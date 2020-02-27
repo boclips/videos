@@ -116,7 +116,6 @@ dependencies {
     implementation('org.litote.kmongo:kmongo:3.9.2')
     implementation('io.sentry:sentry-logback:1.7.21')
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.3")
-    implementation("io.opentracing.contrib:opentracing-mongo-driver:0.1.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

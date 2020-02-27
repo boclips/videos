@@ -14,10 +14,7 @@ import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepos
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
-import io.opentracing.Tracer
-import io.opentracing.contrib.mongo.common.TracingCommandListener
 import org.litote.kmongo.KMongo
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
@@ -32,8 +29,6 @@ import java.util.concurrent.Executors
 class InfrastructureContext(
     val mongoProperties: MongoProperties
 ) {
-    lateinit var tracer: Tracer
-
     @Bean
     fun apiAccessRuleService(userServiceClient: UserServiceClient): ApiAccessRuleService {
         return ApiAccessRuleService(userServiceClient)
@@ -51,12 +46,7 @@ class InfrastructureContext(
 
     @Bean
     fun mongoClient(): MongoClient {
-        return KMongo.createClient(
-            MongoClientURI(
-                mongoProperties.determineUri(),
-                MongoClientOptions.builder().addCommandListener(TracingCommandListener.Builder(tracer).build())
-            )
-        )
+        return KMongo.createClient(MongoClientURI(mongoProperties.determineUri()))
     }
 
     @Bean
