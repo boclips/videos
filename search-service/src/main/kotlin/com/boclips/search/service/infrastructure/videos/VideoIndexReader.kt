@@ -114,7 +114,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     )
                 }
             }.apply {
-                if (!videoQuery.permittedVideoIds.isNullOrEmpty()) {
+                val includedVideos = videoQuery.permittedVideoIds?.subtract(videoQuery.deniedVideoIds ?: emptySet())
+
+                if (!includedVideos.isNullOrEmpty()) {
                     must(
                         boolQuery().must(
                             idsQuery().addIds(*(videoQuery.permittedVideoIds.toTypedArray()))
@@ -122,6 +124,15 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     )
                 }
             }.apply {
+                if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
+                    must(
+                        boolQuery().mustNot(
+                            idsQuery().addIds(*(videoQuery.deniedVideoIds.toTypedArray()))
+                        )
+                    )
+                }
+            }
+            .apply {
                 videoQuery.subjectsSetManually?.let { subjectsSetManually ->
                     must(
                         boolQuery().must(

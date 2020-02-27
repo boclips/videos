@@ -38,7 +38,7 @@ class VideoService(
 
     fun count(videoSearchQuery: VideoSearchQuery, videoAccessRule: VideoAccessRule): Long {
         logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccessRule\"" }
-        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccessRule))
+        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccessRule = videoAccessRule))
     }
 
     fun getPlayableVideo(
