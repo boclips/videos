@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.common.FilterDecorator
@@ -20,8 +21,10 @@ class FilterDecoratorTest {
             ageRangeMax = 10,
             ageRangeMin = 5,
             subjectIds = setOf("subject-123"),
-            maxDuration = Duration.ofSeconds(100),
-            minDuration = Duration.ofSeconds(20),
+            durationRanges = listOf(
+                DurationRange(min =  Duration.ofSeconds(20), max = Duration.ofSeconds(100)),
+                DurationRange(min =  Duration.ofMinutes(10), max = Duration.ofMinutes(15))
+            ),
             source = SourceType.BOCLIPS,
             releaseDateFrom = LocalDate.of(2014, 1, 30),
             releaseDateTo = LocalDate.of(2015, 1, 30),
@@ -36,14 +39,34 @@ class FilterDecoratorTest {
   "bool" : {
     "must" : [
       {
-        "range" : {
-          "durationSeconds" : {
-            "from" : 20,
-            "to" : 100,
-            "include_lower" : true,
-            "include_upper" : true,
-            "boost" : 1.0
-          }
+        "bool" : {
+          "should" : [
+            {
+              "range" : {
+                "durationSeconds" : {
+                  "from" : 20,
+                  "to" : 100,
+                  "include_lower" : true,
+                  "include_upper" : true,
+                  "boost" : 1.0
+                }
+              }
+            },
+            {
+              "range" : {
+                "durationSeconds" : {
+                  "from" : 600,
+                  "to" : 900,
+                  "include_lower" : true,
+                  "include_upper" : true,
+                  "boost" : 1.0
+                }
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "minimum_should_match" : "1",
+          "boost" : 1.0
         }
       },
       {

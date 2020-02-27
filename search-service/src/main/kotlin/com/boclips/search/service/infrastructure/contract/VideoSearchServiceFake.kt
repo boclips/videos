@@ -17,9 +17,6 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
         val phrase = query.phrase
         val idsToLookup = query.ids
 
-        val minDuration: Long = if (query.minDuration != null) query.minDuration.seconds else 0
-        val maxDuration: Long = if (query.maxDuration != null) query.maxDuration.seconds else Long.MAX_VALUE
-
         val releaseDateFrom: LocalDate = query.releaseDateFrom ?: LocalDate.MIN
         val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
 
@@ -47,7 +44,19 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     if (query.type.isEmpty()) true else query.type.contains(entry.value.type)
                 }
                 .filter { entry ->
-                    entry.value.durationSeconds.let { (minDuration..maxDuration).contains(it) }
+                    if (query.durationRanges.isNullOrEmpty()) {
+                        return@filter true;
+                    }
+
+                    query.durationRanges.forEach { durationRange ->
+                        val minSeconds = durationRange.min.seconds
+                        val maxSeconds = durationRange.max?.seconds ?: Long.MAX_VALUE
+                        if ((minSeconds..maxSeconds).contains(entry.value.durationSeconds)) {
+                            return@filter true
+                        }
+                    }
+
+                    return@filter false
                 }
                 .filter { entry ->
                     query.source?.let { it == entry.value.source } ?: true

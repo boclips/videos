@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -33,8 +34,12 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        minDuration = Duration.ofSeconds(60),
-                        maxDuration = Duration.ofSeconds(110)
+                        durationRanges = listOf(
+                            DurationRange(
+                                min = Duration.ofSeconds(60),
+                                max = Duration.ofSeconds(110)
+                            )
+                        )
                     )
                 )
             )
@@ -57,7 +62,7 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        minDuration = Duration.ofSeconds(60)
+                        durationRanges = listOf(DurationRange(min = Duration.ofSeconds(60)))
                     )
                 )
             )
@@ -79,7 +84,14 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
         val results =
             videoIndexReader.search(
                 PaginatedSearchRequest(
-                    query = VideoQuery(maxDuration = Duration.ofSeconds(110))
+                    query = VideoQuery(
+                        durationRanges = listOf(
+                            DurationRange(
+                                min = Duration.ofSeconds(0),
+                                max = Duration.ofSeconds(110)
+                            )
+                        )
+                    )
                 )
             )
 

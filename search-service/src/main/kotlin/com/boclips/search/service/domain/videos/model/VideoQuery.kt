@@ -5,13 +5,17 @@ import com.boclips.search.service.domain.common.model.Sort
 import java.time.Duration
 import java.time.LocalDate
 
+data class DurationRange(
+    val min: Duration,
+    val max: Duration? = null
+)
+
 class VideoQuery(
     phrase: String = "",
     sort: Sort<VideoMetadata>? = null,
     val ids: List<String> = emptyList(),
     val bestFor: List<String>? = null,
-    val minDuration: Duration? = null,
-    val maxDuration: Duration? = null,
+    val durationRanges: List<DurationRange>? = null,
     val source: SourceType? = null,
     val releaseDateFrom: LocalDate? = null,
     val releaseDateTo: LocalDate? = null,

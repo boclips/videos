@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -147,8 +148,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    minDuration = Duration.ofSeconds(5),
-                    maxDuration = Duration.ofSeconds(10)
+                    durationRanges = listOf(DurationRange(min = Duration.ofSeconds(5), max = Duration.ofSeconds(10)))
                 )
             )
         )

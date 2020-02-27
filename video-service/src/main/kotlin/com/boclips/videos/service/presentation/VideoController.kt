@@ -22,7 +22,6 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
-import com.boclips.videos.service.presentation.projections.WithProjection
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
@@ -31,7 +30,6 @@ import mu.KLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -73,6 +71,7 @@ class VideoController(
         @RequestParam(name = "query", required = false) query: String?,
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
         @RequestParam(name = "best_for", required = false) bestFor: List<String>?,
+        @RequestParam(name = "duration", required = false) duration: List<String>?,
         @RequestParam(name = "duration_min", required = false) minDuration: String?,
         @RequestParam(name = "duration_max", required = false) maxDuration: String?,
         @RequestParam(name = "released_date_from", required = false) releasedDateFrom: String?,
@@ -97,6 +96,7 @@ class VideoController(
             bestFor = bestFor?.let { bestFor } ?: emptyList(),
             minDuration = minDuration,
             maxDuration = maxDuration,
+            duration = duration,
             releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
             pageSize = pageSize,

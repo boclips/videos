@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -766,7 +767,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "World war",
-                    minDuration = Duration.ofSeconds(10)
+                    durationRanges = listOf(DurationRange(min = Duration.ofSeconds(10)))
                 )
             )
         )
@@ -795,7 +796,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         "World war",
-                        maxDuration = Duration.ofSeconds(9)
+                        durationRanges = listOf(DurationRange(min = Duration.ofSeconds(0), max = Duration.ofSeconds(9)))
                     )
                 )
             )

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.video.exceptions.InvalidDateException
@@ -48,4 +49,44 @@ class SearchQueryConverter {
             "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL
             else -> throw InvalidTypeException(type, VideoType.values())
         }
+
+    fun convertDurations(
+        minDurationString: String?,
+        maxDurationString: String?,
+        durations: List<String>?
+    ): List<DurationRange> {
+        if (!durations.isNullOrEmpty()) {
+            return durations.fold(mutableListOf()) { acc, durationRangeString ->
+                val (min, max) = if (durationRangeString.contains('-'))
+                    durationRangeString.split('-')
+                else
+                    listOf(durationRangeString, null)
+
+                val minDuration = convertDuration(min)
+                val maxDuration = convertDuration(max)
+
+                if (minDuration != null || maxDuration != null) {
+                    acc.add(
+                        DurationRange(
+                            min = minDuration ?: Duration.ofMinutes(0),
+                            max = maxDuration
+                        )
+                    )
+                }
+
+                acc
+            }
+        }
+
+        if (minDurationString != null || maxDurationString != null) {
+            return listOf(
+                DurationRange(
+                    min = convertDuration(minDurationString) ?: Duration.ofMinutes(0),
+                    max = convertDuration(maxDurationString)
+                )
+            )
+        }
+
+        return emptyList()
+    }
 }

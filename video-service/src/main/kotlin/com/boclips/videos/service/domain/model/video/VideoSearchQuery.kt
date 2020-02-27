@@ -2,11 +2,11 @@ package com.boclips.videos.service.domain.model.video
 
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
-import java.time.Duration
 import java.time.LocalDate
 
 enum class SortKey {
@@ -24,8 +24,7 @@ class VideoSearchQuery(
     val text: String,
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
-    val minDuration: Duration? = null,
-    val maxDuration: Duration? = null,
+    val durationRanges: List<DurationRange>? = null,
     val releaseDateFrom: LocalDate? = null,
     val releaseDateTo: LocalDate? = null,
     val pageSize: Int,
@@ -59,8 +58,7 @@ class VideoSearchQuery(
                 ids = it.ids,
                 phrase = it.phrase,
                 bestFor = bestFor,
-                minDuration = minDuration,
-                maxDuration = maxDuration,
+                durationRanges = durationRanges,
                 source = source,
                 sort = sort,
                 releaseDateFrom = releaseDateFrom,

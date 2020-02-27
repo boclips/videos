@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.common
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument
@@ -8,7 +9,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
-import java.time.Duration
 import java.time.LocalDate
 
 class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
@@ -30,8 +30,8 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         if (videoQuery.bestFor != null) {
             boolQueryBuilder.filter(filterByTag(videoQuery.bestFor))
         }
-        if (listOfNotNull(videoQuery.minDuration, videoQuery.maxDuration).isNotEmpty()) {
-            boolQueryBuilder.must(beWithinDuration(videoQuery.minDuration, videoQuery.maxDuration))
+        if (videoQuery.durationRanges?.isNotEmpty() == true) {
+            boolQueryBuilder.must(beWithinDurationRanges(videoQuery.durationRanges))
         }
         if (videoQuery.source != null) {
             boolQueryBuilder.filter(matchSource(videoQuery.source))
@@ -82,13 +82,18 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         )
     }
 
-    private fun beWithinDuration(min: Duration?, max: Duration?): RangeQueryBuilder {
-        val queryBuilder = QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS)
-
-        min?.let { queryBuilder.from(it.seconds) }
-        max?.let { queryBuilder.to(it.seconds) }
-
-        return queryBuilder
+    private fun beWithinDurationRanges(durationRanges: List<DurationRange>): BoolQueryBuilder {
+        return QueryBuilders.boolQuery().apply {
+            durationRanges.forEach { durationRange ->
+                should(
+                    QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS).apply {
+                        from(durationRange.min.seconds)
+                        durationRange.max?.let { max -> to(max.seconds) }
+                    }
+                )
+            }
+            minimumShouldMatch(1)
+        }
     }
 
     private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {

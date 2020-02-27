@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -313,8 +314,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "matching-query",
-                    minDuration = Duration.ofSeconds(40),
-                    maxDuration = Duration.ofSeconds(60)
+                    durationRanges = listOf(DurationRange(min = Duration.ofSeconds(40), max = Duration.ofSeconds(60)))
                 )
             )
         )
@@ -347,8 +347,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     subjectIds = setOf("subject-two"),
-                    minDuration = Duration.ofSeconds(49),
-                    maxDuration = Duration.ofSeconds(51)
+                    durationRanges = listOf(DurationRange(min = Duration.ofSeconds(49), max = Duration.ofSeconds(51)))
                 )
             )
         )
