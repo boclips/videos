@@ -12,3 +12,8 @@ patches:
     group: apps
     kind: Deployment
     version: v1
+- path: jaeger-sampling-rate.yaml
+  target:
+    group: apps
+    kind: Deployment
+    version: v1
