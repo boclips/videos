@@ -1,10 +1,5 @@
 - op: add
   path: /spec/template/spec/containers/0/env/-
   value:
-    name: OPENTRACING_JAEGER_SERVICE_NAME
-    value: video-service.production
-- op: add
-  path: /spec/template/spec/containers/0/env/-
-  value:
     name: OPENTRACING_JAEGER_RATE_LIMITING_SAMPLER_MAX_TRACES_PER_SECOND
     value: "2.0"
