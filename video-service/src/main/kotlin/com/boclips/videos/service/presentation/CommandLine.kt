@@ -22,6 +22,7 @@ class CommandLine(
         when (env.getProperty("mode")) {
             "reindex-collections" -> {
                 collectionIndex.invoke(ConsoleProgressNotifier())
+                exitProcess(0)
             }
             "reindex-videos" -> {
                 videoIndex.invoke(ConsoleProgressNotifier())
