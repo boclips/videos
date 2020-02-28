@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
+- reindex-collections-cronjob.yaml
+- reindex-videos-cronjob.yaml
 commonLabels:
   app: video-service
 commonAnnotations:

@@ -1,0 +1,48 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: reindex-collections
+spec:
+  schedule: 0 10 * * *
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 7200
+      template:
+        spec:
+          restartPolicy: Never
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: priority
+                    operator: In
+                    values: [noncritical]
+          tolerations:
+          - key: priority
+            operator: Equal
+            value: noncritical
+            effect: NoSchedule
+          containers:
+          - name: reindex-collections
+            image: app:0
+            command:
+            - java
+            - -jar
+            - app.jar
+            envFrom:
+            - secretRef:
+                name: video-service
+            env:
+            - name: MODE
+              value: reindex-collections
+            resources:
+              requests:
+                cpu: 1
+                memory: 2G
+              limits:
+                cpu: 1
+                memory: 2G
