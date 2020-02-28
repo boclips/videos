@@ -17,6 +17,7 @@ import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class RebuildCollectionIndexTest {
 
@@ -53,7 +54,7 @@ class RebuildCollectionIndexTest {
 
         val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, searchService)
 
-        assertThat(rebuildSearchIndex()).isCompleted.hasNotFailed()
+        rebuildSearchIndex()
 
         val searchRequest = PaginatedSearchRequest(CollectionQuery(phrase = "collection"))
 
@@ -73,6 +74,8 @@ class RebuildCollectionIndexTest {
 
         val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, searchService)
 
-        assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
+        assertThrows<MongoClientException> {
+            rebuildSearchIndex()
+        }
     }
 }

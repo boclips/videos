@@ -22,6 +22,7 @@ import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class RebuildVideoIndexTest {
     lateinit var searchService: VideoSearchService
@@ -79,7 +80,7 @@ class RebuildVideoIndexTest {
             searchService
         )
 
-        assertThat(rebuildSearchIndex.invoke()).isCompleted.hasNotFailed()
+        rebuildSearchIndex.invoke()
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
@@ -122,7 +123,7 @@ class RebuildVideoIndexTest {
             searchService
         )
 
-        assertThat(rebuildSearchIndex.invoke()).isCompleted.hasNotFailed()
+        rebuildSearchIndex.invoke()
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
@@ -152,7 +153,9 @@ class RebuildVideoIndexTest {
             searchService
         )
 
-        assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
+        assertThrows<MongoClientException> {
+            rebuildSearchIndex()
+        }
     }
 
     private fun getMockVideoRepo(vararg videos: Video): VideoRepository {
