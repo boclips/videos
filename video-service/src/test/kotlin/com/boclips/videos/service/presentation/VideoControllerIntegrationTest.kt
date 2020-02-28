@@ -276,11 +276,19 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns video when duration is provided as buckets`() {
+    fun `returns video when duration is provided as buckets upper bound`() {
         mockMvc.perform(get("/v1/videos?query=elephants&duration=PT0M-PT2M,PT2M-PT5M").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `returns video when duration is provided as buckets lowerbound`() {
+        mockMvc.perform(get("/v1/videos?query=elephants&duration=PT7M").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
     }
 
     @Test
