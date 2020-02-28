@@ -318,21 +318,6 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `only people with dedicated role can rebuild search index`() {
-        mockMvc.perform(post("/v1/admin/actions/rebuild_video_index").asTeacher())
-            .andExpect(status().isForbidden)
-
-        mockMvc.perform(post("/v1/admin/actions/rebuild_video_index").asOperator())
-            .andExpect(status().is2xxSuccessful)
-
-        mockMvc.perform(post("/v1/admin/actions/rebuild_collection_index").asTeacher())
-            .andExpect(status().isForbidden)
-
-        mockMvc.perform(post("/v1/admin/actions/rebuild_collection_index").asOperator())
-            .andExpect(status().is2xxSuccessful)
-    }
-
-    @Test
     fun `everybody can access subjects without permissions`() {
         mockMvc.perform(get("/v1/subjects"))
             .andExpect(status().`is`(HttpStatus.OK.value()))

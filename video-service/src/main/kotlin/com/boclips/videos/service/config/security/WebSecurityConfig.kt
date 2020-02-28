@@ -57,8 +57,6 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(GET, "/v1/video-types").hasRole(ROLE.VIEW_VIDEO_TYPES)
             .antMatchers(GET, "/v1/content-categories").hasRole(ROLE.VIEW_CONTENT_CATEGORIES)
 
-            .antMatchers(POST, "/v1/admin/actions/rebuild_video_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
-            .antMatchers(POST, "/v1/admin/actions/rebuild_collection_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .antMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
