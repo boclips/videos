@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   name: reindex-videos
 spec:
-  schedule: 0 10 * * *
+  schedule: 0 14 * * *
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
