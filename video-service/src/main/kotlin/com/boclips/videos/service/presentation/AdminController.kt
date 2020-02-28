@@ -41,8 +41,6 @@ class ResponseEmitterProgressNotifier(private val emitter: ResponseBodyEmitter) 
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-    private val rebuildVideoIndex: RebuildVideoIndex,
-    private val rebuildCollectionIndex: RebuildCollectionIndex,
     private val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
     private val videoPlaybackService: VideoPlaybackService,
     private val broadcastVideos: BroadcastVideos,
@@ -52,16 +50,6 @@ class AdminController(
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging()
-
-    @PostMapping("/rebuild_video_index")
-    fun rebuildVideoIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(rebuildVideoIndex::invoke)
-    }
-
-    @PostMapping("/rebuild_collection_index")
-    fun rebuildCollectionIndex(): ResponseEntity<ResponseBodyEmitter> {
-        return asyncWithNotifier(rebuildCollectionIndex::invoke)
-    }
 
     @PostMapping("/build_legacy_search_index")
     fun buildLegacySearchIndex(): ResponseEntity<ResponseBodyEmitter> {

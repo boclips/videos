@@ -15,29 +15,19 @@ open class RebuildVideoIndex(
 ) {
     companion object : KLogging()
 
-    @Async
-    open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
+    open operator fun invoke(notifier: ProgressNotifier? = null) {
         logger.info("Starting a full reindex")
-        val future = CompletableFuture<Unit>()
 
-        try {
-            videoRepository.streamAll { videos ->
-                videos.filter { video ->
-                    contentPartnerService
-                        .findAvailabilityFor(video.contentPartner.contentPartnerId)
-                        .isStreamable()
-                }.let {
-                    videoSearchService.safeRebuildIndex(it, notifier)
-                }
+        videoRepository.streamAll { videos ->
+            videos.filter { video ->
+                contentPartnerService
+                    .findAvailabilityFor(video.contentPartner.contentPartnerId)
+                    .isStreamable()
+            }.let {
+                videoSearchService.safeRebuildIndex(it, notifier)
             }
-
-            logger.info("Full reindex done")
-            future.complete(null)
-        } catch (e: Exception) {
-            logger.error("Error reindexing", e)
-            future.completeExceptionally(e)
         }
 
-        return future
+        logger.info("Full reindex done")
     }
 }

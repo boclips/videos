@@ -13,23 +13,13 @@ open class RebuildCollectionIndex(
 ) {
     companion object : KLogging()
 
-    @Async
-    open operator fun invoke(notifier: ProgressNotifier? = null): CompletableFuture<Unit> {
+    open operator fun invoke(notifier: ProgressNotifier? = null) {
         logger.info("Starting a full reindex")
-        val future = CompletableFuture<Unit>()
 
-        try {
-            collectionRepository.streamAll { collections ->
-                collectionSearchService.safeRebuildIndex(collections, notifier)
-            }
-
-            logger.info("Full reindex done")
-            future.complete(null)
-        } catch (e: Exception) {
-            logger.error("Error reindexing", e)
-            future.completeExceptionally(e)
+        collectionRepository.streamAll { collections ->
+            collectionSearchService.safeRebuildIndex(collections, notifier)
         }
 
-        return future
+        logger.info("Full reindex done")
     }
 }
