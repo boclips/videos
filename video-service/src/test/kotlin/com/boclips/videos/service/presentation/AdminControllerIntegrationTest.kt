@@ -25,30 +25,6 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `rebuildVideoIndex returns 403 when user is not allowed to reindex`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_video_index").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
-    }
-
-    @Test
-    fun `rebuildVideoIndex returns 200 OK when user is allowed to reindex`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_video_index").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isOk)
-    }
-
-    @Test
-    fun `rebuildCollectionIndex returns 403 when user is not allowed to reindex`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_collection_index").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
-    }
-
-    @Test
-    fun `rebuildCollectionIndex returns 200 OK when user is allowed to reindex`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/rebuild_collection_index").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isOk)
-    }
-
-    @Test
     fun `buildLegacySearchIndex returns 403 when user is not allowed to reindex`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/build_legacy_search_index").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isForbidden)
