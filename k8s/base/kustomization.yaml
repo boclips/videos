@@ -9,7 +9,7 @@ commonAnnotations:
   boclips-version: "160"
 images:
 - name: app
-  newName: eu.gcr.io/boclips-prod/boclips/
+  newName: eu.gcr.io/boclips-prod/boclips/video-service
   newTag: "160"
 patches:
 - path: spread-across-zones.yaml
