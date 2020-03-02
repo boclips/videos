@@ -5,8 +5,8 @@ import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
-import com.boclips.users.client.model.Account
 import com.boclips.users.client.model.Organisation
+import com.boclips.users.client.model.OrganisationDetails
 import com.boclips.users.client.model.User
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -44,7 +44,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addAccount(Account(accountId, Organisation(true)))
+            userServiceClient.addOrganisation(Organisation(accountId, OrganisationDetails(true)))
 
             mockMvc.perform(
                 post("/v1/events/playback")
@@ -75,7 +75,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addAccount(Account(accountId, Organisation(false)))
+            userServiceClient.addOrganisation(Organisation(accountId, OrganisationDetails(false)))
 
             mockMvc.perform(
                 post("/v1/events/playback")

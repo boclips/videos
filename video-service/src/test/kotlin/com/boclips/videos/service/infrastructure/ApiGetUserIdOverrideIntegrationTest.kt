@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.users.client.model.Account
+import com.boclips.users.client.model.Organisation
 import com.boclips.users.client.model.User
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -25,7 +25,7 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `it returns null if user is not does not have an organisation`() {
         userServiceClient.addUser(User("user-id", null, emptyList(), null))
-        userServiceClient.clearAccount()
+        userServiceClient.clearOrganisation()
 
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 
@@ -35,7 +35,7 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns null if account does not have an organisation`() {
         userServiceClient.addUser(User("user-id", null, emptyList(), null))
-        userServiceClient.addAccount(Account("account-id", null))
+        userServiceClient.addOrganisation(Organisation("account-id", null))
 
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 

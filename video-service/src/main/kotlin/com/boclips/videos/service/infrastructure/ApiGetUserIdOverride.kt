@@ -9,8 +9,8 @@ import com.boclips.videos.service.presentation.support.BoclipsUserIdHeaderExtrac
 class ApiGetUserIdOverride(private val userServiceClient: UserServiceClient) : GetUserIdOverride {
     override operator fun invoke(user: User): UserId? =
         userServiceClient.findUser(user.id)
-            ?.let { userServiceClient.getAccount(it.organisationAccountId) }
-            ?.takeIf { it.organisation?.allowsOverridingUserIds ?: false }
+            ?.let { userServiceClient.getOrganisation(it.organisationAccountId) }
+            ?.takeIf { it.organisationDetails?.allowsOverridingUserIds ?: false }
             ?.let { BoclipsUserIdHeaderExtractor.getUserId() }
             ?.let(::UserId)
 }
