@@ -5,8 +5,6 @@ resources:
 - service.yaml
 - reindex-collections-cronjob.yaml
 - reindex-videos-cronjob.yaml
-commonLabels:
-  app: video-service
 commonAnnotations:
   boclips-version: "157"
 images:

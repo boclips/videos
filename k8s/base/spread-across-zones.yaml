@@ -11,6 +11,6 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  app: REPLACEME
+                  app: video-service
               topologyKey: failure-domain.beta.kubernetes.io/zone
             weight: 100

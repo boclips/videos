@@ -4,8 +4,16 @@ metadata:
   name: video-service
   annotations:
     sidecar.jaegertracing.io/inject: jaeger
+  labels:
+    app: video-service
 spec:
+  selector:
+    matchLabels:
+      app: video-service
   template:
+    metadata:
+      labels:
+        app: video-service
     spec:
       terminationGracePeriodSeconds: 30
       containers:

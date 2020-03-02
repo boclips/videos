@@ -3,14 +3,22 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: reindex-collections
+  labels:
+    app: video-service-job
 spec:
   schedule: 0 10 * * *
   concurrencyPolicy: Forbid
   jobTemplate:
+    metadata:
+      labels:
+        app: video-service-job
     spec:
       backoffLimit: 0
       activeDeadlineSeconds: 7200
       template:
+        metadata:
+          labels:
+            app: video-service-job
         spec:
           restartPolicy: Never
           affinity:
