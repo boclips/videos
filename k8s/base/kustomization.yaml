@@ -8,11 +8,11 @@ resources:
 commonLabels:
   app: video-service
 commonAnnotations:
-  boclips-version: "156"
+  boclips-version: "157"
 images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/video-service
-  newTag: "156"
+  newTag: "157"
 patches:
 - path: spread-across-zones.yaml
   target:
