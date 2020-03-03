@@ -28,6 +28,11 @@ patches:
     group: apps
     kind: Deployment
     version: v1
+- path: cronjob-shared.yaml
+  target:
+    group: batch
+    kind: CronJob
+    version: v1beta1
 vars:
 - fieldref:
     fieldPath: metadata.annotations.boclips-version
