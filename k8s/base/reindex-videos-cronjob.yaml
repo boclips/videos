@@ -45,6 +45,8 @@ spec:
             - secretRef:
                 name: video-service
             env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: no-event-bus
             - name: MODE
               value: reindex-videos
             resources:
