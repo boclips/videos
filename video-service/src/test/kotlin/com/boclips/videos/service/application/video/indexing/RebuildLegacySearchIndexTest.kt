@@ -20,6 +20,7 @@ import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class RebuildLegacySearchIndexTest {
 
@@ -49,13 +50,11 @@ class RebuildLegacySearchIndexTest {
             }
         }
 
-        val future = RebuildLegacySearchIndex(
+        RebuildLegacySearchIndex(
             videoRepository,
             contentPartnerService,
             legacyVideoSearchService
         ).invoke()
-
-        assertThat(future).isCompleted.hasNotFailed()
 
         verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
     }
@@ -117,7 +116,9 @@ class RebuildLegacySearchIndexTest {
                 legacyVideoSearchService
             )
 
-        assertThat(rebuildSearchIndex()).hasFailedWithThrowableThat().hasMessage("Boom")
+        assertThrows<MongoClientException> {
+            rebuildSearchIndex()
+        }
     }
 
     private fun mockvideoRepository(videos: Sequence<Video>): VideoRepository {
