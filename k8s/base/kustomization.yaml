@@ -5,6 +5,7 @@ resources:
 - service.yaml
 - reindex-collections-cronjob.yaml
 - reindex-videos-cronjob.yaml
+- reindex-legacy-cronjob.yaml
 commonAnnotations:
   boclips-version: "169"
 images:

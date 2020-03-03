@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
+import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import mu.KLogging
 import org.springframework.core.env.Environment
@@ -13,7 +14,8 @@ import kotlin.system.exitProcess
 class CommandLine(
     val env: Environment,
     val collectionIndex: RebuildCollectionIndex,
-    val videoIndex: RebuildVideoIndex
+    val videoIndex: RebuildVideoIndex,
+    val rebuildLegacySearchIndex: RebuildLegacySearchIndex
 ) {
     companion object : KLogging()
 
@@ -26,6 +28,10 @@ class CommandLine(
             }
             "reindex-videos" -> {
                 videoIndex.invoke(ConsoleProgressNotifier())
+                exitProcess(0)
+            }
+            "reindex-legacy" -> {
+                rebuildLegacySearchIndex.invoke(ConsoleProgressNotifier())
                 exitProcess(0)
             }
         }

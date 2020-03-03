@@ -1,0 +1,58 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: reindex-legacy
+  labels:
+    app: video-service-job
+spec:
+  schedule: 0 12 * * *
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      labels:
+        app: video-service-job
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 7200
+      template:
+        metadata:
+          labels:
+            app: video-service-job
+        spec:
+          restartPolicy: Never
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: priority
+                    operator: In
+                    values: [noncritical]
+          tolerations:
+          - key: priority
+            operator: Equal
+            value: noncritical
+            effect: NoSchedule
+          containers:
+          - name: reindex-legacy
+            image: app:0
+            command:
+            - java
+            - -jar
+            - app.jar
+            envFrom:
+            - secretRef:
+                name: video-service
+            env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: no-event-bus
+            - name: MODE
+              value: reindex-legacy
+            resources:
+              requests:
+                cpu: 1
+                memory: 2G
+              limits:
+                cpu: 1
+                memory: 2G
