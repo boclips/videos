@@ -30,5 +30,5 @@ patches:
 - path: keycloak-configuration-cronjob.yaml
   target:
     group: batch
-    kind: Cronjob
-    version: v1/beta1
+    kind: CronJob
+    version: v1beta1
