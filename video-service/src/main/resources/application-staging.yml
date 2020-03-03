@@ -1,2 +1,0 @@
-keycloak:
-  configurationFile: 'classpath:keycloak-staging.json'
