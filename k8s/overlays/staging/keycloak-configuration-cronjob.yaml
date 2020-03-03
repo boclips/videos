@@ -1,5 +1,5 @@
 - op: add
-  path: /spec/template/spec/containers/0/env/-
+  path: /spec/jobTemplate/spec/template/spec/containers/0/env/-
   value:
     name: KEYCLOAK_CONFIGURATIONFILE
     value: classpath:keycloak-staging.json

@@ -22,3 +22,8 @@ patches:
     group: apps
     kind: Deployment
     version: v1
+- path: keycloak-configuration-cronjob.yaml
+  target:
+    group: batch
+    kind: Cronjob
+    version: v1/beta1
