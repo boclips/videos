@@ -3,10 +3,13 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.ManualIngest
+import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -27,6 +30,7 @@ class ContentPartnerToResourceConverterTest {
             contentPartnersLinkBuilder = ContentPartnersLinkBuilder(
                 mock
             ),
+            ingestDetailsToResourceConverter = IngestDetailsToResourceConverter(),
             legalRestrictionsToResourceConverter = LegalRestrictionsToResourceConverter(mock())
         )
     }
@@ -44,6 +48,7 @@ class ContentPartnerToResourceConverterTest {
             awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
+            ingest = MrssFeedIngest(url = "https://feed.mrss"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK)
         )
 
@@ -66,5 +71,6 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
         assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
+        assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestDetailsResource.MRSS, url = "https://feed.mrss"))
     }
 }

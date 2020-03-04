@@ -42,6 +42,8 @@ data class ContentPartnerResource(
     val marketingInformation: ContentPartnerMarketingResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val pedagogyInformation: ContentPartnerPedagogyResource? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val ingest: IngestDetailsResource? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

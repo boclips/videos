@@ -15,6 +15,7 @@ import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
+import com.boclips.contentpartner.service.presentation.IngestDetailsToResourceConverter
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
@@ -27,14 +28,6 @@ class ApplicationContext(
     val contentPartnerRepository: ContentPartnerRepository,
     val ageRangeRepository: AgeRangeRepository
 ) {
-    @Bean
-    fun getContentPartnerToResourceConverter(
-        contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
-        legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
-    ): ContentPartnerToResourceConverter {
-        return ContentPartnerToResourceConverter(contentPartnersLinkBuilder, legalRestrictionsToResourceConverter)
-    }
-
     @Bean
     fun getContentPartner(): GetContentPartner {
         return GetContentPartner(contentPartnerRepository)

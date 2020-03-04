@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 
 class ContentPartnerToResourceConverter(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    private val ingestDetailsToResourceConverter: IngestDetailsToResourceConverter,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
     fun convert(contentPartner: ContentPartner): ContentPartnerResource {
@@ -34,6 +35,7 @@ class ContentPartnerToResourceConverter(
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,
             notes = contentPartner.notes,
+            ingest = ingestDetailsToResourceConverter.convert(contentPartner.ingest),
             language = contentPartner.language?.let { it -> toLanguageResource(it) },
             contentTypes = contentPartner.contentTypes?.map { it.name },
             oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,

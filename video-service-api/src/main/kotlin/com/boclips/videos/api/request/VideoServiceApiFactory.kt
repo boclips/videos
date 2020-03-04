@@ -10,6 +10,7 @@ import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import java.time.LocalDate
 
 class VideoServiceApiFactory {
@@ -95,6 +96,7 @@ class VideoServiceApiFactory {
             awards: String? = null,
             notes: String? = null,
             language: String? = null,
+            ingest: IngestDetailsResource? = null,
             oneLineDescription: String? = null,
             marketingInformation: ContentPartnerMarketingInformationRequest? = null,
             isTranscriptProvided: Boolean? = null,
@@ -116,6 +118,7 @@ class VideoServiceApiFactory {
                 awards = awards,
                 notes = notes,
                 language = language,
+                ingest = ingest,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
                 isTranscriptProvided = isTranscriptProvided,

@@ -2,6 +2,7 @@ package com.boclips.videos.api.request.contentpartner
 
 import com.boclips.videos.api.request.validators.Language
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import javax.validation.constraints.NotBlank
 
 data class UpsertContentPartnerRequest(
@@ -21,6 +22,7 @@ data class UpsertContentPartnerRequest(
     @field:Language
     val language: String? = null,
     val contentTypes: List<String>? = null,
+    val ingest: IngestDetailsResource? = null,
     val oneLineDescription: String? = null,
     val marketingInformation: ContentPartnerMarketingInformationRequest? = null,
     val isTranscriptProvided: Boolean? = null,

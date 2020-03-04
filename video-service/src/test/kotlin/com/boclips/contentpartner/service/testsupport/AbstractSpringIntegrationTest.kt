@@ -18,6 +18,7 @@ import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInfo
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.CreateVideo
@@ -245,6 +246,7 @@ abstract class AbstractSpringIntegrationTest {
         awards: String? = null,
         notes: String? = null,
         language: String? = null,
+        ingest: IngestDetailsResource? = null,
         oneLineDescription: String? = null,
         marketingInformation: ContentPartnerMarketingInformationRequest? = null,
         isTranscriptProvided: Boolean? = null,
@@ -266,6 +268,7 @@ abstract class AbstractSpringIntegrationTest {
                 awards = awards,
                 notes = notes,
                 language = language,
+                ingest = ingest,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
                 isTranscriptProvided = isTranscriptProvided,
