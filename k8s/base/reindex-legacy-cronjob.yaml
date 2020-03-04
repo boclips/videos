@@ -26,8 +26,8 @@ spec:
               value: reindex-legacy
             resources:
               requests:
-                cpu: 1
-                memory: 2G
+                cpu: 150m
+                memory: 500Mi
               limits:
                 cpu: 1
-                memory: 2G
+                memory: 750Mi
