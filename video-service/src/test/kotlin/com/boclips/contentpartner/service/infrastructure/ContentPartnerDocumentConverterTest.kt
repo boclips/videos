@@ -20,6 +20,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URL
+import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
@@ -43,6 +44,7 @@ internal class ContentPartnerDocumentConverterTest {
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
             ingest = MrssFeedIngest(url = "https://mrss.feed"),
+            deliveryFrequency = Period.ofMonths(3),
             marketingInformation = ContentPartnerMarketingInformation(
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NEEDS_INTRODUCTION,

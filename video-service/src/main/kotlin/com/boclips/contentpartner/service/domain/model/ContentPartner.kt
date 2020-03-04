@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
+import java.time.Period
 import java.util.Locale
 
 data class ContentPartner(
@@ -18,6 +19,7 @@ data class ContentPartner(
     val notes: String?,
     val contentTypes: List<ContentPartnerType>? = emptyList(),
     val ingest: IngestDetails,
+    val deliveryFrequency: Period?,
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: ContentPartnerMarketingInformation?
 ) {

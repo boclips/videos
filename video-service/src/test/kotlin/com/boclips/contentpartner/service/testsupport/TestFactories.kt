@@ -24,6 +24,7 @@ import com.boclips.contentpartner.service.infrastructure.IngestDetailsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
+import java.time.Period
 import java.util.Locale
 
 object TestFactories {
@@ -50,6 +51,7 @@ object TestFactories {
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
         ingest: IngestDetails = ManualIngest,
+        deliveryFrequency: Period? = null,
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: ContentPartnerMarketingInformation? = null
     ): ContentPartner {
@@ -69,6 +71,7 @@ object TestFactories {
             language = language,
             contentTypes = contentTypes,
             ingest = ingest,
+            deliveryFrequency = deliveryFrequency,
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation
         )

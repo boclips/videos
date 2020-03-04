@@ -17,6 +17,7 @@ import com.boclips.videos.service.infrastructure.video.DistributionMethodDocumen
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
 import java.net.URL
+import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
@@ -51,6 +52,7 @@ object ContentPartnerDocumentConverter {
             language = contentPartner.language?.toLanguageTag(),
             contentTypes = contentPartner.contentTypes?.map { it.name },
             ingest = IngestDetailsDocumentConverter.toIngestDetailsDocument(contentPartner.ingest),
+            deliveryFrequency = contentPartner.deliveryFrequency?.toString(),
             marketingInformation = contentPartner.marketingInformation?.let {
                 MarketingInformationDocument(
                     oneLineDescription = it.oneLineDescription,
@@ -109,6 +111,7 @@ object ContentPartnerDocumentConverter {
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
             ingest = document.ingest?.let(IngestDetailsDocumentConverter::toIngestDetails) ?: ManualIngest,
+            deliveryFrequency = document.deliveryFrequency?.let { Period.parse(it) },
             marketingInformation = document.marketingInformation?.let {
                 ContentPartnerMarketingInformation(
                     oneLineDescription = it.oneLineDescription,
