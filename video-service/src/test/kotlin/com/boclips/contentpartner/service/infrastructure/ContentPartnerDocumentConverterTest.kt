@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
@@ -39,6 +40,7 @@ internal class ContentPartnerDocumentConverterTest {
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
+            ingest = ManualIngest,
             marketingInformation = ContentPartnerMarketingInformation(
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NEEDS_INTRODUCTION,

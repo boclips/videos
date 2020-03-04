@@ -17,6 +17,7 @@ data class ContentPartner(
     val awards: String?,
     val notes: String?,
     val contentTypes: List<ContentPartnerType>? = emptyList(),
+    val ingest: IngestDetails,
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: ContentPartnerMarketingInformation?
 ) {

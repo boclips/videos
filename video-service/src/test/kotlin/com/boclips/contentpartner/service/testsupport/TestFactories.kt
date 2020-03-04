@@ -9,8 +9,10 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerMarketingIn
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.IngestDetails
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.domain.model.RequestContext
@@ -46,6 +48,7 @@ object TestFactories {
         notes: String? = null,
         language: Locale? = null,
         contentTypes: List<ContentPartnerType>? = emptyList(),
+        ingest: IngestDetails = ManualIngest,
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: ContentPartnerMarketingInformation? = null
     ): ContentPartner {
@@ -64,6 +67,7 @@ object TestFactories {
             notes = notes,
             language = language,
             contentTypes = contentTypes,
+            ingest = ingest,
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation
         )

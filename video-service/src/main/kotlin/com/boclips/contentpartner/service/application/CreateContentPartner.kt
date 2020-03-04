@@ -12,6 +12,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingInformationConverter
@@ -77,6 +78,7 @@ class CreateContentPartner(
                     notes = upsertRequest.notes,
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
                     contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
+                    ingest = ManualIngest,
                     pedagogyInformation = PedagogyInformation(
                         isTranscriptProvided = upsertRequest.isTranscriptProvided,
                         educationalResources = upsertRequest.educationalResources,

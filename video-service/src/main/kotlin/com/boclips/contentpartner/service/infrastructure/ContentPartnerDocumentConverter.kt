@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.videos.api.common.ExplicitlyNull
@@ -106,6 +107,7 @@ object ContentPartnerDocumentConverter {
             notes = document.notes,
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
+            ingest = ManualIngest,
             marketingInformation = document.marketingInformation?.let {
                 ContentPartnerMarketingInformation(
                     oneLineDescription = it.oneLineDescription,
