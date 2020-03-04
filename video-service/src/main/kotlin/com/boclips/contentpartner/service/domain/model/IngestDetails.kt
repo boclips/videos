@@ -6,9 +6,9 @@ object ManualIngest : IngestDetails()
 
 object CustomIngest : IngestDetails()
 
-class MrssFeedIngest(val url: String) : IngestDetails()
+data class MrssFeedIngest(val url: String) : IngestDetails()
 
-class YoutubeScrapeIngest(val url: String) : IngestDetails()
+data class YoutubeScrapeIngest(val url: String) : IngestDetails()
 
 
 

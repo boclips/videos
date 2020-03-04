@@ -20,6 +20,7 @@ import com.boclips.contentpartner.service.domain.model.User
 import com.boclips.contentpartner.service.domain.model.UserId
 import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
+import com.boclips.contentpartner.service.infrastructure.IngestDetailsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
@@ -84,6 +85,7 @@ object TestFactories {
         notes: String? = null,
         language: String? = null,
         contentTypes: List<String>? = emptyList(),
+        ingest: IngestDetailsDocument? = null,
         isTranscriptProvided: Boolean? = null,
         ageRanges: List<AgeRangeDocument>? = emptyList()
     ) = ContentPartnerDocument(
@@ -97,6 +99,7 @@ object TestFactories {
         notes = notes,
         language = language,
         contentTypes = contentTypes,
+        ingest = ingest,
         ageRanges = ageRanges,
         isTranscriptProvided = isTranscriptProvided
     )

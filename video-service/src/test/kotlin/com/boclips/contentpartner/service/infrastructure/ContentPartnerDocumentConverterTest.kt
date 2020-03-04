@@ -9,9 +9,11 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.ManualIngest
+import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerDocument
 import com.boclips.videos.api.common.Specified
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -40,7 +42,7 @@ internal class ContentPartnerDocumentConverterTest {
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
-            ingest = ManualIngest,
+            ingest = MrssFeedIngest(url = "https://mrss.feed"),
             marketingInformation = ContentPartnerMarketingInformation(
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NEEDS_INTRODUCTION,
@@ -64,11 +66,19 @@ internal class ContentPartnerDocumentConverterTest {
         assertThat(convertedAsset).isEqualTo(original)
     }
 
+    @Test
+    fun `ingest defaults to manual when not specified in the document`() {
+        val document = createContentPartnerDocument(ingest = null)
+        val contentPartner = ContentPartnerDocumentConverter.toContentPartner(document)
+
+        assertThat(contentPartner.ingest).isEqualTo(ManualIngest)
+    }
+
     @Nested
     inner class DistributionMethods {
         @Test
         fun `the content partner is available on all distribution methods by default`() {
-            val document = TestFactories.createContentPartnerDocument(distributionMethods = null)
+            val document = createContentPartnerDocument(distributionMethods = null)
 
             val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
             assertThat(convertedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
@@ -76,7 +86,7 @@ internal class ContentPartnerDocumentConverterTest {
 
         @Test
         fun `the content partner from youtube is not available for download by default`() {
-            val document = TestFactories.createContentPartnerDocument(
+            val document = createContentPartnerDocument(
                 distributionMethods = null,
                 youtubeChannelId = "Awesome channel"
             )

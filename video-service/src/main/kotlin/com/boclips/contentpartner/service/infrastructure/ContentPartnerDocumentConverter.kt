@@ -50,6 +50,7 @@ object ContentPartnerDocumentConverter {
             notes = contentPartner.notes,
             language = contentPartner.language?.toLanguageTag(),
             contentTypes = contentPartner.contentTypes?.map { it.name },
+            ingest = IngestDetailsDocumentConverter.toIngestDetailsDocument(contentPartner.ingest),
             marketingInformation = contentPartner.marketingInformation?.let {
                 MarketingInformationDocument(
                     oneLineDescription = it.oneLineDescription,
@@ -107,7 +108,7 @@ object ContentPartnerDocumentConverter {
             notes = document.notes,
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
-            ingest = ManualIngest,
+            ingest = document.ingest?.let(IngestDetailsDocumentConverter::toIngestDetails) ?: ManualIngest,
             marketingInformation = document.marketingInformation?.let {
                 ContentPartnerMarketingInformation(
                     oneLineDescription = it.oneLineDescription,
