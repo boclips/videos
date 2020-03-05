@@ -7,11 +7,11 @@ resources:
 - reindex-videos-cronjob.yaml
 - reindex-legacy-cronjob.yaml
 commonAnnotations:
-  boclips-version: "185"
+  boclips-version: "186"
 images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/video-service
-  newTag: "185"
+  newTag: "186"
 patches:
 - path: spread-across-zones.yaml
   target:
