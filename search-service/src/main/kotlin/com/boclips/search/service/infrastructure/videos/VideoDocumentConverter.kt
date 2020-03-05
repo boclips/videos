@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.infrastructure.ESObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -25,7 +26,7 @@ object VideoDocumentConverter {
             transcript = video.transcript,
             ageRangeMax = video.ageRangeMax,
             ageRangeMin = video.ageRangeMin,
-            ageRange = calculateAgeRange(video),
+            ageRange = AgeRange(video.ageRangeMin, video.ageRangeMax).toRange(),
             type = video.type.name,
             subjectIds = video.subjects.items.map { subject -> subject.id }.toSet(),
             subjectNames = video.subjects.items.map { subject -> subject.name }.toSet(),
@@ -33,12 +34,5 @@ object VideoDocumentConverter {
             promoted = video.promoted,
             meanRating = video.meanRating
         )
-    }
-
-    private fun calculateAgeRange(video: VideoMetadata): List<Int> {
-        val isUnbounded = listOfNotNull(video.ageRangeMin, video.ageRangeMax).isEmpty()
-        if (isUnbounded) return emptyList()
-
-        return ((video.ageRangeMin ?: 3)..(video.ageRangeMax ?: 99)).toList()
     }
 }

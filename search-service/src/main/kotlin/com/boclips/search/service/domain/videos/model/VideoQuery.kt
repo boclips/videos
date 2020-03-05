@@ -2,13 +2,7 @@ package com.boclips.search.service.domain.videos.model
 
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
-import java.time.Duration
 import java.time.LocalDate
-
-data class DurationRange(
-    val min: Duration,
-    val max: Duration? = null
-)
 
 class VideoQuery(
     phrase: String = "",
@@ -21,6 +15,7 @@ class VideoQuery(
     val releaseDateTo: LocalDate? = null,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
+    val ageRanges: List<AgeRange>? = null,
     val userSubjectIds: Set<String> = emptySet(),
     val subjectIds: Set<String> = emptySet(),
     val subjectsSetManually: Boolean? = null,

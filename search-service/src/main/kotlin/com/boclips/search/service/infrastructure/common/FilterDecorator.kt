@@ -1,11 +1,13 @@
 package com.boclips.search.service.infrastructure.common
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
@@ -41,6 +43,9 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         }
         if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
             boolQueryBuilder.filter(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
+        }
+        if (!videoQuery.ageRanges.isNullOrEmpty()) {
+            boolQueryBuilder.filter(beWithinAgeRanges(videoQuery.ageRanges))
         }
         if (videoQuery.subjectIds.isNotEmpty()) {
             boolQueryBuilder.must(matchSubjects(videoQuery.subjectIds))
@@ -103,6 +108,14 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         to?.let { queryBuilder.to(it) }
 
         return queryBuilder
+    }
+
+    private fun beWithinAgeRanges(ageRanges: List<AgeRange>): BoolQueryBuilder? {
+        return QueryBuilders.boolQuery().apply {
+            ageRanges.forEach { ageRange ->
+                should(QueryBuilders.termsQuery(HasAgeRange.AGE_RANGE, ageRange.toRange()))
+            }
+        }
     }
 
     private fun beWithinAgeRange(filterMin: Int?, filterMax: Int?): BoolQueryBuilder {
