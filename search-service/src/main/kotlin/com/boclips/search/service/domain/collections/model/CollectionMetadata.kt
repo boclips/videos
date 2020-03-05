@@ -1,7 +1,5 @@
 package com.boclips.search.service.domain.collections.model
 
-import com.boclips.search.service.domain.videos.model.AgeRange
-
 data class CollectionMetadata(
     val id: String,
     val title: String,
@@ -13,6 +11,5 @@ data class CollectionMetadata(
     val description: String?,
     val hasLessonPlans: Boolean?,
     val ageRangeMin: Int?,
-    val ageRangeMax: Int?,
-    val ageRanges: List<AgeRange>?
+    val ageRangeMax: Int?
 )

@@ -3,7 +3,6 @@ package com.boclips.search.service.testsupport
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
-import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
@@ -101,8 +100,7 @@ object SearchableCollectionMetadataFactory {
         description: String = "some default description",
         hasLessonPlans: Boolean? = null,
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null,
-        ageRanges: List<AgeRange>? = emptyList()
+        ageRangeMax: Int? = null
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -114,8 +112,7 @@ object SearchableCollectionMetadataFactory {
         description = description,
         hasLessonPlans = hasLessonPlans,
         ageRangeMin = ageRangeMin,
-        ageRangeMax = ageRangeMax,
-        ageRanges = ageRanges
+        ageRangeMax = ageRangeMax
     )
 }
 
