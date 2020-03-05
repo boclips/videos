@@ -62,7 +62,7 @@ class ApplicationContext(
 
     @Bean
     fun contentPartnerUpdatesConverter(): ContentPartnerUpdatesConverter {
-        return ContentPartnerUpdatesConverter(legalRestrictionsRepository, ageRangeRepository)
+        return ContentPartnerUpdatesConverter(legalRestrictionsRepository, ageRangeRepository, ingestDetailsToResourceConverter())
     }
 
     @Bean

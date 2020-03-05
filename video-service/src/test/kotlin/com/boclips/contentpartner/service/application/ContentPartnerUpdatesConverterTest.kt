@@ -4,16 +4,19 @@ import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Period
 
 class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
@@ -284,5 +287,33 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             commands.find { it is ContentPartnerUpdateCommand.ReplaceSubjects } as ContentPartnerUpdateCommand.ReplaceSubjects
 
         assertThat(command.subjects).containsExactlyInAnyOrder("subject 1", "subject 2")
+    }
+
+    @Test
+    fun `creates a command for updating ingest details`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = ContentPartnerRequest(
+                ingest = IngestDetailsResource.mrss("https://mrss.feed")
+            )
+        )
+
+        val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceIngestDetails } as ContentPartnerUpdateCommand.ReplaceIngestDetails
+
+        assertThat(command.ingest).isEqualTo(MrssFeedIngest("https://mrss.feed"))
+    }
+
+    @Test
+    fun `creates a command for updating delivery frequency`() {
+        val commands = contentPartnerUpdatesConverter.convert(
+            id = originalContentPartner.contentPartnerId,
+            upsertContentPartnerRequest = ContentPartnerRequest(
+                deliveryFrequency = Period.ofMonths(3)
+            )
+        )
+
+        val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency } as ContentPartnerUpdateCommand.ReplaceDeliveryFrequency
+
+        assertThat(command.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
 }

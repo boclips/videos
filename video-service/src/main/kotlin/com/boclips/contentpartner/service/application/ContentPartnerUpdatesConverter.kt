@@ -11,6 +11,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsReposito
 import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingStatusConverter
 import com.boclips.contentpartner.service.presentation.ContentPartnerUrlConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
+import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
@@ -18,13 +19,14 @@ import java.util.Currency
 
 class ContentPartnerUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
-    private val ageRangeRepository: AgeRangeRepository
+    private val ageRangeRepository: AgeRangeRepository,
+    private val ingestDetailsResourceConverter: IngestDetailsResourceConverter
 ) {
     fun convert(
         id: ContentPartnerId,
         upsertContentPartnerRequest: ContentPartnerRequest
     ): List<ContentPartnerUpdateCommand> =
-        ContentPartnerUpdateCommandCreator(id, upsertContentPartnerRequest).let { commandCreator ->
+        ContentPartnerUpdateCommandCreator(id, upsertContentPartnerRequest, ingestDetailsResourceConverter).let { commandCreator ->
             listOfNotNull(
                 commandCreator.updateName(),
                 commandCreator.updateAgeRanges(ageRangeRepository),
@@ -47,18 +49,21 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateEducationalResources(),
                 commandCreator.updateCurriculumAligned(),
                 commandCreator.updateBestForTags(),
-                commandCreator.updateSubjects()
+                commandCreator.updateSubjects(),
+                commandCreator.updateIngestDetails(),
+                commandCreator.updateDeliveryFrequency()
             )
         }
 }
 
 class ContentPartnerUpdateCommandCreator(
     val id: ContentPartnerId,
-    private val upsertContentPartnerRequest: ContentPartnerRequest
+    private val contentPartnerRequest: ContentPartnerRequest,
+    private val ingestDetailsResourceConverter: IngestDetailsResourceConverter
 ) {
 
     fun updateHiddenDeliveryMethods(): ContentPartnerUpdateCommand? {
-        return upsertContentPartnerRequest.distributionMethods
+        return contentPartnerRequest.distributionMethods
             ?.let {
                 DistributionMethodResourceConverter.toDistributionMethods(it)
             }
@@ -68,12 +73,12 @@ class ContentPartnerUpdateCommandCreator(
     }
 
     fun updateName(): ContentPartnerUpdateCommand.ReplaceName? =
-        upsertContentPartnerRequest.name?.let {
+        contentPartnerRequest.name?.let {
             ContentPartnerUpdateCommand.ReplaceName(contentPartnerId = id, name = it)
         }
 
     fun updateAgeRanges(ageRangeRepository: AgeRangeRepository): ContentPartnerUpdateCommand.ReplaceAgeRanges? =
-        upsertContentPartnerRequest.ageRanges?.let {
+        contentPartnerRequest.ageRanges?.let {
             val ageRanges = it.mapNotNull { ageRangeId ->
                 ageRangeRepository.findById(AgeRangeId(ageRangeId))
             }
@@ -81,67 +86,67 @@ class ContentPartnerUpdateCommandCreator(
         }
 
     fun updateLegalRestrictions(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =
-        upsertContentPartnerRequest.legalRestrictions
+        contentPartnerRequest.legalRestrictions
             ?.let { restrictionsRequest -> legalRestrictionsRepository.findById(LegalRestrictionsId(restrictionsRequest.id!!)) }
             ?.let { restrictions -> ContentPartnerUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
 
     fun updateCurrency(): ContentPartnerUpdateCommand.ReplaceCurrency? =
-        upsertContentPartnerRequest.currency?.let {
+        contentPartnerRequest.currency?.let {
             ContentPartnerUpdateCommand.ReplaceCurrency(id, Currency.getInstance(it))
         }
 
     fun updateContentPartnerTypes(): ContentPartnerUpdateCommand.ReplaceContentTypes? =
-        upsertContentPartnerRequest.contentTypes?.let { contentTypes ->
+        contentPartnerRequest.contentTypes?.let { contentTypes ->
             ContentPartnerUpdateCommand.ReplaceContentTypes(id, contentTypes)
         }
 
     fun updateContentContentCategories(): ContentPartnerUpdateCommand.ReplaceContentCategories? =
-        upsertContentPartnerRequest.contentCategories?.let { contentCategories ->
+        contentPartnerRequest.contentCategories?.let { contentCategories ->
             ContentPartnerUpdateCommand.ReplaceContentCategories(id, contentCategories)
         }
 
     fun updateContentLanguage(): ContentPartnerUpdateCommand.ReplaceLanguage? =
-        upsertContentPartnerRequest.language?.let { language ->
+        contentPartnerRequest.language?.let { language ->
             ContentPartnerUpdateCommand.ReplaceLanguage(id, language)
         }
 
     fun updateDescription(): ContentPartnerUpdateCommand.ReplaceDescription? =
-        upsertContentPartnerRequest.description?.let { description ->
+        contentPartnerRequest.description?.let { description ->
             ContentPartnerUpdateCommand.ReplaceDescription(id, description)
         }
 
     fun updateAwards(): ContentPartnerUpdateCommand.ReplaceAwards? =
-        upsertContentPartnerRequest.awards?.let { awards ->
+        contentPartnerRequest.awards?.let { awards ->
             ContentPartnerUpdateCommand.ReplaceAwards(id, awards)
         }
 
     fun updateHubspotId(): ContentPartnerUpdateCommand.ReplaceHubspotId? =
-        upsertContentPartnerRequest.hubspotId?.let { hubspotId ->
+        contentPartnerRequest.hubspotId?.let { hubspotId ->
             ContentPartnerUpdateCommand.ReplaceHubspotId(id, hubspotId)
         }
 
     fun updateNotes(): ContentPartnerUpdateCommand.ReplaceNotes? =
-        upsertContentPartnerRequest.notes?.let { notes ->
+        contentPartnerRequest.notes?.let { notes ->
             ContentPartnerUpdateCommand.ReplaceNotes(id, notes)
         }
 
     fun updateOneLineDescription(): ContentPartnerUpdateCommand.ReplaceOneLineDescription? =
-        upsertContentPartnerRequest.oneLineDescription?.let {
+        contentPartnerRequest.oneLineDescription?.let {
             ContentPartnerUpdateCommand.ReplaceOneLineDescription(id, it)
         }
 
     fun updateMarketingStatus(): ContentPartnerUpdateCommand.ReplaceMarketingStatus? =
-        upsertContentPartnerRequest.marketingInformation?.status?.let {
+        contentPartnerRequest.marketingInformation?.status?.let {
             ContentPartnerUpdateCommand.ReplaceMarketingStatus(id, ContentPartnerMarketingStatusConverter.convert(it))
         }
 
     fun updateMarketingLogos(): ContentPartnerUpdateCommand.ReplaceMarketingLogos? =
-        upsertContentPartnerRequest.marketingInformation?.logos?.let {
+        contentPartnerRequest.marketingInformation?.logos?.let {
             ContentPartnerUpdateCommand.ReplaceMarketingLogos(id, it.map(ContentPartnerUrlConverter::convert))
         }
 
     fun updateMarketingShowreel(): ContentPartnerUpdateCommand.ReplaceMarketingShowreel? =
-        upsertContentPartnerRequest.marketingInformation?.showreel?.let {
+        contentPartnerRequest.marketingInformation?.showreel?.let {
             ContentPartnerUpdateCommand.ReplaceMarketingShowreel(
                 id,
                 when (it) {
@@ -152,32 +157,42 @@ class ContentPartnerUpdateCommandCreator(
         }
 
     fun updateMarketingSampleVideos(): ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos? =
-        upsertContentPartnerRequest.marketingInformation?.sampleVideos?.let {
+        contentPartnerRequest.marketingInformation?.sampleVideos?.let {
             ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(ContentPartnerUrlConverter::convert))
         }
 
     fun updateIsTranscriptProvided(): ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided? =
-        upsertContentPartnerRequest.isTranscriptProvided?.let {
+        contentPartnerRequest.isTranscriptProvided?.let {
             ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(id, it)
         }
 
     fun updateEducationalResources(): ContentPartnerUpdateCommand.ReplaceEducationalResources? =
-        upsertContentPartnerRequest.educationalResources?.let {
+        contentPartnerRequest.educationalResources?.let {
             ContentPartnerUpdateCommand.ReplaceEducationalResources(id, it)
         }
 
     fun updateCurriculumAligned(): ContentPartnerUpdateCommand.ReplaceCurriculumAligned? =
-        upsertContentPartnerRequest.curriculumAligned?.let {
+        contentPartnerRequest.curriculumAligned?.let {
             ContentPartnerUpdateCommand.ReplaceCurriculumAligned(id, it)
         }
 
     fun updateBestForTags(): ContentPartnerUpdateCommand.ReplaceBestForTags? =
-        upsertContentPartnerRequest.bestForTags?.let {
+        contentPartnerRequest.bestForTags?.let {
             ContentPartnerUpdateCommand.ReplaceBestForTags(id, it)
         }
 
     fun updateSubjects(): ContentPartnerUpdateCommand.ReplaceSubjects? =
-        upsertContentPartnerRequest.subjects?.let {
+        contentPartnerRequest.subjects?.let {
             ContentPartnerUpdateCommand.ReplaceSubjects(id, it)
+        }
+
+    fun updateIngestDetails(): ContentPartnerUpdateCommand.ReplaceIngestDetails? =
+        contentPartnerRequest.ingest?.let {
+            ContentPartnerUpdateCommand.ReplaceIngestDetails(id, ingestDetailsResourceConverter.fromResource(it))
+        }
+
+    fun updateDeliveryFrequency(): ContentPartnerUpdateCommand.ReplaceDeliveryFrequency? =
+        contentPartnerRequest.deliveryFrequency?.let {
+            ContentPartnerUpdateCommand.ReplaceDeliveryFrequency(id, it)
         }
 }

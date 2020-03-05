@@ -177,6 +177,14 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 ContentPartnerDocument::subjects,
                 updateCommand.subjects
             )
+            is ContentPartnerUpdateCommand.ReplaceIngestDetails -> set(
+                ContentPartnerDocument::ingest,
+                IngestDetailsDocumentConverter.toIngestDetailsDocument(updateCommand.ingest)
+            )
+            is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency -> set(
+                ContentPartnerDocument::deliveryFrequency,
+                updateCommand.deliveryFrequency.toString()
+            )
         }
 
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))

@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartner
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.ExplicitlyNull
@@ -11,12 +12,14 @@ import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInfo
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Period
 
 class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -62,7 +65,9 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 ),
                 legalRestrictions = LegalRestrictionsRequest(
                     id = legalRestrictionsId.value
-                )
+                ),
+                ingest = IngestDetailsResource.mrss("https://mrss.feed.com"),
+                deliveryFrequency = Period.ofMonths(4)
             )
         )
 
@@ -71,6 +76,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")
+        assertThat(updatedContentPartner.ingest).isEqualTo(MrssFeedIngest("https://mrss.feed.com"))
+        assertThat(updatedContentPartner.deliveryFrequency?.months).isEqualTo(4)
     }
 
     @Test

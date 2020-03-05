@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.domain.model
 
 import java.net.URL
+import java.time.Period
 import java.util.Currency
 
 sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId) {
@@ -70,5 +71,11 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceSubjects(contentPartnerId: ContentPartnerId, val subjects: List<String>) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceIngestDetails(contentPartnerId: ContentPartnerId, val ingest: IngestDetails) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceDeliveryFrequency(contentPartnerId: ContentPartnerId, val deliveryFrequency: Period) :
         ContentPartnerUpdateCommand(contentPartnerId)
 }

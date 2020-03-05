@@ -8,14 +8,18 @@ import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Period
 
 class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -23,7 +27,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `can create a content partner`() {
-        val contentPartner = TestFactories.createContentPartner()
+        val contentPartner = createContentPartner()
 
         val createdAsset = mongoContentPartnerRepository.create(contentPartner = contentPartner)
 
@@ -33,7 +37,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun find() {
         val originalContentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner()
+            createContentPartner()
         )
 
         val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
@@ -56,15 +60,15 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `find all by name filter`() {
         val contentPartnerIds = listOf(
             mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(name = "hello")
+                createContentPartner(name = "hello")
             ).contentPartnerId,
             mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(name = "hello")
+                createContentPartner(name = "hello")
             ).contentPartnerId
         )
 
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(name = "good day")
+            createContentPartner(name = "good day")
         )
 
         val retrievedContentPartners =
@@ -76,12 +80,12 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find all by official filter`() {
         val officialContentPartnerId = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.PartnerCredit)
+            createContentPartner(credit = Credit.PartnerCredit)
         ).contentPartnerId
 
 
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
         ).contentPartnerId
 
         val retrievedContentPartners =
@@ -93,11 +97,11 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find all by accredited to youtube channel id`() {
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.PartnerCredit)
+            createContentPartner(credit = Credit.PartnerCredit)
         ).contentPartnerId
 
         val accreditedToYtChannelContentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
         ).contentPartnerId
 
         val retrievedContentPartners =
@@ -119,15 +123,15 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find all with multiple filters`() {
         val toBeFoundContentPartnerId = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
+            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
         ).contentPartnerId
 
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
+            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
         ).contentPartnerId
 
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(credit = Credit.PartnerCredit, name = "hello")
+            createContentPartner(credit = Credit.PartnerCredit, name = "hello")
         ).contentPartnerId
 
         val retrievedContentPartners =
@@ -144,7 +148,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find by youtube channel name`() {
         val originalContentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(
+            createContentPartner(
                 credit = Credit.YoutubeCredit(channelId = "123")
             )
         )
@@ -157,7 +161,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find all content partners`() {
         mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(name = "my bloody valentine")
+            createContentPartner(name = "my bloody valentine")
         )
 
         val retrievedAsset = mongoContentPartnerRepository.findAll()
@@ -174,7 +178,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `replaces name`() {
         val contentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(name = "my bloody valentine")
+            createContentPartner(name = "my bloody valentine")
         )
 
         mongoContentPartnerRepository.update(
@@ -193,7 +197,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `replaces age range`() {
         val contentPartner = mongoContentPartnerRepository.create(
-            TestFactories.createContentPartner(
+            createContentPartner(
                 ageRanges = AgeRangeBuckets(emptyList())
             )
         )
@@ -214,7 +218,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace legal restrictions`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val legalRestrictions = LegalRestriction(
             id = LegalRestrictionsId(TestFactories.aValidId()),
             text = "New restrictions"
@@ -235,7 +239,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace curriculumAligned`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val curriculumAligned = "this is a curriculum"
 
         mongoContentPartnerRepository.update(
@@ -253,7 +257,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace isTranscriptProvided`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val isTranscriptProvided = true
 
         mongoContentPartnerRepository.update(
@@ -271,7 +275,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace educational resources`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val educationalResources = "this is a educational resource"
 
         mongoContentPartnerRepository.update(
@@ -289,7 +293,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace best for tags`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val bestForTags = listOf("123", "456")
 
         mongoContentPartnerRepository.update(
@@ -307,7 +311,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace subjects`() {
-        val contentPartner = mongoContentPartnerRepository.create(TestFactories.createContentPartner())
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val subjects = listOf("subject 1", "subject 2")
 
         mongoContentPartnerRepository.update(
@@ -323,12 +327,46 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         assertThat(updatedContentPartner?.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 
+    @Test
+    fun `replace ingest details`() {
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner(ingest = ManualIngest))
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceIngestDetails(
+                    contentPartner.contentPartnerId,
+                    YoutubeScrapeIngest("http://youtube.com/channel")
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.ingest).isEqualTo(YoutubeScrapeIngest("http://youtube.com/channel"))
+    }
+
+    @Test
+    fun `replace delivery frequency`() {
+        val contentPartner = mongoContentPartnerRepository.create(createContentPartner(deliveryFrequency = Period.ofMonths(1)))
+
+        mongoContentPartnerRepository.update(
+            listOf(
+                ContentPartnerUpdateCommand.ReplaceDeliveryFrequency(
+                    contentPartner.contentPartnerId,
+                    Period.ofYears(1)
+                )
+            )
+        )
+
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        assertThat(updatedContentPartner?.deliveryFrequency).isEqualTo(Period.ofYears(1))
+    }
+
     @Nested
     inner class OverridingDistributionMethods {
         @Test
         fun `replaces with stream`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     distributionMethods = emptySet()
                 )
             )
@@ -349,7 +387,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces with download`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     distributionMethods = emptySet()
                 )
             )
@@ -370,7 +408,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces with all`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     distributionMethods = emptySet()
                 )
             )
@@ -391,7 +429,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces with empty`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     distributionMethods = emptySet()
                 )
             )
@@ -412,7 +450,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces educational resources`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     pedagogyInformation = PedagogyInformation(educationalResources = "this is a resource")
                 )
             )
@@ -432,7 +470,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces best for tags`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     pedagogyInformation = PedagogyInformation(bestForTags = listOf("123", "345"))
                 )
             )
@@ -452,7 +490,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `replaces subjects`() {
             val contentPartner = mongoContentPartnerRepository.create(
-                TestFactories.createContentPartner(
+                createContentPartner(
                     pedagogyInformation = PedagogyInformation(subjects = listOf("subject 1", "subject 2"))
                 )
             )
