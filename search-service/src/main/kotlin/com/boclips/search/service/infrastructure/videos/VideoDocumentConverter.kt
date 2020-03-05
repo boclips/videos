@@ -25,7 +25,7 @@ object VideoDocumentConverter {
             transcript = video.transcript,
             ageRangeMax = video.ageRangeMax,
             ageRangeMin = video.ageRangeMin,
-            ageRange = ((video.ageRangeMin ?: 3)..(video.ageRangeMax ?: 99)).toList(),
+            ageRange = calculateAgeRange(video),
             type = video.type.name,
             subjectIds = video.subjects.items.map { subject -> subject.id }.toSet(),
             subjectNames = video.subjects.items.map { subject -> subject.name }.toSet(),
@@ -33,5 +33,12 @@ object VideoDocumentConverter {
             promoted = video.promoted,
             meanRating = video.meanRating
         )
+    }
+
+    private fun calculateAgeRange(video: VideoMetadata): List<Int> {
+        val isUnbounded = listOfNotNull(video.ageRangeMin, video.ageRangeMax).isEmpty()
+        if (isUnbounded) return emptyList()
+
+        return ((video.ageRangeMin ?: 3)..(video.ageRangeMax ?: 99)).toList()
     }
 }

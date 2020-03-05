@@ -149,7 +149,7 @@ class VideoDocumentConverterTest {
     }
 
     @Test
-    fun `converts null age ranges`() {
+    fun `converts null age ranges to an empty array`() {
         val video = VideoMetadata(
             id = "id",
             title = "title",
@@ -175,8 +175,6 @@ class VideoDocumentConverterTest {
 
         val document = VideoDocumentConverter.fromVideo(video)
 
-        val defaultAgeRange = (3..99).toList()
-
-        assertThat(document.ageRange).isEqualTo(defaultAgeRange)
+        assertThat(document.ageRange).isEmpty()
     }
 }
