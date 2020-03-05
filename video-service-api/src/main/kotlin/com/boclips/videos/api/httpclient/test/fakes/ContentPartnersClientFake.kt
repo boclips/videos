@@ -2,7 +2,7 @@ package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.ContentPartnersClient
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
@@ -25,7 +25,7 @@ class ContentPartnersClientFake : ContentPartnersClient, FakeClient<ContentPartn
         return database[contentPartnerId]!!
     }
 
-    override fun create(upsertContentPartnerRequest: UpsertContentPartnerRequest) {
+    override fun create(upsertContentPartnerRequest: ContentPartnerRequest) {
         val id = "${id++}"
         database[id] = ContentPartnerResource(
             id = id,

@@ -14,7 +14,7 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsReposito
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
-import com.boclips.contentpartner.service.presentation.IngestDetailsToResourceConverter
+import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
 import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -71,5 +71,5 @@ class ApplicationContext(
     }
 
     @Bean
-    fun ingestDetailsToResourceConverter(): IngestDetailsToResourceConverter = IngestDetailsToResourceConverter()
+    fun ingestDetailsToResourceConverter(): IngestDetailsResourceConverter = IngestDetailsResourceConverter()
 }

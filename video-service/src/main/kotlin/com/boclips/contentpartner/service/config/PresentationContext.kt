@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
-import com.boclips.contentpartner.service.presentation.IngestDetailsToResourceConverter
+import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
 import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
@@ -26,7 +26,7 @@ class PresentationContext(
     @Bean
     fun getContentPartnerToResourceConverter(
         legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter,
-        ingestDetailsToResourceConverter: IngestDetailsToResourceConverter
+        ingestDetailsToResourceConverter: IngestDetailsResourceConverter
     ): ContentPartnerToResourceConverter {
         return ContentPartnerToResourceConverter(
             contentPartnersLinkBuilder = contentPartnersLinkBuilder(),

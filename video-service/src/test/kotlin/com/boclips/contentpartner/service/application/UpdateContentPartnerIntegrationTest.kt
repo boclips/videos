@@ -9,7 +9,7 @@ import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -17,7 +17,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.Optional
 
 class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -55,7 +54,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            upsertRequest = UpsertContentPartnerRequest(
+            upsertRequest = ContentPartnerRequest(
                 name = "My better content partner",
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
@@ -84,7 +83,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            upsertRequest = UpsertContentPartnerRequest(
+            upsertRequest = ContentPartnerRequest(
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -115,7 +114,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `legal restrictions get created when id not set`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            upsertRequest = UpsertContentPartnerRequest(
+            upsertRequest = ContentPartnerRequest(
                 legalRestrictions = LegalRestrictionsRequest(
                     id = "",
                     text = "New legal restrictions"
@@ -133,7 +132,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `marketing showreel preserved when showreel is updated to null`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            upsertRequest = UpsertContentPartnerRequest(
+            upsertRequest = ContentPartnerRequest(
                 marketingInformation = ContentPartnerMarketingInformationRequest(
                     showreel = null
                 )
@@ -152,7 +151,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `marketing showreel preserved when showreel is updated with a value of ExplicitlyNull`() {
         updateContentPartner(
             contentPartnerId = originalContentPartner.contentPartnerId.value,
-            upsertRequest = UpsertContentPartnerRequest(
+            upsertRequest = ContentPartnerRequest(
                 marketingInformation = ContentPartnerMarketingInformationRequest(
                     showreel = ExplicitlyNull()
                 )

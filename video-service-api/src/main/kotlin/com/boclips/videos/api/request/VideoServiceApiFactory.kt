@@ -4,7 +4,7 @@ import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -106,8 +106,8 @@ class VideoServiceApiFactory {
             curriculumAligned: String? = null,
             bestForTags: List<String>? = null,
             subjects: List<String>? = null
-        ): UpsertContentPartnerRequest {
-            return UpsertContentPartnerRequest(
+        ): ContentPartnerRequest {
+            return ContentPartnerRequest(
                 name = name,
                 ageRanges = ageRanges,
                 accreditedToYtChannelId = accreditedToYtChannel,

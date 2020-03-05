@@ -7,7 +7,7 @@ import com.boclips.contentpartner.service.application.UpdateContentPartner
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
@@ -77,7 +77,7 @@ class ContentPartnerController(
     }
 
     @PostMapping
-    fun postContentPartner(@Valid @RequestBody upsertContentPartnerRequest: UpsertContentPartnerRequest): ResponseEntity<Void> {
+    fun postContentPartner(@Valid @RequestBody upsertContentPartnerRequest: ContentPartnerRequest): ResponseEntity<Void> {
         val contentPartner = createContentPartner(upsertContentPartnerRequest)
 
         return ResponseEntity(HttpHeaders().apply {
@@ -91,7 +91,7 @@ class ContentPartnerController(
     @PatchMapping("/{id}")
     fun patchContentPartner(
         @PathVariable("id") contentPartnerId: String,
-        @Valid @RequestBody updateUpsertContentPartnerRequest: UpsertContentPartnerRequest
+        @Valid @RequestBody updateUpsertContentPartnerRequest: ContentPartnerRequest
     ): ResponseEntity<Void> {
         updateContentPartner(contentPartnerId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
 

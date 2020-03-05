@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +38,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating distribution methods`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 name = "Hello",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
@@ -53,7 +53,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating the name`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 name = "Hello"
             )
         )
@@ -71,7 +71,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 ageRanges = listOf("early-years"),
                 name = null,
                 accreditedToYtChannelId = "test"
@@ -91,7 +91,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 legalRestrictions = LegalRestrictionsRequest(
                     id = legalRestrictions.id.value
                 )
@@ -110,7 +110,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner types`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 contentTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
             )
         )
@@ -125,7 +125,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner categories`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 contentCategories = listOf("DOCUMENTARY_SHORTS", "ANIMATION")
             )
         )
@@ -140,7 +140,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner language`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 language = "spa"
             )
         )
@@ -155,7 +155,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner description`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 description = "This is a new description"
             )
         )
@@ -170,7 +170,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner awards`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 awards = "This is a new award"
             )
         )
@@ -185,7 +185,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner hubspot id`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 hubspotId = "1a2s3d4f5g6h7j8k9l"
             )
         )
@@ -200,7 +200,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner notes`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 notes = "this is a note"
             )
         )
@@ -215,7 +215,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner transcript value`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 isTranscriptProvided = true
             )
         )
@@ -230,7 +230,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner educational resources`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 educationalResources = "This is a resource"
             )
         )
@@ -245,7 +245,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner best for tags`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 bestForTags = listOf("123", "456")
             )
         )
@@ -260,7 +260,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner curriculum`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 curriculumAligned = "curriculum"
             )
         )
@@ -275,7 +275,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner subjects`() {
         val commands = contentPartnerUpdatesConverter.convert(
             id = originalContentPartner.contentPartnerId,
-            upsertContentPartnerRequest = UpsertContentPartnerRequest(
+            upsertContentPartnerRequest = ContentPartnerRequest(
                 subjects = listOf("subject 1", "subject 2")
             )
         )

@@ -17,8 +17,8 @@ import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
-import com.boclips.contentpartner.service.presentation.IngestDetailsToResourceConverter
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import org.bson.types.ObjectId
 import java.util.Currency
@@ -27,9 +27,9 @@ import java.util.Locale
 class CreateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val ageRangeRepository: AgeRangeRepository,
-    private val ingestDetailsToResourceConverter: IngestDetailsToResourceConverter
+    private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter
 ) {
-    operator fun invoke(upsertRequest: UpsertContentPartnerRequest): ContentPartner {
+    operator fun invoke(upsertRequest: ContentPartnerRequest): ContentPartner {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
             AgeRangeId(rawAgeRangeId).let { ageRangeId ->
                 ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)

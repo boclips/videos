@@ -13,7 +13,7 @@ import com.boclips.contentpartner.service.presentation.ContentPartnerUrlConverte
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import java.util.Currency
 
 class ContentPartnerUpdatesConverter(
@@ -22,7 +22,7 @@ class ContentPartnerUpdatesConverter(
 ) {
     fun convert(
         id: ContentPartnerId,
-        upsertContentPartnerRequest: UpsertContentPartnerRequest
+        upsertContentPartnerRequest: ContentPartnerRequest
     ): List<ContentPartnerUpdateCommand> =
         ContentPartnerUpdateCommandCreator(id, upsertContentPartnerRequest).let { commandCreator ->
             listOfNotNull(
@@ -54,7 +54,7 @@ class ContentPartnerUpdatesConverter(
 
 class ContentPartnerUpdateCommandCreator(
     val id: ContentPartnerId,
-    private val upsertContentPartnerRequest: UpsertContentPartnerRequest
+    private val upsertContentPartnerRequest: ContentPartnerRequest
 ) {
 
     fun updateHiddenDeliveryMethods(): ContentPartnerUpdateCommand? {

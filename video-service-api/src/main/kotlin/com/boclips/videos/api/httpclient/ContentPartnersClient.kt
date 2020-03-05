@@ -3,7 +3,7 @@ package com.boclips.videos.api.httpclient
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -26,7 +26,7 @@ interface ContentPartnersClient {
     fun getContentPartner(@Param("contentPartnerId") contentPartnerId: String): ContentPartnerResource
 
     @RequestLine("POST /v1/content-partners")
-    fun create(upsertContentPartnerRequest: UpsertContentPartnerRequest)
+    fun create(upsertContentPartnerRequest: ContentPartnerRequest)
 
     companion object {
         @JvmStatic

@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 
 class ContentPartnerToResourceConverter(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
-    private val ingestDetailsToResourceConverter: IngestDetailsToResourceConverter,
+    private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
     fun convert(contentPartner: ContentPartner): ContentPartnerResource {

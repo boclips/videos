@@ -6,7 +6,7 @@ import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import java.time.Period
 import javax.validation.constraints.NotBlank
 
-data class UpsertContentPartnerRequest(
+data class ContentPartnerRequest(
     @field:NotBlank
     val name: String? = null,
     val accreditedToYtChannelId: String? = null,

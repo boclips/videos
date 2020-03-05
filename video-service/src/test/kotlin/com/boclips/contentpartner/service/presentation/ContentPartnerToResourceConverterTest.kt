@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.domain.model.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.Credit
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
@@ -32,7 +31,7 @@ class ContentPartnerToResourceConverterTest {
             contentPartnersLinkBuilder = ContentPartnersLinkBuilder(
                 mock
             ),
-            ingestDetailsToResourceConverter = IngestDetailsToResourceConverter(),
+            ingestDetailsToResourceConverter = IngestDetailsResourceConverter(),
             legalRestrictionsToResourceConverter = LegalRestrictionsToResourceConverter(mock())
         )
     }

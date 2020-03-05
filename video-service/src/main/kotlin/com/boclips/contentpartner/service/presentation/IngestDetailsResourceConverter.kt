@@ -6,9 +6,8 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
-import java.lang.IllegalArgumentException
 
-class IngestDetailsToResourceConverter {
+class IngestDetailsResourceConverter {
 
     fun convert(ingestDetails: IngestDetails): IngestDetailsResource {
         return when(ingestDetails) {

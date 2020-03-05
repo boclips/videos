@@ -8,9 +8,9 @@ import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class IngestDetailsToResourceConverterTest {
+class IngestDetailsResourceConverterTest {
 
-    private val converter = IngestDetailsToResourceConverter()
+    private val converter = IngestDetailsResourceConverter()
 
     private val mrssIngest = MrssFeedIngest(url = "http://mrss.feed")
 
