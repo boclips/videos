@@ -6,5 +6,6 @@ interface HasAgeRange {
     companion object {
         const val AGE_RANGE_MIN = "ageRangeMin"
         const val AGE_RANGE_MAX = "ageRangeMax"
+        const val AGE_RANGE = "ageRange"
     }
 }

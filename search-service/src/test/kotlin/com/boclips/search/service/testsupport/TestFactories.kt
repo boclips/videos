@@ -76,6 +76,7 @@ object TestFactories {
             transcript = null,
             ageRangeMin = 3,
             ageRangeMax = 11,
+            ageRange = (3..11).toList(),
             subjectIds = setOf("boring-subject"),
             subjectNames = setOf("boring-names"),
             type = VideoType.INSTRUCTIONAL.name,

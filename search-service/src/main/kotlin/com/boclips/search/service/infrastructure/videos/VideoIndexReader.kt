@@ -145,7 +145,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 }
             }
 
-
         FilterDecorator(query).apply(videoQuery)
 
         val esQuery = SearchSourceBuilder().query(query)

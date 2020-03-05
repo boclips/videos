@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
-
-
 data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
@@ -21,13 +19,14 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(TRANSCRIPT) val transcript: String?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
+    @param:JsonProperty(HasAgeRange.AGE_RANGE) val ageRange: List<Int>?,
     @param:JsonProperty(TYPE) val type: String?,
     @param:JsonProperty(SUBJECT_IDS) val subjectIds: Set<String>?,
     @param:JsonProperty(SUBJECT_NAMES) val subjectNames: Set<String>?,
     @param:JsonProperty(PROMOTED) val promoted: Boolean?,
     @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
     @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?
-) :HasAgeRange {
+) : HasAgeRange {
     companion object {
         const val ID = "id"
         const val TITLE = "title"

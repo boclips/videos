@@ -32,6 +32,7 @@ class VideoDocumentConverterTest {
                 "transcript": "A great transcript",
                 "ageRangeMin": "3",
                 "ageRangeMax": "11",
+                "ageRange": [3,4,5,6,7,8,9,10,11],
                 "type": "NEWS",
                 "subjectIds": ["boring-subject-id"],
                 "subjectNames": ["boring-subject-name"]
@@ -56,6 +57,7 @@ class VideoDocumentConverterTest {
                 transcript = "A great transcript",
                 ageRangeMin = 3,
                 ageRangeMax = 11,
+                ageRange = (3..11).toList(),
                 type = "NEWS",
                 subjectIds = setOf("boring-subject-id"),
                 subjectNames = setOf("boring-subject-name"),
@@ -134,6 +136,7 @@ class VideoDocumentConverterTest {
                 transcript = "transcript",
                 ageRangeMin = 10,
                 ageRangeMax = 16,
+                ageRange = (10..16).toList(),
                 type = "INSTRUCTIONAL",
                 subjectIds = setOf("subjectId"),
                 subjectNames = setOf("subjectName"),
@@ -143,5 +146,37 @@ class VideoDocumentConverterTest {
                 isClassroom = false
             )
         )
+    }
+
+    @Test
+    fun `converts null age ranges`() {
+        val video = VideoMetadata(
+            id = "id",
+            title = "title",
+            description = "description",
+            contentProvider = "contentProvider",
+            releaseDate = LocalDate.of(2019, 9, 12),
+            keywords = listOf("keyword"),
+            tags = listOf("tag"),
+            durationSeconds = 120,
+            source = SourceType.BOCLIPS,
+            transcript = "transcript",
+            ageRangeMin = null,
+            ageRangeMax = null,
+            type = VideoType.INSTRUCTIONAL,
+            subjects = SubjectsMetadata(
+                items = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
+                setManually = false
+            ),
+            promoted = null,
+            meanRating = 3.8,
+            isClassroom = false
+        )
+
+        val document = VideoDocumentConverter.fromVideo(video)
+
+        val defaultAgeRange = (3..99).toList()
+
+        assertThat(document.ageRange).isEqualTo(defaultAgeRange)
     }
 }
