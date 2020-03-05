@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -1370,5 +1371,29 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters by age range`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", ageRangeMin = 3, ageRangeMax = 7),
+                SearchableVideoMetadataFactory.create(id = "2", ageRangeMin = 9, ageRangeMax = 11)
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ageRanges = listOf(AgeRange(3, 7))
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("1")
     }
 }

@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import java.time.LocalDate
@@ -57,6 +58,15 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     }
 
                     return@filter false
+                }
+                .filter { entry ->
+                    if (query.ageRanges.isNullOrEmpty()) {
+                        return@filter true
+                    }
+
+                    return@filter query.ageRanges.any { ageRange ->
+                        AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
+                    }
                 }
                 .filter { entry ->
                     query.source?.let { it == entry.value.source } ?: true
