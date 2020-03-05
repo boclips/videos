@@ -36,6 +36,7 @@ class ContentPartnerToResourceConverter(
             awards = contentPartner.awards,
             notes = contentPartner.notes,
             ingest = ingestDetailsToResourceConverter.convert(contentPartner.ingest),
+            deliveryFrequency = contentPartner.deliveryFrequency,
             language = contentPartner.language?.let { it -> toLanguageResource(it) },
             contentTypes = contentPartner.contentTypes?.map { it.name },
             oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,

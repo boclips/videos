@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
+import java.time.Period
 
 class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -533,6 +534,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     showreel = Specified("http://server.com/showreel.mov"),
                     sampleVideos = listOf("http://server.com/sample.mov")
                 ),
+                deliveryFrequency = Period.ofMonths(6),
                 isTranscriptProvided = true,
                 educationalResources = "this is a resource",
                 curriculumAligned = "this is a curriculum",
@@ -557,6 +559,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.ageRange").exists())
                 .andExpect(jsonPath("$.marketingInformation").exists())
                 .andExpect(jsonPath("$.ingest").exists())
+                .andExpect(jsonPath("$.deliveryFrequency").exists())
                 .andExpect(jsonPath("$.pedagogyInformation.educationalResources").exists())
                 .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").exists())
                 .andExpect(jsonPath("$.pedagogyInformation.bestForTags").exists())
@@ -579,6 +582,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ageRange").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ingest").exists())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].deliveryFrequency").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.educationalResources").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.curriculumAligned").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].pedagogyInformation.bestForTags").exists())
@@ -598,6 +602,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 language = "eng",
                 curriculumAligned = "this is a curriculum",
                 isTranscriptProvided = true,
+                deliveryFrequency = Period.ofMonths(6),
                 educationalResources = "this is an educational resource",
                 bestForTags = listOf("123"),
                 subjects = listOf("subject 1")
@@ -622,6 +627,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.official").doesNotExist())
                 .andExpect(jsonPath("$.distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$.ingest").doesNotExist())
+                .andExpect(jsonPath("$.deliveryFrequency").doesNotExist())
                 .andExpect(jsonPath("$.marketingInformation").doesNotExist())
                 .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").doesNotExist())
                 .andExpect(jsonPath("$.pedagogyInformation.educationalResources").doesNotExist())
@@ -649,6 +655,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$._embedded.contentPartners[0].official").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].ingest").doesNotExist())
+                .andExpect(jsonPath("$._embedded.contentPartners[0].deliveryFrequency").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].educationalResources").doesNotExist())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].curriculumAligned").doesNotExist())

@@ -79,7 +79,7 @@ class CreateContentPartner(
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
                     contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
                     ingest = ManualIngest,
-                    deliveryFrequency = null,
+                    deliveryFrequency = upsertRequest.deliveryFrequency,
                     pedagogyInformation = PedagogyInformation(
                         isTranscriptProvided = upsertRequest.isTranscriptProvided,
                         educationalResources = upsertRequest.educationalResources,

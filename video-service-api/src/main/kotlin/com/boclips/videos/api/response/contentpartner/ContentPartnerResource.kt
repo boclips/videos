@@ -5,6 +5,7 @@ import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.response.HateoasLink
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonView
+import java.time.Period
 
 data class ContentPartnerResource(
     @get:JsonView(PublicApiProjection::class)
@@ -44,6 +45,8 @@ data class ContentPartnerResource(
     val pedagogyInformation: ContentPartnerPedagogyResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val ingest: IngestDetailsResource? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val deliveryFrequency: Period? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

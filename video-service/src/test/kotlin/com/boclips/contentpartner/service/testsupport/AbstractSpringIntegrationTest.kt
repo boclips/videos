@@ -50,6 +50,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
+import java.time.Period
 import java.util.UUID
 
 @SpringBootTest
@@ -247,6 +248,7 @@ abstract class AbstractSpringIntegrationTest {
         notes: String? = null,
         language: String? = null,
         ingest: IngestDetailsResource? = null,
+        deliveryFrequency: Period? = null,
         oneLineDescription: String? = null,
         marketingInformation: ContentPartnerMarketingInformationRequest? = null,
         isTranscriptProvided: Boolean? = null,
@@ -269,6 +271,7 @@ abstract class AbstractSpringIntegrationTest {
                 notes = notes,
                 language = language,
                 ingest = ingest,
+                deliveryFrequency = deliveryFrequency,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
                 isTranscriptProvided = isTranscriptProvided,

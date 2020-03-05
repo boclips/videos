@@ -10,6 +10,7 @@ import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.Period
 import java.util.Locale
 
 class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -189,5 +190,16 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(contentPartnerWithBestForTags.pedagogyInformation?.subjects).isEqualTo(subjects)
+    }
+
+    @Test
+    fun `can create a content partner with delivery frequency`() {
+        val contentPartner = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                deliveryFrequency = Period.ofYears(1)
+            )
+        )
+
+        assertThat(contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 }

@@ -12,6 +12,7 @@ import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import java.time.LocalDate
+import java.time.Period
 
 class VideoServiceApiFactory {
     companion object {
@@ -97,6 +98,7 @@ class VideoServiceApiFactory {
             notes: String? = null,
             language: String? = null,
             ingest: IngestDetailsResource? = null,
+            deliveryFrequency: Period? = null,
             oneLineDescription: String? = null,
             marketingInformation: ContentPartnerMarketingInformationRequest? = null,
             isTranscriptProvided: Boolean? = null,
@@ -119,6 +121,7 @@ class VideoServiceApiFactory {
                 notes = notes,
                 language = language,
                 ingest = ingest,
+                deliveryFrequency = deliveryFrequency,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
                 isTranscriptProvided = isTranscriptProvided,

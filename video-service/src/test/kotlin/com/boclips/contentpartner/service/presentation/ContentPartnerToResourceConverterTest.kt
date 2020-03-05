@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.nhaarman.mockitokotlin2.mock
@@ -16,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
@@ -37,7 +39,7 @@ class ContentPartnerToResourceConverterTest {
 
     @Test
     fun `convert content partner to resource`() {
-        val contentPartner = TestFactories.createContentPartner(
+        val contentPartner = createContentPartner(
             credit = Credit.PartnerCredit,
             legalRestriction = TestFactories.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
@@ -49,6 +51,7 @@ class ContentPartnerToResourceConverterTest {
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             ingest = MrssFeedIngest(url = "https://feed.mrss"),
+            deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK)
         )
 
@@ -72,5 +75,6 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
         assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
         assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestDetailsResource.MRSS, url = "https://feed.mrss"))
+        assertThat(contentPartnerResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
 }
