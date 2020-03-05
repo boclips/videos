@@ -24,15 +24,13 @@ class PresentationContext(
     fun marketingStatusesLinkBuilder(): MarketingStatusLinkBuilder = MarketingStatusLinkBuilder()
 
     @Bean
-    fun ingestDetailsToResourceConverter(): IngestDetailsToResourceConverter = IngestDetailsToResourceConverter()
-
-    @Bean
     fun getContentPartnerToResourceConverter(
-        legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
+        legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter,
+        ingestDetailsToResourceConverter: IngestDetailsToResourceConverter
     ): ContentPartnerToResourceConverter {
         return ContentPartnerToResourceConverter(
             contentPartnersLinkBuilder = contentPartnersLinkBuilder(),
-            ingestDetailsToResourceConverter = ingestDetailsToResourceConverter(),
+            ingestDetailsToResourceConverter = ingestDetailsToResourceConverter,
             legalRestrictionsToResourceConverter = legalRestrictionsToResourceConverter
         )
     }

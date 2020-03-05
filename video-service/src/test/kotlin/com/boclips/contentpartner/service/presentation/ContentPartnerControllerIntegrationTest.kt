@@ -119,6 +119,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "bestForTags": ["123", "345"],
                 "subjects": ["subject 1", "subject 2"],
                 "oneLineDescription": "My one-line description",
+                "ingest": {
+                    "type": "MRSS",
+                    "url": "http://mrss.feed"
+                },
                 "deliveryFrequency": "P6M",
                 "marketingInformation": {
                     "status": "PROMOTED",
@@ -151,6 +155,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                     equalTo("My one-line description")
                 )
             )
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.type", equalTo("MRSS")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.url", equalTo("http://mrss.feed")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].deliveryFrequency", equalTo("P6M")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation.status", equalTo("PROMOTED")))
             .andExpect(

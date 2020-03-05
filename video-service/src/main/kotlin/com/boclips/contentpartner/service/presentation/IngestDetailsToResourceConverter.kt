@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import java.lang.IllegalArgumentException
 
 class IngestDetailsToResourceConverter {
 
@@ -15,6 +16,16 @@ class IngestDetailsToResourceConverter {
             CustomIngest -> IngestDetailsResource.custom()
             is MrssFeedIngest -> IngestDetailsResource.mrss(ingestDetails.url)
             is YoutubeScrapeIngest -> IngestDetailsResource.youtube(ingestDetails.url)
+        }
+    }
+
+    fun fromResource(ingestDetailsResource: IngestDetailsResource): IngestDetails {
+        return when(ingestDetailsResource.type) {
+            IngestDetailsResource.MANUAL -> ManualIngest
+            IngestDetailsResource.CUSTOM -> CustomIngest
+            IngestDetailsResource.MRSS -> MrssFeedIngest(ingestDetailsResource.url!!)
+            IngestDetailsResource.YOUTUBE -> YoutubeScrapeIngest(ingestDetailsResource.url!!)
+            else -> throw IllegalArgumentException("Unknown ingest details type: ${ingestDetailsResource.type}")
         }
     }
 }

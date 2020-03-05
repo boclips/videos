@@ -17,6 +17,7 @@ import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
+import com.boclips.contentpartner.service.presentation.IngestDetailsToResourceConverter
 import com.boclips.videos.api.request.contentpartner.UpsertContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import org.bson.types.ObjectId
@@ -25,16 +26,15 @@ import java.util.Locale
 
 class CreateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val ageRangeRepository: AgeRangeRepository
+    private val ageRangeRepository: AgeRangeRepository,
+    private val ingestDetailsToResourceConverter: IngestDetailsToResourceConverter
 ) {
     operator fun invoke(upsertRequest: UpsertContentPartnerRequest): ContentPartner {
-        val ageRanges = upsertRequest.ageRanges?.let {
-            it.map { rawAgeRangeId ->
-                AgeRangeId(rawAgeRangeId).let { ageRangeId ->
-                    ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)
-                }
+        val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
+            AgeRangeId(rawAgeRangeId).let { ageRangeId ->
+                ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)
             }
-        } ?: emptyList()
+        }
 
         val methods = upsertRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
@@ -78,7 +78,7 @@ class CreateContentPartner(
                     notes = upsertRequest.notes,
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
                     contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
-                    ingest = ManualIngest,
+                    ingest = upsertRequest.ingest?.let { ingestDetailsToResourceConverter.fromResource(it) } ?: ManualIngest,
                     deliveryFrequency = upsertRequest.deliveryFrequency,
                     pedagogyInformation = PedagogyInformation(
                         isTranscriptProvided = upsertRequest.isTranscriptProvided,

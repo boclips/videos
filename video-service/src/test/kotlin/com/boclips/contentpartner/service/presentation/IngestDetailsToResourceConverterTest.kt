@@ -12,6 +12,10 @@ class IngestDetailsToResourceConverterTest {
 
     private val converter = IngestDetailsToResourceConverter()
 
+    private val mrssIngest = MrssFeedIngest(url = "http://mrss.feed")
+
+    private val youtubeIngest = YoutubeScrapeIngest(url = "http://yt.scrape")
+
     @Test
     fun `convert manual ingest details`() {
         val ingest = ManualIngest
@@ -34,9 +38,7 @@ class IngestDetailsToResourceConverterTest {
 
     @Test
     fun `convert mrss feed ingest details`() {
-        val ingest = MrssFeedIngest(url = "http://mrss.feed")
-
-        val resource = converter.convert(ingest)
+        val resource = converter.convert(mrssIngest)
 
         assertThat(resource.type).isEqualTo(IngestDetailsResource.MRSS)
         assertThat(resource.url).isEqualTo("http://mrss.feed")
@@ -44,11 +46,17 @@ class IngestDetailsToResourceConverterTest {
 
     @Test
     fun `convert youtube scrape ingest details`() {
-        val ingest = YoutubeScrapeIngest(url = "http://yt.scrape")
-
-        val resource = converter.convert(ingest)
+        val resource = converter.convert(youtubeIngest)
 
         assertThat(resource.type).isEqualTo(IngestDetailsResource.YOUTUBE)
         assertThat(resource.url).isEqualTo("http://yt.scrape")
+    }
+
+    @Test
+    fun `convert back from resource`() {
+        assertThat(ManualIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(ManualIngest)
+        assertThat(CustomIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(CustomIngest)
+        assertThat(mrssIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(mrssIngest)
+        assertThat(youtubeIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(youtubeIngest)
     }
 }

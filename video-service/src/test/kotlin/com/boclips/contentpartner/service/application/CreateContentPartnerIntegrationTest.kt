@@ -4,9 +4,11 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -201,5 +203,16 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
+    }
+
+    @Test
+    fun `can create a content partner with ingest information`() {
+        val contentPartner = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                ingest = IngestDetailsResource.youtube("https://yt.com/channel")
+            )
+        )
+
+        assertThat(contentPartner.ingest).isEqualTo(YoutubeScrapeIngest("https://yt.com/channel"))
     }
 }
