@@ -7,7 +7,6 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
-import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
@@ -25,6 +24,9 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     private fun attachFilters(collectionQuery: CollectionQuery) {
         if (listOfNotNull(collectionQuery.ageRangeMin, collectionQuery.ageRangeMax).isNotEmpty()) {
             boolQueryBuilder.filter(beWithinAgeRange(collectionQuery.ageRangeMin, collectionQuery.ageRangeMax))
+        }
+        if (!collectionQuery.ageRanges.isNullOrEmpty()) {
+            boolQueryBuilder.filter(beWithinAgeRanges(collectionQuery.ageRanges))
         }
     }
 

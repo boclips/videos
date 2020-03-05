@@ -2,10 +2,12 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -44,13 +46,7 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         val collectionIds = getSearchResults(CollectionQuery(ageRangeMin = 7, ageRangeMax = 11))
 
         assertThat(collectionIds).hasSize(1)
-        assertThat(collectionIds).doesNotContain("Pre-school")
-        assertThat(collectionIds).doesNotContain("Lower-Elementary")
         assertThat(collectionIds).contains("Upper-Elementary")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Down")
-        assertThat(collectionIds).doesNotContain("Middle-School")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Up")
-        assertThat(collectionIds).doesNotContain("Jr-High-School")
     }
 
     @Test
@@ -58,13 +54,8 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         val collectionIds = getSearchResults(CollectionQuery(ageRangeMin = 7, ageRangeMax = 14))
 
         assertThat(collectionIds).hasSize(2)
-        assertThat(collectionIds).doesNotContain("Pre-school")
-        assertThat(collectionIds).doesNotContain("Lower-Elementary")
         assertThat(collectionIds).contains("Upper-Elementary")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Down")
         assertThat(collectionIds).contains("Middle-School")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Up")
-        assertThat(collectionIds).doesNotContain("Jr-High-School")
     }
 
     @Test
@@ -72,14 +63,9 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         val collectionIds = getSearchResults(CollectionQuery(ageRangeMin = 7, ageRangeMax = 16))
 
         assertThat(collectionIds).hasSize(3)
-        assertThat(collectionIds).doesNotContain("Pre-school")
-        assertThat(collectionIds).doesNotContain("Lower-Elementary")
         assertThat(collectionIds).contains("Upper-Elementary")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Down")
         assertThat(collectionIds).contains("Middle-School")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Up")
         assertThat(collectionIds).contains("Jr-High-School")
-        assertThat(collectionIds).doesNotContain("High-School")
     }
 
     @Test
@@ -87,14 +73,9 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         val collectionIds = getSearchResults(CollectionQuery(ageRangeMin = 6, ageRangeMax = 16))
 
         assertThat(collectionIds).hasSize(3)
-        assertThat(collectionIds).doesNotContain("Pre-school")
-        assertThat(collectionIds).doesNotContain("Lower-Elementary")
         assertThat(collectionIds).contains("Upper-Elementary")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Down")
         assertThat(collectionIds).contains("Middle-School")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Up")
         assertThat(collectionIds).contains("Jr-High-School")
-        assertThat(collectionIds).doesNotContain("High-School")
     }
 
     @Test
@@ -107,9 +88,6 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         assertThat(collectionIds).contains("Upper-Elementary")
         assertThat(collectionIds).contains("Middle-School-And-Down")
         assertThat(collectionIds).contains("Middle-School")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Up")
-        assertThat(collectionIds).doesNotContain("Jr-High-School")
-        assertThat(collectionIds).doesNotContain("High-School")
     }
 
     @Test
@@ -117,14 +95,61 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         val collectionIds = getSearchResults(CollectionQuery(ageRangeMin = 7))
 
         assertThat(collectionIds).hasSize(5)
-        assertThat(collectionIds).doesNotContain("Pre-school")
-        assertThat(collectionIds).doesNotContain("Lower-Elementary")
         assertThat(collectionIds).contains("Upper-Elementary")
-        assertThat(collectionIds).doesNotContain("Middle-School-And-Down")
         assertThat(collectionIds).contains("Middle-School")
         assertThat(collectionIds).contains("Middle-School-And-Up")
         assertThat(collectionIds).contains("Jr-High-School")
         assertThat(collectionIds).contains("High-School")
+    }
+
+    @Nested
+    inner class AgeRangeQueriesWithRanges {
+        @Test
+        fun `providing single range with min`() {
+            val collectionIds = getSearchResults(CollectionQuery(ageRanges = listOf(AgeRange(min = 7))))
+
+            assertThat(collectionIds).hasSize(7)
+
+            assertThat(collectionIds).contains("Lower-Elementary")
+            assertThat(collectionIds).contains("Middle-School-And-Down")
+            assertThat(collectionIds).contains("Upper-Elementary")
+            assertThat(collectionIds).contains("Middle-School")
+            assertThat(collectionIds).contains("Middle-School-And-Up")
+            assertThat(collectionIds).contains("Jr-High-School")
+            assertThat(collectionIds).contains("High-School")
+        }
+
+        @Test
+        fun `providing single range with min and max`() {
+            val collectionIds = getSearchResults(CollectionQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))))
+
+            assertThat(collectionIds).hasSize(3)
+
+            assertThat(collectionIds).contains("Lower-Elementary")
+            assertThat(collectionIds).contains("Upper-Elementary")
+            assertThat(collectionIds).contains("Middle-School-And-Down")
+        }
+
+        @Test
+        fun `providing multiple ranges with min and max`() {
+            val collectionIds = getSearchResults(
+                CollectionQuery(
+                    ageRanges = listOf(
+                        AgeRange(min = 7, max = 8),
+                        AgeRange(min = 11, max = 14)
+                    )
+                )
+            )
+
+            assertThat(collectionIds).hasSize(6)
+
+            assertThat(collectionIds).contains("Lower-Elementary")
+            assertThat(collectionIds).contains("Middle-School-And-Down")
+            assertThat(collectionIds).contains("Upper-Elementary")
+            assertThat(collectionIds).contains("Middle-School")
+            assertThat(collectionIds).contains("Middle-School-And-Up")
+            assertThat(collectionIds).contains("Jr-High-School")
+        }
     }
 
     private fun getSearchResults(query: CollectionQuery) =

@@ -15,7 +15,8 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(DESCRIPTION) val description: String?,
     @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
-    @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?
+    @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
+    @param:JsonProperty(HasAgeRange.AGE_RANGE) override val ageRange: List<Int>?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"

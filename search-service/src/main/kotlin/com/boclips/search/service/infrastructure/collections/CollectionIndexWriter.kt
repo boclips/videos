@@ -1,7 +1,6 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.infrastructure.AbstractIndexWriter
 import com.boclips.search.service.infrastructure.IndexParameters
 import org.elasticsearch.client.RestHighLevelClient
@@ -26,22 +25,8 @@ class CollectionIndexWriter private constructor(client: RestHighLevelClient, ind
         }
     }
 
-    override fun serializeToIndexDocument(entry: CollectionMetadata) = CollectionDocument(
-        id = entry.id,
-        title = entry.title,
-        visibility = when (entry.visibility) {
-            CollectionVisibility.PUBLIC -> "public"
-            CollectionVisibility.PRIVATE -> "private"
-        },
-        subjects = entry.subjectIds,
-        hasAttachments = entry.hasAttachments,
-        owner = entry.owner,
-        bookmarkedBy = entry.bookmarkedByUsers,
-        description = entry.description,
-        hasLessonPlans = entry.hasLessonPlans,
-        ageRangeMin = entry.ageRangeMin,
-        ageRangeMax = entry.ageRangeMax
-    )
+    override fun serializeToIndexDocument(collectionMetadata: CollectionMetadata) =
+        CollectionDocumentConverter().convertToDocument(collectionMetadata)
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id
 }

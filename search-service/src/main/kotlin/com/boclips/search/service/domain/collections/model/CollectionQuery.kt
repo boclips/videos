@@ -2,6 +2,7 @@ package com.boclips.search.service.domain.collections.model
 
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.videos.model.AgeRange
 
 class CollectionQuery(
     phrase: String = "",
@@ -12,7 +13,8 @@ class CollectionQuery(
     val bookmarkedBy: String? = null,
     val hasLessonPlans: Boolean? = null,
     val ageRangeMin: Int? = null,
-    val ageRangeMax: Int? = null
+    val ageRangeMax: Int? = null,
+    val ageRanges: List<AgeRange>? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort)
 
 data class VisibilityForOwner(
