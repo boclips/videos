@@ -15,6 +15,9 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.client.model.Organisation
+import com.boclips.users.client.model.accessrule.ContentPackage
+import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
 import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
@@ -194,7 +197,7 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        userServiceClient.clearAccessRules()
+        userServiceClient.clearContentPackage()
         userServiceClient.clearUser()
 
         reset(legacyVideoSearchService)
@@ -423,7 +426,7 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun createSelectedVideosContract(vararg contractedVideoIds: String) {
+    fun createSelectedVideosAccessRules(vararg contractedVideoIds: String) {
         userServiceClient.addAccessRule(SelectedVideosAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoIds = contractedVideoIds.toList()

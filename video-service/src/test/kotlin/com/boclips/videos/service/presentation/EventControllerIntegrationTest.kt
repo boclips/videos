@@ -44,7 +44,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addOrganisation(Organisation(accountId, OrganisationDetails(true)))
+            userServiceClient.addOrganisation(Organisation(accountId, null, OrganisationDetails(true)))
 
             mockMvc.perform(
                 post("/v1/events/playback")
@@ -75,7 +75,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addOrganisation(Organisation(accountId, OrganisationDetails(false)))
+            userServiceClient.addOrganisation(Organisation(accountId, null, OrganisationDetails(false)))
 
             mockMvc.perform(
                 post("/v1/events/playback")

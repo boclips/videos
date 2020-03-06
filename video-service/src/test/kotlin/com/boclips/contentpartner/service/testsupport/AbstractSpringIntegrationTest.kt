@@ -141,7 +141,7 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        userServiceClient.clearAccessRules()
+        userServiceClient.clearContentPackage()
         userServiceClient.clearUser()
 
         fakeSignedLinkProvider.clearLink()

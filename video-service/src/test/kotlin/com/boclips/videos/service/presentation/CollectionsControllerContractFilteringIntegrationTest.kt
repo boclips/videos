@@ -23,7 +23,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         val secondCollection = createCollection(title = "My Second Collection", public = false)
         createCollection(title = "My Third Collection", public = false)
 
-        createSelectedCollectionsContract(firstCollection, secondCollection)
+        createSelectedCollectionsAccessRules(firstCollection, secondCollection)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -42,7 +42,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
-        createSelectedCollectionsContract(collectionId)
+        createSelectedCollectionsAccessRules(collectionId)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -66,8 +66,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
     fun `returns collections with deep video information when details projection is used`() {
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
-
-        createSelectedCollectionsContract(collectionId)
+        createSelectedCollectionsAccessRules(collectionId)
 
         mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -94,7 +93,7 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
 
     @Test
     fun `returns empty result set when user has an empty SelectedContent contract`() {
-        createSelectedCollectionsContract("1")
+        createSelectedCollectionsAccessRules("1")
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -111,8 +110,8 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            createSelectedVideosContract(contractedVideoId.value)
-            createSelectedCollectionsContract(collectionId)
+            createSelectedVideosAccessRules(contractedVideoId.value)
+            createSelectedCollectionsAccessRules(collectionId)
 
             mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -133,8 +132,8 @@ class CollectionsControllerContractFilteringIntegrationTest : AbstractCollection
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            createSelectedVideosContract(contractedVideoId.value)
-            createSelectedCollectionsContract(collectionId)
+            createSelectedVideosAccessRules(contractedVideoId.value)
+            createSelectedCollectionsAccessRules(collectionId)
 
             mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

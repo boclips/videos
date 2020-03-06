@@ -24,7 +24,9 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
-        val accessRules = userServiceClient.getAccessRules(user.id.value).let {
+        val retrievedAccessRules = userServiceClient.getContentPackage(user.id.value)?.accessRules ?: emptyList()
+
+        val accessRules = retrievedAccessRules.let {
             AccessRules(
                 collectionAccess = getCollectionAccessRule(it, user),
                 videoAccess = getVideoAccessRule(it)

@@ -35,7 +35,7 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns null if account does not have an organisation`() {
         userServiceClient.addUser(User("user-id", null, emptyList(), null))
-        userServiceClient.addOrganisation(Organisation("account-id", null))
+        userServiceClient.addOrganisation(Organisation("account-id", null, null))
 
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 

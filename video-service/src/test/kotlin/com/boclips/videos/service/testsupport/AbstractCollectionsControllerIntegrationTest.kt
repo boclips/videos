@@ -30,7 +30,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @BeforeEach
     fun cleanupContracts() {
-        userServiceClient.clearAccessRules()
+        userServiceClient.clearContentPackage()
     }
 
     fun createCollection(
@@ -72,9 +72,11 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isNoContent)
     }
 
-    fun updateCollectionAgeRange(collectionId: String,
+    fun updateCollectionAgeRange(
+        collectionId: String,
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null) {
+        ageRangeMax: Int? = null
+    ) {
         mockMvc.perform(
             MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"ageRange": {"min": $ageRangeMin, "max": $ageRangeMax}}"""
@@ -121,7 +123,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         ).id.value
     }
 
-    fun createSelectedCollectionsContract(vararg contractedCollectionIds: String) {
+    fun createSelectedCollectionsAccessRules(vararg contractedCollectionIds: String) {
         userServiceClient.addAccessRule(SelectedCollectionsAccessRule().apply {
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
