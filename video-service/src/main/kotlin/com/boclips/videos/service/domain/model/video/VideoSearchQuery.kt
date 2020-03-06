@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.domain.model.AgeRange
 import java.time.LocalDate
 
 enum class SortKey {
@@ -32,6 +33,7 @@ class VideoSearchQuery(
     val source: SourceType? = null,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
+    val ageRanges: List<AgeRange>? = null,
     val userSubjectIds: Set<String> = emptySet(),
     val subjectQuery: SubjectQuery = SubjectQuery(),
     val promoted: Boolean? = null,
@@ -53,6 +55,7 @@ class VideoSearchQuery(
                 SortKey.RANDOM -> Sort.ByRandom<VideoMetadata>()
             }
         }
+
         return parseIdsOrPhrase(this.text).let {
             VideoQuery(
                 ids = it.ids,
@@ -65,6 +68,12 @@ class VideoSearchQuery(
                 releaseDateTo = releaseDateTo,
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
+                ageRanges = ageRanges?.map { ageRange ->
+                    com.boclips.search.service.domain.videos.model.AgeRange(
+                        ageRange.min(),
+                        ageRange.max()
+                    )
+                },
                 userSubjectIds = userSubjectIds,
                 subjectIds = subjectQuery.ids,
                 subjectsSetManually = subjectQuery.setManually,

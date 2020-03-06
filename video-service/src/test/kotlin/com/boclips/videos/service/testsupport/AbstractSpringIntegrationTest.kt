@@ -44,9 +44,11 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
@@ -427,4 +429,6 @@ abstract class AbstractSpringIntegrationTest {
             videoIds = contractedVideoIds.toList()
         })
     }
+
+    fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoVideoRepository.collectionName)
 }

@@ -79,6 +79,7 @@ class VideoController(
         @RequestParam(name = "source", required = false) source: String?,
         @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
+        @RequestParam(name = "age_range", required = false) ageRanges: List<String>?,
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subject", required = false) subjects: Set<String>?,
@@ -104,6 +105,7 @@ class VideoController(
             source = source,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
+            ageRanges = ageRanges.orEmpty(),
             subjects = subjects ?: emptySet(),
             subjectsSetManually = subjectsSetManually,
             promoted = promoted,
@@ -133,7 +135,10 @@ class VideoController(
 
     @CrossOrigin(allowCredentials = "true")
     @GetMapping(path = ["/v1/videos/{id}"])
-    fun getVideo(@PathVariable("id") id: String?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null): ResponseEntity<VideoResource> {
+    fun getVideo(
+        @PathVariable("id") id: String?,
+        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null
+    ): ResponseEntity<VideoResource> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
             headers.add(

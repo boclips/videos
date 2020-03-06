@@ -1,19 +1,12 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -26,39 +19,29 @@ import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.not
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
 import java.time.Duration
-import java.time.LocalDate
 import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var tagVideo: TagVideo
 
     lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
@@ -99,37 +82,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).value
     }
 
-    @Test
-    fun `returns empty videos array when nothing matches`() {
-        mockMvc.perform(get("/v1/videos?query=whatdohorseseat").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
-    }
-
-    @Test
-    fun `returns links to hls stream and thumbnail`() {
-        val playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123")
-        val videoId = saveVideo(playbackId = playbackId)
-
-        mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId.value)))
-            .andExpect(
-                jsonPath(
-                    "$.playback._links.hlsStream.href",
-                    equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$.playback._links.thumbnail.href",
-                    equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/${playbackId.value}/width/{thumbnailWidth}/vid_slices/3/vid_slice/1")
-                )
-            )
-    }
-
     @Nested
-    inner class VideoResourceProjections {
+    inner class GetVideo {
         @Test
         fun `returns 200 for valid video as boclips employee`() {
             mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
@@ -274,201 +228,254 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].type").doesNotExist())
                 .andExpect(jsonPath("$._embedded.videos[0].status").doesNotExist())
         }
-    }
 
-    @Test
-    fun `sets playback consumer cookie when not already present`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
-            .andExpect(status().isOk)
-            .andExpect(cookie().exists(Cookies.PLAYBACK_DEVICE))
-            .andExpect(cookie().httpOnly(Cookies.PLAYBACK_DEVICE, true))
-            .andExpect(cookie().path(Cookies.PLAYBACK_DEVICE, "/"))
-            .andExpect(cookie().secure(Cookies.PLAYBACK_DEVICE, true))
-            .andExpect(cookie().maxAge(Cookies.PLAYBACK_DEVICE, Duration.ofDays(365).seconds.toInt()))
-    }
+        @Test
+        fun `returns links to hls stream and thumbnail`() {
+            val playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123")
+            val videoId = saveVideo(playbackId = playbackId)
 
-    @Test
-    fun `does not set a playback consumer cookie if already present`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_DEVICE, "a-consumer-id")))
-            .andExpect(status().isOk)
-            .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_DEVICE))
-    }
+            mockMvc.perform(get("/v1/videos/${videoId.value}").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(videoId.value)))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.hlsStream.href",
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.thumbnail.href",
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/thumbnail/entry_id/${playbackId.value}/width/{thumbnailWidth}/vid_slices/3/vid_slice/1")
+                    )
+                )
+        }
 
-    @Test
-    fun `transcript link is not present when not authenticated`() {
-        val videoId = saveVideoWithTranscript()
+        @Test
+        fun `sets playback consumer cookie when not already present`() {
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
+                .andExpect(status().isOk)
+                .andExpect(cookie().exists(Cookies.PLAYBACK_DEVICE))
+                .andExpect(cookie().httpOnly(Cookies.PLAYBACK_DEVICE, true))
+                .andExpect(cookie().path(Cookies.PLAYBACK_DEVICE, "/"))
+                .andExpect(cookie().secure(Cookies.PLAYBACK_DEVICE, true))
+                .andExpect(cookie().maxAge(Cookies.PLAYBACK_DEVICE, Duration.ofDays(365).seconds.toInt()))
+        }
 
-        mockMvc.perform(get("/v1/videos/$videoId"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.self.href").exists())
-            .andExpect(jsonPath("$._links.transcript").doesNotExist())
-    }
+        @Test
+        fun `does not set a playback consumer cookie if already present`() {
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId").cookie(Cookie(Cookies.PLAYBACK_DEVICE, "a-consumer-id")))
+                .andExpect(status().isOk)
+                .andExpect(cookie().doesNotExist(Cookies.PLAYBACK_DEVICE))
+        }
 
-    @Test
-    fun `transcript link is present when authenticated`() {
-        val videoId = saveVideoWithTranscript()
+        @Test
+        fun `returns 200 for valid video alias`() {
+            val title = "Back to the Future II"
+            val alias = "123123"
+            val videoId = saveVideo(title = title)
 
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.self.href").exists())
-            .andExpect(jsonPath("$._links.transcript.href").exists())
-    }
-
-    @Test
-    fun `returns 200 for valid video alias`() {
-        val title = "Back to the Future II"
-        val alias = "123123"
-        val videoId = saveVideo(title = title)
-
-        mongoVideosCollection().findOneAndUpdate(
-            eq("title", title),
-            set("aliases", alias)
-        )
-
-        mockMvc.perform(get("/v1/videos/$alias").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId.value)))
-    }
-
-    @Test
-    fun `returns 404 for nonexistent video`() {
-        mockMvc.perform(get("/v1/videos/9999").asTeacher())
-            .andExpect(status().`is`(404))
-            .andExpectApiErrorPayload()
-    }
-
-    @Test
-    fun `returns 404 for non hex id`() {
-        mockMvc.perform(get("/v1/videos/not-quite-hexadecimal").asTeacher())
-            .andExpect(status().`is`(404))
-            .andExpectApiErrorPayload()
-    }
-
-    @Test
-    fun `returns 200 when video is deleted`() {
-        val videoId = saveVideo().value
-
-        mockMvc.perform(delete("/v1/videos/$videoId").asOperator())
-            .andExpect(status().`is`(200))
-    }
-
-    @Test
-    fun `rates video`() {
-        val videoId = saveVideo().value
-
-        val rateUrl = getRatingLink(videoId)
-
-        mockMvc.perform(patch(rateUrl, 3).asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(3.0)))
-            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
-            .andExpect(jsonPath("$._links.rate.href").exists())
-
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(3.0)))
-            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
-            .andExpect(jsonPath("$._links.rate").exists())
-    }
-
-    @Test
-    fun `update video metadata`() {
-        val videoId = saveVideo(title = "Old title", description = "Old description").value
-
-        val updateLink = getUpdateLink(videoId).expand(
-            mapOf(
-                "title" to "New title",
-                "description" to "New description",
-                "promoted" to "true"
+            mongoVideosCollection().findOneAndUpdate(
+                eq("title", title),
+                set("aliases", alias)
             )
-        )
 
-        mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title", equalTo("New title")))
-            .andExpect(jsonPath("$.description", equalTo("New description")))
-            .andExpect(jsonPath("$.promoted", equalTo(true)))
+            mockMvc.perform(get("/v1/videos/$alias").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.id", equalTo(videoId.value)))
+        }
 
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title", equalTo("New title")))
-            .andExpect(jsonPath("$.description", equalTo("New description")))
-            .andExpect(jsonPath("$.promoted", equalTo(true)))
+        @Test
+        fun `returns 404 for nonexistent video`() {
+            mockMvc.perform(get("/v1/videos/9999").asTeacher())
+                .andExpect(status().`is`(404))
+                .andExpectApiErrorPayload()
+        }
+
+        @Test
+        fun `returns 404 for non hex id`() {
+            mockMvc.perform(get("/v1/videos/not-quite-hexadecimal").asTeacher())
+                .andExpect(status().`is`(404))
+                .andExpectApiErrorPayload()
+        }
+
+        @Test
+        fun `returns 200 when video is deleted`() {
+            val videoId = saveVideo().value
+
+            mockMvc.perform(delete("/v1/videos/$videoId").asOperator())
+                .andExpect(status().`is`(200))
+        }
     }
 
-    @Test
-    fun `multiple ratings uses average but overrides same user's rating`() {
-        val videoId = saveVideo().value
-        val rateUrl = getRatingLink(videoId)
+    @Nested
+    inner class RateVideo {
+        @Test
+        fun `rates video`() {
+            val videoId = saveVideo().value
 
-        mockMvc.perform(patch(rateUrl, 1).asTeacher("teacher-1"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(1.0)))
-            .andExpect(jsonPath("$.yourRating", equalTo(1.0)))
+            val rateUrl = getRatingLink(videoId)
 
-        mockMvc.perform(patch(rateUrl, 3).asTeacher("teacher-1"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(3.0)))
-            .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+            mockMvc.perform(patch(rateUrl, 3).asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.rating", equalTo(3.0)))
+                .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+                .andExpect(jsonPath("$._links.rate.href").exists())
 
-        mockMvc.perform(patch(rateUrl, 5).asTeacher("teacher-2"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.rating", equalTo(4.0)))
-            .andExpect(jsonPath("$.yourRating", equalTo(5.0)))
+            mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.rating", equalTo(3.0)))
+                .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+                .andExpect(jsonPath("$._links.rate").exists())
+        }
+
+        @Test
+        fun `multiple ratings uses average but overrides same user's rating`() {
+            val videoId = saveVideo().value
+            val rateUrl = getRatingLink(videoId)
+
+            mockMvc.perform(patch(rateUrl, 1).asTeacher("teacher-1"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.rating", equalTo(1.0)))
+                .andExpect(jsonPath("$.yourRating", equalTo(1.0)))
+
+            mockMvc.perform(patch(rateUrl, 3).asTeacher("teacher-1"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.rating", equalTo(3.0)))
+                .andExpect(jsonPath("$.yourRating", equalTo(3.0)))
+
+            mockMvc.perform(patch(rateUrl, 5).asTeacher("teacher-2"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.rating", equalTo(4.0)))
+                .andExpect(jsonPath("$.yourRating", equalTo(5.0)))
+        }
     }
 
-    @Test
-    fun `tags video`() {
-        val videoId = saveVideo().value
+    @Nested
+    inner class UpdateVideo {
+        @Test
+        fun `update video metadata`() {
+            val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val tagVideoUrl = getTaggingLink(videoId)
-        val tagUrl = createTag("A tag")
+            val updateLink = getUpdateLink(videoId).expand(
+                mapOf(
+                    "title" to "New title",
+                    "description" to "New description",
+                    "promoted" to "true"
+                )
+            )
 
-        mockMvc.perform(
-            patch(tagVideoUrl).content(tagUrl)
-                .contentType("text/uri-list").asTeacher()
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
-            .andExpect(jsonPath("$._links.tag").doesNotExist())
+            mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.title", equalTo("New title")))
+                .andExpect(jsonPath("$.description", equalTo("New description")))
+                .andExpect(jsonPath("$.promoted", equalTo(true)))
 
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
-            .andExpect(jsonPath("$._links.tag").doesNotExist())
+            mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.title", equalTo("New title")))
+                .andExpect(jsonPath("$.description", equalTo("New description")))
+                .andExpect(jsonPath("$.promoted", equalTo(true)))
+        }
+
+        @Test
+        fun `other roles are not authorised to add data to a video`() {
+            mockMvc.perform(
+                    post("/v1/videos/99999").asIngestor()
+                        .contentType(MediaType.APPLICATION_JSON).content("{}")
+                )
+                .andExpect(status().isForbidden)
+        }
+
+        @Test
+        fun `it updates the subjects of the given video`() {
+            val sampleSubject1 = saveSubject("Design")
+            val sampleSubject2 = saveSubject("Art")
+
+            val videoToUpdate = saveVideo(
+                playbackId = PlaybackId(value = "subject-test", type = PlaybackProviderType.YOUTUBE),
+                title = "subject video",
+                description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
+                date = "2019-01-01",
+                subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
+                duration = Duration.ofSeconds(6),
+                contentProvider = "max",
+                ageRange = UnboundedAgeRange
+            ).value
+
+            val newSubject = saveSubject("Maths")
+
+            mockMvc.perform(
+                    patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
+                        .asBoclipsEmployee()
+                )
+                .andExpect(status().isOk)
+
+            mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
+                .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
+                .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
+        }
     }
 
-    @Test
-    fun `returns bestFor list field on the resource`() {
-        val videoId = saveVideo().value
+    @Nested
+    inner class TagVideo {
+        @Test
+        fun `tags video`() {
+            val videoId = saveVideo().value
 
-        val tagVideoUrl = getTaggingLink(videoId)
-        val tagUrl = createTag("Tag")
+            val tagVideoUrl = getTaggingLink(videoId)
+            val tagUrl = createTag("A tag")
 
-        mockMvc.perform(
-            patch(tagVideoUrl).content(tagUrl)
-                .contentType("text/uri-list").asTeacher()
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
-            .andExpect(jsonPath("$._links.tag").doesNotExist())
+            mockMvc.perform(
+                    patch(tagVideoUrl).content(tagUrl)
+                        .contentType("text/uri-list").asTeacher()
+                )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
+                .andExpect(jsonPath("$._links.tag").doesNotExist())
 
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
-            .andExpect(jsonPath("$._links.tag").doesNotExist())
+            mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
+                .andExpect(jsonPath("$._links.tag").doesNotExist())
+        }
+
+        @Test
+        fun `returns bestFor list field on the resource`() {
+            val videoId = saveVideo().value
+
+            val tagVideoUrl = getTaggingLink(videoId)
+            val tagUrl = createTag("Tag")
+
+            mockMvc.perform(
+                    patch(tagVideoUrl).content(tagUrl)
+                        .contentType("text/uri-list").asTeacher()
+                )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
+                .andExpect(jsonPath("$._links.tag").doesNotExist())
+
+            mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
+                .andExpect(jsonPath("$._links.tag").doesNotExist())
+        }
     }
 
-    @Test
-    fun `create new video`() {
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
+    @Nested
+    inner class CreateVideo {
+        @Test
+        fun `create new video`() {
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
 
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+            val contentPartnerId = saveContentPartner().contentPartnerId.value
 
-        val content = """
+            val content = """
             {
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
@@ -484,29 +491,31 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        val createdResourceUrl =
-            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isCreated)
-                .andReturn().response.getHeader("Location")
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
 
-        mockMvc.perform(get(createdResourceUrl!!).asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.title", equalTo("AP title")))
-            .andExpect(jsonPath("$.playback.id", equalTo("entry-\$123")))
-            .andExpect(jsonPath("$.playback.referenceId", equalTo("ref-entry-\$123")))
-    }
+            mockMvc.perform(get(createdResourceUrl!!).asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.title", equalTo("AP title")))
+                .andExpect(jsonPath("$.playback.id", equalTo("entry-\$123")))
+                .andExpect(jsonPath("$.playback.referenceId", equalTo("ref-entry-\$123")))
+        }
 
-    @Test
-    fun `create new video with subjects`() {
-        val subjectId = saveSubject("Maths").id
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        @Test
+        fun `create new video with subjects`() {
+            val subjectId = saveSubject("Maths").id
+            val contentPartnerId = saveContentPartner().contentPartnerId.value
 
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
 
-        val content = """
+            val content = """
             {
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
@@ -523,27 +532,29 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        val createdResourceUrl =
-            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isCreated)
-                .andReturn().response.getHeader("Location")
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
 
-        mockMvc.perform(get(createdResourceUrl!!).asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.subjects[0].name", equalTo("Maths")))
-            .andExpect(jsonPath("$.subjects[0].id").exists())
-    }
+            mockMvc.perform(get(createdResourceUrl!!).asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.subjects[0].name", equalTo("Maths")))
+                .andExpect(jsonPath("$.subjects[0].id").exists())
+        }
 
-    @Test
-    fun `create new video with a language`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        @Test
+        fun `create new video with a language`() {
+            val contentPartnerId = saveContentPartner().contentPartnerId.value
 
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
 
-        val content = """
+            val content = """
             {
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
@@ -560,43 +571,45 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        val createdResourceUrl =
-            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isCreated)
-                .andReturn().response.getHeader("Location")
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
 
-        mockMvc.perform(get(createdResourceUrl!!).asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.language.code", equalTo("ave")))
-            .andExpect(jsonPath("$.language.displayName", equalTo("Avestan")))
-    }
+            mockMvc.perform(get(createdResourceUrl!!).asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.language.code", equalTo("ave")))
+                .andExpect(jsonPath("$.language.displayName", equalTo("Avestan")))
+        }
 
-    @Test
-    fun `returns a helpful error message when request is not valid`() {
-        val contentPartnerId = saveContentPartner().contentPartnerId.value
+        @Test
+        fun `returns a helpful error message when request is not valid`() {
+            val contentPartnerId = saveContentPartner().contentPartnerId.value
 
-        val content = """
+            val content = """
             {
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId"
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message", containsString("description is required")))
-    }
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.message", containsString("description is required")))
+        }
 
-    @Test
-    fun `returns a CONFLICT and a helpful error message when video already exists`() {
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
+        @Test
+        fun `returns a CONFLICT and a helpful error message when video already exists`() {
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
 
-        val contentPartnerId = saveContentPartner(name = "AP").contentPartnerId.value
+            val contentPartnerId = saveContentPartner(name = "AP").contentPartnerId.value
 
-        val content = """
+            val content = """
             {
                 "providerVideoId": "1",
                 "providerId": "$contentPartnerId",
@@ -612,23 +625,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isCreated)
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isCreated)
 
-        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isConflict)
-            .andExpect(
-                jsonPath(
-                    "$.message",
-                    containsString("""video from provider "AP" and provider id "1" already exists""")
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isConflict)
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        containsString("""video from provider "AP" and provider id "1" already exists""")
+                    )
                 )
-            )
-            .andExpectApiErrorPayload()
-    }
+                .andExpectApiErrorPayload()
+        }
 
-    @Test
-    fun `returns 400 when creating a video without an existing playback`() {
-        val content = """
+        @Test
+        fun `returns 400 when creating a video without an existing playback`() {
+            val content = """
             {
                 "providerVideoId": "1",
                 "title": "AP title",
@@ -643,179 +656,74 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
-            .andExpect(status().isBadRequest)
-            .andExpectApiErrorPayload()
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest)
+                .andExpectApiErrorPayload()
+        }
+
+        @Test
+        fun `teachers cannot create videos`() {
+            mockMvc.perform(post("/v1/videos").asTeacher().contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isForbidden)
+        }
+
+        @Test
+        fun `return BAD_REQUEST when content is invalid`() {
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest)
+                .andExpectApiErrorPayload()
+        }
     }
 
-    @Test
-    fun `teachers cannot create videos`() {
-        mockMvc.perform(post("/v1/videos").asTeacher().contentType(MediaType.APPLICATION_JSON).content("{}"))
-            .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `return BAD_REQUEST when content is invalid`() {
-        mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content("{}"))
-            .andExpect(status().isBadRequest)
-            .andExpectApiErrorPayload()
-    }
-
-    @Test
-    fun `other roles are not authorised to add data to a video`() {
-        mockMvc.perform(
-            post("/v1/videos/99999").asIngestor()
-                .contentType(MediaType.APPLICATION_JSON).content("{}")
-        )
-            .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `returns all enabled and disabled video by ID`() {
-        mockMvc.perform(
-            post("/v1/videos/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""").asBoclipsEmployee()
-        )
-            .andExpect(status().isCreated)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
-            .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$disabledVideoId")))
-            .andExpect(jsonPath("$.page").doesNotExist())
-    }
-
-    @Test
-    fun `ignores unknown videos searching by IDs`() {
-        mockMvc.perform(
-            post("/v1/videos/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-    }
-
-    @Test
-    fun `dedupe videos searching by IDs`() {
-        mockMvc.perform(
-            post("/v1/videos/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.page").doesNotExist())
-            .andExpect(jsonPath("$._links").doesNotExist())
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-    }
-
-    @Test
-    fun `transcripts endpoint causes the file to download, without applying formatting`() {
-        val videoId = saveVideoWithTranscript("Some content in the video.\n\nThis is another sentence that was said")
-
-        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(
-                content().string(
-                    equalTo(
-                        "Some content in the video.\n" +
-                            "\n" +
-                            "This is another sentence that was said"
+    @Nested
+    inner class SearchEndpoint {
+        @Test
+        fun `returns all enabled and disabled video by ID`() {
+            mockMvc.perform(
+                    post("/v1/videos/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""")
+                        .asBoclipsEmployee()
+                )
+                .andExpect(status().isCreated)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
+                .andExpect(
+                    jsonPath(
+                        "$._embedded.videos[0]._links.self.href",
+                        containsString("/videos/$disabledVideoId")
                     )
                 )
-            )
-            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
-    }
+                .andExpect(jsonPath("$.page").doesNotExist())
+        }
 
-    @Test
-    fun `transcripts endpoint causes the file to download, applying formatting`() {
-        val videoId = saveVideoWithTranscript("Some content in the video. This is another sentence that was said")
-
-        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(
-                content().string(
-                    equalTo(
-                        "Some content in the video.\n" +
-                            "\n" +
-                            "This is another sentence that was said"
-                    )
+        @Test
+        fun `ignores unknown videos searching by IDs`() {
+            mockMvc.perform(
+                    post("/v1/videos/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
                 )
-            )
-            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
-    }
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+        }
 
-    @Test
-    fun `going to the transcripts endpoint for a video without transcripts returns 404`() {
-        val videoId = saveVideo(
-            title = "Today Video",
-            date = LocalDate.now().toString(),
-            type = ContentType.NEWS
-        ).value
-
-        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
-            .andExpect(status().isNotFound)
-            .andExpectApiErrorPayload()
-    }
-
-    @Test
-    fun `it returns a transcript URI when there is a transcript to download`() {
-        val videoId = saveVideoWithTranscript()
-
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId)))
-            .andExpect(jsonPath("$._links.transcript.href", containsString("/videos/$videoId/transcript")))
-    }
-
-    @Test
-    fun `it does not return a transcript uri when there is no transcript`() {
-        val videoId = saveVideo(
-            title = "Today Video",
-            date = LocalDate.now().toString(),
-            type = ContentType.NEWS
-        ).value
-
-        mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id", equalTo(videoId)))
-            .andExpect(jsonPath("$._links.transcript.href").doesNotHaveJsonPath())
-    }
-
-    @Test
-    fun `it updates the subjects of the given video`() {
-        val sampleSubject1 = saveSubject("Design")
-        val sampleSubject2 = saveSubject("Art")
-
-        val videoToUpdate = saveVideo(
-            playbackId = PlaybackId(value = "subject-test", type = PlaybackProviderType.YOUTUBE),
-            title = "subject video",
-            description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
-            date = "2019-01-01",
-            subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
-            duration = Duration.ofSeconds(6),
-            contentProvider = "max",
-            ageRange = UnboundedAgeRange
-        ).value
-
-        val newSubject = saveSubject("Maths")
-
-        mockMvc.perform(
-            patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
-                .asBoclipsEmployee()
-        )
-            .andExpect(status().isOk)
-
-        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
-            .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
+        @Test
+        fun `dedupe videos searching by IDs`() {
+            mockMvc.perform(
+                    post("/v1/videos/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
+                )
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$.page").doesNotExist())
+                .andExpect(jsonPath("$._links").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
+        }
     }
 
     @Nested
@@ -825,7 +733,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val contentPartner = saveContentPartner(name = "ted")
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
-            mockMvc.perform(MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc").asIngestor())
+            mockMvc.perform(
+                    MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc")
+                        .asIngestor()
+                )
                 .andExpect(status().isOk)
         }
 
@@ -866,46 +777,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
-                """
+                    """
                 {
                   "label": "$name",
                   "UserId": "User-1"
                 }
                 """.trimIndent()
-            )
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         ).andReturn().response.getHeader("Location")!!
-    }
-
-    private fun setPromoted(videoId: String, promoted: Boolean): ResultActions {
-        val updateLink = getUpdateLink(videoId).expand(mapOf("promoted" to promoted))
-
-        return mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
-    }
-
-    private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {
-        val videoId = saveVideo(
-            title = "Today Video?",
-            date = LocalDate.now().toString(),
-            type = ContentType.NEWS
-        ).value
-
-        assertNotNull(
-            mongoVideosCollection().findOneAndUpdate(
-                eq("title", "Today Video?"),
-                set("transcript", transcriptContent)
-            )
-        )
-        return videoId
-    }
-
-    private fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(collectionName)
-
-    private fun setRating(videoId: VideoId, rating: Int) {
-        val rateUrl = getRatingLink(videoId.value)
-
-        mockMvc.perform(patch(rateUrl, rating).asTeacher()).andExpect(status().isOk)
     }
 }
 

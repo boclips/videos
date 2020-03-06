@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.SortKey
@@ -44,6 +45,7 @@ class SearchVideo(
         source: String? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
+        ageRanges: List<String>? = null,
         subjects: Set<String> = emptySet(),
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
@@ -66,6 +68,7 @@ class SearchVideo(
             source = source,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
+            ageRanges = ageRanges?.map(::convertAgeRanges) ?: emptyList(),
             subjects = subjects,
             subjectsSetManually = subjectsSetManually,
             promoted = promoted,
@@ -93,6 +96,16 @@ class SearchVideo(
             if (throwIfDoesNotExist)
                 throw e
             null
+        }
+    }
+
+    private fun convertAgeRanges(rangeString: String): AgeRange {
+        try {
+            val minAndMax = rangeString.split('-')
+            return AgeRange.bounded(minAndMax[0].toInt(), minAndMax[1].toInt())
+        } catch (ex: Exception) {
+            GetVideosByQuery.logger.info { "Could not parse range string $rangeString" }
+            throw IllegalArgumentException("Provided age range was illegal")
         }
     }
 }

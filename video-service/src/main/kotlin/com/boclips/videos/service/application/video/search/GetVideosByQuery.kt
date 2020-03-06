@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.SubjectQuery
@@ -36,6 +37,7 @@ class GetVideosByQuery(
         source: String?,
         ageRangeMin: Int?,
         ageRangeMax: Int?,
+        ageRanges: List<AgeRange>,
         subjects: Set<String>,
         promoted: Boolean?,
         contentPartnerNames: Set<String>,
@@ -62,6 +64,7 @@ class GetVideosByQuery(
             releaseDateTo = searchQueryConverter.convertDate(releasedDateTo),
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
+            ageRanges = ageRanges,
             userSubjectIds = userSubjectIds,
             subjectQuery = SubjectQuery(ids = subjects, setManually = subjectsSetManually),
             promoted = promoted,

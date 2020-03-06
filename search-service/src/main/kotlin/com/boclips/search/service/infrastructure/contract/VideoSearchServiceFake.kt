@@ -23,10 +23,10 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
 
         return when {
             idsToLookup.isNotEmpty() -> index.filter {
-                val permittedIdsToLookup =
-                    if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
-                permittedIdsToLookup.contains(it.key)
-            }
+                    val permittedIdsToLookup =
+                        if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
+                    permittedIdsToLookup.contains(it.key)
+                }
                 .map { video -> video.key }
             else -> index
                 .filter { entry ->
@@ -46,7 +46,7 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                 }
                 .filter { entry ->
                     if (query.durationRanges.isNullOrEmpty()) {
-                        return@filter true;
+                        return@filter true
                     }
 
                     query.durationRanges.forEach { durationRange ->
@@ -58,6 +58,13 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
                     }
 
                     return@filter false
+                }
+                .filter { entry ->
+                    if (query.ageRangeMin == null && query.ageRangeMax == null) {
+                        return@filter true
+                    }
+
+                    return@filter (entry.value.ageRangeMin == query.ageRangeMin && entry.value.ageRangeMax == query.ageRangeMax)
                 }
                 .filter { entry ->
                     if (query.ageRanges.isNullOrEmpty()) {
