@@ -1,14 +1,34 @@
 package com.boclips.contentpartner.service.domain.model
 
-sealed class IngestDetails
+import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
 
-object ManualIngest : IngestDetails()
+sealed class IngestDetails {
+    abstract fun type(): String
+}
 
-object CustomIngest : IngestDetails()
+object ManualIngest : IngestDetails() {
+    override fun type(): String {
+        return IngestDetailTypes.MANUAL
+    }
+}
 
-data class MrssFeedIngest(val url: String) : IngestDetails()
+object CustomIngest : IngestDetails() {
+    override fun type(): String {
+        return IngestDetailTypes.CUSTOM
+    }
+}
 
-data class YoutubeScrapeIngest(val url: String) : IngestDetails()
+data class MrssFeedIngest(val url: String) : IngestDetails() {
+    override fun type(): String {
+        return IngestDetailTypes.MRSS
+    }
+}
+
+data class YoutubeScrapeIngest(val url: String) : IngestDetails() {
+    override fun type(): String {
+        return IngestDetailTypes.YOUTUBE
+    }
+}
 
 
 

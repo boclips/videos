@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLi
 import com.boclips.contentpartner.service.testsupport.TestFactories
 import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -73,7 +74,7 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
         assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
-        assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestDetailsResource.MRSS, url = "https://feed.mrss"))
+        assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestDetailTypes.MRSS, url = "https://feed.mrss"))
         assertThat(contentPartnerResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
 }

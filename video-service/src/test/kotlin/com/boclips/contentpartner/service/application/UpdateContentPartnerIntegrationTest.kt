@@ -95,6 +95,8 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
                 ),
+                ingest = IngestDetailsResource.mrss("https://feed.me"),
+                deliveryFrequency = Period.ofYears(1),
                 language = "spa",
                 description = description,
                 contentCategories = contentCategories,
@@ -115,6 +117,9 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.contentTypes).isEqualTo(contentTypes)
         assertThat(event.contentPartner.notes).isEqualTo(notes)
         assertThat(event.contentPartner.hubspotId).isEqualTo(hubspotId)
+        assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
+        assertThat(event.contentPartner.ingest.url).isEqualTo("https://feed.me")
+        assertThat(event.contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test

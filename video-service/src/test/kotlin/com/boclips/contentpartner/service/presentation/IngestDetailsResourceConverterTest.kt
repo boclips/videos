@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.CustomIngest
 import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
+import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,7 +23,7 @@ class IngestDetailsResourceConverterTest {
 
         val resource = converter.convert(ingest)
 
-        assertThat(resource.type).isEqualTo(IngestDetailsResource.MANUAL)
+        assertThat(resource.type).isEqualTo(IngestDetailTypes.MANUAL)
         assertThat(resource.url).isNull()
     }
 
@@ -32,7 +33,7 @@ class IngestDetailsResourceConverterTest {
 
         val resource = converter.convert(ingest)
 
-        assertThat(resource.type).isEqualTo(IngestDetailsResource.CUSTOM)
+        assertThat(resource.type).isEqualTo(IngestDetailTypes.CUSTOM)
         assertThat(resource.url).isNull()
     }
 
@@ -40,7 +41,7 @@ class IngestDetailsResourceConverterTest {
     fun `convert mrss feed ingest details`() {
         val resource = converter.convert(mrssIngest)
 
-        assertThat(resource.type).isEqualTo(IngestDetailsResource.MRSS)
+        assertThat(resource.type).isEqualTo(IngestDetailTypes.MRSS)
         assertThat(resource.url).isEqualTo("http://mrss.feed")
     }
 
@@ -48,7 +49,7 @@ class IngestDetailsResourceConverterTest {
     fun `convert youtube scrape ingest details`() {
         val resource = converter.convert(youtubeIngest)
 
-        assertThat(resource.type).isEqualTo(IngestDetailsResource.YOUTUBE)
+        assertThat(resource.type).isEqualTo(IngestDetailTypes.YOUTUBE)
         assertThat(resource.url).isEqualTo("http://yt.scrape")
     }
 

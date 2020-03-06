@@ -15,7 +15,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
     @BoclipsEventListener
     fun contentPartnerUpdated(contentPartnerUpdatedEvent: ContentPartnerUpdated) {
         val contentPartner = contentPartnerUpdatedEvent.contentPartner
-        VideoService.logger.info { "Starting updating videos for content partner: $contentPartner" }
+        logger.info { "Starting updating videos for content partner: $contentPartner" }
 
         val contentPartnerId =
             com.boclips.videos.service.domain.model.video.ContentPartnerId(value = contentPartner.id.value)
@@ -47,6 +47,6 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
             }
         }
 
-        VideoService.logger.info { "Finished updating videos for content partner: $contentPartner" }
+        logger.info { "Finished updating videos for content partner: $contentPartner" }
     }
 }
