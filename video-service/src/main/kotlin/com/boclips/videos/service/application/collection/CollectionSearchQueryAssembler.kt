@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.presentation.CollectionsController
+import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import mu.KLogging
 
 class CollectionSearchQueryAssembler {
@@ -24,7 +25,8 @@ class CollectionSearchQueryAssembler {
         hasLessonPlans: Boolean? = null,
         user: User,
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null
+        ageRangeMax: Int? = null,
+        ageRange: List<String>? = null
     ): CollectionSearchQuery {
         val collectionAccess = user.accessRules.collectionAccess
 
@@ -55,7 +57,8 @@ class CollectionSearchQueryAssembler {
             sort = sort,
             hasLessonPlans = hasLessonPlans,
             ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax
+            ageRangeMax = ageRangeMax,
+            ageRanges = ageRange?.map(::convertAgeRanges)
         )
     }
 

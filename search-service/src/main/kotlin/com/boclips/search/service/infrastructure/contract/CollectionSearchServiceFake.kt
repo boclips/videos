@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.videos.model.AgeRange
 
 class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, CollectionMetadata>(),
     IndexReader<CollectionMetadata, CollectionQuery>,
@@ -51,13 +52,20 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                     true
             }
             .filter { entry ->
-                val queryAgeMin = query.ageRangeMin ?: 0
-                val queryAgeMax = query.ageRangeMax ?: 100
+                if (query.ageRangeMin == null && query.ageRangeMax == null) {
+                    return@filter true
+                }
 
-                val entryAgeMin = entry.value.ageRangeMin ?: 0
-                val entryAgeMax = entry.value.ageRangeMax ?: 100
+                return@filter (entry.value.ageRangeMin == query.ageRangeMin && entry.value.ageRangeMax == query.ageRangeMax)
+            }
+            .filter { entry ->
+                if (query.ageRanges.isNullOrEmpty()) {
+                    return@filter true
+                }
 
-                entryAgeMin in queryAgeMin until queryAgeMax && entryAgeMax > queryAgeMin && entryAgeMax <= queryAgeMax
+                return@filter query.ageRanges.any { ageRange ->
+                    AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
+                }
             }
             .map { collection -> collection.key }
     }

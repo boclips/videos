@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class SearchVideo(
@@ -96,16 +97,6 @@ class SearchVideo(
             if (throwIfDoesNotExist)
                 throw e
             null
-        }
-    }
-
-    private fun convertAgeRanges(rangeString: String): AgeRange {
-        try {
-            val minAndMax = rangeString.split('-')
-            return AgeRange.bounded(minAndMax[0].toInt(), minAndMax[1].toInt())
-        } catch (ex: Exception) {
-            GetVideosByQuery.logger.info { "Could not parse range string $rangeString" }
-            throw IllegalArgumentException("Provided age range was illegal")
         }
     }
 }

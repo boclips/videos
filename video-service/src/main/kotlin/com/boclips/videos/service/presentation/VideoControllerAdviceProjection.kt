@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJacksonResponseBodyAdvice
 
 @ControllerAdvice(assignableTypes = [VideoController::class])
-class VideoControllerAdvise(private val projectionResolver: ProjectionResolver) :
+class VideoControllerAdviceProjection(private val projectionResolver: ProjectionResolver) :
     AbstractMappingJacksonResponseBodyAdvice() {
     override fun beforeBodyWriteInternal(
         bodyContainer: MappingJacksonValue,

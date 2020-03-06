@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.request.collection.CollectionSortKey
+import com.boclips.videos.service.domain.model.AgeRange
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -119,5 +120,21 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().permittedIds).containsExactly("some-collection-id")
+    }
+
+    @Test
+    fun `converts age ranges correctly`() {
+        val query = CollectionSearchQuery(
+            text = "sometin",
+            subjectIds = listOf("subject"),
+            visibilityForOwners = emptySet(),
+            pageIndex = 0,
+            pageSize = 0,
+            permittedCollections = emptyList(),
+            hasLessonPlans = null,
+            ageRanges = listOf(AgeRange.bounded(3,7))
+        )
+
+        assertThat(query.toSearchQuery().ageRanges).containsExactly(com.boclips.search.service.domain.videos.model.AgeRange(3, 7))
     }
 }

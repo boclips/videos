@@ -14,7 +14,8 @@ class CollectionFilterRequest(
     val has_lesson_plans: Boolean? = null,
     val subject: String? = null,
     val age_range_min: Int? = null,
-    val age_range_max: Int? = null
+    val age_range_max: Int? = null,
+    val age_range: List<String>? = null
 )
 
 enum class CollectionSortKey {

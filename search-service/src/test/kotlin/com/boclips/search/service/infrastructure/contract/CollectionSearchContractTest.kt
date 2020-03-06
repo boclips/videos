@@ -10,6 +10,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.testsupport.CollectionSearchProvider
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -126,7 +127,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
     @ParameterizedTest
     @ArgumentsSource(CollectionSearchProvider::class)
-    fun `finds a collection matching age range`(
+    fun `finds a collection matching age range min and max`(
         readService: IndexReader<CollectionMetadata, CollectionQuery>,
         writeService: IndexWriter<CollectionMetadata>
     ) {
@@ -139,6 +140,26 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         val result = readService.search(
             PaginatedSearchRequest(query = CollectionQuery(ageRangeMin = 5, ageRangeMax = 7))
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("Lower-Elementary")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds a collection matching age range`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "Pre-school", ageRangeMin = 3, ageRangeMax = 4),
+                SearchableCollectionMetadataFactory.create(id = "Lower-Elementary", ageRangeMin = 5, ageRangeMax = 7)
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(query = CollectionQuery(ageRanges = listOf(AgeRange(5, 7))))
         )
 
         assertThat(result).containsExactlyInAnyOrder("Lower-Elementary")

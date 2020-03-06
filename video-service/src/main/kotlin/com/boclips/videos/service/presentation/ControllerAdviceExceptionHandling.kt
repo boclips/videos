@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ControllerAdvice(basePackageClasses = [PresentationPackageMarker::class])
-class ExceptionHandlingControllerAdvice {
+class ControllerAdviceExceptionHandling {
     companion object : KLogging()
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authorized")

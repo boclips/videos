@@ -174,8 +174,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next").doesNotExist())
     }
+
     @Test
-    fun `filter for age range`() {
+    fun `filter for age range min and max`() {
         val lowerCollectionId = createCollection("lower")
         val upperCollectionId = createCollection("upper")
         updateCollectionAgeRange(lowerCollectionId, ageRangeMin = 3, ageRangeMax = 5)
@@ -183,7 +184,27 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(lowerCollectionId)
         updateCollectionToBePublic(upperCollectionId)
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=5&public=true&age_range_min=5&age_range_max=7").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(
+                get("/v1/collections?projection=list&page=0&size=5&public=true&age_range_min=5&age_range_max=7").asTeacher(
+                    email = "notTheOwner@gmail.com"
+                )
+            )
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", equalTo(upperCollectionId)))
+    }
+
+    @Test
+    fun `filter for age range`() {
+        val lowerCollectionId = createCollection("lower")
+        val upperCollectionId = createCollection("upper")
+        updateCollectionAgeRange(lowerCollectionId, ageRangeMin = 3, ageRangeMax = 4)
+        updateCollectionAgeRange(upperCollectionId, ageRangeMin = 5, ageRangeMax = 7)
+        updateCollectionToBePublic(lowerCollectionId)
+        updateCollectionToBePublic(upperCollectionId)
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=5&public=true&age_range=5-7").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
@@ -210,11 +231,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         createCollection(title = "while a car and a truck crashed", public = true)
 
         mockMvc.perform(
-            get("/v1/collections?query=truck").asUserWithRoles(
-                UserRoles.VIEW_COLLECTIONS,
-                UserRoles.VIEW_ANY_COLLECTION
+                get("/v1/collections?query=truck").asUserWithRoles(
+                    UserRoles.VIEW_COLLECTIONS,
+                    UserRoles.VIEW_ANY_COLLECTION
+                )
             )
-        )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
@@ -235,8 +256,8 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         mockMvc.perform(
-            get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=TITLE").asTeacher(teacher)
-        )
+                get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=TITLE").asTeacher(teacher)
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("another collection")))
@@ -267,9 +288,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(collectionWithoutSubjects)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.id.value},${germanSubject.id.value}&public=true")
-                .asTeacher("teacher@gmail.com")
-        )
+                get("/v1/collections?subject=${frenchSubject.id.value},${germanSubject.id.value}&public=true")
+                    .asTeacher("teacher@gmail.com")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }
@@ -304,9 +325,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         mockMvc.perform(
-            get("/v1/collections?subject=${subject.id.value}&public=true")
-                .asTeacher("teacher@gmail.com")
-        )
+                get("/v1/collections?subject=${subject.id.value}&public=true")
+                    .asTeacher("teacher@gmail.com")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
             .andExpect(jsonPath("$._embedded.collections[0].title", startsWith("With lesson plan")))
@@ -330,9 +351,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(unclassifiedCollection)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.id.value}&projection=details&public=true")
-                .asTeacher("teacher@gmail.com")
-        )
+                get("/v1/collections?subject=${frenchSubject.id.value}&projection=details&public=true")
+                    .asTeacher("teacher@gmail.com")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }

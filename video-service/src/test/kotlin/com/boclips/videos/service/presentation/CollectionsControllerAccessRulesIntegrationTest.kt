@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class CollectionsControllerContractFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
+class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
     fun `returns collections user is contracted to when they have any SelectedContent contracts`() {
         val firstCollection = createCollection(title = "My First Collection", public = true)

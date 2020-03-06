@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.AccessRules
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -35,7 +36,8 @@ class CollectionSearchQueryAssemblerTest {
             owner = "other-id",
             hasLessonPlans = true,
             ageRangeMin = 3,
-            ageRangeMax = 7
+            ageRangeMax = 7,
+            ageRange = listOf("3-7")
         )
 
         assertThat(query.text).isEqualTo("minute physics")
@@ -48,6 +50,7 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.hasLessonPlans).isTrue()
         assertThat(query.ageRangeMin).isEqualTo(3)
         assertThat(query.ageRangeMax).isEqualTo(7)
+        assertThat(query.ageRanges).isEqualTo(listOf(AgeRange.bounded(3, 7)))
     }
 
     @Test
@@ -419,19 +422,21 @@ class CollectionSearchQueryAssemblerTest {
             )
         }),
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null
+        ageRangeMax: Int? = null,
+        ageRange: List<String>? = null
     ) = CollectionSearchQueryAssembler()(
-        query,
-        subjects,
-        public,
-        bookmarked,
-        owner,
-        page,
-        size,
-        sort,
-        hasLessonPlans,
-        user,
-        ageRangeMin,
-        ageRangeMax
+        query = query,
+        subjects = subjects,
+        public = public,
+        bookmarked = bookmarked,
+        owner = owner,
+        page = page,
+        size = size,
+        sort = sort,
+        hasLessonPlans = hasLessonPlans,
+        user = user,
+        ageRangeMin = ageRangeMin,
+        ageRangeMax = ageRangeMax,
+        ageRange = ageRange
     )
 }

@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.request.collection.CollectionSortKey
+import com.boclips.videos.service.domain.model.AgeRange
 
 class CollectionSearchQuery(
     val text: String?,
@@ -18,6 +19,7 @@ class CollectionSearchQuery(
     val hasLessonPlans: Boolean?,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
+    val ageRanges: List<AgeRange>? = null,
     val sort: CollectionSortKey? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
@@ -42,7 +44,8 @@ class CollectionSearchQuery(
         },
         hasLessonPlans = this.hasLessonPlans,
         ageRangeMin = this.ageRangeMin,
-        ageRangeMax = this.ageRangeMax
+        ageRangeMax = this.ageRangeMax,
+        ageRanges = this.ageRanges?.map { com.boclips.search.service.domain.videos.model.AgeRange(it.min(), it.max()) }
     )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
