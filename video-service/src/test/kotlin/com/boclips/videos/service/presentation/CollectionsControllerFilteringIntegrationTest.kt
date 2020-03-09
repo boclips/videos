@@ -244,7 +244,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `query search for my collections and my bookmarked collections sorted alphabetically`() {
+    fun `query search for my collections and my bookmarked collections sorted by update date descending`() {
         val teacher = "teacher"
         val stranger = "stranger"
 
@@ -256,12 +256,12 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         mockMvc.perform(
-                get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=TITLE").asTeacher(teacher)
+                get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=UPDATE_DATE").asTeacher(teacher)
             )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("another collection")))
-            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("bookmarked")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("bookmarked")))
+            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("another collection")))
             .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("mine")))
     }
 

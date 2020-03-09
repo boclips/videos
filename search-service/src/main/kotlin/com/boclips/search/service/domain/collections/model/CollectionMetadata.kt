@@ -1,5 +1,7 @@
 package com.boclips.search.service.domain.collections.model
 
+import java.time.LocalDate
+
 data class CollectionMetadata(
     val id: String,
     val title: String,
@@ -11,5 +13,6 @@ data class CollectionMetadata(
     val description: String?,
     val hasLessonPlans: Boolean?,
     val ageRangeMin: Int?,
-    val ageRangeMax: Int?
+    val ageRangeMax: Int?,
+    val lastUpdated: LocalDate
 )
