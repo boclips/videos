@@ -7,14 +7,16 @@ object ContentPartnerFiltersConverter {
     fun convert(
         name: String? = null,
         official: Boolean? = null,
-        accreditedYTChannelId: String?
+        accreditedYTChannelId: String?,
+        hubspotId: String? = null
     ): List<ContentPartnerFilter> =
         listOfNotNull(
             getNameFilter(name),
             getOfficialFilter(official),
             getAccreditedToFilter(
                 accreditedYTChannelId
-            )
+            ),
+            getHubspotId(hubspotId)
         )
 
     private fun getNameFilter(name: String?) =
@@ -25,4 +27,7 @@ object ContentPartnerFiltersConverter {
 
     private fun getAccreditedToFilter(accreditedYTChannelId: String?) =
         accreditedYTChannelId?.let { ContentPartnerFilter.AccreditedTo(credit = Credit.YoutubeCredit(channelId = accreditedYTChannelId)) }
+
+    private fun getHubspotId(hubspotId: String?) =
+        hubspotId?.let { ContentPartnerFilter.HubspotIdFilter(hubspotId = hubspotId) }
 }

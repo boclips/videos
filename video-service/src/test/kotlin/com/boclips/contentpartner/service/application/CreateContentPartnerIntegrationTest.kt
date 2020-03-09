@@ -109,11 +109,33 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `cannot create the same content partner twice`() {
+    fun `can create a content partner without a selected language`() {
+        val contentPartnerWithCategory = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                name = "without language cp",
+                language = null
+            )
+        )
+
+        assertThat(contentPartnerWithCategory.name).isEqualTo("without language cp")
+    }
+
+    @Test
+    fun `cannot create the same content partner with the same name`() {
         createContentPartner(VideoServiceApiFactory.createContentPartnerRequest())
         assertThrows<ContentPartnerConflictException> {
             createContentPartner(
                 VideoServiceApiFactory.createContentPartnerRequest()
+            )
+        }
+    }
+
+    @Test
+    fun `cannot create the same content partner with the same hubspotId`() {
+        createContentPartner(VideoServiceApiFactory.createContentPartnerRequest(hubspotId = "123"))
+        assertThrows<ContentPartnerConflictException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest(hubspotId = "123")
             )
         }
     }
@@ -139,7 +161,9 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+        assertThat(contentPartnerWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(
+            isTranscriptProvided
+        )
     }
 
     @Test
@@ -152,7 +176,9 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
+        assertThat(contentPartnerWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(
+            educationalResources
+        )
     }
 
     @Test
@@ -165,7 +191,9 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartnerWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
+        assertThat(contentPartnerWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(
+            curriculumAligned
+        )
     }
 
     @Test

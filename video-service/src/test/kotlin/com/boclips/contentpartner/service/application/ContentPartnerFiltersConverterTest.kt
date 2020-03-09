@@ -26,5 +26,12 @@ class ContentPartnerFiltersConverterTest {
 
         assertThat(filters).containsExactly(ContentPartnerFilter.AccreditedTo(credit = Credit.YoutubeCredit(channelId = "123")))
     }
+
+    @Test
+    fun `creates a hubspotId filter if present`() {
+        val filters = ContentPartnerFiltersConverter.convert(hubspotId = "12345678", accreditedYTChannelId = null)
+
+        assertThat(filters).containsExactly(ContentPartnerFilter.HubspotIdFilter(hubspotId = "12345678"))
+    }
 }
 

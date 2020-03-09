@@ -143,7 +143,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             )
             is ContentPartnerUpdateCommand.ReplaceMarketingLogos -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::logos,
-                updateCommand.logos.map {it.toString()}
+                updateCommand.logos.map { it.toString() }
             )
             is ContentPartnerUpdateCommand.ReplaceMarketingShowreel -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::showreel,
@@ -151,7 +151,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             )
             is ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::sampleVideos,
-                updateCommand.sampleVideos.map {it.toString()}
+                updateCommand.sampleVideos.map { it.toString() }
             )
             is ContentPartnerUpdateCommand.ReplaceOneLineDescription -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::oneLineDescription,
@@ -202,6 +202,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 is Credit.YoutubeCredit -> ContentPartnerDocument::youtubeChannelId eq filter.credit.channelId
                 Credit.PartnerCredit -> ContentPartnerDocument::youtubeChannelId ne null
             }
+            is ContentPartnerFilter.HubspotIdFilter -> ContentPartnerDocument::hubspotId eq filter.hubspotId
         }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {

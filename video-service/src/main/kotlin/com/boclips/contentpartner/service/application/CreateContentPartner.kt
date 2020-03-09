@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.exceptions.ContentPartnerHubspotIdExceptions
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
@@ -41,15 +42,26 @@ class CreateContentPartner(
         ) ?: DistributionMethod.ALL
 
         val name = upsertRequest.name!!
+        val hubspotId = upsertRequest.hubspotId
 
-        val filters = ContentPartnerFiltersConverter.convert(
+        val validityFilter = ContentPartnerFiltersConverter.convert(
             name = name,
+            hubspotId = hubspotId,
             official = upsertRequest.accreditedToYtChannelId == null,
             accreditedYTChannelId = upsertRequest.accreditedToYtChannelId
         )
 
-        if (contentPartnerRepository.findAll(filters).toList().isNotEmpty()) {
-            throw ContentPartnerConflictException(name)
+        val validateContentPartner = contentPartnerRepository.findAll(validityFilter).toList()
+
+        if (validateContentPartner.isNotEmpty()) {
+            validateContentPartner.forEach {
+                if (it.name == name) {
+                    throw ContentPartnerConflictException(name)
+                }
+                if (it.hubspotId == hubspotId && hubspotId != null) {
+                    throw ContentPartnerHubspotIdExceptions(hubspotId)
+                }
+            }
         }
 
         if (!upsertRequest.contentCategories.isNullOrEmpty()) {
@@ -78,7 +90,8 @@ class CreateContentPartner(
                     notes = upsertRequest.notes,
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
                     contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
-                    ingest = upsertRequest.ingest?.let { ingestDetailsToResourceConverter.fromResource(it) } ?: ManualIngest,
+                    ingest = upsertRequest.ingest?.let { ingestDetailsToResourceConverter.fromResource(it) }
+                        ?: ManualIngest,
                     deliveryFrequency = upsertRequest.deliveryFrequency,
                     pedagogyInformation = PedagogyInformation(
                         isTranscriptProvided = upsertRequest.isTranscriptProvided,
