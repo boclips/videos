@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -58,7 +59,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
-                    id = "2",
+                    id = "3",
                     title = "TED",
                     ageRangeMin = 3,
                     ageRangeMax = 5,
@@ -176,7 +177,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     subjects = setOf(createSubjectMetadata("subject-1"))
                 ),
                 SearchableVideoMetadataFactory.create(
-                    id = "2",
+                    id = "3",
                     title = "Intercom Learning",
                     ageRangeMin = 3,
                     ageRangeMax = 5,
@@ -197,6 +198,48 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         assertThat(results).isEmpty()
+    }
+
+    @Test
+    fun `age range, subject, query`() {
+        val subject = createSubjectMetadata("subject-1")
+
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "elephant",
+                    ageRangeMin = 3,
+                    ageRangeMax = 5,
+                    subjects = setOf(subject)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "elephant",
+                    ageRangeMin = 7,
+                    ageRangeMax = 12,
+                    subjects = setOf(subject)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "elephant",
+                    ageRangeMin = 3,
+                    ageRangeMax = 5
+                )
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "elephant",
+                    ageRanges = listOf(AgeRange(3, 6), AgeRange(7, 8)),
+                    subjectIds = setOf("subject-1")
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("1", "2")
     }
 
     @Test

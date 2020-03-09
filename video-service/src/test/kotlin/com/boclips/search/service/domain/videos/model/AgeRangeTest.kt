@@ -8,7 +8,7 @@ class AgeRangeTest {
     fun `converts to a range`() {
         val ageRange = AgeRange(min = 5, max = 11)
 
-        assertThat(ageRange.toRange()).isEqualTo((5..11).toList())
+        assertThat(ageRange.toRange()).isEqualTo(listOf(5, 6, 7, 8, 9, 10, 11))
     }
 
     @Test
@@ -22,6 +22,6 @@ class AgeRangeTest {
     fun `converts to a range with default min`() {
         val ageRange = AgeRange(max = 11)
 
-        assertThat(ageRange.toRange()).isEqualTo((3..11).toList())
+        assertThat(ageRange.toRange()).isEqualTo(listOf(3, 4, 5, 6, 7, 8, 9, 10, 11))
     }
 }
