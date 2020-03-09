@@ -204,7 +204,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBePublic(lowerCollectionId)
         updateCollectionToBePublic(upperCollectionId)
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=5&public=true&age_range=5-7").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=5&public=true&age_range=5-7,50-55").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))

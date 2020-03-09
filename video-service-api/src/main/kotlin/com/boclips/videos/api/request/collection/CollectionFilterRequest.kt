@@ -15,8 +15,12 @@ class CollectionFilterRequest(
     val subject: String? = null,
     val age_range_min: Int? = null,
     val age_range_max: Int? = null,
-    val age_range: List<String>? = null
-)
+    val age_range: String? = null
+) {
+    fun getAgeRanges(): List<String> {
+        return age_range?.split(",") ?: emptyList()
+    }
+}
 
 enum class CollectionSortKey {
     TITLE
