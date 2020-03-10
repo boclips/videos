@@ -110,7 +110,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.mySavedCollections.href",
-                    endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com&bookmarked=true&sort_by=UPDATE_DATE")
+                    endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com&bookmarked=true&sort_by=TITLE")
                 )
             )
             .andExpect(

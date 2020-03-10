@@ -17,8 +17,7 @@ object CollectionMetadataConverter {
             hasLessonPlans = if (collection.attachments.isNotEmpty()) collection.attachments.any { it.type == AttachmentType.LESSON_PLAN } else false,
             description = collection.description,
             ageRangeMin = collection.ageRange.min(),
-            ageRangeMax = collection.ageRange.max(),
-            lastUpdated = collection.updatedAt.toLocalDate()
+            ageRangeMax = collection.ageRange.max()
         )
     }
 }

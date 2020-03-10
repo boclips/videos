@@ -23,6 +23,5 @@ class CollectionFilterRequest(
 }
 
 enum class CollectionSortKey {
-    TITLE,
-    UPDATE_DATE
+    TITLE
 }

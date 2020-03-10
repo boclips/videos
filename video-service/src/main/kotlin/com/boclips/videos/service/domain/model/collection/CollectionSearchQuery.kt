@@ -33,9 +33,6 @@ class CollectionSearchQuery(
                 CollectionMetadata::title,
                 SortOrder.ASC
             )
-            CollectionSortKey.UPDATE_DATE -> Sort.ByField(
-                CollectionMetadata::lastUpdated, SortOrder.DESC
-            )
             else -> if (this.text.isNullOrBlank()) {
                 Sort.ByField(
                     CollectionMetadata::hasAttachments,

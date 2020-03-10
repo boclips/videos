@@ -108,27 +108,6 @@ class CollectionSearchQueryTest {
     }
 
     @Test
-    fun `can sort by lastUpdated`() {
-        val query = CollectionSearchQuery(
-            text = null,
-            subjectIds = emptyList(),
-            visibilityForOwners = emptySet(),
-            pageIndex = 0,
-            pageSize = 0,
-            permittedCollections = null,
-            hasLessonPlans = null,
-            sort = CollectionSortKey.UPDATE_DATE
-        )
-
-        assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::lastUpdated,
-                SortOrder.DESC
-            )
-        )
-    }
-
-    @Test
     fun `sets permitted ids`() {
         val query = CollectionSearchQuery(
             text = "sometin",
