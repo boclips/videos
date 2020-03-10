@@ -10,6 +10,7 @@ import com.boclips.videos.api.request.collection.AttachmentRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
@@ -28,10 +29,10 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class SearchingForCollections {
         @Test
         fun `retrieved collections filter out videos according to access rules`() {
-            val firstPermittedId = TestFactories.createVideoId()
-            val secondPermittedId = TestFactories.createVideoId()
+            val firstPermittedId = saveVideo()
+            val secondPermittedId = saveVideo()
 
-            val nonPermittedId = TestFactories.createVideoId()
+            val nonPermittedId = saveVideo()
 
             saveCollection(
                 title = "a collection", videos = listOf(
@@ -58,10 +59,14 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
                 user = UserFactory.sample(accessRulesSupplier = {
                     AccessRulesFactory.sample(
-                        videoAccessRule = VideoAccessRule.SpecificIds(
-                            setOf(
-                                firstPermittedId,
-                                secondPermittedId
+                        videoAccess = VideoAccess.Rules(
+                            listOf(
+                                VideoAccessRule.SpecificIds(
+                                    setOf(
+                                        firstPermittedId,
+                                        secondPermittedId
+                                    )
+                                )
                             )
                         )
                     )
@@ -161,7 +166,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class FindCollection {
         @Test
         fun `can find a collection by ID`() {
-            val videoId = TestFactories.createVideoId()
+            val videoId = saveVideo()
             val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
             val collection = collectionReadService.find(
                 collectionId,
@@ -173,10 +178,10 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `can find a collection by ID with only permitted videos included`() {
-            val firstPermittedId = TestFactories.createVideoId()
-            val secondPermittedId = TestFactories.createVideoId()
+            val firstPermittedId = saveVideo()
+            val secondPermittedId = saveVideo()
 
-            val nonPermittedId = TestFactories.createVideoId()
+            val nonPermittedId = saveVideo()
 
             val collectionId = saveCollection(
                 videos = listOf(
@@ -188,10 +193,14 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val collection = collectionReadService.find(
                 collectionId, UserFactory.sample(accessRulesSupplier = {
                     AccessRulesFactory.sample(
-                        videoAccessRule = VideoAccessRule.SpecificIds(
-                            videoIds = setOf(
-                                firstPermittedId,
-                                secondPermittedId
+                        videoAccess = VideoAccess.Rules(
+                            listOf(
+                                VideoAccessRule.SpecificIds(
+                                    videoIds = setOf(
+                                        firstPermittedId,
+                                        secondPermittedId
+                                    )
+                                )
                             )
                         )
                     )

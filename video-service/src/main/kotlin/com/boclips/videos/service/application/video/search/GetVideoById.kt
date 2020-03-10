@@ -11,7 +11,7 @@ class GetVideoById(
     operator fun invoke(videoId: VideoId, user: User): Video {
         return videoService.getPlayableVideo(
             videoId,
-            videoAccessRule = user.accessRules.videoAccess
+            videoAccess = user.accessRules.videoAccess
         )
     }
 }

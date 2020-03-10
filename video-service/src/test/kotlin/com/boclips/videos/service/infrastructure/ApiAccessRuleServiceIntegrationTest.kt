@@ -7,6 +7,7 @@ import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -46,7 +47,11 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(accessRules.collectionAccess).isEqualTo(
             CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
         )
-        assertThat(accessRules.videoAccess).isEqualTo(VideoAccessRule.SpecificIds(videoIds = setOf(VideoId(videoId))))
+        assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
+            VideoAccessRule.SpecificIds(
+                videoIds = setOf(VideoId(videoId))
+            )
+        )
     }
 
     @Test
@@ -59,7 +64,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(accessRules.collectionAccess).isEqualTo(
             CollectionAccessRule.asOwner(me = UserId(value = "test-user"))
         )
-        assertThat(accessRules.videoAccess).isEqualTo(VideoAccessRule.Everything)
+        assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
     }
 
     @Nested
@@ -102,7 +107,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
-    inner class VideoAccess {
+    inner class AccessingVideos {
         @Test
         fun `has access to everything when no contracts specified`() {
             whenever(userServiceClient.getContentPackage(anyString()))
@@ -114,7 +119,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
-            assertThat(accessRules.videoAccess).isEqualTo(VideoAccessRule.Everything)
+            assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
         }
     }
 

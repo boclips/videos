@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.Page
-import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.SortKey
@@ -15,7 +14,6 @@ import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
-    private val getAllVideosById: GetAllVideosById,
     private val getVideosByQuery: GetVideosByQuery,
     private val videoRepository: VideoRepository
 ) {
@@ -28,8 +26,12 @@ class SearchVideo(
         return getVideoById(resolveToAssetId(id)!!, user)
     }
 
-    fun byIds(ids: List<String>, user: User): List<Video> {
-        return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) }, user)
+    // TODO - forcing all video service look up  to go via ES means admin search no longer has access to all videos
+    //  (due to hiding by distribution methods on the content partner level)
+    // We should refactor this once access rules are powerful enough to include and exclude content partners
+    @Deprecated("This will start using access rules once these support Content Partners.")
+    fun byIds(ids: List<String>): List<Video> {
+        return videoRepository.findAll(ids.mapNotNull { this.resolveToAssetId(it, false) })
     }
 
     fun byQuery(

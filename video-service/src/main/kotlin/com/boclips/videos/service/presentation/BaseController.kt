@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.RequestContext
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
@@ -55,7 +55,7 @@ object Administrator : User(
     accessRulesSupplier = {
         AccessRules(
             collectionAccess = CollectionAccessRule.Everything,
-            videoAccess = VideoAccessRule.Everything
+            videoAccess = VideoAccess.Everything
         )
     }
 )

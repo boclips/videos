@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
@@ -48,8 +49,8 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `can create a collection with videos`() {
-        val firstVideoId = TestFactories.createVideoId()
-        val secondVideoId = TestFactories.createVideoId()
+        val firstVideoId = saveVideo()
+        val secondVideoId = saveVideo()
         val createdCollection = collectionCreationService.create(
             CreateCollectionCommand(
                 owner = UserId(value = "123"),
@@ -82,7 +83,15 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
             user = UserFactory.sample(
                 id = "123",
                 accessRulesSupplier = {
-                    AccessRulesFactory.sample(videoAccessRule = VideoAccessRule.SpecificIds(videoIds = emptySet()))
+                    AccessRulesFactory.sample(
+                        videoAccess = VideoAccess.Rules(
+                            listOf(
+                                VideoAccessRule.SpecificIds(
+                                    videoIds = emptySet()
+                                )
+                            )
+                        )
+                    )
                 }
             )
         )!!

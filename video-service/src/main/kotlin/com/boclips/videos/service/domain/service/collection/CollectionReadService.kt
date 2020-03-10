@@ -13,8 +13,9 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.FindCollectionResult
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
+import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
@@ -22,7 +23,8 @@ class CollectionReadService(
     private val collectionRepository: CollectionRepository,
     private val collectionSearchService: CollectionSearchService,
     private val collectionAccessService: CollectionAccessService,
-    private val eventService: EventService
+    private val eventService: EventService,
+    private val videoService: VideoService
 ) {
     companion object : KLogging()
 
@@ -104,8 +106,7 @@ class CollectionReadService(
     ): Collection {
         return if (!user.isAuthenticated && shareCode != null && referer != null) {
             collection.copy(attachments = emptySet())
-        }
-        else {
+        } else {
             collection
         }
     }
@@ -144,9 +145,11 @@ class CollectionReadService(
             }
         }
 
-    private fun withPermittedVideos(collection: Collection, videoAccessRule: VideoAccessRule): Collection =
-        when (videoAccessRule) {
-            is VideoAccessRule.SpecificIds -> collection.copy(videos = collection.videos.intersect(videoAccessRule.videoIds).toList())
-            VideoAccessRule.Everything -> collection
-        }
+    private fun withPermittedVideos(collection: Collection, videoAccess: VideoAccess): Collection =
+        videoService.getPlayableVideos(
+            videoIds = collection.videos,
+            videoAccess = videoAccess
+        )
+            .map { it.videoId }
+            .let { collection.copy(videos = it) }
 }

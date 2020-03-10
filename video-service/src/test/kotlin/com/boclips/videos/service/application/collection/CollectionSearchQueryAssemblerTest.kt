@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.UserFactory
@@ -396,7 +396,7 @@ class CollectionSearchQueryAssemblerTest {
                     bookmarked = true,
                     user = UserFactory.sample(accessRulesSupplier = {
                         AccessRules(
-                            videoAccess = VideoAccessRule.Everything,
+                            videoAccess = VideoAccess.Everything,
                             collectionAccess = CollectionAccessRule.public()
                         )
                     })
@@ -417,7 +417,7 @@ class CollectionSearchQueryAssemblerTest {
         hasLessonPlans: Boolean? = null,
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(
-                videoAccess = VideoAccessRule.Everything,
+                videoAccess = VideoAccess.Everything,
                 collectionAccess = CollectionAccessRule.public()
             )
         }),

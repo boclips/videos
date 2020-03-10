@@ -74,7 +74,7 @@ class GetVideosByQuery(
         )
 
         val totalVideos =
-            videoService.count(videoSearchQuery = videoSearchQuery, videoAccessRule = user.accessRules.videoAccess)
+            videoService.count(videoSearchQuery = videoSearchQuery, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found $totalVideos videos for query $videoSearchQuery" }
 
         val videos: List<Video> = videoService.search(videoSearchQuery, user.accessRules.videoAccess)

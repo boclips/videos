@@ -1,11 +1,11 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
+import com.boclips.contentpartner.service.infrastructure.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
-import com.boclips.contentpartner.service.infrastructure.MongoAgeRangeRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.users.client.UserServiceClient
@@ -64,13 +64,15 @@ class DomainContext(
         collectionRepository: CollectionRepository,
         collectionSearchService: CollectionSearchService,
         collectionAccessService: CollectionAccessService,
-        eventService: EventService
+        eventService: EventService,
+        videoService: VideoService
     ): CollectionReadService {
         return CollectionReadService(
             collectionRepository,
             collectionSearchService,
             collectionAccessService,
-            eventService
+            eventService,
+            videoService
         )
     }
 

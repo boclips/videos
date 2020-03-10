@@ -123,7 +123,7 @@ class VideoController(
     @PostMapping("/v1/videos/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
-        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), user)
+        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
             .map { videoToResourceConverter.convert(it, user) }
             .let {
                 ResponseEntity(
@@ -180,7 +180,7 @@ class VideoController(
     @PostMapping("/v1/videos")
     fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
         val resource: VideoResource = try {
-            createVideo(createVideoRequest, getCurrentUser())
+            createVideo(createVideoRequest)
                 .let { videoToResourceConverter.convert(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(

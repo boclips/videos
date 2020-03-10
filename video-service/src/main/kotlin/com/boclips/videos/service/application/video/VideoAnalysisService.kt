@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -39,8 +39,7 @@ class VideoAnalysisService(
     fun analysePlayableVideo(videoId: String, language: Locale?) {
         val video = videoService.getPlayableVideo(
             videoId = VideoId(value = videoId),
-            videoAccessRule = VideoAccessRule.Everything
-
+            videoAccess = VideoAccess.Everything
         )
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 

@@ -8,8 +8,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoIdsQuery
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
 import com.boclips.videos.service.infrastructure.convertPageToIndex
@@ -22,56 +23,61 @@ class VideoService(
 ) {
     companion object : KLogging()
 
-    fun search(query: VideoSearchQuery, videoAccessRule: VideoAccessRule): List<Video> {
+    fun search(query: VideoSearchQuery, videoAccess: VideoAccess): List<Video> {
         val searchRequest = PaginatedSearchRequest(
-            query = query.toSearchQuery(videoAccessRule),
+            query = query.toSearchQuery(videoAccess),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
         val videoIds = videoSearchService.search(searchRequest).map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        logger.info { "Returning ${playableVideos.size} videos for query $query and access rule $videoAccessRule" }
+        logger.info { "Returning ${playableVideos.size} videos for query $query and access rule $videoAccess" }
 
         return playableVideos
     }
 
-    fun count(videoSearchQuery: VideoSearchQuery, videoAccessRule: VideoAccessRule): Long {
-        logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccessRule\"" }
-        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccessRule = videoAccessRule))
+    fun count(videoSearchQuery: VideoSearchQuery, videoAccess: VideoAccess): Long {
+        logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccess\"" }
+        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccess))
     }
 
     fun getPlayableVideo(
         videoId: VideoId,
-        videoAccessRule: VideoAccessRule
-    ): Video =
-        when (videoAccessRule) {
-            is VideoAccessRule.SpecificIds -> {
-                if (!videoAccessRule.videoIds.contains(videoId)) {
-                    throw VideoNotFoundException()
+        videoAccess: VideoAccess
+    ): Video {
+        return videoSearchService.search(
+            PaginatedSearchRequest(
+                VideoIdsQuery(ids = listOf(videoId)).toSearchQuery(
+                    videoAccess
+                ),
+                windowSize = 1
+            )
+        )
+            .firstOrNull()
+            ?.let { getPlayableVideo(VideoId(value = it)) }
+            ?: throw VideoNotFoundException()
+    }
+
+    fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {
+        return videoSearchService.search(
+            PaginatedSearchRequest(
+                VideoIdsQuery(ids = videoIds).toSearchQuery(
+                    videoAccess
+                ),
+                windowSize = videoIds.size
+            )
+        ).map { VideoId(value = it) }
+            .let { videoRepository.findAll(it) }
+            .also { videos ->
+                if (videoIds.size != videos.size) {
+                    logger.info {
+                        val videosNotFound = videoIds - videos.map { it.videoId }
+                        "Some of the requested video videos could not be found. Ids not found: $videosNotFound"
+                    }
                 }
-
-                getPlayableVideo(videoId)
             }
-            VideoAccessRule.Everything -> getPlayableVideo(videoId)
-        }
-
-    fun getPlayableVideos(videoIds: List<VideoId>, accessRule: VideoAccessRule): List<Video> {
-        val permittedVideoIds = when (accessRule) {
-            is VideoAccessRule.SpecificIds -> videoIds.intersect(accessRule.videoIds)
-            VideoAccessRule.Everything -> videoIds
-        }.toList()
-
-        val videos = videoRepository.findAll(permittedVideoIds)
-
-        if (videoIds.size != videos.size) {
-            logger.info {
-                val videosNotFound = videoIds - videos.map { it.videoId }
-                "Some of the requested video videos could not be found. Ids not found: $videosNotFound"
-            }
-        }
-
-        return videos.filter { it.isPlayable() }
+            .filter { it.isPlayable() }
     }
 
     fun create(videoToBeCreated: Video): Video {

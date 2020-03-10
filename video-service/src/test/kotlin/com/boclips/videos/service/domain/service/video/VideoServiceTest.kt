@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -43,7 +44,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ),
-                VideoAccessRule.Everything
+                VideoAccess.Everything
             )
 
             assertThat(videos).isNotEmpty
@@ -63,7 +64,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ),
-                VideoAccessRule.Everything
+                VideoAccess.Everything
             )
 
             assertThat(videos).isNotEmpty
@@ -84,7 +85,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ),
-                VideoAccessRule.Everything
+                VideoAccess.Everything
             )
 
             assertThat(size).isEqualTo(1)
@@ -100,7 +101,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pageIndex = 0
-                ), VideoAccessRule.SpecificIds(setOf(firstVideo))
+                ), VideoAccess.Rules(
+                    listOf(VideoAccessRule.SpecificIds(setOf(firstVideo)))
+                )
             )
 
             assertThat(searchResults).hasSize(1)
@@ -117,7 +120,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pageIndex = 0
-                ), VideoAccessRule.SpecificIds(setOf(firstVideo))
+                ), VideoAccess.Rules(
+                    listOf(VideoAccessRule.SpecificIds(setOf(firstVideo)))
+                )
             )
 
             assertThat(searchResults).isEqualTo(1)
@@ -127,7 +132,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         fun `look up video by id`() {
             val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-            val video = videoService.getPlayableVideo(videoId, VideoAccessRule.Everything)
+            val video = videoService.getPlayableVideo(videoId, VideoAccess.Everything)
 
             assertThat(video).isNotNull
         }
@@ -138,7 +143,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             saveVideo()
             val videoId2 = saveVideo()
 
-            val video = videoService.getPlayableVideos(listOf(videoId1, videoId2), VideoAccessRule.Everything)
+            val video = videoService.getPlayableVideos(listOf(videoId1, videoId2), VideoAccess.Everything)
 
             assertThat(video).hasSize(2)
             assertThat(video.map { it.videoId }).containsExactly(videoId1, videoId2)
@@ -149,7 +154,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             Assertions.assertThatThrownBy {
                 videoService.getPlayableVideo(
                     VideoId(value = TestFactories.aValidId()),
-                    VideoAccessRule.Everything
+                    VideoAccess.Everything
                 )
             }
                 .isInstanceOf(VideoNotFoundException::class.java)
@@ -161,9 +166,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         @Test
         fun `create video with an age range`() {
             val ageRange = AgeRange.bounded(2, 5)
-            val video = videoService.create(TestFactories.createVideo(ageRange = ageRange))
+            val videoId = saveVideo(ageRange = ageRange)
 
-            assertThat(videoService.getPlayableVideo(video.videoId, VideoAccessRule.Everything).ageRange).isEqualTo(
+            assertThat(videoService.getPlayableVideo(videoId, VideoAccess.Everything).ageRange).isEqualTo(
                 ageRange
             )
         }

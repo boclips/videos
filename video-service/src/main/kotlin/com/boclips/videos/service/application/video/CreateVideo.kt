@@ -6,8 +6,6 @@ import com.boclips.videos.service.application.exceptions.VideoNotAnalysableExcep
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
-import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -25,7 +23,6 @@ class CreateVideo(
     private val videoService: VideoService,
     private val subjectRepository: SubjectRepository,
     private val contentPartnerService: ContentPartnerService,
-    private val searchVideo: SearchVideo,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
@@ -34,7 +31,7 @@ class CreateVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
+    operator fun invoke(createRequest: CreateVideoRequest): Video {
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
         val contentPartner = findContentPartner(createRequest)
@@ -72,7 +69,7 @@ class CreateVideo(
 
         videoCounter.increment()
 
-        return searchVideo.byId(createdVideo.videoId.value, user)
+        return createdVideo
     }
 
     private fun findContentPartner(createRequest: CreateVideoRequest): ContentPartner? =

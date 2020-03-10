@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.AccessRuleService
@@ -54,15 +55,19 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         }
     }
 
-    private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccessRule {
+    private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccess {
         val videoIds: List<VideoId> = accessRules.filterIsInstance<IncludedVideosAccessRule>()
             .flatMap { accessRule -> accessRule.videoIds.map { id -> VideoId(id) } }
 
         return when {
-            videoIds.isNotEmpty() -> VideoAccessRule.SpecificIds(
-                videoIds.toSet()
+            videoIds.isNotEmpty() -> VideoAccess.Rules(
+                listOf(
+                    VideoAccessRule.SpecificIds(
+                        videoIds.toSet()
+                    )
+                )
             )
-            else -> VideoAccessRule.Everything
+            else -> VideoAccess.Everything
         }
     }
 
@@ -71,7 +76,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         logger.warn { "Unable to retrieve access rules, defaulting to access to public collections. Cause: $e" }
         return AccessRules(
             CollectionAccessRule.public(),
-            VideoAccessRule.Everything
+            VideoAccess.Everything
         )
     }
 }

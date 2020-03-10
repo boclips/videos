@@ -21,6 +21,17 @@ data class SubjectQuery(
     val setManually: Boolean? = null
 )
 
+class VideoIdsQuery(
+    val ids: List<VideoId>
+) {
+    fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
+        return VideoQuery(
+            ids = ids.map { it.value },
+            permittedVideoIds = getPermittedVideoIds(videoAccess)
+        )
+    }
+}
+
 class VideoSearchQuery(
     val text: String,
     val sortBy: SortKey? = null,
@@ -41,7 +52,7 @@ class VideoSearchQuery(
     val type: Set<VideoType> = emptySet(),
     val isClassroom: Boolean? = null
 ) {
-    fun toSearchQuery(videoAccessRule: VideoAccessRule): VideoQuery {
+    fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
                 SortKey.RELEASE_DATE -> Sort.ByField(
@@ -81,10 +92,7 @@ class VideoSearchQuery(
                 contentPartnerNames = contentPartnerNames,
                 type = type,
                 isClassroom = isClassroom,
-                permittedVideoIds = when (videoAccessRule) {
-                    is VideoAccessRule.SpecificIds -> videoAccessRule.videoIds.map { videoId -> videoId.value }.toSet()
-                    VideoAccessRule.Everything -> null
-                }
+                permittedVideoIds = getPermittedVideoIds(videoAccess)
             )
         }
     }
@@ -101,5 +109,16 @@ class VideoSearchQuery(
             return VideoQuery(ids = ids)
         }
         return VideoQuery(phrase = query)
+    }
+}
+
+fun getPermittedVideoIds(videoAccess: VideoAccess): Set<String>? {
+    return when (videoAccess) {
+        is VideoAccess.Rules -> videoAccess.accessRules.flatMap { accessRule ->
+            when (accessRule) {
+                is VideoAccessRule.SpecificIds -> accessRule.videoIds.map { id -> id.value }
+            }
+        }.toSet()
+        VideoAccess.Everything -> null
     }
 }

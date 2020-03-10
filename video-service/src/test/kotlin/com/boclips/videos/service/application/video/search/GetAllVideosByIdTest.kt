@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AccessRulesFactory
@@ -20,9 +20,9 @@ internal class GetAllVideosByIdTest {
 
         getAllVideosById(
             listOf(VideoId("5c542ab85438cdbcb56ddf02"), VideoId("5c542ab85438cdbcb56ddf02")),
-            UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.sample(videoAccessRule = VideoAccessRule.Everything) })
+            UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.sample(videoAccess = VideoAccess.Everything) })
         )
 
-        verify(videoService).getPlayableVideos(argThat { size == 1 }, eq(VideoAccessRule.Everything))
+        verify(videoService).getPlayableVideos(argThat { size == 1 }, eq(VideoAccess.Everything))
     }
 }

@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -26,7 +27,11 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val user = controller.getCurrentUser()
             val accessRules = user.accessRules
 
-            assertThat(accessRules.videoAccess).isEqualTo(VideoAccessRule.SpecificIds(videoIds = setOf(video)))
+            assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
+                VideoAccessRule.SpecificIds(
+                    videoIds = setOf(video)
+                )
+            )
         }
 
         @Test
@@ -35,7 +40,7 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(user.accessRules).isEqualTo(
                 AccessRules(
-                    videoAccess = VideoAccessRule.Everything,
+                    videoAccess = VideoAccess.Everything,
                     collectionAccess = CollectionAccessRule.public()
                 )
             )

@@ -43,7 +43,7 @@ import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
@@ -430,20 +430,6 @@ object SubjectFactory {
     )
 }
 
-object DisciplineFactory {
-    fun sample(
-        id: String = ObjectId().toHexString(),
-        code: String = "code",
-        name: String = "name",
-        subjects: List<Subject> = listOf(SubjectFactory.sample())
-    ) = Discipline(
-        id = DisciplineId(id),
-        code = code,
-        name = name,
-        subjects = subjects
-    )
-}
-
 object AttachmentFactory {
     fun sample(
         id: String = ObjectId().toHexString(),
@@ -473,11 +459,11 @@ object AttachmentFactory {
 object AccessRulesFactory {
     fun sample(
         collectionAccessRule: CollectionAccessRule = CollectionAccessRule.everything(),
-        videoAccessRule: VideoAccessRule = VideoAccessRule.Everything
+        videoAccess: VideoAccess = VideoAccess.Everything
     ): AccessRules {
         return AccessRules(
             collectionAccess = collectionAccessRule,
-            videoAccess = videoAccessRule
+            videoAccess = videoAccess
         )
     }
 
@@ -538,7 +524,7 @@ object UserFactory {
         isAuthenticated: Boolean = true,
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
-                videoAccess = VideoAccessRule.Everything,
+                videoAccess = VideoAccess.Everything,
                 collectionAccess = CollectionAccessRule.PublicOnly
             )
         }

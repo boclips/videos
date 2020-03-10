@@ -105,14 +105,12 @@ class ApplicationContext(
         searchQueryConverter: SearchQueryConverter
     ) = SearchVideo(
         getVideoById(),
-        getAllVideosById(),
         getVideosByQuery(searchQueryConverter),
         videoRepository
     )
 
     @Bean
     fun createVideo(
-        searchVideo: SearchVideo,
         videoCounter: Counter,
         videoAnalysisService: VideoAnalysisService,
         subjectClassificationService: SubjectClassificationService
@@ -121,7 +119,6 @@ class ApplicationContext(
             videoService,
             subjectRepository,
             contentPartnerService,
-            searchVideo,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             videoCounter,

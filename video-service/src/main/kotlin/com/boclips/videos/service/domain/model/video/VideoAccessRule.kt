@@ -6,9 +6,14 @@ sealed class VideoAccessRule {
             return "VideoAccessRule(restricted to ${videoIds.size} videos)"
         }
     }
-    object Everything : VideoAccessRule() {
+}
+
+sealed class VideoAccess {
+    object Everything : VideoAccess() {
         override fun toString(): String {
             return "Everything - VideoAccessRule"
         }
     }
+
+    class Rules(val accessRules: List<VideoAccessRule>) : VideoAccess()
 }

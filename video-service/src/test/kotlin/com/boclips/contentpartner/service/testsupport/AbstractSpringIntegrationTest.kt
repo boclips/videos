@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateAgeRange
+import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -56,7 +56,15 @@ import java.util.UUID
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test", "fakes", "fakes-kaltura", "fakes-search", "fakes-youtube", "fakes-security", "fakes-signed-link")
+@ActiveProfiles(
+    "test",
+    "fakes",
+    "fakes-kaltura",
+    "fakes-search",
+    "fakes-youtube",
+    "fakes-security",
+    "fakes-signed-link"
+)
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
@@ -226,8 +234,7 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
                 subjects = subjectIds
-            ),
-            user = com.boclips.videos.service.testsupport.UserFactory.sample()
+            )
         )
 
         fakeEventBus.clearState()

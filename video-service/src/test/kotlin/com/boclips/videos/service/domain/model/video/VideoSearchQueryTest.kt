@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class VideoSearchVideoQueryTest {
+class VideoSearchQueryTest {
 
     @Test
     fun `translate phrase query`() {
@@ -19,7 +19,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(videoAccessRule = VideoAccessRule.Everything)
+            .toSearchQuery(videoAccess = VideoAccess.Everything)
 
         assertThat(searchQuery.phrase).isEqualTo("normal phrase")
     }
@@ -31,7 +31,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11")
     }
@@ -43,7 +43,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11", "12", "13")
     }
@@ -56,7 +56,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.bestFor).contains("explainer")
     }
@@ -69,7 +69,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
 
@@ -85,7 +85,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = SortKey.RANDOM
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.sort is Sort.ByRandom<VideoMetadata>)
     }
@@ -98,7 +98,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             sortBy = null
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.sort).isNull()
     }
@@ -112,7 +112,7 @@ class VideoSearchVideoQueryTest {
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
@@ -125,7 +125,7 @@ class VideoSearchVideoQueryTest {
             pageIndex = 0,
             type = setOf(VideoType.NEWS, VideoType.STOCK)
         )
-            .toSearchQuery(VideoAccessRule.Everything)
+            .toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.type).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
@@ -139,7 +139,7 @@ class VideoSearchVideoQueryTest {
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
-        ).toSearchQuery(VideoAccessRule.Everything)
+        ).toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
@@ -152,7 +152,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(VideoAccessRule.Everything)
+        ).toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.promoted).isEqualTo(true)
     }
@@ -167,7 +167,18 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(VideoAccessRule.SpecificIds(setOf(firstId, secondId)))
+        ).toSearchQuery(
+            VideoAccess.Rules(
+                accessRules = listOf(
+                    VideoAccessRule.SpecificIds(
+                        videoIds = setOf(
+                            firstId,
+                            secondId
+                        )
+                    )
+                )
+            )
+        )
 
         assertThat(searchQuery.permittedVideoIds).containsExactlyInAnyOrder(firstId.value, secondId.value)
     }
@@ -179,7 +190,7 @@ class VideoSearchVideoQueryTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(VideoAccessRule.Everything)
+        ).toSearchQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.permittedVideoIds).isNull()
     }

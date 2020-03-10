@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -25,7 +25,7 @@ class CollectionAccessServiceTest {
 
     @BeforeEach
     fun setup() {
-        userServiceClient = mock<UserServiceClient>()
+        userServiceClient = mock()
         collectionAccessService = CollectionAccessService(userServiceClient)
     }
 
@@ -46,7 +46,7 @@ class CollectionAccessServiceTest {
                 user = UserFactory.sample(id = "attacker@example.com", accessRulesSupplier = {
                     AccessRules(
                         CollectionAccessRule.specificIds(listOf()),
-                        VideoAccessRule.Everything
+                        VideoAccess.Everything
                     )
                 })
             )
@@ -69,7 +69,7 @@ class CollectionAccessServiceTest {
                 user = UserFactory.sample(id = "attacker@example.com", accessRulesSupplier = {
                     AccessRules(
                         CollectionAccessRule.public(),
-                        VideoAccessRule.Everything
+                        VideoAccess.Everything
                     )
                 })
             )
@@ -101,7 +101,6 @@ class CollectionAccessServiceTest {
 
                     assertThat(accessValidationResult.successful).isTrue()
                 }
-
 
                 // We do not check shareCodes for authenticated users if the collection is public
                 // so they can provide any invalid data, we ignore it
