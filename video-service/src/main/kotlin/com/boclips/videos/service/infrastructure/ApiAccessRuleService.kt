@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.accessrule.AccessRule
-import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
-import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
+import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
@@ -40,7 +40,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         val collectionIds: List<CollectionId> = accessRules
             .flatMap { accessRule ->
                 when (accessRule) {
-                    is SelectedCollectionsAccessRule -> accessRule.collectionIds.map { CollectionId(it) }
+                    is IncludedCollectionsAccessRule -> accessRule.collectionIds.map { CollectionId(it) }
                     else -> emptyList()
                 }
             }
@@ -55,7 +55,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
     }
 
     private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccessRule {
-        val videoIds: List<VideoId> = accessRules.filterIsInstance<SelectedVideosAccessRule>()
+        val videoIds: List<VideoId> = accessRules.filterIsInstance<IncludedVideosAccessRule>()
             .flatMap { accessRule -> accessRule.videoIds.map { id -> VideoId(id) } }
 
         return when {

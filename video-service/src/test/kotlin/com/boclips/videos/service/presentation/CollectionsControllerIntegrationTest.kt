@@ -472,7 +472,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `fetching a collection as a user with a SelectedContent contract for it`() {
         val collectionId = createCollection(title = "Some Non Public Collection", public = false)
-        createSelectedCollectionsAccessRules(collectionId)
+        createIncludedCollectionsAccessRules(collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
@@ -123,8 +123,8 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         ).id.value
     }
 
-    fun createSelectedCollectionsAccessRules(vararg contractedCollectionIds: String) {
-        userServiceClient.addAccessRule(SelectedCollectionsAccessRule().apply {
+    fun createIncludedCollectionsAccessRules(vararg contractedCollectionIds: String) {
+        userServiceClient.addAccessRule(IncludedCollectionsAccessRule().apply {
             name = UUID.randomUUID().toString()
             collectionIds = contractedCollectionIds.toList()
         })

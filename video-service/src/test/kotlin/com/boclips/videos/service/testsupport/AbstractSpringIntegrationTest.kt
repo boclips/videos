@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateAgeRange
+import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -15,10 +15,7 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.Organisation
-import com.boclips.users.client.model.accessrule.ContentPackage
-import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
-import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
+import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.collection.AttachmentRequest
@@ -426,12 +423,13 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun createSelectedVideosAccessRules(vararg contractedVideoIds: String) {
-        userServiceClient.addAccessRule(SelectedVideosAccessRule().apply {
+    fun createIncludedVideosAccessRules(vararg contractedVideoIds: String) {
+        userServiceClient.addAccessRule(IncludedVideosAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoIds = contractedVideoIds.toList()
         })
     }
 
-    fun mongoVideosCollection() = mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoVideoRepository.collectionName)
+    fun mongoVideosCollection() =
+        mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoVideoRepository.collectionName)
 }

@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ContentPackage
-import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
-import com.boclips.users.client.model.accessrule.SelectedVideosAccessRule
+import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -24,13 +24,13 @@ import org.springframework.web.client.HttpClientErrorException
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `passes through client's response if all is well`() {
-        val collectionsContract = SelectedCollectionsAccessRule().apply {
+        val collectionsContract = IncludedCollectionsAccessRule().apply {
             name = "Test Contract"
             collectionIds = listOf("test-collection-id")
         }
 
         val videoId = ObjectId().toHexString()
-        val videosContract = SelectedVideosAccessRule().apply {
+        val videosContract = IncludedVideosAccessRule().apply {
             name = "Test Contract"
             videoIds = listOf(videoId)
         }
@@ -120,7 +120,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `retries up to 3 times when client throws errors`() {
-        val collectionsContract = SelectedCollectionsAccessRule().apply {
+        val collectionsContract = IncludedCollectionsAccessRule().apply {
             name = "Test Contract"
             collectionIds = listOf("test-collection-id")
         }

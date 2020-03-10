@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.users.client.model.accessrule.AccessRule
-import com.boclips.users.client.model.accessrule.SelectedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.bson.types.ObjectId
@@ -17,11 +17,11 @@ class MongoCollectionFilterContractAdapterTest {
     }
 
     @Test
-    fun `translates a SelectedContent access rule into an "id in ( )" clause`() {
+    fun `translates a IncludedContent access rule into an "id in ( )" clause`() {
         val firstId = ObjectId()
         val secondId = ObjectId()
         val thirdId = ObjectId()
-        val selectedContent = SelectedCollectionsAccessRule().apply {
+        val selectedContent = IncludedCollectionsAccessRule().apply {
             collectionIds = listOf(firstId.toHexString(), secondId.toHexString(), thirdId.toHexString())
         }
 

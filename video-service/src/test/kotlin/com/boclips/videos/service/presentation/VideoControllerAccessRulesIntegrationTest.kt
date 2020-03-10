@@ -24,7 +24,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val firstContractedVideo = saveVideo(title = "Contracted video")
             val secondContractedVideo = saveVideo(title = "This is a movie about something else")
 
-            createSelectedVideosAccessRules(firstContractedVideo.value, secondContractedVideo.value)
+            createIncludedVideosAccessRules(firstContractedVideo.value, secondContractedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -40,7 +40,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val idUserIsNotContractedTo = saveVideo(title = "A non-contracted video")
             val idUserIsContractedTo = saveVideo(title = "Contracted video")
 
-            createSelectedVideosAccessRules(idUserIsContractedTo.value)
+            createIncludedVideosAccessRules(idUserIsContractedTo.value)
 
             mockMvc.perform(get("/v1/videos/$idUserIsNotContractedTo").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isNotFound)
@@ -50,7 +50,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         fun `returns the video if user has a access to it`() {
             val videoId = saveVideo(title = "Contracted video")
 
-            createSelectedVideosAccessRules(videoId.value)
+            createIncludedVideosAccessRules(videoId.value)
 
             mockMvc.perform(get("/v1/videos/$videoId").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
