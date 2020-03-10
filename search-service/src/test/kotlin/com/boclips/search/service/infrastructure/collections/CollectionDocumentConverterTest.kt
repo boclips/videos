@@ -6,6 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.Month
 
 class CollectionDocumentConverterTest {
 
@@ -25,7 +27,8 @@ class CollectionDocumentConverterTest {
                 "owner": "juan",
                 "description": "Collection under test",
                 "hasLessonPlans": "false",
-                "ageRange": []
+                "ageRange": [],
+                "updatedAt": "2019-01-16T12:00:00.870Z"
             }
         """.trimIndent()
             )
@@ -45,7 +48,8 @@ class CollectionDocumentConverterTest {
                 hasLessonPlans = false,
                 ageRangeMin = null,
                 ageRangeMax = null,
-                ageRange = emptyList()
+                ageRange = emptyList(),
+                updatedAt = LocalDate.of(2019, Month.JANUARY, 16)
             )
         )
     }
@@ -62,7 +66,8 @@ class CollectionDocumentConverterTest {
                 "subjects": ["crispity", "crunchy"],
                 "owner": "juan",
                 "description": "Collection under test",
-                "ageRange": []
+                "ageRange": [],
+                "updatedAt": "2018-12-19T00:00:00Z"
             }
         """.trimIndent()
             )
@@ -82,7 +87,8 @@ class CollectionDocumentConverterTest {
                 hasLessonPlans = null,
                 ageRangeMin = null,
                 ageRangeMax = null,
-                ageRange = emptyList()
+                ageRange = emptyList(),
+                updatedAt = LocalDate.of(2018,Month.DECEMBER,19)
             )
         )
     }
@@ -100,7 +106,8 @@ class CollectionDocumentConverterTest {
             hasLessonPlans = null,
             ageRangeMin = null,
             ageRangeMax = null,
-            bookmarkedBy = setOf("juan")
+            bookmarkedBy = setOf("juan"),
+            updatedAt = LocalDate.of(2000,Month.APRIL,12)
         )
 
         val document = CollectionDocumentConverter().convertToDocument(metadata)
@@ -118,7 +125,8 @@ class CollectionDocumentConverterTest {
                 hasLessonPlans = null,
                 ageRangeMin = null,
                 ageRangeMax = null,
-                ageRange = emptyList()
+                ageRange = emptyList(),
+                updatedAt = LocalDate.of(2000,Month.APRIL,12)
             )
         )
     }

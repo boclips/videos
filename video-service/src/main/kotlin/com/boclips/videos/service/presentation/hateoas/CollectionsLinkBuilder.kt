@@ -164,7 +164,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 href = collectionsLink(projection = projection, page = page, size = size)
                     .queryParam("owner", currentUser)
                     .queryParam("bookmarked", true)
-                    .queryParam("sort_by", CollectionSortKey.TITLE)
+                    .queryParam("sort_by", CollectionSortKey.UPDATED_AT)
                     .toUriString(),
                 rel = "mySavedCollections"
             )

@@ -17,6 +17,7 @@ import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.time.LocalDate
 
 class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
@@ -199,24 +200,28 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     id = "100",
                     owner = "teacher",
                     title = "Kappa",
-                    bookmarkedBy = emptySet()
+                    bookmarkedBy = emptySet(),
+                    updatedAt = LocalDate.now().minusDays(10)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
                     owner = "stranger",
                     title = "Beta",
-                    bookmarkedBy = setOf("teacher")
+                    bookmarkedBy = setOf("teacher"),
+                    updatedAt = LocalDate.now().minusDays(8)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "102",
                     owner = "stranger",
-                    bookmarkedBy = emptySet()
+                    bookmarkedBy = emptySet(),
+                    updatedAt = LocalDate.now().minusDays(5)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "103",
                     owner = "teacher",
                     title = "Alpha",
-                    bookmarkedBy = emptySet()
+                    bookmarkedBy = emptySet(),
+                    updatedAt = LocalDate.now().minusDays(1)
                 )
             )
         )
@@ -228,7 +233,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                         VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
                     ),
                     bookmarkedBy = "teacher",
-                    sort = Sort.ByField(CollectionMetadata::title, SortOrder.ASC)
+                    sort = Sort.ByField(CollectionMetadata::updatedAt, SortOrder.DESC)
                 )
             )
         )

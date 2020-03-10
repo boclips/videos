@@ -195,14 +195,14 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
                         PaginatedSearchRequest(
                                 query = CollectionQuery(
                                         sort = Sort.ByField(
-                                                CollectionMetadata::hasAttachments,
+                                                CollectionMetadata::updatedAt,
                                                 SortOrder.DESC
                                         )
                                 )
                         )
                 )
 
-        Assertions.assertThat(results).containsExactly("101", "100")
+        Assertions.assertThat(results).containsExactly("100", "101")
     }
 
         @Test

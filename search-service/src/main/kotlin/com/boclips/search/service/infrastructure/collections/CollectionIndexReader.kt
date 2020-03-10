@@ -53,21 +53,20 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
         if (query.sort != null) {
             Do exhaustive when (query.sort) {
                 is Sort.ByField -> {
-                    val prefix = if (query.sort.fieldName.returnType == String::class.createType()) {
+                    val suffix = if (query.sort.fieldName.returnType == String::class.createType()) {
                         ".keyword"
                     } else {
                         ""
                     }
 
                     esQuery.sort(
-                        query.sort.fieldName.name + prefix,
+                        query.sort.fieldName.name + suffix,
                         SortOrder.fromString(query.sort.order.toString())
                     )
                 }
                 is Sort.ByRandom -> TODO()
             }
         }
-
         return esQuery
     }
 

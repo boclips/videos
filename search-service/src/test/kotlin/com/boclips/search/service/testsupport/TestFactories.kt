@@ -100,7 +100,8 @@ object SearchableCollectionMetadataFactory {
         description: String = "some default description",
         hasLessonPlans: Boolean? = null,
         ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null
+        ageRangeMax: Int? = null,
+        updatedAt: LocalDate = LocalDate.now()
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -112,7 +113,8 @@ object SearchableCollectionMetadataFactory {
         description = description,
         hasLessonPlans = hasLessonPlans,
         ageRangeMin = ageRangeMin,
-        ageRangeMax = ageRangeMax
+        ageRangeMax = ageRangeMax,
+        updatedAt = updatedAt
     )
 }
 

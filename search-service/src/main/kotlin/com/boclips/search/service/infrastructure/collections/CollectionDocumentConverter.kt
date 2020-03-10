@@ -35,7 +35,8 @@ class CollectionDocumentConverter {
             hasLessonPlans = metadata.hasLessonPlans,
             ageRangeMin = metadata.ageRangeMin,
             ageRangeMax = metadata.ageRangeMax,
-            ageRange = AgeRange(metadata.ageRangeMin, metadata.ageRangeMax).toRange()
+            ageRange = AgeRange(metadata.ageRangeMin, metadata.ageRangeMax).toRange(),
+            updatedAt = metadata.updatedAt
         )
     }
 }
