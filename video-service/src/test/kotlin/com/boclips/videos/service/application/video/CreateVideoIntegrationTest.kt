@@ -43,7 +43,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
     }
 
     @Test
@@ -61,7 +61,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        assertThat(videoService.getPlayableVideo(video.videoId)).isNotNull
     }
 
     @Test
@@ -125,7 +125,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val video = videoService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything)
+        val video = videoService.getPlayableVideo(createdVideo.videoId)
 
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }

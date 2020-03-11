@@ -2,11 +2,8 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.application.exceptions.InvalidAgeRangeFormatException
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ConvertAgeRangesTest {
@@ -17,6 +14,6 @@ class ConvertAgeRangesTest {
 
     @Test
     fun `throws for an invalid age range`() {
-        assertThrows<InvalidAgeRangeFormatException>{ convertAgeRanges("abc") }
+        assertThrows<InvalidAgeRangeFormatException> { convertAgeRanges("abc") }
     }
 }

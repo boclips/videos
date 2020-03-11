@@ -147,7 +147,7 @@ class VideoController(
             )
         }
 
-        val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
+        val resources: VideoResource = searchVideo.byId(id)
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
 
         return ResponseEntity(resources, headers, HttpStatus.OK)
@@ -161,7 +161,7 @@ class VideoController(
     @GetMapping("/v1/videos/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
         val videoTitle =
-            searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+            searchVideo.byId(videoId).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
             if (it.contains(Regex("\\n\\n"))) {

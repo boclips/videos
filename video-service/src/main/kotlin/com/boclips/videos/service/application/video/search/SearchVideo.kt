@@ -21,15 +21,19 @@ class SearchVideo(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?, user: User): Video {
+    fun byId(id: String?): Video {
 
-        return getVideoById(resolveToAssetId(id)!!, user)
+        return getVideoById(resolveToAssetId(id)!!)
     }
 
-    // TODO - forcing all video service look up  to go via ES means admin search no longer has access to all videos
-    //  (due to hiding by distribution methods on the content partner level)
-    // We should refactor this once access rules are powerful enough to include and exclude content partners
-    @Deprecated("This will start using access rules once these support Content Partners.")
+    @Deprecated("""
+        This will start using access rules once these support Content Partners.
+        
+        forcing all video service look up  to go via ES means admin search no longer has access to all videos
+        (due to hiding by distribution methods on the content partner level).
+        
+        We should refactor this once access rules are powerful enough to include and exclude content partners
+    """)
     fun byIds(ids: List<String>): List<Video> {
         return videoRepository.findAll(ids.mapNotNull { this.resolveToAssetId(it, false) })
     }

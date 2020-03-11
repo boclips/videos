@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -33,7 +32,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         deleteVideo(videoId.value, UserFactory.sample())
 
-        assertThatThrownBy { videoService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        assertThatThrownBy { videoService.getPlayableVideo(videoId) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
@@ -55,7 +54,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         deleteVideo(videoId.value, UserFactory.sample())
 
-        assertThatThrownBy { videoService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        assertThatThrownBy { videoService.getPlayableVideo(videoId) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
