@@ -8,7 +8,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -89,43 +88,6 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(size).isEqualTo(1)
-        }
-
-        @Test
-        fun `limits search results when specific id access rule is provided`() {
-            val firstVideo = saveVideo(title = "access")
-            saveVideo(title = "no access")
-
-            val searchResults = videoService.search(
-                VideoSearchQuery(
-                    text = "access",
-                    pageSize = 10,
-                    pageIndex = 0
-                ), VideoAccess.Rules(
-                    listOf(VideoAccessRule.SpecificIds(setOf(firstVideo)))
-                )
-            )
-
-            assertThat(searchResults).hasSize(1)
-            assertThat(searchResults.map { it.videoId }).containsExactly(firstVideo)
-        }
-
-        @Test
-        fun `count takes specific ids access into ac-count (pun intended)`() {
-            val firstVideo = saveVideo(title = "access")
-            saveVideo(title = "no access")
-
-            val searchResults = videoService.count(
-                VideoSearchQuery(
-                    text = "access",
-                    pageSize = 10,
-                    pageIndex = 0
-                ), VideoAccess.Rules(
-                    listOf(VideoAccessRule.SpecificIds(setOf(firstVideo)))
-                )
-            )
-
-            assertThat(searchResults).isEqualTo(1)
         }
 
         @Test

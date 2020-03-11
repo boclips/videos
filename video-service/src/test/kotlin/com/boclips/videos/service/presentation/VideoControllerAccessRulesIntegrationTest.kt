@@ -31,5 +31,18 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(firstContractedVideo.value)))
         }
+
+        @Test
+        fun `excludes blacklisted videos from results`() {
+            val video = saveVideo(title = "Some Video")
+            val excludedVideo = saveVideo(title = "Blacklisted Video")
+
+            createExcludedVideosAccessRule(excludedVideo.value)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(video.value)))
+        }
     }
 }

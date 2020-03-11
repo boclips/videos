@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.accessrule.AccessRule
+import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.AccessRules
@@ -56,17 +57,16 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
     }
 
     private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccess {
-        val videoIds: List<VideoId> = accessRules.filterIsInstance<IncludedVideosAccessRule>()
-            .flatMap { accessRule -> accessRule.videoIds.map { id -> VideoId(id) } }
+        val videoAccessRules = accessRules.mapNotNull {
+            when (it) {
+                is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
+                is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
+                else -> null
+            }
+        }
 
         return when {
-            videoIds.isNotEmpty() -> VideoAccess.Rules(
-                listOf(
-                    VideoAccessRule.SpecificIds(
-                        videoIds.toSet()
-                    )
-                )
-            )
+            videoAccessRules.isNotEmpty() -> VideoAccess.Rules(videoAccessRules)
             else -> VideoAccess.Everything
         }
     }

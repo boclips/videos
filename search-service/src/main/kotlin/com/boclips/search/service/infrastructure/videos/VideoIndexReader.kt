@@ -15,6 +15,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.common.unit.Fuzziness
+import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.MultiMatchQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
@@ -45,7 +46,11 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
         val query =
-            if (isIdLookup(videoQuery)) lookUpById(videoQuery.ids, videoQuery.permittedVideoIds) else findBySearchTerm(
+            if (isIdLookup(videoQuery)) lookUpById(
+                videoQuery.ids,
+                videoQuery.permittedVideoIds,
+                videoQuery.deniedVideoIds
+            ) else findBySearchTerm(
                 videoQuery
             )
         val request = SearchRequest(
@@ -114,23 +119,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     )
                 }
             }.apply {
-                val includedVideos = videoQuery.permittedVideoIds?.subtract(videoQuery.deniedVideoIds ?: emptySet())
-
-                if (!includedVideos.isNullOrEmpty()) {
-                    must(
-                        boolQuery().must(
-                            idsQuery().addIds(*(videoQuery.permittedVideoIds.toTypedArray()))
-                        )
-                    )
-                }
+                permittedIdsFilter(this, videoQuery.permittedVideoIds)
             }.apply {
-                if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
-                    must(
-                        boolQuery().mustNot(
-                            idsQuery().addIds(*(videoQuery.deniedVideoIds.toTypedArray()))
-                        )
-                    )
-                }
+                deniedIdsFilter(this, videoQuery.deniedVideoIds)
             }
             .apply {
                 videoQuery.subjectsSetManually?.let { subjectsSetManually ->
@@ -163,6 +154,36 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         return esQuery
     }
 
+    private fun deniedIdsFilter(
+        currentQueryBuilder: BoolQueryBuilder,
+        deniedVideoIds: Set<String>?
+    ): BoolQueryBuilder {
+        if (!deniedVideoIds.isNullOrEmpty()) {
+            currentQueryBuilder.must(
+                boolQuery().mustNot(
+                    idsQuery().addIds(*(deniedVideoIds.toTypedArray()))
+                )
+            )
+        }
+
+        return currentQueryBuilder
+    }
+
+    private fun permittedIdsFilter(
+        currentQueryBuilder: BoolQueryBuilder,
+        permittedVideoIds: Set<String>?
+    ): BoolQueryBuilder {
+        if (!permittedVideoIds.isNullOrEmpty()) {
+            currentQueryBuilder.must(
+                boolQuery().must(
+                    idsQuery().addIds(*(permittedVideoIds.toTypedArray()))
+                )
+            )
+        }
+
+        return currentQueryBuilder
+    }
+
     private fun boostInstructionalVideos() = { innerQuery: QueryBuilder ->
         boostingQuery(
             innerQuery,
@@ -179,11 +200,19 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         ).negativeBoost(0.5F)
     }
 
-    private fun lookUpById(idsToLookup: List<String>, permittedIds: Set<String>?): SearchSourceBuilder {
+    private fun lookUpById(
+        idsToLookup: List<String>,
+        permittedIds: Set<String>?,
+        deniedIds: Set<String>?
+    ): SearchSourceBuilder {
         val permittedIdsToLookup =
             if (permittedIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(permittedIds)
+
         val bunchOfIds = idsQuery().addIds(*(permittedIdsToLookup.toTypedArray()))
+
         val lookUpByIdQuery = boolQuery().should(bunchOfIds)
+            .apply { deniedIdsFilter(this, deniedIds) }
+
         return SearchSourceBuilder().query(lookUpByIdQuery)
     }
 

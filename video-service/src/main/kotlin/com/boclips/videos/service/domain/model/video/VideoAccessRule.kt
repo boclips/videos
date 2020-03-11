@@ -1,9 +1,15 @@
 package com.boclips.videos.service.domain.model.video
 
 sealed class VideoAccessRule {
-    data class SpecificIds(val videoIds: Set<VideoId>) : VideoAccessRule() {
+    data class ExcludedIds(val videoIds: Set<VideoId>) : VideoAccessRule() {
         override fun toString(): String {
-            return "VideoAccessRule(restricted to ${videoIds.size} videos)"
+            return "VideoAccessRule(restricted to exclude ${videoIds.size} videos)"
+        }
+    }
+
+    data class IncludedIds(val videoIds: Set<VideoId>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to include ${videoIds.size} videos)"
         }
     }
 }

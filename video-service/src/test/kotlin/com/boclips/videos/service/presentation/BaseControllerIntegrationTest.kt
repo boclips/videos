@@ -28,7 +28,7 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = user.accessRules
 
             assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
-                VideoAccessRule.SpecificIds(
+                VideoAccessRule.IncludedIds(
                     videoIds = setOf(video)
                 )
             )

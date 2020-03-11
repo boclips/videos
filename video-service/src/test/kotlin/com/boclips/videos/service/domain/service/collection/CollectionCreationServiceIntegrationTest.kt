@@ -86,7 +86,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                     AccessRulesFactory.sample(
                         videoAccess = VideoAccess.Rules(
                             listOf(
-                                VideoAccessRule.SpecificIds(
+                                VideoAccessRule.IncludedIds(
                                     videoIds = emptySet()
                                 )
                             )

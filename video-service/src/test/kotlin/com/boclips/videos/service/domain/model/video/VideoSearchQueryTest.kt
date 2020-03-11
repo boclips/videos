@@ -170,7 +170,7 @@ class VideoSearchQueryTest {
         ).toSearchQuery(
             VideoAccess.Rules(
                 accessRules = listOf(
-                    VideoAccessRule.SpecificIds(
+                    VideoAccessRule.IncludedIds(
                         videoIds = setOf(
                             firstId,
                             secondId

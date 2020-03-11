@@ -21,7 +21,7 @@ class VideoIdsQueryTest {
             VideoIdsQuery(ids = listOf(id)).toSearchQuery(
                 VideoAccess.Rules(
                     listOf(
-                        VideoAccessRule.SpecificIds(
+                        VideoAccessRule.IncludedIds(
                             allowedVideos
                         )
                     )

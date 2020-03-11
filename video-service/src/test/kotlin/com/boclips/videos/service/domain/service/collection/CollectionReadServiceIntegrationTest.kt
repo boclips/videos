@@ -61,7 +61,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     AccessRulesFactory.sample(
                         videoAccess = VideoAccess.Rules(
                             listOf(
-                                VideoAccessRule.SpecificIds(
+                                VideoAccessRule.IncludedIds(
                                     setOf(
                                         firstPermittedId,
                                         secondPermittedId
@@ -195,7 +195,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     AccessRulesFactory.sample(
                         videoAccess = VideoAccess.Rules(
                             listOf(
-                                VideoAccessRule.SpecificIds(
+                                VideoAccessRule.IncludedIds(
                                     videoIds = setOf(
                                         firstPermittedId,
                                         secondPermittedId

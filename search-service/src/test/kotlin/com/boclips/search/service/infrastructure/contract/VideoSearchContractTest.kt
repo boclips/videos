@@ -1375,6 +1375,58 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `does not include denied video ids in id lookup`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1"),
+                SearchableVideoMetadataFactory.create(id = "2"),
+                SearchableVideoMetadataFactory.create(id = "3")
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ids = listOf("1", "2", "3"),
+                    deniedVideoIds = setOf("1")
+                )
+            )
+        )
+
+        assertThat(results).containsExactlyInAnyOrder("3", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `does not include denied video ids in search query`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "hello you"),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Oh hello"),
+                SearchableVideoMetadataFactory.create(id = "3", title = "hello to you")
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "hello",
+                    deniedVideoIds = setOf("1", "2")
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("3")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `filters by age range`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

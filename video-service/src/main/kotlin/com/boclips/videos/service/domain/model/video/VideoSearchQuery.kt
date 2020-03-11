@@ -27,7 +27,8 @@ class VideoIdsQuery(
     fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
         return VideoQuery(
             ids = ids.map { it.value },
-            permittedVideoIds = getPermittedVideoIds(videoAccess)
+            permittedVideoIds = mapAccessToPermittedVideoIds(videoAccess),
+            deniedVideoIds = mapAccessToDeniedVideoIds(videoAccess)
         )
     }
 }
@@ -92,7 +93,8 @@ class VideoSearchQuery(
                 contentPartnerNames = contentPartnerNames,
                 type = type,
                 isClassroom = isClassroom,
-                permittedVideoIds = getPermittedVideoIds(videoAccess)
+                permittedVideoIds = mapAccessToPermittedVideoIds(videoAccess),
+                deniedVideoIds = mapAccessToDeniedVideoIds(videoAccess)
             )
         }
     }
@@ -112,13 +114,24 @@ class VideoSearchQuery(
     }
 }
 
-fun getPermittedVideoIds(videoAccess: VideoAccess): Set<String>? {
+fun mapAccessToPermittedVideoIds(videoAccess: VideoAccess): Set<String>? {
     return when (videoAccess) {
-        is VideoAccess.Rules -> videoAccess.accessRules.flatMap { accessRule ->
-            when (accessRule) {
-                is VideoAccessRule.SpecificIds -> accessRule.videoIds.map { id -> id.value }
-            }
-        }.toSet()
+        is VideoAccess.Rules -> videoAccess.accessRules
+            .filterIsInstance<VideoAccessRule.IncludedIds>()
+            .takeIf { it.isNotEmpty() }
+            ?.flatMap { accessRule -> accessRule.videoIds.map { id -> id.value } }
+            ?.toSet()
+        VideoAccess.Everything -> null
+    }
+}
+
+fun mapAccessToDeniedVideoIds(videoAccess: VideoAccess): Set<String>? {
+    return when (videoAccess) {
+        is VideoAccess.Rules -> videoAccess.accessRules
+            .filterIsInstance<VideoAccessRule.ExcludedIds>()
+            .takeIf { it.isNotEmpty() }
+            ?.flatMap { accessRule -> accessRule.videoIds.map { id -> id.value } }
+            ?.toSet()
         VideoAccess.Everything -> null
     }
 }

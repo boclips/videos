@@ -23,14 +23,21 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
 
         return when {
             idsToLookup.isNotEmpty() -> index.filter {
-                    val permittedIdsToLookup =
-                        if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
-                    permittedIdsToLookup.contains(it.key)
+                val permittedIdsToLookup =
+                    if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
+                permittedIdsToLookup.contains(it.key)
+            }
+                .filter {
+                    if (query.deniedVideoIds.isNullOrEmpty()) true
+                    else !query.deniedVideoIds.contains(it.key)
                 }
                 .map { video -> video.key }
             else -> index
                 .filter { entry ->
                     query.permittedVideoIds.isNullOrEmpty() || query.permittedVideoIds.contains(entry.value.id)
+                }
+                .filter { entry ->
+                    query.deniedVideoIds.isNullOrEmpty() || !query.deniedVideoIds.contains(entry.value.id)
                 }
                 .filter { entry ->
                     entry.value.title.contains(phrase, ignoreCase = true)

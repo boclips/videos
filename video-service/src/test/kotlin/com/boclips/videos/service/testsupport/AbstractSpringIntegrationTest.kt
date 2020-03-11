@@ -15,6 +15,7 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
@@ -425,6 +426,13 @@ abstract class AbstractSpringIntegrationTest {
         userServiceClient.addAccessRule(IncludedVideosAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoIds = contractedVideoIds.toList()
+        })
+    }
+
+    fun createExcludedVideosAccessRule(vararg excludedVideoIds: String) {
+        userServiceClient.addAccessRule(ExcludedVideosAccessRule().apply {
+            name = UUID.randomUUID().toString()
+            videoIds = excludedVideoIds.toList()
         })
     }
 

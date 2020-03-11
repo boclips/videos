@@ -117,7 +117,8 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             videoIndexWriter.upsert(
                 sequenceOf(
                     SearchableVideoMetadataFactory.create(id = "1", title = "apple"),
-                    SearchableVideoMetadataFactory.create(id = "2", title = "apple & bananas")
+                    SearchableVideoMetadataFactory.create(id = "2", title = "apple & bananas"),
+                    SearchableVideoMetadataFactory.create(id = "3", title = "apple & bananas & pineapples")
                 )
             )
 
@@ -125,7 +126,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         deniedVideoIds = setOf("1"),
-                        permittedVideoIds = setOf("1"),
+                        permittedVideoIds = setOf("1", "2"),
                         phrase = "apple"
                     )
                 )

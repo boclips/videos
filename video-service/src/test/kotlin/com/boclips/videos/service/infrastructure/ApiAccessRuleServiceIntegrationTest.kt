@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ContentPackage
+import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
@@ -11,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -48,7 +50,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
         )
         assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
-            VideoAccessRule.SpecificIds(
+            VideoAccessRule.IncludedIds(
                 videoIds = setOf(VideoId(videoId))
             )
         )
@@ -120,6 +122,54 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = accessRuleService.getRules(user)
 
             assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
+        }
+
+        @Test
+        fun `can convert ExcludedAccess rule to domain`() {
+            val firstId = TestFactories.createVideoId()
+            val secondId = TestFactories.createVideoId()
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(ExcludedVideosAccessRule().apply {
+                        name = "bad videos"
+                        videoIds = listOf(firstId.value, secondId.value)
+                    })
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.ExcludedIds(setOf(firstId, secondId)))
+        }
+
+        @Test
+        fun `can convert all video access rule types to domain`() {
+            val firstId = TestFactories.createVideoId()
+            val secondId = TestFactories.createVideoId()
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(
+                        IncludedVideosAccessRule().apply {
+                            name = "good videos"
+                            videoIds = listOf(firstId.value)
+                        },
+                        ExcludedVideosAccessRule().apply {
+                            name = "bad videos"
+                            videoIds = listOf(secondId.value)
+                        }
+                    )
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+
+            assertThat(videoAccess.accessRules).containsExactlyInAnyOrder(
+                VideoAccessRule.IncludedIds(setOf(firstId)),
+                VideoAccessRule.ExcludedIds(setOf(secondId))
+            )
         }
     }
 
