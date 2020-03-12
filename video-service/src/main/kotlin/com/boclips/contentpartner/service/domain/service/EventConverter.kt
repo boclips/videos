@@ -7,7 +7,7 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
-import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
+import com.boclips.videos.api.response.contentpartner.IngestType
 import com.boclips.eventbus.domain.contentpartner.IngestDetails as EventBusIngestDetails
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
 
@@ -38,14 +38,15 @@ class EventConverter {
 
     fun toIngestDetailsPayload(ingest: IngestDetails): EventBusIngestDetails {
         val (type, url) = when(ingest) {
-            ManualIngest -> IngestDetailTypes.MANUAL to null
-            CustomIngest -> IngestDetailTypes.CUSTOM to null
-            is MrssFeedIngest -> IngestDetailTypes.MRSS to ingest.url
-            is YoutubeScrapeIngest -> IngestDetailTypes.YOUTUBE to ingest.url
+            ManualIngest -> IngestType.MANUAL to null
+            CustomIngest -> IngestType.CUSTOM to null
+            is MrssFeedIngest -> IngestType.MRSS to ingest.url
+            is YoutubeScrapeIngest -> IngestType.YOUTUBE to ingest.url
         }
 
         return EventBusIngestDetails
-            .builder().type(type)
+            .builder()
+            .type(type.name)
             .url(url)
             .build()
     }

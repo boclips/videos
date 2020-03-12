@@ -1,32 +1,32 @@
 package com.boclips.contentpartner.service.domain.model
 
-import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
+import com.boclips.videos.api.response.contentpartner.IngestType
 
 sealed class IngestDetails {
-    abstract fun type(): String
+    abstract fun type(): IngestType
 }
 
 object ManualIngest : IngestDetails() {
-    override fun type(): String {
-        return IngestDetailTypes.MANUAL
+    override fun type(): IngestType {
+        return IngestType.MANUAL
     }
 }
 
 object CustomIngest : IngestDetails() {
-    override fun type(): String {
-        return IngestDetailTypes.CUSTOM
+    override fun type(): IngestType {
+        return IngestType.CUSTOM
     }
 }
 
 data class MrssFeedIngest(val url: String) : IngestDetails() {
-    override fun type(): String {
-        return IngestDetailTypes.MRSS
+    override fun type(): IngestType {
+        return IngestType.MRSS
     }
 }
 
 data class YoutubeScrapeIngest(val url: String) : IngestDetails() {
-    override fun type(): String {
-        return IngestDetailTypes.YOUTUBE
+    override fun type(): IngestType {
+        return IngestType.YOUTUBE
     }
 }
 

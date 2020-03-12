@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.domain.model.CustomIngest
 import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
-import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
+import com.boclips.videos.api.response.contentpartner.IngestType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,7 +16,7 @@ class EventConverterTest {
     fun `convert manual ingest details`() {
         val payload = converter.toIngestDetailsPayload(ManualIngest)
 
-        assertThat(payload.type).isEqualTo(IngestDetailTypes.MANUAL)
+        assertThat(payload.type).isEqualTo(IngestType.MANUAL.name)
         assertThat(payload.url).isNull()
     }
 
@@ -24,7 +24,7 @@ class EventConverterTest {
     fun `convert custom ingest details`() {
         val payload = converter.toIngestDetailsPayload(CustomIngest)
 
-        assertThat(payload.type).isEqualTo(IngestDetailTypes.CUSTOM)
+        assertThat(payload.type).isEqualTo(IngestType.CUSTOM.name)
         assertThat(payload.url).isNull()
     }
 
@@ -32,7 +32,7 @@ class EventConverterTest {
     fun `convert mrss ingest details`() {
         val payload = converter.toIngestDetailsPayload(MrssFeedIngest("http://feed.me"))
 
-        assertThat(payload.type).isEqualTo(IngestDetailTypes.MRSS)
+        assertThat(payload.type).isEqualTo(IngestType.MRSS.name)
         assertThat(payload.url).isEqualTo("http://feed.me")
     }
 
@@ -40,7 +40,7 @@ class EventConverterTest {
     fun `convert youtube ingest details`() {
         val payload = converter.toIngestDetailsPayload(YoutubeScrapeIngest("http://yt.channel"))
 
-        assertThat(payload.type).isEqualTo(IngestDetailTypes.YOUTUBE)
+        assertThat(payload.type).isEqualTo(IngestType.YOUTUBE.name)
         assertThat(payload.url).isEqualTo("http://yt.channel")
     }
 }

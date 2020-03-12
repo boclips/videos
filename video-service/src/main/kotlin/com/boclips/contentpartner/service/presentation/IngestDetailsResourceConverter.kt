@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.domain.model.IngestDetails
 import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
-import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
+import com.boclips.videos.api.response.contentpartner.IngestType
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 
 class IngestDetailsResourceConverter {
@@ -21,10 +21,10 @@ class IngestDetailsResourceConverter {
 
     fun fromResource(ingestDetailsResource: IngestDetailsResource): IngestDetails {
         return when(ingestDetailsResource.type) {
-            IngestDetailTypes.MANUAL -> ManualIngest
-            IngestDetailTypes.CUSTOM -> CustomIngest
-            IngestDetailTypes.MRSS -> MrssFeedIngest(ingestDetailsResource.url!!)
-            IngestDetailTypes.YOUTUBE -> YoutubeScrapeIngest(ingestDetailsResource.url!!)
+            IngestType.MANUAL -> ManualIngest
+            IngestType.CUSTOM -> CustomIngest
+            IngestType.MRSS -> MrssFeedIngest(ingestDetailsResource.url!!)
+            IngestType.YOUTUBE -> YoutubeScrapeIngest(ingestDetailsResource.url!!)
             else -> throw IllegalArgumentException("Unknown ingest details type: ${ingestDetailsResource.type}")
         }
     }

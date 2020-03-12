@@ -6,6 +6,7 @@ import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
+import com.boclips.videos.api.response.contentpartner.IngestType
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -259,9 +260,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by ingest types`() {
-        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "MRSS", url = "http://feed.me"))
-        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "YOUTUBE", url = "http://yt.com"))
-        saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "MANUAL"))
+        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MRSS, url = "http://feed.me"))
+        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, url = "http://yt.com"))
+        saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL))
 
         mockMvc.perform(
             get("/v1/content-partners?ingestType=MRSS&ingestType=YOUTUBE").asBoclipsEmployee()
