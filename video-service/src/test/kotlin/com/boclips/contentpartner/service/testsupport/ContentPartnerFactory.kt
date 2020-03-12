@@ -15,19 +15,17 @@ import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.contentpartner.service.domain.model.RequestContext
-import com.boclips.contentpartner.service.domain.model.User
-import com.boclips.contentpartner.service.domain.model.UserId
 import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.infrastructure.IngestDetailsDocument
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
 import java.time.Period
 import java.util.Locale
 
-object TestFactories {
+object ContentPartnerFactory {
 
     fun aValidId(): String {
         return ObjectId().toHexString()
@@ -107,6 +105,16 @@ object TestFactories {
         isTranscriptProvided = isTranscriptProvided
     )
 
+    fun createIngestDetailsResource(
+        type: String = "MANUAL",
+        url: String? = null
+    ): IngestDetailsResource {
+        return IngestDetailsResource(
+            type = type,
+            url = url
+        )
+    }
+
     fun createLegalRestrictions(text: String = "No restrictions."): LegalRestriction {
         return LegalRestriction(
             id = LegalRestrictionsId(TestFactories.aValidId()),
@@ -121,15 +129,3 @@ object TestFactories {
     }
 }
 
-object UserFactory {
-    fun sample(
-        isAdministrator: Boolean = false,
-        id: String = "userio-123"
-    ): User {
-        return User(
-            id = UserId(id),
-            isPermittedToAccessBackoffice = isAdministrator,
-            context = RequestContext(origin = "https://teachers.boclips.com")
-        )
-    }
-}

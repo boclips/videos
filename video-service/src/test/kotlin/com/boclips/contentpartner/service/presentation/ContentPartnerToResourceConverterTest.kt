@@ -6,8 +6,8 @@ import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
-import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailTypes
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
@@ -41,7 +41,7 @@ class ContentPartnerToResourceConverterTest {
     fun `convert content partner to resource`() {
         val contentPartner = createContentPartner(
             credit = Credit.PartnerCredit,
-            legalRestriction = TestFactories.createLegalRestrictions(text = "Forbidden in the EU"),
+            legalRestriction = ContentPartnerFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(Currency.getInstance("GBP")),
             description = "this is a description",

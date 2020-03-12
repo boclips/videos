@@ -8,7 +8,8 @@ object ContentPartnerFiltersConverter {
         name: String? = null,
         official: Boolean? = null,
         accreditedYTChannelId: String?,
-        hubspotId: String? = null
+        hubspotId: String? = null,
+        ingestTypes: List<String>? = null
     ): List<ContentPartnerFilter> =
         listOfNotNull(
             getNameFilter(name),
@@ -16,7 +17,8 @@ object ContentPartnerFiltersConverter {
             getAccreditedToFilter(
                 accreditedYTChannelId
             ),
-            getHubspotId(hubspotId)
+            getHubspotId(hubspotId),
+            getIngestTypesFilter(ingestTypes)
         )
 
     private fun getNameFilter(name: String?) =
@@ -30,4 +32,7 @@ object ContentPartnerFiltersConverter {
 
     private fun getHubspotId(hubspotId: String?) =
         hubspotId?.let { ContentPartnerFilter.HubspotIdFilter(hubspotId = hubspotId) }
+
+    private fun getIngestTypesFilter(ingestTypes: List<String>?) =
+        ingestTypes?.let { ContentPartnerFilter.IngestTypesFilter(ingestTypes = it) }
 }

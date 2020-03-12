@@ -7,12 +7,14 @@ class GetContentPartners(private val contentPartnerRepository: ContentPartnerRep
     operator fun invoke(
         name: String? = null,
         official: Boolean? = null,
-        accreditedToYtChannelId: String? = null
+        accreditedToYtChannelId: String? = null,
+        ingestTypes: List<String>? = null
     ): Iterable<ContentPartner> {
         val filters = ContentPartnerFiltersConverter.convert(
-            name,
-            official,
-            accreditedToYtChannelId
+            name = name,
+            official = official,
+            accreditedYTChannelId = accreditedToYtChannelId,
+            ingestTypes = ingestTypes
         )
 
         return contentPartnerRepository.findAll(filters)

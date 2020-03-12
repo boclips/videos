@@ -38,15 +38,15 @@ class RebuildVideoIndexTest {
         searchService = DefaultVideoSearch(inMemorySearchService, inMemorySearchService)
 
         val contentPartnerRepository: ContentPartnerRepository = getMockContentPartnerRepo(
-            com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner(
+            com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
                 id = ContentPartnerId(bothContentPartnerId),
                 distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
             ),
-            com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner(
+            com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
                 id = ContentPartnerId(streamableContentPartnerId),
                 distributionMethods = setOf(DistributionMethod.STREAM)
             ),
-            com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner(
+            com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
                 id = ContentPartnerId(downloadContentPartnerId),
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )

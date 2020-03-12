@@ -221,7 +221,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     private fun createVideo(distributionMethods: Set<DistributionMethod> = emptySet()): Video {
-        val contentPartner = com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner(
+        val contentPartner = com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
             distributionMethods = distributionMethods
         )
 

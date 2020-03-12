@@ -12,8 +12,8 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartner
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -206,7 +206,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             listOf(
                 ContentPartnerUpdateCommand.ReplaceAgeRanges(
                     contentPartnerId = contentPartner.contentPartnerId,
-                    ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange(min = 10, max = 20)))
+                    ageRangeBuckets = AgeRangeBuckets(listOf(ContentPartnerFactory.createAgeRange(min = 10, max = 20)))
                 )
             )
         )
@@ -220,7 +220,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `replace legal restrictions`() {
         val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
         val legalRestrictions = LegalRestriction(
-            id = LegalRestrictionsId(TestFactories.aValidId()),
+            id = LegalRestrictionsId(ContentPartnerFactory.aValidId()),
             text = "New restrictions"
         )
 

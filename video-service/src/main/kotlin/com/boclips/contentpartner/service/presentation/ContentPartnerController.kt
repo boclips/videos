@@ -57,7 +57,8 @@ class ContentPartnerController(
         val contentPartners = fetchContentPartners(
             name = contentPartnerFilterRequest.name,
             official = contentPartnerFilterRequest.official,
-            accreditedToYtChannelId = contentPartnerFilterRequest.accreditedToYtChannelId
+            accreditedToYtChannelId = contentPartnerFilterRequest.accreditedToYtChannelId,
+            ingestTypes = contentPartnerFilterRequest.ingestType
         )
 
         val resources = contentPartners.map {

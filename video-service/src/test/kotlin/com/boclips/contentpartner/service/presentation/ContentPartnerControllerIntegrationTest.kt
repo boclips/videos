@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
@@ -13,6 +14,7 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -253,6 +255,20 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("CAD")))
+    }
+
+    @Test
+    fun `can filter content partners by ingest types`() {
+        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "MRSS", url = "http://feed.me"))
+        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "YOUTUBE", url = "http://yt.com"))
+        saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = "MANUAL"))
+
+        mockMvc.perform(
+            get("/v1/content-partners?ingestType=MRSS&ingestType=YOUTUBE").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].name", oneOf("mrss", "yt")))
+            .andExpect(jsonPath("$._embedded.contentPartners[1].name", oneOf("mrss", "yt")))
     }
 
     @Test

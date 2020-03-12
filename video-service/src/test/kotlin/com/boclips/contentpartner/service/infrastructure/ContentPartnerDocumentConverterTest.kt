@@ -12,8 +12,8 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.contentpartner.service.testsupport.TestFactories
-import com.boclips.contentpartner.service.testsupport.TestFactories.createContentPartnerDocument
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartnerDocument
 import com.boclips.videos.api.common.Specified
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -31,9 +31,9 @@ internal class ContentPartnerDocumentConverterTest {
         val original = ContentPartner(
             contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
             name = "The grandest content partner there ever lived",
-            ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange())),
+            ageRangeBuckets = AgeRangeBuckets(listOf(ContentPartnerFactory.createAgeRange())),
             credit = Credit.PartnerCredit,
-            legalRestriction = TestFactories.createLegalRestrictions(),
+            legalRestriction = ContentPartnerFactory.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(Currency.getInstance("GBP")),
             description = "This is a description",
@@ -58,7 +58,7 @@ internal class ContentPartnerDocumentConverterTest {
                 curriculumAligned = "this is a curriculum",
                 bestForTags = listOf("123", "345"),
                 subjects = listOf("subject 1", "subjects 2"),
-                ageRangeBuckets = AgeRangeBuckets(listOf(TestFactories.createAgeRange()))
+                ageRangeBuckets = AgeRangeBuckets(listOf(ContentPartnerFactory.createAgeRange()))
             )
         )
 
@@ -99,7 +99,7 @@ internal class ContentPartnerDocumentConverterTest {
 
         @Test
         fun `the content partner is available on all distribution methods`() {
-            val contentPartner = TestFactories.createContentPartner(
+            val contentPartner = ContentPartnerFactory.createContentPartner(
                 distributionMethods = emptySet()
             )
 
@@ -111,7 +111,7 @@ internal class ContentPartnerDocumentConverterTest {
 
         @Test
         fun `the content partner is not available at all`() {
-            val contentPartner = TestFactories.createContentPartner(
+            val contentPartner = ContentPartnerFactory.createContentPartner(
                 distributionMethods = DistributionMethod.ALL
             )
 
@@ -123,7 +123,7 @@ internal class ContentPartnerDocumentConverterTest {
 
         @Test
         fun `the content partner is only available for download`() {
-            val contentPartner = TestFactories.createContentPartner(
+            val contentPartner = ContentPartnerFactory.createContentPartner(
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
 
@@ -135,7 +135,7 @@ internal class ContentPartnerDocumentConverterTest {
 
         @Test
         fun `the content partner is only available for stream`() {
-            val contentPartner = TestFactories.createContentPartner(
+            val contentPartner = ContentPartnerFactory.createContentPartner(
                 distributionMethods = setOf(DistributionMethod.STREAM)
             )
 

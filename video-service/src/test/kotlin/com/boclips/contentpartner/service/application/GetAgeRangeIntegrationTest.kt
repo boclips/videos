@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.AgeRangeNotFoun
 import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,7 +24,7 @@ class GetAgeRangeIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns expected age range when it's found`() {
         val id = "test-age-range-id"
-        val ageRange = TestFactories.createAgeRange(id = id)
+        val ageRange = ContentPartnerFactory.createAgeRange(id = id)
 
         ageRangeRepository.create(ageRange)
 

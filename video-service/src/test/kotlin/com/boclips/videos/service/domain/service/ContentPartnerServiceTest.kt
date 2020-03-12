@@ -2,7 +2,7 @@ package com.boclips.videos.service.domain.service
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.testsupport.TestFactories
+import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.nhaarman.mockitokotlin2.any
@@ -64,7 +64,7 @@ class ContentPartnerServiceTest {
     private fun mockRepository(distributionMethods: Set<DistributionMethod>): ContentPartnerRepository {
         return mock() {
             on { findById(any()) } doReturn
-                TestFactories.createContentPartner(
+                ContentPartnerFactory.createContentPartner(
                     distributionMethods = distributionMethods
                 )
         }

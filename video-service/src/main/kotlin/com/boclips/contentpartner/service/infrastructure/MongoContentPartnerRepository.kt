@@ -14,6 +14,7 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.`in`
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.div
@@ -203,6 +204,8 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                 Credit.PartnerCredit -> ContentPartnerDocument::youtubeChannelId ne null
             }
             is ContentPartnerFilter.HubspotIdFilter -> ContentPartnerDocument::hubspotId eq filter.hubspotId
+            is ContentPartnerFilter.IngestTypesFilter ->
+                ContentPartnerDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes
         }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {
