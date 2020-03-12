@@ -2,12 +2,14 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ContentPackage
+import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -125,7 +127,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `can convert ExcludedAccess rule to domain`() {
+        fun `can convert ExcludedVideosAccess rule to domain`() {
             val firstId = TestFactories.createVideoId()
             val secondId = TestFactories.createVideoId()
             whenever(userServiceClient.getContentPackage(anyString()))
@@ -141,6 +143,56 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
             val videoAccess = accessRules.videoAccess as VideoAccess.Rules
             assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.ExcludedIds(setOf(firstId, secondId)))
+        }
+
+        @Test
+        fun `can convert ExcludedVideoTypesAccess rule to domain`() {
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+                        name = "bad video types"
+                        videoTypes = listOf("NEWS")
+                    })
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS)))
+        }
+
+        @Test
+        fun `ignores any unknown content types`() {
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+                        name = "bad video types"
+                        videoTypes = listOf("UNKNOWN", "NEWS")
+                    })
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsExactly(VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS)))
+        }
+
+        @Test
+        fun `access to everything if only unknown content types are specified`() {
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+                        name = "bad video types"
+                        videoTypes = listOf("UNKNOWN")
+                    })
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            assertThat(accessRules.videoAccess is VideoAccess.Everything).isTrue()
         }
 
         @Test

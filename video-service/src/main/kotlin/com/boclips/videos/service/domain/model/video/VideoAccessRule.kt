@@ -12,6 +12,12 @@ sealed class VideoAccessRule {
             return "VideoAccessRule(restricted to include ${videoIds.size} videos)"
         }
     }
+
+    data class ExcludedContentTypes(val contentTypes: Set<ContentType>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to exclude ${contentTypes.size} content types)"
+        }
+    }
 }
 
 sealed class VideoAccess {

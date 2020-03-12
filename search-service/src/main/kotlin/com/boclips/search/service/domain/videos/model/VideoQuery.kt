@@ -21,7 +21,8 @@ class VideoQuery(
     val subjectsSetManually: Boolean? = null,
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
-    val type: Set<VideoType> = emptySet(),
+    val includedType: Set<VideoType> = emptySet(),
+    val excludedType: Set<VideoType> = emptySet(),
     val permittedVideoIds: Set<String>? = null,
     val deniedVideoIds: Set<String>? = null,
     val isClassroom: Boolean? = null

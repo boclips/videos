@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoSearchQuery
@@ -49,6 +51,23 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(videos.map { it.videoId }).containsExactly(secondVideoId)
+        }
+
+        @Test
+        fun `has access to everything but excluded content types`() {
+            val stockVideoId = saveVideo(type = ContentType.STOCK)
+            val newsVideoId = saveVideo(type = ContentType.NEWS)
+            val instructionalVideoId = saveVideo(type = ContentType.INSTRUCTIONAL_CLIPS)
+
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+
+            val videos = videoService.getPlayableVideos(
+                listOf(stockVideoId, newsVideoId, instructionalVideoId), VideoAccess.Rules(
+                    listOf(accessRule)
+                )
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
         }
     }
 
@@ -108,6 +127,49 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             assertThat(searchResults).hasSize(1)
             assertThat(searchResults.map { it.videoId }).containsExactly(secondVideo)
+        }
+
+        @Test
+        fun `excluded content types are not returned in search results`() {
+            saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
+            saveVideo(title = "Wild Elephant", type = ContentType.NEWS)
+            val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
+
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+
+            val videos = videoService.search(
+                VideoSearchQuery(
+                    text = "Wild",
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccess.Rules(
+                    listOf(accessRule)
+                )
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
+        }
+
+        @Test
+        fun `excluded content types are not return in search results even when filtering by an excluded type`() {
+            saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
+            saveVideo(title = "Wild Elephant", type = ContentType.NEWS)
+            val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
+
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+
+            val videos = videoService.search(
+                VideoSearchQuery(
+                    text = "Wild",
+                    type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccess.Rules(
+                    listOf(accessRule)
+                )
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
         }
     }
 }

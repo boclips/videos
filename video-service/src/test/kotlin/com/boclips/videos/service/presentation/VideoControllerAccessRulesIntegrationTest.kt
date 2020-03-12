@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.equalTo
@@ -43,6 +44,19 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(video.value)))
+        }
+
+        @Test
+        fun `excludes certain video ContentTypes from results`() {
+            val stockVideo = saveVideo(title = "Some Video", type = ContentType.STOCK)
+            saveVideo(title = "Some Video", type = ContentType.NEWS)
+
+            createExcludedVideoTypesAccessRule(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideo.value)))
         }
     }
 }

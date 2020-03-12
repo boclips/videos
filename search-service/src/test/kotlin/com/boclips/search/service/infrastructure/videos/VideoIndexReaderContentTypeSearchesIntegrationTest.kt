@@ -34,7 +34,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val documentIds = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    type = setOf(
+                    includedType = setOf(
                         VideoType.STOCK,
                         VideoType.INSTRUCTIONAL
                     )
@@ -60,13 +60,64 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val documentIds = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    type = emptySet()
+                    includedType = emptySet()
                 ), 0, 10
             )
         )
 
         assertThat(documentIds).containsOnly("1", "2", "3", "4", "5")
     }
+
+    @Test
+    fun `excluded types take precedence`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL),
+                SearchableVideoMetadataFactory.create(id = "4", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "5", type = VideoType.STOCK)
+            )
+        )
+
+        val documentIds = videoIndexReader.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    includedType = setOf(
+                        VideoType.STOCK,
+                        VideoType.INSTRUCTIONAL
+                    ),
+                    excludedType = setOf(
+                        VideoType.STOCK
+                    )
+                ), 0, 10
+            )
+        )
+
+        assertThat(documentIds).containsOnly("3")
+    }
+
+    @Test
+    fun `excluded types can be combined with phrase queries`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "Wild Rhino", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "3", title = "Cyborg Rhino", type = VideoType.STOCK)
+            )
+        )
+
+        val documentIds = videoIndexReader.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    phrase = "Rhino",
+                    excludedType = setOf(
+                        VideoType.NEWS
+                    )
+                ), 0, 10
+            )
+        )
+
+        assertThat(documentIds).containsOnly("3")
+    }
 }
-
-

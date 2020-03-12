@@ -53,7 +53,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                     query = VideoQuery(
                         permittedVideoIds = setOf("1", "2"),
                         phrase = "apple",
-                        type = setOf(VideoType.NEWS)
+                        includedType = setOf(VideoType.NEWS)
                     )
                 )
             )

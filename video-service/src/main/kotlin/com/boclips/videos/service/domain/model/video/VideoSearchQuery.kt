@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 import java.time.LocalDate
 
 enum class SortKey {
@@ -27,8 +28,9 @@ class VideoIdsQuery(
     fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
         return VideoQuery(
             ids = ids.map { it.value },
-            permittedVideoIds = mapAccessToPermittedVideoIds(videoAccess),
-            deniedVideoIds = mapAccessToDeniedVideoIds(videoAccess)
+            permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
+            deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
+            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess)
         )
     }
 }
@@ -91,10 +93,11 @@ class VideoSearchQuery(
                 subjectsSetManually = subjectQuery.setManually,
                 promoted = promoted,
                 contentPartnerNames = contentPartnerNames,
-                type = type,
+                includedType = type,
+                excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
                 isClassroom = isClassroom,
-                permittedVideoIds = mapAccessToPermittedVideoIds(videoAccess),
-                deniedVideoIds = mapAccessToDeniedVideoIds(videoAccess)
+                permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
+                deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess)
             )
         }
     }
@@ -111,27 +114,5 @@ class VideoSearchQuery(
             return VideoQuery(ids = ids)
         }
         return VideoQuery(phrase = query)
-    }
-}
-
-fun mapAccessToPermittedVideoIds(videoAccess: VideoAccess): Set<String>? {
-    return when (videoAccess) {
-        is VideoAccess.Rules -> videoAccess.accessRules
-            .filterIsInstance<VideoAccessRule.IncludedIds>()
-            .takeIf { it.isNotEmpty() }
-            ?.flatMap { accessRule -> accessRule.videoIds.map { id -> id.value } }
-            ?.toSet()
-        VideoAccess.Everything -> null
-    }
-}
-
-fun mapAccessToDeniedVideoIds(videoAccess: VideoAccess): Set<String>? {
-    return when (videoAccess) {
-        is VideoAccess.Rules -> videoAccess.accessRules
-            .filterIsInstance<VideoAccessRule.ExcludedIds>()
-            .takeIf { it.isNotEmpty() }
-            ?.flatMap { accessRule -> accessRule.videoIds.map { id -> id.value } }
-            ?.toSet()
-        VideoAccess.Everything -> null
     }
 }

@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.accessrule.AccessRule
+import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
@@ -9,6 +10,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -61,6 +63,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
             when (it) {
                 is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
                 is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
+                is ExcludedVideoTypesAccessRule -> extractExcludedContentTypes(it)
                 else -> null
             }
         }
@@ -70,6 +73,22 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
             else -> VideoAccess.Everything
         }
     }
+
+    private fun extractExcludedContentTypes(accessRule: ExcludedVideoTypesAccessRule): VideoAccessRule.ExcludedContentTypes? =
+        accessRule.videoTypes
+            .mapNotNull { type ->
+                when (type) {
+                    "NEWS" -> ContentType.NEWS
+                    "INSTRUCTIONAL" -> ContentType.INSTRUCTIONAL_CLIPS
+                    "STOCK" -> ContentType.STOCK
+                    else -> {
+                        logger.info { "Invalid Content Type: $type" }
+                        null
+                    }
+                }
+            }
+            .takeIf { contentTypes -> contentTypes.isNotEmpty() }
+            ?.let { contentTypes -> VideoAccessRule.ExcludedContentTypes(contentTypes = contentTypes.toSet()) }
 
     @Recover
     fun getRulesRecoveryMethod(e: Exception): AccessRules {

@@ -289,12 +289,67 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    type = setOf(VideoType.NEWS, VideoType.STOCK)
+                    includedType = setOf(VideoType.NEWS, VideoType.STOCK)
                 )
             )
         )
 
         assertThat(result).containsOnly("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters out videos of excluded video types`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "Johnson Dancing",
+                    type = VideoType.INSTRUCTIONAL
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    excludedType = setOf(VideoType.NEWS, VideoType.STOCK)
+                )
+            )
+        )
+
+        assertThat(result).containsOnly("3")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters out specified video types when retrieving videos by ids`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL)
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    ids = listOf("1", "2", "3"),
+                    excludedType = setOf(VideoType.NEWS, VideoType.STOCK)
+                )
+            )
+        )
+
+        assertThat(result).containsOnly("3")
     }
 
     @ParameterizedTest
@@ -318,7 +373,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    type = emptySet()
+                    includedType = emptySet()
                 )
             )
         )

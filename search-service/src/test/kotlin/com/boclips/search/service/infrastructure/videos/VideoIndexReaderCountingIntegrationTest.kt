@@ -68,7 +68,7 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             )
         )
 
-        val results = videoIndexReader.count(VideoQuery(type = setOf(VideoType.NEWS)))
+        val results = videoIndexReader.count(VideoQuery(includedType = setOf(VideoType.NEWS)))
 
         assertThat(results).isEqualTo(2)
     }

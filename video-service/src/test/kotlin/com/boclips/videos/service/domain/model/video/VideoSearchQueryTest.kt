@@ -127,7 +127,7 @@ class VideoSearchQueryTest {
         )
             .toSearchQuery(VideoAccess.Everything)
 
-        assertThat(searchQuery.type).containsExactly(VideoType.NEWS, VideoType.STOCK)
+        assertThat(searchQuery.includedType).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
 
     @Test

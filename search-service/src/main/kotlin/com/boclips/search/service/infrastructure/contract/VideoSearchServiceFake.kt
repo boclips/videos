@@ -16,99 +16,92 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
 
     override fun idsMatching(index: MutableMap<String, VideoMetadata>, query: VideoQuery): List<String> {
         val phrase = query.phrase
-        val idsToLookup = query.ids
 
         val releaseDateFrom: LocalDate = query.releaseDateFrom ?: LocalDate.MIN
         val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
 
-        return when {
-            idsToLookup.isNotEmpty() -> index.filter {
-                val permittedIdsToLookup =
-                    if (query.permittedVideoIds.isNullOrEmpty()) idsToLookup else idsToLookup.intersect(query.permittedVideoIds)
-                permittedIdsToLookup.contains(it.key)
+        return index
+            .filter { entry ->
+                query.ids.isNullOrEmpty() || query.ids.contains(entry.value.id)
             }
-                .filter {
-                    if (query.deniedVideoIds.isNullOrEmpty()) true
-                    else !query.deniedVideoIds.contains(it.key)
+            .filter { entry ->
+                query.permittedVideoIds.isNullOrEmpty() || query.permittedVideoIds.contains(entry.value.id)
+            }
+            .filter { entry ->
+                query.deniedVideoIds.isNullOrEmpty() || !query.deniedVideoIds.contains(entry.value.id)
+            }
+            .filter { entry ->
+                entry.value.title.contains(phrase, ignoreCase = true)
+                    || entry.value.description.contains(phrase, ignoreCase = true)
+                    || entry.value.contentProvider.contains(phrase, ignoreCase = true)
+                    || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
+            }
+            .filter { entry ->
+                if (query.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.bestFor)
+            }
+            .filter { entry ->
+                if (query.includedType.isEmpty()) true else query.includedType.contains(entry.value.type)
+            }
+            .filter { entry ->
+                if (query.excludedType.isEmpty()) true else !query.excludedType.contains(entry.value.type)
+            }
+            .filter { entry ->
+                if (query.durationRanges.isNullOrEmpty()) {
+                    return@filter true
                 }
-                .map { video -> video.key }
-            else -> index
-                .filter { entry ->
-                    query.permittedVideoIds.isNullOrEmpty() || query.permittedVideoIds.contains(entry.value.id)
-                }
-                .filter { entry ->
-                    query.deniedVideoIds.isNullOrEmpty() || !query.deniedVideoIds.contains(entry.value.id)
-                }
-                .filter { entry ->
-                    entry.value.title.contains(phrase, ignoreCase = true)
-                        || entry.value.description.contains(phrase, ignoreCase = true)
-                        || entry.value.contentProvider.contains(phrase, ignoreCase = true)
-                        || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
-                }
-                .filter { entry ->
-                    if (query.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.bestFor)
-                }
-                .filter { entry ->
-                    if (query.type.isEmpty()) true else query.type.contains(entry.value.type)
-                }
-                .filter { entry ->
-                    if (query.durationRanges.isNullOrEmpty()) {
+
+                query.durationRanges.forEach { durationRange ->
+                    val minSeconds = durationRange.min.seconds
+                    val maxSeconds = durationRange.max?.seconds ?: Long.MAX_VALUE
+                    if ((minSeconds..maxSeconds).contains(entry.value.durationSeconds)) {
                         return@filter true
                     }
+                }
 
-                    query.durationRanges.forEach { durationRange ->
-                        val minSeconds = durationRange.min.seconds
-                        val maxSeconds = durationRange.max?.seconds ?: Long.MAX_VALUE
-                        if ((minSeconds..maxSeconds).contains(entry.value.durationSeconds)) {
-                            return@filter true
+                return@filter false
+            }
+            .filter { entry ->
+                if (query.ageRangeMin == null && query.ageRangeMax == null) {
+                    return@filter true
+                }
+
+                return@filter (entry.value.ageRangeMin == query.ageRangeMin && entry.value.ageRangeMax == query.ageRangeMax)
+            }
+            .filter { entry ->
+                if (query.ageRanges.isNullOrEmpty()) {
+                    return@filter true
+                }
+
+                return@filter query.ageRanges.any { ageRange ->
+                    AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
+                }
+            }
+            .filter { entry ->
+                query.source?.let { it == entry.value.source } ?: true
+            }.filter { entry ->
+                (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
+            }.filter { entry ->
+                if (query.subjectIds.isEmpty()) {
+                    true
+                } else {
+                    query.subjectIds.any { querySubject ->
+                        entry.value.subjects.items.any { videoSubject ->
+                            videoSubject.id.contains(querySubject)
                         }
                     }
-
-                    return@filter false
                 }
-                .filter { entry ->
-                    if (query.ageRangeMin == null && query.ageRangeMax == null) {
-                        return@filter true
-                    }
-
-                    return@filter (entry.value.ageRangeMin == query.ageRangeMin && entry.value.ageRangeMax == query.ageRangeMax)
-                }
-                .filter { entry ->
-                    if (query.ageRanges.isNullOrEmpty()) {
-                        return@filter true
-                    }
-
-                    return@filter query.ageRanges.any { ageRange ->
-                        AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
-                    }
-                }
-                .filter { entry ->
-                    query.source?.let { it == entry.value.source } ?: true
-                }.filter { entry ->
-                    (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
-                }.filter { entry ->
-                    if (query.subjectIds.isEmpty()) {
-                        true
-                    } else {
-                        query.subjectIds.any { querySubject ->
-                            entry.value.subjects.items.any { videoSubject ->
-                                videoSubject.id.contains(querySubject)
-                            }
-                        }
-                    }
-                }.filter { entry ->
-                    query.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
-                }.filter { entry ->
-                    query.promoted?.let { entry.value.promoted == it } ?: true
-                }.filter { entry ->
-                    if (query.contentPartnerNames.isNotEmpty())
-                        query.contentPartnerNames.contains(entry.value.contentProvider)
-                    else true
-                }
-                .filter { entry ->
-                    query.isClassroom?.let { entry.value.isClassroom == it } ?: true
-                }
-                .map { video -> video.key }
-        }
+            }.filter { entry ->
+                query.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
+            }.filter { entry ->
+                query.promoted?.let { entry.value.promoted == it } ?: true
+            }.filter { entry ->
+                if (query.contentPartnerNames.isNotEmpty())
+                    query.contentPartnerNames.contains(entry.value.contentProvider)
+                else true
+            }
+            .filter { entry ->
+                query.isClassroom?.let { entry.value.isClassroom == it } ?: true
+            }
+            .map { video -> video.key }
     }
 }
