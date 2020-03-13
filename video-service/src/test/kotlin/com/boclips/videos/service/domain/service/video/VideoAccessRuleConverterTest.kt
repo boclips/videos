@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -127,6 +128,44 @@ class VideoAccessRuleConverterTest {
                 )
             )
             assertThat(excludedTypes).containsOnly(VideoType.STOCK)
+        }
+    }
+
+    @Nested
+    inner class ToExcludedContentPartnersIds {
+        @Test
+        fun `returns empty when access to everything`() {
+            val excludedIds = converter.mapToExcludedContentPartnerIds(VideoAccess.Everything)
+            assertThat(excludedIds).isEmpty()
+        }
+
+        @Test
+        fun `returns empty when no ExcludedVideoTypes in rules`() {
+            val videoId = TestFactories.createVideoId()
+            val excludedIds = converter.mapToExcludedContentPartnerIds(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedIds(
+                            videoIds = setOf(videoId)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedIds).isEmpty()
+        }
+
+        @Test
+        fun `returns excluded video types if specified`() {
+            val excludedIds = converter.mapToExcludedContentPartnerIds(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedContentPartners(
+                            contentPartnerIds = setOf(ContentPartnerId(value = "123"))
+                        )
+                    )
+                )
+            )
+            assertThat(excludedIds).containsOnly("123")
         }
     }
 }

@@ -36,4 +36,13 @@ object VideoAccessRuleConverter {
                 .flatMap { accessRule -> accessRule.contentTypes.map { SearchQueryConverter().convertType(it.name) } }
                 .toSet()
         }
+
+    fun mapToExcludedContentPartnerIds(videoAccess: VideoAccess): Set<String> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.ExcludedContentPartners>()
+                .flatMap { accessRule -> accessRule.contentPartnerIds.map { id -> id.value } }
+                .toSet()
+        }
 }

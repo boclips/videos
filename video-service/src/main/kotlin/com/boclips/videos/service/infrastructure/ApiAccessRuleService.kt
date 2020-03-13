@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.accessrule.AccessRule
+import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
@@ -10,6 +11,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -64,6 +66,9 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
                 is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
                 is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
                 is ExcludedVideoTypesAccessRule -> extractExcludedContentTypes(it)
+                is ExcludedContentPartnersAccessRule -> VideoAccessRule.ExcludedContentPartners(
+                    it.contentPartnerIds.map { id -> ContentPartnerId(id) }.toSet()
+                )
                 else -> null
             }
         }

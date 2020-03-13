@@ -17,6 +17,7 @@ object VideoDocumentConverter {
             title = video.title,
             description = video.description,
             contentProvider = video.contentProvider,
+            contentPartnerId = video.contentPartnerId,
             releaseDate = video.releaseDate,
             keywords = video.keywords,
             tags = video.tags,

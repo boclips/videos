@@ -58,5 +58,22 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideo.value)))
         }
+
+        @Test
+        fun `excludes certain videos with excluded content partners from results`() {
+            val allowedContentPartner = saveContentPartner(name = "Turna")
+            val excludedContentPartner = saveContentPartner(name = "Tiner")
+
+            val videoWithAllowedContentPartner =
+                saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.contentPartnerId.value)
+            saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.contentPartnerId.value)
+
+            createExcludedContentPartnersRule(excludedContentPartner.contentPartnerId.value)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithAllowedContentPartner.value)))
+        }
     }
 }

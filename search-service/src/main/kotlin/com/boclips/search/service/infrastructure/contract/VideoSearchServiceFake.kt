@@ -44,6 +44,9 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
             }
             .filter { entry ->
                 if (query.excludedType.isEmpty()) true else !query.excludedType.contains(entry.value.type)
+            }.filter { entry ->
+                if (query.excludedContentPartnerIds.isEmpty()) true
+                else !query.excludedContentPartnerIds.contains(entry.value.contentPartnerId)
             }
             .filter { entry ->
                 if (query.durationRanges.isNullOrEmpty()) {

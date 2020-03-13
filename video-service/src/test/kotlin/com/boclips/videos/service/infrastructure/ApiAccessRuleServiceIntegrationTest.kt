@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ContentPackage
+import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
@@ -9,6 +10,7 @@ import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -193,6 +195,29 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = accessRuleService.getRules(user)
 
             assertThat(accessRules.videoAccess is VideoAccess.Everything).isTrue()
+        }
+
+        @Test
+        fun `can convert ExcludedContent types to domain`() {
+            whenever(userServiceClient.getContentPackage(anyString()))
+                .thenReturn(ContentPackage().apply {
+                    name = "blah"
+                    accessRules = listOf(ExcludedContentPartnersAccessRule().apply {
+                        name = "bad video types"
+                        contentPartnerIds = listOf("content-partner-1")
+                    })
+                })
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(
+                VideoAccessRule.ExcludedContentPartners(
+                    contentPartnerIds = setOf(
+                        ContentPartnerId(value = "content-partner-1")
+                    )
+                )
+            )
         }
 
         @Test

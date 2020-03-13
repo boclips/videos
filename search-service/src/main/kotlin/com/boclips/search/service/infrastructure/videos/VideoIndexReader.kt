@@ -140,6 +140,11 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     )
                 }
             }
+            .apply {
+                if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
+                    buildExcludedContentPartnerIdsFilter(this, videoQuery.excludedContentPartnerIds)
+                }
+            }
 
         FilterDecorator(query).apply(videoQuery)
 
@@ -173,6 +178,16 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         return currentQueryBuilder
     }
+
+    private fun buildExcludedContentPartnerIdsFilter(
+        currentQueryBuilder: BoolQueryBuilder,
+        excludedContentPartnerIds: Set<String>
+    ): BoolQueryBuilder =
+        currentQueryBuilder.must(
+            boolQuery().mustNot(
+                termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
+            )
+        )
 
     private fun permittedIdsFilter(
         currentQueryBuilder: BoolQueryBuilder,

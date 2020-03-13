@@ -30,7 +30,8 @@ class VideoIdsQuery(
             ids = ids.map { it.value },
             permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
             deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
-            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess)
+            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
+            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess)
         )
     }
 }
@@ -97,7 +98,8 @@ class VideoSearchQuery(
                 excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
                 isClassroom = isClassroom,
                 permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
-                deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess)
+                deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
+                excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess)
             )
         }
     }

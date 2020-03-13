@@ -328,6 +328,43 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters out videos with excluded content partner ids`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "May Dancing",
+                    contentPartnerId = "excluded-cp"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "Trump Dancing",
+                    contentPartnerId = "included-cp"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "Johnson Dancing",
+                    contentPartnerId = "included-cp"
+                )
+            )
+        )
+
+        val result = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    excludedContentPartnerIds = setOf("excluded-cp")
+                )
+            )
+        )
+
+        assertThat(result).containsExactlyInAnyOrder("2", "3")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `filters out specified video types when retrieving videos by ids`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

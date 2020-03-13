@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -68,6 +69,27 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
+        }
+
+        @Test
+        fun `does not have access to excluded content partners`() {
+            val allowedContentPartnerId = saveContentPartner(name = "Tina").contentPartnerId.value
+            val excludedContentPartnerId = saveContentPartner(name = "Turner").contentPartnerId.value
+
+            val allowedVideoId = saveVideo(contentProviderId = allowedContentPartnerId)
+            val firstExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
+            val secondExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
+
+            val accessRule = VideoAccessRule.ExcludedContentPartners(
+                contentPartnerIds = setOf(ContentPartnerId(value = excludedContentPartnerId))
+            )
+
+            val videos = videoService.getPlayableVideos(
+                listOf(allowedVideoId, firstExcludedVideoId, secondExcludedVideoId),
+                VideoAccess.Rules(listOf(accessRule))
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
         }
     }
 
@@ -170,6 +192,33 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
+        }
+
+        @Test
+        fun `does not have access to excluded content partners`() {
+            val allowedContentPartnerId = saveContentPartner(name = "Tuner").contentPartnerId.value
+            val excludedContentPartnerId = saveContentPartner(name = "Tina").contentPartnerId.value
+
+            val allowedVideoId = saveVideo(title = "Wild Elephant", contentProviderId = allowedContentPartnerId)
+            saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
+            saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
+
+            val accessRule = VideoAccessRule.ExcludedContentPartners(
+                contentPartnerIds = setOf(ContentPartnerId(value = excludedContentPartnerId))
+            )
+
+            val videos = videoService.search(
+                VideoSearchQuery(
+                    text = "Wild",
+                    type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccess.Rules(
+                    listOf(accessRule)
+                )
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
         }
     }
 }

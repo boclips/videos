@@ -7,6 +7,7 @@ data class VideoMetadata(
     val title: String,
     val description: String,
     val contentProvider: String,
+    val contentPartnerId: String,
     val releaseDate: LocalDate,
     val keywords: List<String>,
     val tags: List<String>,

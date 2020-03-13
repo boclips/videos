@@ -7,6 +7,7 @@ import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTe
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -119,5 +120,67 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
         assertThat(results).containsExactlyInAnyOrder(
             *expectIds.toTypedArray()
         )
+    }
+
+    @Nested
+    inner class ExcludedContentPartnerIds {
+        @Test
+        fun `excludes content partner even when filtering by a content partner`() {
+            contentPartnerTest(
+                given = sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "math",
+                        contentProvider = "p1",
+                        contentPartnerId = "cp-id-1"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        title = "science",
+                        contentProvider = "p1",
+                        contentPartnerId = "cp-id-1"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        title = "science",
+                        contentProvider = "p2",
+                        contentPartnerId = "cp-id-2"
+                    )
+                ),
+                searchFor = VideoQuery(
+                    contentPartnerNames = setOf("p1", "p2"),
+                    excludedContentPartnerIds = setOf("cp-id-1")
+                ),
+                expectIds = listOf("3")
+            )
+        }
+
+        @Test
+        fun `excludes multiple content partners`() {
+            contentPartnerTest(
+                given = sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "math",
+                        contentPartnerId = "cp-id-1"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        title = "science",
+                        contentPartnerId = "cp-id-2"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        title = "science",
+                        contentPartnerId = "cp-id-3"
+                    )
+                ),
+                searchFor = VideoQuery(
+                    phrase = "science",
+                    excludedContentPartnerIds = setOf("cp-id-1", "cp-id-3")
+                ),
+                expectIds = listOf("2")
+            )
+        }
     }
 }
