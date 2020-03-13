@@ -5,7 +5,7 @@ set -eu
 GRADLE_USER_HOME="$(pwd)/.gradle"
 export GRADLE_USER_HOME
 
-version=$(cat version/version)
+version=$(cat version/tag)
 
 (
 cd source
