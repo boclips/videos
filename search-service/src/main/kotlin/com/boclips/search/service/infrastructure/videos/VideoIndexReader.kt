@@ -72,30 +72,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 }
             }
             .apply {
-                if (videoQuery.includedType.isNotEmpty()) {
-                    must(
-                        boolQuery().must(
-                            termsQuery(
-                                VideoDocument.TYPE,
-                                videoQuery.includedType
-                            )
-                        )
-                    )
-                }
-            }
-            .apply {
-                if (videoQuery.excludedType.isNotEmpty()) {
-                    must(
-                        boolQuery().mustNot(
-                            termsQuery(
-                                VideoDocument.TYPE,
-                                videoQuery.excludedType
-                            )
-                        )
-                    )
-                }
-            }
-            .apply {
                 if (phrase.isNotBlank()) {
                     must(
                         boolQuery()
@@ -125,25 +101,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 }
             }.apply {
                 permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
-            }.apply {
-                deniedIdsFilter(this, videoQuery.deniedVideoIds)
-            }
-            .apply {
-                videoQuery.subjectsSetManually?.let { subjectsSetManually ->
-                    must(
-                        boolQuery().must(
-                            termsQuery(
-                                VideoDocument.SUBJECTS_SET_MANUALLY,
-                                subjectsSetManually
-                            )
-                        )
-                    )
-                }
-            }
-            .apply {
-                if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
-                    buildExcludedContentPartnerIdsFilter(this, videoQuery.excludedContentPartnerIds)
-                }
             }
 
         FilterDecorator(query).apply(videoQuery)
@@ -163,31 +120,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         return esQuery
     }
-
-    private fun deniedIdsFilter(
-        currentQueryBuilder: BoolQueryBuilder,
-        deniedVideoIds: Set<String>?
-    ): BoolQueryBuilder {
-        if (!deniedVideoIds.isNullOrEmpty()) {
-            currentQueryBuilder.must(
-                boolQuery().mustNot(
-                    idsQuery().addIds(*(deniedVideoIds.toTypedArray()))
-                )
-            )
-        }
-
-        return currentQueryBuilder
-    }
-
-    private fun buildExcludedContentPartnerIdsFilter(
-        currentQueryBuilder: BoolQueryBuilder,
-        excludedContentPartnerIds: Set<String>
-    ): BoolQueryBuilder =
-        currentQueryBuilder.must(
-            boolQuery().mustNot(
-                termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
-            )
-        )
 
     private fun permittedIdsFilter(
         currentQueryBuilder: BoolQueryBuilder,

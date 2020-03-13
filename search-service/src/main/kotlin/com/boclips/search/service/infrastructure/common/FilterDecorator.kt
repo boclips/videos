@@ -5,11 +5,13 @@ import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
+import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
 class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
@@ -58,7 +60,59 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         if (videoQuery.isClassroom != null) {
             boolQueryBuilder.must(matchIsClassroom(videoQuery.isClassroom))
         }
+
+        videoQuery.subjectsSetManually?.let { subjectsSetManually ->
+            boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
+        }
+
+        if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
+            boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
+        }
+
+        if (videoQuery.includedType.isNotEmpty()) {
+            boolQueryBuilder.must(matchIncludedType(videoQuery.includedType))
+        }
+
+        if (videoQuery.excludedType.isNotEmpty()) {
+            boolQueryBuilder.must(matchExcludeType(videoQuery.excludedType))
+        }
+
+        if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
+            boolQueryBuilder.must(matchDeniedIdsFilter(videoQuery.deniedVideoIds))
+        }
     }
+
+    private fun matchDeniedIdsFilter(deniedVideoIds: Set<String>): BoolQueryBuilder =
+        QueryBuilders.boolQuery().mustNot(
+            QueryBuilders.idsQuery().addIds(*(deniedVideoIds.toTypedArray()))
+        )
+
+    private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder =
+        QueryBuilders.boolQuery().mustNot(
+            QueryBuilders.termsQuery(
+                VideoDocument.TYPE,
+                excludedType
+            )
+        )
+
+    private fun matchIncludedType(includedType: Set<VideoType>): BoolQueryBuilder =
+        QueryBuilders.boolQuery().must(
+            QueryBuilders.termsQuery(
+                VideoDocument.TYPE,
+                includedType
+            )
+        )
+
+    private fun matchExcludedContentPartnerIds(excludedContentPartnerIds: Set<String>): BoolQueryBuilder =
+        QueryBuilders.boolQuery().mustNot(
+            QueryBuilders.termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
+        )
+
+    private fun matchSubjectsSetManually(subjectsSetManually: Boolean): TermsQueryBuilder =
+        QueryBuilders.termsQuery(
+            VideoDocument.SUBJECTS_SET_MANUALLY,
+            subjectsSetManually
+        )
 
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
         val queries = QueryBuilders.boolQuery()
