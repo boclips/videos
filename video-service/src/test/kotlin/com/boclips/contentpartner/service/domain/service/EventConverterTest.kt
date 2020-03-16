@@ -17,7 +17,7 @@ class EventConverterTest {
         val payload = converter.toIngestDetailsPayload(ManualIngest)
 
         assertThat(payload.type).isEqualTo(IngestType.MANUAL.name)
-        assertThat(payload.url).isNull()
+        assertThat(payload.urls).isNull()
     }
 
     @Test
@@ -25,22 +25,28 @@ class EventConverterTest {
         val payload = converter.toIngestDetailsPayload(CustomIngest)
 
         assertThat(payload.type).isEqualTo(IngestType.CUSTOM.name)
-        assertThat(payload.url).isNull()
+        assertThat(payload.urls).isNull()
     }
 
     @Test
     fun `convert mrss ingest details`() {
-        val payload = converter.toIngestDetailsPayload(MrssFeedIngest("http://feed.me"))
+        val payload = converter.toIngestDetailsPayload(MrssFeedIngest(listOf(
+            "http://feed1.me",
+            "http://feed2.me"
+        )))
 
         assertThat(payload.type).isEqualTo(IngestType.MRSS.name)
-        assertThat(payload.url).isEqualTo("http://feed.me")
+        assertThat(payload.urls).containsExactly("http://feed1.me", "http://feed2.me")
     }
 
     @Test
     fun `convert youtube ingest details`() {
-        val payload = converter.toIngestDetailsPayload(YoutubeScrapeIngest("http://yt.channel"))
+        val payload = converter.toIngestDetailsPayload(YoutubeScrapeIngest(listOf(
+            "http://yt1.channel",
+            "http://yt2.channel"
+        )))
 
         assertThat(payload.type).isEqualTo(IngestType.YOUTUBE.name)
-        assertThat(payload.url).isEqualTo("http://yt.channel")
+        assertThat(payload.urls).containsExactly("http://yt1.channel", "http://yt2.channel")
     }
 }

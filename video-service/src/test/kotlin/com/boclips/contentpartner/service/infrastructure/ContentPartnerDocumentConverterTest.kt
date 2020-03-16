@@ -43,7 +43,7 @@ internal class ContentPartnerDocumentConverterTest {
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL),
-            ingest = MrssFeedIngest(url = "https://mrss.feed"),
+            ingest = MrssFeedIngest(urls = listOf("https://mrss.feed")),
             deliveryFrequency = Period.ofMonths(3),
             marketingInformation = ContentPartnerMarketingInformation(
                 oneLineDescription = "1l",

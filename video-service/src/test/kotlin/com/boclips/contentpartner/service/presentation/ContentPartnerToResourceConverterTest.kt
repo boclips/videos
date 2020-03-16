@@ -50,7 +50,7 @@ class ContentPartnerToResourceConverterTest {
             awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
-            ingest = MrssFeedIngest(url = "https://feed.mrss"),
+            ingest = MrssFeedIngest(urls = listOf("https://feed.mrss")),
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK)
         )
@@ -74,7 +74,7 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
         assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
-        assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestType.MRSS, url = "https://feed.mrss"))
+        assertThat(contentPartnerResource.ingest).isEqualTo(IngestDetailsResource(type = IngestType.MRSS, urls = listOf("https://feed.mrss")))
         assertThat(contentPartnerResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
 }

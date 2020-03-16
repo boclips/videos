@@ -335,13 +335,13 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             listOf(
                 ContentPartnerUpdateCommand.ReplaceIngestDetails(
                     contentPartner.contentPartnerId,
-                    YoutubeScrapeIngest("http://youtube.com/channel")
+                    YoutubeScrapeIngest(listOf("http://youtube.com/channel"))
                 )
             )
         )
 
         val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
-        assertThat(updatedContentPartner?.ingest).isEqualTo(YoutubeScrapeIngest("http://youtube.com/channel"))
+        assertThat(updatedContentPartner?.ingest).isEqualTo(YoutubeScrapeIngest(listOf("http://youtube.com/channel")))
     }
 
     @Test

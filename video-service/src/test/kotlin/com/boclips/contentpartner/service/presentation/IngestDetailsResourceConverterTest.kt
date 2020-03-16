@@ -12,9 +12,9 @@ class IngestDetailsResourceConverterTest {
 
     private val converter = IngestDetailsResourceConverter()
 
-    private val mrssIngest = MrssFeedIngest(url = "http://mrss.feed")
+    private val mrssIngest = MrssFeedIngest(urls = listOf("http://mrss.feed"))
 
-    private val youtubeIngest = YoutubeScrapeIngest(url = "http://yt.scrape")
+    private val youtubeIngest = YoutubeScrapeIngest(urls = listOf("http://yt.scrape"))
 
     @Test
     fun `convert manual ingest details`() {
@@ -23,7 +23,7 @@ class IngestDetailsResourceConverterTest {
         val resource = converter.convert(ingest)
 
         assertThat(resource.type).isEqualTo(IngestType.MANUAL)
-        assertThat(resource.url).isNull()
+        assertThat(resource.urls).isNull()
     }
 
     @Test
@@ -33,7 +33,7 @@ class IngestDetailsResourceConverterTest {
         val resource = converter.convert(ingest)
 
         assertThat(resource.type).isEqualTo(IngestType.CUSTOM)
-        assertThat(resource.url).isNull()
+        assertThat(resource.urls).isNull()
     }
 
     @Test
@@ -41,7 +41,7 @@ class IngestDetailsResourceConverterTest {
         val resource = converter.convert(mrssIngest)
 
         assertThat(resource.type).isEqualTo(IngestType.MRSS)
-        assertThat(resource.url).isEqualTo("http://mrss.feed")
+        assertThat(resource.urls).containsExactly("http://mrss.feed")
     }
 
     @Test
@@ -49,7 +49,7 @@ class IngestDetailsResourceConverterTest {
         val resource = converter.convert(youtubeIngest)
 
         assertThat(resource.type).isEqualTo(IngestType.YOUTUBE)
-        assertThat(resource.url).isEqualTo("http://yt.scrape")
+        assertThat(resource.urls).containsExactly("http://yt.scrape")
     }
 
     @Test

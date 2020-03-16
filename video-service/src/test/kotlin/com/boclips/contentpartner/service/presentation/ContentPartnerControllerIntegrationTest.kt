@@ -124,7 +124,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "oneLineDescription": "My one-line description",
                 "ingest": {
                     "type": "MRSS",
-                    "url": "http://mrss.feed"
+                    "urls": ["http://mrss.feed", "http://mrss2.feed"]
                 },
                 "deliveryFrequency": "P6M",
                 "marketingInformation": {
@@ -159,7 +159,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 )
             )
             .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.type", equalTo("MRSS")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.url", equalTo("http://mrss.feed")))
+            .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.urls", equalTo(listOf("http://mrss.feed", "http://mrss2.feed"))))
             .andExpect(jsonPath("$._embedded.contentPartners[0].deliveryFrequency", equalTo("P6M")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation.status", equalTo("PROMOTED")))
             .andExpect(
@@ -260,8 +260,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by ingest types`() {
-        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MRSS, url = "http://feed.me"))
-        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, url = "http://yt.com"))
+        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MRSS, urls = listOf("http://feed.me")))
+        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, urls = listOf("http://yt.com")))
         saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL))
 
         mockMvc.perform(

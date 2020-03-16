@@ -9,8 +9,8 @@ import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -76,7 +76,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")
-        assertThat(updatedContentPartner.ingest).isEqualTo(MrssFeedIngest("https://mrss.feed.com"))
+        assertThat(updatedContentPartner.ingest).isEqualTo(MrssFeedIngest(listOf("https://mrss.feed.com")))
         assertThat(updatedContentPartner.deliveryFrequency?.months).isEqualTo(4)
     }
 
@@ -118,7 +118,7 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.notes).isEqualTo(notes)
         assertThat(event.contentPartner.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
-        assertThat(event.contentPartner.ingest.url).isEqualTo("https://feed.me")
+        assertThat(event.contentPartner.ingest.urls).containsExactly("https://feed.me")
         assertThat(event.contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 

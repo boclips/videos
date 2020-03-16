@@ -300,7 +300,7 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceIngestDetails } as ContentPartnerUpdateCommand.ReplaceIngestDetails
 
-        assertThat(command.ingest).isEqualTo(MrssFeedIngest("https://mrss.feed"))
+        assertThat(command.ingest).isEqualTo(MrssFeedIngest(listOf("https://mrss.feed")))
     }
 
     @Test

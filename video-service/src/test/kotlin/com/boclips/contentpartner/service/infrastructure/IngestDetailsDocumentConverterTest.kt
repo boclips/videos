@@ -29,19 +29,19 @@ class IngestDetailsDocumentConverterTest {
 
     @Test
     fun `convert mrss ingest details to document and back`() {
-        val ingestDetails = MrssFeedIngest(url = "http://feed.me")
+        val ingestDetails = MrssFeedIngest(urls = listOf("http://feed.me"))
             .let(IngestDetailsDocumentConverter::toIngestDetailsDocument)
             .let(IngestDetailsDocumentConverter::toIngestDetails)
 
-        assertThat(ingestDetails).isEqualTo(MrssFeedIngest(url = "http://feed.me"))
+        assertThat(ingestDetails).isEqualTo(MrssFeedIngest(urls = listOf("http://feed.me")))
     }
 
     @Test
     fun `convert youtube ingest details to document and back`() {
-        val ingestDetails = YoutubeScrapeIngest(url = "http://you.tube")
+        val ingestDetails = YoutubeScrapeIngest(urls = listOf("http://you.tube"))
             .let(IngestDetailsDocumentConverter::toIngestDetailsDocument)
             .let(IngestDetailsDocumentConverter::toIngestDetails)
 
-        assertThat(ingestDetails).isEqualTo(YoutubeScrapeIngest(url = "http://you.tube"))
+        assertThat(ingestDetails).isEqualTo(YoutubeScrapeIngest(urls = listOf("http://you.tube")))
     }
 }

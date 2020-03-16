@@ -18,13 +18,13 @@ object CustomIngest : IngestDetails() {
     }
 }
 
-data class MrssFeedIngest(val url: String) : IngestDetails() {
+data class MrssFeedIngest(val urls: List<String>) : IngestDetails() {
     override fun type(): IngestType {
         return IngestType.MRSS
     }
 }
 
-data class YoutubeScrapeIngest(val url: String) : IngestDetails() {
+data class YoutubeScrapeIngest(val urls: List<String>) : IngestDetails() {
     override fun type(): IngestType {
         return IngestType.YOUTUBE
     }

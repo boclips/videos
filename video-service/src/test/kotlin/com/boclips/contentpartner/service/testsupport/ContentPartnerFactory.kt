@@ -18,8 +18,8 @@ import com.boclips.contentpartner.service.domain.model.Remittance
 import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
 import com.boclips.contentpartner.service.infrastructure.IngestDetailsDocument
-import com.boclips.videos.api.response.contentpartner.IngestType
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.response.contentpartner.IngestType
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
@@ -108,11 +108,11 @@ object ContentPartnerFactory {
 
     fun createIngestDetailsResource(
         type: IngestType = IngestType.MANUAL,
-        url: String? = null
+        urls: List<String>? = null
     ): IngestDetailsResource {
         return IngestDetailsResource(
             type = type,
-            url = url
+            urls = urls
         )
     }
 

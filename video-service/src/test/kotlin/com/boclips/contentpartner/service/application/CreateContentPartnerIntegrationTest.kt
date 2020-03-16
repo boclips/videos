@@ -241,6 +241,6 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.ingest).isEqualTo(YoutubeScrapeIngest("https://yt.com/channel"))
+        assertThat(contentPartner.ingest).isEqualTo(YoutubeScrapeIngest(listOf("https://yt.com/channel")))
     }
 }
