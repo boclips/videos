@@ -110,7 +110,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            createIncludedVideosAccessRules(contractedVideoId.value)
+            addAccessToVideoIds(contractedVideoId.value)
             createIncludedCollectionsAccessRules(collectionId)
 
             mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
@@ -132,7 +132,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            createIncludedVideosAccessRules(contractedVideoId.value)
+            addAccessToVideoIds(contractedVideoId.value)
             createIncludedCollectionsAccessRules(collectionId)
 
             mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asApiUser(email = "api-user@gmail.com"))

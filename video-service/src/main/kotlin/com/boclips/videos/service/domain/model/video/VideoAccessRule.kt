@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
+
 sealed class VideoAccessRule {
     data class ExcludedIds(val videoIds: Set<VideoId>) : VideoAccessRule() {
         override fun toString(): String {
@@ -19,9 +21,15 @@ sealed class VideoAccessRule {
         }
     }
 
-    data class ExcludedContentPartners(val contentPartnerIds: Set<ContentPartnerId>): VideoAccessRule() {
+    data class ExcludedContentPartners(val contentPartnerIds: Set<ContentPartnerId>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to exclude ${contentPartnerIds.size} content partners)"
+        }
+    }
+
+    data class IncludedDistributionMethods(val distributionMethods: Set<DistributionMethod>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to included $distributionMethods distribution methods)"
         }
     }
 }

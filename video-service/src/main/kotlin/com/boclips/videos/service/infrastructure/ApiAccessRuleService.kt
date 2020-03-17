@@ -1,11 +1,13 @@
 package com.boclips.videos.service.infrastructure
 
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.users.client.UserServiceClient
 import com.boclips.users.client.model.accessrule.AccessRule
 import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedDistributionMethodsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.User
@@ -63,11 +65,16 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
     private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccess {
         val videoAccessRules = accessRules.mapNotNull {
             when (it) {
-                is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
-                is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }.toSet())
+                is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }
+                    .toSet())
+                is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }
+                    .toSet())
                 is ExcludedVideoTypesAccessRule -> extractExcludedContentTypes(it)
                 is ExcludedContentPartnersAccessRule -> VideoAccessRule.ExcludedContentPartners(
                     it.contentPartnerIds.map { id -> ContentPartnerId(id) }.toSet()
+                )
+                is IncludedDistributionMethodsAccessRule -> VideoAccessRule.IncludedDistributionMethods(
+                    distributionMethods = it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }.toSet()
                 )
                 else -> null
             }

@@ -22,7 +22,7 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
             setSecurityContext("a valid user")
 
             val video = saveVideo(title = "A video")
-            createIncludedVideosAccessRules(video.value)
+            addAccessToVideoIds(video.value)
 
             val user = controller.getCurrentUser()
             val accessRules = user.accessRules

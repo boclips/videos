@@ -1,10 +1,12 @@
 package com.boclips.videos.service.infrastructure
 
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
 import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
+import com.boclips.users.client.model.accessrule.IncludedDistributionMethodsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
@@ -204,6 +206,29 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoAccessRule.ExcludedContentPartners(
                     contentPartnerIds = setOf(
                         ContentPartnerId(value = "content-partner-1")
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `can convert IncludedDistributionMethod types to domain`() {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(IncludedDistributionMethodsAccessRule().apply {
+                        name = "bad video types"
+                        distributionMethods = listOf("STREAM", "DOWNLOAD")
+                    })
+                )
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(
+                VideoAccessRule.IncludedDistributionMethods(
+                    distributionMethods = setOf(
+                        DistributionMethod.STREAM,
+                        DistributionMethod.DOWNLOAD
                     )
                 )
             )

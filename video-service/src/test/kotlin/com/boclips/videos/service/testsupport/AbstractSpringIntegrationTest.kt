@@ -18,6 +18,7 @@ import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
+import com.boclips.users.client.model.accessrule.IncludedDistributionMethodsAccessRule
 import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
@@ -424,28 +425,35 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun createIncludedVideosAccessRules(vararg contractedVideoIds: String) {
+    fun addAccessToVideoIds(vararg contractedVideoIds: String) {
         userServiceClient.addAccessRule(IncludedVideosAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoIds = contractedVideoIds.toList()
         })
     }
 
-    fun createExcludedVideosAccessRule(vararg excludedVideoIds: String) {
+    fun addsAccessToStreamingVideos(vararg includedDistributionMethods: DistributionMethodResource) {
+        userServiceClient.addAccessRule(IncludedDistributionMethodsAccessRule().apply {
+            name = UUID.randomUUID().toString()
+            distributionMethods = includedDistributionMethods.map { it.name }
+        })
+    }
+
+    fun removeAccessToVideo(vararg excludedVideoIds: String) {
         userServiceClient.addAccessRule(ExcludedVideosAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoIds = excludedVideoIds.toList()
         })
     }
 
-    fun createExcludedVideoTypesAccessRule(vararg excludedVideoType: ContentType) {
+    fun addAccessToVideoTypes(vararg excludedVideoType: ContentType) {
         userServiceClient.addAccessRule(ExcludedVideoTypesAccessRule().apply {
             name = UUID.randomUUID().toString()
             videoTypes = excludedVideoType.map { it.name }
         })
     }
 
-    fun createExcludedContentPartnersRule(vararg excludeContentPartners: String) {
+    fun removeAccessToContentPartner(vararg excludeContentPartners: String) {
         userServiceClient.addAccessRule(ExcludedContentPartnersAccessRule().apply {
             name = UUID.randomUUID().toString()
             contentPartnerIds = excludeContentPartners.toList()

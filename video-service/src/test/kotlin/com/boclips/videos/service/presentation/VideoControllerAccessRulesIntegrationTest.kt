@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
@@ -20,12 +21,12 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
     @Nested
     inner class VideoSearch {
         @Test
-        fun `limits search results to contracted IDs`() {
+        fun `limits search results to included videoIds`() {
             saveVideo(title = "A non-contracted video")
             val firstContractedVideo = saveVideo(title = "Contracted video")
             val secondContractedVideo = saveVideo(title = "This is a movie about something else")
 
-            createIncludedVideosAccessRules(firstContractedVideo.value, secondContractedVideo.value)
+            addAccessToVideoIds(firstContractedVideo.value, secondContractedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -34,11 +35,30 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         }
 
         @Test
+        fun `limits search to included distribution methods`() {
+            val streamContentPartner =
+                saveContentPartner(name = "stream", distributionMethods = setOf(DistributionMethodResource.STREAM))
+            val downloadContentPartner =
+                saveContentPartner(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
+
+            val streamVideo =
+                saveVideo(title = "video included", contentProviderId = streamContentPartner.contentPartnerId.value)
+            saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.contentPartnerId.value)
+
+            addsAccessToStreamingVideos(DistributionMethodResource.STREAM)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(streamVideo.value)))
+        }
+
+        @Test
         fun `excludes blacklisted videos from results`() {
             val video = saveVideo(title = "Some Video")
             val excludedVideo = saveVideo(title = "Blacklisted Video")
 
-            createExcludedVideosAccessRule(excludedVideo.value)
+            removeAccessToVideo(excludedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -51,7 +71,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val stockVideo = saveVideo(title = "Some Video", type = ContentType.STOCK)
             saveVideo(title = "Some Video", type = ContentType.NEWS)
 
-            createExcludedVideoTypesAccessRule(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+            addAccessToVideoTypes(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -68,7 +88,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.contentPartnerId.value)
             saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.contentPartnerId.value)
 
-            createExcludedContentPartnersRule(excludedContentPartner.contentPartnerId.value)
+            removeAccessToContentPartner(excludedContentPartner.contentPartnerId.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
