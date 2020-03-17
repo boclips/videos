@@ -21,6 +21,6 @@ data class VideoMetadata(
     val subjects: SubjectsMetadata,
     val promoted: Boolean?,
     val meanRating: Double?,
-    val eligibleForStream: Boolean,
+    val eligibleForStream: Boolean?,
     val eligibleForDownload: Boolean
 )

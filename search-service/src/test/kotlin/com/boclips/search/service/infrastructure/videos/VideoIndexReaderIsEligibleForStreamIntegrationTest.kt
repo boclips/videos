@@ -27,6 +27,10 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
                     description = "banana",
                     eligibleForStream = true
                 ), SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "banana",
+                    eligibleForStream = null
+                ), SearchableVideoMetadataFactory.create(
                     id = "3",
                     description = "banana",
                     eligibleForStream = false
@@ -38,7 +42,7 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(query = VideoQuery(isEligibleForStream = true))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results).containsExactly("1", "2")
     }
 
 
