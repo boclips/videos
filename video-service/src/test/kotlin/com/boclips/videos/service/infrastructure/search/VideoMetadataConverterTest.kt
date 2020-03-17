@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.TestFactories
@@ -51,7 +52,7 @@ class VideoMetadataConverterTest {
             ratings = emptyList()
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.NONE)
 
         assertThat(videoMetadata).isEqualTo(
             VideoMetadata(
@@ -75,7 +76,9 @@ class VideoMetadataConverterTest {
                 ),
                 promoted = true,
                 meanRating = null,
-                isClassroom = true
+                isClassroom = true,
+                eligibleForStream = false,
+                eligibleForDownload = false
             )
         )
     }
@@ -86,7 +89,7 @@ class VideoMetadataConverterTest {
             type = ContentType.INSTRUCTIONAL_CLIPS
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).containsExactly("classroom")
         assertThat(videoMetadata.isClassroom).isTrue()
@@ -98,7 +101,7 @@ class VideoMetadataConverterTest {
             type = ContentType.NEWS
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).contains("news")
     }
@@ -110,7 +113,7 @@ class VideoMetadataConverterTest {
             type = ContentType.NEWS
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).containsExactly("classroom", "news")
         assertThat(videoMetadata.isClassroom).isTrue()
@@ -124,7 +127,7 @@ class VideoMetadataConverterTest {
             type = ContentType.STOCK
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).isEmpty()
         assertThat(videoMetadata.isClassroom).isFalse()
@@ -138,7 +141,7 @@ class VideoMetadataConverterTest {
             )
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.source).isEqualTo(SourceType.YOUTUBE)
     }
@@ -151,7 +154,7 @@ class VideoMetadataConverterTest {
             )
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.source).isEqualTo(SourceType.BOCLIPS)
     }
@@ -164,7 +167,7 @@ class VideoMetadataConverterTest {
             ratings = ratings.map { UserRatingFactory.sample(rating = it) }
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.meanRating).isCloseTo(
             ratings.sum() / ratings.size.toDouble(),
@@ -179,9 +182,30 @@ class VideoMetadataConverterTest {
             tags = listOf(TestFactories.createUserTag(label = "explainer"))
         )
 
-        val videoMetadata = VideoMetadataConverter.convert(video)
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).containsExactlyInAnyOrder("classroom", "explainer")
         assertThat(videoMetadata.isClassroom).isTrue()
+    }
+
+    @Test
+    fun `videos are eligible for streaming based on their content partner`() {
+        val video = TestFactories.createVideo()
+
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.STREAMING)
+
+        // The compiler is lying. You know nothing, IntelliJ (or maybe I know nothing?)
+        assertThat(videoMetadata.eligibleForStream).isTrue()
+        assertThat(videoMetadata.eligibleForDownload).isFalse()
+    }
+
+    @Test
+    fun `videos eligible for all based on their content partner`() {
+        val video = TestFactories.createVideo()
+
+        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
+
+        assertThat(videoMetadata.eligibleForStream).isTrue()
+        assertThat(videoMetadata.eligibleForDownload).isTrue()
     }
 }

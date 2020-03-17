@@ -99,7 +99,8 @@ class VideoSearchQuery(
                 isClassroom = isClassroom,
                 permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
                 deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
-                excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess)
+                excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess),
+                isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess)
             )
         }
     }

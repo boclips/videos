@@ -44,13 +44,13 @@ class VideoIndexUpdater(
             videoRepository.find(VideoId(it.id.value)) ?: logger.info { "Video ${it.id.value} not found" }.let { null }
         }
 
-        bulkUpdateStreamIndex(videos)
-        bulkUpdateDownloadIndex(videos)
+        bulkUpdateIndex(videos)
+        bulkUpdateLegacyIndex(videos)
     }
 
     private fun updateIndexWith(updatedVideo: Video) {
         try {
-            updateDownloadIndex(updatedVideo)
+            updateLegacyIndex(updatedVideo)
         } catch (e: Exception) {
             logger.info {
                 "Failed to update video: ${updatedVideo.videoId} for ${DistributionMethod.DOWNLOAD}" +
@@ -58,21 +58,15 @@ class VideoIndexUpdater(
             }
         }
 
-        updateStreamIndex(updatedVideo)
+        updateIndex(updatedVideo)
     }
 
-    private fun bulkUpdateStreamIndex(updatedVideos: List<Video>) {
-        val videosToUpsert = updatedVideos.filter { isStreamable(it) }
-        val videosToRemove = updatedVideos.filterNot { isStreamable(it) }
-
-        videoSearchService.upsert(videosToUpsert.asSequence())
-        logger.info { "Indexed ${videosToUpsert.size} videos for ${DistributionMethod.STREAM}" }
-
-        videoSearchService.bulkRemoveFromSearch(videosToRemove.map { it.videoId.value })
-        logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.STREAM}" }
+    private fun bulkUpdateIndex(updatedVideos: List<Video>) {
+        videoSearchService.upsert(updatedVideos.asSequence())
+        logger.info { "Indexed ${updatedVideos.size} videos " }
     }
 
-    private fun bulkUpdateDownloadIndex(updatedVideos: List<Video>) {
+    private fun bulkUpdateLegacyIndex(updatedVideos: List<Video>) {
         val videosToUpsert = updatedVideos
             .filter { isDownloadable(it) }
             .filter { it.isBoclipsHosted() }
@@ -86,17 +80,12 @@ class VideoIndexUpdater(
         logger.info { "Removed ${videosToRemove.size} videos for ${DistributionMethod.DOWNLOAD}" }
     }
 
-    private fun updateStreamIndex(updatedVideo: Video) {
-        if (isStreamable(updatedVideo)) {
-            videoSearchService.upsert(sequenceOf(updatedVideo))
-            logger.info { "Indexed video ${updatedVideo.videoId} for ${DistributionMethod.STREAM}" }
-        } else {
-            videoSearchService.removeFromSearch(updatedVideo.videoId.value)
-            logger.info { "Removed video ${updatedVideo.videoId} from ${DistributionMethod.STREAM}" }
-        }
+    private fun updateIndex(updatedVideo: Video) {
+        videoSearchService.upsert(sequenceOf(updatedVideo))
+        logger.info { "Indexed video ${updatedVideo.videoId} " }
     }
 
-    private fun updateDownloadIndex(updatedVideo: Video) {
+    private fun updateLegacyIndex(updatedVideo: Video) {
         if (isDownloadable(updatedVideo)) {
             if (updatedVideo.isBoclipsHosted()) {
                 legacyVideoSearchService.upsert(sequenceOf(VideoToLegacyVideoMetadataConverter.convert(updatedVideo)))
@@ -110,9 +99,5 @@ class VideoIndexUpdater(
 
     private fun isDownloadable(video: Video): Boolean {
         return contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId).isDownloadable()
-    }
-
-    private fun isStreamable(video: Video): Boolean {
-        return contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId).isStreamable()
     }
 }

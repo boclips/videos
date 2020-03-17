@@ -3,10 +3,12 @@ package com.boclips.videos.service.testsupport.fakes
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
+import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.nhaarman.mockitokotlin2.mock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,9 +18,13 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class SearchContextFake {
     @Bean
-    fun videoMetadataSearchService(): VideoSearchService {
+    fun videoMetadataSearchService(contentPartnerService: ContentPartnerService): VideoSearchService {
         val inMemoryVideoSearch = VideoSearchServiceFake()
-        return DefaultVideoSearch(inMemoryVideoSearch, inMemoryVideoSearch)
+        return DefaultVideoSearch(
+            inMemoryVideoSearch,
+            inMemoryVideoSearch,
+            contentPartnerService
+        )
     }
 
     @Bean

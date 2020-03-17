@@ -10,7 +10,7 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(TITLE) val title: String,
     @param:JsonProperty(DESCRIPTION) val description: String,
     @param:JsonProperty(CONTENT_PROVIDER) val contentProvider: String,
-    @param:JsonProperty(CONTENT_PARTNER_ID) val contentPartnerId: String?, //TODO Null whilst we re-index
+    @param:JsonProperty(CONTENT_PARTNER_ID) val contentPartnerId: String,
     @param:JsonProperty(RELEASE_DATE) val releaseDate: LocalDate?,
     @param:JsonProperty(KEYWORDS) val keywords: List<String>,
     @param:JsonProperty(TAGS) val tags: List<String>,
@@ -26,7 +26,9 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(SUBJECT_NAMES) val subjectNames: Set<String>?,
     @param:JsonProperty(PROMOTED) val promoted: Boolean?,
     @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
-    @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?
+    @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?,
+    @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean? = true, //TODO make these non-optional after re-index
+    @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"
@@ -47,5 +49,7 @@ data class VideoDocument @JsonCreator constructor(
         const val PROMOTED = "promoted"
         const val MEAN_RATING = "meanRating"
         const val SUBJECTS_SET_MANUALLY = "subjectsSetManually"
+        const val ELIGIBLE_FOR_STREAM = "eligibleForStream"
+        const val ELIGIBLE_FOR_DOWNLOAD = "eligibleForDownload"
     }
 }

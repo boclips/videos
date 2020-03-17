@@ -227,7 +227,6 @@ class ApplicationContext(
     fun rebuildSearchIndex(): RebuildVideoIndex {
         return RebuildVideoIndex(
             videoRepository,
-            contentPartnerService,
             videoSearchService
         )
     }

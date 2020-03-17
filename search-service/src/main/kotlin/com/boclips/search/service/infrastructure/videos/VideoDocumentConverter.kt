@@ -33,7 +33,9 @@ object VideoDocumentConverter {
             subjectNames = video.subjects.items.map { subject -> subject.name }.toSet(),
             subjectsSetManually = video.subjects.setManually,
             promoted = video.promoted,
-            meanRating = video.meanRating
+            meanRating = video.meanRating,
+            eligibleForDownload = video.eligibleForDownload,
+            eligibleForStream = video.eligibleForStream
         )
     }
 }

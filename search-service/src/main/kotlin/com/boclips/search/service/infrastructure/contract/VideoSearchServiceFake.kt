@@ -104,6 +104,8 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
             }
             .filter { entry ->
                 query.isClassroom?.let { entry.value.isClassroom == it } ?: true
+            }.filter { entry ->
+                query.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
             }
             .map { video -> video.key }
     }

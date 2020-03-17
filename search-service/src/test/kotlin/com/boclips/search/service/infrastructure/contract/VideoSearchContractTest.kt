@@ -1540,4 +1540,28 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         assertThat(results).containsExactly("1")
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `filters by stream eligibility`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", eligibleForStream = true),
+                SearchableVideoMetadataFactory.create(id = "2", eligibleForStream = false)
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    isEligibleForStream = true
+                )
+            )
+        )
+
+        assertThat(results).containsExactly("1")
+    }
 }

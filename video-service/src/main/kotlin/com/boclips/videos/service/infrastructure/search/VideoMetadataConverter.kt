@@ -7,14 +7,17 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
 object VideoMetadataConverter {
-    fun convert(video: Video): VideoMetadata {
+    fun convert(video: Video, videoAvailability: Availability): VideoMetadata {
         val subjects = video.subjects.items
             .map { SubjectMetadata(id = it.id.value, name = it.name) }
             .toSet()
+
         return VideoMetadata(
             id = video.videoId.value,
             title = video.title,
@@ -36,7 +39,9 @@ object VideoMetadataConverter {
                 setManually = video.subjects.setManually
             ),
             promoted = video.promoted,
-            meanRating = video.getRatingAverage()
+            meanRating = video.getRatingAverage(),
+            eligibleForStream = videoAvailability.isStreamable(),
+            eligibleForDownload = videoAvailability.isDownloadable()
         )
     }
 

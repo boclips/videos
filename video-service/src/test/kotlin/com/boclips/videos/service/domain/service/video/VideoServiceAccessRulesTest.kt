@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -95,6 +96,33 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class Searching {
+        @Test
+        fun `always limits search to videos eligible for streaming`() {
+            val streamContentPartner = saveContentPartner(
+                name = "stream",
+                distributionMethods = setOf(DistributionMethodResource.STREAM)
+            )
+            val downloadContentPartner = saveContentPartner(
+                name = "download",
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
+            )
+
+            val streamVideo =
+                saveVideo(title = "video", contentProviderId = streamContentPartner.contentPartnerId.value)
+            saveVideo(title = "video", contentProviderId = downloadContentPartner.contentPartnerId.value)
+
+            val searchResults = videoService.search(
+                VideoSearchQuery(
+                    text = "video",
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccess.Everything
+            )
+
+            assertThat(searchResults).hasSize(1)
+            assertThat(searchResults.map { it.videoId }).containsExactly(streamVideo)
+        }
+
         @Test
         fun `limits search results when specific id access rule is provided`() {
             val firstVideo = saveVideo(title = "access")

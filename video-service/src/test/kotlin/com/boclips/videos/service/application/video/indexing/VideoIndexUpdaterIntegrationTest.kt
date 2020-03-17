@@ -36,7 +36,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class OnVideoCreated {
         @Test
-        fun `does not add new video to search indices`() {
+        fun `add new video to search indices`() {
             val video = createVideo(emptySet())
 
             fakeEventBus.publish(
@@ -46,43 +46,15 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService).removeFromSearch(video.videoId.value)
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(0)
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
         }
     }
 
     @Nested
     inner class OnVideoUpdated {
         @Test
-        fun `add updated video to download index`() {
+        fun `add updated video to both indices`() {
             val video = createVideo(distributionMethods = setOf(DistributionMethod.DOWNLOAD))
-
-            fakeEventBus.publish(
-                com.boclips.eventbus.events.video.VideoUpdated.builder()
-                    .video(EventConverter().toVideoPayload(video))
-                    .build()
-            )
-
-            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(0)
-        }
-
-        @Test
-        fun `add updated video to stream index`() {
-            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM))
-
-            fakeEventBus.publish(
-                com.boclips.eventbus.events.video.VideoUpdated.builder()
-                    .video(EventConverter().toVideoPayload(video))
-                    .build()
-            )
-
-            verify(legacyVideoSearchService, times(0)).upsert(any(), anyOrNull())
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
-        }
-
-        @Test
-        fun `add updated video to both download and stream index`() {
-            val video = createVideo(distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD))
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideoUpdated.builder()
@@ -98,8 +70,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class OnVideosUpdated {
         @Test
-        fun `add stream videos to stream index`() {
-            val videos = listOf(createVideo(setOf(DistributionMethod.STREAM)))
+        fun `add stream videos to non-legacy index only`() {
+            val videos = listOf(createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(DistributionMethod.DOWNLOAD)))
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
@@ -107,12 +79,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(2)
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
         }
 
         @Test
-        fun `add download videos to download index`() {
+        fun `add download videos to both indices`() {
             val videos = listOf(createVideo(setOf(DistributionMethod.DOWNLOAD)))
 
             fakeEventBus.publish(
@@ -121,7 +93,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(0)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
         }
 
@@ -129,12 +101,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         fun `add updated videos to correct index`() {
             val downloadVideo = createVideo(setOf(DistributionMethod.DOWNLOAD))
             val streamVideo = createVideo(setOf(DistributionMethod.STREAM))
-            val unindexedVideo = createVideo(emptySet())
+            val video = createVideo(emptySet())
 
             val videos = listOf(
                 downloadVideo,
                 streamVideo,
-                unindexedVideo
+                video
             )
 
             fakeEventBus.publish(
@@ -145,27 +117,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
-        }
-
-        @Test
-        fun `ignores missing video in bulk update`() {
-            val savedVideo = createVideo(setOf(DistributionMethod.STREAM))
-            val missingVideo = TestFactories.createVideo()
-
-            fakeEventBus.publish(
-                com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(
-                        listOf(
-                            EventConverter().toVideoPayload(savedVideo),
-                            EventConverter().toVideoPayload(missingVideo)
-                        )
-                    )
-                    .build()
-            )
-
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(savedVideo.videoId.value)))).isEqualTo(1)
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(missingVideo.videoId.value)))).isEqualTo(0)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(3)
         }
 
         @Test

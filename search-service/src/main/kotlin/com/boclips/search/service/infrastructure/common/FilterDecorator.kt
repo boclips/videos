@@ -80,7 +80,16 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
             boolQueryBuilder.must(matchDeniedIdsFilter(videoQuery.deniedVideoIds))
         }
+
+        if (videoQuery.isEligibleForStream != null) {
+            boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
+        }
     }
+
+    private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) = QueryBuilders.termsQuery(
+        VideoDocument.ELIGIBLE_FOR_STREAM,
+        isEligibleForStream
+    )
 
     private fun matchDeniedIdsFilter(deniedVideoIds: Set<String>): BoolQueryBuilder =
         QueryBuilders.boolQuery().mustNot(

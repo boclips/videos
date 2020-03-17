@@ -26,5 +26,6 @@ class VideoQuery(
     val excludedType: Set<VideoType> = emptySet(),
     val permittedVideoIds: Set<String>? = null,
     val deniedVideoIds: Set<String>? = null,
-    val isClassroom: Boolean? = null
+    val isClassroom: Boolean? = null,
+    val isEligibleForStream: Boolean? = null
 ) : SearchQuery<VideoMetadata>(phrase, sort)

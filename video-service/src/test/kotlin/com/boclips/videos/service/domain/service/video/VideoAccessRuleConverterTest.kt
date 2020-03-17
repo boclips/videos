@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -166,6 +167,43 @@ class VideoAccessRuleConverterTest {
                 )
             )
             assertThat(excludedIds).containsOnly("123")
+        }
+    }
+
+    @Nested
+    inner class ToIsEligibleForStreaming() {
+        @Test
+        fun `returns nothing when access to everything`() {
+            val isEligibleForStreaming = converter.isEligibleForStreaming(VideoAccess.Everything)
+            assertThat(isEligibleForStreaming).isNull()
+        }
+
+        @Test
+        fun `returns true with streaming access rule`() {
+            val isEligibleForStreaming = converter.isEligibleForStreaming(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedDistributionMethods(
+                            setOf(DistributionMethod.STREAM)
+                        )
+                    )
+                )
+            )
+            assertThat(isEligibleForStreaming).isTrue()
+        }
+
+        @Test
+        fun `returns true with no stream access rule`() {
+            val isEligibleForStreaming = converter.isEligibleForStreaming(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedDistributionMethods(
+                            setOf(DistributionMethod.DOWNLOAD)
+                        )
+                    )
+                )
+            )
+            assertThat(isEligibleForStreaming).isFalse()
         }
     }
 }

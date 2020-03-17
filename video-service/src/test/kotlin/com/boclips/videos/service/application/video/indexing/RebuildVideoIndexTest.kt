@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
+import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockitokotlin2.any
@@ -35,7 +36,6 @@ class RebuildVideoIndexTest {
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = VideoSearchServiceFake()
-        searchService = DefaultVideoSearch(inMemorySearchService, inMemorySearchService)
 
         val contentPartnerRepository: ContentPartnerRepository = getMockContentPartnerRepo(
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
@@ -53,6 +53,11 @@ class RebuildVideoIndexTest {
         )
 
         contentPartnerService = ContentPartnerService(contentPartnerRepository)
+        searchService = DefaultVideoSearch(
+            inMemorySearchService,
+            inMemorySearchService,
+            contentPartnerService
+        )
     }
 
     @Test
@@ -76,7 +81,6 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            contentPartnerService,
             searchService
         )
 
@@ -98,7 +102,7 @@ class RebuildVideoIndexTest {
     }
 
     @Test
-    fun `only reindexes streamable videos`() {
+    fun `reindexes all videos`() {
         val streamableVideoId = TestFactories.aValidId()
         val downloadableVideoId = TestFactories.aValidId()
 
@@ -119,7 +123,6 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            contentPartnerService,
             searchService
         )
 
@@ -135,8 +138,7 @@ class RebuildVideoIndexTest {
         )
 
         val searchResults = searchService.search(searchRequest)
-        assertThat(searchResults).contains(streamableVideoId)
-        assertThat(searchResults).doesNotContain(downloadableVideoId)
+        assertThat(searchResults).containsExactlyInAnyOrder(streamableVideoId, downloadableVideoId)
     }
 
     @Test
@@ -149,7 +151,6 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            contentPartnerService,
             searchService
         )
 

@@ -10,10 +10,12 @@ import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.SolrProperties
+import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
+import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -28,10 +30,14 @@ class SearchContext {
 
     @Bean
     @Profile("!fakes-search")
-    fun videoSearchService(elasticSearchClient: ElasticSearchClient): VideoSearchService {
+    fun videoSearchService(
+        elasticSearchClient: ElasticSearchClient,
+        contentPartnerService: ContentPartnerService
+    ): VideoSearchService {
         return DefaultVideoSearch(
             VideoIndexReader(elasticSearchClient.buildClient()),
-            VideoIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5))
+            VideoIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5)),
+            contentPartnerService
         )
     }
 

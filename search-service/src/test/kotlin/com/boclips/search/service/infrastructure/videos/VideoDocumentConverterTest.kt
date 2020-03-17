@@ -66,7 +66,9 @@ class VideoDocumentConverterTest {
                 promoted = null,
                 meanRating = null,
                 subjectsSetManually = null,
-                isClassroom = null
+                isClassroom = null,
+                eligibleForStream = true,
+                eligibleForDownload = null
             )
         )
     }
@@ -81,6 +83,7 @@ class VideoDocumentConverterTest {
                 "title": "The title",
                 "description": "The description",
                 "contentProvider": "TED Talks",
+                "contentPartnerId": "123",  
                 "price_category": "expensive",
                 "duration": "02:01:20",
                 "keywords": ["k1","k2"],
@@ -120,7 +123,9 @@ class VideoDocumentConverterTest {
             ),
             promoted = null,
             meanRating = 3.8,
-            isClassroom = false
+            isClassroom = false,
+            eligibleForStream = false,
+            eligibleForDownload = true
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -147,7 +152,9 @@ class VideoDocumentConverterTest {
                 promoted = null,
                 meanRating = 3.8,
                 subjectsSetManually = false,
-                isClassroom = false
+                isClassroom = false,
+                eligibleForStream = false,
+                eligibleForDownload = true
             )
         )
     }
@@ -175,11 +182,39 @@ class VideoDocumentConverterTest {
             ),
             promoted = null,
             meanRating = 3.8,
-            isClassroom = false
+            isClassroom = false,
+            eligibleForStream = true,
+            eligibleForDownload = true
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
 
         assertThat(document.ageRange).isEmpty()
+    }
+
+    @Test
+    fun `does not default eligibleForStream if present`() {
+        val searchHit = SearchHit(14).sourceRef(
+            BytesArray(
+                """
+            {
+                "id": "14",
+                "title": "The title",
+                "description": "The description",
+                "contentProvider": "TED Talks",
+                "contentPartnerId": "123",
+                "eligibleForStream": false,
+                "keywords": ["k1","k2"],
+                "tags": ["news", "classroom"],
+                "durationSeconds": 10,
+                "source": "Boclips"
+            }
+        """.trimIndent()
+            )
+        )
+
+        val video = VideoDocumentConverter.fromSearchHit(searchHit)
+
+        assertThat(video.eligibleForStream).isFalse()
     }
 }
