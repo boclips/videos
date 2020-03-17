@@ -38,10 +38,23 @@ class IngestDetailsDocumentConverterTest {
 
     @Test
     fun `convert youtube ingest details to document and back`() {
-        val ingestDetails = YoutubeScrapeIngest(urls = listOf("http://you.tube"))
+        val ingestDetails = YoutubeScrapeIngest(playlistIds = listOf("http://you.tube"))
             .let(IngestDetailsDocumentConverter::toIngestDetailsDocument)
             .let(IngestDetailsDocumentConverter::toIngestDetails)
 
-        assertThat(ingestDetails).isEqualTo(YoutubeScrapeIngest(urls = listOf("http://you.tube")))
+        assertThat(ingestDetails).isEqualTo(YoutubeScrapeIngest(playlistIds = listOf("http://you.tube")))
+    }
+
+    @Test
+    fun `handle legacy youtube documents with urls populated`() {
+        val document = IngestDetailsDocument(
+            type = "YOUTUBE",
+            urls = listOf("playlist-id"),
+            playlistIds = null
+        )
+
+        val ingestDetails = IngestDetailsDocumentConverter.toIngestDetails(document)
+
+        assertThat(ingestDetails).isEqualTo(YoutubeScrapeIngest(playlistIds = listOf("playlist-id")))
     }
 }

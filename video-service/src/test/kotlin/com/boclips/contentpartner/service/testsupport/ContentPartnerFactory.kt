@@ -108,10 +108,12 @@ object ContentPartnerFactory {
 
     fun createIngestDetailsResource(
         type: IngestType = IngestType.MANUAL,
+        playlistIds: List<String>? = null,
         urls: List<String>? = null
     ): IngestDetailsResource {
         return IngestDetailsResource(
             type = type,
+            playlistIds = playlistIds,
             urls = urls
         )
     }

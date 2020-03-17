@@ -2,14 +2,15 @@ package com.boclips.videos.api.response.contentpartner
 
 data class IngestDetailsResource(
     val type: IngestType,
-    val urls: List<String>?
+    val playlistIds: List<String>? = null,
+    val urls: List<String>? = null
 ) {
     companion object {
-        fun manual() = IngestDetailsResource(type = IngestType.MANUAL, urls = null)
-        fun custom() = IngestDetailsResource(type = IngestType.CUSTOM, urls = null)
+        fun manual() = IngestDetailsResource(type = IngestType.MANUAL)
+        fun custom() = IngestDetailsResource(type = IngestType.CUSTOM)
         fun mrss(vararg urls: String) = mrss(urls.toList())
         fun mrss(urls: List<String>) = IngestDetailsResource(type = IngestType.MRSS, urls = urls)
-        fun youtube(vararg urls: String) = youtube(urls.toList())
-        fun youtube(urls: List<String>) = IngestDetailsResource(type = IngestType.YOUTUBE, urls = urls)
+        fun youtube(vararg playlistIds: String) = youtube(playlistIds.toList())
+        fun youtube(playlistIds: List<String>) = IngestDetailsResource(type = IngestType.YOUTUBE, playlistIds = playlistIds)
     }
 }

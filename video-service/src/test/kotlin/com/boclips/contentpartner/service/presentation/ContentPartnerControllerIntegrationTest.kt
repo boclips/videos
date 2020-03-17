@@ -261,7 +261,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `can filter content partners by ingest types`() {
         saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MRSS, urls = listOf("http://feed.me")))
-        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, urls = listOf("http://yt.com")))
+        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, playlistIds = listOf("http://yt.com")))
         saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL))
 
         mockMvc.perform(

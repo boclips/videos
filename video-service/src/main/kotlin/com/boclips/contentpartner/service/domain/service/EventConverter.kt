@@ -41,7 +41,7 @@ class EventConverter {
             ManualIngest -> IngestType.MANUAL to null
             CustomIngest -> IngestType.CUSTOM to null
             is MrssFeedIngest -> IngestType.MRSS to ingest.urls
-            is YoutubeScrapeIngest -> IngestType.YOUTUBE to ingest.urls
+            is YoutubeScrapeIngest -> IngestType.YOUTUBE to ingest.playlistIds
         }
 
         return EventBusIngestDetails

@@ -15,10 +15,10 @@ object IngestDetailsDocumentConverter {
 
     fun toIngestDetailsDocument(ingestDetails: IngestDetails): IngestDetailsDocument {
         return when(ingestDetails) {
-            ManualIngest -> IngestDetailsDocument(type = MANUAL, urls = null)
-            CustomIngest -> IngestDetailsDocument(type = CUSTOM, urls = null)
+            ManualIngest -> IngestDetailsDocument(type = MANUAL)
+            CustomIngest -> IngestDetailsDocument(type = CUSTOM)
             is MrssFeedIngest -> IngestDetailsDocument(type = MRSS, urls = ingestDetails.urls)
-            is YoutubeScrapeIngest -> IngestDetailsDocument(type = YOUTUBE, urls = ingestDetails.urls)
+            is YoutubeScrapeIngest -> IngestDetailsDocument(type = YOUTUBE, playlistIds = ingestDetails.playlistIds)
         }
     }
 
@@ -27,7 +27,7 @@ object IngestDetailsDocumentConverter {
             MANUAL -> ManualIngest
             CUSTOM -> CustomIngest
             MRSS -> MrssFeedIngest(urls = document.urls!!)
-            YOUTUBE -> YoutubeScrapeIngest(urls = document.urls!!)
+            YOUTUBE -> YoutubeScrapeIngest(playlistIds = document.playlistIds ?: document.urls!!)
             else -> throw IllegalArgumentException("Cannot convert ingest details document: $document")
         }
     }

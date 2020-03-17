@@ -15,7 +15,7 @@ class IngestDetailsResourceConverter {
             ManualIngest -> IngestDetailsResource.manual()
             CustomIngest -> IngestDetailsResource.custom()
             is MrssFeedIngest -> IngestDetailsResource.mrss(ingestDetails.urls)
-            is YoutubeScrapeIngest -> IngestDetailsResource.youtube(ingestDetails.urls)
+            is YoutubeScrapeIngest -> IngestDetailsResource.youtube(ingestDetails.playlistIds)
         }
     }
 
@@ -24,8 +24,7 @@ class IngestDetailsResourceConverter {
             IngestType.MANUAL -> ManualIngest
             IngestType.CUSTOM -> CustomIngest
             IngestType.MRSS -> MrssFeedIngest(ingestDetailsResource.urls!!)
-            IngestType.YOUTUBE -> YoutubeScrapeIngest(ingestDetailsResource.urls!!)
-            else -> throw IllegalArgumentException("Unknown ingest details type: ${ingestDetailsResource.type}")
+            IngestType.YOUTUBE -> YoutubeScrapeIngest(ingestDetailsResource.playlistIds ?: ingestDetailsResource.urls!!)
         }
     }
 }

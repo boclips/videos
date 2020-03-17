@@ -24,7 +24,7 @@ data class MrssFeedIngest(val urls: List<String>) : IngestDetails() {
     }
 }
 
-data class YoutubeScrapeIngest(val urls: List<String>) : IngestDetails() {
+data class YoutubeScrapeIngest(val playlistIds: List<String>) : IngestDetails() {
     override fun type(): IngestType {
         return IngestType.YOUTUBE
     }

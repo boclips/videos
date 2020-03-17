@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.CustomIngest
 import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.api.response.contentpartner.IngestType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,7 +15,7 @@ class IngestDetailsResourceConverterTest {
 
     private val mrssIngest = MrssFeedIngest(urls = listOf("http://mrss.feed"))
 
-    private val youtubeIngest = YoutubeScrapeIngest(urls = listOf("http://yt.scrape"))
+    private val youtubeIngest = YoutubeScrapeIngest(playlistIds = listOf("playlistId"))
 
     @Test
     fun `convert manual ingest details`() {
@@ -49,7 +50,7 @@ class IngestDetailsResourceConverterTest {
         val resource = converter.convert(youtubeIngest)
 
         assertThat(resource.type).isEqualTo(IngestType.YOUTUBE)
-        assertThat(resource.urls).containsExactly("http://yt.scrape")
+        assertThat(resource.playlistIds).containsExactly("playlistId")
     }
 
     @Test
@@ -58,5 +59,18 @@ class IngestDetailsResourceConverterTest {
         assertThat(CustomIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(CustomIngest)
         assertThat(mrssIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(mrssIngest)
         assertThat(youtubeIngest.let(converter::convert).let(converter::fromResource)).isEqualTo(youtubeIngest)
+    }
+
+    @Test
+    fun `convert youtube resource to ingest details when playlist ids are sent via the urls field`() {
+        val resource = IngestDetailsResource(
+            type = IngestType.YOUTUBE,
+            playlistIds = null,
+            urls = listOf("playlistId")
+        )
+
+        val ingestDetails = converter.fromResource(resource)
+
+        assertThat(ingestDetails).isEqualTo(youtubeIngest)
     }
 }
