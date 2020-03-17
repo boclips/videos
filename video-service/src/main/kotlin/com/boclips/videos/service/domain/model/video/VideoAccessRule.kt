@@ -41,5 +41,9 @@ sealed class VideoAccess {
         }
     }
 
-    class Rules(val accessRules: List<VideoAccessRule>) : VideoAccess()
+    class Rules(val accessRules: List<VideoAccessRule>) : VideoAccess() {
+        override fun toString(): String {
+            return accessRules.map { it.toString() }.joinToString { ", " }
+        }
+    }
 }
