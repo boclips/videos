@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
-import com.boclips.videos.api.response.contentpartner.IngestType
+import com.boclips.videos.api.common.IngestType
 
 sealed class IngestDetails {
     abstract fun type(): IngestType

@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
 import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.videos.api.common.IngestType
 
 object ContentPartnerFiltersConverter {
     fun convert(
@@ -9,7 +10,7 @@ object ContentPartnerFiltersConverter {
         official: Boolean? = null,
         accreditedYTChannelId: String?,
         hubspotId: String? = null,
-        ingestTypes: List<String>? = null
+        ingestTypes: List<IngestType>? = null
     ): List<ContentPartnerFilter> =
         listOfNotNull(
             getNameFilter(name),
@@ -33,6 +34,6 @@ object ContentPartnerFiltersConverter {
     private fun getHubspotId(hubspotId: String?) =
         hubspotId?.let { ContentPartnerFilter.HubspotIdFilter(hubspotId = hubspotId) }
 
-    private fun getIngestTypesFilter(ingestTypes: List<String>?) =
+    private fun getIngestTypesFilter(ingestTypes: List<IngestType>?) =
         ingestTypes?.let { ContentPartnerFilter.IngestTypesFilter(ingestTypes = it) }
 }

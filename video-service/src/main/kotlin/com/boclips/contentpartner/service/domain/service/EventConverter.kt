@@ -7,7 +7,7 @@ import com.boclips.contentpartner.service.domain.model.ManualIngest
 import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
-import com.boclips.videos.api.response.contentpartner.IngestType
+import com.boclips.videos.api.common.IngestType
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
 import com.boclips.eventbus.domain.contentpartner.IngestDetails as EventBusIngestDetails
 

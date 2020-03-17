@@ -1,5 +1,7 @@
 package com.boclips.videos.api.response.contentpartner
 
+import com.boclips.videos.api.common.IngestType
+
 data class IngestDetailsResource(
     val type: IngestType,
     val playlistIds: List<String>? = null,

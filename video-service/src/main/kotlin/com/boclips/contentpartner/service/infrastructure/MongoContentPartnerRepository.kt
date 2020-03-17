@@ -205,7 +205,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             }
             is ContentPartnerFilter.HubspotIdFilter -> ContentPartnerDocument::hubspotId eq filter.hubspotId
             is ContentPartnerFilter.IngestTypesFilter ->
-                ContentPartnerDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes
+                ContentPartnerDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }
         }
 
     private fun findByQuery(mongoQuery: Bson): ContentPartner? {

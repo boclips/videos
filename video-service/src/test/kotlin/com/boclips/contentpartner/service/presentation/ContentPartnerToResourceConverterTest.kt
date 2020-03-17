@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLi
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.contentpartner.IngestType
+import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever

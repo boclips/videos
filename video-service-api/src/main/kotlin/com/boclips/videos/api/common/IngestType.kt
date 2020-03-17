@@ -1,4 +1,4 @@
-package com.boclips.videos.api.response.contentpartner
+package com.boclips.videos.api.common
 
 enum class IngestType {
     MANUAL,
