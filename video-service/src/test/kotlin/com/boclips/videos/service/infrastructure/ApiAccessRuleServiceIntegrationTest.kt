@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.accessrule.ContentPackage
 import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
@@ -42,11 +41,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             videoIds = listOf(videoId)
         }
 
-        whenever(userServiceClient.getContentPackage(anyString()))
-            .thenReturn(ContentPackage().apply {
-                name = "blah"
-                accessRules = listOf(collectionsContract, videosContract)
-            })
+        whenever(userServiceClient.getAccessRules(anyString()))
+            .thenReturn(
+                listOf(collectionsContract, videosContract)
+            )
 
         val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
 
@@ -62,7 +60,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns default when content package cannot be found`() {
-        whenever(userServiceClient.getContentPackage(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenReturn(null)
 
         val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
@@ -77,12 +75,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class CollectionsAccess {
         @Test
         fun `has access specific user's collections when no contracts specified`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
+            whenever(userServiceClient.getAccessRules(anyString()))
                 .thenReturn(
-                    ContentPackage().apply {
-                        name = "blah"
-                        accessRules = emptyList()
-                    })
+                    emptyList()
+                )
 
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
@@ -98,12 +94,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `has access to everything if is allowed to view any collection`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
+            whenever(userServiceClient.getAccessRules(anyString()))
                 .thenReturn(
-                    ContentPackage().apply {
-                        name = "blah"
-                        accessRules = emptyList()
-                    })
+                    emptyList()
+                )
 
             val user = UserFactory.sample(id = "test-user", isPermittedToViewAnyCollection = true)
             val accessRules = accessRuleService.getRules(user)
@@ -116,11 +110,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     inner class AccessingVideos {
         @Test
         fun `has access to everything when no contracts specified`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = emptyList()
-                })
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    emptyList()
+                )
 
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
@@ -132,14 +125,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `can convert ExcludedVideosAccess rule to domain`() {
             val firstId = TestFactories.createVideoId()
             val secondId = TestFactories.createVideoId()
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(ExcludedVideosAccessRule().apply {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(ExcludedVideosAccessRule().apply {
                         name = "bad videos"
                         videoIds = listOf(firstId.value, secondId.value)
                     })
-                })
+                )
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -149,14 +141,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `can convert ExcludedVideoTypesAccess rule to domain`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(ExcludedVideoTypesAccessRule().apply {
                         name = "bad video types"
                         videoTypes = listOf("NEWS")
                     })
-                })
+                )
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -166,14 +157,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `ignores any unknown content types`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(ExcludedVideoTypesAccessRule().apply {
                         name = "bad video types"
                         videoTypes = listOf("UNKNOWN", "NEWS")
                     })
-                })
+                )
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -183,14 +173,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `access to everything if only unknown content types are specified`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(ExcludedVideoTypesAccessRule().apply {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(ExcludedVideoTypesAccessRule().apply {
                         name = "bad video types"
                         videoTypes = listOf("UNKNOWN")
                     })
-                })
+                )
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -199,14 +188,14 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `can convert ExcludedContent types to domain`() {
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(ExcludedContentPartnersAccessRule().apply {
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(
+                    listOf(ExcludedContentPartnersAccessRule().apply {
                         name = "bad video types"
                         contentPartnerIds = listOf("content-partner-1")
                     })
-                })
+                )
+
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -224,20 +213,18 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `can convert all video access rule types to domain`() {
             val firstId = TestFactories.createVideoId()
             val secondId = TestFactories.createVideoId()
-            whenever(userServiceClient.getContentPackage(anyString()))
-                .thenReturn(ContentPackage().apply {
-                    name = "blah"
-                    accessRules = listOf(
-                        IncludedVideosAccessRule().apply {
-                            name = "good videos"
-                            videoIds = listOf(firstId.value)
-                        },
-                        ExcludedVideosAccessRule().apply {
-                            name = "bad videos"
-                            videoIds = listOf(secondId.value)
-                        }
-                    )
-                })
+            whenever(userServiceClient.getAccessRules(anyString()))
+                .thenReturn(listOf(
+                    IncludedVideosAccessRule().apply {
+                        name = "good videos"
+                        videoIds = listOf(firstId.value)
+                    },
+                    ExcludedVideosAccessRule().apply {
+                        name = "bad videos"
+                        videoIds = listOf(secondId.value)
+                    }
+                )
+                )
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
@@ -257,13 +244,12 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             collectionIds = listOf("test-collection-id")
         }
 
-        whenever(userServiceClient.getContentPackage(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
-            .thenReturn(ContentPackage().apply {
-                name = "blah"
-                accessRules = listOf(collectionsContract)
-            })
+            .thenReturn(
+                listOf(collectionsContract)
+            )
 
         assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess).isEqualTo(
             CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
@@ -272,7 +258,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `when rules cannot be obtained, revert to public access`() {
-        whenever(userServiceClient.getContentPackage(anyString()))
+        whenever(userServiceClient.getAccessRules(anyString()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))

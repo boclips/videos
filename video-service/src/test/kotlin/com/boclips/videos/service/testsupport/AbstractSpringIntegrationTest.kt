@@ -197,7 +197,7 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        userServiceClient.clearContentPackage()
+        userServiceClient.clearAccessRules()
         userServiceClient.clearUser()
 
         reset(legacyVideoSearchService)

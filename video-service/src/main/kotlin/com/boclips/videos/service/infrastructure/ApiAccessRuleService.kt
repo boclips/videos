@@ -30,7 +30,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
-        val retrievedAccessRules = userServiceClient.getContentPackage(user.id.value)?.accessRules ?: emptyList()
+        val retrievedAccessRules = userServiceClient.getAccessRules(user.id.value) ?: emptyList()
 
         val accessRules = retrievedAccessRules.let {
             AccessRules(

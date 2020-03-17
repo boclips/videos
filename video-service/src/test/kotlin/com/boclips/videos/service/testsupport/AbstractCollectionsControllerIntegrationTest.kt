@@ -30,7 +30,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @BeforeEach
     fun cleanupContracts() {
-        userServiceClient.clearContentPackage()
+        userServiceClient.clearAccessRules()
     }
 
     fun createCollection(
