@@ -14,7 +14,7 @@ class CollectionFilterDecoratorTest {
             ageRangeMin = 5
         )
 
-        CollectionFilterDecorator(boolQuery).apply(collectionQuery)
+        CollectionFilterDecorator(boolQuery).decorate(collectionQuery)
 
         Assertions.assertThat(boolQuery.toString()).isEqualTo(
             """

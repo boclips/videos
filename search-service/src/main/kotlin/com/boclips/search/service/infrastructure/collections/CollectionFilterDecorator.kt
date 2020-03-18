@@ -12,11 +12,7 @@ import org.elasticsearch.index.query.QueryBuilders
 class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     companion object : KLogging()
 
-    fun apply(collectionQuery: CollectionQuery) {
-        attachFilters(collectionQuery)
-    }
-
-    private fun attachFilters(collectionQuery: CollectionQuery) {
+    fun decorate(collectionQuery: CollectionQuery) {
         if (listOfNotNull(collectionQuery.ageRangeMin, collectionQuery.ageRangeMax).isNotEmpty()) {
             boolQueryBuilder.filter(
                 beWithinAgeRange(
@@ -25,7 +21,6 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
                 )
             )
         }
-
         if (!collectionQuery.ageRanges.isNullOrEmpty()) {
             boolQueryBuilder.filter(
                 beWithinAgeRanges(
@@ -33,7 +28,6 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
                 )
             )
         }
-
         if (collectionQuery.hasLessonPlans != null) {
             boolQueryBuilder.filter(
                 QueryBuilders.termsQuery(
@@ -42,15 +36,12 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
                 )
             )
         }
-
         if (collectionQuery.permittedIds != null) {
             boolQueryBuilder.filter(QueryBuilders.termsQuery(CollectionDocument.ID, collectionQuery.permittedIds))
         }
-
         if (collectionQuery.subjectIds.isNotEmpty()) {
             boolQueryBuilder.filter(matchSubjects(collectionQuery.subjectIds))
         }
-
         boolQueryBuilder.filter(
             QueryBuilders.boolQuery().apply {
                 collectionQuery.visibilityForOwners.forEach { visibilityForOwner ->

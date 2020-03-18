@@ -89,22 +89,22 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
             }
 
-        VideoFilterDecorator(query).apply(videoQuery)
+        VideoFilterDecorator(query).decorate(videoQuery)
 
-        val esQuery = SearchSourceBuilder().query(query)
+        val searchSourceBuilder = SearchSourceBuilder().query(query)
 
         videoQuery.sort?.let { sort ->
             Do exhaustive when (sort) {
-                is Sort.ByField -> esQuery.sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
-                is Sort.ByRandom -> esQuery.query(
-                    FunctionScoreQueryBuilder(esQuery.query(), ScoreFunctionBuilders.randomFunction()).boostMode(
+                is Sort.ByField -> searchSourceBuilder.sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
+                is Sort.ByRandom -> searchSourceBuilder.query(
+                    FunctionScoreQueryBuilder(searchSourceBuilder.query(), ScoreFunctionBuilders.randomFunction()).boostMode(
                         CombineFunction.REPLACE
                     )
                 )
             }
         }
 
-        return esQuery
+        return searchSourceBuilder
     }
 
     private fun permittedIdsFilter(

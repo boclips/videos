@@ -29,7 +29,7 @@ class VideoFilterDecoratorTest {
             promoted = true
         )
 
-        VideoFilterDecorator(boolQuery).apply(videoQuery)
+        VideoFilterDecorator(boolQuery).decorate(videoQuery)
 
         assertThat(boolQuery.toString()).isEqualTo(
             """

@@ -102,7 +102,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             }
             .apply {
                 CollectionFilterDecorator(this)
-                    .apply(query)
+                    .decorate(query)
             }
     }
 }

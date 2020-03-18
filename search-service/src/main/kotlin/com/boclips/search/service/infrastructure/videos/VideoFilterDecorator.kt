@@ -16,11 +16,7 @@ import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
 class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
-    fun apply(videoQuery: VideoQuery) {
-        attachFilters(videoQuery)
-    }
-
-    private fun attachFilters(videoQuery: VideoQuery) {
+    fun decorate(videoQuery: VideoQuery) {
         if (videoQuery.contentPartnerNames.isNotEmpty()) {
             boolQueryBuilder.filter(
                 boolQuery().must(
@@ -31,23 +27,18 @@ class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
                 )
             )
         }
-
         if (videoQuery.bestFor != null) {
             boolQueryBuilder.filter(filterByTag(videoQuery.bestFor))
         }
-
         if (videoQuery.durationRanges?.isNotEmpty() == true) {
             boolQueryBuilder.must(beWithinDurationRanges(videoQuery.durationRanges))
         }
-
         if (videoQuery.source != null) {
             boolQueryBuilder.filter(matchSource(videoQuery.source))
         }
-
         if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
             boolQueryBuilder.must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
         }
-
         if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
             boolQueryBuilder.filter(
                 beWithinAgeRange(
@@ -56,7 +47,6 @@ class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
                 )
             )
         }
-
         if (!videoQuery.ageRanges.isNullOrEmpty()) {
             boolQueryBuilder.filter(
                 beWithinAgeRanges(
@@ -64,39 +54,30 @@ class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
                 )
             )
         }
-
         if (videoQuery.subjectIds.isNotEmpty()) {
             boolQueryBuilder.must(matchSubjects(videoQuery.subjectIds))
         }
-
         if (videoQuery.promoted != null) {
             boolQueryBuilder.must(matchPromoted(videoQuery.promoted))
         }
-
         if (videoQuery.isClassroom != null) {
             boolQueryBuilder.must(matchIsClassroom(videoQuery.isClassroom))
         }
-
         if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
             boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
         }
-
         if (videoQuery.includedType.isNotEmpty()) {
             boolQueryBuilder.must(matchIncludedType(videoQuery.includedType))
         }
-
         if (videoQuery.excludedType.isNotEmpty()) {
             boolQueryBuilder.must(matchExcludeType(videoQuery.excludedType))
         }
-
         if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
             boolQueryBuilder.must(matchDeniedIdsFilter(videoQuery.deniedVideoIds))
         }
-
         if (videoQuery.isEligibleForStream != null) {
             boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
         }
-
         videoQuery.subjectsSetManually?.let { subjectsSetManually ->
             boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
         }
