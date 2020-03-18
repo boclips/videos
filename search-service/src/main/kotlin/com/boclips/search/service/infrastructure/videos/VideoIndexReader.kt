@@ -10,6 +10,7 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.unstemmed
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.lucene.search.function.CombineFunction
@@ -25,7 +26,6 @@ import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
 import org.elasticsearch.index.query.QueryBuilders.termQuery
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
-import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
@@ -33,23 +33,23 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     companion object : KLogging();
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
-        return search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
+        return search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize).hits
             .map(VideoDocumentConverter::fromSearchHit)
             .map { it.id }
     }
 
     override fun count(query: VideoQuery): Long {
-        return search(videoQuery = query, startIndex = 0, windowSize = 1).totalHits?.value ?: 0L
+        val response = search(videoQuery = query, startIndex = 0, windowSize = 1)
+        return response.hits.totalHits?.value ?: 0L
     }
 
-    private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchHits {
+    private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchResponse {
         val query = buildElasticSearchQuery(videoQuery)
         val request = SearchRequest(
             arrayOf(VideosIndex.getIndexAlias()),
             query.from(startIndex).size(windowSize).explain(false)
         )
-        val result = client.search(request, RequestOptions.DEFAULT)
-        return result.hits
+        return client.search(request, RequestOptions.DEFAULT)
     }
 
     private fun buildElasticSearchQuery(videoQuery: VideoQuery): SearchSourceBuilder {
@@ -91,13 +91,19 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         VideoFilterDecorator(query).decorate(videoQuery)
 
-        val searchSourceBuilder = SearchSourceBuilder().query(query)
+        val searchSourceBuilder: SearchSourceBuilder = SearchSourceBuilder().query(query).postFilter(query)
 
-        videoQuery.sort?.let { sort ->
+        videoQuery.sort?.let { sort: Sort<VideoMetadata> ->
             Do exhaustive when (sort) {
-                is Sort.ByField -> searchSourceBuilder.sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
+                is Sort.ByField -> searchSourceBuilder.sort(
+                    sort.fieldName.name,
+                    EsSortOrder.fromString(sort.order.toString())
+                )
                 is Sort.ByRandom -> searchSourceBuilder.query(
-                    FunctionScoreQueryBuilder(searchSourceBuilder.query(), ScoreFunctionBuilders.randomFunction()).boostMode(
+                    FunctionScoreQueryBuilder(
+                        searchSourceBuilder.query(),
+                        ScoreFunctionBuilders.randomFunction()
+                    ).boostMode(
                         CombineFunction.REPLACE
                     )
                 )
