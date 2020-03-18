@@ -15,8 +15,10 @@ import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
-class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
-    fun decorate(videoQuery: VideoQuery) {
+class VideoFilter {
+    fun create(videoQuery: VideoQuery): BoolQueryBuilder? {
+        val boolQueryBuilder = boolQuery()
+
         if (videoQuery.contentPartnerNames.isNotEmpty()) {
             boolQueryBuilder.filter(
                 boolQuery().must(
@@ -81,6 +83,8 @@ class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         videoQuery.subjectsSetManually?.let { subjectsSetManually ->
             boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
         }
+
+        return boolQueryBuilder
     }
 
     private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) =

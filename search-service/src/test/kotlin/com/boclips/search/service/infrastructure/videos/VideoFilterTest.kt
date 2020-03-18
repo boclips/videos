@@ -4,16 +4,14 @@ import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import org.assertj.core.api.Assertions.assertThat
-import org.elasticsearch.index.query.QueryBuilders
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
 
-class VideoFilterDecoratorTest {
+class VideoFilterTest {
 
     @Test
-    fun `attaches all filters for video`() {
-        val boolQuery = QueryBuilders.boolQuery()
+    fun `creates video filters given query`() {
         val videoQuery = VideoQuery(
             phrase = "some phrase",
             ageRangeMax = 10,
@@ -29,9 +27,9 @@ class VideoFilterDecoratorTest {
             promoted = true
         )
 
-        VideoFilterDecorator(boolQuery).decorate(videoQuery)
+        val filters = VideoFilter().create(videoQuery)
 
-        assertThat(boolQuery.toString()).isEqualTo(
+        assertThat(filters.toString()).isEqualTo(
             """
 {
   "bool" : {

@@ -53,45 +53,12 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     }
 
     private fun buildElasticSearchQuery(videoQuery: VideoQuery): SearchSourceBuilder {
-        val phrase = videoQuery.phrase
-        val query = boolQuery()
+        val query = query(videoQuery)
+        val filters = VideoFilter().create(videoQuery)
 
-        query
-            .apply {
-                if (phrase.isNotBlank()) {
-                    must(
-                        boolQuery()
-                            .should(matchPhraseQuery(VideoDocument.TITLE, phrase).slop(1))
-                            .should(matchPhraseQuery(VideoDocument.DESCRIPTION, phrase).slop(1))
-                            .should(
-                                multiMatchQuery(
-                                    phrase,
-                                    VideoDocument.TITLE,
-                                    unstemmed(VideoDocument.TITLE),
-                                    VideoDocument.DESCRIPTION,
-                                    unstemmed(VideoDocument.DESCRIPTION),
-                                    VideoDocument.TRANSCRIPT,
-                                    unstemmed(VideoDocument.TRANSCRIPT),
-                                    VideoDocument.KEYWORDS
-                                )
-                                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
-                                    .minimumShouldMatch("75%")
-                                    .fuzziness(Fuzziness.ZERO)
-                            )
-                            .should(termQuery(VideoDocument.CONTENT_PROVIDER, phrase).boost(1000F))
-                            .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, phrase).boost(1000F))
-                            .minimumShouldMatch(1)
-                            .let(boostInstructionalVideos())
-                            .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
-                    )
-                }
-            }.apply {
-                permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
-            }
-
-        VideoFilterDecorator(query).decorate(videoQuery)
-
-        val searchSourceBuilder: SearchSourceBuilder = SearchSourceBuilder().query(query).postFilter(query)
+        val searchSourceBuilder: SearchSourceBuilder = SearchSourceBuilder()
+            .query(query)
+            .postFilter(filters)
 
         videoQuery.sort?.let { sort: Sort<VideoMetadata> ->
             Do exhaustive when (sort) {
@@ -111,6 +78,43 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         }
 
         return searchSourceBuilder
+    }
+
+    private fun query(videoQuery: VideoQuery): BoolQueryBuilder? {
+        val query = boolQuery()
+        query
+            .apply {
+                if (videoQuery.phrase.isNotBlank()) {
+                    must(
+                        boolQuery()
+                            .should(matchPhraseQuery(VideoDocument.TITLE, videoQuery.phrase).slop(1))
+                            .should(matchPhraseQuery(VideoDocument.DESCRIPTION, videoQuery.phrase).slop(1))
+                            .should(
+                                multiMatchQuery(
+                                    videoQuery.phrase,
+                                    VideoDocument.TITLE,
+                                    unstemmed(VideoDocument.TITLE),
+                                    VideoDocument.DESCRIPTION,
+                                    unstemmed(VideoDocument.DESCRIPTION),
+                                    VideoDocument.TRANSCRIPT,
+                                    unstemmed(VideoDocument.TRANSCRIPT),
+                                    VideoDocument.KEYWORDS
+                                )
+                                    .type(MultiMatchQueryBuilder.Type.MOST_FIELDS)
+                                    .minimumShouldMatch("75%")
+                                    .fuzziness(Fuzziness.ZERO)
+                            )
+                            .should(termQuery(VideoDocument.CONTENT_PROVIDER, videoQuery.phrase).boost(1000F))
+                            .should(matchPhraseQuery(VideoDocument.SUBJECT_NAMES, videoQuery.phrase).boost(1000F))
+                            .minimumShouldMatch(1)
+                            .let(boostInstructionalVideos())
+                            .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
+                    )
+                }
+            }.apply {
+                permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
+            }
+        return query
     }
 
     private fun permittedIdsFilter(
