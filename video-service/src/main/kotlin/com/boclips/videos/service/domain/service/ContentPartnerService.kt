@@ -28,7 +28,7 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
             }
         }
 
-        return contentPartnerRepository.findById(
+        return (contentPartnerRepository.findById(
             contentPartnerId = ContentPartnerServiceContentPartnerId(
                 value = contentPartnerId.value
             )
@@ -39,9 +39,10 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
                 it.isStreamable() -> Availability.STREAMING
                 else -> Availability.NONE
             }
-        } ?: Availability.NONE.also {
-            idCache = contentPartnerId to it
-        }
+        } ?: Availability.NONE)
+            .also {
+                idCache = contentPartnerId to it
+            }
     }
 
     private fun find(contentPartnerId: ContentPartnerId): com.boclips.contentpartner.service.domain.model.ContentPartner? {

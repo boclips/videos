@@ -8,6 +8,8 @@ import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -59,6 +61,20 @@ class ContentPartnerServiceTest {
             contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
 
         assertThat(availability).isEqualTo(Availability.NONE)
+    }
+
+    @Test
+    fun `memoises content partner look up`() {
+        val contentPartnerRepository = mockRepository(emptySet())
+
+        val contentPartnerService = ContentPartnerService(contentPartnerRepository = contentPartnerRepository)
+
+        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "new content partner"))
+
+        verify(contentPartnerRepository, times(2)).findById(any())
     }
 
     private fun mockRepository(distributionMethods: Set<DistributionMethod>): ContentPartnerRepository {
