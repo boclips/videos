@@ -32,7 +32,7 @@ class DeleteCollectionTest : AbstractSpringIntegrationTest() {
 
         deleteCollection.invoke(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
-        assertThat(collectionSearchService.count(CollectionQuery(phrase = "An excellent"))).isEqualTo(0)
+        assertThat(collectionSearchService.count(CollectionQuery(phrase = "An excellent")).hits).isEqualTo(0)
     }
 
     @Test

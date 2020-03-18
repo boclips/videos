@@ -53,18 +53,18 @@ class VideoService(
         logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccess\"" }
 
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
-        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules))
+        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules)).hits
     }
 
     fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {
         return videoSearchService.search(
-                PaginatedSearchRequest(
-                    VideoIdsQuery(ids = videoIds).toSearchQuery(
-                        videoAccess
-                    ),
-                    windowSize = videoIds.size
-                )
-            ).map { VideoId(value = it) }
+            PaginatedSearchRequest(
+                VideoIdsQuery(ids = videoIds).toSearchQuery(
+                    videoAccess
+                ),
+                windowSize = videoIds.size
+            )
+        ).map { VideoId(value = it) }
             .let { videoRepository.findAll(it) }
             .also { videos ->
                 if (videoIds.size != videos.size) {
@@ -90,10 +90,10 @@ class VideoService(
         var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
             contentPartnerRepository.findById(
-                    contentPartnerId = ContentPartnerId(
-                        value = videoToBeCreated.contentPartner.contentPartnerId.value
-                    )
+                contentPartnerId = ContentPartnerId(
+                    value = videoToBeCreated.contentPartner.contentPartnerId.value
                 )
+            )
                 ?.apply {
                     ageRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
                         AgeRange.bounded(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
@@ -119,7 +119,6 @@ class VideoService(
 
         logger.info { "Retrieved playable video $videoId" }
         return video
-
     }
 
     private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {

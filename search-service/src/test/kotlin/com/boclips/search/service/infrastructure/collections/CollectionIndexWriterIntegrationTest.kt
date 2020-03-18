@@ -25,7 +25,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             sequenceOf(SearchableCollectionMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        assertThat(indexReader.count(CollectionQuery("Boy"))).isEqualTo(1)
+        assertThat(indexReader.count(CollectionQuery("Boy")).hits).isEqualTo(1)
     }
 
     @Test
@@ -40,7 +40,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             )
         )
 
-        assertThat(indexReader.count(CollectionQuery("verbose"))).isEqualTo(1)
+        assertThat(indexReader.count(CollectionQuery("verbose")).hits).isEqualTo(1)
     }
 
     @Test

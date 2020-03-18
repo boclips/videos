@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.Counts
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -29,8 +30,9 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .map { it.id }
     }
 
-    override fun count(query: CollectionQuery): Long {
-        return searchElasticSearch(query = query, startIndex = 0, windowSize = 1).totalHits?.value ?: 0L
+    override fun count(query: CollectionQuery): Counts {
+        val response = searchElasticSearch(query = query, startIndex = 0, windowSize = 1)
+        return Counts(hits = response.totalHits?.value ?: 0L)
     }
 
     private fun searchElasticSearch(query: CollectionQuery, startIndex: Int, windowSize: Int): SearchHits {

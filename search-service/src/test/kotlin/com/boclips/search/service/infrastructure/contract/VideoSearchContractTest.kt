@@ -520,7 +520,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val result = queryService.count(VideoQuery("gentleman"))
+        val result = queryService.count(VideoQuery("gentleman")).hits
 
         assertThat(result).isEqualTo(3)
     }
@@ -627,7 +627,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        assertThat(queryService.count(VideoQuery("Boy"))).isEqualTo(1)
+        assertThat(queryService.count(VideoQuery("Boy")).hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -646,7 +646,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val query = VideoQuery(ids = listOf("1", "2", "3", "4"))
-        assertThat(queryService.count(query)).isEqualTo(1)
+        assertThat(queryService.count(query).hits).isEqualTo(1)
 
         val searchResults = queryService.search(
             PaginatedSearchRequest(
@@ -692,7 +692,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                     order = SortOrder.ASC
                 )
             )
-        assertThat(queryService.count(query)).isEqualTo(3)
+        assertThat(queryService.count(query).hits).isEqualTo(3)
 
         val searchResults = queryService.search(
             PaginatedSearchRequest(
@@ -738,7 +738,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                     order = SortOrder.DESC
                 )
             )
-        assertThat(queryService.count(query)).isEqualTo(3)
+        assertThat(queryService.count(query).hits).isEqualTo(3)
 
         val searchResults = queryService.search(
             PaginatedSearchRequest(
@@ -789,7 +789,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 )
             )
 
-        assertThat(queryService.count(query)).isEqualTo(4)
+        assertThat(queryService.count(query).hits).isEqualTo(4)
 
         val searchResults = queryService.search(
             PaginatedSearchRequest(
@@ -832,7 +832,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             VideoQuery(
                 sort = Sort.ByRandom()
             )
-        assertThat(queryService.count(query)).isEqualTo(3)
+        assertThat(queryService.count(query).hits).isEqualTo(3)
 
         val searchResults = queryService.search(
             PaginatedSearchRequest(

@@ -47,7 +47,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
                     )
                 )
             )
-        ).isEqualTo(2)
+                .hits).isEqualTo(2)
     }
 
     @Test

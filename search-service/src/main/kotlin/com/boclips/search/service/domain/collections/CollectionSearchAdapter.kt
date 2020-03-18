@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.Counts
 
 abstract class CollectionSearchAdapter<T>(
     private val indexReader: IndexReader<CollectionMetadata, CollectionQuery>,
@@ -25,7 +26,7 @@ abstract class CollectionSearchAdapter<T>(
         return indexReader.search(searchRequest)
     }
 
-    override fun count(query: CollectionQuery): Long {
+    override fun count(query: CollectionQuery): Counts {
         return indexReader.count(query)
     }
 

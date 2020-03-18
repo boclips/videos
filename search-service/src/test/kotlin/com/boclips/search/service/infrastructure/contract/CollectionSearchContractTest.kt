@@ -356,7 +356,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         val result = readService.count(CollectionQuery("gentleman"))
 
-        assertThat(result).isEqualTo(3)
+        assertThat(result.hits).isEqualTo(3)
     }
 
     @ParameterizedTest

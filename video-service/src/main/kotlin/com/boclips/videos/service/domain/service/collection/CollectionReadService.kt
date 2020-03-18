@@ -68,7 +68,7 @@ class CollectionReadService(
 
     fun count(collectionSearchQuery: CollectionSearchQuery): Long {
         logger.info { "Counted collections for query $collectionSearchQuery" }
-        return collectionSearchService.count(collectionSearchQuery.toSearchQuery())
+        return collectionSearchService.count(collectionSearchQuery.toSearchQuery()).hits
     }
 
     fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult =

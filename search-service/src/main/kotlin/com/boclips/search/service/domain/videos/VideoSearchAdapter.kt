@@ -1,5 +1,6 @@
 package com.boclips.search.service.domain.videos
 
+import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
@@ -25,7 +26,7 @@ abstract class VideoSearchAdapter<T>(
         return indexReader.search(searchRequest)
     }
 
-    override fun count(query: VideoQuery): Long {
+    override fun count(query: VideoQuery): Counts {
         return indexReader.count(query)
     }
 

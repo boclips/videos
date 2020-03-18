@@ -7,20 +7,22 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.common.Counts
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
 
-    override fun count(query: QUERY): Long = idsMatching(index, query).size.toLong()
+    override fun count(query: QUERY): Counts =
+        Counts(hits = idsMatching(index = index, query = query).size.toLong())
 
     override fun search(searchRequest: PaginatedSearchRequest<QUERY>): List<String> {
         val idsMatching = idsMatching(index, searchRequest.query)
 
         return sort(idsMatching, searchRequest.query)
-            .drop(searchRequest.startIndex.toInt())
-            .take(searchRequest.windowSize.toInt())
+            .drop(searchRequest.startIndex)
+            .take(searchRequest.windowSize)
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {

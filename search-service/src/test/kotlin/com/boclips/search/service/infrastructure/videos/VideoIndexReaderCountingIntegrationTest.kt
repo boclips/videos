@@ -1,12 +1,15 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -39,7 +42,7 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
 
         val results = videoIndexReader.count(VideoQuery(phrase = "banana"))
 
-        assertThat(results).isEqualTo(11)
+        assertThat(results.hits).isEqualTo(11)
     }
 
     @Test
@@ -54,7 +57,7 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
 
         val results = videoIndexReader.count(VideoQuery(ids = listOf("2", "5")))
 
-        assertThat(results).isEqualTo(1)
+        assertThat(results.hits).isEqualTo(1)
     }
 
     @Test
@@ -71,6 +74,46 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
 
         val results = videoIndexReader.count(VideoQuery(includedType = setOf(VideoType.NEWS)))
 
-        assertThat(results).isEqualTo(2)
+        assertThat(results.hits).isEqualTo(2)
+    }
+
+    inner class AggregationCounts {
+        fun `returns counts for all subjects`() {
+            videoIndexWriter.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1", title = "Apple banana candy", subjects = setOf(
+                            SubjectMetadata(id = "1", name = "French"),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2", title = "candy banana apple", subjects = setOf(
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3", title = "banana apple candy", subjects = setOf(
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        )
+                    )
+                )
+            )
+
+            val counts = videoIndexReader.count(VideoQuery(phrase = "apple"))
+
+            assertThat(counts.hits).isEqualTo(3)
+
+            assertThat(counts.filters?.subjects).hasSize(3)
+
+            assertThat(counts.filters?.subjects?.get(0)?.id).isEqualTo("1")
+            assertThat(counts.filters?.subjects?.get(0)?.total).isEqualTo(1)
+
+            assertThat(counts.filters?.subjects?.get(1)?.id).isEqualTo("2")
+            assertThat(counts.filters?.subjects?.get(1)?.total).isEqualTo(2)
+
+            assertThat(counts.filters?.subjects?.get(2)?.id).isEqualTo("3")
+            assertThat(counts.filters?.subjects?.get(2)?.total).isEqualTo(1)
+        }
     }
 }

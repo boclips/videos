@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos.legacy
 
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -44,7 +45,7 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         return client.query(SolrQuery(query)).results.toList().map { it.getFieldValue("id").toString() }
     }
 
-    override fun count(query: VideoQuery): Long {
+    override fun count(query: VideoQuery): Counts {
         throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
     }
 

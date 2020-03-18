@@ -46,7 +46,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService).removeFromSearch(video.videoId.value)
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
         }
     }
 
@@ -63,7 +63,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
         }
     }
 
@@ -79,7 +79,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(2)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(2)
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
         }
 
@@ -93,7 +93,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(1)
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
         }
 
@@ -117,7 +117,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value }))).isEqualTo(3)
+            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(3)
         }
 
         @Test
@@ -159,7 +159,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             val count = videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))
 
-            assertThat(count).isEqualTo(1)
+            assertThat(count.hits).isEqualTo(1)
         }
 
         @Test
@@ -168,7 +168,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             whenever(legacyVideoSearchService.upsert(any(), any())).thenThrow(RuntimeException())
 
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))).isEqualTo(1)
+            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
         }
     }
 

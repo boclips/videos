@@ -4,6 +4,7 @@ import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -38,9 +39,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .map { it.id }
     }
 
-    override fun count(query: VideoQuery): Long {
+    override fun count(query: VideoQuery): Counts {
         val response = search(videoQuery = query, startIndex = 0, windowSize = 1)
-        return response.hits.totalHits?.value ?: 0L
+        return Counts(hits = response.hits.totalHits?.value ?: 0L)
     }
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchResponse {
