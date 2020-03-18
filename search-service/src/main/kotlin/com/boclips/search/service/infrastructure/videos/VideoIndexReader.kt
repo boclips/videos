@@ -60,18 +60,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         query
             .apply {
-                if (videoQuery.contentPartnerNames.isNotEmpty()) {
-                    filter(
-                        boolQuery().must(
-                            termsQuery(
-                                VideoDocument.CONTENT_PROVIDER,
-                                videoQuery.contentPartnerNames
-                            )
-                        )
-                    )
-                }
-            }
-            .apply {
                 if (phrase.isNotBlank()) {
                     must(
                         boolQuery()

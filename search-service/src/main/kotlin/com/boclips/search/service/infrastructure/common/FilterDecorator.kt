@@ -9,6 +9,8 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryBuilders.boolQuery
+import org.elasticsearch.index.query.QueryBuilders.termsQuery
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.index.query.TermsQueryBuilder
@@ -33,36 +35,51 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     }
 
     private fun attachFilters(videoQuery: VideoQuery) {
+        if (videoQuery.contentPartnerNames.isNotEmpty()) {
+            boolQueryBuilder.filter(
+                boolQuery().must(
+                    termsQuery(
+                        VideoDocument.CONTENT_PROVIDER,
+                        videoQuery.contentPartnerNames
+                    )
+                )
+            )
+        }
+
         if (videoQuery.bestFor != null) {
             boolQueryBuilder.filter(filterByTag(videoQuery.bestFor))
         }
+
         if (videoQuery.durationRanges?.isNotEmpty() == true) {
             boolQueryBuilder.must(beWithinDurationRanges(videoQuery.durationRanges))
         }
+
         if (videoQuery.source != null) {
             boolQueryBuilder.filter(matchSource(videoQuery.source))
         }
+
         if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
             boolQueryBuilder.must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
         }
+
         if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
             boolQueryBuilder.filter(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
         }
+
         if (!videoQuery.ageRanges.isNullOrEmpty()) {
             boolQueryBuilder.filter(beWithinAgeRanges(videoQuery.ageRanges))
         }
+
         if (videoQuery.subjectIds.isNotEmpty()) {
             boolQueryBuilder.must(matchSubjects(videoQuery.subjectIds))
         }
+
         if (videoQuery.promoted != null) {
             boolQueryBuilder.must(matchPromoted(videoQuery.promoted))
         }
+
         if (videoQuery.isClassroom != null) {
             boolQueryBuilder.must(matchIsClassroom(videoQuery.isClassroom))
-        }
-
-        videoQuery.subjectsSetManually?.let { subjectsSetManually ->
-            boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
         }
 
         if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
@@ -84,6 +101,10 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         if (videoQuery.isEligibleForStream != null) {
             boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
         }
+
+        videoQuery.subjectsSetManually?.let { subjectsSetManually ->
+            boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
+        }
     }
 
     private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) =
@@ -94,18 +115,18 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
                     isEligibleForStream
                 )
             ).should(
-                QueryBuilders.boolQuery().mustNot(
+                boolQuery().mustNot(
                     QueryBuilders.existsQuery(VideoDocument.ELIGIBLE_FOR_STREAM)
                 )
             )
 
     private fun matchDeniedIdsFilter(deniedVideoIds: Set<String>): BoolQueryBuilder =
-        QueryBuilders.boolQuery().mustNot(
+        boolQuery().mustNot(
             QueryBuilders.idsQuery().addIds(*(deniedVideoIds.toTypedArray()))
         )
 
     private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder =
-        QueryBuilders.boolQuery().mustNot(
+        boolQuery().mustNot(
             QueryBuilders.termsQuery(
                 VideoDocument.TYPE,
                 excludedType
@@ -121,7 +142,7 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         )
 
     private fun matchExcludedContentPartnerIds(excludedContentPartnerIds: Set<String>): BoolQueryBuilder =
-        QueryBuilders.boolQuery().mustNot(
+        boolQuery().mustNot(
             QueryBuilders.termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
         )
 
