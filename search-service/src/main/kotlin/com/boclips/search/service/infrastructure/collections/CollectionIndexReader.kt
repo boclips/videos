@@ -3,17 +3,13 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.infrastructure.common.FilterDecorator
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
-import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHits
@@ -101,75 +97,12 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
                             )
                             .should(QueryBuilders.matchPhraseQuery(CollectionDocument.DESCRIPTION, query.phrase))
                     )
-                            .must(QueryBuilders.wildcardQuery(CollectionDocument.DESCRIPTION, "?*"))
+                        .must(QueryBuilders.wildcardQuery(CollectionDocument.DESCRIPTION, "?*"))
                 }
             }
             .apply {
-                filter(
-                    QueryBuilders.boolQuery().apply {
-                        query.visibilityForOwners.forEach { visibilityForOwner ->
-                            should(
-                                QueryBuilders.boolQuery().apply {
-                                    visibilityForOwner.owner?.let {
-                                        must(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
-                                    }
-                                    must(
-                                        QueryBuilders.termsQuery(
-                                            CollectionDocument.VISIBILITY,
-                                            when (visibilityForOwner.visibility) {
-                                                CollectionVisibilityQuery.All -> listOf("public", "private")
-                                                is CollectionVisibilityQuery.One -> when (visibilityForOwner.visibility.collectionVisibility) {
-                                                    CollectionVisibility.PUBLIC -> listOf("public")
-                                                    CollectionVisibility.PRIVATE -> listOf("private")
-                                                }
-                                            }
-                                        )
-                                    )
-                                }
-                            )
-                        }
-
-                        if (query.bookmarkedBy != null) {
-                            logger.info { "Search query checking if bookmarked by: ${query.bookmarkedBy}" }
-                            should(
-                                QueryBuilders.termQuery(
-                                    CollectionDocument.BOOKMARKED_BY,
-                                    query.bookmarkedBy
-                                )
-                            )
-                        }
-
-                        if (query.bookmarkedBy != null && query.visibilityForOwners.any { it.owner == null }) {
-                            minimumShouldMatch(2)
-                        }
-                    }
-                )
+                CollectionFilterDecorator(this)
+                    .apply(query)
             }
-            .apply {
-                if (query.subjectIds.isNotEmpty()) {
-                    filter(matchSubjects(query.subjectIds))
-                }
-            }
-            .apply {
-                if (query.permittedIds != null) {
-                    filter(QueryBuilders.termsQuery(CollectionDocument.ID, query.permittedIds))
-                }
-            }
-            .apply {
-                if (query.hasLessonPlans != null) {
-                    filter(QueryBuilders.termsQuery(CollectionDocument.HAS_LESSON_PLANS, query.hasLessonPlans))
-                }
-            }
-            .apply {
-                FilterDecorator(this).apply(query)
-            }
-    }
-
-    private fun matchSubjects(subjects: List<String>): BoolQueryBuilder {
-        val queries = QueryBuilders.boolQuery()
-        for (s: String in subjects) {
-            queries.should(QueryBuilders.matchPhraseQuery(CollectionDocument.SUBJECTS, s))
-        }
-        return queries
     }
 }

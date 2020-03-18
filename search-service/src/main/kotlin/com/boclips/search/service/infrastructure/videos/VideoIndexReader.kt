@@ -8,7 +8,6 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.IndexConfiguration.Companion.unstemmed
-import com.boclips.search.service.infrastructure.common.FilterDecorator
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -24,7 +23,6 @@ import org.elasticsearch.index.query.QueryBuilders.idsQuery
 import org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery
 import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
 import org.elasticsearch.index.query.QueryBuilders.termQuery
-import org.elasticsearch.index.query.QueryBuilders.termsQuery
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.SearchHits
@@ -91,7 +89,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
             }
 
-        FilterDecorator(query).apply(videoQuery)
+        VideoFilterDecorator(query).apply(videoQuery)
 
         val esQuery = SearchSourceBuilder().query(query)
 

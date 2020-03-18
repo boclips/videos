@@ -1,12 +1,11 @@
-package com.boclips.search.service.infrastructure.common
+package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.search.service.infrastructure.videos.VideoDocument
+import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
+import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
@@ -16,22 +15,9 @@ import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
-class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
+class VideoFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     fun apply(videoQuery: VideoQuery) {
         attachFilters(videoQuery)
-    }
-
-    fun apply(collectionQuery: CollectionQuery) {
-        attachFilters(collectionQuery)
-    }
-
-    private fun attachFilters(collectionQuery: CollectionQuery) {
-        if (listOfNotNull(collectionQuery.ageRangeMin, collectionQuery.ageRangeMax).isNotEmpty()) {
-            boolQueryBuilder.filter(beWithinAgeRange(collectionQuery.ageRangeMin, collectionQuery.ageRangeMax))
-        }
-        if (!collectionQuery.ageRanges.isNullOrEmpty()) {
-            boolQueryBuilder.filter(beWithinAgeRanges(collectionQuery.ageRanges))
-        }
     }
 
     private fun attachFilters(videoQuery: VideoQuery) {
@@ -63,11 +49,20 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         }
 
         if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
-            boolQueryBuilder.filter(beWithinAgeRange(videoQuery.ageRangeMin, videoQuery.ageRangeMax))
+            boolQueryBuilder.filter(
+                beWithinAgeRange(
+                    videoQuery.ageRangeMin,
+                    videoQuery.ageRangeMax
+                )
+            )
         }
 
         if (!videoQuery.ageRanges.isNullOrEmpty()) {
-            boolQueryBuilder.filter(beWithinAgeRanges(videoQuery.ageRanges))
+            boolQueryBuilder.filter(
+                beWithinAgeRanges(
+                    videoQuery.ageRanges
+                )
+            )
         }
 
         if (videoQuery.subjectIds.isNotEmpty()) {
@@ -108,9 +103,9 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     }
 
     private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) =
-        QueryBuilders.boolQuery()
+        boolQuery()
             .should(
-                QueryBuilders.termsQuery(
+                termsQuery(
                     VideoDocument.ELIGIBLE_FOR_STREAM,
                     isEligibleForStream
                 )
@@ -127,15 +122,15 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
 
     private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder =
         boolQuery().mustNot(
-            QueryBuilders.termsQuery(
+            termsQuery(
                 VideoDocument.TYPE,
                 excludedType
             )
         )
 
     private fun matchIncludedType(includedType: Set<VideoType>): BoolQueryBuilder =
-        QueryBuilders.boolQuery().must(
-            QueryBuilders.termsQuery(
+        boolQuery().must(
+            termsQuery(
                 VideoDocument.TYPE,
                 includedType
             )
@@ -143,17 +138,17 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
 
     private fun matchExcludedContentPartnerIds(excludedContentPartnerIds: Set<String>): BoolQueryBuilder =
         boolQuery().mustNot(
-            QueryBuilders.termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
+            termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
         )
 
     private fun matchSubjectsSetManually(subjectsSetManually: Boolean): TermsQueryBuilder =
-        QueryBuilders.termsQuery(
+        termsQuery(
             VideoDocument.SUBJECTS_SET_MANUALLY,
             subjectsSetManually
         )
 
     private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
-        val queries = QueryBuilders.boolQuery()
+        val queries = boolQuery()
         for (s: String in subjects) {
             queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
         }
@@ -182,7 +177,7 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
     }
 
     private fun beWithinDurationRanges(durationRanges: List<DurationRange>): BoolQueryBuilder {
-        return QueryBuilders.boolQuery().apply {
+        return boolQuery().apply {
             durationRanges.forEach { durationRange ->
                 should(
                     QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS).apply {
@@ -204,37 +199,9 @@ class FilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) {
         return queryBuilder
     }
 
-    private fun beWithinAgeRanges(ageRanges: List<AgeRange>): BoolQueryBuilder? {
-        return QueryBuilders.boolQuery().apply {
-            ageRanges.forEach { ageRange ->
-                should(QueryBuilders.termsQuery(HasAgeRange.AGE_RANGE, ageRange.toRange()))
-            }
-        }
-    }
-
-    private fun beWithinAgeRange(filterMin: Int?, filterMax: Int?): BoolQueryBuilder {
-        return QueryBuilders
-            .boolQuery()
-            .apply {
-                if (filterMin != null) {
-                    must(QueryBuilders.rangeQuery(HasAgeRange.AGE_RANGE_MIN).apply {
-                        gte(filterMin)
-                        lt(filterMax)
-                    })
-                }
-                if (filterMax != null) {
-                    must(QueryBuilders.rangeQuery(HasAgeRange.AGE_RANGE_MAX).apply {
-                        gt(filterMin)
-                        lte(filterMax)
-                    })
-                }
-
-            }
-    }
-
     private fun filterByTag(includeTags: List<String>): BoolQueryBuilder? {
         return includeTags
-            .fold(QueryBuilders.boolQuery()) { acc: BoolQueryBuilder, term: String ->
+            .fold(boolQuery()) { acc: BoolQueryBuilder, term: String ->
                 acc.must(QueryBuilders.termQuery(VideoDocument.TAGS, term))
             }
     }
