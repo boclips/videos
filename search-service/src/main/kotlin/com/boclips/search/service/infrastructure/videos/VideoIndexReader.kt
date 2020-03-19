@@ -1,10 +1,12 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
+import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.Counts
+import com.boclips.search.service.domain.common.FilterCounts
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -27,6 +29,8 @@ import org.elasticsearch.index.query.QueryBuilders.multiMatchQuery
 import org.elasticsearch.index.query.QueryBuilders.termQuery
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
+import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
@@ -41,7 +45,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     override fun count(query: VideoQuery): Counts {
         val response = search(videoQuery = query, startIndex = 0, windowSize = 1)
-        return Counts(hits = response.hits.totalHits?.value ?: 0L)
+        val subjectCounts = response.aggregations.get<ParsedStringTerms>("subjects").buckets.map { bucket ->
+            Count(id = bucket.key.toString(), hits = bucket.docCount)
+        }
+        return Counts(hits = response.hits.totalHits?.value ?: 0L, buckets = FilterCounts(subjects = subjectCounts))
     }
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchResponse {
@@ -59,6 +66,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         val searchSourceBuilder: SearchSourceBuilder = SearchSourceBuilder()
             .query(query)
+            .aggregation(AggregationBuilders.terms("subjects").field(VideoDocument.SUBJECT_IDS))
             .postFilter(filters)
 
         videoQuery.sort?.let { sort: Sort<VideoMetadata> ->

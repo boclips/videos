@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -7,7 +8,6 @@ import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTe
 
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -77,7 +77,9 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
         assertThat(results.hits).isEqualTo(2)
     }
 
+    @Nested
     inner class AggregationCounts {
+        @Test
         fun `returns counts for all subjects`() {
             videoIndexWriter.upsert(
                 sequenceOf(
@@ -103,17 +105,11 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             val counts = videoIndexReader.count(VideoQuery(phrase = "apple"))
 
             assertThat(counts.hits).isEqualTo(3)
+            assertThat(counts.buckets?.subjects).hasSize(3)
 
-            assertThat(counts.filters?.subjects).hasSize(3)
-
-            assertThat(counts.filters?.subjects?.get(0)?.id).isEqualTo("1")
-            assertThat(counts.filters?.subjects?.get(0)?.total).isEqualTo(1)
-
-            assertThat(counts.filters?.subjects?.get(1)?.id).isEqualTo("2")
-            assertThat(counts.filters?.subjects?.get(1)?.total).isEqualTo(2)
-
-            assertThat(counts.filters?.subjects?.get(2)?.id).isEqualTo("3")
-            assertThat(counts.filters?.subjects?.get(2)?.total).isEqualTo(1)
+            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
+            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 2))
+            assertThat(counts.buckets?.subjects).contains(Count(id = "3", hits = 1))
         }
     }
 }
