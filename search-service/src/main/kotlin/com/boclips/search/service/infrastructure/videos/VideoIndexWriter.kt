@@ -1,6 +1,5 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.config.properties.ReindexProperties
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.infrastructure.AbstractIndexWriter
 import com.boclips.search.service.infrastructure.IndexParameters
@@ -9,25 +8,25 @@ import org.elasticsearch.client.RestHighLevelClient
 class VideoIndexWriter private constructor(
     client: RestHighLevelClient,
     indexParameters: IndexParameters,
-    reindexProperties: ReindexProperties
+    batchSize: Int
 ) :
     AbstractIndexWriter<VideoMetadata>(
         VideoIndexConfiguration(),
         client,
         indexParameters,
         VideosIndex,
-        reindexProperties
+        batchSize
     ) {
     companion object {
-        fun createTestInstance(client: RestHighLevelClient, reindexProperties: ReindexProperties): VideoIndexWriter =
-            VideoIndexWriter(client, IndexParameters(numberOfShards = 1), reindexProperties)
+        fun createTestInstance(client: RestHighLevelClient, batchSize: Int): VideoIndexWriter =
+            VideoIndexWriter(client, IndexParameters(numberOfShards = 1), batchSize)
 
         fun createInstance(
             client: RestHighLevelClient,
             indexParameters: IndexParameters,
-            reindexProperties: ReindexProperties
+            batchSize: Int
         ): VideoIndexWriter =
-            VideoIndexWriter(client, indexParameters, reindexProperties)
+            VideoIndexWriter(client, indexParameters, batchSize)
     }
 
     override fun serializeToIndexDocument(entry: VideoMetadata) = VideoDocumentConverter.fromVideo(entry)

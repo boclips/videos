@@ -53,3 +53,6 @@ user-service:
 
 batch-processing:
   video-batch-size: 1000
+
+reindex:
+  batch-size: 2000

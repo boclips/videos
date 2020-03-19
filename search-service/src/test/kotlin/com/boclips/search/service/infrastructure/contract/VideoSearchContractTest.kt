@@ -14,7 +14,7 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-import com.boclips.search.service.testsupport.ReindexPropertiesFactory
+
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
 import org.assertj.core.api.Assertions.assertThat
@@ -34,7 +34,7 @@ class SearchServiceProvider : ArgumentsProvider {
         val elasticSearchServiceAdmin =
             VideoIndexWriter.createTestInstance(
                 EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient(),
-                ReindexPropertiesFactory.create()
+                100
             )
 
         return Stream.of(

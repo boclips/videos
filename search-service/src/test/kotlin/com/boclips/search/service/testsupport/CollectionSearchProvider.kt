@@ -14,7 +14,7 @@ class CollectionSearchProvider : ArgumentsProvider {
 
         val esClient = EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient()
         val readSearchService = CollectionIndexReader(esClient)
-        val writeSearchService = CollectionIndexWriter.createTestInstance(esClient, ReindexPropertiesFactory.create())
+        val writeSearchService = CollectionIndexWriter.createTestInstance(esClient, 20)
 
         return Stream.of(
             Arguments.of(inMemorySearchService, inMemorySearchService),

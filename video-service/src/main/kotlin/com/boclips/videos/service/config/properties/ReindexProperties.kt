@@ -1,4 +1,4 @@
-package com.boclips.search.service.config.properties
+package com.boclips.videos.service.config.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "reindex")
 data class ReindexProperties(
-    var batchSize: Int
+    var batchSize: Int = -1
 )

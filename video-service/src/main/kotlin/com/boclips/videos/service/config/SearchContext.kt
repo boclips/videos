@@ -1,6 +1,5 @@
 package com.boclips.videos.service.config
 
-import com.boclips.search.service.config.properties.ReindexProperties
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchClient
 import com.boclips.search.service.infrastructure.IndexParameters
@@ -10,6 +9,7 @@ import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
+import com.boclips.videos.service.config.properties.ReindexProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
@@ -40,7 +40,7 @@ class SearchContext {
             VideoIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),
-                reindexProperties
+                reindexProperties.batchSize
             ),
             contentPartnerService
         )
@@ -57,7 +57,7 @@ class SearchContext {
             CollectionIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),
-                reindexProperties
+                reindexProperties.batchSize
             )
         )
     }
