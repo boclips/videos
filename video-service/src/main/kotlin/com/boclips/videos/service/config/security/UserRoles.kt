@@ -5,6 +5,7 @@ object UserRoles {
     const val TEACHER = "TEACHER"
     const val PUBLISHER = "PUBLISHER"
     const val BACKOFFICE = "BACKOFFICE"
+    const val BOCLIPS_SERVICE = "BOCLIPS_SERVICE"
 
     const val CREATE_SUBJECTS = "CREATE_SUBJECTS"
     const val DELETE_SUBJECTS = "DELETE_SUBJECTS"

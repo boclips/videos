@@ -68,8 +68,8 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         index.remove(itemId)
     }
 
-    override fun bulkRemoveFromSearch(items: List<String>) {
-        items.forEach(this::removeFromSearch)
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        itemIds.forEach(this::removeFromSearch)
     }
 
     override fun makeSureIndexIsThere() {
