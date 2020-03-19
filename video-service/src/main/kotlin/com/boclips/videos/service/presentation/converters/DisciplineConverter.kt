@@ -16,7 +16,8 @@ class DisciplineConverter(private val disciplinesLinkBuilder: DisciplinesLinkBui
             subjects = discipline.subjects.map { SubjectResource(id = it.id.value, name = it.name) },
             _links = listOfNotNull(
                 disciplinesLinkBuilder.discipline(rel = "self", id = discipline.id.value),
-                disciplinesLinkBuilder.subjectsForDiscipline(discipline.id.value)
+                disciplinesLinkBuilder.subjectsForDiscipline(discipline.id.value),
+                disciplinesLinkBuilder.updateDiscipline(discipline.id.value)
             ).map { it.rel.value() to it }.toMap()
         )
     }

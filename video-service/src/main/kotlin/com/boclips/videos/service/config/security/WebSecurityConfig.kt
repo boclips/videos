@@ -46,6 +46,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/disciplines").hasRole(ROLE.VIEW_DISCIPLINES)
             .antMatchers(GET, "/v1/disciplines/*").hasRole(ROLE.VIEW_DISCIPLINES)
+            .antMatchers(PUT, "/v1/disciplines/*").hasRole(ROLE.UPDATE_DISCIPLINES)
             .antMatchers(PUT, "/v1/disciplines/*/subjects").hasRole(ROLE.UPDATE_DISCIPLINES)
             .antMatchers(POST, "/v1/disciplines").hasRole(ROLE.INSERT_DISCIPLINES)
 

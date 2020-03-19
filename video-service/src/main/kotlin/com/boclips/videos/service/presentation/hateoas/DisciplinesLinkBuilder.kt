@@ -17,6 +17,10 @@ class DisciplinesLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         Link(getDisciplineRoot().pathSegment(id).pathSegment("subjects").toUriString(), "subjects")
     }
 
+    fun updateDiscipline(id: String) = getIfHasRole(UserRoles.UPDATE_DISCIPLINES) {
+        Link(getDisciplineRoot().pathSegment(id).toUriString(), "update")
+    }
+
     private fun getDisciplineRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/disciplines")
         .replaceQueryParams(null)

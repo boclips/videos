@@ -24,6 +24,7 @@ import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
+import com.boclips.videos.service.application.disciplines.UpdateDiscipline
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -323,6 +324,11 @@ class ApplicationContext(
     @Bean
     fun replaceDisciplineSubjects(disciplineConverter: DisciplineConverter): ReplaceDisciplineSubjects {
         return ReplaceDisciplineSubjects(disciplineRepository, subjectRepository)
+    }
+
+    @Bean
+    fun updateDiscipline(): UpdateDiscipline {
+        return UpdateDiscipline(disciplineRepository)
     }
 
     @Bean

@@ -77,6 +77,45 @@ class DisciplinesControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.self").exists())
     }
 
+    @Test
+    fun `fetch a discipline as a Boclips employee`() {
+        val disciplineResponse =
+            createDiscipline(code = "humanities", name = "Humanities").andReturn().response.contentAsString
+        val disciplineUrl = JsonPath.parse(disciplineResponse).read<String>("$._links.self.href")
+
+        mockMvc.perform(get(disciplineUrl).asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.name", equalTo("Humanities")))
+            .andExpect(jsonPath("$.code", equalTo("humanities")))
+            .andExpect(jsonPath("$._links.self").exists())
+            .andExpect(jsonPath("$._links.subjects").exists())
+            .andExpect(jsonPath("$._links.update").exists())
+    }
+
+    @Test
+    fun `update a discipline`() {
+        val disciplineResponse =
+            createDiscipline(code = "humanities", name = "Humanities").andReturn().response.contentAsString
+        val disciplineUrl = JsonPath.parse(disciplineResponse).read<String>("$._links.self.href")
+
+        mockMvc.perform(
+            put(disciplineUrl).content(
+                """
+            {"name": "Social Studies",
+            "code": "social-studies"}
+        """.trim()
+            ).asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get(disciplineUrl).asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.name", equalTo("Social Studies")))
+            .andExpect(jsonPath("$.code", equalTo("social-studies")))
+    }
+
     private fun createDiscipline(code: String, name: String): ResultActions {
         return mockMvc.perform(
             post("/v1/disciplines").content(

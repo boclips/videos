@@ -1,12 +1,15 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.discipline.CreateDisciplineRequest
+import com.boclips.videos.api.request.discipline.UpdateDisciplineRequest
 import com.boclips.videos.api.response.discipline.DisciplineResource
 import com.boclips.videos.api.response.discipline.DisciplinesResource
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
+import com.boclips.videos.service.application.disciplines.UpdateDiscipline
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -29,6 +32,7 @@ class DisciplinesController(
     private val getDiscipline: GetDiscipline,
     private val getDisciplines: GetDisciplines,
     private val createDiscipline: CreateDiscipline,
+    private val updateDiscipline: UpdateDiscipline,
     private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
@@ -54,6 +58,13 @@ class DisciplinesController(
         }
 
         return ResponseEntity(discipline(discipline.id.value), headers, HttpStatus.CREATED)
+    }
+
+    @PutMapping("/{id}")
+    fun updateADiscipline(@Valid @PathVariable id: String, @RequestBody updateDisciplineRequest: UpdateDisciplineRequest): ResponseEntity<Any> {
+        updateDiscipline(id, updateDisciplineRequest)
+
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

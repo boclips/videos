@@ -66,4 +66,13 @@ class DisciplinesLinkBuilderTest {
             Link("https://localhost/v1/disciplines/id/subjects", "subjects")
         )
     }
+
+    @Test
+    fun `update discipline link`() {
+        setSecurityContext("admin@boclips.com", UserRoles.UPDATE_DISCIPLINES)
+
+        assertThat(disciplinesLinkBuilder.updateDiscipline("id")).isEqualTo(
+            Link("https://localhost/v1/disciplines/id", "update")
+        )
+    }
 }
