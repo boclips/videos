@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
+import com.boclips.search.service.testsupport.ReindexPropertiesFactory
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +18,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
     @BeforeEach
     fun setUp() {
         videoIndexReader = VideoIndexReader(esClient)
-        videoIndexWriter = VideoIndexWriter.createTestInstance(esClient)
+        videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, ReindexPropertiesFactory.create())
 
         videoIndexWriter.upsert(
             sequenceOf(

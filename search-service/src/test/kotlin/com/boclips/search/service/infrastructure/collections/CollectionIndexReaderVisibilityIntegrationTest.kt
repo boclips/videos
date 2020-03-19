@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
+import com.boclips.search.service.testsupport.ReindexPropertiesFactory
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +19,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
     @BeforeEach
     fun setUp() {
         collectionIndexReader = CollectionIndexReader(esClient)
-        collectionIndexWriter = CollectionIndexWriter.createTestInstance(esClient)
+        collectionIndexWriter = CollectionIndexWriter.createTestInstance(esClient, ReindexPropertiesFactory.create())
     }
 
     @Test

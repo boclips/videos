@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config
 
+import com.boclips.search.service.config.properties.ReindexProperties
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchClient
 import com.boclips.search.service.infrastructure.IndexParameters
@@ -15,7 +16,6 @@ import com.boclips.videos.service.domain.service.collection.CollectionSearchServ
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
-import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -32,21 +32,33 @@ class SearchContext {
     @Profile("!fakes-search")
     fun videoSearchService(
         elasticSearchClient: ElasticSearchClient,
-        contentPartnerService: ContentPartnerService
+        contentPartnerService: ContentPartnerService,
+        reindexProperties: ReindexProperties
     ): VideoSearchService {
         return DefaultVideoSearch(
             VideoIndexReader(elasticSearchClient.buildClient()),
-            VideoIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5)),
+            VideoIndexWriter.createInstance(
+                elasticSearchClient.buildClient(),
+                IndexParameters(numberOfShards = 5),
+                reindexProperties
+            ),
             contentPartnerService
         )
     }
 
     @Bean
     @Profile("!fakes-search")
-    fun collectionSearchService(elasticSearchClient: ElasticSearchClient): CollectionSearchService {
+    fun collectionSearchService(
+        elasticSearchClient: ElasticSearchClient,
+        reindexProperties: ReindexProperties
+    ): CollectionSearchService {
         return DefaultCollectionSearch(
             CollectionIndexReader(elasticSearchClient.buildClient()),
-            CollectionIndexWriter.createInstance(elasticSearchClient.buildClient(), IndexParameters(numberOfShards = 5))
+            CollectionIndexWriter.createInstance(
+                elasticSearchClient.buildClient(),
+                IndexParameters(numberOfShards = 5),
+                reindexProperties
+            )
         )
     }
 

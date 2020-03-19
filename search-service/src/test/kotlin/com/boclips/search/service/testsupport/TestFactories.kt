@@ -1,5 +1,6 @@
 package com.boclips.search.service.testsupport
 
+import com.boclips.search.service.config.properties.ReindexProperties
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
@@ -150,4 +151,9 @@ object LegacyVideoMetadataFactory {
         videoTypeTitle = videoType,
         releaseDate = releaseDate
     )
+}
+
+object ReindexPropertiesFactory {
+    fun create(batchSize: Int = 2000) =
+        ReindexProperties(batchSize = batchSize)
 }

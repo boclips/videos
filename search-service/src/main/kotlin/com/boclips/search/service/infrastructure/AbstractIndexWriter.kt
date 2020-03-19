@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure
 
+import com.boclips.search.service.config.properties.ReindexProperties
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import mu.KLogging
@@ -23,11 +24,10 @@ abstract class AbstractIndexWriter<T>(
     private val indexConfiguration: IndexConfiguration,
     val client: RestHighLevelClient,
     private val indexParameters: IndexParameters,
-    private val esIndex: Index
+    private val esIndex: Index,
+    private val reindexProperties: ReindexProperties
 ) : IndexWriter<T> {
-    companion object : KLogging() {
-        private const val UPSERT_BATCH_SIZE = 2000
-    }
+    companion object : KLogging()
 
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         val newIndexName = esIndex.generateIndexName()
@@ -55,7 +55,7 @@ abstract class AbstractIndexWriter<T>(
     }
 
     override fun bulkRemoveFromSearch(itemIds: List<String>) {
-        itemIds.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+        itemIds.windowed(size = reindexProperties.batchSize, step = reindexProperties.batchSize, partialWindows = true)
             .forEachIndexed { batchIndex, list ->
                 logger.info { "[Batch $batchIndex] removing ${itemIds.size} item(s)" }
 
@@ -99,7 +99,7 @@ abstract class AbstractIndexWriter<T>(
     }
 
     private fun upsertToIndex(items: Sequence<T>, indexName: String, notifier: ProgressNotifier? = null) {
-        items.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+        items.windowed(size = reindexProperties.batchSize, step = reindexProperties.batchSize, partialWindows = true)
             .forEachIndexed { idx, batch ->
                 notifier?.send("Starting upsert batch $idx")
                 this.upsertBatch(idx, batch, indexName)

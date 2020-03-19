@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
+import com.boclips.search.service.testsupport.ReindexPropertiesFactory
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -15,7 +16,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
     @BeforeEach
     fun setUp() {
         indexReader = CollectionIndexReader(esClient)
-        indexWriter = CollectionIndexWriter.createTestInstance(esClient)
+        indexWriter = CollectionIndexWriter.createTestInstance(esClient, ReindexPropertiesFactory.create())
     }
 
     @Test
