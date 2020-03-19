@@ -57,6 +57,8 @@ class VideoService(
     }
 
     fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {
+        val orderById = videoIds.withIndex().associate { it.value to it.index }
+
         return videoSearchService.search(
             PaginatedSearchRequest(
                 VideoIdsQuery(ids = videoIds).toSearchQuery(
@@ -75,6 +77,7 @@ class VideoService(
                 }
             }
             .filter { it.isPlayable() }
+            .sortedBy { orderById[it.videoId] }
     }
 
     fun create(videoToBeCreated: Video): Video {
@@ -106,14 +109,24 @@ class VideoService(
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
-    @Deprecated(
-        """
-        This will be reworked to use access rules once the support is robust enough and all videos go through ES.
-        
-        See commit d929267f2067705055522846eb8bf7082a5d8333 in this repo for more details.
-    """
-    )
-    fun getPlayableVideo(videoId: VideoId): Video {
+    fun getPlayableVideo(
+        videoId: VideoId,
+        videoAccess: VideoAccess
+    ): Video {
+        return videoSearchService.search(
+            PaginatedSearchRequest(
+                VideoIdsQuery(ids = listOf(videoId)).toSearchQuery(
+                    videoAccess
+                ),
+                windowSize = 1
+            )
+        )
+            .firstOrNull()
+            ?.let { getPlayableVideo(VideoId(value = it)) }
+            ?: throw VideoNotFoundException()
+    }
+
+    private fun getPlayableVideo(videoId: VideoId): Video {
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
         if (!video.isPlayable()) throw VideoPlaybackNotFound()
 

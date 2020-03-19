@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -11,6 +12,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
@@ -247,6 +249,20 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
+        }
+    }
+
+    @Nested
+    inner class SingleVideoLookup {
+        @Test
+        fun `looking up a single video respects access rules`() {
+            val stockVideo = saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
+
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.STOCK))
+
+            assertThrows<VideoNotFoundException> {
+                videoService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))
+            }
         }
     }
 }

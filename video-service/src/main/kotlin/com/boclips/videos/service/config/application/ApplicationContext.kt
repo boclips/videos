@@ -107,6 +107,7 @@ class ApplicationContext(
     ) = SearchVideo(
         getVideoById(),
         getVideosByQuery(searchQueryConverter),
+        getAllVideosById(),
         videoRepository
     )
 

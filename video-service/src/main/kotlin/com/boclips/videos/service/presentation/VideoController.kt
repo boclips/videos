@@ -123,7 +123,7 @@ class VideoController(
     @PostMapping("/v1/videos/search")
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
-        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList())
+        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), Administrator)
             .map { videoToResourceConverter.convert(it, user) }
             .let {
                 ResponseEntity(
@@ -147,7 +147,7 @@ class VideoController(
             )
         }
 
-        val resources: VideoResource = searchVideo.byId(id)
+        val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
 
         return ResponseEntity(resources, headers, HttpStatus.OK)
@@ -161,7 +161,7 @@ class VideoController(
     @GetMapping("/v1/videos/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
         val videoTitle =
-            searchVideo.byId(videoId).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+            searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
         val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
             if (it.contains(Regex("\\n\\n"))) {

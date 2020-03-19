@@ -94,7 +94,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         fun `look up video by id`() {
             val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-            val video = videoService.getPlayableVideo(videoId)
+            val video = videoService.getPlayableVideo(videoId, VideoAccess.Everything)
 
             assertThat(video).isNotNull
         }
@@ -112,9 +112,19 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `look up videos honors order`() {
+            val videoId1 = saveVideo()
+            val videoId2 = saveVideo()
+            val videoId3 = saveVideo()
+
+            val videos = videoService.getPlayableVideos(listOf(videoId3, videoId1, videoId2), VideoAccess.Everything)
+            assertThat(videos.map { it.videoId }).containsExactly(videoId3, videoId1, videoId2)
+        }
+
+        @Test
         fun `look up by id throws if video does not exist`() {
             Assertions.assertThatThrownBy {
-                videoService.getPlayableVideo(VideoId(value = TestFactories.aValidId()))
+                videoService.getPlayableVideo(VideoId(value = TestFactories.aValidId()), VideoAccess.Everything)
             }
                 .isInstanceOf(VideoNotFoundException::class.java)
         }
@@ -127,7 +137,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val ageRange = AgeRange.bounded(2, 5)
             val videoId = saveVideo(ageRange = ageRange)
 
-            assertThat(videoService.getPlayableVideo(videoId).ageRange).isEqualTo(
+            assertThat(videoService.getPlayableVideo(videoId, VideoAccess.Everything).ageRange).isEqualTo(
                 ageRange
             )
         }
