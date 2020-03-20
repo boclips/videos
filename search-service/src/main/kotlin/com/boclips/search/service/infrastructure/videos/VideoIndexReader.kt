@@ -30,6 +30,7 @@ import org.elasticsearch.index.query.QueryBuilders.termQuery
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.elasticsearch.search.aggregations.bucket.filter.ParsedFilter
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
@@ -45,7 +46,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     override fun count(query: VideoQuery): Counts {
         val response = search(videoQuery = query, startIndex = 0, windowSize = 1)
-        val subjectCounts = response.aggregations.get<ParsedStringTerms>("subjects").buckets.map { bucket ->
+        val subjectCounts = response
+            .aggregations.get<ParsedFilter>("subjects")
+            .aggregations.get<ParsedStringTerms>("subject ids")
+            .buckets.map { bucket ->
             Count(id = bucket.key.toString(), hits = bucket.docCount)
         }
         return Counts(hits = response.hits.totalHits?.value ?: 0L, buckets = FilterCounts(subjects = subjectCounts))
@@ -62,12 +66,17 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
     private fun buildElasticSearchQuery(videoQuery: VideoQuery): SearchSourceBuilder {
         val query = query(videoQuery)
-        val filters = VideoFilter().create(videoQuery)
+        val queryFilters = VideoFilter().create(videoQuery)
+        val aggregationFilters = VideoFilter().createAggregationFilter(videoQuery)
+
+        val subjectAggregation = AggregationBuilders
+            .filter("subjects", aggregationFilters)
+            .subAggregation(AggregationBuilders.terms("subject ids").field(VideoDocument.SUBJECT_IDS))
 
         val searchSourceBuilder: SearchSourceBuilder = SearchSourceBuilder()
             .query(query)
-            .aggregation(AggregationBuilders.terms("subjects").field(VideoDocument.SUBJECT_IDS))
-            .postFilter(filters)
+            .aggregation(subjectAggregation)
+            .postFilter(queryFilters)
 
         videoQuery.sort?.let { sort: Sort<VideoMetadata> ->
             Do exhaustive when (sort) {

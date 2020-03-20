@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -13,6 +14,8 @@ import org.elasticsearch.index.query.QueryBuilders.termsQuery
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermQueryBuilder
 import org.elasticsearch.index.query.TermsQueryBuilder
+import org.elasticsearch.search.aggregations.AggregationBuilders.filter
+import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import java.time.LocalDate
 
 class VideoFilter {
@@ -86,6 +89,75 @@ class VideoFilter {
 
         return boolQueryBuilder
     }
+
+    fun createAggregationFilter(videoQuery: VideoQuery): BoolQueryBuilder? {
+        val boolQueryBuilder = boolQuery()
+
+        if (videoQuery.contentPartnerNames.isNotEmpty()) {
+            boolQueryBuilder.filter(
+                boolQuery().must(
+                    termsQuery(
+                        VideoDocument.CONTENT_PROVIDER,
+                        videoQuery.contentPartnerNames
+                    )
+                )
+            )
+        }
+        if (videoQuery.bestFor != null) {
+            boolQueryBuilder.filter(filterByTag(videoQuery.bestFor))
+        }
+        if (videoQuery.durationRanges?.isNotEmpty() == true) {
+            boolQueryBuilder.must(beWithinDurationRanges(videoQuery.durationRanges))
+        }
+        if (videoQuery.source != null) {
+            boolQueryBuilder.filter(matchSource(videoQuery.source))
+        }
+        if (listOfNotNull(videoQuery.releaseDateFrom, videoQuery.releaseDateTo).isNotEmpty()) {
+            boolQueryBuilder.must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
+        }
+        if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
+            boolQueryBuilder.filter(
+                beWithinAgeRange(
+                    videoQuery.ageRangeMin,
+                    videoQuery.ageRangeMax
+                )
+            )
+        }
+        if (!videoQuery.ageRanges.isNullOrEmpty()) {
+            boolQueryBuilder.filter(
+                beWithinAgeRanges(
+                    videoQuery.ageRanges
+                )
+            )
+        }
+        if (videoQuery.promoted != null) {
+            boolQueryBuilder.must(matchPromoted(videoQuery.promoted))
+        }
+        if (videoQuery.isClassroom != null) {
+            boolQueryBuilder.must(matchIsClassroom(videoQuery.isClassroom))
+        }
+        if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
+            boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
+        }
+        if (videoQuery.includedType.isNotEmpty()) {
+            boolQueryBuilder.must(matchIncludedType(videoQuery.includedType))
+        }
+        if (videoQuery.excludedType.isNotEmpty()) {
+            boolQueryBuilder.must(matchExcludeType(videoQuery.excludedType))
+        }
+        if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
+            boolQueryBuilder.must(matchDeniedIdsFilter(videoQuery.deniedVideoIds))
+        }
+        if (videoQuery.isEligibleForStream != null) {
+            boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
+        }
+        videoQuery.subjectsSetManually?.let { subjectsSetManually ->
+            boolQueryBuilder.must(matchSubjectsSetManually(subjectsSetManually))
+        }
+
+        return boolQueryBuilder
+    }
+
 
     private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) =
         boolQuery()

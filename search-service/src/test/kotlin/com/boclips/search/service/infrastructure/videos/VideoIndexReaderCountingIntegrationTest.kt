@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.Count
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -80,7 +81,7 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
     @Nested
     inner class AggregationCounts {
         @Test
-        fun `returns counts for all subjects`() {
+        fun `returns counts for all subjects without filter`() {
             videoIndexWriter.upsert(
                 sequenceOf(
                     SearchableVideoMetadataFactory.create(
@@ -110,6 +111,76 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
             assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 2))
             assertThat(counts.buckets?.subjects).contains(Count(id = "3", hits = 1))
+        }
+
+        @Test
+        fun `returns counts for all subjects with filter`() {
+            videoIndexWriter.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1", title = "Apple banana candy", subjects = setOf(
+                            SubjectMetadata(id = "1", name = "French")
+                        )
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2", title = "candy banana apple", subjects = setOf(
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3", title = "banana apple candy", subjects = setOf(
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        )
+                    )
+                )
+            )
+
+            val counts = videoIndexReader.count(VideoQuery(phrase = "apple", subjectIds = setOf("1")))
+
+            assertThat(counts.hits).isEqualTo(1)
+            assertThat(counts.buckets?.subjects).hasSize(3)
+
+            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
+            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 1))
+            assertThat(counts.buckets?.subjects).contains(Count(id = "3", hits = 1))
+        }
+
+        @Test
+        fun `returns counts subjects when another filter is applied`() {
+            videoIndexWriter.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1", title = "Apple banana candy", subjects = setOf(
+                            SubjectMetadata(id = "1", name = "French"),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        ),
+                        ageRangeMax = 3, ageRangeMin = 1
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2", title = "candy banana apple", subjects = setOf(
+                            SubjectMetadata(id = "2", name = "Maths")
+                        ),
+                        ageRangeMin = 13, ageRangeMax = 18
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3", title = "banana apple candy", subjects = setOf(
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        ),
+                        ageRangeMin = 13,
+                        ageRangeMax = 17
+                    )
+                )
+            )
+
+            val counts = videoIndexReader.count(
+                VideoQuery(phrase = "apple", subjectIds = setOf("1"), ageRanges = listOf(AgeRange(1, 3)))
+            )
+
+            assertThat(counts.hits).isEqualTo(1)
+            assertThat(counts.buckets?.subjects).hasSize(2)
+
+            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
+            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 1))
         }
     }
 }
