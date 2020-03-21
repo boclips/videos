@@ -4,7 +4,6 @@ import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.infrastructure.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.ApiGetUserIdOverride
@@ -12,7 +11,6 @@ import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
-import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.mongodb.MongoClient
@@ -74,7 +72,6 @@ class InfrastructureContext(
     ): MongoCollectionRepository {
         return MongoCollectionRepository(
             mongoClient = mongoClient(),
-            mongoCollectionFilterAccessRuleAdapter = mongoCollectionFilterContractAdapter(),
             batchProcessingConfig = batchProcessingConfig,
             collectionSubjects = collectionSubjects()
         )

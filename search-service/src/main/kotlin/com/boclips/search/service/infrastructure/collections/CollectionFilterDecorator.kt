@@ -67,7 +67,6 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
                 }
 
                 if (collectionQuery.bookmarkedBy != null) {
-                    logger.info { "Search query checking if bookmarked by: ${collectionQuery.bookmarkedBy}" }
                     should(
                         QueryBuilders.termQuery(
                             CollectionDocument.BOOKMARKED_BY,

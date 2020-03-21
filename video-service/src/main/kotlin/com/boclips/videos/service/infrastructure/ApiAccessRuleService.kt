@@ -40,7 +40,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
                 videoAccess = getVideoAccessRule(it)
             )
         }
-        logger.info { "User $user got rules $accessRules" }
+        logger.info { "Retrieved access rules for user ${user.id.value}" }
         return accessRules
     }
 
@@ -74,7 +74,8 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
                     it.contentPartnerIds.map { id -> ContentPartnerId(id) }.toSet()
                 )
                 is IncludedDistributionMethodsAccessRule -> VideoAccessRule.IncludedDistributionMethods(
-                    distributionMethods = it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }.toSet()
+                    distributionMethods = it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }
+                        .toSet()
                 )
                 else -> null
             }

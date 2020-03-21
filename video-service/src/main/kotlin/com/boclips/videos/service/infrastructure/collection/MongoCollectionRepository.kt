@@ -1,8 +1,5 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.common.Page
-import com.boclips.videos.service.common.PageInfo
-import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -25,7 +22,6 @@ import org.bson.types.ObjectId.isValid
 import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
-import org.litote.kmongo.descendingSort
 import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -36,7 +32,6 @@ import java.time.Instant
 class MongoCollectionRepository(
     private val mongoClient: MongoClient,
     private val collectionUpdates: CollectionUpdates = CollectionUpdates(),
-    private val mongoCollectionFilterAccessRuleAdapter: MongoCollectionFilterAccessRuleAdapter,
     private val batchProcessingConfig: BatchProcessingConfig,
     private val collectionSubjects: CollectionSubjects
 ) : CollectionRepository {
@@ -70,7 +65,7 @@ class MongoCollectionRepository(
         }
 
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
-        logger.info { "Found collection ${id.value}: $collectionDocument" }
+        logger.info { "Found collection ${id.value}" }
 
         return CollectionDocumentConverter.toCollection(collectionDocument)
     }
@@ -133,7 +128,7 @@ class MongoCollectionRepository(
         }
 
         val result = dbCollection().bulkWrite(updateDocs)
-        logger.info("Bulk collection update: $result")
+        logger.info("Updated collections: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
 
         return findAll(commands.map { it.collectionId }.toSet().toList())
             .map { CollectionUpdateResult(it, commandsByCollectionId[it.id].orEmpty()) }
@@ -157,32 +152,6 @@ class MongoCollectionRepository(
     override fun delete(id: CollectionId, user: User) {
         dbCollection().deleteOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "User $user deleted collection $id" }
-    }
-
-    private fun getPagedCollections(
-        pageRequest: PageRequest,
-        criteria: Bson
-    ): Page<Collection> {
-        val offset = pageRequest.size * pageRequest.page
-        val collections = dbCollection()
-            .find(criteria)
-            .descendingSort(CollectionDocument::updatedAt)
-            .limit(pageRequest.size)
-            .skip(offset)
-            .mapNotNull(CollectionDocumentConverter::toCollection)
-
-        val totalDocuments = dbCollection().countDocuments(criteria)
-        val hasMoreElements = totalDocuments > (pageRequest.size + 1) * pageRequest.page
-        logger.info { "Found ${collections.size} public collections" }
-
-        return Page(
-            elements = collections,
-            pageInfo = PageInfo(
-                hasMoreElements = hasMoreElements,
-                totalElements = totalDocuments,
-                pageRequest = pageRequest
-            )
-        )
     }
 
     private fun dbCollection(): MongoCollection<CollectionDocument> {

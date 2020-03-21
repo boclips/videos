@@ -175,7 +175,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         }
 
         val result = getVideoCollection().bulkWrite(updateDocs)
-        logger.info("Bulk video update: $result")
+        logger.info("Updated videos: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
 
         return findAll(commands.map { it.videoId })
     }

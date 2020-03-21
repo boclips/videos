@@ -44,13 +44,13 @@ class VideoService(
         val videoIds = videoSearchService.search(searchRequest).map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        logger.info { "Returning ${playableVideos.size} videos for query $query and access rule $videoAccess" }
+        logger.info { "Retrieving ${playableVideos.size} videos for query $query" }
 
         return playableVideos
     }
 
     fun count(videoSearchQuery: VideoSearchQuery, videoAccess: VideoAccess): Long {
-        logger.info { "Counted videos for query $videoSearchQuery and access rule $videoAccess\"" }
+        logger.info { "Counting videos for query $videoSearchQuery" }
 
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
         return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules)).hits
@@ -60,13 +60,13 @@ class VideoService(
         val orderById = videoIds.withIndex().associate { it.value to it.index }
 
         return videoSearchService.search(
-            PaginatedSearchRequest(
-                VideoIdsQuery(ids = videoIds).toSearchQuery(
-                    videoAccess
-                ),
-                windowSize = videoIds.size
-            )
-        ).map { VideoId(value = it) }
+                PaginatedSearchRequest(
+                    VideoIdsQuery(ids = videoIds).toSearchQuery(
+                        videoAccess
+                    ),
+                    windowSize = videoIds.size
+                )
+            ).map { VideoId(value = it) }
             .let { videoRepository.findAll(it) }
             .also { videos ->
                 if (videoIds.size != videos.size) {
@@ -93,10 +93,10 @@ class VideoService(
         var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnboundedAgeRange) {
             contentPartnerRepository.findById(
-                contentPartnerId = ContentPartnerId(
-                    value = videoToBeCreated.contentPartner.contentPartnerId.value
+                    contentPartnerId = ContentPartnerId(
+                        value = videoToBeCreated.contentPartner.contentPartnerId.value
+                    )
                 )
-            )
                 ?.apply {
                     ageRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
                         AgeRange.bounded(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
@@ -109,18 +109,15 @@ class VideoService(
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
     }
 
-    fun getPlayableVideo(
-        videoId: VideoId,
-        videoAccess: VideoAccess
-    ): Video {
+    fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
         return videoSearchService.search(
-            PaginatedSearchRequest(
-                VideoIdsQuery(ids = listOf(videoId)).toSearchQuery(
-                    videoAccess
-                ),
-                windowSize = 1
+                PaginatedSearchRequest(
+                    query = VideoIdsQuery(ids = listOf(videoId)).toSearchQuery(
+                        videoAccess
+                    ),
+                    windowSize = 1
+                )
             )
-        )
             .firstOrNull()
             ?.let { getPlayableVideo(VideoId(value = it)) }
             ?: throw VideoNotFoundException().also {
