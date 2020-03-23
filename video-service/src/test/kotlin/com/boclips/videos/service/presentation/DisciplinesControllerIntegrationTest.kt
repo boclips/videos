@@ -73,7 +73,44 @@ class DisciplinesControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.code", equalTo("physics")))
             .andExpect(jsonPath("$.subjects[0].name", equalTo("electromagnetism")))
             .andExpect(jsonPath("$.subjects[1].name", equalTo("thermodynamics")))
+            .andExpect(jsonPath("$._links.self").exists())
+    }
 
+    @Test
+    fun `order of the subjects in a discipline is persisted`() {
+        val subject1Url = createSubject("electromagnetism")
+        val subject2Url = createSubject("thermodynamics")
+        val subject3Url = createSubject("other1")
+        val subject4Url = createSubject("other2")
+
+        val newDisciplineResponse =
+            createDiscipline(code = "physics", name = "Physics").andReturn().response.contentAsString
+        val subjectsUrl = JsonPath.parse(newDisciplineResponse).read<String>("$._links.subjects.href")
+        val disciplineUrl = JsonPath.parse(newDisciplineResponse).read<String>("$._links.self.href")
+
+        mockMvc.perform(
+            put(subjectsUrl).content(
+                """
+                $subject4Url
+                $subject2Url
+                $subject1Url
+                $subject3Url
+                """.trimIndent()
+            )
+                .contentType("text/uri-list")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get(disciplineUrl).asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.name", equalTo("Physics")))
+            .andExpect(jsonPath("$.code", equalTo("physics")))
+            .andExpect(jsonPath("$.subjects[0].name", equalTo("other2")))
+            .andExpect(jsonPath("$.subjects[1].name", equalTo("thermodynamics")))
+            .andExpect(jsonPath("$.subjects[2].name", equalTo("electromagnetism")))
+            .andExpect(jsonPath("$.subjects[3].name", equalTo("other1")))
             .andExpect(jsonPath("$._links.self").exists())
     }
 

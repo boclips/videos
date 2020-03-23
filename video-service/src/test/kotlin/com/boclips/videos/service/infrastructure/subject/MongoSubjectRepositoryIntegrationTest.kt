@@ -38,6 +38,22 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `find by ordered ids`() {
+        val maths = mongoSubjectRepository.create(name = "Mathematics")
+        val subject2 = mongoSubjectRepository.create(name = "Subject2")
+        val subject3 = mongoSubjectRepository.create(name = "Subject3")
+        val subject4 = mongoSubjectRepository.create(name = "Subject4")
+
+        val subjects = mongoSubjectRepository.findByOrderedIds(
+            listOf(maths.id.value, subject4.id.value, subject2.id.value, subject3.id.value))
+
+        assertThat(subjects[0]).isEqualTo(maths)
+        assertThat(subjects[1]).isEqualTo(subject4)
+        assertThat(subjects[2]).isEqualTo(subject2)
+        assertThat(subjects[3]).isEqualTo(subject3)
+    }
+
+    @Test
     fun `create a subject`() {
         mongoSubjectRepository.create(name = "Mathematics")
 
@@ -52,7 +68,7 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `delete a subject`() {
         val subject = mongoSubjectRepository.create(name = "Biology")
 
-        mongoSubjectRepository.delete(subject.id);
+        mongoSubjectRepository.delete(subject.id)
 
         assertThat(mongoSubjectRepository.findAll()).isEmpty()
     }

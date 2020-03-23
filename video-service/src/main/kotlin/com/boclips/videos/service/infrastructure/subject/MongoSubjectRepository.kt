@@ -25,6 +25,12 @@ class MongoSubjectRepository(
             .toList()
     }
 
+    override fun findByOrderedIds(ids: Iterable<String>): List<Subject> {
+        val subjectsById: Map<String, Subject> =
+            findByIds(ids).map { it.id.value to it }.toMap()
+        return ids.mapNotNull { subjectsById[it] }
+    }
+
     companion object : KLogging() {
         const val collectionName = "subjects"
     }

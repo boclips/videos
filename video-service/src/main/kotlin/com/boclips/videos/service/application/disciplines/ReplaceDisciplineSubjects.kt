@@ -16,7 +16,7 @@ class ReplaceDisciplineSubjects(
             "The discipline with id=$disciplineId can't be found"
         )
 
-        val subjectsToUpdate: List<Subject> = subjectRepository.findByIds(subjectIds)
+        val subjectsToUpdate: List<Subject> = subjectRepository.findByOrderedIds(subjectIds)
         val updatedDiscipline = discipline.copy(subjects = subjectsToUpdate)
         updatedDiscipline.let { disciplineRepository.update(discipline = it) }
 

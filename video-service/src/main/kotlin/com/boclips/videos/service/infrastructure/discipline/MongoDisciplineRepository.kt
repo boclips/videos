@@ -68,7 +68,7 @@ class MongoDisciplineRepository(
         mongoClient.getDatabase(DATABASE_NAME).getCollection<DisciplineDocument>(collectionName)
 
     private fun toDiscipline(document: DisciplineDocument): Discipline {
-        val subjects = subjectRepository.findByIds(document.subjects.map { it.toHexString() })
+        val subjects = subjectRepository.findByOrderedIds(document.subjects.map { it.toHexString() })
 
         return Discipline(
             id = DisciplineId(document.id.toHexString()),
