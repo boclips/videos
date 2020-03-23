@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
-import com.boclips.search.service.domain.common.Counts
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -45,7 +45,7 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         val query = searchRequest.query.ids.joinToString(separator = " OR ", prefix = "id:")
         val videoIds = client.query(SolrQuery(query)).results.toList()
         val elements = videoIds.map { it.getFieldValue("id").toString() }
-        return SearchResults(elements = elements, counts = Counts(hits = videoIds.size.toLong()))
+        return SearchResults(elements = elements, counts = ResultCounts(totalHits = videoIds.size.toLong()))
     }
 
     override fun removeFromSearch(itemId: String) {

@@ -69,7 +69,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).hasSize(0)
-        assertThat(result.counts.hits).isEqualTo(0)
+        assertThat(result.counts.totalHits).isEqualTo(0)
     }
 
     @ParameterizedTest
@@ -108,7 +108,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "2", "4")
-        assertThat(result.counts.hits).isEqualTo(3)
+        assertThat(result.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -138,7 +138,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -169,7 +169,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("2")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -205,7 +205,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("4")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -240,7 +240,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("2", "4")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -276,7 +276,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("2", "4")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -306,7 +306,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsOnly("1", "2")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -336,7 +336,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsOnly("3")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -374,7 +374,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("2", "3")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -401,7 +401,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsOnly("3")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -431,7 +431,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsOnly("1", "2", "3")
-        assertThat(result.counts.hits).isEqualTo(3)
+        assertThat(result.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -455,7 +455,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(result.elements).containsExactly("1")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -503,10 +503,10 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
 
         assertThat(page1.elements).hasSize(2)
-        assertThat(page1.counts.hits).isEqualTo(3)
+        assertThat(page1.counts.totalHits).isEqualTo(3)
 
         assertThat(page2.elements).hasSize(1)
-        assertThat(page2.counts.hits).isEqualTo(3)
+        assertThat(page2.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -611,7 +611,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        assertThat(queryService.search(PaginatedSearchRequest(query = VideoQuery("Boy"))).counts.hits).isEqualTo(1)
+        assertThat(queryService.search(PaginatedSearchRequest(query = VideoQuery("Boy"))).counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -630,7 +630,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val query = VideoQuery(ids = listOf("1", "2", "3", "4"))
-        assertThat(queryService.search(PaginatedSearchRequest(query = query)).counts.hits).isEqualTo(1)
+        assertThat(queryService.search(PaginatedSearchRequest(query = query)).counts.totalHits).isEqualTo(1)
 
         val results = queryService.search(
             PaginatedSearchRequest(
@@ -640,7 +640,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
         assertThat(results.elements).containsExactly("1")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -683,7 +683,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
         assertThat(results.elements).containsExactly("yesterday", "today", "tomorrow")
-        assertThat(results.counts.hits).isEqualTo(3)
+        assertThat(results.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -726,7 +726,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
         assertThat(results.elements).containsExactly("tomorrow", "today", "yesterday")
-        assertThat(results.counts.hits).isEqualTo(3)
+        assertThat(results.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -774,7 +774,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).isEqualTo(listOf("highRating", "middleRating", "lowRating", "noRating"))
-        assertThat(results.counts.hits).isEqualTo(4)
+        assertThat(results.counts.totalHits).isEqualTo(4)
     }
 
     @ParameterizedTest
@@ -814,7 +814,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("tomorrow", "today", "yesterday")
-        assertThat(results.counts.hits).isEqualTo(3)
+        assertThat(results.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -1387,7 +1387,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("1")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -1414,7 +1414,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
-        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -1441,7 +1441,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
-        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -1468,7 +1468,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("3", "2")
-        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -1495,7 +1495,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactly("3")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -1520,7 +1520,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactly("1")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -1545,6 +1545,6 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactly("1")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 }

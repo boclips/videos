@@ -44,7 +44,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).hasSize(0)
-        assertThat(result.counts.hits).isEqualTo(0)
+        assertThat(result.counts.totalHits).isEqualTo(0)
     }
 
     @ParameterizedTest
@@ -73,7 +73,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).hasSize(1)
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -105,7 +105,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "3")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -127,7 +127,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -148,7 +148,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -169,7 +169,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
-        assertThat(result.counts.hits).isEqualTo(1)
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -192,7 +192,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
-        assertThat(result.counts.hits).isEqualTo(2)
+        assertThat(result.counts.totalHits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -247,7 +247,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results.elements).hasSize(3)
         assertThat(results.elements).containsExactly("103", "101", "100")
-        assertThat(results.counts.hits).isEqualTo(3)
+        assertThat(results.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -289,7 +289,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(results.elements).hasSize(1)
         assertThat(results.elements).containsExactly("101")
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -334,10 +334,10 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
 
         assertThat(page1.elements).hasSize(2)
-        assertThat(page1.counts.hits).isEqualTo(3)
+        assertThat(page1.counts.totalHits).isEqualTo(3)
 
         assertThat(page2.elements).hasSize(1)
-        assertThat(page2.counts.hits).isEqualTo(3)
+        assertThat(page2.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest

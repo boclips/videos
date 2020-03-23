@@ -49,7 +49,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
             )
         )
 
-        Assertions.assertThat(results.counts.hits).isEqualTo(2)
+        Assertions.assertThat(results.counts.totalHits).isEqualTo(2)
     }
 
     @Test

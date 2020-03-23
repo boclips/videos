@@ -4,7 +4,7 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.video.VideoFacet
+import com.boclips.videos.api.response.video.VideoFacetResource
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
@@ -12,7 +12,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.SubjectCount
+import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -198,7 +198,7 @@ class VideoToResourceConverterTest {
                 elements = listOf(),
                 counts = VideoCounts(
                     total = 10,
-                    subjects = listOf(SubjectCount(subjectId = SubjectId("id"), total = 100))
+                    subjects = listOf(SubjectFacet(subjectId = SubjectId("id"), total = 100))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -209,7 +209,7 @@ class VideoToResourceConverterTest {
             user = UserFactory.sample()
         )
 
-        assertThat(resultResource._embedded.facets?.subjects?.first()).isEqualTo(VideoFacet(id = "id", hits = 100))
+        assertThat(resultResource._embedded.facets?.subjects?.first()).isEqualTo(VideoFacetResource(id = "id", hits = 100))
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.Counts
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -33,7 +33,7 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
             .map(elasticSearchResultConverter::convert)
             .map { it.id }
 
-        return SearchResults(elements = elements, counts = Counts(hits = results.totalHits?.value ?: 0L))
+        return SearchResults(elements = elements, counts = ResultCounts(totalHits = results.totalHits?.value ?: 0L))
     }
 
     private fun searchElasticSearch(query: CollectionQuery, startIndex: Int, windowSize: Int): SearchHits {

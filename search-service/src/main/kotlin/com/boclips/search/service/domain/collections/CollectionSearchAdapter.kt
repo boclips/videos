@@ -6,7 +6,6 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.common.SearchResults
 
 abstract class CollectionSearchAdapter<T>(

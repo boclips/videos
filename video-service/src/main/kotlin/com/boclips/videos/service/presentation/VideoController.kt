@@ -92,7 +92,7 @@ class VideoController(
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
-        val videos = searchVideo.byQuery(
+        val results = searchVideo.byQuery(
             query = query,
             sortBy = sortBy,
             bestFor = bestFor?.let { bestFor } ?: emptyList(),
@@ -116,7 +116,7 @@ class VideoController(
             user = getCurrentUser()
         )
 
-        val videosResource = videoToResourceConverter.convert(resultsPage = videos, user = getCurrentUser())
+        val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())
 
         return ResponseEntity(videosResource, HttpStatus.OK)
     }

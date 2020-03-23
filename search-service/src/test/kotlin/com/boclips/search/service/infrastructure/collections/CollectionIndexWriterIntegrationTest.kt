@@ -27,7 +27,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("Boy")))
 
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @Test
@@ -44,7 +44,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("verbose")))
 
-        assertThat(results.counts.hits).isEqualTo(1)
+        assertThat(results.counts.totalHits).isEqualTo(1)
     }
 
     @Test

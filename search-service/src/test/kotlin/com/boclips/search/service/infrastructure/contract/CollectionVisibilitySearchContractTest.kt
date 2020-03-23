@@ -49,7 +49,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
                         )
                     )
                 )
-            ).counts.hits
+            ).counts.totalHits
         ).isEqualTo(2)
     }
 

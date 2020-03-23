@@ -1,9 +1,7 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.Bucket
-import com.boclips.search.service.domain.common.Count
-import com.boclips.search.service.domain.common.Counts
-import com.boclips.search.service.domain.common.FilterCounts
+import com.boclips.search.service.domain.common.ResultCounts
+import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
@@ -17,7 +15,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
-    private var facets: List<FilterCounts> = emptyList()
+    private var facetCounts: List<FacetCount> = emptyList()
 
     override fun search(searchRequest: PaginatedSearchRequest<QUERY>): SearchResults {
         val idsMatching = idsMatching(index, searchRequest.query)
@@ -28,9 +26,9 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
 
         return SearchResults(
             elements = elements,
-            counts = Counts(
-                hits = idsMatching.size.toLong(),
-                buckets = facets
+            counts = ResultCounts(
+                totalHits = idsMatching.size.toLong(),
+                facets = facetCounts
             )
         )
     }
@@ -76,8 +74,8 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         index.clear()
     }
 
-    fun setFacets(facets: List<FilterCounts>) {
-        this.facets = facets
+    fun setFacets(facetCounts: List<FacetCount>) {
+        this.facetCounts = facetCounts
     }
 
     override fun removeFromSearch(itemId: String) {

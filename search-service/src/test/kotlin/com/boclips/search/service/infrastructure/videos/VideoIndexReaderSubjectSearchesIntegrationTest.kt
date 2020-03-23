@@ -112,7 +112,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
             )
         )
 
-        assertThat(results.counts.hits).isEqualTo(4)
+        assertThat(results.counts.totalHits).isEqualTo(4)
         assertThat(results.elements).hasSize(4)
         assertThat(results.elements.subList(0, 2)).containsExactlyInAnyOrder("2", "4")
     }

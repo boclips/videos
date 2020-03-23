@@ -1,10 +1,10 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
-import com.boclips.search.service.domain.common.Bucket
+import com.boclips.search.service.domain.common.Facet
 import com.boclips.search.service.domain.common.Count
-import com.boclips.search.service.domain.common.Counts
-import com.boclips.search.service.domain.common.FilterCounts
+import com.boclips.search.service.domain.common.ResultCounts
+import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -41,9 +41,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .map(VideoDocumentConverter::fromSearchHit)
             .map { it.id }
 
-        val counts = Counts(
-            hits = results.hits.totalHits?.value ?: 0L,
-            buckets = listOf(FilterCounts(key = Bucket.SubjectsBucket, counts = subjectCounts))
+        val counts = ResultCounts(
+            totalHits = results.hits.totalHits?.value ?: 0L,
+            facets = listOf(FacetCount(key = Facet.SubjectsFacet, counts = subjectCounts))
         )
 
         return SearchResults(elements = elements, counts = counts)

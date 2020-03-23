@@ -6,7 +6,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
 import com.boclips.videos.api.response.video.TagResource
 import com.boclips.videos.api.response.video.VideoBadge
-import com.boclips.videos.api.response.video.VideoFacet
+import com.boclips.videos.api.response.video.VideoFacetResource
 import com.boclips.videos.api.response.video.VideoFacetsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
@@ -84,7 +84,7 @@ class VideoToResourceConverter(
     private fun convertFacets(resultsPage: ResultsPage<Video, VideoCounts>): VideoFacetsResource? {
         return resultsPage.counts?.let { counts ->
             VideoFacetsResource(subjects = counts.subjects.map {
-                VideoFacet(
+                VideoFacetResource(
                     id = it.subjectId.value,
                     hits = it.total
                 )

@@ -40,7 +40,7 @@ class VideoIndexReaderPaginationIntegrationTest : EmbeddedElasticSearchIntegrati
             )
 
         assertThat(results.elements).hasSize(2)
-        assertThat(results.counts.hits).isEqualTo(4)
+        assertThat(results.counts.totalHits).isEqualTo(4)
     }
 
     @Test

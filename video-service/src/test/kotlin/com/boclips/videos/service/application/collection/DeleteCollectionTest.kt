@@ -36,7 +36,7 @@ class DeleteCollectionTest : AbstractSpringIntegrationTest() {
         val results =
             collectionSearchService.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
 
-        assertThat(results.counts.hits).isEqualTo(0)
+        assertThat(results.counts.totalHits).isEqualTo(0)
     }
 
     @Test

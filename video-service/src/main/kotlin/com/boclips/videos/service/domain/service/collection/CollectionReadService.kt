@@ -54,7 +54,7 @@ class CollectionReadService(
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 
-        val count = results.counts.hits
+        val count = results.counts.totalHits
         return ResultsPage(
             elements = collections,
             pageInfo = PageInfo(

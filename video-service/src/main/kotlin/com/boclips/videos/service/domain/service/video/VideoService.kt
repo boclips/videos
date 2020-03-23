@@ -3,14 +3,14 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.search.service.domain.common.Bucket
+import com.boclips.search.service.domain.common.Facet
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.SubjectCount
+import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -51,14 +51,14 @@ class VideoService(
         val videoIds = results.elements.map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        val subjectCounts = results.counts.getCounts(Bucket.SubjectsBucket)
-            .map { SubjectCount(subjectId = SubjectId(it.id), total = it.hits) }
+        val subjectCounts = results.counts.getFacetCounts(Facet.SubjectsFacet)
+            .map { SubjectFacet(subjectId = SubjectId(it.id), total = it.hits) }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
         return VideoResults(
             videos = playableVideos,
-            counts = VideoCounts(total = results.counts.hits, subjects = subjectCounts)
+            counts = VideoCounts(total = results.counts.totalHits, subjects = subjectCounts)
         )
     }
 

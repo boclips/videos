@@ -2,6 +2,6 @@ package com.boclips.videos.service.domain.model.video
 
 import com.boclips.videos.service.domain.model.subject.SubjectId
 
-class VideoCounts(val total: Long, val subjects: List<SubjectCount>)
+class VideoCounts(val total: Long, val subjects: List<SubjectFacet>)
 
-class SubjectCount(val subjectId: SubjectId, val total: Long)
+class SubjectFacet(val subjectId: SubjectId, val total: Long)
