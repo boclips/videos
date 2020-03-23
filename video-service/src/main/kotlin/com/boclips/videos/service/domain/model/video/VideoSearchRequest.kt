@@ -17,12 +17,12 @@ enum class SortKey {
     RANDOM
 }
 
-data class SubjectQuery(
+data class SubjectsRequest(
     val ids: Set<String> = emptySet(),
     val setManually: Boolean? = null
 )
 
-class VideoIdsQuery(
+class VideoIdsRequest(
     val ids: List<VideoId>
 ) {
     fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
@@ -36,7 +36,7 @@ class VideoIdsQuery(
     }
 }
 
-class VideoSearchQuery(
+class VideoSearchRequest(
     val text: String,
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
@@ -50,7 +50,7 @@ class VideoSearchQuery(
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
     val userSubjectIds: Set<String> = emptySet(),
-    val subjectQuery: SubjectQuery = SubjectQuery(),
+    val subjectsRequest: SubjectsRequest = SubjectsRequest(),
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),
@@ -90,8 +90,8 @@ class VideoSearchQuery(
                     )
                 },
                 userSubjectIds = userSubjectIds,
-                subjectIds = subjectQuery.ids,
-                subjectsSetManually = subjectQuery.setManually,
+                subjectIds = subjectsRequest.ids,
+                subjectsSetManually = subjectsRequest.setManually,
                 promoted = promoted,
                 contentPartnerNames = contentPartnerNames,
                 includedType = type,
@@ -106,7 +106,7 @@ class VideoSearchQuery(
     }
 
     override fun toString(): String {
-        return "VideoQuery: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
+        return "Video Request: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
     }
 
     private fun parseIdsOrPhrase(query: String): VideoQuery {

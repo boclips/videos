@@ -10,11 +10,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class VideoSearchQueryTest {
+class VideoSearchRequestTest {
 
     @Test
     fun `translate phrase query`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "normal phrase",
             pageSize = 2,
             pageIndex = 0
@@ -26,7 +26,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `translate single id query`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "id:11",
             pageSize = 2,
             pageIndex = 0
@@ -38,7 +38,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `translate multiple id query`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "id:11,12,13",
             pageSize = 2,
             pageIndex = 0
@@ -50,7 +50,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows filtering by bestFor`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "id:3222",
             bestFor = listOf("explainer"),
             pageSize = 2,
@@ -63,7 +63,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows ordering of results by releaseDate descending`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
@@ -79,7 +79,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows ordering of results by random`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
@@ -92,7 +92,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `does not sort the results without a sortBy`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "id:11,12,13",
             pageSize = 2,
             pageIndex = 0,
@@ -105,7 +105,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows filtering of source`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
@@ -119,7 +119,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows filtering of content type`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
@@ -132,7 +132,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows filtering of release date`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
@@ -147,7 +147,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `allows filtering by promoted`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,
@@ -162,7 +162,7 @@ class VideoSearchQueryTest {
         val firstId = TestFactories.createVideoId()
         val secondId = TestFactories.createVideoId()
 
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,
@@ -185,7 +185,7 @@ class VideoSearchQueryTest {
 
     @Test
     fun `does not limit ids when has access to everything`() {
-        val searchQuery = VideoSearchQuery(
+        val searchQuery = VideoSearchRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,

@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoSearchRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -114,15 +114,15 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "video", contentProviderId = downloadContentPartner.contentPartnerId.value)
 
             val searchResults = videoService.search(
-                VideoSearchQuery(
+                VideoSearchRequest(
                     text = "video",
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Everything
             )
 
-            assertThat(searchResults).hasSize(1)
-            assertThat(searchResults.map { it.videoId }).containsExactly(streamVideo)
+            assertThat(searchResults.videos).hasSize(1)
+            assertThat(searchResults.videos.map { it.videoId }).containsExactly(streamVideo)
         }
 
         @Test
@@ -131,7 +131,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "no access")
 
             val searchResults = videoService.search(
-                VideoSearchQuery(
+                VideoSearchRequest(
                     text = "access",
                     pageSize = 10,
                     pageIndex = 0
@@ -140,8 +140,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(searchResults).hasSize(1)
-            assertThat(searchResults.map { it.videoId }).containsExactly(firstVideo)
+            assertThat(searchResults.videos).hasSize(1)
+            assertThat(searchResults.videos.map { it.videoId }).containsExactly(firstVideo)
         }
 
         @Test
@@ -149,8 +149,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "access")
             saveVideo(title = "no access")
 
-            val searchResults = videoService.count(
-                VideoSearchQuery(
+            val searchResults = videoService.search(
+                VideoSearchRequest(
                     text = "access",
                     pageSize = 10,
                     pageIndex = 0
@@ -159,7 +159,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(searchResults.total).isEqualTo(1)
+            assertThat(searchResults.counts.total).isEqualTo(1)
         }
 
         @Test
@@ -168,7 +168,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val secondVideo = saveVideo(title = "Wild Rhino")
 
             val searchResults = videoService.search(
-                VideoSearchQuery(
+                VideoSearchRequest(
                     text = "Wild",
                     pageSize = 10,
                     pageIndex = 0
@@ -177,8 +177,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(searchResults).hasSize(1)
-            assertThat(searchResults.map { it.videoId }).containsExactly(secondVideo)
+            assertThat(searchResults.videos).hasSize(1)
+            assertThat(searchResults.videos.map { it.videoId }).containsExactly(secondVideo)
         }
 
         @Test
@@ -189,8 +189,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val videos = videoService.search(
-                VideoSearchQuery(
+            val results = videoService.search(
+                VideoSearchRequest(
                     text = "Wild",
                     pageSize = 10,
                     pageIndex = 0
@@ -199,7 +199,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
+            assertThat(results.videos.map { it.videoId }).containsOnly(instructionalVideoId)
         }
 
         @Test
@@ -210,8 +210,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val videos = videoService.search(
-                VideoSearchQuery(
+            val results = videoService.search(
+                VideoSearchRequest(
                     text = "Wild",
                     type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
@@ -221,7 +221,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videos.map { it.videoId }).containsOnly(instructionalVideoId)
+            assertThat(results.videos.map { it.videoId }).containsOnly(instructionalVideoId)
         }
 
         @Test
@@ -237,8 +237,8 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 contentPartnerIds = setOf(ContentPartnerId(value = excludedContentPartnerId))
             )
 
-            val videos = videoService.search(
-                VideoSearchQuery(
+            val results = videoService.search(
+                VideoSearchRequest(
                     text = "Wild",
                     type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
@@ -248,7 +248,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
+            assertThat(results.videos.map { it.videoId }).containsOnly(allowedVideoId)
         }
     }
 

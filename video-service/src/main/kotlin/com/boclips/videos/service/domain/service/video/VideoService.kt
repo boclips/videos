@@ -16,9 +16,9 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoIdsQuery
+import com.boclips.videos.service.domain.model.video.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoSearchRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
@@ -37,32 +37,26 @@ class VideoService(
         )
     )
 
-    fun search(query: VideoSearchQuery, videoAccess: VideoAccess): List<Video> {
+    fun search(request: VideoSearchRequest, videoAccess: VideoAccess): VideoSearchResults {
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
 
         val searchRequest = PaginatedSearchRequest(
-            query = query.toSearchQuery(videoAccessWithDefaultRules),
-            startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
-            windowSize = query.pageSize
+            query = request.toSearchQuery(videoAccessWithDefaultRules),
+            startIndex = convertPageToIndex(request.pageSize, request.pageIndex),
+            windowSize = request.pageSize
         )
         val videoIds = videoSearchService.search(searchRequest).map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
+        val counts = videoSearchService.count(request.toSearchQuery(videoAccess = videoAccessWithDefaultRules))
+        val subjectCounts = counts.getCounts(Bucket.SubjectsBucket)
+            .map { SubjectCount(subjectId = SubjectId(it.id), total = it.hits) }
 
-        logger.info { "Retrieving ${playableVideos.size} videos for query $query" }
+        logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
-        return playableVideos
-    }
-
-    fun count(videoSearchQuery: VideoSearchQuery, videoAccess: VideoAccess): VideoCounts {
-        logger.info { "Counting videos for query $videoSearchQuery" }
-
-        val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
-        val counts = videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules))
-
-        val subjectCounts =
-            counts.getCounts(Bucket.SubjectsBucket).map { SubjectCount(subjectId = SubjectId(it.id), total = it.hits) }
-
-        return VideoCounts(total = counts.hits, subjects = subjectCounts)
+        return VideoSearchResults(
+            videos = playableVideos,
+            counts = VideoCounts(total = counts.hits, subjects = subjectCounts)
+        )
     }
 
     fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {
@@ -70,7 +64,7 @@ class VideoService(
 
         return videoSearchService.search(
                 PaginatedSearchRequest(
-                    VideoIdsQuery(ids = videoIds).toSearchQuery(
+                    VideoIdsRequest(ids = videoIds).toSearchQuery(
                         videoAccess
                     ),
                     windowSize = videoIds.size
@@ -87,6 +81,27 @@ class VideoService(
             }
             .filter { it.isPlayable() }
             .sortedBy { orderById[it.videoId] }
+    }
+
+    fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
+        return videoSearchService.search(
+                PaginatedSearchRequest(
+                    query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(
+                        videoAccess
+                    ),
+                    windowSize = 1
+                )
+            )
+            .firstOrNull()
+            ?.let {
+                val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+                if (!video.isPlayable()) throw VideoPlaybackNotFound()
+                logger.info { "Retrieved playable video $videoId" }
+                video
+            }
+            ?: throw VideoNotFoundException().also {
+                logger.info { "Could not find playable video $videoId with access rules $videoAccess" }
+            }
     }
 
     fun create(videoToBeCreated: Video): Video {
@@ -116,27 +131,6 @@ class VideoService(
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
-    }
-
-    fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
-        return videoSearchService.search(
-                PaginatedSearchRequest(
-                    query = VideoIdsQuery(ids = listOf(videoId)).toSearchQuery(
-                        videoAccess
-                    ),
-                    windowSize = 1
-                )
-            )
-            .firstOrNull()
-            ?.let {
-                val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
-                if (!video.isPlayable()) throw VideoPlaybackNotFound()
-                logger.info { "Retrieved playable video $videoId" }
-                video
-            }
-            ?: throw VideoNotFoundException().also {
-                logger.info { "Could not find playable video $videoId with access rules $videoAccess" }
-            }
     }
 
     private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {

@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoSearchRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -37,8 +37,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 title = "a kaltura video"
             )
 
-            val videos = videoService.search(
-                VideoSearchQuery(
+            val results = videoService.search(
+                VideoSearchRequest(
                     text = "kaltura",
                     pageSize = 10,
                     pageIndex = 0
@@ -46,8 +46,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 VideoAccess.Everything
             )
 
-            assertThat(videos).isNotEmpty
-            assertThat(videos.first().title).isEqualTo("a kaltura video")
+            assertThat(results.videos).isNotEmpty
+            assertThat(results.videos.first().title).isEqualTo("a kaltura video")
         }
 
         @Test
@@ -57,8 +57,8 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 title = "a youtube video"
             )
 
-            val videos = videoService.search(
-                VideoSearchQuery(
+            val results = videoService.search(
+                VideoSearchRequest(
                     text = "youtube",
                     pageSize = 10,
                     pageIndex = 0
@@ -66,28 +66,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 VideoAccess.Everything
             )
 
-            assertThat(videos).isNotEmpty
-            assertThat(videos.first().title).isEqualTo("a youtube video")
-            assertThat((videos.first().playback as VideoPlayback.YoutubePlayback).thumbnailUrl).isNotBlank()
-        }
-
-        @Test
-        fun `count videos`() {
-            saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-123"),
-                title = "a youtube video"
-            )
-
-            val size = videoService.count(
-                VideoSearchQuery(
-                    text = "youtube",
-                    pageSize = 10,
-                    pageIndex = 0
-                ),
-                VideoAccess.Everything
-            ).total
-
-            assertThat(size).isEqualTo(1)
+            assertThat(results.videos).isNotEmpty
+            assertThat(results.videos.first().title).isEqualTo("a youtube video")
+            assertThat((results.videos.first().playback as VideoPlayback.YoutubePlayback).thumbnailUrl).isNotBlank()
         }
 
         @Test

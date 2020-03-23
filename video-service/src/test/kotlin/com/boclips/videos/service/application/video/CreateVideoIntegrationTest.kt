@@ -9,7 +9,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoSearchRequest
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import io.micrometer.core.instrument.Counter
@@ -68,7 +68,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of video without playback ignores video and throws`() {
         val contentPartner = saveContentPartner()
 
-
         assertThrows<VideoPlaybackNotFound> {
             createVideo(
                 VideoServiceApiFactory.createCreateVideoRequest(
@@ -79,14 +78,14 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         assertThat(
-            videoService.count(
-                VideoSearchQuery(
+            videoService.search(
+                VideoSearchRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,
                     pageIndex = 0
                 ),
                 VideoAccess.Everything
-            ).total
+            ).counts.total
         ).isEqualTo(0)
     }
 

@@ -6,9 +6,9 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
-import com.boclips.videos.service.domain.model.video.SubjectQuery
+import com.boclips.videos.service.domain.model.video.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoSearchQuery
+import com.boclips.videos.service.domain.model.video.VideoSearchRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -52,7 +52,7 @@ class GetVideosByQuery(
         val userSubjectIds =
             user.let { userService.getSubjectIds(it.id.value) } ?: emptySet()
 
-        val videoSearchQuery = VideoSearchQuery(
+        val request = VideoSearchRequest(
             text = query,
             sortBy = sortBy,
             pageIndex = pageNumber,
@@ -66,34 +66,31 @@ class GetVideosByQuery(
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges,
             userSubjectIds = userSubjectIds,
-            subjectQuery = SubjectQuery(ids = subjects, setManually = subjectsSetManually),
+            subjectsRequest = SubjectsRequest(ids = subjects, setManually = subjectsSetManually),
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
             isClassroom = isClassroom
         )
 
-        val counts =
-            videoService.count(videoSearchQuery = videoSearchQuery, videoAccess = user.accessRules.videoAccess)
-        logger.info { "Found ${counts.total} videos for query $videoSearchQuery" }
-
-        val videos: List<Video> = videoService.search(videoSearchQuery, user.accessRules.videoAccess)
-        logger.info { "Return ${videos.size} out of $pageSize results for query $videoSearchQuery" }
+        val videoSearchResponse = videoService.search(request = request, videoAccess = user.accessRules.videoAccess)
+        logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
+        logger.info { "Return ${videoSearchResponse.videos.size} out of $pageSize results for query $request" }
 
         eventService.saveSearchEvent(
             query = query,
             pageIndex = pageNumber,
             pageSize = pageSize,
-            totalResults = counts.total,
-            pageVideoIds = videos.map { it.videoId.value },
+            totalResults = videoSearchResponse.counts.total,
+            pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
             user = user
         )
 
         return Page(
-            elements = videos.asIterable(),
+            elements = videoSearchResponse.videos.asIterable(),
             pageInfo = PageInfo(
-                hasMoreElements = (pageNumber + 1) * pageSize < counts.total,
-                totalElements = counts.total,
+                hasMoreElements = (pageNumber + 1) * pageSize < videoSearchResponse.counts.total,
+                totalElements = videoSearchResponse.counts.total,
                 pageRequest = PageRequest(page = pageNumber, size = pageSize)
             )
         )
