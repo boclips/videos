@@ -4,10 +4,17 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.video.VideoFacet
+import com.boclips.videos.service.common.PageInfo
+import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.SubjectCount
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -22,7 +29,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.Locale
 
-internal class VideoToResourceConverterTest {
+class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
@@ -182,5 +189,44 @@ internal class VideoToResourceConverterTest {
             "STREAM",
             "YOUTUBE"
         )
+    }
+
+    @Test
+    fun `produces facets if they exist on the search results`() {
+        val resultResource = videoToResourceConverter.convert(
+            resultsPage = ResultsPage(
+                elements = listOf(),
+                counts = VideoCounts(
+                    total = 10,
+                    subjects = listOf(SubjectCount(subjectId = SubjectId("id"), total = 100))
+                ),
+                pageInfo = PageInfo(
+                    hasMoreElements = false,
+                    totalElements = 10,
+                    pageRequest = PageRequest(page = 0, size = 10)
+                )
+            ),
+            user = UserFactory.sample()
+        )
+
+        assertThat(resultResource._embedded.facets?.subjects?.first()).isEqualTo(VideoFacet(id = "id", hits = 100))
+    }
+
+    @Test
+    fun `omits facets if they don't exist on the search results`() {
+        val resultResource = videoToResourceConverter.convert(
+            resultsPage = ResultsPage(
+                elements = listOf(),
+                counts = null,
+                pageInfo = PageInfo(
+                    hasMoreElements = false,
+                    totalElements = 10,
+                    pageRequest = PageRequest(page = 0, size = 10)
+                )
+            ),
+            user = UserFactory.sample()
+        )
+
+        assertThat(resultResource._embedded.facets).isNull()
     }
 }

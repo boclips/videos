@@ -1,9 +1,6 @@
 package com.boclips.search.service.domain.common
 
-class Counts(
-    val hits: Long,
-    val buckets: List<FilterCounts>? = null
-) {
+class Counts(val hits: Long, val buckets: List<FilterCounts>? = null) {
     fun getCounts(bucket: Bucket): List<Count> {
         return when (bucket) {
             is Bucket.SubjectsBucket -> {

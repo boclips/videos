@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -220,8 +220,8 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
         }
     }
 
-    class CollectionsAssert(private val availableIds: List<CollectionId>, actual: Page<Collection>) :
-        AbstractAssert<CollectionsAssert, Page<Collection>>(actual, CollectionsAssert::class.java) {
+    class CollectionsAssert(private val availableIds: List<CollectionId>, actual: ResultsPage<Collection, Nothing>) :
+        AbstractAssert<CollectionsAssert, ResultsPage<Collection, Nothing>>(actual, CollectionsAssert::class.java) {
 
         fun containsCollectionsWithIds(expectedIds: Iterable<CollectionId>): CollectionsAssert {
             if (!(actual.elements.map { it.id }.containsAll(expectedIds.toList()))
@@ -240,7 +240,10 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         companion object {
-            fun assertThat(availableIds: List<CollectionId>, actual: Page<Collection>): CollectionsAssert {
+            fun assertThat(
+                availableIds: List<CollectionId>,
+                actual: ResultsPage<Collection, Nothing>
+            ): CollectionsAssert {
                 return CollectionsAssert(availableIds, actual)
             }
         }

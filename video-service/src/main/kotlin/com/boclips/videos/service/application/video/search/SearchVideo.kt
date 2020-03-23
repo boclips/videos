@@ -2,11 +2,12 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
@@ -53,7 +54,7 @@ class SearchVideo(
         type: Set<String> = emptySet(),
         isClassroom: Boolean? = null,
         user: User
-    ): Page<Video> {
+    ): ResultsPage<Video, VideoCounts> {
         return getVideosByQuery(
             query = query ?: "",
             sortBy = sortBy,

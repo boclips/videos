@@ -2,9 +2,9 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.domain.ResourceType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.videos.service.common.Page
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessValidationResult
 import com.boclips.videos.service.domain.model.User
@@ -28,7 +28,7 @@ class CollectionReadService(
 ) {
     companion object : KLogging()
 
-    fun search(query: CollectionSearchQuery, user: User): Page<Collection> {
+    fun search(query: CollectionSearchQuery, user: User): ResultsPage<Collection, Nothing> {
         val accessRules = user.accessRules
         val searchRequest = PaginatedSearchRequest(
             query = query.toSearchQuery(),
@@ -55,8 +55,9 @@ class CollectionReadService(
         logger.info { "Returning ${collections.size} collections for query $query" }
 
         val count = results.counts.hits
-        return Page(
-            collections, PageInfo(
+        return ResultsPage(
+            elements = collections,
+            pageInfo = PageInfo(
                 hasMoreElements = count > query.pageIndexUpperBound(),
                 totalElements = count,
                 pageRequest = PageRequest(

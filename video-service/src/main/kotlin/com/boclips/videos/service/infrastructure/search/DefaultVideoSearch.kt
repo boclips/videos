@@ -16,9 +16,9 @@ class DefaultVideoSearch(
 ) : VideoSearchAdapter<Video>(indexReader, indexWriter),
     VideoSearchService {
 
-    override fun convert(video: Video): VideoMetadata {
-        val videoAvailability = contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId)
+    override fun convert(document: Video): VideoMetadata {
+        val videoAvailability = contentPartnerService.findAvailabilityFor(document.contentPartner.contentPartnerId)
 
-        return VideoMetadataConverter.convert(video = video, videoAvailability = videoAvailability)
+        return VideoMetadataConverter.convert(video = document, videoAvailability = videoAvailability)
     }
 }

@@ -8,32 +8,24 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.video.MongoVideoRepository.Companion.collectionName
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asTeacher
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.not
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -92,7 +84,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `can filter by query and return youtube videos`() {
+    fun `can filter by query`() {
         mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -503,13 +495,13 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
-                    """
+                """
                 {
                   "label": "$name",
                   "UserId": "User-1"
                 }
                 """.trimIndent()
-                )
+            )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         ).andReturn().response.getHeader("Location")!!

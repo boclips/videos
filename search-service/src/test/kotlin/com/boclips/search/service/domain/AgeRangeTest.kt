@@ -1,5 +1,6 @@
-package com.boclips.search.service.domain.videos.model
+package com.boclips.search.service.domain
 
+import com.boclips.search.service.domain.videos.model.AgeRange
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

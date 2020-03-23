@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.AgeRange
@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -45,7 +46,7 @@ class GetVideosByQuery(
         user: User,
         subjectsSetManually: Boolean?,
         isClassroom: Boolean?
-    ): Page<Video> {
+    ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
@@ -85,8 +86,9 @@ class GetVideosByQuery(
             user = user
         )
 
-        return Page(
+        return ResultsPage(
             elements = videoSearchResponse.videos.asIterable(),
+            counts = videoSearchResponse.counts,
             pageInfo = PageInfo(
                 hasMoreElements = (pageNumber + 1) * pageSize < videoSearchResponse.counts.total,
                 totalElements = videoSearchResponse.counts.total,

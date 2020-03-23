@@ -18,6 +18,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetAlready
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -115,7 +116,7 @@ class VideoController(
             user = getCurrentUser()
         )
 
-        val videosResource = videoToResourceConverter.convert(videos = videos, user = getCurrentUser())
+        val videosResource = videoToResourceConverter.convert(resultsPage = videos, user = getCurrentUser())
 
         return ResponseEntity(videosResource, HttpStatus.OK)
     }
@@ -124,10 +125,14 @@ class VideoController(
     fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), Administrator)
-            .map { videoToResourceConverter.convert(it, user) }
+            .map { video: Video -> videoToResourceConverter.convert(video = video, user = user) }
             .let {
                 ResponseEntity(
-                    VideosResource(_embedded = VideosWrapperResource(videos = it), _links = null, page = null),
+                    VideosResource(
+                        _embedded = VideosWrapperResource(videos = it, facets = null),
+                        _links = null,
+                        page = null
+                    ),
                     HttpStatus.CREATED
                 )
             }

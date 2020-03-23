@@ -13,5 +13,7 @@ class VideosResource(
 )
 
 data class VideosWrapperResource(
-    val videos: List<VideoResource>
+    val videos: List<VideoResource>,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val facets: VideoFacetsResource?
 )

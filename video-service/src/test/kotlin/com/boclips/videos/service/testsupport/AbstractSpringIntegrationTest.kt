@@ -14,6 +14,7 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.users.client.implementation.FakeUserServiceClient
 import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
 import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
@@ -96,7 +97,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @Autowired
-    lateinit var videoSearchService: VideoSearchService
+    lateinit var videoSearchService: VideoSearchServiceFake
 
     @Autowired
     lateinit var collectionSearchService: CollectionSearchService

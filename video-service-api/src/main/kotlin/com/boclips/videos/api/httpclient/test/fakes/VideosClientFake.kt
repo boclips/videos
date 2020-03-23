@@ -37,7 +37,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         val pageNumber = searchVideosRequest.page ?: 0
         return VideosResource(
             _embedded = VideosWrapperResource(
-                database.values.toList().drop(pageNumber * pageSize).take((pageNumber + 1) * pageSize)
+                videos = database.values.toList().drop(pageNumber * pageSize).take((pageNumber + 1) * pageSize),
+                facets = null
             ),
             page = PagedModel.PageMetadata(
                 pageSize.toLong(),

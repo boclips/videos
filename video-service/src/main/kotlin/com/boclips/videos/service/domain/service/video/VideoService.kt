@@ -46,11 +46,11 @@ class VideoService(
             windowSize = request.pageSize
         )
 
-        // TODO: collapse in one call
         val results = videoSearchService.search(searchRequest)
-        val videoIds = results.elements.map { VideoId(value = it) }
 
+        val videoIds = results.elements.map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
+
         val subjectCounts = results.counts.getCounts(Bucket.SubjectsBucket)
             .map { SubjectCount(subjectId = SubjectId(it.id), total = it.hits) }
 

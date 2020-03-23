@@ -5,7 +5,7 @@ import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -87,7 +87,7 @@ class CollectionResourceConverter(
     }
 
     fun buildCollectionsResource(
-        collections: Page<Collection>,
+        collections: ResultsPage<Collection, Nothing>,
         currentUser: User,
         projection: Projection?
     ): Any {

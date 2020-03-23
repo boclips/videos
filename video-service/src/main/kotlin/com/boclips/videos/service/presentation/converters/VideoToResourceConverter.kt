@@ -6,14 +6,17 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
 import com.boclips.videos.api.response.video.TagResource
 import com.boclips.videos.api.response.video.VideoBadge
+import com.boclips.videos.api.response.video.VideoFacet
+import com.boclips.videos.api.response.video.VideoFacetsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
@@ -26,15 +29,18 @@ class VideoToResourceConverter(
         return videos.map { video -> convert(video, user) }
     }
 
-    fun convert(videos: Page<Video>, user: User): VideosResource {
+    fun convert(resultsPage: ResultsPage<Video, VideoCounts>, user: User): VideosResource {
         return VideosResource(
-            _embedded = VideosWrapperResource(videos = videos
-                .elements.toList()
-                .map { video -> convert(video, user) }),
+            _embedded = VideosWrapperResource(
+                videos = resultsPage
+                    .elements.toList()
+                    .map { video -> convert(video, user) },
+                facets = convertFacets(resultsPage)
+            ),
             page = PagedModel.PageMetadata(
-                videos.pageInfo.pageRequest.size.toLong(),
-                videos.pageInfo.pageRequest.page.toLong(),
-                videos.pageInfo.totalElements
+                resultsPage.pageInfo.pageRequest.size.toLong(),
+                resultsPage.pageInfo.pageRequest.page.toLong(),
+                resultsPage.pageInfo.totalElements
             ),
             _links = null
         )
@@ -52,11 +58,11 @@ class VideoToResourceConverter(
             releasedOn = video.releasedOn,
             playback = playbackToResourceConverter.convert(video.playback),
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
-            badges = getBadges(video),
+            badges = convertBadges(video),
             type = VideoTypeResource(id = video.type.id, name = video.type.title),
             legalRestrictions = video.legalRestrictions,
             hasTranscripts = video.transcript != null,
-            ageRange = getAgeRange(video),
+            ageRange = convertAgeRange(video),
             rating = video.getRatingAverage(),
             yourRating = video.ratings.firstOrNull { it.userId == user.id }?.rating?.toDouble(),
             bestFor = video.tags.map { TagResource(it.tag.label) },
@@ -75,11 +81,22 @@ class VideoToResourceConverter(
         }
     }
 
-    private fun getAgeRange(video: Video): AgeRangeResource? {
+    private fun convertFacets(resultsPage: ResultsPage<Video, VideoCounts>): VideoFacetsResource? {
+        return resultsPage.counts?.let { counts ->
+            VideoFacetsResource(subjects = counts.subjects.map {
+                VideoFacet(
+                    id = it.subjectId.value,
+                    hits = it.total
+                )
+            })
+        }
+    }
+
+    private fun convertAgeRange(video: Video): AgeRangeResource? {
         return AgeRangeToResourceConverter.convert(video.ageRange)
     }
 
-    private fun getBadges(video: Video): Set<String> {
+    private fun convertBadges(video: Video): Set<String> {
         return when (video.playback) {
             is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
             else -> setOf(VideoBadge.AD_FREE.id)

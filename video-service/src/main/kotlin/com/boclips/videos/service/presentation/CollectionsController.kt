@@ -14,7 +14,7 @@ import com.boclips.videos.service.application.collection.RemoveVideoFromCollecti
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
-import com.boclips.videos.service.common.Page
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -83,7 +83,7 @@ class CollectionsController(
             throw OperationForbiddenException("User must be authenticated to access collections")
         }
 
-        val collections: Page<Collection> = getCollections(collectionFilterRequest, user)
+        val collections: ResultsPage<Collection, Nothing> = getCollections(collectionFilterRequest, user)
         val collectionsResource = collectionResourceConverter.buildCollectionsResource(
             collections,
             getCurrentUser(),

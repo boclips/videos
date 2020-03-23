@@ -4,7 +4,7 @@ import com.boclips.videos.service.infrastructure.convertPageToIndex
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ConvertPageToIndexKtTest {
+class ConvertResultsPageToIndexKtTest {
 
     @Test
     fun `calculates the index end of a page`() {
