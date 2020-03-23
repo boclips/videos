@@ -85,7 +85,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                     pageIndex = 0
                 ),
                 VideoAccess.Everything
-            )
+            ).total
 
             assertThat(size).isEqualTo(1)
         }

@@ -3,14 +3,18 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.search.service.domain.common.Bucket
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.video.SubjectCount
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoIdsQuery
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -49,11 +53,16 @@ class VideoService(
         return playableVideos
     }
 
-    fun count(videoSearchQuery: VideoSearchQuery, videoAccess: VideoAccess): Long {
+    fun count(videoSearchQuery: VideoSearchQuery, videoAccess: VideoAccess): VideoCounts {
         logger.info { "Counting videos for query $videoSearchQuery" }
 
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
-        return videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules)).hits
+        val counts = videoSearchService.count(videoSearchQuery.toSearchQuery(videoAccess = videoAccessWithDefaultRules))
+
+        val subjectCounts =
+            counts.getCounts(Bucket.SubjectsBucket).map { SubjectCount(subjectId = SubjectId(it.id), total = it.hits) }
+
+        return VideoCounts(total = counts.hits, subjects = subjectCounts)
     }
 
     fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {

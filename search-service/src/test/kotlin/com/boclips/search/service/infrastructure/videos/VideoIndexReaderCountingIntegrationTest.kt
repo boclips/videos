@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.common.Bucket
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
@@ -106,11 +107,11 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             val counts = videoIndexReader.count(VideoQuery(phrase = "apple"))
 
             assertThat(counts.hits).isEqualTo(3)
-            assertThat(counts.buckets?.subjects).hasSize(3)
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
 
-            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
-            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 2))
-            assertThat(counts.buckets?.subjects).contains(Count(id = "3", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 2))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
         }
 
         @Test
@@ -138,11 +139,11 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             val counts = videoIndexReader.count(VideoQuery(phrase = "apple", subjectIds = setOf("1")))
 
             assertThat(counts.hits).isEqualTo(1)
-            assertThat(counts.buckets?.subjects).hasSize(3)
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
 
-            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
-            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 1))
-            assertThat(counts.buckets?.subjects).contains(Count(id = "3", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
         }
 
         @Test
@@ -177,10 +178,10 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             )
 
             assertThat(counts.hits).isEqualTo(1)
-            assertThat(counts.buckets?.subjects).hasSize(2)
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(2)
 
-            assertThat(counts.buckets?.subjects).contains(Count(id = "1", hits = 1))
-            assertThat(counts.buckets?.subjects).contains(Count(id = "2", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
         }
     }
 }

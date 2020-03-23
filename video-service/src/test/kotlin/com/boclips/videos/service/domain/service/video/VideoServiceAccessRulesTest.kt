@@ -159,7 +159,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(searchResults).isEqualTo(1)
+            assertThat(searchResults.total).isEqualTo(1)
         }
 
         @Test

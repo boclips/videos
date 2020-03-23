@@ -73,9 +73,9 @@ class GetVideosByQuery(
             isClassroom = isClassroom
         )
 
-        val totalVideos =
+        val counts =
             videoService.count(videoSearchQuery = videoSearchQuery, videoAccess = user.accessRules.videoAccess)
-        logger.info { "Found $totalVideos videos for query $videoSearchQuery" }
+        logger.info { "Found ${counts.total} videos for query $videoSearchQuery" }
 
         val videos: List<Video> = videoService.search(videoSearchQuery, user.accessRules.videoAccess)
         logger.info { "Return ${videos.size} out of $pageSize results for query $videoSearchQuery" }
@@ -84,7 +84,7 @@ class GetVideosByQuery(
             query = query,
             pageIndex = pageNumber,
             pageSize = pageSize,
-            totalResults = totalVideos,
+            totalResults = counts.total,
             pageVideoIds = videos.map { it.videoId.value },
             user = user
         )
@@ -92,8 +92,8 @@ class GetVideosByQuery(
         return Page(
             elements = videos.asIterable(),
             pageInfo = PageInfo(
-                hasMoreElements = (pageNumber + 1) * pageSize < totalVideos,
-                totalElements = totalVideos,
+                hasMoreElements = (pageNumber + 1) * pageSize < counts.total,
+                totalElements = counts.total,
                 pageRequest = PageRequest(page = pageNumber, size = pageSize)
             )
         )

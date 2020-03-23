@@ -86,7 +86,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     pageIndex = 0
                 ),
                 VideoAccess.Everything
-            )
+            ).total
         ).isEqualTo(0)
     }
 

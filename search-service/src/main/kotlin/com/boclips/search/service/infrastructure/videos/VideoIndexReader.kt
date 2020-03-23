@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
+import com.boclips.search.service.domain.common.Bucket
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.common.FilterCounts
@@ -41,7 +42,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             Count(id = bucket.key.toString(), hits = bucket.docCount)
         }
 
-        return Counts(hits = response.hits.totalHits?.value ?: 0L, buckets = FilterCounts(subjects = subjectCounts))
+        return Counts(
+            hits = response.hits.totalHits?.value ?: 0L,
+            buckets = listOf(FilterCounts(key = Bucket.SubjectsBucket, counts = subjectCounts))
+        )
     }
 
     private fun search(videoQuery: VideoQuery, startIndex: Int, windowSize: Int): SearchResponse {
