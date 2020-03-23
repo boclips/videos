@@ -6,6 +6,8 @@ import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -35,19 +37,20 @@ class VideoAnalysisService(
         }
     }
 
-    fun analysePlayableVideo(videoId: String, language: Locale?) {
-        val video = videoService.getPlayableVideo(
-            videoId = VideoId(value = videoId)
-        )
+    fun analysePlayableVideo(id: String, language: Locale?) {
+        val videoId = VideoId(id)
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+        if (!video.isPlayable()) throw VideoPlaybackNotFound()
+
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
         if (video.type != ContentType.INSTRUCTIONAL_CLIPS) {
-            logger.info { "Analysis of video $videoId NOT requested because its legacy type is ${video.type.name}" }
+            logger.info { "Analysis of video $id NOT requested because its legacy type is ${video.type.name}" }
             return
         }
 
         if (video.playback.duration.seconds <= 20) {
-            logger.info { "Analysis of video $videoId NOT requested because it's too short" }
+            logger.info { "Analysis of video $id NOT requested because it's too short" }
             return
         }
 
@@ -59,7 +62,7 @@ class VideoAnalysisService(
 
         eventBus.publish(videoToAnalyse)
 
-        logger.info { "Analysis of video $videoId requested" }
+        logger.info { "Analysis of video $id requested" }
     }
 
     @BoclipsEventListener

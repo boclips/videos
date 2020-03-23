@@ -119,18 +119,15 @@ class VideoService(
                 )
             )
             .firstOrNull()
-            ?.let { getPlayableVideo(VideoId(value = it)) }
+            ?.let {
+                val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
+                if (!video.isPlayable()) throw VideoPlaybackNotFound()
+                logger.info { "Retrieved playable video $videoId" }
+                video
+            }
             ?: throw VideoNotFoundException().also {
                 logger.info { "Could not find playable video $videoId with access rules $videoAccess" }
             }
-    }
-
-    fun getPlayableVideo(videoId: VideoId): Video {
-        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
-        if (!video.isPlayable()) throw VideoPlaybackNotFound()
-
-        logger.info { "Retrieved playable video $videoId" }
-        return video
     }
 
     private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {
