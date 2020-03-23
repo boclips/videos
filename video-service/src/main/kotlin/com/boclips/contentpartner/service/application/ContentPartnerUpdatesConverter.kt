@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateComma
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.ContentPartnerMarketingStatusConverter
-import com.boclips.contentpartner.service.presentation.ContentPartnerUrlConverter
+import com.boclips.contentpartner.service.presentation.UrlConverter
 import com.boclips.contentpartner.service.presentation.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
 import com.boclips.videos.api.common.ExplicitlyNull
@@ -142,7 +142,7 @@ class ContentPartnerUpdateCommandCreator(
 
     fun updateMarketingLogos(): ContentPartnerUpdateCommand.ReplaceMarketingLogos? =
         contentPartnerRequest.marketingInformation?.logos?.let {
-            ContentPartnerUpdateCommand.ReplaceMarketingLogos(id, it.map(ContentPartnerUrlConverter::convert))
+            ContentPartnerUpdateCommand.ReplaceMarketingLogos(id, it.map(UrlConverter::convert))
         }
 
     fun updateMarketingShowreel(): ContentPartnerUpdateCommand.ReplaceMarketingShowreel? =
@@ -150,7 +150,7 @@ class ContentPartnerUpdateCommandCreator(
             ContentPartnerUpdateCommand.ReplaceMarketingShowreel(
                 id,
                 when (it) {
-                    is Specified -> ContentPartnerUrlConverter.convert(it.value)
+                    is Specified -> UrlConverter.convert(it.value)
                     is ExplicitlyNull -> null
                 }
             )
@@ -158,7 +158,7 @@ class ContentPartnerUpdateCommandCreator(
 
     fun updateMarketingSampleVideos(): ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos? =
         contentPartnerRequest.marketingInformation?.sampleVideos?.let {
-            ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(ContentPartnerUrlConverter::convert))
+            ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(UrlConverter::convert))
         }
 
     fun updateIsTranscriptProvided(): ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided? =

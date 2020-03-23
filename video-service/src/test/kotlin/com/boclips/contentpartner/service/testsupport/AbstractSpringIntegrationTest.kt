@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException

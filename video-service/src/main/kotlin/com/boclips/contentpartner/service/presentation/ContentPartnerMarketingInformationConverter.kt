@@ -8,8 +8,8 @@ object ContentPartnerMarketingInformationConverter {
         ContentPartnerMarketingInformation(
             oneLineDescription = contentPartnerRequest.oneLineDescription,
             status = contentPartnerRequest.marketingInformation?.status?.let(ContentPartnerMarketingStatusConverter::convert),
-            logos = contentPartnerRequest.marketingInformation?.logos?.map(ContentPartnerUrlConverter::convert),
-            showreel = contentPartnerRequest.marketingInformation?.showreel?.map(ContentPartnerUrlConverter::convert),
-            sampleVideos = contentPartnerRequest.marketingInformation?.sampleVideos?.map(ContentPartnerUrlConverter::convert)
+            logos = contentPartnerRequest.marketingInformation?.logos?.map(UrlConverter::convert),
+            showreel = contentPartnerRequest.marketingInformation?.showreel?.map(UrlConverter::convert),
+            sampleVideos = contentPartnerRequest.marketingInformation?.sampleVideos?.map(UrlConverter::convert)
         )
 }

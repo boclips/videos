@@ -95,7 +95,6 @@ class ContentPartnerController(
         @Valid @RequestBody updateUpsertContentPartnerRequest: ContentPartnerRequest
     ): ResponseEntity<Void> {
         updateContentPartner(contentPartnerId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
-
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 

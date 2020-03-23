@@ -1,9 +1,12 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.MongoAgeRangeRepository
+import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerContractRepository
 import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepository
 import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
@@ -131,6 +134,18 @@ class DomainContext(
     @Bean
     fun contentPartnerRepository(): ContentPartnerRepository {
         return MongoContentPartnerRepository(mongoClient)
+    }
+
+    @Bean
+    fun contentPartnerContractRepository(
+        converter: ContentPartnerContractDocumentConverter
+    ): ContentPartnerContractRepository {
+        return MongoContentPartnerContractRepository(mongoClient, converter)
+    }
+
+    @Bean
+    fun contentPartnerContractDocumentConverter(): ContentPartnerContractDocumentConverter {
+        return ContentPartnerContractDocumentConverter()
     }
 
     @Bean

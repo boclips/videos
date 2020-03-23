@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.InvalidUrlExcep
 import java.net.MalformedURLException
 import java.net.URL
 
-object ContentPartnerUrlConverter {
+object UrlConverter {
     fun convert(s: String): URL {
         try {
             return URL(s)

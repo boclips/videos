@@ -1,5 +1,9 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -24,8 +28,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
-import com.boclips.videos.service.domain.model.discipline.Discipline
-import com.boclips.videos.service.domain.model.discipline.DisciplineId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -53,10 +55,12 @@ import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import org.bson.types.ObjectId
+import java.net.URL
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import java.util.Currency
 import java.util.Locale
 import com.boclips.security.utils.User as SecurityUser
 
@@ -563,3 +567,36 @@ object CreatePlaybackEventCommandFactory {
     }
 }
 
+object ContentPartnerContractFactory {
+    fun sample(
+        id: String? = null,
+        contentPartnerName: String? = null,
+        contractDocument: String? = "http://contractdocument.com",
+        contractDates: ContentPartnerContractDates? = ContentPartnerContractDates(
+            LocalDate.of(2011, 10, 10),
+            LocalDate.of(2012, 10, 31)
+        ),
+        daysBeforeTerminationWarning: Int? = 30,
+        yearsForMaximumLicense: Int? = 5,
+        daysForSellOffPeriod: Int? = 60,
+        royaltySplit: ContentPartnerContractRoyaltySplit? =
+            ContentPartnerContractRoyaltySplit(
+                download = 10.1.toFloat(),
+                streaming = 20.5.toFloat()
+            ),
+        minimumPriceDescription: String? = "This is the minimum price",
+        remittanceCurrency: String? = "GBP"
+    ) =
+        ContentPartnerContract(
+            id = ContentPartnerContractId(id ?: "5cf140c4c1475c47f7178678"),
+            contentPartnerName = contentPartnerName ?: "content-partner-name",
+            contractDocument = URL(contractDocument),
+            contractDates = contractDates,
+            daysBeforeTerminationWarning = daysBeforeTerminationWarning,
+            yearsForMaximumLicense = yearsForMaximumLicense,
+            daysForSellOffPeriod = daysForSellOffPeriod,
+            royaltySplit = royaltySplit,
+            minimumPriceDescription = minimumPriceDescription,
+            remittanceCurrency = Currency.getInstance(remittanceCurrency)
+        )
+}

@@ -65,7 +65,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     fun updateCollectionToBePublic(collectionId: String) {
         mockMvc.perform(
-            MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"public": "true"}"""
             ).asTeacher()
         )
@@ -78,7 +78,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         ageRangeMax: Int? = null
     ) {
         mockMvc.perform(
-            MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"ageRange": {"min": $ageRangeMin, "max": $ageRangeMax}}"""
             ).asTeacher()
         )
@@ -92,7 +92,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         attachmentURL: String
     ) {
         mockMvc.perform(
-            MockMvcRequestBuilders.patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"attachment": {
                     |"description" : "$attachmentDescription",
                     |"linkToResource" : "$attachmentURL",
