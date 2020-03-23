@@ -10,66 +10,66 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class VideoSearchRequestTest {
+class VideoRequestTest {
 
     @Test
     fun `translate phrase query`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "normal phrase",
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(videoAccess = VideoAccess.Everything)
+            .toQuery(videoAccess = VideoAccess.Everything)
 
         assertThat(searchQuery.phrase).isEqualTo("normal phrase")
     }
 
     @Test
     fun `translate single id query`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "id:11",
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11")
     }
 
     @Test
     fun `translate multiple id query`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "id:11,12,13",
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.ids).containsExactly("11", "12", "13")
     }
 
     @Test
     fun `allows filtering by bestFor`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "id:3222",
             bestFor = listOf("explainer"),
             pageSize = 2,
             pageIndex = 0
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.bestFor).contains("explainer")
     }
 
     @Test
     fun `allows ordering of results by releaseDate descending`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
 
@@ -79,67 +79,67 @@ class VideoSearchRequestTest {
 
     @Test
     fun `allows ordering of results by random`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RANDOM
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.sort is Sort.ByRandom<VideoMetadata>)
     }
 
     @Test
     fun `does not sort the results without a sortBy`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "id:11,12,13",
             pageSize = 2,
             pageIndex = 0,
             sortBy = null
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.sort).isNull()
     }
 
     @Test
     fun `allows filtering of source`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
 
     @Test
     fun `allows filtering of content type`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
             type = setOf(VideoType.NEWS, VideoType.STOCK)
         )
-            .toSearchQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.includedType).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
 
     @Test
     fun `allows filtering of release date`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
-        ).toSearchQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
@@ -147,12 +147,12 @@ class VideoSearchRequestTest {
 
     @Test
     fun `allows filtering by promoted`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.promoted).isEqualTo(true)
     }
@@ -162,12 +162,12 @@ class VideoSearchRequestTest {
         val firstId = TestFactories.createVideoId()
         val secondId = TestFactories.createVideoId()
 
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(
+        ).toQuery(
             VideoAccess.Rules(
                 accessRules = listOf(
                     VideoAccessRule.IncludedIds(
@@ -185,12 +185,12 @@ class VideoSearchRequestTest {
 
     @Test
     fun `does not limit ids when has access to everything`() {
-        val searchQuery = VideoSearchRequest(
+        val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toSearchQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.permittedVideoIds).isNull()
     }

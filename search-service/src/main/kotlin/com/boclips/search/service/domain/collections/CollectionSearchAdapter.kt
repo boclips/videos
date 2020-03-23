@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.Counts
+import com.boclips.search.service.domain.common.SearchResults
 
 abstract class CollectionSearchAdapter<T>(
     private val indexReader: IndexReader<CollectionMetadata, CollectionQuery>,
@@ -22,12 +23,8 @@ abstract class CollectionSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): SearchResults {
         return indexReader.search(searchRequest)
-    }
-
-    override fun count(query: CollectionQuery): Counts {
-        return indexReader.count(query)
     }
 
     override fun removeFromSearch(itemId: String) {

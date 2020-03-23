@@ -227,7 +227,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
                             "transcript"
                         )
                     )
-                )
+                ).elements
             ).containsExactly(videoId.value)
         }
 

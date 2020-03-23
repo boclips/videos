@@ -3,10 +3,11 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.common.IndexReader
+import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.Counts
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -24,15 +25,15 @@ class CollectionIndexReader(val client: RestHighLevelClient) :
 
     private val elasticSearchResultConverter = CollectionDocumentConverter()
 
-    override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): List<String> {
-        return searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
+    override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): SearchResults {
+        val results =
+            searchElasticSearch(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
+
+        val elements = results
             .map(elasticSearchResultConverter::convert)
             .map { it.id }
-    }
 
-    override fun count(query: CollectionQuery): Counts {
-        val response = searchElasticSearch(query = query, startIndex = 0, windowSize = 1)
-        return Counts(hits = response.totalHits?.value ?: 0L)
+        return SearchResults(elements = elements, counts = Counts(hits = results.totalHits?.value ?: 0L))
     }
 
     private fun searchElasticSearch(query: CollectionQuery, startIndex: Int, windowSize: Int): SearchHits {

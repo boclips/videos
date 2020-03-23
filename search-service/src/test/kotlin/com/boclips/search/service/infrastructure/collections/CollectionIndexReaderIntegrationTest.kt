@@ -33,7 +33,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
 
-        Assertions.assertThat(results).containsExactly("1")
+        Assertions.assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -51,7 +51,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "taught a dog")))
 
-        Assertions.assertThat(results).containsExactly("1")
+        Assertions.assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -77,7 +77,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
 
-        Assertions.assertThat(results).containsExactly("3", "1")
+        Assertions.assertThat(results.elements).containsExactly("3", "1")
     }
 
     @Test
@@ -92,7 +92,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Boy")))
 
-        Assertions.assertThat(results).containsExactly("1")
+        Assertions.assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -107,7 +107,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "ear")))
 
-        Assertions.assertThat(results).isEmpty()
+        Assertions.assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -119,7 +119,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Boi")))
 
-        Assertions.assertThat(results).containsExactly("100")
+        Assertions.assertThat(results.elements).containsExactly("100")
     }
 
     @Test
@@ -131,7 +131,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "test")))
 
-        Assertions.assertThat(results).isEmpty()
+        Assertions.assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -168,76 +168,75 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
                 )
             )
 
-        Assertions.assertThat(results).hasSize(2)
-        Assertions.assertThat(results).contains("100")
-        Assertions.assertThat(results).contains("101")
-        Assertions.assertThat(results).doesNotContain("102")
+        Assertions.assertThat(results.elements).hasSize(2)
+        Assertions.assertThat(results.elements).contains("100")
+        Assertions.assertThat(results.elements).contains("101")
+        Assertions.assertThat(results.elements).doesNotContain("102")
     }
 
     @Test
     fun `returns collections with respecting sorting`() {
         collectionIndexWriter.safeRebuildIndex(
-                sequenceOf(
-                        SearchableCollectionMetadataFactory.create(
-                                id = "100",
-                                title = "Beautiful Boy Dancing",
-                                hasAttachments = false
-                        ),
-                        SearchableCollectionMetadataFactory.create(
-                                id = "101",
-                                title = "Beautiful Dog Barking",
-                                hasAttachments = true
-                        )
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    title = "Beautiful Boy Dancing",
+                    hasAttachments = false
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    title = "Beautiful Dog Barking",
+                    hasAttachments = true
                 )
+            )
         )
 
         val results =
-                collectionIndexReader.search(
-                        PaginatedSearchRequest(
-                                query = CollectionQuery(
-                                        sort = Sort.ByField(
-                                                CollectionMetadata::updatedAt,
-                                                SortOrder.DESC
-                                        )
-                                )
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        sort = Sort.ByField(
+                            CollectionMetadata::updatedAt,
+                            SortOrder.DESC
                         )
+                    )
                 )
+            )
 
-        Assertions.assertThat(results).containsExactly("100", "101")
+        Assertions.assertThat(results.elements).containsExactly("100", "101")
     }
 
-        @Test
+    @Test
     fun `Returns collections by multiple word matching ignores single world matching`() {
         collectionIndexWriter.safeRebuildIndex(
-                sequenceOf(
-                        SearchableCollectionMetadataFactory.create(
-                                id = "1",
-                                title = "great war",
-                                description = "that war was great"
-                        ),
-                        SearchableCollectionMetadataFactory.create(
-                                id = "2",
-                                title = "great query",
-                                description = "such a great query"
-                        ),
-                        SearchableCollectionMetadataFactory.create(
-                                id = "3",
-                                title = "great gatsby",
-                                description = "the great gatsby is a great film"
-                        )
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "great war",
+                    description = "that war was great"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    title = "great query",
+                    description = "such a great query"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    title = "great gatsby",
+                    description = "the great gatsby is a great film"
                 )
+            )
         )
 
         val results =
-                collectionIndexReader.search(
-                        PaginatedSearchRequest(
-                                query = CollectionQuery(phrase = "great gatsby"
-                                        )
-                                )
-                        )
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        phrase = "great gatsby"
+                    )
+                )
+            )
 
-        Assertions.assertThat(results).containsExactly("3")
+        Assertions.assertThat(results.elements).containsExactly("3")
     }
-
-
 }

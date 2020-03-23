@@ -85,7 +85,7 @@ class SolrSearchServiceIntegrationTest {
                 )
             )
         )
-        assertThat(results).containsExactlyInAnyOrder("1", "2")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @Test
@@ -101,7 +101,7 @@ class SolrSearchServiceIntegrationTest {
                 )
             )
         )
-        assertThat(results).isEmpty()
+        assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -123,7 +123,7 @@ class SolrSearchServiceIntegrationTest {
                 )
             )
         )
-        assertThat(results).isEmpty()
+        assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -143,7 +143,7 @@ class SolrSearchServiceIntegrationTest {
                 )
             )
         )
-        assertThat(results).isEmpty()
+        assertThat(results.elements).isEmpty()
     }
 
     @Test

@@ -51,6 +51,6 @@ class CollectionIndexReaderHasLessonPlans : EmbeddedElasticSearchIntegrationTest
                 )
             )
 
-        Assertions.assertThat(results).containsExactly("1")
+        Assertions.assertThat(results.elements).containsExactly("1")
     }
 }

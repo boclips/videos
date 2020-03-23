@@ -36,7 +36,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = setOf("1"), phrase = "apple"))
             )
 
-            assertThat(results).containsExactly("1")
+            assertThat(results.elements).containsExactly("1")
         }
 
         @Test
@@ -59,7 +59,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 )
             )
 
-            assertThat(results).containsExactly("1")
+            assertThat(results.elements).containsExactly("1")
         }
 
         @Test
@@ -75,7 +75,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = null, phrase = "apple"))
             )
 
-            assertThat(results).containsExactlyInAnyOrder("1", "2")
+            assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
         }
 
         @Test
@@ -91,7 +91,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = emptySet(), phrase = "apple"))
             )
 
-            assertThat(results).containsExactlyInAnyOrder("1", "2")
+            assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
         }
     }
 
@@ -110,7 +110,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(query = VideoQuery(deniedVideoIds = setOf("1"), phrase = "apple"))
             )
 
-            assertThat(results).containsExactly("2")
+            assertThat(results.elements).containsExactly("2")
         }
 
         @Test
@@ -133,7 +133,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 )
             )
 
-            assertThat(results).containsExactly("2")
+            assertThat(results.elements).containsExactly("2")
         }
 
         @Test
@@ -149,7 +149,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 PaginatedSearchRequest(query = VideoQuery(deniedVideoIds = setOf("100"), phrase = "apple"))
             )
 
-            assertThat(results).containsExactly("1", "2")
+            assertThat(results.elements).containsExactly("1", "2")
         }
     }
 }

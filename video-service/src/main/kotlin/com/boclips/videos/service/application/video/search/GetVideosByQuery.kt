@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoSearchRequest
+import com.boclips.videos.service.domain.model.video.VideoRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -52,7 +52,7 @@ class GetVideosByQuery(
         val userSubjectIds =
             user.let { userService.getSubjectIds(it.id.value) } ?: emptySet()
 
-        val request = VideoSearchRequest(
+        val request = VideoRequest(
             text = query,
             sortBy = sortBy,
             pageIndex = pageNumber,
@@ -75,7 +75,6 @@ class GetVideosByQuery(
 
         val videoSearchResponse = videoService.search(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
-        logger.info { "Return ${videoSearchResponse.videos.size} out of $pageSize results for query $request" }
 
         eventService.saveSearchEvent(
             query = query,

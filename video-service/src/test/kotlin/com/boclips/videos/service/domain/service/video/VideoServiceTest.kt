@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.VideoSearchRequest
+import com.boclips.videos.service.domain.model.video.VideoRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
@@ -38,7 +38,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             )
 
             val results = videoService.search(
-                VideoSearchRequest(
+                VideoRequest(
                     text = "kaltura",
                     pageSize = 10,
                     pageIndex = 0
@@ -58,7 +58,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             )
 
             val results = videoService.search(
-                VideoSearchRequest(
+                VideoRequest(
                     text = "youtube",
                     pageSize = 10,
                     pageIndex = 0

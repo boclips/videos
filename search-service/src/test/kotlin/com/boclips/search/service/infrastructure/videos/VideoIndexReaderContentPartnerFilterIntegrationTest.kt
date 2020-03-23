@@ -118,7 +118,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
             PaginatedSearchRequest(query = searchFor)
         )
 
-        assertThat(results).containsExactlyInAnyOrder(
+        assertThat(results.elements).containsExactlyInAnyOrder(
             *expectIds.toTypedArray()
         )
     }

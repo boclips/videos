@@ -37,7 +37,7 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
                     startIndex = 0,
                     windowSize = 10
                 )
-            )
+            ).elements
         ).isNotEmpty
         assertThat(
             searchService.search(
@@ -46,7 +46,7 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
                     startIndex = 0,
                     windowSize = 10
                 )
-            )
+            ).elements
         ).isNotEmpty
     }
 }

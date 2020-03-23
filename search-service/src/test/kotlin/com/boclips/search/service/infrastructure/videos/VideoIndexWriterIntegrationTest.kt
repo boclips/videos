@@ -71,7 +71,7 @@ class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(query = VideoQuery("candy"))
         )
 
-        assertThat(results).hasSize(2)
+        assertThat(results.elements).hasSize(2)
     }
 
     private fun getCurrentIndices() =

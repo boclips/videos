@@ -38,7 +38,7 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        Assertions.assertThat(results).isEmpty()
+        Assertions.assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -60,7 +60,7 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        Assertions.assertThat(results).containsExactly("1")
+        Assertions.assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -81,6 +81,6 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        Assertions.assertThat(results).containsExactlyInAnyOrder("1", "2")
+        Assertions.assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
 }

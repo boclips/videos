@@ -56,7 +56,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 )
             )
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -87,7 +87,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -111,7 +111,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed"))
         )
 
-        assertThat(results).startsWith("3")
+        assertThat(results.elements).startsWith("3")
     }
 
     @Test
@@ -154,7 +154,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactlyInAnyOrder("1", "2")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @Test
@@ -183,7 +183,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactlyInAnyOrder("1")
+        assertThat(results.elements).containsExactlyInAnyOrder("1")
     }
 
     @Test
@@ -215,7 +215,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactlyInAnyOrder("0")
+        assertThat(results.elements).containsExactlyInAnyOrder("0")
     }
 
     @Test
@@ -245,7 +245,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactlyInAnyOrder("0")
+        assertThat(results.elements).containsExactlyInAnyOrder("0")
     }
 
     @Test
@@ -274,6 +274,6 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             )
         )
 
-        assertThat(results).containsExactlyInAnyOrder("0")
+        assertThat(results.elements).containsExactlyInAnyOrder("0")
     }
 }

@@ -36,7 +36,7 @@ class VideoIdsRequest(
     }
 }
 
-class VideoSearchRequest(
+class VideoRequest(
     val text: String,
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
@@ -56,7 +56,7 @@ class VideoSearchRequest(
     val type: Set<VideoType> = emptySet(),
     val isClassroom: Boolean? = null
 ) {
-    fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
+    fun toQuery(videoAccess: VideoAccess): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
                 SortKey.RELEASE_DATE -> Sort.ByField(

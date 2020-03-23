@@ -43,7 +43,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         bookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
-        val searchResults = collectionSearchService.search(
+        val results = collectionSearchService.search(
             searchRequest = PaginatedSearchRequest(
                 query = CollectionQuery(
                     visibilityForOwners = setOf(VisibilityForOwner(null, CollectionVisibilityQuery.publicOnly())),
@@ -52,7 +52,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(searchResults).containsExactly(collectionId.value)
+        assertThat(results.elements).containsExactly(collectionId.value)
     }
 
     @Test

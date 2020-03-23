@@ -37,7 +37,7 @@ class VideoIndexReaderPromotedVideosIntegrationTest : EmbeddedElasticSearchInteg
                 )
             )
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -58,6 +58,6 @@ class VideoIndexReaderPromotedVideosIntegrationTest : EmbeddedElasticSearchInteg
                 )
             )
 
-        assertThat(results).containsExactly("1", "2")
+        assertThat(results.elements).containsExactly("1", "2")
     }
 }

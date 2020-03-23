@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video.indexing
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -46,7 +47,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService).removeFromSearch(video.videoId.value)
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
+
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = listOf(video.videoId.value)))
+                ).counts.hits
+            ).isEqualTo(1)
         }
     }
 
@@ -63,7 +69,11 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = listOf(video.videoId.value)))
+                ).counts.hits
+            ).isEqualTo(1)
         }
     }
 
@@ -71,7 +81,9 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     inner class OnVideosUpdated {
         @Test
         fun `add stream videos to non-legacy index only`() {
-            val videos = listOf(createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(DistributionMethod.DOWNLOAD)))
+            val videos = listOf(
+                createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(DistributionMethod.DOWNLOAD))
+            )
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
@@ -79,7 +91,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(2)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }))
+                ).counts.hits
+            ).isEqualTo(2)
+
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
         }
 
@@ -93,7 +110,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     .build()
             )
 
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(1)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }))
+                ).counts.hits
+            ).isEqualTo(1)
+
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
         }
 
@@ -117,7 +139,11 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
-            assertThat(videoSearchService.count(VideoQuery(ids = videos.map { it.videoId.value })).hits).isEqualTo(3)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }))
+                ).counts.hits
+            ).isEqualTo(3)
         }
 
         @Test
@@ -157,9 +183,11 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             val video = createVideo(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
-            val count = videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value)))
-
-            assertThat(count.hits).isEqualTo(1)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = listOf(video.videoId.value)))
+                ).counts.hits
+            ).isEqualTo(1)
         }
 
         @Test
@@ -168,7 +196,11 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             whenever(legacyVideoSearchService.upsert(any(), any())).thenThrow(RuntimeException())
 
-            assertThat(videoSearchService.count(VideoQuery(ids = listOf(video.videoId.value))).hits).isEqualTo(1)
+            assertThat(
+                videoSearchService.search(
+                    PaginatedSearchRequest(query = VideoQuery(ids = listOf(video.videoId.value)))
+                ).counts.hits
+            ).isEqualTo(1)
         }
     }
 

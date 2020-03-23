@@ -33,6 +33,6 @@ class VideoIndexReaderIdSearchesIntegrationTest : EmbeddedElasticSearchIntegrati
             PaginatedSearchRequest(query = VideoQuery(ids = listOf("2", "5")))
         )
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 }

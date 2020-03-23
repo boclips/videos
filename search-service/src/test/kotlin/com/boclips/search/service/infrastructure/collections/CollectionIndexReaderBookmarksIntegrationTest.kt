@@ -34,9 +34,9 @@ class CollectionIndexReaderBookmarksIntegrationTest : EmbeddedElasticSearchInteg
             )
         )
 
-        assertThat(
+        val results =
             collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(bookmarkedBy = "123-4345-12312")))
-        )
-            .containsExactlyInAnyOrder("2")
+
+        assertThat(results.elements).containsExactlyInAnyOrder("2")
     }
 }

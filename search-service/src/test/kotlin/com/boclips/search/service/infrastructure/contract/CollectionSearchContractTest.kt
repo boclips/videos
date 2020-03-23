@@ -43,7 +43,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
         )
 
-        assertThat(result).hasSize(0)
+        assertThat(result.elements).hasSize(0)
+        assertThat(result.counts.hits).isEqualTo(0)
     }
 
     @ParameterizedTest
@@ -71,7 +72,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
         )
 
-        assertThat(result).hasSize(1)
+        assertThat(result.elements).hasSize(1)
+        assertThat(result.counts.hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -102,7 +104,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             PaginatedSearchRequest(query = CollectionQuery("gentleman"))
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "3")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "3")
+        assertThat(result.counts.hits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -123,7 +126,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             PaginatedSearchRequest(query = CollectionQuery(subjectIds = listOf("gentleman", "crispity")))
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1")
+        assertThat(result.elements).containsExactlyInAnyOrder("1")
+        assertThat(result.counts.hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -143,7 +147,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             PaginatedSearchRequest(query = CollectionQuery(ageRangeMin = 5, ageRangeMax = 7))
         )
 
-        assertThat(result).containsExactlyInAnyOrder("Lower-Elementary")
+        assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
+        assertThat(result.counts.hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -163,7 +168,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             PaginatedSearchRequest(query = CollectionQuery(ageRanges = listOf(AgeRange(5, 7))))
         )
 
-        assertThat(result).containsExactlyInAnyOrder("Lower-Elementary")
+        assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
+        assertThat(result.counts.hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -185,7 +191,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.counts.hits).isEqualTo(2)
     }
 
     @ParameterizedTest
@@ -238,8 +245,9 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
         )
 
-        assertThat(results).hasSize(3)
-        assertThat(results).containsExactly("103", "101", "100")
+        assertThat(results.elements).hasSize(3)
+        assertThat(results.elements).containsExactly("103", "101", "100")
+        assertThat(results.counts.hits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -279,10 +287,9 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             )
         )
 
-        assertThat(results).hasSize(1)
-        assertThat(results).doesNotContain("100")
-        assertThat(results).contains("101")
-        assertThat(results).doesNotContain("102")
+        assertThat(results.elements).hasSize(1)
+        assertThat(results.elements).containsExactly("101")
+        assertThat(results.counts.hits).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -326,37 +333,11 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                 )
             )
 
-        assertThat(page1).hasSize(2)
-        assertThat(page2).hasSize(1)
-    }
+        assertThat(page1.elements).hasSize(2)
+        assertThat(page1.counts.hits).isEqualTo(3)
 
-    @ParameterizedTest
-    @ArgumentsSource(CollectionSearchProvider::class)
-    fun `counts collections`(
-        readService: IndexReader<CollectionMetadata, CollectionQuery>,
-        writeService: IndexWriter<CollectionMetadata>
-    ) {
-        writeService.safeRebuildIndex(
-            sequenceOf(
-                SearchableCollectionMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
-                SearchableCollectionMetadataFactory.create(
-                    id = "2",
-                    title = "Beer"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "3",
-                    title = "Mixed-race couple playing piano with a dog and a gentleman"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "4",
-                    title = "Who are you, really? I am GENTLEman"
-                )
-            )
-        )
-
-        val result = readService.count(CollectionQuery("gentleman"))
-
-        assertThat(result.hits).isEqualTo(3)
+        assertThat(page2.elements).hasSize(1)
+        assertThat(page2.counts.hits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -383,7 +364,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                         "gentleman"
                     )
                 )
-            ).isEmpty()
+            ).elements.isEmpty()
         )
     }
 
@@ -420,7 +401,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                         "gentleman"
                     )
                 )
-            ).isEmpty()
+            ).elements.isEmpty()
         )
     }
 }

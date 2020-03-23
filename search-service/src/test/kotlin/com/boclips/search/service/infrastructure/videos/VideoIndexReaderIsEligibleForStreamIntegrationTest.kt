@@ -43,7 +43,7 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(query = VideoQuery(isEligibleForStream = true))
         )
 
-        assertThat(results).containsExactly("1", "2")
+        assertThat(results.elements).containsExactly("1", "2")
     }
 
     @Test
@@ -66,6 +66,6 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(query = VideoQuery(isEligibleForStream = null))
         )
 
-        assertThat(results).containsExactlyInAnyOrder("1", "3")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "3")
     }
 }

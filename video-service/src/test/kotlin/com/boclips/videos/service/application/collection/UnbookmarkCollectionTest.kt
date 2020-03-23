@@ -50,15 +50,14 @@ class UnbookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         unbookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
-        assertThat(
-            collectionSearchService.search(
-                searchRequest = PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        bookmarkedBy = "me@me.com"
-                    )
+        val results = collectionSearchService.search(
+            searchRequest = PaginatedSearchRequest(
+                query = CollectionQuery(
+                    bookmarkedBy = "me@me.com"
                 )
             )
-        ).isEmpty()
+        )
+        assertThat(results.elements).isEmpty()
     }
 
     @Test

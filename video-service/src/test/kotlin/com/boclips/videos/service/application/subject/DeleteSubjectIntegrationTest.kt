@@ -39,18 +39,19 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         val privateCollection = collectionRepository.find(privateCollectionWithSubject)!!
         assertThat(privateCollection.subjects.map { it.id }).doesNotContain(subject.id)
 
-        assertThat(
-            collectionReadService.count(
-                CollectionSearchQuery(
-                    subjectIds = listOf(subject.id.value),
-                    text = null,
-                    visibilityForOwners = emptySet(),
-                    pageIndex = 0,
-                    pageSize = 10,
-                    permittedCollections = null,
-                    hasLessonPlans = null
-                )
-            )
-        ).isEqualTo(0)
+        val results = collectionReadService.search(
+            CollectionSearchQuery(
+                subjectIds = listOf(subject.id.value),
+                text = null,
+                visibilityForOwners = emptySet(),
+                pageIndex = 0,
+                pageSize = 10,
+                permittedCollections = null,
+                hasLessonPlans = null
+            ),
+            user = UserFactory.sample()
+        )
+
+        assertThat(results.elements).isEmpty()
     }
 }

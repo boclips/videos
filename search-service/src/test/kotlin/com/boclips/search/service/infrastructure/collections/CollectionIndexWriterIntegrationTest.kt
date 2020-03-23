@@ -25,7 +25,9 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             sequenceOf(SearchableCollectionMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        assertThat(indexReader.count(CollectionQuery("Boy")).hits).isEqualTo(1)
+        val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("Boy")))
+
+        assertThat(results.counts.hits).isEqualTo(1)
     }
 
     @Test
@@ -40,7 +42,9 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             )
         )
 
-        assertThat(indexReader.count(CollectionQuery("verbose")).hits).isEqualTo(1)
+        val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("verbose")))
+
+        assertThat(results.counts.hits).isEqualTo(1)
     }
 
     @Test
@@ -53,6 +57,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
                 )
             )
         )
+
         assertThat(
             indexReader.search(
                 PaginatedSearchRequest(
@@ -60,8 +65,8 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
                         "boy"
                     )
                 )
-            ).isNotEmpty()
-        )
+            ).elements
+        ).isNotEmpty
 
         indexWriter.safeRebuildIndex(emptySequence())
 
@@ -72,7 +77,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
                         "boy"
                     )
                 )
-            ).isEmpty()
+            ).elements.isEmpty()
         )
     }
 }

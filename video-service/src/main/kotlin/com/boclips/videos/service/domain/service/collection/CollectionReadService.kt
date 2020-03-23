@@ -29,14 +29,15 @@ class CollectionReadService(
     companion object : KLogging()
 
     fun search(query: CollectionSearchQuery, user: User): Page<Collection> {
-
         val accessRules = user.accessRules
         val searchRequest = PaginatedSearchRequest(
             query = query.toSearchQuery(),
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
-        val collectionIds = collectionSearchService.search(searchRequest).map { CollectionId(value = it) }
+        val results = collectionSearchService.search(searchRequest)
+
+        val collectionIds = results.elements.map { CollectionId(value = it) }
         val collections = collectionRepository.findAll(collectionIds).map {
             withPermittedVideos(it, accessRules.videoAccess)
         }
@@ -53,7 +54,7 @@ class CollectionReadService(
 
         logger.info { "Returning ${collections.size} collections for query $query" }
 
-        val count = count(query)
+        val count = results.counts.hits
         return Page(
             collections, PageInfo(
                 hasMoreElements = count > query.pageIndexUpperBound(),
@@ -64,11 +65,6 @@ class CollectionReadService(
                 )
             )
         )
-    }
-
-    fun count(collectionSearchQuery: CollectionSearchQuery): Long {
-        logger.info { "Counted collections for query $collectionSearchQuery" }
-        return collectionSearchService.count(collectionSearchQuery.toSearchQuery()).hits
     }
 
     fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult =
@@ -147,9 +143,9 @@ class CollectionReadService(
 
     private fun withPermittedVideos(collection: Collection, videoAccess: VideoAccess): Collection =
         videoService.getPlayableVideos(
-            videoIds = collection.videos,
-            videoAccess = videoAccess
-        )
+                videoIds = collection.videos,
+                videoAccess = videoAccess
+            )
             .map { it.videoId }
             .let { collection.copy(videos = it) }
 }

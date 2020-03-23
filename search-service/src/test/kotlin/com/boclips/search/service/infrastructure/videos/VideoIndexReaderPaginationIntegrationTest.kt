@@ -39,7 +39,8 @@ class VideoIndexReaderPaginationIntegrationTest : EmbeddedElasticSearchIntegrati
                 )
             )
 
-        assertThat(results.size).isEqualTo(2)
+        assertThat(results.elements).hasSize(2)
+        assertThat(results.counts.hits).isEqualTo(4)
     }
 
     @Test
@@ -75,9 +76,9 @@ class VideoIndexReaderPaginationIntegrationTest : EmbeddedElasticSearchIntegrati
             )
         )
 
-        assertThat(page1).doesNotContainAnyElementsOf(page2)
-        assertThat(page1).hasSize(2)
-        assertThat(page2).hasSize(2)
-        assertThat(page3).hasSize(0)
+        assertThat(page1.elements).doesNotContainAnyElementsOf(page2.elements)
+        assertThat(page1.elements).hasSize(2)
+        assertThat(page2.elements).hasSize(2)
+        assertThat(page3.elements).hasSize(0)
     }
 }

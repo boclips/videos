@@ -1,8 +1,9 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
-import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.Counts
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -37,16 +38,14 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} video(s) in Solr" }
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): SearchResults {
         if (searchRequest.query.phrase.isNotEmpty()) {
             throw java.lang.UnsupportedOperationException()
         }
         val query = searchRequest.query.ids.joinToString(separator = " OR ", prefix = "id:")
-        return client.query(SolrQuery(query)).results.toList().map { it.getFieldValue("id").toString() }
-    }
-
-    override fun count(query: VideoQuery): Counts {
-        throw java.lang.UnsupportedOperationException("Not supported by SOLR search service")
+        val videoIds = client.query(SolrQuery(query)).results.toList()
+        val elements = videoIds.map { it.getFieldValue("id").toString() }
+        return SearchResults(elements = elements, counts = Counts(hits = videoIds.size.toLong()))
     }
 
     override fun removeFromSearch(itemId: String) {

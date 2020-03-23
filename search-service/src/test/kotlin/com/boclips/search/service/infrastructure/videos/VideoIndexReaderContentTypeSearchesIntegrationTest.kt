@@ -32,7 +32,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        val documentIds = videoIndexReader.search(
+        val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
                     includedType = setOf(
@@ -43,7 +43,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(documentIds).containsOnly("2", "3", "5")
+        assertThat(results.elements).containsOnly("2", "3", "5")
     }
 
     @Test
@@ -58,7 +58,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        val documentIds = videoIndexReader.search(
+        val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
                     includedType = emptySet()
@@ -66,7 +66,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(documentIds).containsOnly("1", "2", "3", "4", "5")
+        assertThat(results.elements).containsOnly("1", "2", "3", "4", "5")
     }
 
     @Test
@@ -81,7 +81,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        val documentIds = videoIndexReader.search(
+        val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
                     includedType = setOf(
@@ -95,7 +95,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(documentIds).containsOnly("3")
+        assertThat(results.elements).containsOnly("3")
     }
 
     @Test
@@ -108,7 +108,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        val documentIds = videoIndexReader.search(
+        val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
                     phrase = "Rhino",
@@ -119,6 +119,6 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(documentIds).containsOnly("3")
+        assertThat(results.elements).containsOnly("3")
     }
 }

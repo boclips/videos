@@ -40,21 +40,19 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             )
         )
 
-        assertThat(
-            collectionIndexReader.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        visibilityForOwners = setOf(
-                            VisibilityForOwner(
-                                owner = "juan-123",
-                                visibility = CollectionVisibilityQuery.All
-                            )
+        val results = collectionIndexReader.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(
+                            owner = "juan-123",
+                            visibility = CollectionVisibilityQuery.All
                         )
                     )
                 )
             )
         )
-            .containsExactlyInAnyOrder("1", "2")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @Test
@@ -69,19 +67,19 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             )
         )
 
-        assertThat(
-            collectionIndexReader.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        visibilityForOwners = setOf(
-                            VisibilityForOwner(
-                                owner = "jose",
-                                visibility = CollectionVisibilityQuery.All
-                            )
+        val results = collectionIndexReader.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    visibilityForOwners = setOf(
+                        VisibilityForOwner(
+                            owner = "jose",
+                            visibility = CollectionVisibilityQuery.All
                         )
                     )
                 )
             )
-        ).isEmpty()
+        )
+
+        assertThat(results.elements).isEmpty()
     }
 }

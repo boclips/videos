@@ -72,7 +72,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
                         "Some title"
                     )
                 )
-            )
+            ).elements
         ).isEmpty()
     }
 

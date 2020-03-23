@@ -31,7 +31,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("one four")))
 
-        assertThat(results.first()).isEqualTo("1")
+        assertThat(results.elements.first()).isEqualTo("1")
     }
 
     @Test
@@ -45,8 +45,8 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("six two")))
 
-        assertThat(results).hasSize(2)
-        assertThat(results.first()).isEqualTo("1")
+        assertThat(results.elements).hasSize(2)
+        assertThat(results.elements.first()).isEqualTo("1")
     }
 
     @Test
@@ -63,7 +63,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("Apple banana candy"))
         )
 
-        assertThat(results.first()).isEqualTo("1")
+        assertThat(results.elements.first()).isEqualTo("1")
     }
 
     @Test
@@ -80,7 +80,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("Apple banana candy"))
         )
 
-        assertThat(results.first()).isEqualTo("1")
+        assertThat(results.elements.first()).isEqualTo("1")
     }
 
     @Test
@@ -93,7 +93,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("dogs")))
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -107,7 +107,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "science")))
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -129,7 +129,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("thrones"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -155,8 +155,8 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("thrones"))
         )
 
-        assertThat(results).hasSize(3)
-        assertThat(results).startsWith("2")
+        assertThat(results.elements).hasSize(3)
+        assertThat(results.elements).startsWith("2")
     }
 
     @Test
@@ -172,7 +172,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("i have a dream"))
         )
 
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -187,7 +187,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("rain"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -208,7 +208,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("Napalm bombing during Vietnam War"))
         )
 
-        assertThat(results.first()).isEqualTo("2")
+        assertThat(results.elements.first()).isEqualTo("2")
     }
 
     @Test
@@ -223,7 +223,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("WW2"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -237,13 +237,13 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         assertThat(
             videoIndexReader.search(
                 PaginatedSearchRequest(query = VideoQuery("second world war"))
-            )
+            ).elements
         ).containsExactly("1")
 
         assertThat(
             videoIndexReader.search(
                 PaginatedSearchRequest(query = VideoQuery("second world"))
-            )
+            ).elements
         ).isEmpty()
     }
 
@@ -256,7 +256,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         assertThat(
-            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "ww2")))
+            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "ww2"))).elements
         ).isEmpty()
     }
 
@@ -273,7 +273,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("United States of America"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -292,7 +292,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("empire"))
         )
 
-        assertThat(results).startsWith("3")
+        assertThat(results.elements).startsWith("3")
     }
 
     @Test
@@ -311,7 +311,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("empire"))
         )
 
-        assertThat(results).startsWith("3")
+        assertThat(results.elements).startsWith("3")
     }
 
     @Test
@@ -337,7 +337,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("history"))
         )
 
-        assertThat(results).containsExactly("2", "1")
+        assertThat(results.elements).containsExactly("2", "1")
     }
 
     @Test
@@ -355,7 +355,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("art history"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -379,7 +379,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("history"))
         )
 
-        assertThat(results).containsExactly("2", "1")
+        assertThat(results.elements).containsExactly("2", "1")
     }
 
     @Test
@@ -407,7 +407,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("mathematics fractions"))
         )
 
-        assertThat(results).containsExactly("2", "3")
+        assertThat(results.elements).containsExactly("2", "3")
     }
 
     @Test
@@ -425,7 +425,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("maths"))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -448,7 +448,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedSearchRequest(query = VideoQuery("London Underground"))
         )
 
-        assertThat(results).startsWith("3")
-        assertThat(results).hasSize(5)
+        assertThat(results.elements).startsWith("3")
+        assertThat(results.elements).hasSize(5)
     }
 }

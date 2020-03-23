@@ -12,7 +12,6 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
-import com.boclips.videos.service.infrastructure.search.VideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockitokotlin2.any
@@ -95,10 +94,11 @@ class RebuildVideoIndexTest {
                 )
             )
         )
-        val searchResults = searchService.search(searchRequest)
-        assertThat(searchResults).doesNotContain(videoId1)
-        assertThat(searchResults).contains(videoId2)
-        assertThat(searchResults).contains(videoId3)
+        val results = searchService.search(searchRequest)
+
+        assertThat(results.elements).doesNotContain(videoId1)
+        assertThat(results.elements).contains(videoId2)
+        assertThat(results.elements).contains(videoId3)
     }
 
     @Test
@@ -137,8 +137,8 @@ class RebuildVideoIndexTest {
             )
         )
 
-        val searchResults = searchService.search(searchRequest)
-        assertThat(searchResults).containsExactlyInAnyOrder(streamableVideoId, downloadableVideoId)
+        val results = searchService.search(searchRequest)
+        assertThat(results.elements).containsExactlyInAnyOrder(streamableVideoId, downloadableVideoId)
     }
 
     @Test

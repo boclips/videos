@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.Bucket
 import com.boclips.search.service.domain.common.Count
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -42,9 +43,9 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             )
         )
 
-        val results = videoIndexReader.count(VideoQuery(phrase = "banana"))
+        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "banana")))
 
-        assertThat(results.hits).isEqualTo(11)
+        assertThat(results.counts.hits).isEqualTo(11)
     }
 
     @Test
@@ -57,9 +58,9 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             )
         )
 
-        val results = videoIndexReader.count(VideoQuery(ids = listOf("2", "5")))
+        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(ids = listOf("2", "5"))))
 
-        assertThat(results.hits).isEqualTo(1)
+        assertThat(results.counts.hits).isEqualTo(1)
     }
 
     @Test
@@ -74,9 +75,9 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
             )
         )
 
-        val results = videoIndexReader.count(VideoQuery(includedType = setOf(VideoType.NEWS)))
+        val results = videoIndexReader.search(PaginatedSearchRequest(VideoQuery(includedType = setOf(VideoType.NEWS))))
 
-        assertThat(results.hits).isEqualTo(2)
+        assertThat(results.counts.hits).isEqualTo(2)
     }
 
     @Nested
@@ -104,14 +105,14 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
                 )
             )
 
-            val counts = videoIndexReader.count(VideoQuery(phrase = "apple"))
+            val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "apple")))
 
-            assertThat(counts.hits).isEqualTo(3)
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
+            assertThat(results.counts.hits).isEqualTo(3)
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
 
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 2))
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 2))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
         }
 
         @Test
@@ -136,14 +137,21 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
                 )
             )
 
-            val counts = videoIndexReader.count(VideoQuery(phrase = "apple", subjectIds = setOf("1")))
+            val results = videoIndexReader.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        phrase = "apple",
+                        subjectIds = setOf("1")
+                    )
+                )
+            )
 
-            assertThat(counts.hits).isEqualTo(1)
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
+            assertThat(results.counts.hits).isEqualTo(1)
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).hasSize(3)
 
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "3", hits = 1))
         }
 
         @Test
@@ -173,15 +181,21 @@ class VideoIndexReaderCountingIntegrationTest : EmbeddedElasticSearchIntegration
                 )
             )
 
-            val counts = videoIndexReader.count(
-                VideoQuery(phrase = "apple", subjectIds = setOf("1"), ageRanges = listOf(AgeRange(1, 3)))
+            val results = videoIndexReader.search(
+                PaginatedSearchRequest(
+                    VideoQuery(
+                        phrase = "apple",
+                        subjectIds = setOf("1"),
+                        ageRanges = listOf(AgeRange(1, 3))
+                    )
+                )
             )
 
-            assertThat(counts.hits).isEqualTo(1)
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).hasSize(2)
+            assertThat(results.counts.hits).isEqualTo(1)
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).hasSize(2)
 
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
-            assertThat(counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "1", hits = 1))
+            assertThat(results.counts.getCounts(Bucket.SubjectsBucket)).contains(Count(id = "2", hits = 1))
         }
     }
 }

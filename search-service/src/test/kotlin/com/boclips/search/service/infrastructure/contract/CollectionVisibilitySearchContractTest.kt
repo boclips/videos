@@ -38,16 +38,18 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
         )
 
         assertThat(
-            readService.count(
-                CollectionQuery(
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(
-                            owner = null,
-                            visibility = CollectionVisibilityQuery.All
+            readService.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        visibilityForOwners = setOf(
+                            VisibilityForOwner(
+                                owner = null,
+                                visibility = CollectionVisibilityQuery.All
+                            )
                         )
                     )
                 )
-            ).hits
+            ).counts.hits
         ).isEqualTo(2)
     }
 
@@ -81,7 +83,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
                         )
                     )
                 )
-            )
+            ).elements
         ).containsExactly("2")
     }
 
@@ -109,7 +111,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -146,7 +148,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2", "3")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2", "3")
     }
 
     @ParameterizedTest
@@ -196,7 +198,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("3", "4", "5")
+        assertThat(result.elements).containsExactlyInAnyOrder("3", "4", "5")
     }
 
     @ParameterizedTest
@@ -228,7 +230,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -267,7 +269,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -292,7 +294,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -332,7 +334,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -372,7 +374,7 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @ParameterizedTest
@@ -416,6 +418,6 @@ class CollectionVisibilitySearchContractTest : EmbeddedElasticSearchIntegrationT
             )
         )
 
-        assertThat(result).containsExactly("2")
+        assertThat(result.elements).containsExactly("2")
     }
 }

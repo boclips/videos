@@ -39,7 +39,7 @@ class VideoIndexReaderIsClassroomIntegrationTest : EmbeddedElasticSearchIntegrat
             PaginatedSearchRequest(query = VideoQuery(isClassroom = true))
         )
 
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 
     @Test
@@ -62,7 +62,7 @@ class VideoIndexReaderIsClassroomIntegrationTest : EmbeddedElasticSearchIntegrat
             PaginatedSearchRequest(query = VideoQuery(isClassroom = false))
         )
 
-        assertThat(results).containsExactly("3")
+        assertThat(results.elements).containsExactly("3")
     }
 
     @Test
@@ -85,6 +85,6 @@ class VideoIndexReaderIsClassroomIntegrationTest : EmbeddedElasticSearchIntegrat
             PaginatedSearchRequest(query = VideoQuery())
         )
 
-        assertThat(results).containsExactlyInAnyOrder("1", "3")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "3")
     }
 }

@@ -9,7 +9,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoSearchRequest
+import com.boclips.videos.service.domain.model.video.VideoRequest
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import io.micrometer.core.instrument.Counter
@@ -79,7 +79,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(
             videoService.search(
-                VideoSearchRequest(
+                VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,
                     pageIndex = 0

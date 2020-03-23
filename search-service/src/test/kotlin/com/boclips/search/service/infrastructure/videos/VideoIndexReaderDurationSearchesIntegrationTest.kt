@@ -45,8 +45,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        assertThat(results.size).isEqualTo(2)
-        assertThat(results).containsExactlyInAnyOrder("2", "3")
+        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.elements).containsExactlyInAnyOrder("2", "3")
     }
 
     @Test
@@ -68,8 +68,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        assertThat(results.size).isEqualTo(2)
-        assertThat(results).containsExactlyInAnyOrder("1", "2")
+        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
 
     @Test
@@ -96,7 +96,7 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-        assertThat(results.size).isEqualTo(2)
-        assertThat(results).containsExactlyInAnyOrder("2", "3")
+        assertThat(results.counts.hits).isEqualTo(2)
+        assertThat(results.elements).containsExactlyInAnyOrder("2", "3")
     }
 }

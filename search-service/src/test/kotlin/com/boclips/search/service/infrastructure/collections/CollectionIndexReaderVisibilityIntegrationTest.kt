@@ -39,15 +39,17 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
             )
         )
 
-        Assertions.assertThat(
-            collectionIndexReader.count(
-                CollectionQuery(
+        val results = collectionIndexReader.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
                     visibilityForOwners = setOf(
                         VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.All)
                     )
                 )
             )
-                .hits).isEqualTo(2)
+        )
+
+        Assertions.assertThat(results.counts.hits).isEqualTo(2)
     }
 
     @Test
@@ -78,7 +80,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
                 )
             )
 
-        Assertions.assertThat(results).containsExactly("100")
+        Assertions.assertThat(results.elements).containsExactly("100")
     }
 
     @Test
@@ -112,7 +114,7 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
                 )
             )
 
-        Assertions.assertThat(results).containsExactly("101")
+        Assertions.assertThat(results.elements).containsExactly("101")
     }
 
     @Test
@@ -138,6 +140,6 @@ class CollectionIndexReaderVisibilityIntegrationTest : EmbeddedElasticSearchInte
             )
         )
 
-        Assertions.assertThat(results).containsExactlyInAnyOrder("100", "101")
+        Assertions.assertThat(results.elements).containsExactlyInAnyOrder("100", "101")
     }
 }

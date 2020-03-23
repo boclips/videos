@@ -1,28 +1,28 @@
 package com.boclips.search.service.infrastructure.contract
 
+import com.boclips.search.service.domain.common.Counts
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
-import com.boclips.search.service.domain.common.Counts
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
 
-    override fun count(query: QUERY): Counts =
-        Counts(hits = idsMatching(index = index, query = query).size.toLong())
-
-    override fun search(searchRequest: PaginatedSearchRequest<QUERY>): List<String> {
+    override fun search(searchRequest: PaginatedSearchRequest<QUERY>): SearchResults {
         val idsMatching = idsMatching(index, searchRequest.query)
 
-        return sort(idsMatching, searchRequest.query)
+        val elements = sort(idsMatching, searchRequest.query)
             .drop(searchRequest.startIndex)
             .take(searchRequest.windowSize)
+
+        return SearchResults(elements = elements, counts = Counts(hits = idsMatching.size.toLong()))
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {

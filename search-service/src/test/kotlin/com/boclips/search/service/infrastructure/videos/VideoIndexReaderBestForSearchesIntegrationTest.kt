@@ -48,7 +48,7 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(query = VideoQuery(bestFor = listOf("other", "explainer")))
         )
 
-        assertThat(results).containsOnly("3")
+        assertThat(results.elements).containsOnly("3")
     }
 
     @Test
@@ -84,7 +84,7 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(query = VideoQuery(bestFor = null))
         )
 
-        assertThat(results).containsExactlyInAnyOrder("1", "2", "3")
+        assertThat(results.elements).containsExactlyInAnyOrder("1", "2", "3")
     }
 
     @Test
@@ -111,6 +111,6 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(query = VideoQuery(bestFor = listOf("Other")))
         )
 
-        assertThat(results).containsExactlyInAnyOrder("3")
+        assertThat(results.elements).containsExactlyInAnyOrder("3")
     }
 }

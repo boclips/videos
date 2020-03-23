@@ -39,7 +39,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
 
         val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery()))
 
-        assertThat(results).hasSize(2)
+        assertThat(results.elements).hasSize(2)
     }
 
     @Test
@@ -79,8 +79,8 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).hasSize(1)
-        assertThat(results).contains("1")
+        assertThat(results.elements).hasSize(1)
+        assertThat(results.elements).contains("1")
     }
 
     @Test
@@ -112,8 +112,8 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).hasSize(1)
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).hasSize(1)
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -148,7 +148,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        val result = videoIndexReader.search(
+        val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
@@ -157,7 +157,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(result).containsOnly("1", "4")
+        assertThat(results.elements).containsOnly("1", "4")
     }
 
     @Test
@@ -198,7 +198,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).isEmpty()
+        assertThat(results.elements).isEmpty()
     }
 
     @Test
@@ -240,7 +240,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).containsExactly("1", "2")
+        assertThat(results.elements).containsExactly("1", "2")
     }
 
     @Test
@@ -269,8 +269,8 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).hasSize(1)
-        assertThat(results).contains("1")
+        assertThat(results.elements).hasSize(1)
+        assertThat(results.elements).contains("1")
     }
 
     @Test
@@ -301,8 +301,8 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             )
         )
 
-        assertThat(results).hasSize(1)
-        assertThat(results).contains("2")
+        assertThat(results.elements).hasSize(1)
+        assertThat(results.elements).contains("2")
     }
 
     @Test
@@ -328,7 +328,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 )
             )
 
-        assertThat(results).containsExactly("4")
+        assertThat(results.elements).containsExactly("4")
     }
 
     @Test
@@ -362,7 +362,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 )
             )
         )
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -395,7 +395,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 )
             )
         )
-        assertThat(results).containsExactly("2")
+        assertThat(results.elements).containsExactly("2")
     }
 
     @Test
@@ -427,6 +427,6 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 )
             )
         )
-        assertThat(results).containsExactly("1")
+        assertThat(results.elements).containsExactly("1")
     }
 }
