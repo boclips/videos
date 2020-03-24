@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.search.service.domain.common.Facet
+import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -24,7 +24,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         videoSearchService.setFacets(
             listOf(
                 FacetCount(
-                    key = Facet.SubjectsFacet,
+                    type = FacetType.Subjects,
                     counts = listOf(Count(id = "subject-1", hits = 56))
                 )
             )

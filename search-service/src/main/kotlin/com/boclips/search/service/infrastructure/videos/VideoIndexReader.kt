@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
-import com.boclips.search.service.domain.common.Facet
+import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.FacetCount
@@ -43,7 +43,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
 
         val counts = ResultCounts(
             totalHits = results.hits.totalHits?.value ?: 0L,
-            facets = listOf(FacetCount(key = Facet.SubjectsFacet, counts = subjectCounts))
+            facets = listOf(FacetCount(type = FacetType.Subjects, counts = subjectCounts))
         )
 
         return SearchResults(elements = elements, counts = counts)

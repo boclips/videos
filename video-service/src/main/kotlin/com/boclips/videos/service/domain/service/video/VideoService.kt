@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.search.service.domain.common.Facet
+import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
@@ -51,7 +51,7 @@ class VideoService(
         val videoIds = results.elements.map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
 
-        val subjectCounts = results.counts.getFacetCounts(Facet.SubjectsFacet)
+        val subjectCounts = results.counts.getFacetCounts(FacetType.Subjects)
             .map { SubjectFacet(subjectId = SubjectId(it.id), total = it.hits) }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }

@@ -1,19 +1,19 @@
 package com.boclips.search.service.domain.common
 
 class ResultCounts(val totalHits: Long, val facets: List<FacetCount>? = null) {
-    fun getFacetCounts(facet: Facet): List<Count> {
-        return when (facet) {
-            is Facet.SubjectsFacet -> {
-                facets?.find { it.key is Facet.SubjectsFacet }?.counts ?: emptyList()
+    fun getFacetCounts(facetType: FacetType): List<Count> {
+        return when (facetType) {
+            is FacetType.Subjects -> {
+                facets?.find { it.type is FacetType.Subjects }?.counts ?: emptyList()
             }
         }
     }
 }
 
-class FacetCount(val key: Facet, val counts: List<Count>)
+class FacetCount(val type: FacetType, val counts: List<Count>)
 
 data class Count(val id: String, val hits: Long)
 
-sealed class Facet {
-    object SubjectsFacet : Facet()
+sealed class FacetType {
+    object Subjects : FacetType()
 }
