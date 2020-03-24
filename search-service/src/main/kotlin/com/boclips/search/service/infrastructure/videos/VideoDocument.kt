@@ -43,6 +43,7 @@ data class VideoDocument @JsonCreator constructor(
         const val DURATION_SECONDS = "durationSeconds"
         const val SOURCE = "source"
         const val TRANSCRIPT = "transcript"
+        const val AGE_RANGE = "ageRange"
         const val SUBJECT_IDS = "subjectIds"
         const val SUBJECT_NAMES = "subjectNames"
         const val TYPE = "type"

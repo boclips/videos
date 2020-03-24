@@ -19,6 +19,7 @@ import java.time.LocalDate
 class VideoFilterCriteria {
     companion object {
         const val SUBJECTS = "subjects-filter"
+        const val AGE_RANGES = "age-ranges-filter"
 
         fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
             val boolQueryBuilder = boolQuery()
@@ -108,8 +109,8 @@ class VideoFilterCriteria {
 
         fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
             fun removeFromList(must: MutableList<QueryBuilder>) {
-                val subjectFilter = must.find { it.queryName() === filterName }
-                subjectFilter?.let { must.remove(it) }
+                val filter = must.find { it.queryName() === filterName }
+                filter?.let { must.remove(it) }
             }
 
             queryBuilder
@@ -168,7 +169,7 @@ class VideoFilterCriteria {
             )
 
         private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
-            val queries = boolQuery().queryName(VideoFilterCriteria.SUBJECTS)
+            val queries = boolQuery().queryName(SUBJECTS)
             for (s: String in subjects) {
                 queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
             }

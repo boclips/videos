@@ -120,7 +120,8 @@ class VideoFilterCriteriaTest {
                         }
                       ],
                       "adjust_pure_negative" : true,
-                      "boost" : 1.0
+                      "boost" : 1.0,
+                      "_name" : "age-ranges-filter"
                     }
                   }
                 ],
