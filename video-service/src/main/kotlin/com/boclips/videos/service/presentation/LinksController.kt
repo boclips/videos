@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
@@ -31,6 +32,7 @@ class LinksController(
     private val videosLinkBuilder: VideosLinkBuilder,
     private val subjectsLinkBuilder: SubjectsLinkBuilder,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    private val contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val tagsLinkBuilder: TagsLinkBuilder,
@@ -67,6 +69,8 @@ class LinksController(
                 contentPartnersLinkBuilder.contentPartnerLink(null),
                 contentPartnersLinkBuilder.contentPartnersLink(),
                 contentPartnersLinkBuilder.contentPartnersSignedUploadLink(),
+                contentPartnerContractsLinkBuilder.contentPartnerContractLink(null),
+                contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),

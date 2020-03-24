@@ -64,8 +64,10 @@ class ApplicationContext(
     }
 
     @Bean
-    fun contentPartnerContractsLinkBuilder(): ContentPartnerContractsLinkBuilder {
-        return ContentPartnerContractsLinkBuilder()
+    fun contentPartnerContractsLinkBuilder(
+        uriComponentsBuilderFactory: UriComponentsBuilderFactory
+    ): ContentPartnerContractsLinkBuilder {
+        return ContentPartnerContractsLinkBuilder(uriComponentsBuilderFactory)
     }
 
     @Bean
