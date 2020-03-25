@@ -14,15 +14,15 @@ class SubjectAggregation {
         private const val SUBJECT_AGGREGATION_FILTER = "subjects"
         private const val SUBJECT_SUB_AGGREGATION = "subject ids"
 
-        fun aggregateSubjects(aggregationFilters: BoolQueryBuilder?): FilterAggregationBuilder? {
+        fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder? {
             return AggregationBuilders
-                .filter(SUBJECT_AGGREGATION_FILTER, aggregationFilters)
+                .filter(SUBJECT_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(
                     AggregationBuilders.terms(SUBJECT_SUB_AGGREGATION).field(VideoDocument.SUBJECT_IDS).size(60)
                 )
         }
 
-        fun extractSubjectCounts(response: SearchResponse): List<Count> {
+        fun extractBucketCounts(response: SearchResponse): List<Count> {
             return response
                 .aggregations.get<ParsedFilter>(SUBJECT_AGGREGATION_FILTER)
                 .aggregations.get<ParsedStringTerms>(SUBJECT_SUB_AGGREGATION)

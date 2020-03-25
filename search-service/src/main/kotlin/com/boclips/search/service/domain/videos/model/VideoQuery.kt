@@ -1,12 +1,14 @@
 package com.boclips.search.service.domain.videos.model
 
+import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import java.time.LocalDate
 
-class VideoQuery(
+open class VideoQuery(
     phrase: String = "",
     sort: Sort<VideoMetadata>? = null,
+    override val facetDefinition: FacetDefinition.Video? = null,
     val ids: List<String> = emptyList(),
     val bestFor: List<String>? = null,
     val durationRanges: List<DurationRange>? = null,
@@ -28,4 +30,4 @@ class VideoQuery(
     val deniedVideoIds: Set<String>? = null,
     val isClassroom: Boolean? = null,
     val isEligibleForStream: Boolean? = null
-) : SearchQuery<VideoMetadata>(phrase, sort)
+) : SearchQuery<VideoMetadata>(phrase, sort, facetDefinition)

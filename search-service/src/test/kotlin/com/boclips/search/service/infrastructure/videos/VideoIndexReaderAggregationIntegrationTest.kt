@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetType
+import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
@@ -204,6 +205,41 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(facetCounts).contains(Count(id = "11-14", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "14-16", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "16-99", hits = 1))
+            }
+
+            @Test
+            fun `returns counts for age range buckets without filter - custom ageRange buckets`() {
+                val videos = sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1", title = "Apple banana candy",
+                        ageRangeMin = 3, ageRangeMax = 9
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2", title = "candy banana apple",
+                        ageRangeMin = 11, ageRangeMax = null
+                    )
+                )
+
+                val ageRangeBuckets: List<AgeRange> = listOf(
+                    AgeRange(3, 10),
+                    AgeRange(10, 20)
+                )
+
+                videoIndexWriter.upsert(videos)
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(ageRangeBuckets)
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+
+                val facetCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
+                assertThat(facetCounts).contains(Count(id = "3-10", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "10-20", hits = 1))
             }
 
             @Test
