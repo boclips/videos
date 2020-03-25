@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.contentpartner.service.domain.model.AgeRangeId
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
@@ -11,6 +12,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -198,7 +200,8 @@ class VideoToResourceConverterTest {
                 elements = listOf(),
                 counts = VideoCounts(
                     total = 10,
-                    subjects = listOf(SubjectFacet(subjectId = SubjectId("id"), total = 100))
+                    subjects = listOf(SubjectFacet(subjectId = SubjectId("id"), total = 100)),
+                    ageRanges = listOf(AgeRangeFacet(ageRangeId = AgeRangeId("3-5"), total = 3), AgeRangeFacet(ageRangeId = AgeRangeId("5-11"), total = 1))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -210,6 +213,8 @@ class VideoToResourceConverterTest {
         )
 
         assertThat(resultResource._embedded.facets?.subjects?.first()).isEqualTo(VideoFacetResource(id = "id", hits = 100))
+        assertThat(resultResource._embedded.facets!!.ageRanges).contains(VideoFacetResource(id = "3-5", hits = 3))
+        assertThat(resultResource._embedded.facets!!.ageRanges).contains(VideoFacetResource(id = "5-11", hits = 1))
     }
 
     @Test
