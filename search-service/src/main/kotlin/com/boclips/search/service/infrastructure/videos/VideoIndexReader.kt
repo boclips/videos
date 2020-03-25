@@ -1,10 +1,10 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
-import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.IndexReader
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
