@@ -53,7 +53,10 @@ class InfrastructureContext(
         return KMongo.createClient(
             MongoClientURI(
                 mongoProperties.determineUri(),
-                MongoClientOptions.builder().addCommandListener(TracingCommandListener.Builder(tracer).build())
+                MongoClientOptions.builder()
+                    .maxWaitTime(10_000)
+                    .socketTimeout(10_000)
+                    .addCommandListener(TracingCommandListener.Builder(tracer).build())
             )
         )
     }
