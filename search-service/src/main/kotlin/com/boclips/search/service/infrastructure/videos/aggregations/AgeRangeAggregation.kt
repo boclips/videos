@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.videos.aggregations
 
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import com.boclips.search.service.infrastructure.videos.aggregations.Aggregation.Companion.parseBuckets
 import org.elasticsearch.action.search.SearchResponse
@@ -29,9 +30,10 @@ class AgeRangeAggregation {
                 .range(AGE_RANGE_SUB_AGGREGATION)
                 .apply {
                     DEFAULT_AGE_RANGES.forEach { ageRange ->
-                        addRange(ageRange.toString(), ageRange.min().toDouble(), ageRange.max().toDouble())
+                        val inclusiveMax = ageRange.max().toDouble() + 1
+                        addRange(ageRange.toString(), ageRange.min().toDouble(), inclusiveMax)
                     }
-                    field(VideoDocument.AGE_RANGE)
+                    field(HasAgeRange.AGE_RANGE)
                 }
 
             return AggregationBuilders
