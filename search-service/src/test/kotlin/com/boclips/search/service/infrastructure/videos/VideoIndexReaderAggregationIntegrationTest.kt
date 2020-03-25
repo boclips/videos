@@ -189,7 +189,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         hits = 2
                     )
                 )
-                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16+", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16-99", hits = 1))
             }
 
             @Test
@@ -230,7 +230,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         hits = 1
                     )
                 )
-                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16+", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16-99", hits = 1))
             }
 
             @Test
@@ -266,7 +266,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         hits = 0
                     )
                 )
-                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16+", hits = 0))
+                assertThat(results.counts.getFacetCounts(FacetType.AgeRanges)).contains(Count(id = "16-99", hits = 0))
             }
         }
     }

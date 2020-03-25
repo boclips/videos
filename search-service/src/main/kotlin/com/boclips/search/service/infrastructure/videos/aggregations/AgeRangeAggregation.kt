@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos.aggregations
 
 import com.boclips.search.service.domain.common.Count
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import com.boclips.search.service.infrastructure.videos.aggregations.Aggregation.Companion.parseBuckets
 import org.elasticsearch.action.search.SearchResponse
@@ -14,20 +15,29 @@ class AgeRangeAggregation {
     companion object {
         private const val AGE_RANGE_AGGREGATION_FILTER = "ageRanges"
         private const val AGE_RANGE_SUB_AGGREGATION = "ageRange buckets"
+        private val DEFAULT_AGE_RANGES = listOf(
+            AgeRange(3, 5),
+            AgeRange(5, 9),
+            AgeRange(9, 11),
+            AgeRange(11, 14),
+            AgeRange(14, 16),
+            AgeRange(16, 99)
+        )
 
         fun aggregateAgeRanges(aggregationFilters: BoolQueryBuilder?): FilterAggregationBuilder? {
+            val ageRangeAggregation = AggregationBuilders
+                .range(AGE_RANGE_SUB_AGGREGATION)
+                .apply {
+                    DEFAULT_AGE_RANGES.forEach { ageRange ->
+                        addRange(ageRange.toString(), ageRange.min().toDouble(), ageRange.max().toDouble())
+                    }
+                    field(VideoDocument.AGE_RANGE)
+                }
+
             return AggregationBuilders
                 .filter(AGE_RANGE_AGGREGATION_FILTER, aggregationFilters)
                 .subAggregation(
-                    AggregationBuilders
-                        .range(AGE_RANGE_SUB_AGGREGATION)
-                        .addRange("3-5", 3.0, 5.0)
-                        .addRange("5-9", 5.0, 9.0)
-                        .addRange("9-11", 9.0, 11.0)
-                        .addRange("11-14", 11.0, 14.0)
-                        .addRange("14-16", 14.0, 16.0)
-                        .addUnboundedFrom("16+", 16.0)
-                        .field(VideoDocument.AGE_RANGE)
+                    ageRangeAggregation
                 )
         }
 
