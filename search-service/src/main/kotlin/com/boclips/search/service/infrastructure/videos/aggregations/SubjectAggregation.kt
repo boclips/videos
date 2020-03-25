@@ -18,7 +18,7 @@ class SubjectAggregation {
             return AggregationBuilders
                 .filter(SUBJECT_AGGREGATION_FILTER, aggregationFilters)
                 .subAggregation(
-                    AggregationBuilders.terms(SUBJECT_SUB_AGGREGATION).field(VideoDocument.SUBJECT_IDS)
+                    AggregationBuilders.terms(SUBJECT_SUB_AGGREGATION).field(VideoDocument.SUBJECT_IDS).size(60)
                 )
         }
 
