@@ -62,33 +62,38 @@ class InfrastructureContext(
     fun mongoCollectionFilterContractAdapter() = MongoCollectionFilterAccessRuleAdapter()
 
     @Bean
-    fun collectionSubjects(): CollectionSubjects {
-        return CollectionSubjects(mongoSubjectRepository())
+    fun collectionSubjects(mongoSubjectRepository: MongoSubjectRepository): CollectionSubjects {
+        return CollectionSubjects(mongoSubjectRepository)
     }
 
     @Bean
     fun mongoCollectionRepository(
+        mongoClient: MongoClient,
+        collectionSubjects: CollectionSubjects,
         batchProcessingConfig: BatchProcessingConfig
     ): MongoCollectionRepository {
         return MongoCollectionRepository(
-            mongoClient = mongoClient(),
+            mongoClient = mongoClient,
             batchProcessingConfig = batchProcessingConfig,
-            collectionSubjects = collectionSubjects()
+            collectionSubjects = collectionSubjects
         )
     }
 
     @Bean
-    fun mongoSubjectRepository(): MongoSubjectRepository {
-        return MongoSubjectRepository(mongoClient())
+    fun mongoSubjectRepository(mongoClient: MongoClient): MongoSubjectRepository {
+        return MongoSubjectRepository(mongoClient)
     }
 
     @Bean
-    fun mongoTagRepository(): TagRepository {
-        return MongoTagRepository(mongoClient())
+    fun mongoTagRepository(mongoClient: MongoClient): TagRepository {
+        return MongoTagRepository(mongoClient)
     }
 
     @Bean
-    fun mongoDisciplineRepository(): DisciplineRepository {
-        return MongoDisciplineRepository(mongoClient(), mongoSubjectRepository())
+    fun mongoDisciplineRepository(
+        mongoClient: MongoClient,
+        mongoSubjectRepository: MongoSubjectRepository
+    ): DisciplineRepository {
+        return MongoDisciplineRepository(mongoClient, mongoSubjectRepository)
     }
 }

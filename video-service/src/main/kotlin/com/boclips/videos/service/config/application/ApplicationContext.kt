@@ -102,12 +102,14 @@ class ApplicationContext(
 ) {
     @Bean
     fun searchVideo(
-        videosLinkBuilder: VideosLinkBuilder,
+        getVideoById: GetVideoById,
+        getAllVideosById: GetAllVideosById,
+        getVideosByQuery: GetVideosByQuery,
         searchQueryConverter: SearchQueryConverter
     ) = SearchVideo(
-        getVideoById(),
-        getVideosByQuery(searchQueryConverter),
-        getAllVideosById(),
+        getVideoById,
+        getVideosByQuery,
+        getAllVideosById,
         videoRepository
     )
 
@@ -372,11 +374,13 @@ class ApplicationContext(
         return FindAllLegalRestrictions(legalRestrictionsRepository)
     }
 
-    private fun getVideoById(): GetVideoById {
+    @Bean
+    fun getVideoById(): GetVideoById {
         return GetVideoById(videoService)
     }
 
-    private fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {
+    @Bean
+    fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {
         return GetVideosByQuery(
             videoService,
             eventService,
@@ -385,7 +389,8 @@ class ApplicationContext(
         )
     }
 
-    private fun getAllVideosById(): GetAllVideosById {
+    @Bean
+    fun getAllVideosById(): GetAllVideosById {
         return GetAllVideosById(videoService)
     }
 }
