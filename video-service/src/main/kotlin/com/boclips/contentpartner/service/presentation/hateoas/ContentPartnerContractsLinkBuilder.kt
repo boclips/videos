@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.presentation.ContentPartnerContractCon
 import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
 import com.boclips.security.utils.UserExtractor
 import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
+import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
@@ -26,7 +27,7 @@ class ContentPartnerContractsLinkBuilder(private val uriComponentsBuilderFactory
     }
 
     fun contentPartnerContractLink(id: String?): Link? {
-        return UserExtractor.getIfHasRole(UserRoles.VIEW_CONTENT_PARTNERS) {
+        return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS) {
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ContentPartnerContractController::class.java).getContentPartnerContract(
                     id
@@ -36,7 +37,7 @@ class ContentPartnerContractsLinkBuilder(private val uriComponentsBuilderFactory
     }
 
     fun contentPartnerContractsLink(): Link? {
-        return getIfHasAnyRole(
+        return getIfHasRole(
             UserRoles.INSERT_CONTENT_PARTNER_CONTRACTS
         ) {
             Link(
