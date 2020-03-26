@@ -27,7 +27,7 @@ class ServiceAccountTokenFactory(serviceAccountCredentials: ServiceAccountCreden
     }
 
     private fun hasTokenExpired(previousRefreshTime: Instant): Boolean {
-        val timeElapsed: Long = Duration.between(previousRefreshTime, Instant.now()).toMillis()
+        val timeElapsed: Long = Duration.between(previousRefreshTime, Instant.now()).seconds
         return timeElapsed > currentToken.expires_in!!
     }
 
