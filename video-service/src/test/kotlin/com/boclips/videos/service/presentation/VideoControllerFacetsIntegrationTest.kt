@@ -1,8 +1,8 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetCount
+import com.boclips.search.service.domain.common.FacetType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.equalTo
@@ -25,7 +25,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.Subjects,
-                    counts = listOf(Count(id = "subject-1", hits = 56))
+                    counts = listOf(Count(id = "subject1", hits = 56))
                 )
             )
         )
@@ -33,9 +33,8 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.facets.subjects", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.facets.subjects[0].id", equalTo("subject-1")))
-            .andExpect(jsonPath("$._embedded.facets.subjects[0].hits", equalTo(56)))
+            .andExpect(jsonPath("$._embedded.facets.subjects.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.subjects.subject1.hits", equalTo(56)))
     }
 
     @Test

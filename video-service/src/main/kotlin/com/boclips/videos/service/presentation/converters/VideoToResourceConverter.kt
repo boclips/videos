@@ -85,17 +85,16 @@ class VideoToResourceConverter(
         return resultsPage.counts?.let { counts ->
             VideoFacetsResource(
                 subjects = counts.subjects.map {
-                    VideoFacetResource(
-                        id = it.subjectId.value,
+                    it.subjectId.value to VideoFacetResource(
                         hits = it.total
                     )
-                },
+                }.toMap(),
                 ageRanges = counts.ageRanges.map {
-                    VideoFacetResource(
-                        id = it.ageRangeId.value,
+                    it.ageRangeId.value to VideoFacetResource(
                         hits = it.total
                     )
-                })
+                }.toMap()
+            )
         }
     }
 

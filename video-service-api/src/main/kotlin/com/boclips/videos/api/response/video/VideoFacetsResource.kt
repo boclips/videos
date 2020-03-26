@@ -1,5 +1,8 @@
 package com.boclips.videos.api.response.video
 
-data class VideoFacetsResource(val subjects: List<VideoFacetResource>, val ageRanges: List<VideoFacetResource>)
+data class VideoFacetsResource(
+    val subjects: Map<String, VideoFacetResource>,
+    val ageRanges: Map<String, VideoFacetResource>
+)
 
-data class VideoFacetResource(val id: String, val hits: Long)
+data class VideoFacetResource(val hits: Long)
