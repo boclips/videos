@@ -9,8 +9,9 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.allCriteria
-import com.boclips.search.service.infrastructure.videos.aggregations.Aggregation.Companion.addAggregations
-import com.boclips.search.service.infrastructure.videos.aggregations.Aggregation.Companion.extractFacetCounts
+import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAggregation.Companion.aggregateAgeRanges
+import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
+import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
@@ -45,10 +46,9 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .apply {
                 query(EsVideoQuery().buildQuery(videoQuery))
                 postFilter(allCriteria(videoQuery))
+                aggregation(aggregateSubjects(videoQuery))
+                aggregation(aggregateAgeRanges(videoQuery))
                 videoQuery.sort?.let { applySort(it) }
-            }
-            .let {
-                addAggregations(it, videoQuery)
             }
 
         val request = SearchRequest(

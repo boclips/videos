@@ -2,8 +2,9 @@ package com.boclips.search.service.infrastructure.videos.aggregations
 
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.common.HasAgeRange
-import com.boclips.search.service.infrastructure.videos.aggregations.Aggregation.Companion.parseBuckets
+import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
@@ -24,8 +25,28 @@ class AgeRangeAggregation {
             AgeRange(16, 99)
         )
 
-        fun aggregate(queryBuilder: BoolQueryBuilder?, ageRangeBuckets: List<AgeRange>): FilterAggregationBuilder? {
+        fun aggregateAgeRanges(videoQuery: VideoQuery): FilterAggregationBuilder {
+            return aggregate(
+                queryBuilder = VideoFilterCriteria.removeCriteria(
+                    VideoFilterCriteria.allCriteria(videoQuery),
+                    VideoFilterCriteria.AGE_RANGES
+                ),
+                ageRangeBuckets = videoQuery.facetDefinition?.ageRangeBuckets ?: emptyList()
+            )
+        }
 
+        fun extractBucketCounts(response: SearchResponse): List<Count> {
+            return response
+                .aggregations.get<ParsedFilter>(AGE_RANGE_AGGREGATION_FILTER)
+                .aggregations.get<ParsedRange>(AGE_RANGE_SUB_AGGREGATION)
+                .buckets
+                .let { buckets -> parseBuckets(buckets) }
+        }
+
+        private fun aggregate(
+            queryBuilder: BoolQueryBuilder?,
+            ageRangeBuckets: List<AgeRange>
+        ): FilterAggregationBuilder {
             val ageRangeAggregation = AggregationBuilders
                 .range(AGE_RANGE_SUB_AGGREGATION)
                 .field(HasAgeRange.AGE_RANGE)
@@ -41,14 +62,6 @@ class AgeRangeAggregation {
             return AggregationBuilders
                 .filter(AGE_RANGE_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(ageRangeAggregation)
-        }
-
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
-            return response
-                .aggregations.get<ParsedFilter>(AGE_RANGE_AGGREGATION_FILTER)
-                .aggregations.get<ParsedRange>(AGE_RANGE_SUB_AGGREGATION)
-                .buckets
-                .let { buckets -> parseBuckets(buckets) }
         }
     }
 }
