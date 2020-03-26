@@ -11,7 +11,7 @@ import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails

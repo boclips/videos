@@ -5,9 +5,9 @@ import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
-import com.boclips.users.client.model.Organisation
-import com.boclips.users.client.model.OrganisationDetails
-import com.boclips.users.client.model.User
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.organisation.OrganisationDetailsResource
+import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
@@ -43,8 +43,24 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val overrideUserId = aValidId()
             val accountId = aValidId()
 
-            userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addOrganisation(Organisation(accountId, null, OrganisationDetails(true)))
+            usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
+            //TODO create organisation factory
+            organisationsClient.add(
+                OrganisationResource(
+                    id = accountId,
+                    accessExpiresOn = null,
+                    organisationDetails = OrganisationDetailsResource(
+                        allowsOverridingUserIds = true,
+                        name = "hello",
+                        domain = null,
+                        type = null,
+                        state = null,
+                        country = null
+                    ),
+                    _links = null,
+                    contentPackageId = null
+                )
+            )
 
             mockMvc.perform(
                 post("/v1/events/playback")
@@ -74,9 +90,24 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val overrideUserId = aValidId()
             val accountId = aValidId()
 
-            userServiceClient.addUser(User(userId, accountId, emptyList(), null))
-            userServiceClient.addOrganisation(Organisation(accountId, null, OrganisationDetails(false)))
-
+            usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
+            //TODO create organisation factory
+            organisationsClient.add(
+                OrganisationResource(
+                    id = accountId,
+                    accessExpiresOn = null,
+                    organisationDetails = OrganisationDetailsResource(
+                        allowsOverridingUserIds = false,
+                        name = "hello",
+                        domain = null,
+                        type = null,
+                        state = null,
+                        country = null
+                    ),
+                    _links = null,
+                    contentPackageId = null
+                )
+            )
             mockMvc.perform(
                 post("/v1/events/playback")
                     .asApiUser(email = userId)

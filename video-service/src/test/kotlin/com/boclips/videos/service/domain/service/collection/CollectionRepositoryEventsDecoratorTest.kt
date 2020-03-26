@@ -3,10 +3,10 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.eventbus.events.collection.CollectionCreated
 import com.boclips.eventbus.events.collection.CollectionDeleted
 import com.boclips.eventbus.events.collection.CollectionUpdated
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

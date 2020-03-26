@@ -16,8 +16,8 @@ import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection

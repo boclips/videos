@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 
 data class CollectionUpdateResult(val collection: Collection, val commands: List<CollectionUpdateCommand>)
 

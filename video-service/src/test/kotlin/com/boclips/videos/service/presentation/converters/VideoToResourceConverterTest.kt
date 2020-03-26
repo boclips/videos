@@ -9,7 +9,7 @@ import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.ContentType

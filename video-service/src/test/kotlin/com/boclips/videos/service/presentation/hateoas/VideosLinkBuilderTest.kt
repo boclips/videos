@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag

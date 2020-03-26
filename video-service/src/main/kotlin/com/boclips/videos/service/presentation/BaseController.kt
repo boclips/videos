@@ -3,13 +3,13 @@ package com.boclips.videos.service.presentation
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.AccessRules
-import com.boclips.videos.service.domain.model.RequestContext
-import com.boclips.videos.service.domain.model.User
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
+import com.boclips.videos.service.domain.model.user.RequestContext
+import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 
 open class BaseController(
@@ -23,7 +23,10 @@ open class BaseController(
             userRequest?.let(getUserIdOverride::invoke)
         }
 
-        val id = UserId(value = userRequest?.id ?: "anonymousUser")
+        val id = UserId(
+            value = userRequest?.id ?: "anonymousUser"
+        )
+
         return User(
             id = id,
             isBoclipsEmployee = userRequest?.boclipsEmployee ?: false,

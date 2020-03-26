@@ -26,7 +26,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val firstContractedVideo = saveVideo(title = "Contracted video")
             val secondContractedVideo = saveVideo(title = "This is a movie about something else")
 
-            addAccessToVideoIds(firstContractedVideo.value, secondContractedVideo.value)
+            addAccessToVideoIds("api-user@gmail.com", firstContractedVideo.value, secondContractedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -45,7 +45,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "video included", contentProviderId = streamContentPartner.contentPartnerId.value)
             saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.contentPartnerId.value)
 
-            addsAccessToStreamingVideos(DistributionMethodResource.STREAM)
+            addsAccessToStreamingVideos("api-user@gmail.com", DistributionMethodResource.STREAM)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -58,7 +58,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val video = saveVideo(title = "Some Video")
             val excludedVideo = saveVideo(title = "Blacklisted Video")
 
-            removeAccessToVideo(excludedVideo.value)
+            removeAccessToVideo("api-user@gmail.com", excludedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -71,7 +71,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val stockVideo = saveVideo(title = "Some Video", type = ContentType.STOCK)
             saveVideo(title = "Some Video", type = ContentType.NEWS)
 
-            addAccessToVideoTypes(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -88,7 +88,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.contentPartnerId.value)
             saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.contentPartnerId.value)
 
-            removeAccessToContentPartner(excludedContentPartner.contentPartnerId.value)
+            removeAccessToContentPartner("api-user@gmail.com", excludedContentPartner.contentPartnerId.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

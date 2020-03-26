@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.application.FindLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.application.ContentPartnerUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
@@ -58,7 +57,7 @@ import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
@@ -97,8 +96,7 @@ class ApplicationContext(
     val contentPartnerService: ContentPartnerService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val accessRuleService: AccessRuleService,
-    val userServiceClient: UserServiceClient
+    val accessRuleService: AccessRuleService
 ) {
     @Bean
     fun searchVideo(
@@ -180,7 +178,6 @@ class ApplicationContext(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
-        userServiceClient: UserServiceClient,
         collectionFilterAssembler: CollectionSearchQueryAssembler
     ): GetCollections {
         return GetCollections(

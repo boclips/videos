@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.Video

@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType

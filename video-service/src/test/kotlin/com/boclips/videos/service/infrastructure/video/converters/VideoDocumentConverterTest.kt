@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -54,7 +54,9 @@ class VideoDocumentConverterTest {
                     )
                 )
             ),
-            ratings = listOf(UserRating(3, UserId("user"))),
+            ratings = listOf(UserRating(3,
+                UserId("user")
+            )),
             ageRange = AgeRange.bounded(11, 16),
             promoted = true
         )

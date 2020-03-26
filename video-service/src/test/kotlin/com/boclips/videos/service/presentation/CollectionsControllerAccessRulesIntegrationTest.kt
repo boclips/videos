@@ -23,7 +23,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
         val secondCollection = createCollection(title = "My Second Collection", public = false)
         createCollection(title = "My Third Collection", public = false)
 
-        createIncludedCollectionsAccessRules(firstCollection, secondCollection)
+        createIncludedCollectionsAccessRules("api-user@gmail.com", firstCollection, secondCollection)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -42,7 +42,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
-        createIncludedCollectionsAccessRules(collectionId)
+        createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -66,7 +66,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
     fun `returns collections with deep video information when details projection is used`() {
         val collectionId = createCollection(title = "A Collection", public = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
-        createIncludedCollectionsAccessRules(collectionId)
+        createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -110,8 +110,8 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            addAccessToVideoIds(contractedVideoId.value)
-            createIncludedCollectionsAccessRules(collectionId)
+            addAccessToVideoIds("api-user@gmail.com", contractedVideoId.value)
+            createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
             mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -132,8 +132,8 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
-            addAccessToVideoIds(contractedVideoId.value)
-            createIncludedCollectionsAccessRules(collectionId)
+            addAccessToVideoIds("api-user@gmail.com", contractedVideoId.value)
+            createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
             mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

@@ -4,8 +4,8 @@ import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
-import com.boclips.users.client.model.TeacherPlatformAttributes
-import com.boclips.users.client.model.User
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.videos.api.request.collection.AttachmentRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -247,7 +247,12 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     type = "LESSON_PLAN"
                 )
             )
-            userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "12345",
+                    teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+                )
+            )
 
             val collection = collectionReadService.find(
                 collectionId,

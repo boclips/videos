@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.users.client.model.TeacherPlatformAttributes
-import com.boclips.users.client.model.User
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -28,7 +28,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     fun `propagates the OperationForbiddenException for public collection with invalid shareCode`() {
         val savedCollectionId = saveCollection(public = true)
-        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "12345",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+            )
+        )
 
         assertThrows<OperationForbiddenException> {
             getCollection(
@@ -59,7 +64,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     fun `propagates the OperationForbiddenException for anonymous no sharecode or referrer id`() {
         val savedCollectionId = saveCollection()
 
-        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "12345",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+            )
+        )
 
         assertThrows<OperationForbiddenException> {
             getCollection(
@@ -72,7 +82,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     fun `provides a public collection when the correct share code and ID combination is provided`() {
         val savedCollectionId = saveCollection(public = true)
-        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "12345",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+            )
+        )
 
         val retrievedCollection = getCollection(
             savedCollectionId.value,
@@ -86,7 +101,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     fun `unauthenticated user has access to a private collection when the correct share code and referrer combination is provided`() {
         val savedCollectionId = saveCollection(owner = "12345", public = false)
-        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "12345",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+            )
+        )
 
         val retrievedCollection = getCollection(
             savedCollectionId.value,
@@ -100,7 +120,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     fun `authenticated user has access to a private collection when the correct share code and referrer combination is provided`() {
         val savedCollectionId = saveCollection(owner = "12345", public = false)
-        userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "12345",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+            )
+        )
 
         val retrievedCollection = getCollection(
             savedCollectionId.value,
@@ -114,7 +139,12 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     @Test
     fun `user does not have access to private collection when referer id is not the owner of the collection`() {
         val savedCollectionId = saveCollection(owner = "the-owner", public = false)
-        userServiceClient.addUser(User("not-the-owner", null, emptyList(), TeacherPlatformAttributes("ABCD")))
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "not-the-owner",
+                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+            )
+        )
 
         assertThrows<OperationForbiddenException> {
             getCollection(

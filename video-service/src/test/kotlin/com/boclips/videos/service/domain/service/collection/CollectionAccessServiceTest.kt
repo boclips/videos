@@ -1,11 +1,11 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -21,12 +21,12 @@ class CollectionAccessServiceTest {
     lateinit var collectionAccessService: CollectionAccessService
     lateinit var collectionRepository: CollectionRepository
 
-    lateinit var userServiceClient: UserServiceClient
+    lateinit var userService: UserService
 
     @BeforeEach
     fun setup() {
-        userServiceClient = mock()
-        collectionAccessService = CollectionAccessService(userServiceClient)
+        userService = mock()
+        collectionAccessService = CollectionAccessService(userService)
     }
 
     @Nested
@@ -39,7 +39,7 @@ class CollectionAccessServiceTest {
                 on { find(privateCollection.id) } doReturn privateCollection
             }
 
-            collectionAccessService = CollectionAccessService(userServiceClient)
+            collectionAccessService = CollectionAccessService(userService)
 
             val hasWriteAccess = collectionAccessService.hasWriteAccess(
                 collection = privateCollection,
@@ -62,7 +62,7 @@ class CollectionAccessServiceTest {
                 on { find(publicCollection.id) } doReturn publicCollection
             }
 
-            collectionAccessService = CollectionAccessService(userServiceClient)
+            collectionAccessService = CollectionAccessService(userService)
 
             val hasWriteAccess = collectionAccessService.hasWriteAccess(
                 collection = publicCollection,
@@ -142,7 +142,7 @@ class CollectionAccessServiceTest {
                     val privateCollection =
                         TestFactories.createCollection(owner = "owner@example.com", isPublic = false)
 
-                    whenever(userServiceClient.validateShareCode("owner@example.com", "AB12")).thenReturn(true)
+                    whenever(userService.isShareCodeValid("owner@example.com", "AB12")).thenReturn(true)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = privateCollection,
@@ -199,7 +199,7 @@ class CollectionAccessServiceTest {
                     val privateCollection =
                         TestFactories.createCollection(owner = "owner@example.com", isPublic = false)
 
-                    whenever(userServiceClient.validateShareCode("other@example.com", "ABC123")).thenReturn(true)
+                    whenever(userService.isShareCodeValid("other@example.com", "ABC123")).thenReturn(true)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = privateCollection,
@@ -219,7 +219,7 @@ class CollectionAccessServiceTest {
                     val privateCollection =
                         TestFactories.createCollection(owner = "owner@example.com", isPublic = false)
 
-                    whenever(userServiceClient.validateShareCode("other@example.com", "ABC123")).thenReturn(false)
+                    whenever(userService.isShareCodeValid("other@example.com", "ABC123")).thenReturn(false)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = privateCollection,
@@ -245,7 +245,7 @@ class CollectionAccessServiceTest {
                 fun `public collection with a valid shareCode`() {
                     val publicCollection = TestFactories.createCollection(owner = "owner@example.com", isPublic = true)
 
-                    whenever(userServiceClient.validateShareCode("teacher@example.com", "AB12")).thenReturn(true)
+                    whenever(userService.isShareCodeValid("teacher@example.com", "AB12")).thenReturn(true)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = publicCollection,
@@ -265,7 +265,7 @@ class CollectionAccessServiceTest {
                     val privateCollection =
                         TestFactories.createCollection(owner = "owner@example.com", isPublic = false)
 
-                    whenever(userServiceClient.validateShareCode("owner@example.com", "AB12")).thenReturn(true)
+                    whenever(userService.isShareCodeValid("owner@example.com", "AB12")).thenReturn(true)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = privateCollection,
@@ -323,7 +323,7 @@ class CollectionAccessServiceTest {
                     val privateCollection =
                         TestFactories.createCollection(owner = "owner@example.com", isPublic = false)
 
-                    whenever(userServiceClient.validateShareCode("teacher@example.com", "AB12")).thenReturn(true)
+                    whenever(userService.isShareCodeValid("teacher@example.com", "AB12")).thenReturn(true)
 
                     val accessValidationResult = collectionAccessService.validateReadAccess(
                         collection = privateCollection,

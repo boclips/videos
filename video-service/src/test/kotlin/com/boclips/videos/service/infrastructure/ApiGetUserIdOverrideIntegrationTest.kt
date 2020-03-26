@@ -1,7 +1,8 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.users.client.model.Organisation
-import com.boclips.users.client.model.User
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.organisation.OrganisationDetailsResource
+import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.SecurityUserFactory
@@ -15,8 +16,6 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it returns null if user is not found in user service`() {
-        userServiceClient.clearUser()
-
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 
         assertThat(userIdOverride).isNull()
@@ -24,8 +23,8 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `it returns null if user is not does not have an organisation`() {
-        userServiceClient.addUser(User("user-id", null, emptyList(), null))
-        userServiceClient.clearOrganisation()
+        usersClient.add(UserResourceFactory.sample("user-id"))
+        organisationsClient.clear()
 
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 
@@ -34,8 +33,18 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns null if account does not have an organisation`() {
-        userServiceClient.addUser(User("user-id", null, emptyList(), null))
-        userServiceClient.addOrganisation(Organisation("account-id", null, null))
+        usersClient.add(UserResourceFactory.sample(id = "user-id"))
+        organisationsClient.add(
+            OrganisationResource(
+                id = "account-id",
+                accessExpiresOn = null,
+                contentPackageId = null,
+                organisationDetails = OrganisationDetailsResource(
+                    "organisation", null, null, null, null, null
+                ),
+                _links = null
+            )
+        )
 
         val userIdOverride = getUserIdOverride(SecurityUserFactory.sample())
 

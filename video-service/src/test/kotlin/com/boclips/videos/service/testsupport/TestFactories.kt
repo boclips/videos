@@ -9,17 +9,16 @@ import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
-import com.boclips.users.client.model.TeacherPlatformAttributes
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.SubjectResource
+import com.boclips.users.api.response.TeacherPlatformAttributesResource
+import com.boclips.users.api.response.user.UserResource
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
-import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.RequestContext
-import com.boclips.videos.service.domain.model.User
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -38,6 +37,9 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.RequestContext
+import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -399,7 +401,7 @@ object VideoResourceFactory {
         contentPartnerVideoId: String = "cp-id-$id",
         playback: PlaybackResource? = PlaybackResourceFactory.sample(),
         type: VideoTypeResource = VideoTypeResourceFactory.sample(),
-        subjects: Set<SubjectResource> = emptySet(),
+        subjects: Set<com.boclips.videos.api.response.subject.SubjectResource> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         legalRestrictions: String = "",
         contentPartner: String = "Content Partner",
@@ -506,14 +508,14 @@ object SecurityUserFactory {
     fun createClientUser(
         id: String = "user-id",
         organisationAccountId: String = "organisation-id",
-        subjects: List<com.boclips.users.client.model.Subject> = emptyList(),
-        teacherPlatformAttributes: TeacherPlatformAttributes? = TeacherPlatformAttributes(null)
-    ): com.boclips.users.client.model.User {
-        return com.boclips.users.client.model.User(
-            id,
-            organisationAccountId,
-            subjects,
-            teacherPlatformAttributes
+        subjects: List<SubjectResource> = emptyList(),
+        teacherPlatformAttributes: TeacherPlatformAttributesResource? = TeacherPlatformAttributesResource(null)
+    ): UserResource {
+        return UserResourceFactory.sample(
+            id = id,
+            organisationAccountId = organisationAccountId,
+            subjects = subjects,
+            teacherPlatformAttributes = teacherPlatformAttributes
         )
     }
 }

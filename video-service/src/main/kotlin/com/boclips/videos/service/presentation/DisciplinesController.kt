@@ -9,8 +9,7 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
-import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import org.springframework.http.HttpHeaders

@@ -1,13 +1,13 @@
 package com.boclips.videos.service.domain.service.collection
 
-import com.boclips.users.client.UserServiceClient
 import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessValidationResult
-import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.service.user.UserService
 
 class CollectionAccessService(
-    private val userServiceClient: UserServiceClient
+    private val userService: UserService
 ) {
     fun hasWriteAccess(collection: Collection, user: User): Boolean =
         validateAccess(collection = collection, readOnly = false, user = user).successful
@@ -86,7 +86,19 @@ class CollectionAccessService(
         shareCode: String?,
         user: User
     ): AccessValidationResult {
-        val shareCodeIsValid = userServiceClient.validateShareCode(referer, shareCode)
+        if (shareCode == null || referer == null) {
+            return AccessValidationResult(
+                error = AccessError.InvalidShareCode(
+                    collectionId = collection.id,
+                    userId = user.id,
+                    shareCode = shareCode,
+                    referer = referer
+                )
+            )
+        }
+
+        val shareCodeIsValid = userService.isShareCodeValid(referer, shareCode)
+
         val ownerIsReferer = collection.owner.value == referer
         return when {
             collection.isPublic && shareCodeIsValid -> AccessValidationResult.SUCCESS

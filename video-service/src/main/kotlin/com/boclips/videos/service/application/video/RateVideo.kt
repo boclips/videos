@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository

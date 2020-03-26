@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 

@@ -8,9 +8,9 @@ import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AccessRulesFactory

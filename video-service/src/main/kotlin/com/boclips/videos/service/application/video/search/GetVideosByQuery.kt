@@ -4,7 +4,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.SortKey
 import com.boclips.videos.service.domain.model.video.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.Video

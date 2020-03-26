@@ -1,18 +1,19 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.users.client.UserServiceClient
+import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
 import com.boclips.videos.service.domain.model.tag.TagRepository
 import com.boclips.videos.service.domain.service.GetUserIdOverride
-import com.boclips.videos.service.infrastructure.ApiAccessRuleService
-import com.boclips.videos.service.infrastructure.ApiGetUserIdOverride
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
+import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
+import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
@@ -34,13 +35,15 @@ class InfrastructureContext(
     val tracer: Tracer
 ) {
     @Bean
-    fun apiAccessRuleService(userServiceClient: UserServiceClient): ApiAccessRuleService {
-        return ApiAccessRuleService(userServiceClient)
+    fun apiAccessRuleService(usersClient: UsersClient): ApiAccessRuleService {
+        return ApiAccessRuleService(usersClient)
     }
 
     @Bean
-    fun getUserIdOverride(userServiceClient: UserServiceClient): GetUserIdOverride {
-        return ApiGetUserIdOverride(userServiceClient)
+    fun getUserIdOverride(userService: UserService): GetUserIdOverride {
+        return ApiGetUserIdOverride(
+            userService
+        )
     }
 
     @Bean

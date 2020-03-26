@@ -1,16 +1,10 @@
-package com.boclips.videos.service.infrastructure
+package com.boclips.videos.service.infrastructure.user
 
 import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.users.client.UserServiceClient
-import com.boclips.users.client.model.accessrule.AccessRule
-import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
-import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
-import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
-import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
-import com.boclips.users.client.model.accessrule.IncludedDistributionMethodsAccessRule
-import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
+import com.boclips.users.api.httpclient.UsersClient
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.AccessRules
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
@@ -18,13 +12,15 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.AccessRuleService
+import com.boclips.videos.service.domain.service.user.AccessRuleService
+import feign.FeignException
 import mu.KLogging
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Recover
 import org.springframework.retry.annotation.Retryable
 
-open class ApiAccessRuleService(private val userServiceClient: UserServiceClient) : AccessRuleService {
+open class ApiAccessRuleService(private val usersClient: UsersClient) :
+    AccessRuleService {
     companion object : KLogging()
 
     @Retryable(
@@ -32,7 +28,15 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
-        val retrievedAccessRules = userServiceClient.getAccessRules(user.id.value) ?: emptyList()
+        val retrievedAccessRules: List<AccessRuleResource> =
+            try {
+                usersClient.getAccessRulesOfUser(user.id.value)._embedded.accessRules
+            } catch (ex: FeignException) {
+                when (ex.status()) {
+                    404 -> emptyList()
+                    else -> throw ex
+                }
+            }
 
         val accessRules = retrievedAccessRules.let {
             AccessRules(
@@ -44,11 +48,11 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         return accessRules
     }
 
-    private fun getCollectionAccessRule(accessRules: List<AccessRule>, user: User): CollectionAccessRule {
+    private fun getCollectionAccessRule(accessRules: List<AccessRuleResource>, user: User): CollectionAccessRule {
         val collectionIds: List<CollectionId> = accessRules
             .flatMap { accessRule ->
                 when (accessRule) {
-                    is IncludedCollectionsAccessRule -> accessRule.collectionIds.map { CollectionId(it) }
+                    is AccessRuleResource.IncludedCollections -> accessRule.collectionIds.map { CollectionId(it) }
                     else -> emptyList()
                 }
             }
@@ -62,22 +66,23 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         }
     }
 
-    private fun getVideoAccessRule(accessRules: List<AccessRule>): VideoAccess {
+    private fun getVideoAccessRule(accessRules: List<AccessRuleResource>): VideoAccess {
         val videoAccessRules = accessRules.mapNotNull {
             when (it) {
-                is IncludedVideosAccessRule -> VideoAccessRule.IncludedIds(it.videoIds.map { id -> VideoId(id) }
-                    .toSet())
-                is ExcludedVideosAccessRule -> VideoAccessRule.ExcludedIds(it.videoIds.map { id -> VideoId(id) }
-                    .toSet())
-                is ExcludedVideoTypesAccessRule -> extractExcludedContentTypes(it)
-                is ExcludedContentPartnersAccessRule -> VideoAccessRule.ExcludedContentPartners(
+                is AccessRuleResource.IncludedDistributionMethod -> VideoAccessRule.IncludedDistributionMethods(
+                    it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }.toSet()
+                )
+                is AccessRuleResource.IncludedVideos -> VideoAccessRule.IncludedIds(
+                    it.videoIds.map { id -> VideoId(id) }.toSet()
+                )
+                is AccessRuleResource.ExcludedVideos -> VideoAccessRule.ExcludedIds(
+                    it.videoIds.map { id -> VideoId(id) }.toSet()
+                )
+                is AccessRuleResource.ExcludedVideoTypes -> extractExcludedContentTypes(it)
+                is AccessRuleResource.ExcludedContentPartners -> VideoAccessRule.ExcludedContentPartners(
                     it.contentPartnerIds.map { id -> ContentPartnerId(id) }.toSet()
                 )
-                is IncludedDistributionMethodsAccessRule -> VideoAccessRule.IncludedDistributionMethods(
-                    distributionMethods = it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }
-                        .toSet()
-                )
-                else -> null
+                is AccessRuleResource.IncludedCollections -> null
             }
         }
 
@@ -87,7 +92,7 @@ open class ApiAccessRuleService(private val userServiceClient: UserServiceClient
         }
     }
 
-    private fun extractExcludedContentTypes(accessRule: ExcludedVideoTypesAccessRule): VideoAccessRule.ExcludedContentTypes? =
+    private fun extractExcludedContentTypes(accessRule: AccessRuleResource.ExcludedVideoTypes): VideoAccessRule.ExcludedContentTypes? =
         accessRule.videoTypes
             .mapNotNull { type ->
                 when (type) {

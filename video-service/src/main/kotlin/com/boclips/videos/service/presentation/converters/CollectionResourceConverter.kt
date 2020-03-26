@@ -6,8 +6,8 @@ import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel

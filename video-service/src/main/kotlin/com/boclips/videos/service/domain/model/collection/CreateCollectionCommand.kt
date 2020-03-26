@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 
 data class CreateCollectionCommand(

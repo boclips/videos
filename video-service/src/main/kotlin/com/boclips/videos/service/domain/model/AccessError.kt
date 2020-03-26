@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model
 
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.user.UserId
 
 sealed class AccessError(val message: String, val collectionId: CollectionId, val userId: UserId) {
     class Default(collectionId: CollectionId, userId: UserId) :

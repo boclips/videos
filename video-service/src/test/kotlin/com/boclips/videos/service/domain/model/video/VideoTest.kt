@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -30,7 +30,15 @@ class VideoTest {
 
     @Test
     fun `is rated by user when no user`() {
-        val video = createVideo(ratings = listOf(UserRating(rating = 3, userId = UserId("another-teacher"))))
+        val video = createVideo(
+            ratings = listOf(
+                UserRating(
+                    rating = 3, userId = UserId(
+                        "another-teacher"
+                    )
+                )
+            )
+        )
         assertThat(video.isRatedByUser(UserId("teacher"))).isFalse()
     }
 

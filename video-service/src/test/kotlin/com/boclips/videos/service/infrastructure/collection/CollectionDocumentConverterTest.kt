@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.videos.service.domain.model.UserId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

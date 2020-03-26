@@ -1,7 +1,8 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.jayway.jsonpath.JsonPath
@@ -12,7 +13,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -30,7 +30,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     @BeforeEach
     fun cleanupContracts() {
-        userServiceClient.clearAccessRules()
+        usersClient.clear()
     }
 
     fun createCollection(
@@ -123,11 +123,16 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         ).id.value
     }
 
-    fun createIncludedCollectionsAccessRules(vararg contractedCollectionIds: String) {
-        userServiceClient.addAccessRule(IncludedCollectionsAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            collectionIds = contractedCollectionIds.toList()
-        })
+    fun createIncludedCollectionsAccessRules(userId: String, vararg contractedCollectionIds: String) {
+        usersClient.addAccessRules(
+            userId = userId,
+            accessRulesResource = AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedCollections(
+                    name = UUID.randomUUID().toString(),
+                    collectionIds = contractedCollectionIds.toList()
+                )
+            )
+        )
     }
 
     fun MvcResult.extractLink(relName: String): URI {

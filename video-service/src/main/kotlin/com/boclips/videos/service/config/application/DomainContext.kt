@@ -11,7 +11,8 @@ import com.boclips.contentpartner.service.infrastructure.MongoContentPartnerRepo
 import com.boclips.contentpartner.service.infrastructure.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.users.client.UserServiceClient
+import com.boclips.users.api.httpclient.OrganisationsClient
+import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -47,8 +48,7 @@ class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
     private val mongoCollectionRepository: MongoCollectionRepository,
-    private val mongoSubjectRepository: MongoSubjectRepository,
-    private val userServiceClient: UserServiceClient
+    private val mongoSubjectRepository: MongoSubjectRepository
 ) {
 
     @Bean
@@ -88,8 +88,8 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionAccessService(): CollectionAccessService {
-        return CollectionAccessService(userServiceClient)
+    fun collectionAccessService(userService: UserService): CollectionAccessService {
+        return CollectionAccessService(userService)
     }
 
     @Primary
@@ -159,8 +159,8 @@ class DomainContext(
     }
 
     @Bean
-    fun userService(): UserService {
-        return ApiUserService(userServiceClient)
+    fun userService(usersClient: UsersClient, organisationsClient: OrganisationsClient): UserService {
+        return ApiUserService(usersClient, organisationsClient)
     }
 
     @Bean

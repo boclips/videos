@@ -7,12 +7,12 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessValidationResult
-import com.boclips.videos.service.domain.model.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.FindCollectionResult
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -144,9 +144,9 @@ class CollectionReadService(
 
     private fun withPermittedVideos(collection: Collection, videoAccess: VideoAccess): Collection =
         videoService.getPlayableVideos(
-                videoIds = collection.videos,
-                videoAccess = videoAccess
-            )
+            videoIds = collection.videos,
+            videoAccess = videoAccess
+        )
             .map { it.videoId }
             .let { collection.copy(videos = it) }
 }

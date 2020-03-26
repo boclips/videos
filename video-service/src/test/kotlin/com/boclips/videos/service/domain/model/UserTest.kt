@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model
 
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never

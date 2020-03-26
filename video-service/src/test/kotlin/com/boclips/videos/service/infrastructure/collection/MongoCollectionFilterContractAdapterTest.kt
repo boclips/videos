@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
-import com.boclips.users.client.model.accessrule.AccessRule
-import com.boclips.users.client.model.accessrule.IncludedCollectionsAccessRule
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.bson.types.ObjectId
@@ -11,9 +10,9 @@ import org.litote.kmongo.`in`
 class MongoCollectionFilterContractAdapterTest {
     @Test
     fun `throws an illegal argument exception if given an access rule it doesn't understand`() {
-        assertThatThrownBy { adapter.adapt(UnknownContractForTesting()) }
+        assertThatThrownBy { adapter.adapt(unknownContractForTesting) }
             .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("UnknownContractForTesting")
+            .hasMessageContaining("AccessRuleResource\$ExcludedVideoTypes")
     }
 
     @Test
@@ -21,9 +20,10 @@ class MongoCollectionFilterContractAdapterTest {
         val firstId = ObjectId()
         val secondId = ObjectId()
         val thirdId = ObjectId()
-        val selectedContent = IncludedCollectionsAccessRule().apply {
+        val selectedContent = AccessRuleResource.IncludedCollections(
+            name = "included collections",
             collectionIds = listOf(firstId.toHexString(), secondId.toHexString(), thirdId.toHexString())
-        }
+        )
 
         val filter = adapter.adapt(selectedContent)
 
@@ -32,7 +32,8 @@ class MongoCollectionFilterContractAdapterTest {
         )
     }
 
-    inner class UnknownContractForTesting : AccessRule()
+    private val unknownContractForTesting =
+        AccessRuleResource.ExcludedVideoTypes(name = "not collection", videoTypes = emptyList())
 
     private val adapter = MongoCollectionFilterAccessRuleAdapter()
 }

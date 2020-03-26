@@ -1,4 +1,6 @@
-package com.boclips.videos.service.domain.model
+package com.boclips.videos.service.domain.model.user
+
+import com.boclips.videos.service.domain.model.AccessRules
 
 open class User(
     val id: UserId,

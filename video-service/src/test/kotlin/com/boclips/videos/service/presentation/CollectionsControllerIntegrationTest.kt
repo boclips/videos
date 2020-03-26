@@ -1,9 +1,9 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.users.client.model.TeacherPlatformAttributes
-import com.boclips.users.client.model.User
-import com.boclips.videos.service.domain.model.UserId
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
@@ -472,7 +472,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `fetching a collection as a user with a SelectedContent contract for it`() {
         val collectionId = createCollection(title = "Some Non Public Collection", public = false)
-        createIncludedCollectionsAccessRules(collectionId)
+        createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
@@ -488,7 +488,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `private collection providing a valid shareCode and referer is the owner of the collection`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("VALID")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "VALID")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher())
                     .andExpect(status().isOk)
@@ -500,8 +505,18 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `private collection providing a valid shareCode but referer is non-owner is forbidden`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("VALID")))
-                userServiceClient.addUser(User("other", null, emptyList(), TeacherPlatformAttributes("CODE")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("VALID")
+                    )
+                )
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "other",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("CODE")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=other&shareCode=CODE").asTeacher())
                     .andExpect(status().isForbidden)
@@ -510,7 +525,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `providing a invalid shareCode is forbidden`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Collection", public = false)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("VALID")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("VALID")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=INVALID").asTeacher())
                     .andExpect(status().isForbidden)
@@ -522,7 +542,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `providing a valid shareCode and referer`() {
                 val collectionId = createCollection(title = "Some Public Collection", public = true)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=TEST"))
                     .andExpect(status().isOk)
@@ -534,7 +559,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `providing an invalid shareCode and referer`() {
                 val collectionId = createCollection(title = "Some Public Collection", public = true)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=INVALID"))
                     .andExpect(status().isForbidden)
@@ -543,7 +573,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             @Test
             fun `not providing a shareCode or referer returns forbidden`() {
                 val collectionId = createCollection(title = "Some Public Collection", public = true)
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    )
+                )
 
                 mockMvc.perform(get("/v1/collections/$collectionId"))
                     .andExpect(status().isForbidden)
@@ -551,7 +586,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `does not return collection attachments`() {
-                userServiceClient.addUser(User("12345", null, emptyList(), TeacherPlatformAttributes("TEST")))
+                usersClient.add(
+                    UserResourceFactory.sample(
+                        id = "12345",
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    )
+                )
                 val collectionId = createCollection(title = "Some Public Collection", public = true)
                 updateCollectionAttachment(
                     collectionId = collectionId,
@@ -566,7 +606,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     .andExpect(jsonPath("$.id", equalTo(collectionId)))
                     .andExpect(jsonPath("$.title", equalTo("Some Public Collection")))
                     .andExpect(jsonPath("$.attachments", hasSize<Any>(0)))
-
             }
         }
     }

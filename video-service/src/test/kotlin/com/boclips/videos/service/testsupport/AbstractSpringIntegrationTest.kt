@@ -15,12 +15,10 @@ import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
-import com.boclips.users.client.implementation.FakeUserServiceClient
-import com.boclips.users.client.model.accessrule.ExcludedContentPartnersAccessRule
-import com.boclips.users.client.model.accessrule.ExcludedVideoTypesAccessRule
-import com.boclips.users.client.model.accessrule.ExcludedVideosAccessRule
-import com.boclips.users.client.model.accessrule.IncludedDistributionMethodsAccessRule
-import com.boclips.users.client.model.accessrule.IncludedVideosAccessRule
+import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
+import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.collection.AttachmentRequest
@@ -46,9 +44,8 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.AccessRuleService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -89,7 +86,8 @@ import java.util.UUID
     "fakes-search",
     "fakes-youtube",
     "fakes-security",
-    "fakes-signed-link"
+    "fakes-signed-link",
+    "fake-user-service"
 )
 abstract class AbstractSpringIntegrationTest {
 
@@ -154,7 +152,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var accessRuleService: AccessRuleService
 
     @Autowired
-    lateinit var userServiceClient: FakeUserServiceClient
+    lateinit var usersClient: UsersClientFake
+
+    @Autowired
+    lateinit var organisationsClient: OrganisationsClientFake
 
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions
@@ -199,8 +200,8 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        userServiceClient.clearAccessRules()
-        userServiceClient.clearUser()
+        usersClient.clear()
+        organisationsClient.clear()
 
         reset(legacyVideoSearchService)
 
@@ -426,39 +427,55 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun addAccessToVideoIds(vararg contractedVideoIds: String) {
-        userServiceClient.addAccessRule(IncludedVideosAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            videoIds = contractedVideoIds.toList()
-        })
+    fun addAccessToVideoIds(userId: String, vararg contractedVideoIds: String) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedVideos(
+                    name = UUID.randomUUID().toString(),
+                    videoIds = contractedVideoIds.toList()
+                )
+            )
+        )
     }
 
-    fun addsAccessToStreamingVideos(vararg includedDistributionMethods: DistributionMethodResource) {
-        userServiceClient.addAccessRule(IncludedDistributionMethodsAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            distributionMethods = includedDistributionMethods.map { it.name }
-        })
+    fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedDistributionMethod(name = UUID.randomUUID().toString(),
+                    distributionMethods = includedDistributionMethods.map { it.name })
+            )
+        )
     }
 
-    fun removeAccessToVideo(vararg excludedVideoIds: String) {
-        userServiceClient.addAccessRule(ExcludedVideosAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            videoIds = excludedVideoIds.toList()
-        })
+    fun removeAccessToVideo(userId: String, vararg excludedVideoIds: String) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.ExcludedVideos(
+                    name = UUID.randomUUID().toString(),
+                    videoIds = excludedVideoIds.toList()
+                )
+            )
+        )
     }
 
-    fun addAccessToVideoTypes(vararg excludedVideoType: ContentType) {
-        userServiceClient.addAccessRule(ExcludedVideoTypesAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            videoTypes = excludedVideoType.map { it.name }
-        })
+    fun addAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.ExcludedVideoTypes(name = UUID.randomUUID().toString(),
+                    videoTypes = excludedVideoType.map { it.name })
+            )
+        )
     }
 
-    fun removeAccessToContentPartner(vararg excludeContentPartners: String) {
-        userServiceClient.addAccessRule(ExcludedContentPartnersAccessRule().apply {
-            name = UUID.randomUUID().toString()
-            contentPartnerIds = excludeContentPartners.toList()
-        })
+    fun removeAccessToContentPartner(userId: String, vararg excludeContentPartners: String) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.ExcludedContentPartners(
+                    name = UUID.randomUUID().toString(),
+                    contentPartnerIds = excludeContentPartners.toList()
+                )
+            )
+        )
     }
 
     fun mongoVideosCollection() =

@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.subject
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.subject.SubjectChanged
-import com.boclips.videos.service.domain.model.User
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand

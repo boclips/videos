@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
@@ -13,7 +12,8 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.users.client.implementation.FakeUserServiceClient
+import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
+import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
@@ -64,7 +64,8 @@ import java.util.UUID
     "fakes-search",
     "fakes-youtube",
     "fakes-security",
-    "fakes-signed-link"
+    "fakes-signed-link",
+    "fake-user-service"
 )
 abstract class AbstractSpringIntegrationTest {
 
@@ -111,7 +112,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createSubject: CreateSubject
 
     @Autowired
-    lateinit var userServiceClient: FakeUserServiceClient
+    lateinit var usersClient: UsersClientFake
+
+    @Autowired
+    lateinit var organisationsClient: OrganisationsClientFake
 
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions
@@ -150,8 +154,8 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        userServiceClient.clearAccessRules()
-        userServiceClient.clearUser()
+        usersClient.clear()
+        organisationsClient.clear()
 
         fakeSignedLinkProvider.clearLink()
 
