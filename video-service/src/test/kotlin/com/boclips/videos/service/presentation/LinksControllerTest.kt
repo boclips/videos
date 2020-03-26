@@ -37,6 +37,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("collections?projection=list&public=true&page=0&size=30")
                 )
             )
+            .andExpect(
+                jsonPath(
+                    "$._links.promotedCollections.href",
+                    endsWith("collections?projection=list&promoted=true&public=true&page=0&size=30")
+                )
+            )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(jsonPath("$._links.createPlaybackEvent").doesNotExist())
             .andExpect(jsonPath("$._links.createPlaybackEvents").doesNotExist())
@@ -93,6 +99,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                 jsonPath(
                     "$._links.publicCollections.href",
                     endsWith("collections?projection=list&public=true&page=0&size=30")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._links.promotedCollections.href",
+                    endsWith("collections?projection=list&promoted=true&public=true&page=0&size=30")
                 )
             )
             .andExpect(

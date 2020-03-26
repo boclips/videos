@@ -22,6 +22,9 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId, val user: U
     class ChangeVisibility(collectionId: CollectionId, val isPublic: Boolean, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
+    class ChangePromotion(collectionId: CollectionId, val promoted: Boolean, user: User) :
+        CollectionUpdateCommand(collectionId, user)
+
     class ReplaceSubjects(collectionId: CollectionId, val subjects: Set<Subject>, user: User) :
         CollectionUpdateCommand(collectionId, user)
 

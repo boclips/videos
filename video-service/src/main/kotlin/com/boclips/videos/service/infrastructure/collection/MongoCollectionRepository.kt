@@ -52,6 +52,7 @@ class MongoCollectionRepository(
             updatedAt = Instant.now(),
             visibility = if (command.public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = command.createdByBoclips,
+            promoted = false,
             subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray())
         )
 

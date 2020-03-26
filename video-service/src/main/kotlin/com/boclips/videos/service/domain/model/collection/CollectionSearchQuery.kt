@@ -20,6 +20,7 @@ class CollectionSearchQuery(
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
+    val promoted: Boolean? = null,
     val sort: CollectionSortKey? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
@@ -48,7 +49,8 @@ class CollectionSearchQuery(
         hasLessonPlans = this.hasLessonPlans,
         ageRangeMin = this.ageRangeMin,
         ageRangeMax = this.ageRangeMax,
-        ageRanges = this.ageRanges?.map { com.boclips.search.service.domain.videos.model.AgeRange(it.min(), it.max()) }
+        ageRanges = this.ageRanges?.map { com.boclips.search.service.domain.videos.model.AgeRange(it.min(), it.max()) },
+        promoted = this.promoted
     )
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize

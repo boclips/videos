@@ -86,6 +86,23 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         )
     }
 
+    fun promotedCollections(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
+    ): HateoasLink {
+        return HateoasLink(
+            href = getCollectionsRoot()
+                .queryParam("projection", projection)
+                .queryParam("promoted", true)
+                .queryParam("public", true)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .toUriString(),
+            rel = "promotedCollections"
+        )
+    }
+
     fun searchPublicCollections(
         page: Int = 0,
         size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE

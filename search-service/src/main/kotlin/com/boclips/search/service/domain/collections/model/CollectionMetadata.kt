@@ -12,6 +12,7 @@ data class CollectionMetadata(
     val hasAttachments: Boolean,
     val description: String?,
     val hasLessonPlans: Boolean?,
+    val promoted: Boolean?,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
     val updatedAt: LocalDate

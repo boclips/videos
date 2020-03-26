@@ -24,6 +24,7 @@ class GetCollections(
             size = collectionFilterRequest.size,
             sort = collectionFilterRequest.sort_by,
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
+            promoted = collectionFilterRequest.promoted,
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,
             ageRangeMax = collectionFilterRequest.age_range_max,

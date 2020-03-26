@@ -19,10 +19,11 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.emptyOrNullString
+import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyOrNullString
-import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.nullValue
@@ -73,7 +74,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         mockMvc.perform(get(collectionUrl).asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.id", not(emptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo("a collection")))
@@ -188,44 +189,95 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             )
     }
 
-    @Test
-    fun `updates a collection`() {
-        val firstVideoId = saveVideo(title = "first").value
-        val secondVideoId = saveVideo(title = "second").value
-        val thirdVideoId = saveVideo(title = "third").value
+    @Nested
+    inner class Update {
+        @Test
+        fun `updates a collection`() {
+            val firstVideoId = saveVideo(title = "first").value
+            val secondVideoId = saveVideo(title = "second").value
+            val thirdVideoId = saveVideo(title = "third").value
 
-        val collectionId = createCollection().also {
-            addVideo(it, firstVideoId)
-        }
+            val collectionId = createCollection().also {
+                addVideo(it, firstVideoId)
+            }
 
-        val newTitle = "brave, new title"
-        val newDescription = "brave, new description"
+            val newTitle = "brave, new title"
+            val newDescription = "brave, new description"
 
-        mockMvc.perform(
-            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
+            mockMvc.perform(
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                     {
                         "title": "$newTitle",
                         "description": "$newDescription",
                         "videos": ["$secondVideoId", "$thirdVideoId"]
                     }
                     """.trimIndent()
-                )
-                .asBoclipsEmployee()
-        )
-            .andExpect(status().isNoContent)
+                    )
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isNoContent)
 
-        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(collectionId)))
-            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
-            .andExpect(jsonPath("$.title", equalTo(newTitle)))
-            .andExpect(jsonPath("$.description", equalTo(newDescription)))
-            .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
-            .andExpect(jsonPath("$.videos[*].id", containsInAnyOrder(secondVideoId, thirdVideoId)))
+            mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+                .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
+                .andExpect(jsonPath("$.title", equalTo(newTitle)))
+                .andExpect(jsonPath("$.description", equalTo(newDescription)))
+                .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
+                .andExpect(jsonPath("$.videos[*].id", containsInAnyOrder(secondVideoId, thirdVideoId)))
+        }
+
+        @Test
+        fun `collections can be promoted by Boclips`() {
+            val collectionId = createCollection()
+
+            mockMvc.perform(
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                    {
+                        "promoted": "true"
+                    }
+                    """.trimIndent()
+                    )
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isNoContent)
+
+            mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.promoted", equalTo(true)))
+        }
+
+        @Test
+        fun `collections cannot be promoted by non-Boclippers`() {
+            val collectionId = createCollection()
+
+            mockMvc.perform(
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                    {
+                        "promoted": "true"
+                    }
+                    """.trimIndent()
+                    )
+                    .asTeacher()
+            )
+                .andExpect(status().isForbidden)
+
+            mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.promoted", equalTo(false)))
+        }
     }
 
     @Test
@@ -268,6 +320,28 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
+    fun `get all promoted collections`() {
+        val promotedCollectionIds: Array<String> = (1..10).asIterable().map {
+            createCollection("collection$it").apply {
+                updateCollectionToBePublic(this)
+                updateCollectionToBePromoted(this)
+            }
+        }.toTypedArray()
+
+        (1..10).asIterable().map {
+            createCollection("collection$it").apply {
+                updateCollectionToBePublic(this)
+            }
+        }
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=30&promoted=true&public=true").asTeacher(email = "random@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(10)))
+            .andExpect(jsonPath("$._embedded.collections[*].id", hasItems(*promotedCollectionIds)))
+    }
+
+    @Test
     fun `get bookmarked collections correctly paginated, prioritising collections with attachments`() {
         val collectionId = createCollection("collection 1").apply {
             updateCollectionToBePublic(this)
@@ -288,7 +362,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
@@ -335,7 +409,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.id", not(emptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
@@ -355,7 +429,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=false").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", not(isEmptyString())))
+            .andExpect(jsonPath("$.id", not(emptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
@@ -391,18 +465,18 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
-            .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.remove.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.edit.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.addVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.self.href", not(emptyString())))
+            .andExpect(jsonPath("$._links.remove.href", not(emptyString())))
+            .andExpect(jsonPath("$._links.edit.href", not(emptyString())))
+            .andExpect(jsonPath("$._links.addVideo.href", not(emptyString())))
+            .andExpect(jsonPath("$._links.removeVideo.href", not(emptyString())))
     }
 
     @Test
     fun `fetching a non-existent collection returns 404`() {
         mockMvc.perform(get("/v1/collections/${ObjectId().toHexString()}").asTeacher())
             .andExpect(status().isNotFound)
-            .andExpect(content().string(isEmptyString()))
+            .andExpect(content().string(emptyString()))
     }
 
     @Test
@@ -414,7 +488,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
-            .andExpect(jsonPath("$._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._links.self.href", not(emptyString())))
             .andExpect(jsonPath("$._links.remove").doesNotExist())
             .andExpect(jsonPath("$._links.edit").doesNotExist())
             .andExpect(jsonPath("$._links.addVideo").doesNotExist())
@@ -439,7 +513,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.videos[0].description", nullValue()))
             .andExpect(jsonPath("$.videos[0].playback", nullValue()))
             .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
-            .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
             .andReturn()
     }
 
@@ -464,8 +538,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.videos[0].playback", not(nullValue())))
             .andExpect(jsonPath("$.videos[0].playback.duration", not(nullValue())))
             .andExpect(jsonPath("$.videos[0].subjects", not(nullValue())))
-            .andExpect(jsonPath("$.videos[0]._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$.videos[0].playback._links.thumbnail.href", not(isEmptyOrNullString())))
+            .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
+            .andExpect(jsonPath("$.videos[0].playback._links.thumbnail.href", not(emptyOrNullString())))
             .andReturn()
     }
 

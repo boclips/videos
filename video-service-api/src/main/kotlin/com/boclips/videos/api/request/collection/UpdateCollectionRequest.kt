@@ -10,6 +10,7 @@ class UpdateCollectionRequest(
     var description: String? = null,
     var videos: List<String>? = null,
     var attachment: AttachmentRequest? = null,
+    var promoted: Boolean? = null,
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null

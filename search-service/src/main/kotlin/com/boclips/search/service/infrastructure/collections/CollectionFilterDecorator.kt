@@ -36,6 +36,15 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
                 )
             )
         }
+        if (collectionQuery.promoted != null) {
+            boolQueryBuilder.filter(
+                QueryBuilders.termsQuery(
+                    CollectionDocument.PROMOTED,
+                    collectionQuery.promoted
+                )
+            )
+        }
+
         if (collectionQuery.permittedIds != null) {
             boolQueryBuilder.filter(QueryBuilders.termsQuery(CollectionDocument.ID, collectionQuery.permittedIds))
         }

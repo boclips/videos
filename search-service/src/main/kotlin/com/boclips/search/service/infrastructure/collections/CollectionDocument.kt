@@ -15,6 +15,7 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(OWNER) val owner: String?,
     @param:JsonProperty(DESCRIPTION) val description: String?,
     @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean?,
+    @param:JsonProperty(PROMOTED) val promoted: Boolean?,
     @param:JsonProperty(UPDATED_AT) val updatedAt: LocalDate?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
@@ -30,6 +31,7 @@ data class CollectionDocument @JsonCreator constructor(
         const val BOOKMARKED_BY = "bookmarkedBy"
         const val DESCRIPTION = "description"
         const val HAS_LESSON_PLANS = "hasLessonPlans"
+        const val PROMOTED = "promoted"
         const val UPDATED_AT = "updatedAt"
     }
 }

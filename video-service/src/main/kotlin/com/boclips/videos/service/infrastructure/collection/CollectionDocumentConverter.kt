@@ -35,6 +35,7 @@ object CollectionDocumentConverter {
             ),
             updatedAt = ZonedDateTime.ofInstant(collectionDocument.updatedAt, ZoneOffset.UTC),
             isPublic = isPubliclyVisible,
+            promoted = collectionDocument.promoted ?: false,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map {
                 UserId(

@@ -38,6 +38,10 @@ class CollectionUpdates {
                 command.collectionId,
                 command.isPublic
             )
+            is CollectionUpdateCommand.ChangePromotion -> changePromotion(
+                command.collectionId,
+                command.promoted
+            )
             is CollectionUpdateCommand.ReplaceSubjects -> replaceSubjects(
                 command.collectionId,
                 command.subjects
@@ -137,6 +141,11 @@ class CollectionUpdates {
 
         logger.info { "Prepare visibility change of collection $collectionId to $visibility" }
         return set(CollectionDocument::visibility, visibility)
+    }
+
+    private fun changePromotion(collectionId: CollectionId, promoted: Boolean): Bson {
+        logger.info { "Prepare promotion change of collection $collectionId to $promoted" }
+        return set(CollectionDocument::promoted, promoted)
     }
 
     private fun changeDescription(collectionId: CollectionId, description: String): Bson {

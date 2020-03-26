@@ -138,6 +138,7 @@ class EventService(val eventBus: EventBus) {
                         user = updateCommand.user
                     )
                 )
+            is CollectionUpdateCommand.ChangePromotion -> null
             is CollectionUpdateCommand.ReplaceSubjects, is CollectionUpdateCommand.RemoveSubjectFromCollection ->
                 eventBus.publish(
                     msg(

@@ -33,6 +33,7 @@ class CollectionDocumentConverter {
             bookmarkedBy = metadata.bookmarkedByUsers,
             description = metadata.description,
             hasLessonPlans = metadata.hasLessonPlans,
+            promoted = metadata.promoted,
             ageRangeMin = metadata.ageRangeMin,
             ageRangeMax = metadata.ageRangeMax,
             ageRange = AgeRange(metadata.ageRangeMin, metadata.ageRangeMax).toRange(),

@@ -33,6 +33,13 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                     user = user
                 )
             },
+            updateCollectionRequest.promoted?.let {
+                CollectionUpdateCommand.ChangePromotion(
+                    collectionId = collectionId,
+                    promoted = it,
+                    user = user
+                )
+            },
             updateCollectionRequest.subjects?.let {
                 CollectionUpdateCommand.ReplaceSubjects(
                     collectionId = collectionId,

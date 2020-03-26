@@ -16,6 +16,7 @@ data class Collection(
     val createdAt: ZonedDateTime,
     val updatedAt: ZonedDateTime,
     val isPublic: Boolean,
+    val promoted: Boolean,
     val createdByBoclips: Boolean,
     val bookmarks: Set<UserId>,
     val subjects: Set<Subject>,

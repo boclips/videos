@@ -16,7 +16,8 @@ class CollectionQuery(
     val hasLessonPlans: Boolean? = null,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
-    val ageRanges: List<AgeRange>? = null
+    val ageRanges: List<AgeRange>? = null,
+    val promoted: Boolean? = null
 ) : SearchQuery<CollectionMetadata>(phrase, sort, facetDefinition)
 
 data class VisibilityForOwner(

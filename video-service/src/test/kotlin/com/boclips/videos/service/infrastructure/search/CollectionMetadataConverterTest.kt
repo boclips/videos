@@ -70,4 +70,13 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.ageRangeMin).isEqualTo(3)
         assertThat(collectionMetadata.ageRangeMax).isEqualTo(10)
     }
+
+    @Test
+    fun `convert when promoted`() {
+        val promotedCollection = TestFactories.createCollection(promoted = true)
+
+        val collectionMetadata = CollectionMetadataConverter.convert(promotedCollection)
+
+        assertThat(collectionMetadata.promoted).isTrue()
+    }
 }

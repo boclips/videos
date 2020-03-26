@@ -72,6 +72,15 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isNoContent)
     }
 
+    fun updateCollectionToBePromoted(collectionId: String) {
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
+                """{"promoted": "true"}"""
+            ).asBoclipsEmployee()
+        )
+            .andExpect(status().isNoContent)
+    }
+
     fun updateCollectionAgeRange(
         collectionId: String,
         ageRangeMin: Int? = null,

@@ -15,6 +15,7 @@ object CollectionMetadataConverter {
             bookmarkedByUsers = collection.bookmarks.map { it.value }.toSet(),
             hasAttachments = collection.attachments.isNotEmpty(),
             hasLessonPlans = if (collection.attachments.isNotEmpty()) collection.attachments.any { it.type == AttachmentType.LESSON_PLAN } else false,
+            promoted = collection.promoted,
             description = collection.description,
             ageRangeMin = collection.ageRange.min(),
             ageRangeMax = collection.ageRange.max(),

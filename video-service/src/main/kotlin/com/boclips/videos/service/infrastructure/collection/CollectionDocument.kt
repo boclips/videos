@@ -15,6 +15,7 @@ data class CollectionDocument(
     val updatedAt: Instant,
     val visibility: CollectionVisibilityDocument?,
     val createdByBoclips: Boolean?,
+    val promoted: Boolean? = false,
     val bookmarks: Set<String> = emptySet(),
     val subjects: Set<SubjectDocument> = emptySet(),
     val ageRangeMin: Int? = null,

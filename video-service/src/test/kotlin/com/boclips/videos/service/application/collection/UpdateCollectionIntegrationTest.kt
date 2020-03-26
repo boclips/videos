@@ -4,8 +4,10 @@ import com.boclips.eventbus.events.collection.CollectionDescriptionChanged
 import com.boclips.eventbus.events.collection.CollectionRenamed
 import com.boclips.eventbus.events.collection.CollectionVideosBulkChanged
 import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
+import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.api.request.collection.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
@@ -33,6 +35,21 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("new title")
+    }
+
+    @Test
+    fun `can promote a collection`() {
+        setSecurityContext("boclipper@boclips.com", UserRoles.BACKOFFICE)
+
+        val collectionId = saveCollection(owner = "me@me.com", title = "original title")
+
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(promoted = true),
+            UserFactory.sample(id = "me@me.com")
+        )
+
+        assertThat(collectionRepository.find(collectionId)!!.promoted).isTrue()
     }
 
     @Test

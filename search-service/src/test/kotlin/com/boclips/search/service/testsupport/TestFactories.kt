@@ -109,6 +109,7 @@ object SearchableCollectionMetadataFactory {
         bookmarkedBy: Set<String> = setOf(owner),
         description: String = "some default description",
         hasLessonPlans: Boolean? = null,
+        promoted: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         updatedAt: LocalDate = LocalDate.now()
@@ -122,6 +123,7 @@ object SearchableCollectionMetadataFactory {
         hasAttachments = hasAttachments,
         description = description,
         hasLessonPlans = hasLessonPlans,
+        promoted = promoted,
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         updatedAt = updatedAt
