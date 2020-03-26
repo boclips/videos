@@ -1,8 +1,7 @@
 package com.boclips.videos.service.infrastructure
 
+import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.organisation.OrganisationDetailsResource
-import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.SecurityUserFactory
@@ -35,14 +34,11 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns null if account does not have an organisation`() {
         usersClient.add(UserResourceFactory.sample(id = "user-id"))
         organisationsClient.add(
-            OrganisationResource(
+            OrganisationResourceFactory.sample(
                 id = "account-id",
-                accessExpiresOn = null,
-                contentPackageId = null,
-                organisationDetails = OrganisationDetailsResource(
-                    "organisation", null, null, null, null, null
-                ),
-                _links = null
+                organisationDetails = OrganisationResourceFactory.sampleDetails(
+                    allowsOverridingUserIds = null
+                )
             )
         )
 

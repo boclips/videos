@@ -1,9 +1,8 @@
 package com.boclips.videos.service.infrastructure.user
 
+import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.SubjectResource
-import com.boclips.users.api.response.organisation.OrganisationDetailsResource
-import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -66,19 +65,12 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         organisationsClient.add(
-            OrganisationResource(
+            OrganisationResourceFactory.sample(
                 id = "organisation-1",
-                accessExpiresOn = null,
-                contentPackageId = null,
-                organisationDetails = OrganisationDetailsResource(
+                organisationDetails = OrganisationResourceFactory.sampleDetails(
                     name = "hello",
-                    allowsOverridingUserIds = true,
-                    country = null,
-                    domain = null,
-                    type = null,
-                    state = null
-                ),
-                _links = null
+                    allowsOverridingUserIds = true
+                )
             )
         )
 

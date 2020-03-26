@@ -5,9 +5,8 @@ import com.boclips.eventbus.events.collection.CollectionInteractionType
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.organisation.OrganisationDetailsResource
-import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
@@ -44,21 +43,12 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
-            //TODO create organisation factory
             organisationsClient.add(
-                OrganisationResource(
+                OrganisationResourceFactory.sample(
                     id = accountId,
-                    accessExpiresOn = null,
-                    organisationDetails = OrganisationDetailsResource(
-                        allowsOverridingUserIds = true,
-                        name = "hello",
-                        domain = null,
-                        type = null,
-                        state = null,
-                        country = null
-                    ),
-                    _links = null,
-                    contentPackageId = null
+                    organisationDetails = OrganisationResourceFactory.sampleDetails(
+                        allowsOverridingUserIds = true
+                    )
                 )
             )
 
@@ -91,21 +81,12 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val accountId = aValidId()
 
             usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
-            //TODO create organisation factory
             organisationsClient.add(
-                OrganisationResource(
+                OrganisationResourceFactory.sample(
                     id = accountId,
-                    accessExpiresOn = null,
-                    organisationDetails = OrganisationDetailsResource(
-                        allowsOverridingUserIds = false,
-                        name = "hello",
-                        domain = null,
-                        type = null,
-                        state = null,
-                        country = null
-                    ),
-                    _links = null,
-                    contentPackageId = null
+                    organisationDetails = OrganisationResourceFactory.sampleDetails(
+                        allowsOverridingUserIds = false
+                    )
                 )
             )
             mockMvc.perform(
