@@ -32,7 +32,7 @@ class MongoContentPartnerContractRepository(
             ).joinToString(separator = " ")
         )
 
-        MongoContentPartnerRepository.logger.info { "Created contentPartnerContract ${created.id.value}" }
+        logger.info { "Created contentPartnerContract ${created.id.value}" }
 
         return created.id
     }
@@ -49,7 +49,7 @@ class MongoContentPartnerContractRepository(
                 }
 
         document?.let {
-            MongoContentPartnerRepository.logger.info { "Found content partner ${it.id.value}" }
+            logger.info { "Found content partner contract ${it.id.value}" }
         }
 
         return document
@@ -57,6 +57,6 @@ class MongoContentPartnerContractRepository(
 
     private fun getCollection() =
         mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerContractDocument>(
-            MongoContentPartnerRepository.collectionName
+            collectionName
         )
 }
