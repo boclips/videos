@@ -57,7 +57,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         getVideosRoot()
                             .build()
                             .toUriString()
-                            + "{?query,sort_by,duration,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,size,page,subject,subjects_set_manually,promoted,content_partner,type,is_classroom}",
+                            + "{?query,sort_by,duration,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type,is_classroom}",
                         SEARCH_VIDEOS
                     )
                 )
