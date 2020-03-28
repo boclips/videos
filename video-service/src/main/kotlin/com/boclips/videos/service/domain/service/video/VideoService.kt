@@ -18,9 +18,9 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoIdsRequest
+import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
@@ -71,7 +71,8 @@ class VideoService(
 
         val results = videoSearchService.search(
             PaginatedSearchRequest(
-                VideoIdsRequest(ids = videoIds).toSearchQuery(
+                VideoIdsRequest(ids = videoIds)
+                    .toSearchQuery(
                     videoAccess
                 ),
                 windowSize = videoIds.size
@@ -95,7 +96,11 @@ class VideoService(
     fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
         val results = videoSearchService.search(
             PaginatedSearchRequest(
-                query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(
+                query = VideoIdsRequest(
+                    ids = listOf(
+                        videoId
+                    )
+                ).toSearchQuery(
                     videoAccess
                 ),
                 windowSize = 1

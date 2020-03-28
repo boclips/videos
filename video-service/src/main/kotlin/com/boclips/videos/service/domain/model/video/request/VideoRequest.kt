@@ -1,5 +1,6 @@
-package com.boclips.videos.service.domain.model.video
+package com.boclips.videos.service.domain.model.video.request
 
+import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.DurationRange
@@ -8,6 +9,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 import java.time.LocalDate
 
@@ -15,25 +17,6 @@ enum class SortKey {
     RELEASE_DATE,
     RATING,
     RANDOM
-}
-
-data class SubjectsRequest(
-    val ids: Set<String> = emptySet(),
-    val setManually: Boolean? = null
-)
-
-class VideoIdsRequest(
-    val ids: List<VideoId>
-) {
-    fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
-        return VideoQuery(
-            ids = ids.map { it.value },
-            permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
-            deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
-            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
-            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess)
-        )
-    }
 }
 
 class VideoRequest(
@@ -54,7 +37,8 @@ class VideoRequest(
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),
-    val isClassroom: Boolean? = null
+    val isClassroom: Boolean? = null,
+    val facets: VideoFacets = VideoFacets()
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
         val sort = sortBy?.let {
@@ -97,6 +81,12 @@ class VideoRequest(
                 includedType = type,
                 excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
                 isClassroom = isClassroom,
+                facetDefinition = FacetDefinition.Video(facets.ageRanges.map { ageRange ->
+                    com.boclips.search.service.domain.videos.model.AgeRange(
+                        ageRange.min(),
+                        ageRange.max()
+                    )
+                }),
                 permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
                 deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
                 excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess),
@@ -109,6 +99,7 @@ class VideoRequest(
         return "Video Request: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
     }
 
+    // TODO: this points to e modelling smell; perhaps we should model id query as a different type?
     private fun parseIdsOrPhrase(query: String): VideoQuery {
         val idQueryRegex = "id:(\\S+)".toRegex()
         val match = idQueryRegex.matchEntire(query)

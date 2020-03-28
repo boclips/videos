@@ -17,7 +17,7 @@ import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -81,6 +81,7 @@ class VideoController(
         @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
         @RequestParam(name = "age_range", required = false) ageRanges: List<String>?,
+        @RequestParam(name = "age_range_facets", required = false) ageRangeFacets: List<String>?,
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "subject", required = false) subjects: Set<String>?,
@@ -107,6 +108,7 @@ class VideoController(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges.orEmpty(),
+            ageRangeFacets = ageRangeFacets.orEmpty(),
             subjects = subjects ?: emptySet(),
             subjectsSetManually = subjectsSetManually,
             promoted = promoted,

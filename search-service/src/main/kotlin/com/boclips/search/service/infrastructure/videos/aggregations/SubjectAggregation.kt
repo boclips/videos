@@ -17,7 +17,7 @@ class SubjectAggregation {
         private const val SUBJECT_SUB_AGGREGATION = "subject ids"
 
         fun aggregateSubjects(videoQuery: VideoQuery): FilterAggregationBuilder {
-            return SubjectAggregation.aggregate(
+            return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery),
                     VideoFilterCriteria.SUBJECTS

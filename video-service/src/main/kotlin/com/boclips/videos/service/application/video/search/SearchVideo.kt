@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
-import com.boclips.videos.service.domain.model.video.SortKey
+import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -47,6 +47,7 @@ class SearchVideo(
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         ageRanges: List<String>? = null,
+        ageRangeFacets: List<String>? = null,
         subjects: Set<String> = emptySet(),
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
@@ -70,6 +71,7 @@ class SearchVideo(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges?.map(::convertAgeRanges) ?: emptyList(),
+            ageRangesFacets = ageRangeFacets?.map(::convertAgeRanges),
             subjects = subjects,
             subjectsSetManually = subjectsSetManually,
             promoted = promoted,

@@ -1,15 +1,16 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
+import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.SortKey
-import com.boclips.videos.service.domain.model.video.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.SortKey
+import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
+import com.boclips.videos.service.domain.model.video.request.VideoFacets
+import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -39,6 +40,7 @@ class GetVideosByQuery(
         ageRangeMin: Int?,
         ageRangeMax: Int?,
         ageRanges: List<AgeRange>,
+        ageRangesFacets: List<AgeRange>?,
         subjects: Set<String>,
         promoted: Boolean?,
         contentPartnerNames: Set<String>,
@@ -67,11 +69,15 @@ class GetVideosByQuery(
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges,
             userSubjectIds = userSubjectIds,
-            subjectsRequest = SubjectsRequest(ids = subjects, setManually = subjectsSetManually),
+            subjectsRequest = SubjectsRequest(
+                ids = subjects,
+                setManually = subjectsSetManually
+            ),
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
-            isClassroom = isClassroom
+            isClassroom = isClassroom,
+            facets = ageRangesFacets?.let { VideoFacets(ageRanges = it) } ?: VideoFacets()
         )
 
         val videoSearchResponse = videoService.search(request = request, videoAccess = user.accessRules.videoAccess)

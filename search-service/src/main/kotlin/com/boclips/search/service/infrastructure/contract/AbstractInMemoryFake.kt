@@ -16,8 +16,11 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
     private var facetCounts: List<FacetCount> = emptyList()
+    private var requests: MutableList<PaginatedSearchRequest<QUERY>> = mutableListOf()
 
     override fun search(searchRequest: PaginatedSearchRequest<QUERY>): SearchResults {
+        requests.add(searchRequest)
+
         val idsMatching = idsMatching(index, searchRequest.query)
 
         val elements = sort(idsMatching, searchRequest.query)
@@ -31,6 +34,40 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
                 facets = facetCounts
             )
         )
+    }
+
+    override fun upsert(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
+        items.forEach { video ->
+            upsertMetadata(index, video)
+        }
+    }
+
+    override fun safeRebuildIndex(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
+        index.clear()
+        upsert(items, notifier)
+    }
+
+    override fun removeFromSearch(itemId: String) {
+        index.remove(itemId)
+    }
+
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        itemIds.forEach(this::removeFromSearch)
+    }
+
+    override fun makeSureIndexIsThere() {
+    }
+
+    fun clear() {
+        index.clear()
+    }
+
+    fun setFacets(facetCounts: List<FacetCount>) {
+        this.facetCounts = facetCounts
+    }
+
+    fun getLastSearchRequest(): PaginatedSearchRequest<QUERY> {
+        return requests.last()
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {
@@ -57,36 +94,6 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
             }
             is Sort.ByRandom -> ids.shuffled()
         }
-    }
-
-    override fun upsert(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
-        items.forEach { video ->
-            upsertMetadata(index, video)
-        }
-    }
-
-    override fun safeRebuildIndex(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
-        index.clear()
-        upsert(items, notifier)
-    }
-
-    fun clear() {
-        index.clear()
-    }
-
-    fun setFacets(facetCounts: List<FacetCount>) {
-        this.facetCounts = facetCounts
-    }
-
-    override fun removeFromSearch(itemId: String) {
-        index.remove(itemId)
-    }
-
-    override fun bulkRemoveFromSearch(itemIds: List<String>) {
-        itemIds.forEach(this::removeFromSearch)
-    }
-
-    override fun makeSureIndexIsThere() {
     }
 
     abstract fun idsMatching(index: MutableMap<String, METADATA>, query: QUERY): List<String>

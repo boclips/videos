@@ -770,8 +770,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
 
-        val tagUrl = JsonPath.parse(videoResponse).read<String>("$._links.tag.href")
-        return tagUrl
+        return JsonPath.parse(videoResponse).read("$._links.tag.href")
     }
 
     private fun createTag(name: String): String {

@@ -3,8 +3,10 @@ package com.boclips.videos.service.presentation
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.FacetType
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
@@ -38,6 +40,24 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `contains count for age ranges`() {
+        videoSearchService.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.AgeRanges,
+                    counts = listOf(Count(id = "agerange1", hits = 86))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.facets.ageRanges.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.ageRanges.agerange1.hits", equalTo(86)))
+    }
+
+    @Test
     fun `does not render if they don't exist`() {
         videoSearchService.setFacets(emptyList())
 
@@ -45,6 +65,20 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.facets.subjects[*]", hasSize<Int>(0)))
+            .andExpect(jsonPath("$._embedded.facets.ageRanges[*]", hasSize<Int>(0)))
+    }
+
+    @Test
+    fun `age_range_facets overwrite default age range facets`() {
+        mockMvc.perform(get("/v1/videos?query=content&age_range_facets=3-7,11-13").asTeacher())
+            .andExpect(status().isOk)
+
+        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+
+        assertThat(lastSearchRequest.query.facetDefinition?.ageRangeBuckets).containsExactly(
+            AgeRange(3, 7),
+            AgeRange(11, 13)
+        )
     }
 }
 
