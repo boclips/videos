@@ -20,6 +20,7 @@ class VideoFilterCriteria {
     companion object {
         const val SUBJECTS = "subjects-filter"
         const val AGE_RANGES = "age-ranges-filter"
+        const val DURATION_RANGES = "duration-ranges-filter"
 
         fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
             val boolQueryBuilder = boolQuery()
@@ -187,17 +188,19 @@ class VideoFilterCriteria {
         }
 
         private fun beWithinDurationRanges(durationRanges: List<DurationRange>): BoolQueryBuilder {
-            return boolQuery().apply {
-                durationRanges.forEach { durationRange ->
-                    should(
-                        QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS).apply {
-                            from(durationRange.min.seconds)
-                            durationRange.max?.let { max -> to(max.seconds) }
-                        }
-                    )
+            return boolQuery()
+                .queryName(DURATION_RANGES)
+                .apply {
+                    durationRanges.forEach { durationRange ->
+                        should(
+                            QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS).apply {
+                                from(durationRange.min.seconds)
+                                durationRange.max?.let { max -> to(max.seconds) }
+                            }
+                        )
+                    }
+                    minimumShouldMatch(1)
                 }
-                minimumShouldMatch(1)
-            }
         }
 
         private fun beWithinReleaseDate(from: LocalDate?, to: LocalDate?): RangeQueryBuilder {

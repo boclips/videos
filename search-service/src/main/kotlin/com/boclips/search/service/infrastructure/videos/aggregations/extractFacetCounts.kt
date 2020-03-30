@@ -7,6 +7,7 @@ import org.elasticsearch.action.search.SearchResponse
 fun extractFacetCounts(results: SearchResponse): List<FacetCount> {
     return listOf(
         FacetCount(type = FacetType.Subjects, counts = SubjectAggregation.extractBucketCounts(results)),
-        FacetCount(type = FacetType.AgeRanges, counts = AgeRangeAggregation.extractBucketCounts(results))
+        FacetCount(type = FacetType.AgeRanges, counts = AgeRangeAggregation.extractBucketCounts(results)),
+        FacetCount(type = FacetType.Duration, counts = DurationAggregation.extractBucketCounts(results))
     )
 }

@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -14,6 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
@@ -307,6 +309,98 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(facetCounts).contains(Count(id = "11-14", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "14-16", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "16-99", hits = 0))
+            }
+        }
+
+        @Nested
+        inner class DurationFacet {
+            @Test
+            fun `returns duration buckets when no filters are applied`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            durationSeconds = 70
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "Banana apple",
+                            durationSeconds = 130
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "Apple candy",
+                            durationSeconds = 310
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            phrase = "apple",
+                            durationRanges = listOf(DurationRange(Duration.ofSeconds(65), Duration.ofSeconds(135)))
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                val facetCounts = results.counts.getFacetCounts(FacetType.Duration)
+
+                assertThat(facetCounts).contains(Count(id = "PT0S-PT2M", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "PT2M-PT5M", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "PT5M-PT10M", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "PT10M-PT20M", hits = 0))
+                assertThat(facetCounts).contains(Count(id = "PT20M-PT24H", hits = 0))
+            }
+
+            @Test
+            fun `returns duration buckets when`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            durationSeconds = 70,
+                            ageRangeMin = 10,
+                            ageRangeMax = 12
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "Banana apple",
+                            durationSeconds = 130,
+                            ageRangeMin = 5,
+                            ageRangeMax = 7
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "Apple candy",
+                            durationSeconds = 310,
+                            ageRangeMin = 10,
+                            ageRangeMax = 12
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            phrase = "apple",
+                            ageRanges = listOf(AgeRange(15, 19)),
+                            durationRanges = listOf(DurationRange(Duration.ofSeconds(65), Duration.ofSeconds(135)))
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(0)
+                val facetCounts = results.counts.getFacetCounts(FacetType.Duration)
+
+                assertThat(facetCounts).contains(Count(id = "PT0S-PT2M", hits = 0))
+                assertThat(facetCounts).contains(Count(id = "PT2M-PT5M", hits = 0))
+                assertThat(facetCounts).contains(Count(id = "PT5M-PT10M", hits = 0))
+                assertThat(facetCounts).contains(Count(id = "PT10M-PT20M", hits = 0))
+                assertThat(facetCounts).contains(Count(id = "PT20M-PT24H", hits = 0))
             }
         }
     }

@@ -13,4 +13,5 @@ data class Count(val id: String, val hits: Long)
 sealed class FacetType {
     object Subjects : FacetType()
     object AgeRanges : FacetType()
+    object Duration: FacetType()
 }

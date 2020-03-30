@@ -42,7 +42,8 @@ class VideoFilterCriteriaTest {
                       ],
                       "adjust_pure_negative" : true,
                       "minimum_should_match" : "1",
-                      "boost" : 1.0
+                      "boost" : 1.0,
+                      "_name" : "duration-ranges-filter"
                     }
                   },
                   {
