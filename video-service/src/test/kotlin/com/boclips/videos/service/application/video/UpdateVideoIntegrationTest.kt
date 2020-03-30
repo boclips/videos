@@ -112,7 +112,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 title = null,
                 description = "new description",
                 promoted = true,
-                ageRangeIds = listOf("thirteen-plus")
+                ageRangeIds = listOf("unbounded")
             ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
