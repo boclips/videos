@@ -231,12 +231,13 @@ class VideoController(
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["!rating"])
     fun patchVideo(
         @PathVariable id: String,
-        @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move to updateRequest if the spring gods allow it
+        @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move these to updateRequest if the spring gods allow it
+        @RequestParam ageRangeIds: List<String>? = emptyList(),
         updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
-        val updateRequestWithSubjects = updateRequest.copy(subjectIds = subjectIds)
+        val updateRequestWithPathParams = updateRequest.copy(subjectIds = subjectIds).copy(ageRangeIds = ageRangeIds)
 
-        return updateVideo(id, updateRequestWithSubjects, getCurrentUser()).let { this.getVideo(id) }
+        return updateVideo(id, updateRequestWithPathParams, getCurrentUser()).let { this.getVideo(id) }
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/tags"])

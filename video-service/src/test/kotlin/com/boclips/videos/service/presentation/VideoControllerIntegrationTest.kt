@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -416,6 +417,29 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.subjects", hasSize<Int>(2)))
                 .andExpect(jsonPath("$.subjects[0].name", equalTo("Art")))
                 .andExpect(jsonPath("$.subjects[1].name", equalTo("Maths")))
+        }
+
+        @Test
+        fun `updates the age range of a video`() {
+            val videoToUpdate = saveVideo(
+                ageRange = BoundedAgeRange(min = 3, max = 10)
+            ).value
+
+            val ageRanges = listOf(
+                createAgeRange(AgeRangeRequest(id = "early-years", min = 4, max = 7, label = "4-7")),
+                createAgeRange(AgeRangeRequest(id = "later-years", min = 7, max = 12, label = "7-12"))
+            )
+
+            mockMvc.perform(
+                patch("/v1/videos/$videoToUpdate?ageRangeIds=${ageRanges[0].id.value},${ageRanges[1].id.value}")
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+
+            mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.ageRange.min", equalTo(4)))
+                .andExpect(jsonPath("$.ageRange.max", equalTo(12)))
         }
     }
 

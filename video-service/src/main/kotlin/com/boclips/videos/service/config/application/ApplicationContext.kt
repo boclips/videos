@@ -3,6 +3,7 @@ package com.boclips.videos.service.config.application
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.FindLegalRestrictions
+import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
@@ -90,6 +91,7 @@ class ApplicationContext(
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val eventBus: EventBus,
+    val ageRangeRepository: AgeRangeRepository,
     val subjectRepository: SubjectRepository,
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
@@ -136,7 +138,7 @@ class ApplicationContext(
 
     @Bean
     fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoRepository, subjectRepository)
+        return UpdateVideo(videoRepository, subjectRepository, ageRangeRepository)
     }
 
     @Bean

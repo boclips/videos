@@ -4,5 +4,6 @@ data class UpdateVideoRequest(
     val title: String? = null,
     val description: String? = null,
     val promoted: Boolean? = null,
-    val subjectIds: List<String>? = null
+    val subjectIds: List<String>? = null,
+    val ageRangeIds: List<String>? = null
 )

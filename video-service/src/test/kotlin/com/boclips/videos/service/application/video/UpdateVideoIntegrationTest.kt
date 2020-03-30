@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -23,6 +25,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             saveSubject(name = "Design"),
             saveSubject(name = "Art")
         )
+        createAgeRange(AgeRangeRequest(id = "early-years", min = 3, max = 7, label = "3-7"))
 
         val subjectIdList = subjectsList.map { it.id.value }
 
@@ -32,7 +35,8 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 title = null,
                 description = "new description",
                 promoted = true,
-                subjectIds = subjectIdList
+                subjectIds = subjectIdList,
+                ageRangeIds = listOf("early-years")
             ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
@@ -44,6 +48,8 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.promoted).isEqualTo(true)
         assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
         assertThat(updatedVideo.subjects.setManually).isTrue()
+        assertThat(updatedVideo.ageRange.min()).isEqualTo(3)
+        assertThat(updatedVideo.ageRange.max()).isEqualTo(7)
     }
 
     @Test
@@ -68,5 +74,52 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo.subjects.items).isEmpty()
         assertThat(updatedVideo.subjects.setManually).isFalse()
+    }
+
+    @Test
+    fun `updates to bounded agerange with no max`() {
+        val videoId = saveVideo(
+            ageRange = AgeRange.bounded(min = 2, max = 10)
+        )
+
+        createAgeRange(AgeRangeRequest(id = "thirteen-plus", min = 13, label = "13+"))
+
+        updateVideo(
+            id = videoId.value,
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
+                ageRangeIds = listOf("thirteen-plus")
+            ),
+            user = UserFactory.sample(id = "admin@boclips.com")
+        )
+
+        val updatedVideo = videoRepository.find(videoId)!!
+
+        assertThat(updatedVideo.ageRange.min()).isEqualTo(13)
+        assertThat(updatedVideo.ageRange.max()).isNull()
+    }
+
+    @Test
+    fun `updates to unbounded agerange`() {
+        val videoId = saveVideo(
+            ageRange = AgeRange.bounded(min = 2, max = 10)
+        )
+
+        createAgeRange(AgeRangeRequest(id = "unbounded", min = 13, label = "13+"))
+
+        updateVideo(
+            id = videoId.value,
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
+                title = null,
+                description = "new description",
+                promoted = true,
+                ageRangeIds = listOf("thirteen-plus")
+            ),
+            user = UserFactory.sample(id = "admin@boclips.com")
+        )
+
+        val updatedVideo = videoRepository.find(videoId)!!
+
+        assertThat(updatedVideo.ageRange.min()).isEqualTo(13)
+        assertThat(updatedVideo.ageRange.max()).isNull()
     }
 }
