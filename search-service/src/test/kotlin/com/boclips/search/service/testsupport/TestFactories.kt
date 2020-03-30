@@ -32,7 +32,6 @@ object SearchableVideoMetadataFactory {
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
         meanRating: Double? = 5.0,
-        isClassroom: Boolean = false,
         eligibleForStream: Boolean? = true,
         eligibleForDownload: Boolean = true
 
