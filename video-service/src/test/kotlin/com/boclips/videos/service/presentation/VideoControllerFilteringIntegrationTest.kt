@@ -119,19 +119,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `can find by is_classroom`() {
-        val notClassroomVideoId = saveVideo(title = "not suitable for the classroom", type = ContentType.STOCK)
-        val classroomVideoId =
-            saveVideo(title = "suitable for the classroom", type = ContentType.INSTRUCTIONAL_CLIPS)
-
-        mockMvc.perform(get("/v1/videos?query=suitable for&is_classroom=true").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(classroomVideoId.value)))
-            .andExpect(jsonPath("$._embedded.videos[*].id", not(hasItem(notClassroomVideoId.value))))
-    }
-
-    @Test
     fun `can find videos by single best for tag`() {
         val explainerTagUrl = createTag("explainer")
         val otherTagUrl = createTag("other")

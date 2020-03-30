@@ -143,37 +143,6 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `filters by isClassroom`(
-        queryService: IndexReader<VideoMetadata, VideoQuery>,
-        adminService: IndexWriter<VideoMetadata>
-    ) {
-        adminService.safeRebuildIndex(
-            sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", isClassroom = true),
-                SearchableVideoMetadataFactory.create(
-                    id = "2",
-                    title = "Beer Trump Dancing",
-                    description = "Behave like a gentleman, cane like a sponge",
-                    isClassroom = false
-                )
-            )
-        )
-
-        val result = queryService.search(
-            PaginatedSearchRequest(
-                query = VideoQuery(
-                    phrase = "dancing",
-                    isClassroom = false
-                )
-            )
-        )
-
-        assertThat(result.elements).containsExactlyInAnyOrder("2")
-        assertThat(result.counts.totalHits).isEqualTo(1)
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(SearchServiceProvider::class)
     fun `finds videos by best for tags`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

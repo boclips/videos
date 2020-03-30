@@ -27,7 +27,6 @@ object VideoMetadataConverter {
             releaseDate = video.releasedOn,
             keywords = video.keywords,
             tags = tagsFrom(video),
-            isClassroom = ContentEnrichers.isClassroom(video),
             durationSeconds = video.playback.duration.seconds,
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
             transcript = video.transcript,
@@ -48,9 +47,6 @@ object VideoMetadataConverter {
     private fun tagsFrom(video: Video): List<String> {
         val tags = video.tags.map { it.tag.label }.toMutableList()
 
-        if (ContentEnrichers.isClassroom(video)) {
-            tags.add("classroom")
-        }
         if (ContentEnrichers.isNews(video)) {
             tags.add("news")
         }

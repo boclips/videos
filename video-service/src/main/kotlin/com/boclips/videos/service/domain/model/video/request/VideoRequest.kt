@@ -37,7 +37,6 @@ class VideoRequest(
     val promoted: Boolean? = null,
     val contentPartnerNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),
-    val isClassroom: Boolean? = null,
     val facets: VideoFacets = VideoFacets()
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
@@ -80,7 +79,6 @@ class VideoRequest(
                 contentPartnerNames = contentPartnerNames,
                 includedType = type,
                 excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
-                isClassroom = isClassroom,
                 facetDefinition = FacetDefinition.Video(facets.ageRanges.map { ageRange ->
                     com.boclips.search.service.domain.videos.model.AgeRange(
                         ageRange.min(),

@@ -46,8 +46,7 @@ class GetVideosByQuery(
         contentPartnerNames: Set<String>,
         type: Set<String>,
         user: User,
-        subjectsSetManually: Boolean?,
-        isClassroom: Boolean?
+        subjectsSetManually: Boolean?
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -76,7 +75,6 @@ class GetVideosByQuery(
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
-            isClassroom = isClassroom,
             facets = ageRangesFacets?.let { VideoFacets(ageRanges = it) } ?: VideoFacets()
         )
 

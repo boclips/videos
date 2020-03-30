@@ -76,10 +76,6 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchPromoted(videoQuery.promoted))
             }
 
-            if (videoQuery.isClassroom != null) {
-                boolQueryBuilder.must(matchIsClassroom(videoQuery.isClassroom))
-            }
-
             if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
             }
@@ -180,13 +176,6 @@ class VideoFilterCriteria {
             return QueryBuilders.termQuery(
                 VideoDocument.PROMOTED,
                 promoted
-            )
-        }
-
-        private fun matchIsClassroom(isClassroom: Boolean): TermQueryBuilder {
-            return QueryBuilders.termQuery(
-                VideoDocument.IS_CLASSROOM,
-                isClassroom
             )
         }
 

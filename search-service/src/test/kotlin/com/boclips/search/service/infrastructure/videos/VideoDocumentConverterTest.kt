@@ -66,7 +66,6 @@ class VideoDocumentConverterTest {
                 promoted = null,
                 meanRating = null,
                 subjectsSetManually = null,
-                isClassroom = null,
                 eligibleForStream = true,
                 eligibleForDownload = null
             )
@@ -123,7 +122,6 @@ class VideoDocumentConverterTest {
             ),
             promoted = null,
             meanRating = 3.8,
-            isClassroom = false,
             eligibleForStream = false,
             eligibleForDownload = true
         )
@@ -152,7 +150,6 @@ class VideoDocumentConverterTest {
                 promoted = null,
                 meanRating = 3.8,
                 subjectsSetManually = false,
-                isClassroom = false,
                 eligibleForStream = false,
                 eligibleForDownload = true
             )
@@ -182,7 +179,6 @@ class VideoDocumentConverterTest {
             ),
             promoted = null,
             meanRating = 3.8,
-            isClassroom = false,
             eligibleForStream = true,
             eligibleForDownload = true
         )

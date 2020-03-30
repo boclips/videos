@@ -63,7 +63,7 @@ class VideoMetadataConverterTest {
                 contentPartnerId = "content-partner-id",
                 releaseDate = LocalDate.of(2019, Month.APRIL, 19),
                 keywords = listOf("k1"),
-                tags = listOf("classroom"),
+                tags = emptyList(),
                 durationSeconds = 10,
                 source = SourceType.YOUTUBE,
                 transcript = "a great transcript",
@@ -76,24 +76,12 @@ class VideoMetadataConverterTest {
                 ),
                 promoted = true,
                 meanRating = null,
-                isClassroom = true,
                 eligibleForStream = false,
                 eligibleForDownload = false
             )
         )
     }
 
-    @Test
-    fun `tags classroom video`() {
-        val video = TestFactories.createVideo(
-            type = ContentType.INSTRUCTIONAL_CLIPS
-        )
-
-        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
-
-        assertThat(videoMetadata.tags).containsExactly("classroom")
-        assertThat(videoMetadata.isClassroom).isTrue()
-    }
 
     @Test
     fun `tags news video`() {
@@ -106,18 +94,6 @@ class VideoMetadataConverterTest {
         assertThat(videoMetadata.tags).contains("news")
     }
 
-    @Test
-    fun `it can apply multiple tags`() {
-        val video = TestFactories.createVideo(
-            description = "biology animation",
-            type = ContentType.NEWS
-        )
-
-        val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
-
-        assertThat(videoMetadata.tags).containsExactly("classroom", "news")
-        assertThat(videoMetadata.isClassroom).isTrue()
-    }
 
     @Test
     fun `it doesn't tag videos without a match`() {
@@ -130,7 +106,6 @@ class VideoMetadataConverterTest {
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
         assertThat(videoMetadata.tags).isEmpty()
-        assertThat(videoMetadata.isClassroom).isFalse()
     }
 
     @Test
@@ -178,14 +153,13 @@ class VideoMetadataConverterTest {
     @Test
     fun `keeps tags explicitly set on the video`() {
         val video = TestFactories.createVideo(
-            type = ContentType.INSTRUCTIONAL_CLIPS,
+            type = ContentType.NEWS,
             tags = listOf(TestFactories.createUserTag(label = "explainer"))
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
-        assertThat(videoMetadata.tags).containsExactlyInAnyOrder("classroom", "explainer")
-        assertThat(videoMetadata.isClassroom).isTrue()
+        assertThat(videoMetadata.tags).containsExactlyInAnyOrder("news", "explainer")
     }
 
     @Test

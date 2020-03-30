@@ -88,8 +88,7 @@ class VideoController(
         @RequestParam(name = "subjects_set_manually", required = false) subjectsSetManually: Boolean?,
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
-        @RequestParam(name = "type", required = false) type: Set<String>?,
-        @RequestParam(name = "is_classroom", required = false) isClassroom: Boolean?
+        @RequestParam(name = "type", required = false) type: Set<String>?
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
@@ -114,7 +113,6 @@ class VideoController(
             promoted = promoted,
             contentPartnerNames = contentPartners ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
-            isClassroom = isClassroom,
             user = getCurrentUser()
         )
 

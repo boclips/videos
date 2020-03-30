@@ -54,7 +54,6 @@ object SearchableVideoMetadataFactory {
         subjects = SubjectsMetadata(items = subjects, setManually = subjectsSetManually),
         promoted = promoted,
         meanRating = meanRating,
-        isClassroom = isClassroom,
         eligibleForStream = eligibleForStream,
         eligibleForDownload = eligibleForDownload
     )
@@ -91,7 +90,6 @@ object TestFactories {
             promoted = null,
             meanRating = null,
             subjectsSetManually = null,
-            isClassroom = null,
             eligibleForDownload = true,
             eligibleForStream = true
         )

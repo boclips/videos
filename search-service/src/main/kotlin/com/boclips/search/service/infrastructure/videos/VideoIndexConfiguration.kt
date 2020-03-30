@@ -31,7 +31,6 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.SUBJECTS_SET_MANUALLY to IndexConfiguration.Fields.boolean,
                 VideoDocument.ELIGIBLE_FOR_DOWNLOAD to IndexConfiguration.Fields.boolean,
                 VideoDocument.ELIGIBLE_FOR_STREAM to IndexConfiguration.Fields.boolean,
-                VideoDocument.IS_CLASSROOM to IndexConfiguration.Fields.boolean,
                 VideoDocument.TAGS to keywordField,
                 VideoDocument.CONTENT_PARTNER_ID to IndexConfiguration.Fields.simpleText
             )

@@ -101,23 +101,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `includes educational content when category is classroom`() {
-        val videoId = saveVideo(title = "banana", type = ContentType.INSTRUCTIONAL_CLIPS)
-        saveVideo(title = "banana", type = ContentType.STOCK)
-
-        val videos = searchVideo.byQuery(
-            query = "banana",
-            isClassroom = true,
-            pageSize = 2,
-            pageNumber = 0,
-            user = UserFactory.sample()
-        )
-
-        assertThat(videos.elements).hasSize(1)
-        assertThat(videos.elements.first().videoId.value).isEqualTo(videoId.value)
-    }
-
-    @Test
     fun `shows only news when category is news`() {
         val newsVideoId = saveVideo(title = "banana", type = ContentType.NEWS)
         saveVideo(title = "banana", type = ContentType.INSTRUCTIONAL_CLIPS)
@@ -132,24 +115,6 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         assertThat(videos.elements).hasSize(1)
         assertThat(videos.elements.first().videoId.value).isEqualTo(newsVideoId.value)
-    }
-
-    @Test
-    fun `returns videos with multiple categories`() {
-        saveVideo(title = "banana", type = ContentType.STOCK)
-        val newsAndClassroomVideoId = saveVideo(title = "banana", type = ContentType.NEWS)
-        saveVideo(title = "banana", type = ContentType.INSTRUCTIONAL_CLIPS)
-
-        val videos = searchVideo.byQuery(
-            query = "banana",
-            isClassroom = true,
-            type = setOf("NEWS"),
-            pageSize = 2,
-            pageNumber = 0,
-            user = UserFactory.sample()
-        )
-
-        assertThat(videos.elements.map { it.videoId.value }).containsExactly(newsAndClassroomVideoId.value)
     }
 
     @Test
