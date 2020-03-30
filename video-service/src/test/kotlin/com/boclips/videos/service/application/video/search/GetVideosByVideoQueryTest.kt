@@ -107,9 +107,9 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val videos = searchVideo.byQuery(
             query = "banana",
-            type = setOf("NEWS"),
             pageSize = 2,
             pageNumber = 0,
+            type = setOf("NEWS"),
             user = UserFactory.sample()
         )
 

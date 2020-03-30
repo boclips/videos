@@ -63,8 +63,8 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         logger.info { "Video $itemId removed from Solr" }
     }
 
-    override fun bulkRemoveFromSearch(items: List<String>) {
-        items.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        itemIds.windowed(size = UPSERT_BATCH_SIZE, step = UPSERT_BATCH_SIZE, partialWindows = true)
             .forEachIndexed { batchIndex, videoBatch ->
                 logger.info { "[Batch $batchIndex] Removing ${videoBatch.size} video(s) in Solr" }
 

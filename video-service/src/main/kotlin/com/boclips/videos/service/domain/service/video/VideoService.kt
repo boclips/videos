@@ -12,14 +12,15 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnboundedAgeRange
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
@@ -62,12 +63,19 @@ class VideoService(
             .map { SubjectFacet(subjectId = SubjectId(it.id), total = it.hits) }
         val ageRangeCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
             .map { AgeRangeFacet(ageRangeId = AgeRangeId(it.id), total = it.hits) }
+        val durationCounts = results.counts.getFacetCounts(FacetType.Duration)
+            .map { DurationFacet(durationId = it.id, total = it.hits) }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
         return VideoResults(
             videos = playableVideos,
-            counts = VideoCounts(total = results.counts.totalHits, subjects = subjectCounts, ageRanges = ageRangeCounts)
+            counts = VideoCounts(
+                total = results.counts.totalHits,
+                subjects = subjectCounts,
+                ageRanges = ageRangeCounts,
+                durations = durationCounts
+            )
         )
     }
 
@@ -78,8 +86,8 @@ class VideoService(
             PaginatedSearchRequest(
                 VideoIdsRequest(ids = videoIds)
                     .toSearchQuery(
-                    videoAccess
-                ),
+                        videoAccess
+                    ),
                 windowSize = videoIds.size
             )
         )

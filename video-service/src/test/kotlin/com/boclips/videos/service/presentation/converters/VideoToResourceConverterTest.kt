@@ -13,6 +13,7 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoCounts
@@ -203,7 +204,8 @@ class VideoToResourceConverterTest {
                     ageRanges = listOf(
                         AgeRangeFacet(ageRangeId = AgeRangeId("3-5"), total = 3),
                         AgeRangeFacet(ageRangeId = AgeRangeId("5-11"), total = 1)
-                    )
+                    ),
+                    durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -217,6 +219,7 @@ class VideoToResourceConverterTest {
         assertThat(resultResource._embedded.facets?.subjects?.get("id")?.hits).isEqualTo(100)
         assertThat(resultResource._embedded.facets?.ageRanges?.get("3-5")?.hits).isEqualTo(3)
         assertThat(resultResource._embedded.facets?.ageRanges?.get("5-11")?.hits).isEqualTo(1)
+        assertThat(resultResource._embedded.facets?.durations?.get("PT0S-PT1M")?.hits).isEqualTo(10)
     }
 
     @Test

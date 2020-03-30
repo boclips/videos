@@ -232,7 +232,10 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             phrase = "apple",
-                            facetDefinition = FacetDefinition.Video(ageRangeBuckets)
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = ageRangeBuckets,
+                                duration = emptyList()
+                            )
                         )
                     )
                 )

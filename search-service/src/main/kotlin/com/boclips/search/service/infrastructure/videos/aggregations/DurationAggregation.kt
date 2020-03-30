@@ -4,7 +4,6 @@ import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument.Companion.DURATION_SECONDS
-import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.DURATION_RANGES
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.allCriteria
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.removeCriteria
@@ -31,7 +30,7 @@ class DurationAggregation {
         fun aggregateDuration(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = removeCriteria(queryBuilder = allCriteria(videoQuery), filterName = DURATION_RANGES),
-                durationRanges = DEFAULT_DURATION_RANGES
+                durationRanges = videoQuery.facetDefinition?.duration ?: emptyList()
             )
         }
 

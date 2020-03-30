@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
-import com.boclips.videos.service.domain.model.video.request.VideoFacets
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -32,7 +31,7 @@ class GetVideosByQuery(
         minDurationString: String?,
         maxDurationString: String?,
         duration: List<String>?,
-        releasedDateFrom: String?,
+        durationFacets: List<String>?,
         releasedDateTo: String?,
         pageSize: Int,
         pageNumber: Int,
@@ -46,7 +45,8 @@ class GetVideosByQuery(
         contentPartnerNames: Set<String>,
         type: Set<String>,
         user: User,
-        subjectsSetManually: Boolean?
+        subjectsSetManually: Boolean?,
+        releasedDateFrom: String?
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -75,7 +75,7 @@ class GetVideosByQuery(
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
-            facets = ageRangesFacets?.let { VideoFacets(ageRanges = it) } ?: VideoFacets()
+            facets = FacetConverter().invoke(ageRangesFacets, durationFacets)
         )
 
         val videoSearchResponse = videoService.search(request = request, videoAccess = user.accessRules.videoAccess)

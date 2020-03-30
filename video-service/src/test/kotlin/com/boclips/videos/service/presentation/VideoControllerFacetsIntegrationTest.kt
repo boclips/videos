@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Duration
 
 class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -78,6 +80,37 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(lastSearchRequest.query.facetDefinition?.ageRangeBuckets).containsExactly(
             AgeRange(3, 7),
             AgeRange(11, 13)
+        )
+    }
+
+    @Test
+    fun `contains counts for durations`() {
+        videoSearchService.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.Duration,
+                    counts = listOf(Count(id = "duration1", hits = 94))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.facets.durations.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.durations.duration1.hits", equalTo(94)))
+    }
+
+    @Test
+    fun `duration_facets overwrite default duration facets`() {
+        mockMvc.perform(get("/v1/videos?query=content&duration_facets=PT0S-PT5M,PT5M-PT10M").asTeacher())
+            .andExpect(status().isOk)
+
+        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+
+        assertThat(lastSearchRequest.query.facetDefinition?.duration).containsExactly(
+            DurationRange(Duration.ZERO, Duration.ofMinutes(5)),
+            DurationRange(Duration.ofMinutes(5), Duration.ofMinutes(10))
         )
     }
 }

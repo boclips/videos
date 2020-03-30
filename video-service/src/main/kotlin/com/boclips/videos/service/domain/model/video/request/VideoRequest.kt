@@ -79,12 +79,15 @@ class VideoRequest(
                 contentPartnerNames = contentPartnerNames,
                 includedType = type,
                 excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
-                facetDefinition = FacetDefinition.Video(facets.ageRanges.map { ageRange ->
-                    com.boclips.search.service.domain.videos.model.AgeRange(
-                        ageRange.min(),
-                        ageRange.max()
-                    )
-                }),
+                facetDefinition = FacetDefinition.Video(
+                    ageRangeBuckets = facets.ageRanges.map { ageRange ->
+                        com.boclips.search.service.domain.videos.model.AgeRange(
+                            ageRange.min(),
+                            ageRange.max()
+                        )
+                    },
+                    duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) }
+                ),
                 permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
                 deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
                 excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess),

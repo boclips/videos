@@ -13,8 +13,8 @@ import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -93,6 +93,9 @@ class VideoToResourceConverter(
                     it.ageRangeId.value to VideoFacetResource(
                         hits = it.total
                     )
+                }.toMap(),
+                durations = counts.durations.map {
+                    it.durationId to VideoFacetResource(hits = it.total)
                 }.toMap()
             )
         }
