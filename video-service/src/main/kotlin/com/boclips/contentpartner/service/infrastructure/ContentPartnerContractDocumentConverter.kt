@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -30,7 +31,17 @@ class ContentPartnerContractDocumentConverter() {
                 streaming = contract.royaltySplit?.streaming
             ),
             minimumPriceDescription = contract.minimumPriceDescription,
-            remittanceCurrency = contract.remittanceCurrency?.currencyCode
+            remittanceCurrency = contract.remittanceCurrency?.currencyCode,
+            restrictions = ContentPartnerContractRestrictionsDocument(
+                clientFacing = contract.restrictions.clientFacing,
+                territory = contract.restrictions.territory,
+                licensing = contract.restrictions.licensing,
+                editing = contract.restrictions.editing,
+                marketing = contract.restrictions.marketing,
+                companies = contract.restrictions.companies,
+                payout = contract.restrictions.payout,
+                other = contract.restrictions.other
+            )
         )
 
     fun toContract(document: ContentPartnerContractDocument) =
@@ -62,7 +73,17 @@ class ContentPartnerContractDocumentConverter() {
                 } catch (e: IllegalArgumentException) {
                     null
                 }
-            }
+            },
+            restrictions = ContentPartnerContractRestrictions(
+                clientFacing = document.restrictions?.clientFacing ?: emptyList(),
+                territory = document.restrictions?.territory,
+                licensing = document.restrictions?.licensing,
+                editing = document.restrictions?.editing,
+                marketing = document.restrictions?.marketing,
+                companies = document.restrictions?.companies,
+                payout = document.restrictions?.payout,
+                other = document.restrictions?.other
+            )
         )
 
     private fun parseDate(id: ObjectId, s: String): LocalDate? {

@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
 import com.boclips.contentpartner.service.presentation.CurrencyConverter
 import com.boclips.contentpartner.service.presentation.DateConverter
@@ -32,7 +33,17 @@ class CreateContentPartnerContract(
                     streaming = request.royaltySplit?.streaming
                 ),
                 minimumPriceDescription = request.minimumPriceDescription,
-                remittanceCurrency = request.remittanceCurrency?.let(CurrencyConverter::convert)
+                remittanceCurrency = request.remittanceCurrency?.let(CurrencyConverter::convert),
+                restrictions = ContentPartnerContractRestrictions(
+                    clientFacing = request.restrictions?.clientFacing ?: emptyList(),
+                    territory = request.restrictions?.territory,
+                    licensing = request.restrictions?.licensing,
+                    editing = request.restrictions?.editing,
+                    marketing = request.restrictions?.marketing,
+                    companies = request.restrictions?.companies,
+                    payout = request.restrictions?.payout,
+                    other = request.restrictions?.other
+                )
             )
         )
 }

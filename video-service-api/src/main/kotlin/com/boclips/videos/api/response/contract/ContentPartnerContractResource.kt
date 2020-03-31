@@ -13,5 +13,6 @@ data class ContentPartnerContractResource(
     val royaltySplit: ContentPartnerContractRoyaltySplitResource?,
     val minimumPriceDescription: String?,
     val remittanceCurrency: String?,
+    val restrictions: ContentPartnerContractRestrictionsResource?,
     val _links: Map<String, HateoasLink>
 )

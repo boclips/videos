@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractRestrictionsResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 import java.time.format.DateTimeFormatter
 
@@ -29,6 +30,16 @@ class ContentPartnerContractToResourceConverter(
             ),
             minimumPriceDescription = contract.minimumPriceDescription,
             remittanceCurrency = contract.remittanceCurrency?.currencyCode,
+            restrictions = ContentPartnerContractRestrictionsResource(
+                clientFacing = contract.restrictions.clientFacing,
+                territory = contract.restrictions.territory,
+                licensing = contract.restrictions.licensing,
+                editing = contract.restrictions.editing,
+                marketing = contract.restrictions.marketing,
+                companies = contract.restrictions.companies,
+                payout = contract.restrictions.payout,
+                other = contract.restrictions.other
+            ),
             _links = listOf(linksBuilder.self(contract.id.value)).map { it.rel to it }.toMap()
         )
     }

@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
@@ -589,7 +590,17 @@ object ContentPartnerContractFactory {
                 streaming = 20.5.toFloat()
             ),
         minimumPriceDescription: String? = "This is the minimum price",
-        remittanceCurrency: String? = "GBP"
+        remittanceCurrency: String? = "GBP",
+        restrictions: ContentPartnerContractRestrictions = ContentPartnerContractRestrictions(
+            clientFacing = listOf("restriction 1", "restriction 2"),
+            territory = "Australia",
+            licensing = "License 1",
+            editing = "Edit",
+            marketing = "Marketing info",
+            companies = "Companies info",
+            payout = "Payout info",
+            other = "Other info"
+        )
     ) =
         ContentPartnerContract(
             id = ContentPartnerContractId(id ?: "5cf140c4c1475c47f7178678"),
@@ -601,6 +612,7 @@ object ContentPartnerContractFactory {
             daysForSellOffPeriod = daysForSellOffPeriod,
             royaltySplit = royaltySplit,
             minimumPriceDescription = minimumPriceDescription,
-            remittanceCurrency = Currency.getInstance(remittanceCurrency)
+            remittanceCurrency = Currency.getInstance(remittanceCurrency),
+            restrictions = restrictions
         )
 }

@@ -38,7 +38,17 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
                                 "streaming": 50
                             },
                             "minimumPriceDescription": "Minimum prices are cool",
-                            "remittanceCurrency": "GBP"
+                            "remittanceCurrency": "GBP",
+                            "restrictions": {
+                                "clientFacing": ["Restriction 1", "Restriction 2"],
+                                "territory": "Austria",
+                                "licensing": "123456789",
+                                "editing": "no removal of logo",
+                                "marketing": "marketing info",
+                                "companies": "company one",
+                                "payout": "payout",
+                                "other": "other"
+                            }
                         }
                     """.trimIndent()
                 )
@@ -61,6 +71,7 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.royaltySplit.streaming", closeTo(50.0, 0.0001)))
             .andExpect(jsonPath("$.minimumPriceDescription", equalTo("Minimum prices are cool")))
             .andExpect(jsonPath("$.remittanceCurrency", equalTo("GBP")))
+            .andExpect(jsonPath("$.restrictions").exists())
     }
 
     @Test

@@ -13,5 +13,6 @@ data class ContentPartnerContract(
     val daysForSellOffPeriod: Int?,
     val royaltySplit: ContentPartnerContractRoyaltySplit?,
     val minimumPriceDescription: String?,
-    val remittanceCurrency: Currency?
+    val remittanceCurrency: Currency?,
+    val restrictions: ContentPartnerContractRestrictions
 )
