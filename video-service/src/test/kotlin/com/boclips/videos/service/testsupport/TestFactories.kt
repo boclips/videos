@@ -612,7 +612,7 @@ object ContentPartnerContractFactory {
             daysForSellOffPeriod = daysForSellOffPeriod,
             royaltySplit = royaltySplit,
             minimumPriceDescription = minimumPriceDescription,
-            remittanceCurrency = Currency.getInstance(remittanceCurrency),
+            remittanceCurrency = remittanceCurrency?.let { Currency.getInstance(remittanceCurrency) },
             restrictions = restrictions
         )
 }

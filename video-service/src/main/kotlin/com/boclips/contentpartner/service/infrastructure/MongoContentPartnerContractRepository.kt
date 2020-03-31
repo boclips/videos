@@ -55,6 +55,10 @@ class MongoContentPartnerContractRepository(
         return document
     }
 
+    override fun findAll(): List<ContentPartnerContract> {
+        return getCollection().find().map { converter.toContract(it) }.toMutableList()
+    }
+
     private fun getCollection() =
         mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerContractDocument>(
             collectionName

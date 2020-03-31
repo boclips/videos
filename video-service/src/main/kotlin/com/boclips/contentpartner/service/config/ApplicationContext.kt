@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateContentPartner
 import com.boclips.contentpartner.service.application.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.GetAgeRange
+import com.boclips.contentpartner.service.application.GetAllContentPartnerContracts
 import com.boclips.contentpartner.service.application.GetContentPartner
 import com.boclips.contentpartner.service.application.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.GetContentPartners
@@ -106,4 +107,9 @@ class ApplicationContext(
 
     @Bean
     fun ingestDetailsToResourceConverter(): IngestDetailsResourceConverter = IngestDetailsResourceConverter()
+
+    @Bean
+    fun getAllContentPartnerContracts(
+        contentPartnerContractRepository: ContentPartnerContractRepository
+    ): GetAllContentPartnerContracts = GetAllContentPartnerContracts(contentPartnerContractRepository)
 }

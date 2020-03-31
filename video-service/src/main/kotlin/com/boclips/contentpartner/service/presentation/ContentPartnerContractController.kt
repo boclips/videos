@@ -1,12 +1,14 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.application.CreateContentPartnerContract
+import com.boclips.contentpartner.service.application.GetAllContentPartnerContracts
 import com.boclips.contentpartner.service.application.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,10 +25,18 @@ import javax.validation.constraints.NotBlank
 @RequestMapping("/v1/content-partner-contracts")
 class ContentPartnerContractController(
     private val fetchOne: GetContentPartnerContract,
+    private val fetchAll: GetAllContentPartnerContracts,
     private val create: CreateContentPartnerContract,
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
     private val linksBuilder: ContentPartnerContractsLinkBuilder
 ) : BaseController() {
+    @GetMapping
+    fun getAll(): ResponseEntity<ContentPartnerContractsResource> {
+        val resources = fetchAll().let { toResourceConverter.convert(it) }
+
+        return ResponseEntity(resources, HttpStatus.OK)
+    }
+
     @GetMapping("/{id}")
     fun getContentPartnerContract(@PathVariable("id") @NotBlank id: String?): ResponseEntity<ContentPartnerContractResource> {
         val resource = fetchOne(ContentPartnerContractId(id!!))?.let(toResourceConverter::convert)

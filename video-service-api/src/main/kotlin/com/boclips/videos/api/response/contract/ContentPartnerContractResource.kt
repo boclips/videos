@@ -6,13 +6,13 @@ data class ContentPartnerContractResource(
     val id: String,
     val contentPartnerName: String,
     val contractDocument: String?,
-    val contractDates: ContentPartnerContractDatesResource?,
+    val contractDates: ContentPartnerContractDatesResource,
     val daysBeforeTerminationWarning: Int?,
     val yearsForMaximumLicense: Int?,
     val daysForSellOffPeriod: Int?,
-    val royaltySplit: ContentPartnerContractRoyaltySplitResource?,
+    val royaltySplit: ContentPartnerContractRoyaltySplitResource,
     val minimumPriceDescription: String?,
     val remittanceCurrency: String?,
-    val restrictions: ContentPartnerContractRestrictionsResource?,
+    val restrictions: ContentPartnerContractRestrictionsResource,
     val _links: Map<String, HateoasLink>
 )

@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRep
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -24,5 +25,18 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
         contentPartnerContractRepository.create(original)
         val found = contentPartnerContractRepository.findById(original.id)
         assertThat(found).isEqualTo(original)
+    }
+
+    @Test
+    fun `can find all contracts`() {
+        val contracts = listOf(
+            ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
+            ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
+        )
+
+        contracts.map { contentPartnerContractRepository.create(it) }
+
+        val retrievedContracts = contentPartnerContractRepository.findAll()
+        assertThat(retrievedContracts.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }.toTypedArray())
     }
 }

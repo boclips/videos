@@ -6,6 +6,8 @@ import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResou
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRestrictionsResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractsWrapperResource
 import java.time.format.DateTimeFormatter
 
 class ContentPartnerContractToResourceConverter(
@@ -40,7 +42,17 @@ class ContentPartnerContractToResourceConverter(
                 payout = contract.restrictions.payout,
                 other = contract.restrictions.other
             ),
-            _links = listOf(linksBuilder.self(contract.id.value)).map { it.rel to it }.toMap()
+            _links = listOfNotNull(linksBuilder.self(contract.id.value)).map { it.rel to it }.toMap()
+        )
+    }
+
+    fun convert(contracts: List<ContentPartnerContract>): ContentPartnerContractsResource {
+        return ContentPartnerContractsResource(
+            _embedded = ContentPartnerContractsWrapperResource(
+                contracts = contracts.map { convert(it) }
+            ),
+            _links = null,
+            page = null
         )
     }
 }

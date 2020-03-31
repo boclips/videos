@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.Locale
 
-class VideoToResourceConverterTest {
+class xVideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter

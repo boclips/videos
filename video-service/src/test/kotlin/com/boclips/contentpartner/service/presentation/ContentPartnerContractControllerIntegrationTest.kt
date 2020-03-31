@@ -3,7 +3,9 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.closeTo
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -57,8 +59,8 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(
-                get(contractUrl).asBoclipsEmployee()
-            )
+            get(contractUrl).asBoclipsEmployee()
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
             .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png")))
@@ -72,6 +74,13 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.minimumPriceDescription", equalTo("Minimum prices are cool")))
             .andExpect(jsonPath("$.remittanceCurrency", equalTo("GBP")))
             .andExpect(jsonPath("$.restrictions").exists())
+    }
+
+
+    @Test
+    fun `a 403 when trying to create a contract with incorrect role`() {
+        mockMvc.perform(post("/v1/content-partner-contracts"))
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -90,9 +99,26 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(
-                get(contractUrl).asBoclipsEmployee()
-            )
+            get(contractUrl).asBoclipsEmployee()
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
+    }
+
+    @Test
+    fun `view all contracts`() {
+        val firstContractId = saveContentPartnerContract(name = "the best videos")
+        val secondContractId = saveContentPartnerContract(name = "okay videos")
+
+        mockMvc.perform(get("/v1/content-partner-contracts").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.contracts[*].id", contains(firstContractId.value, secondContractId.value)))
+    }
+
+    @Test
+    fun `a 403 when viewing all contracts with incorrect role`() {
+        mockMvc.perform(get("/v1/content-partner-contracts"))
+            .andExpect(status().isForbidden)
     }
 }

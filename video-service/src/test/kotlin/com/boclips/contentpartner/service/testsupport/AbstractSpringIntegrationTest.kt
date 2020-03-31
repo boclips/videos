@@ -2,10 +2,12 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.CreateAgeRange
 import com.boclips.contentpartner.service.application.CreateContentPartner
+import com.boclips.contentpartner.service.application.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.domain.model.ContentPartner
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -17,9 +19,13 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.CreateVideo
@@ -51,6 +57,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
 import java.time.LocalDate
+import java.time.Month
 import java.time.Period
 import java.util.UUID
 
@@ -119,6 +126,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createLegalRestrictions: CreateLegalRestrictions
+
+    @Autowired
+    lateinit var createContentPartnerContract: CreateContentPartnerContract
 
     @Autowired
     lateinit var cacheManager: CacheManager
@@ -303,6 +313,40 @@ abstract class AbstractSpringIntegrationTest {
         val createdResource = createLegalRestrictions(text = text)
         return LegalRestrictionsId(createdResource.id.value)
     }
+
+    fun saveContentPartnerContract(
+        name: String = "Contract name",
+        contractDocument: String? = null,
+        contractDateStart: String? = null,
+        contractDateEnd: String? = LocalDate.of(2001, Month.AUGUST, 1).toString(),
+        daysBeforeTerminationWarning: Int? = 100,
+        yearsForMaximumLicense: Int? = 5,
+        daysForSellOffPeriod: Int? = 4,
+        royaltySplitDownload: Float? = 0.1F,
+        royaltySplitStream: Float? = 0.9F,
+        minimumPriceDescription: String? = "Price",
+        remittanceCurrency: String? = "GBP",
+        restrictions: ContentPartnerContractRestrictionsRequest? = null
+    ): ContentPartnerContractId = createContentPartnerContract(
+        ContentPartnerContractRequest(
+            contentPartnerName = name,
+            contractDocument = contractDocument,
+            contractDates = ContentPartnerContractDatesResource(
+                start = contractDateStart,
+                end = contractDateEnd
+            ),
+            daysBeforeTerminationWarning = daysBeforeTerminationWarning,
+            yearsForMaximumLicense = yearsForMaximumLicense,
+            daysForSellOffPeriod = daysForSellOffPeriod,
+            royaltySplit = ContentPartnerContractRoyaltySplitResource(
+                download = royaltySplitDownload,
+                streaming = royaltySplitStream
+            ),
+            minimumPriceDescription = minimumPriceDescription,
+            remittanceCurrency = remittanceCurrency,
+            restrictions = restrictions
+        )
+    )
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {
         return this.andExpect(jsonPath("$.timestamp").exists())
