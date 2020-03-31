@@ -1,10 +1,12 @@
 package com.boclips.contentpartner.service.infrastructure
 
+import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -27,16 +29,54 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
         assertThat(found).isEqualTo(original)
     }
 
-    @Test
-    fun `can find all contracts`() {
-        val contracts = listOf(
-            ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
-            ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
-        )
+    @Nested
+    inner class FindAll {
 
-        contracts.map { contentPartnerContractRepository.create(it) }
+        @Test
+        fun `can find all contracts`() {
+            val contracts = listOf(
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
+            )
 
-        val retrievedContracts = contentPartnerContractRepository.findAll()
-        assertThat(retrievedContracts.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }.toTypedArray())
+            contracts.map { contentPartnerContractRepository.create(it) }
+
+            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 10, page = 0))
+            assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }.toTypedArray())
+            assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
+        }
+
+        @Test
+        fun `returns correct page information`() {
+            val contracts = listOf(
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
+            )
+
+            contracts.map { contentPartnerContractRepository.create(it) }
+
+            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 1, page = 0))
+            assertThat(retrievedContracts.pageInfo.hasMoreElements).isTrue()
+            assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(2)
+            assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(0)
+            assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(1)
+        }
+
+        @Test
+        fun `fetching the last page returns the correct size`() {
+            val contracts = listOf(
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString()),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
+            )
+
+            contracts.map { contentPartnerContractRepository.create(it) }
+
+            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 2, page = 1))
+            assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
+            assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(3)
+            assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(1)
+            assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(1)
+        }
     }
 }

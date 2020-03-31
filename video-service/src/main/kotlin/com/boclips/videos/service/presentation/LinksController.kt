@@ -8,8 +8,8 @@ import com.boclips.contentpartner.service.presentation.hateoas.DistributionMetho
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
@@ -72,6 +72,7 @@ class LinksController(
                 contentPartnersLinkBuilder.contentPartnersSignedUploadLink(),
                 contentPartnerContractsLinkBuilder.contentPartnerContractLink(null),
                 contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
+                contentPartnerContractsLinkBuilder.createContractLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),

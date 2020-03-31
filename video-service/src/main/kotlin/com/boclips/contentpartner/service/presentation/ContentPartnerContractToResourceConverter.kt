@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.response.contract.ContentPartnerContractCostsResource
@@ -9,6 +10,7 @@ import com.boclips.videos.api.response.contract.ContentPartnerContractRestrictio
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractsWrapperResource
+import org.springframework.hateoas.PagedModel
 import java.time.format.DateTimeFormatter
 
 class ContentPartnerContractToResourceConverter(
@@ -54,13 +56,18 @@ class ContentPartnerContractToResourceConverter(
         )
     }
 
-    fun convert(contracts: List<ContentPartnerContract>): ContentPartnerContractsResource {
+    fun convert(contracts: ResultsPage<ContentPartnerContract>): ContentPartnerContractsResource {
         return ContentPartnerContractsResource(
             _embedded = ContentPartnerContractsWrapperResource(
-                contracts = contracts.map { convert(it) }
+                contracts = contracts.elements.map { convert(it) }
             ),
             _links = null,
-            page = null
+            page = PagedModel.PageMetadata(
+                contracts.pageInfo.pageRequest.size.toLong(),
+                contracts.pageInfo.pageRequest.page.toLong(),
+                contracts.pageInfo.totalElements,
+                contracts.pageInfo.totalPages
+            )
         )
     }
 }

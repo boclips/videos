@@ -86,7 +86,6 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.restrictions").exists())
     }
 
-
     @Test
     fun `a 403 when trying to create a contract with incorrect role`() {
         mockMvc.perform(post("/v1/content-partner-contracts"))
@@ -130,5 +129,19 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
     fun `a 403 when viewing all contracts with incorrect role`() {
         mockMvc.perform(get("/v1/content-partner-contracts"))
             .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `can page when fetching all contracts`() {
+        saveContentPartnerContract(name = "the best videos")
+        saveContentPartnerContract(name = "okay videos")
+
+        mockMvc.perform(get("/v1/content-partner-contracts?page=0&size=1").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.page.size", equalTo(1)))
+            .andExpect(jsonPath("$.page.number", equalTo(0)))
+            .andExpect(jsonPath("$.page.totalElements", equalTo(2)))
+            .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
     }
 }

@@ -66,6 +66,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentCategories").doesNotExist())
             .andExpect(jsonPath("$._links.ageRanges").doesNotExist())
             .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
+            .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
     }
 
     @Test
@@ -162,7 +163,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `as Boclips employee see admin search`() {
+    fun `as Boclips employee see admin links`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
@@ -183,9 +184,21 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
             .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
-            .andExpect(jsonPath("$._links.contentPartnerContract.href", containsString("/content-partner-contracts/{id}")))
+            .andExpect(
+                jsonPath(
+                    "$._links.contentPartnerContract.href",
+                    containsString("/content-partner-contracts/{id}")
+                )
+            )
             .andExpect(jsonPath("$._links.contentPartnerContract.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.marketingStatuses.href", endsWith("/marketing-statuses")))
+            .andExpect(
+                jsonPath(
+                    "$._links.contentPartnerContracts.href",
+                    endsWith("/content-partner-contracts{?size,page}")
+                )
+            )
+            .andExpect(jsonPath("$._links.contentPartnerContracts.templated", equalTo(true)))
     }
 
     @Test

@@ -1,5 +1,8 @@
 package com.boclips.contentpartner.service.infrastructure
 
+import com.boclips.contentpartner.service.common.PageInfo
+import com.boclips.contentpartner.service.common.PageRequest
+import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
@@ -55,8 +58,22 @@ class MongoContentPartnerContractRepository(
         return document
     }
 
-    override fun findAll(): List<ContentPartnerContract> {
-        return getCollection().find().map { converter.toContract(it) }.toMutableList()
+    override fun findAll(pageRequest: PageRequest): ResultsPage<ContentPartnerContract> {
+        val count = getCollection().countDocuments()
+
+        return getCollection().find()
+            .limit(pageRequest.size)
+            .skip(pageRequest.size * pageRequest.page)
+            .let {
+                ResultsPage(
+                    elements = it.map(converter::toContract).toMutableList(),
+                    pageInfo = PageInfo(
+                        hasMoreElements = count > pageRequest.size * (pageRequest.page + 1),
+                        totalElements = count,
+                        pageRequest = pageRequest.copy(size = it.count())
+                    )
+                )
+            }
     }
 
     private fun getCollection() =

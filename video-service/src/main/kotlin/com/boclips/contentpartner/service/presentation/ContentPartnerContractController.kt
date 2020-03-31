@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.application.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.GetAllContentPartnerContracts
+import com.boclips.contentpartner.service.application.GetContentPartnerContracts
 import com.boclips.contentpartner.service.application.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -25,14 +26,17 @@ import javax.validation.constraints.NotBlank
 @RequestMapping("/v1/content-partner-contracts")
 class ContentPartnerContractController(
     private val fetchOne: GetContentPartnerContract,
-    private val fetchAll: GetAllContentPartnerContracts,
+    private val fetch: GetContentPartnerContracts,
     private val create: CreateContentPartnerContract,
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
     private val linksBuilder: ContentPartnerContractsLinkBuilder
 ) : BaseController() {
     @GetMapping
-    fun getAll(): ResponseEntity<ContentPartnerContractsResource> {
-        val resources = fetchAll().let { toResourceConverter.convert(it) }
+    fun getAll(
+        @RequestParam(name = "size", required = false) size: Int?,
+        @RequestParam(name = "page", required = false) page: Int?
+    ): ResponseEntity<ContentPartnerContractsResource> {
+        val resources = fetch(page = page, size = size).let { toResourceConverter.convert(it) }
 
         return ResponseEntity(resources, HttpStatus.OK)
     }

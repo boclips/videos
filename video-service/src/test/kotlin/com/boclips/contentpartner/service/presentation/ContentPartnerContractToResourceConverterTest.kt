@@ -1,6 +1,9 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
+import com.boclips.contentpartner.service.common.PageInfo
+import com.boclips.contentpartner.service.common.PageRequest
+import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
@@ -88,13 +91,24 @@ class ContentPartnerContractToResourceConverterTest {
 
     @Test
     fun `can convert a list of resources`() {
-        val contracts = listOf(
-            ContentPartnerContractFactory.sample(id = "id1"),
-            ContentPartnerContractFactory.sample(id = "id2")
+        val contracts = ResultsPage(
+            elements = listOf(
+                ContentPartnerContractFactory.sample(id = "id1"),
+                ContentPartnerContractFactory.sample(id = "id2")
+            ),
+            pageInfo = PageInfo(
+                hasMoreElements = true,
+                totalElements = 11,
+                pageRequest = PageRequest(size = 2, page = 0)
+            )
         )
 
         val resources = converter.convert(contracts)
 
         assertThat(resources._embedded.contracts.map { it.id }).containsExactlyInAnyOrder("id1", "id2")
+        assertThat(resources.page?.number).isEqualTo(0)
+        assertThat(resources.page?.size).isEqualTo(2)
+        assertThat(resources.page?.totalElements).isEqualTo(11)
+        assertThat(resources.page?.totalPages).isEqualTo(6)
     }
 }
