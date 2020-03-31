@@ -19,6 +19,7 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -326,7 +327,8 @@ abstract class AbstractSpringIntegrationTest {
         royaltySplitStream: Float? = 0.9F,
         minimumPriceDescription: String? = "Price",
         remittanceCurrency: String? = "GBP",
-        restrictions: ContentPartnerContractRestrictionsRequest? = null
+        restrictions: ContentPartnerContractRestrictionsRequest? = null,
+        costs: ContentPartnerContractCostsRequest? = null
     ): ContentPartnerContractId = createContentPartnerContract(
         ContentPartnerContractRequest(
             contentPartnerName = name,
@@ -344,7 +346,8 @@ abstract class AbstractSpringIntegrationTest {
             ),
             minimumPriceDescription = minimumPriceDescription,
             remittanceCurrency = remittanceCurrency,
-            restrictions = restrictions
+            restrictions = restrictions,
+            costs = costs
         )
     )
 

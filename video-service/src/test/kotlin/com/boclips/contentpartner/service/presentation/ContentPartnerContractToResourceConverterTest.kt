@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
@@ -8,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.LocalDate
 
 class ContentPartnerContractToResourceConverterTest {
@@ -46,6 +48,12 @@ class ContentPartnerContractToResourceConverterTest {
                 companies = "Cobra",
                 payout = "All the money goes to charity",
                 other = "Cannot use at 11:45pm"
+            ),
+            costs = ContentPartnerContractCosts(
+                minimumGuarantee = listOf(BigDecimal.ONE),
+                upfrontLicense = BigDecimal.TEN,
+                technicalFee = BigDecimal.ZERO,
+                recoupable = true
             )
         )
 
@@ -71,6 +79,11 @@ class ContentPartnerContractToResourceConverterTest {
         assertThat(resource.restrictions.companies).isEqualTo("Cobra")
         assertThat(resource.restrictions.payout).isEqualTo("All the money goes to charity")
         assertThat(resource.restrictions.other).isEqualTo("Cannot use at 11:45pm")
+
+        assertThat(resource.costs.minimumGuarantee).isEqualTo(listOf(BigDecimal.ONE))
+        assertThat(resource.costs.upfrontLicense).isEqualTo(BigDecimal.TEN)
+        assertThat(resource.costs.technicalFee).isEqualTo(BigDecimal.ZERO)
+        assertThat(resource.costs.recoupable).isEqualTo(true)
     }
 
     @Test

@@ -17,5 +17,6 @@ data class ContentPartnerContractDocument(
     val remittanceCurrency: String?,
     val lastModified: Instant? = null,
     val createdAt: Instant? = null,
-    val restrictions: ContentPartnerContractRestrictionsDocument?
+    val restrictions: ContentPartnerContractRestrictionsDocument?,
+    val costs: ContentPartnerContractCostsDocument?
 )

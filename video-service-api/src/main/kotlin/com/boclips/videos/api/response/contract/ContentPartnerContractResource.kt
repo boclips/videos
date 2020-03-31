@@ -14,5 +14,6 @@ data class ContentPartnerContractResource(
     val minimumPriceDescription: String?,
     val remittanceCurrency: String?,
     val restrictions: ContentPartnerContractRestrictionsResource,
+    val costs: ContentPartnerContractCostsResource,
     val _links: Map<String, HateoasLink>
 )

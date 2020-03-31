@@ -50,6 +50,12 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
                                 "companies": "company one",
                                 "payout": "payout",
                                 "other": "other"
+                            },
+                            "costs": {
+                                "minimumGuarantee": [12.50],
+                                "upfrontLicense": 3.1,
+                                "recoupable": true,
+                                "technicalFee": 11.30
                             }
                         }
                     """.trimIndent()
@@ -73,6 +79,10 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.royaltySplit.streaming", closeTo(50.0, 0.0001)))
             .andExpect(jsonPath("$.minimumPriceDescription", equalTo("Minimum prices are cool")))
             .andExpect(jsonPath("$.remittanceCurrency", equalTo("GBP")))
+            .andExpect(jsonPath("$.costs.minimumGuarantee[0]", closeTo(12.5, 0.0001)))
+            .andExpect(jsonPath("$.costs.upfrontLicense", closeTo(3.1, 0.0001)))
+            .andExpect(jsonPath("$.costs.recoupable", equalTo(true)))
+            .andExpect(jsonPath("$.costs.technicalFee", closeTo(11.3, 0.0001)))
             .andExpect(jsonPath("$.restrictions").exists())
     }
 

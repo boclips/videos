@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
@@ -41,6 +42,12 @@ class ContentPartnerContractDocumentConverter() {
                 companies = contract.restrictions.companies,
                 payout = contract.restrictions.payout,
                 other = contract.restrictions.other
+            ),
+            costs = ContentPartnerContractCostsDocument(
+                minimumGuarantee = contract.costs.minimumGuarantee,
+                upfrontLicense = contract.costs.upfrontLicense,
+                technicalFee = contract.costs.technicalFee,
+                recoupable = contract.costs.recoupable
             )
         )
 
@@ -83,6 +90,12 @@ class ContentPartnerContractDocumentConverter() {
                 companies = document.restrictions?.companies,
                 payout = document.restrictions?.payout,
                 other = document.restrictions?.other
+            ),
+            costs = ContentPartnerContractCosts(
+                minimumGuarantee = document.costs?.minimumGuarantee ?: emptyList(),
+                upfrontLicense = document.costs?.upfrontLicense,
+                technicalFee = document.costs?.technicalFee,
+                recoupable = document.costs?.recoupable
             )
         )
 

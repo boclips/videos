@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
+import com.boclips.videos.api.response.contract.ContentPartnerContractCostsResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRestrictionsResource
@@ -42,6 +43,13 @@ class ContentPartnerContractToResourceConverter(
                 payout = contract.restrictions.payout,
                 other = contract.restrictions.other
             ),
+            costs = ContentPartnerContractCostsResource(
+                minimumGuarantee = contract.costs.minimumGuarantee,
+                upfrontLicense = contract.costs.upfrontLicense,
+                technicalFee = contract.costs.technicalFee,
+                recoupable = contract.costs.recoupable
+            ),
+
             _links = listOfNotNull(linksBuilder.self(contract.id.value)).map { it.rel to it }.toMap()
         )
     }

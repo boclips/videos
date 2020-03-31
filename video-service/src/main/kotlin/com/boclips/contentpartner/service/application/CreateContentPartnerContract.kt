@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
@@ -43,6 +44,12 @@ class CreateContentPartnerContract(
                     companies = request.restrictions?.companies,
                     payout = request.restrictions?.payout,
                     other = request.restrictions?.other
+                ),
+                costs = ContentPartnerContractCosts(
+                    minimumGuarantee = request.costs?.minimumGuarantee ?: emptyList(),
+                    upfrontLicense = request.costs?.upfrontLicense,
+                    technicalFee = request.costs?.technicalFee,
+                    recoupable = request.costs?.recoupable ?: false
                 )
             )
         )

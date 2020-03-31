@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
@@ -58,6 +59,7 @@ import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import org.bson.types.ObjectId
+import java.math.BigDecimal
 import java.net.URL
 import java.time.Duration
 import java.time.Instant
@@ -600,6 +602,12 @@ object ContentPartnerContractFactory {
             companies = "Companies info",
             payout = "Payout info",
             other = "Other info"
+        ),
+        costs: ContentPartnerContractCosts = ContentPartnerContractCosts(
+            minimumGuarantee = listOf(BigDecimal.ONE),
+            upfrontLicense = BigDecimal.ONE,
+            technicalFee = BigDecimal.ONE,
+            recoupable = true
         )
     ) =
         ContentPartnerContract(
@@ -613,6 +621,7 @@ object ContentPartnerContractFactory {
             royaltySplit = royaltySplit,
             minimumPriceDescription = minimumPriceDescription,
             remittanceCurrency = remittanceCurrency?.let { Currency.getInstance(remittanceCurrency) },
-            restrictions = restrictions
+            restrictions = restrictions,
+            costs = costs
         )
 }
