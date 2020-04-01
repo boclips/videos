@@ -440,6 +440,31 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.ageRange.min", equalTo(4)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(12)))
+                .andExpect(jsonPath("$.ageRange.label", equalTo("4-12")))
+        }
+
+        @Test
+        fun `updates the age range of a video to an unbounded range`() {
+            val videoToUpdate = saveVideo(
+                ageRange = BoundedAgeRange(min = 3, max = 10)
+            ).value
+
+            val ageRanges = listOf(
+                createAgeRange(AgeRangeRequest(id = "early-years", min = 14, max = 16, label = "14-16")),
+                createAgeRange(AgeRangeRequest(id = "later-years", min = 16, label = "16+"))
+            )
+
+            mockMvc.perform(
+                patch("/v1/videos/$videoToUpdate?ageRangeIds=${ageRanges[0].id.value},${ageRanges[1].id.value}")
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+
+            mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.ageRange.min", equalTo(14)))
+                .andExpect(jsonPath("$.ageRange.max", equalTo(null)))
+                .andExpect(jsonPath("$.ageRange.label", equalTo("14+")))
         }
     }
 

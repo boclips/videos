@@ -44,10 +44,14 @@ open class UpdateVideo(
                 )
             ) }
             val lowerBound = ranges.map { it.min }.min()
-            val upperBound = ranges.mapNotNull { it.max }.max()
+
+            val rangeMax: Int? = if (ranges.map { it.max }.any { it == null }) null else {
+                ranges.mapNotNull { it.max }.max()
+            }
+
             VideoUpdateCommand.ReplaceAgeRange(
                 VideoId(id), com.boclips.videos.service.domain.model.AgeRange.bounded(
-                    min = lowerBound, max = upperBound
+                    min = lowerBound, max = rangeMax
                 )
             )
         }

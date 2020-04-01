@@ -45,8 +45,10 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
+            val oldAgeRange = saveAgeRange(min = 12, max = 16, id = "12to16", label = "12-16")
+
             createMediaEntry(id = "123")
-            val contentPartner = saveContentPartner()
+            val contentPartner = saveContentPartner(ageRanges = listOf(oldAgeRange.id.value))
 
             assertThrows<Exception> {
                 videosClient.probeVideoReference(
@@ -71,13 +73,23 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     contentPartnerVideoId = "abc"
                 )
             }
+            val ageRange = saveAgeRange(min = 3, max = 9, id = "3to9", label = "3-9")
 
-            videosClient.updateVideo(createdVideo, VideoServiceApiFactory.createUpdateVideoRequest(title = "new title"))
+            videosClient.updateVideo(
+                createdVideo,
+                VideoServiceApiFactory.createUpdateVideoRequest(
+                    title = "new title",
+                    ageRangeIds = listOf(ageRange.id.value)
+                )
+            )
             videosClient.updateVideoRating(createdVideo, 4)
 
             val updatedVideo = videosClient.getVideo(createdVideo)
             assertThat(updatedVideo.title).isEqualTo("new title")
             assertThat(updatedVideo.yourRating).isEqualTo(4.0)
+            assertThat(updatedVideo.ageRange!!.min).isEqualTo(3)
+            assertThat(updatedVideo.ageRange!!.max).isEqualTo(9)
+            assertThat(updatedVideo.ageRange!!.getLabel()).isEqualTo("3-9")
             assertThat(updatedVideo.playback).isNotNull
             assertThat(updatedVideo.playback!!.id).isNotNull()
             assertThat(updatedVideo._links?.get("self")?.href).isNotEmpty()
