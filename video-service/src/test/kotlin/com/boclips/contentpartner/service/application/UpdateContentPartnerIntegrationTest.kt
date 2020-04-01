@@ -1,8 +1,9 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
+import com.boclips.contentpartner.service.application.contentpartner.UpdateContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.ExplicitlyNull
@@ -76,7 +77,11 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")
-        assertThat(updatedContentPartner.ingest).isEqualTo(MrssFeedIngest(listOf("https://mrss.feed.com")))
+        assertThat(updatedContentPartner.ingest).isEqualTo(
+            MrssFeedIngest(
+                listOf("https://mrss.feed.com")
+            )
+        )
         assertThat(updatedContentPartner.deliveryFrequency?.months).isEqualTo(4)
     }
 

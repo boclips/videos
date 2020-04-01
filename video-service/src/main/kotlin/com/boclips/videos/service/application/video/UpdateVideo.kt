@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.user.User
@@ -38,7 +38,11 @@ open class UpdateVideo(
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(VideoId(id), true)
         }
         val updateAgeRangeIds = updateRequest.ageRangeIds?.let { idList ->
-            val ranges: List<AgeRange> = idList.mapNotNull { ageRangeRepository.findById(AgeRangeId(it)) }
+            val ranges: List<AgeRange> = idList.mapNotNull { ageRangeRepository.findById(
+                AgeRangeId(
+                    it
+                )
+            ) }
             val lowerBound = ranges.map { it.min }.min()
             val upperBound = ranges.mapNotNull { it.max }.max()
             VideoUpdateCommand.ReplaceAgeRange(

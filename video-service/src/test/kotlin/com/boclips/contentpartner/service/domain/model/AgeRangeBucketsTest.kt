@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test

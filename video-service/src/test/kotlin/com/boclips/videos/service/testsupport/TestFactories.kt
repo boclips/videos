@@ -1,11 +1,11 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractCosts
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractDates
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRestrictions
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -579,7 +579,7 @@ object ContentPartnerContractFactory {
         id: String? = null,
         contentPartnerName: String? = null,
         contractDocument: String? = "http://contractdocument.com",
-        contractDates: ContentPartnerContractDates? = ContentPartnerContractDates(
+        contractDates: ContractDates? = ContractDates(
             LocalDate.of(2011, 10, 10),
             LocalDate.of(2012, 10, 31)
         ),
@@ -587,14 +587,14 @@ object ContentPartnerContractFactory {
         daysBeforeTerminationWarning: Int? = 30,
         yearsForMaximumLicense: Int? = 5,
         daysForSellOffPeriod: Int? = 60,
-        royaltySplit: ContentPartnerContractRoyaltySplit? =
-            ContentPartnerContractRoyaltySplit(
+        royaltySplit: ContractRoyaltySplit? =
+            ContractRoyaltySplit(
                 download = 10.1.toFloat(),
                 streaming = 20.5.toFloat()
             ),
         minimumPriceDescription: String? = "This is the minimum price",
         remittanceCurrency: String? = "GBP",
-        restrictions: ContentPartnerContractRestrictions = ContentPartnerContractRestrictions(
+        restrictions: ContractRestrictions = ContractRestrictions(
             clientFacing = listOf("restriction 1", "restriction 2"),
             territory = "Australia",
             licensing = "License 1",
@@ -604,7 +604,7 @@ object ContentPartnerContractFactory {
             payout = "Payout info",
             other = "Other info"
         ),
-        costs: ContentPartnerContractCosts = ContentPartnerContractCosts(
+        costs: ContractCosts = ContractCosts(
             minimumGuarantee = listOf(BigDecimal.ONE),
             upfrontLicense = BigDecimal.ONE,
             technicalFee = BigDecimal.ONE,
@@ -612,7 +612,9 @@ object ContentPartnerContractFactory {
         )
     ) =
         ContentPartnerContract(
-            id = ContentPartnerContractId(id ?: "5cf140c4c1475c47f7178678"),
+            id = ContentPartnerContractId(
+                id ?: "5cf140c4c1475c47f7178678"
+            ),
             contentPartnerName = contentPartnerName ?: "content-partner-name",
             contractDocument = URL(contractDocument),
             contractDates = contractDates,

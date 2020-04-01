@@ -1,14 +1,14 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.application.CreateAgeRange
-import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.CreateLegalRestrictions
-import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
+import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
+import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
+import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
+import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.TestKalturaClient
@@ -312,7 +312,9 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {
         val createdResource = createLegalRestrictions(text = text)
-        return LegalRestrictionsId(createdResource.id.value)
+        return LegalRestrictionsId(
+            createdResource.id.value
+        )
     }
 
     fun saveContentPartnerContract(

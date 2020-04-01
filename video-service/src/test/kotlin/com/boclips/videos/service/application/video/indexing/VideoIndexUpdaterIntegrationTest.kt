@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video.indexing
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -82,7 +82,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `add stream videos to non-legacy index only`() {
             val videos = listOf(
-                createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(DistributionMethod.DOWNLOAD))
+                createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(
+                    DistributionMethod.DOWNLOAD))
             )
 
             fakeEventBus.publish(

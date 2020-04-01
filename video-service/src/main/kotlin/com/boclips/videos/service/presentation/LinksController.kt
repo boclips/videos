@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder

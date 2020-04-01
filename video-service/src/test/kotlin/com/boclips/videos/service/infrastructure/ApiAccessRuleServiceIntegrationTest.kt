@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure
 
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule

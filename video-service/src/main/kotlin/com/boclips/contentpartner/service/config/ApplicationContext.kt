@@ -1,26 +1,26 @@
 package com.boclips.contentpartner.service.config
 
-import com.boclips.contentpartner.service.application.AgeRangeResourceConverter
-import com.boclips.contentpartner.service.application.ContentPartnerUpdatesConverter
-import com.boclips.contentpartner.service.application.CreateAgeRange
-import com.boclips.contentpartner.service.application.CreateContentPartner
-import com.boclips.contentpartner.service.application.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.GetAgeRange
-import com.boclips.contentpartner.service.application.GetContentPartnerContracts
-import com.boclips.contentpartner.service.application.GetContentPartner
-import com.boclips.contentpartner.service.application.GetContentPartnerContract
-import com.boclips.contentpartner.service.application.GetContentPartners
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResourceConverter
+import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerUpdatesConverter
+import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
+import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
+import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
+import com.boclips.contentpartner.service.application.agerange.GetAgeRange
+import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
+import com.boclips.contentpartner.service.application.contentpartner.GetContentPartner
+import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
+import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
 import com.boclips.contentpartner.service.config.properties.GcsProperties
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
-import com.boclips.contentpartner.service.presentation.AgeRangeLinkBuilder
-import com.boclips.contentpartner.service.presentation.ContentPartnerContractToResourceConverter
-import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
+import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
+import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,34 +34,48 @@ class ApplicationContext(
 ) {
     @Bean
     fun getContentPartner(): GetContentPartner {
-        return GetContentPartner(contentPartnerRepository)
+        return GetContentPartner(
+            contentPartnerRepository
+        )
     }
 
     @Bean
     fun getContentPartners(): GetContentPartners {
-        return GetContentPartners(contentPartnerRepository)
+        return GetContentPartners(
+            contentPartnerRepository
+        )
     }
 
     @Bean
     fun createContentPartner(): CreateContentPartner {
-        return CreateContentPartner(contentPartnerRepository, ageRangeRepository, ingestDetailsToResourceConverter())
+        return CreateContentPartner(
+            contentPartnerRepository,
+            ageRangeRepository,
+            ingestDetailsToResourceConverter()
+        )
     }
 
     @Bean
     fun getContentPartnerContract(): GetContentPartnerContract {
-        return GetContentPartnerContract(contentPartnerContractRepository)
+        return GetContentPartnerContract(
+            contentPartnerContractRepository
+        )
     }
 
     @Bean
     fun createContentPartnerContract(): CreateContentPartnerContract {
-        return CreateContentPartnerContract(contentPartnerContractRepository)
+        return CreateContentPartnerContract(
+            contentPartnerContractRepository
+        )
     }
 
     @Bean
     fun contentPartnerContractToResourceConverter(
         contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder
     ): ContentPartnerContractToResourceConverter {
-        return ContentPartnerContractToResourceConverter(contentPartnerContractsLinkBuilder)
+        return ContentPartnerContractToResourceConverter(
+            contentPartnerContractsLinkBuilder
+        )
     }
 
     @Bean
@@ -73,17 +87,23 @@ class ApplicationContext(
 
     @Bean
     fun createAgeRange(): CreateAgeRange {
-        return CreateAgeRange(ageRangeRepository)
+        return CreateAgeRange(
+            ageRangeRepository
+        )
     }
 
     @Bean
     fun ageRangeLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): AgeRangeLinkBuilder {
-        return AgeRangeLinkBuilder(uriComponentsBuilderFactory)
+        return AgeRangeLinkBuilder(
+            uriComponentsBuilderFactory
+        )
     }
 
     @Bean
     fun ageRangeResourceConverter(ageRangeLinkBuilder: AgeRangeLinkBuilder): AgeRangeResourceConverter {
-        return AgeRangeResourceConverter(ageRangeLinkBuilder)
+        return AgeRangeResourceConverter(
+            ageRangeLinkBuilder
+        )
     }
 
     @Bean
@@ -106,10 +126,14 @@ class ApplicationContext(
     }
 
     @Bean
-    fun ingestDetailsToResourceConverter(): IngestDetailsResourceConverter = IngestDetailsResourceConverter()
+    fun ingestDetailsToResourceConverter(): IngestDetailsResourceConverter =
+        IngestDetailsResourceConverter()
 
     @Bean
     fun getAllContentPartnerContracts(
         contentPartnerContractRepository: ContentPartnerContractRepository
-    ): GetContentPartnerContracts = GetContentPartnerContracts(contentPartnerContractRepository)
+    ): GetContentPartnerContracts =
+        GetContentPartnerContracts(
+            contentPartnerContractRepository
+        )
 }

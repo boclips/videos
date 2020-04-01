@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartnerId

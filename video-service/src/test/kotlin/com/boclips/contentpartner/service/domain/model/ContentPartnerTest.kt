@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.domain.model
 
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

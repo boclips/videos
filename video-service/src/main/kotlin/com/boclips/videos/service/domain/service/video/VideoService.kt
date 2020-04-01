@@ -1,9 +1,9 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -62,7 +62,9 @@ class VideoService(
         val subjectCounts = results.counts.getFacetCounts(FacetType.Subjects)
             .map { SubjectFacet(subjectId = SubjectId(it.id), total = it.hits) }
         val ageRangeCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
-            .map { AgeRangeFacet(ageRangeId = AgeRangeId(it.id), total = it.hits) }
+            .map { AgeRangeFacet(ageRangeId = AgeRangeId(
+                it.id
+            ), total = it.hits) }
         val durationCounts = results.counts.getFacetCounts(FacetType.Duration)
             .map { DurationFacet(durationId = it.id, total = it.hits) }
 

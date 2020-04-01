@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerStatus
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asUserWithRoles

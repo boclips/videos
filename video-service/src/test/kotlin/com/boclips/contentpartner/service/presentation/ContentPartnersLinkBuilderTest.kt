@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.nhaarman.mockitokotlin2.mock

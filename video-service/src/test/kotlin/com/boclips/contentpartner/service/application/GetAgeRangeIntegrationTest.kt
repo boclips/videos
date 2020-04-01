@@ -1,8 +1,9 @@
 package com.boclips.contentpartner.service.application
 
+import com.boclips.contentpartner.service.application.agerange.GetAgeRange
 import com.boclips.contentpartner.service.application.exceptions.AgeRangeNotFoundException
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +19,11 @@ class GetAgeRangeIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws an not found exception when given age range is not found`() {
-        assertThrows<AgeRangeNotFoundException> { getAgeRange(AgeRangeId("this does not exist")) }
+        assertThrows<AgeRangeNotFoundException> { getAgeRange(
+            AgeRangeId(
+                "this does not exist"
+            )
+        ) }
     }
 
     @Test

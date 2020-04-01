@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.domain.model.video.VideoAccess

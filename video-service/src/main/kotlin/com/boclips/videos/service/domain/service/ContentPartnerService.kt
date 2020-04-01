@@ -1,12 +1,12 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import org.springframework.stereotype.Component
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId as ContentPartnerServiceContentPartnerId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId as ContentPartnerServiceContentPartnerId
 
 @Component
 class ContentPartnerService(val contentPartnerRepository: ContentPartnerRepository) {
@@ -45,7 +45,11 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
             }
     }
 
-    private fun find(contentPartnerId: ContentPartnerId): com.boclips.contentpartner.service.domain.model.ContentPartner? {
-        return contentPartnerRepository.findById(com.boclips.contentpartner.service.domain.model.ContentPartnerId(value = contentPartnerId.value))
+    private fun find(contentPartnerId: ContentPartnerId): com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner? {
+        return contentPartnerRepository.findById(
+            com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId(
+                value = contentPartnerId.value
+            )
+        )
     }
 }

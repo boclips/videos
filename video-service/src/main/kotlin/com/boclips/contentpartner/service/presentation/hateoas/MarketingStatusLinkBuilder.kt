@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.hateoas
 
-import com.boclips.contentpartner.service.presentation.MarketingStatusController
+import com.boclips.contentpartner.service.presentation.marketingstatus.MarketingStatusController
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link

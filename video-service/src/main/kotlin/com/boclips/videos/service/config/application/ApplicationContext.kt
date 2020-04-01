@@ -1,10 +1,10 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.contentpartner.service.application.CreateLegalRestrictions
-import com.boclips.contentpartner.service.application.FindAllLegalRestrictions
-import com.boclips.contentpartner.service.application.FindLegalRestrictions
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
+import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
+import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ContentPartnerUpdated
@@ -360,17 +360,23 @@ class ApplicationContext(
 
     @Bean
     fun createLegalRestrictions(): CreateLegalRestrictions {
-        return CreateLegalRestrictions(legalRestrictionsRepository)
+        return CreateLegalRestrictions(
+            legalRestrictionsRepository
+        )
     }
 
     @Bean
     fun findLegalRestrictions(): FindLegalRestrictions {
-        return FindLegalRestrictions(legalRestrictionsRepository)
+        return FindLegalRestrictions(
+            legalRestrictionsRepository
+        )
     }
 
     @Bean
     fun findAllLegalRestrictions(): FindAllLegalRestrictions {
-        return FindAllLegalRestrictions(legalRestrictionsRepository)
+        return FindAllLegalRestrictions(
+            legalRestrictionsRepository
+        )
     }
 
     @Bean

@@ -1,23 +1,23 @@
 package com.boclips.contentpartner.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.AgeRange
-import com.boclips.contentpartner.service.domain.model.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerMarketingInformation
-import com.boclips.contentpartner.service.domain.model.ContentPartnerType
-import com.boclips.contentpartner.service.domain.model.Credit
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.IngestDetails
-import com.boclips.contentpartner.service.domain.model.LegalRestriction
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsId
-import com.boclips.contentpartner.service.domain.model.ManualIngest
-import com.boclips.contentpartner.service.domain.model.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.Remittance
-import com.boclips.contentpartner.service.infrastructure.AgeRangeDocument
-import com.boclips.contentpartner.service.infrastructure.ContentPartnerDocument
-import com.boclips.contentpartner.service.infrastructure.IngestDetailsDocument
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
+import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDetails
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
+import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
+import com.boclips.contentpartner.service.infrastructure.contentpartner.IngestDetailsDocument
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -37,7 +37,9 @@ object ContentPartnerFactory {
             ObjectId().toHexString()
         ),
         name: String = "TED",
-        ageRanges: AgeRangeBuckets = AgeRangeBuckets(emptyList()),
+        ageRanges: AgeRangeBuckets = AgeRangeBuckets(
+            emptyList()
+        ),
         credit: Credit = Credit.PartnerCredit,
         legalRestriction: LegalRestriction? = null,
         distributionMethods: Set<DistributionMethod> = emptySet(),
@@ -120,7 +122,9 @@ object ContentPartnerFactory {
 
     fun createLegalRestrictions(text: String = "No restrictions."): LegalRestriction {
         return LegalRestriction(
-            id = LegalRestrictionsId(TestFactories.aValidId()),
+            id = LegalRestrictionsId(
+                TestFactories.aValidId()
+            ),
             text = text
         )
     }

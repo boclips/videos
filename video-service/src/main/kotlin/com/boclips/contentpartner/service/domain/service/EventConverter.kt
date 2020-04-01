@@ -1,11 +1,11 @@
 package com.boclips.contentpartner.service.domain.service
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.CustomIngest
-import com.boclips.contentpartner.service.domain.model.IngestDetails
-import com.boclips.contentpartner.service.domain.model.ManualIngest
-import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.CustomIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDetails
+import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
 import com.boclips.videos.api.common.IngestType
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner

@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.videos.service.testsupport.asApiUser

@@ -3,8 +3,8 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -241,6 +241,10 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.ingest).isEqualTo(YoutubeScrapeIngest(listOf("https://yt.com/channel")))
+        assertThat(contentPartner.ingest).isEqualTo(
+            YoutubeScrapeIngest(
+                listOf("https://yt.com/channel")
+            )
+        )
     }
 }

@@ -1,10 +1,11 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerUpdateCommand
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.domain.model.MrssFeedIngest
+import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerUpdatesConverter
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
@@ -300,7 +301,11 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceIngestDetails } as ContentPartnerUpdateCommand.ReplaceIngestDetails
 
-        assertThat(command.ingest).isEqualTo(MrssFeedIngest(listOf("https://mrss.feed")))
+        assertThat(command.ingest).isEqualTo(
+            MrssFeedIngest(
+                listOf("https://mrss.feed")
+            )
+        )
     }
 
     @Test

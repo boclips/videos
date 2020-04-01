@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
@@ -202,8 +202,12 @@ class xVideoToResourceConverterTest {
                     total = 10,
                     subjects = listOf(SubjectFacet(subjectId = SubjectId("id"), total = 100)),
                     ageRanges = listOf(
-                        AgeRangeFacet(ageRangeId = AgeRangeId("3-5"), total = 3),
-                        AgeRangeFacet(ageRangeId = AgeRangeId("5-11"), total = 1)
+                        AgeRangeFacet(ageRangeId = AgeRangeId(
+                            "3-5"
+                        ), total = 3),
+                        AgeRangeFacet(ageRangeId = AgeRangeId(
+                            "5-11"
+                        ), total = 1)
                     ),
                     durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10))
                 ),

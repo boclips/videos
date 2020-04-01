@@ -1,10 +1,10 @@
 package com.boclips.contentpartner.service.config
 
-import com.boclips.contentpartner.service.presentation.ContentPartnerToResourceConverter
-import com.boclips.contentpartner.service.presentation.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.LegalRestrictionsToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.ContentPartnerToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
-import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
+import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

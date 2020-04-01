@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 
 sealed class VideoAccessRule {
     data class ExcludedIds(val videoIds: Set<VideoId>) : VideoAccessRule() {

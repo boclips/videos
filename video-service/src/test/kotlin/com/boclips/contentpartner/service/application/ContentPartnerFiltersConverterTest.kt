@@ -1,7 +1,8 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.domain.model.ContentPartnerFilter
-import com.boclips.contentpartner.service.domain.model.Credit
+import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerFiltersConverter
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerFilter
+import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

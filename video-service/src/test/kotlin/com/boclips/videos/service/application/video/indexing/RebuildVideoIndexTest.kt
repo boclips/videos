@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video.indexing
 
-import com.boclips.contentpartner.service.domain.model.ContentPartner
-import com.boclips.contentpartner.service.domain.model.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
@@ -38,15 +38,21 @@ class RebuildVideoIndexTest {
 
         val contentPartnerRepository: ContentPartnerRepository = getMockContentPartnerRepo(
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(bothContentPartnerId),
+                id = ContentPartnerId(
+                    bothContentPartnerId
+                ),
                 distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
             ),
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(streamableContentPartnerId),
+                id = ContentPartnerId(
+                    streamableContentPartnerId
+                ),
                 distributionMethods = setOf(DistributionMethod.STREAM)
             ),
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(downloadContentPartnerId),
+                id = ContentPartnerId(
+                    downloadContentPartnerId
+                ),
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
         )

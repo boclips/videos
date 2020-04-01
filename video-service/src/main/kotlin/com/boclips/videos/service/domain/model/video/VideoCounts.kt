@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.contentpartner.service.domain.model.AgeRangeId
+import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 
 class VideoCounts(

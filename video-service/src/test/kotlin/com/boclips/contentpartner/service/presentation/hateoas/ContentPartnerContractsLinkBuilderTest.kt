@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.presentation.hateoas
 
-import com.boclips.contentpartner.service.presentation.UriComponentsBuilderFactory
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.nhaarman.mockitokotlin2.mock
