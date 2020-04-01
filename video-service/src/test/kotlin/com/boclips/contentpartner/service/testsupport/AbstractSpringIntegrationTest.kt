@@ -320,6 +320,7 @@ abstract class AbstractSpringIntegrationTest {
         contractDocument: String? = null,
         contractDateStart: String? = null,
         contractDateEnd: String? = LocalDate.of(2001, Month.AUGUST, 1).toString(),
+        contractIsRolling: Boolean? = true,
         daysBeforeTerminationWarning: Int? = 100,
         yearsForMaximumLicense: Int? = 5,
         daysForSellOffPeriod: Int? = 4,
@@ -337,6 +338,7 @@ abstract class AbstractSpringIntegrationTest {
                 start = contractDateStart,
                 end = contractDateEnd
             ),
+            contractIsRolling = contractIsRolling,
             daysBeforeTerminationWarning = daysBeforeTerminationWarning,
             yearsForMaximumLicense = yearsForMaximumLicense,
             daysForSellOffPeriod = daysForSellOffPeriod,

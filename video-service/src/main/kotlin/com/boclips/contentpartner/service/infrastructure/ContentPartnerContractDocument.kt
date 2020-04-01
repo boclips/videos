@@ -9,6 +9,7 @@ data class ContentPartnerContractDocument(
     val contentPartnerName: String,
     val contractDocument: String?,
     val contractDates: ContentPartnerContractDatesDocument?,
+    val contractIsRolling: Boolean?,
     val daysBeforeTerminationWarning: Int?,
     val yearsForMaximumLicense: Int?,
     val daysForSellOffPeriod: Int?,

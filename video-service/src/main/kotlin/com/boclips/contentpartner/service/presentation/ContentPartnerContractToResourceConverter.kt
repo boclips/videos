@@ -26,6 +26,7 @@ class ContentPartnerContractToResourceConverter(
                 start = contract.contractDates?.start?.format(formatter),
                 end = contract.contractDates?.end?.format(formatter)
             ),
+            contractIsRolling = contract.contractIsRolling,
             daysBeforeTerminationWarning = contract.daysBeforeTerminationWarning,
             yearsForMaximumLicense = contract.yearsForMaximumLicense,
             daysForSellOffPeriod = contract.daysForSellOffPeriod,

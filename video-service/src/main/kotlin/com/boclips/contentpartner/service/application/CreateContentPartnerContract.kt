@@ -26,6 +26,7 @@ class CreateContentPartnerContract(
                     start = request.contractDates?.start?.let(DateConverter::convert),
                     end = request.contractDates?.end?.let(DateConverter::convert)
                 ),
+                contractIsRolling = request.contractIsRolling,
                 daysBeforeTerminationWarning = request.daysBeforeTerminationWarning,
                 yearsForMaximumLicense = request.yearsForMaximumLicense,
                 daysForSellOffPeriod = request.daysForSellOffPeriod,

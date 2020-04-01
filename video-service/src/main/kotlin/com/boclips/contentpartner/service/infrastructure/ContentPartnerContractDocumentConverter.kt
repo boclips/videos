@@ -24,6 +24,7 @@ class ContentPartnerContractDocumentConverter() {
                 start = contract.contractDates?.start?.toString(),
                 end = contract.contractDates?.end?.toString()
             ),
+            contractIsRolling = contract.contractIsRolling,
             daysBeforeTerminationWarning = contract.daysBeforeTerminationWarning,
             yearsForMaximumLicense = contract.yearsForMaximumLicense,
             daysForSellOffPeriod = contract.daysForSellOffPeriod,
@@ -66,6 +67,7 @@ class ContentPartnerContractDocumentConverter() {
                 start = document.contractDates?.start?.let { parseDate(document.id, it) },
                 end = document.contractDates?.end?.let { parseDate(document.id, it) }
             ),
+            contractIsRolling = document.contractIsRolling,
             daysBeforeTerminationWarning = document.daysBeforeTerminationWarning,
             yearsForMaximumLicense = document.yearsForMaximumLicense,
             daysForSellOffPeriod = document.daysForSellOffPeriod,

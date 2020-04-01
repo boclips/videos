@@ -583,6 +583,7 @@ object ContentPartnerContractFactory {
             LocalDate.of(2011, 10, 10),
             LocalDate.of(2012, 10, 31)
         ),
+        contractIsRolling: Boolean? = true,
         daysBeforeTerminationWarning: Int? = 30,
         yearsForMaximumLicense: Int? = 5,
         daysForSellOffPeriod: Int? = 60,
@@ -615,6 +616,7 @@ object ContentPartnerContractFactory {
             contentPartnerName = contentPartnerName ?: "content-partner-name",
             contractDocument = URL(contractDocument),
             contractDates = contractDates,
+            contractIsRolling = contractIsRolling,
             daysBeforeTerminationWarning = daysBeforeTerminationWarning,
             yearsForMaximumLicense = yearsForMaximumLicense,
             daysForSellOffPeriod = daysForSellOffPeriod,

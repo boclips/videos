@@ -33,6 +33,7 @@ class ContentPartnerContractToResourceConverterTest {
                 start = LocalDate.of(2011, 1, 1),
                 end = LocalDate.of(2022, 2, 2)
             ),
+            contractIsRolling = true,
             daysBeforeTerminationWarning = 100,
             yearsForMaximumLicense = 10,
             daysForSellOffPeriod = 10,
