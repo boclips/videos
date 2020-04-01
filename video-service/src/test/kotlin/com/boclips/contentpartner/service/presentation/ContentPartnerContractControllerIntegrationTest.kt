@@ -87,6 +87,13 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
     }
 
     @Test
+    fun `a 404 when fetching non-existent content partner`() {
+        mockMvc.perform(get("/v1/content-partner-contracts/missing").asBoclipsEmployee())
+            .andExpect(status().isNotFound)
+            .andExpectApiErrorPayload()
+    }
+
+    @Test
     fun `a 403 when trying to create a contract with incorrect role`() {
         mockMvc.perform(post("/v1/content-partner-contracts"))
             .andExpect(status().isForbidden)
