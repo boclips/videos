@@ -253,7 +253,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `invalid content types are ignored`() {
         val contentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
-                contentTypes = listOf("NEWS", "STOCK", "WOAH_NATURE", "INSTRUCTIONAL")
+                contentTypes = listOf("NEWS", "STOCK", "WOAH_NATURE", "INSTRUCTIONAL", null)
             )
         )
 

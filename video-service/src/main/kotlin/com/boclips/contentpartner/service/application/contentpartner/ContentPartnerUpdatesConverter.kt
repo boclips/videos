@@ -9,9 +9,9 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingStatusConverter
-import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
@@ -90,18 +90,21 @@ class ContentPartnerUpdateCommandCreator(
                     )
                 )
             }
-            ContentPartnerUpdateCommand.ReplaceAgeRanges(id,
+            ContentPartnerUpdateCommand.ReplaceAgeRanges(
+                id,
                 AgeRangeBuckets(ageRanges = ageRanges)
             )
         }
 
     fun updateLegalRestrictions(legalRestrictionsRepository: LegalRestrictionsRepository): ContentPartnerUpdateCommand.ReplaceLegalRestrictions? =
         contentPartnerRequest.legalRestrictions
-            ?.let { restrictionsRequest -> legalRestrictionsRepository.findById(
-                LegalRestrictionsId(
-                    restrictionsRequest.id!!
+            ?.let { restrictionsRequest ->
+                legalRestrictionsRepository.findById(
+                    LegalRestrictionsId(
+                        restrictionsRequest.id!!
+                    )
                 )
-            ) }
+            }
             ?.let { restrictions -> ContentPartnerUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
 
     fun updateCurrency(): ContentPartnerUpdateCommand.ReplaceCurrency? =
@@ -111,7 +114,7 @@ class ContentPartnerUpdateCommandCreator(
 
     fun updateContentPartnerTypes(): ContentPartnerUpdateCommand.ReplaceContentTypes? =
         contentPartnerRequest.contentTypes?.let { contentTypes ->
-            ContentPartnerUpdateCommand.ReplaceContentTypes(id, contentTypes)
+            ContentPartnerUpdateCommand.ReplaceContentTypes(id, contentTypes.mapNotNull { it })
         }
 
     fun updateContentContentCategories(): ContentPartnerUpdateCommand.ReplaceContentCategories? =

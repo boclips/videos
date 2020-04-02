@@ -22,7 +22,7 @@ data class ContentPartnerRequest(
     val notes: String? = null,
     @field:Language
     val language: String? = null,
-    val contentTypes: List<String>? = null,
+    val contentTypes: List<String?>? = null,
     val ingest: IngestDetailsResource? = null,
     val deliveryFrequency: Period? = null,
     val oneLineDescription: String? = null,
