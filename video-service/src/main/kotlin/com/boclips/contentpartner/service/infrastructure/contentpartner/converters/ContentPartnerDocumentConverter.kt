@@ -20,6 +20,7 @@ import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalR
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
+import mu.KLogging
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
 import java.net.URL
@@ -27,7 +28,7 @@ import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
-object ContentPartnerDocumentConverter {
+object ContentPartnerDocumentConverter : KLogging() {
     private fun getAgeRangeBuckets(ageRangeBuckets: List<AgeRangeDocument>?) =
         ageRangeBuckets?.map { AgeRangeDocumentConverter.toAgeRange(it) }
             ?: emptyList()
@@ -127,7 +128,20 @@ object ContentPartnerDocumentConverter {
             awards = document.awards,
             notes = document.notes,
             language = document.language?.let { Locale.forLanguageTag(it) },
-            contentTypes = document.contentTypes?.map { ContentPartnerType.valueOf(it) },
+            contentTypes = document.contentTypes?.mapNotNull {
+                when (it) {
+                    "NEWS" -> ContentPartnerType.NEWS
+                    "INSTRUCTIONAL" -> ContentPartnerType.INSTRUCTIONAL
+                    "STOCK" -> ContentPartnerType.STOCK
+                    else -> {
+                        logger.warn {
+                            "$it is not a valid type. Valid types are ${ContentPartnerType.values()
+                                .joinToString(prefix = "[", postfix = "]") { value -> value.name }}"
+                        }
+                        null
+                    }
+                }
+            },
             ingest = document.ingest?.let(IngestDetailsDocumentConverter::toIngestDetails) ?: ManualIngest,
             deliveryFrequency = document.deliveryFrequency?.let { Period.parse(it) },
             marketingInformation = document.marketingInformation?.let {
@@ -144,7 +158,8 @@ object ContentPartnerDocumentConverter {
                         null -> null
                     },
                     logos = it.logos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl),
-                    showreel = it.showreel?.let(ContentPartnerDocumentConverter::safeToUrl)?.let { url -> Specified(url) },
+                    showreel = it.showreel?.let(ContentPartnerDocumentConverter::safeToUrl)
+                        ?.let { url -> Specified(url) },
                     sampleVideos = it.sampleVideos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl)
                 )
             },

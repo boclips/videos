@@ -25,7 +25,7 @@ import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
-internal class ContentPartnerDocumentConverterTest {
+class ContentPartnerDocumentConverterTest {
 
     @Test
     fun `round-trips a content partner conversion via document`() {
@@ -154,6 +154,23 @@ internal class ContentPartnerDocumentConverterTest {
             val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
 
             assertThat(convertedContentPartner.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
+        }
+    }
+
+    @Nested
+    inner class Types {
+        @Test
+        fun `invalid types are ignored`() {
+            val contentPartnerDocument =
+                createContentPartnerDocument(contentTypes = listOf("NEWS", "INSTRUCTIONAL", "STOCK", "WHODIS?"))
+
+            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+
+            assertThat(convertedContentPartner.contentTypes).containsExactly(
+                ContentPartnerType.NEWS,
+                ContentPartnerType.INSTRUCTIONAL,
+                ContentPartnerType.STOCK
+            )
         }
     }
 }
