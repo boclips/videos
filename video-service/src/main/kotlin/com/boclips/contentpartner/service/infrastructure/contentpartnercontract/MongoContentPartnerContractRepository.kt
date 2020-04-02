@@ -70,7 +70,7 @@ class MongoContentPartnerContractRepository(
                     pageInfo = PageInfo(
                         hasMoreElements = count > pageRequest.size * (pageRequest.page + 1),
                         totalElements = count,
-                        pageRequest = pageRequest.copy(size = it.count())
+                        pageRequest = pageRequest
                     )
                 )
             }

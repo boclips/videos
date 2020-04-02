@@ -76,7 +76,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
             assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(3)
             assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(1)
-            assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(1)
+            assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(2)
         }
     }
 }
