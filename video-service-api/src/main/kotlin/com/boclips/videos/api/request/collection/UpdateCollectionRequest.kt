@@ -1,6 +1,7 @@
 package com.boclips.videos.api.request.collection
 
 import com.boclips.videos.api.request.agerange.AgeRangeRequest
+import com.boclips.videos.api.request.attachments.AttachmentRequest
 import javax.validation.Valid
 
 class UpdateCollectionRequest(
@@ -14,11 +15,5 @@ class UpdateCollectionRequest(
 
     @field:Valid
     var ageRange: AgeRangeRequest? = null
-)
-
-class AttachmentRequest(
-    var linkToResource: String,
-    var description: String? = null,
-    var type: String
 )
 

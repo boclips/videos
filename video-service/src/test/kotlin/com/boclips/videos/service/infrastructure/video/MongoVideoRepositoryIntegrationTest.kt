@@ -2,8 +2,9 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -13,6 +14,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -520,6 +522,28 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
         assertThat(videos).containsExactly(video1, video2)
+    }
+
+    @Test
+    fun `add attachment to video`() {
+        val video = mongoVideoRepository.create(createVideo(attachments = emptyList()))
+
+        val updatedVideo = mongoVideoRepository.update(
+            VideoUpdateCommand.AddAttachment(
+                videoId = video.videoId,
+                attachment = AttachmentFactory.sample(
+                    description = "description",
+                    type = AttachmentType.ACTIVITY,
+                    linkToResource = "some-link"
+                )
+            )
+        )
+
+        assertThat(updatedVideo.attachments).hasSize(1)
+        assertThat(updatedVideo.attachments[0].attachmentId).isNotNull
+        assertThat(updatedVideo.attachments[0].description).isEqualTo("description")
+        assertThat(updatedVideo.attachments[0].linkToResource).isEqualTo("some-link")
+        assertThat(updatedVideo.attachments[0].type).isEqualTo(AttachmentType.ACTIVITY)
     }
 
     @Nested

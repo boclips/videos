@@ -1,7 +1,7 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
+import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoService
@@ -11,6 +11,7 @@ import com.boclips.videos.service.presentation.converters.CollectionResourceConv
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
@@ -81,9 +82,14 @@ class PresentationContext(val videoService: VideoService) {
     @Bean
     fun videoConverter(
         videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter
+        playbackToResourceConverter: PlaybackToResourceConverter,
+        attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): VideoToResourceConverter {
-        return VideoToResourceConverter(videosLinkBuilder, playbackToResourceConverter)
+        return VideoToResourceConverter(
+            videosLinkBuilder = videosLinkBuilder,
+            playbackToResourceConverter = playbackToResourceConverter,
+            attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder)
+        )
     }
 
     @Bean
@@ -94,7 +100,7 @@ class PresentationContext(val videoService: VideoService) {
         return PlaybackToResourceConverter(eventsLinkBuilder, playbacksLinkBuilder)
     }
 
-    @Bean //TODO: collectionResourceFactory mixes different abstractions, address smell
+    @Bean //TODO: collectionResourceFactory mixes different abstractions, address smell. This is a mess.
     fun collectionResourceFactory(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
@@ -104,7 +110,8 @@ class PresentationContext(val videoService: VideoService) {
         return CollectionResourceConverter(
             VideoToResourceConverter(
                 videosLinkBuilder,
-                playbackToResourceConverter
+                playbackToResourceConverter,
+                attachmentsToResourceConverter
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,

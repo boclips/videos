@@ -6,16 +6,12 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentPartner
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
-import com.boclips.web.exceptions.BoclipsApiException
-import org.assertj.core.api.AbstractThrowableAssert
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Condition
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.function.Predicate
 
 class CreateVideoRequestToVideoConverterTest {
 
@@ -99,13 +95,4 @@ class CreateVideoRequestToVideoConverterTest {
             ).legalRestrictions
         ).isEmpty()
     }
-}
-
-private fun AbstractThrowableAssert<*, *>.hasBoclipsApiErrorMessage(s: String) {
-    this.has(
-        Condition(
-            Predicate { t -> (t as BoclipsApiException).exceptionDetails.message == s },
-            "cannot find exception message"
-        )
-    )
 }

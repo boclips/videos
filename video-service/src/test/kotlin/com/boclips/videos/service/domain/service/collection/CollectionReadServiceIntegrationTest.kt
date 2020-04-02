@@ -6,7 +6,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibilityQ
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.TeacherPlatformAttributesResource
-import com.boclips.videos.api.request.collection.AttachmentRequest
+import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery

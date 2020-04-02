@@ -25,6 +25,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocumentConverter
@@ -296,6 +297,9 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceSubjectsWereSetManually -> set(
                 VideoDocument::subjectsWereSetManually,
                 updateCommand.subjectsWereSetManually
+            )
+            is VideoUpdateCommand.AddAttachment -> set(
+                VideoDocument::attachments, listOf(AttachmentDocumentConverter.convert(updateCommand.attachment))
             )
         }
     }

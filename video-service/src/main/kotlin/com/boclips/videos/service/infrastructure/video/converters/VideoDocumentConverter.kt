@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
@@ -47,7 +48,8 @@ object VideoDocumentConverter {
                 )
             },
             promoted = video.promoted,
-            subjectsWereSetManually = video.subjects.setManually
+            subjectsWereSetManually = video.subjects.setManually,
+            attachments = video.attachments.map { AttachmentDocumentConverter.convert(it) }
         )
     }
 
@@ -83,7 +85,8 @@ object VideoDocumentConverter {
                     it
                 )
             },
-            promoted = document.promoted
+            promoted = document.promoted,
+            attachments = document.attachments.map { AttachmentDocumentConverter.convert(it) }
         )
     }
 

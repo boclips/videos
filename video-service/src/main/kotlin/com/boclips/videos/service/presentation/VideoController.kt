@@ -1,13 +1,16 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.AdminSearchRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.collection.AttachmentResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.service.application.AddAttachment
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -15,13 +18,16 @@ import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
+import com.boclips.videos.service.application.video.exceptions.VideoServiceException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
@@ -38,6 +44,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -57,7 +64,9 @@ class VideoController(
     private val objectMapper: ObjectMapper,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
+    private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val videoRepository: VideoRepository,
+    private val addAttachment: AddAttachment,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -68,7 +77,7 @@ class VideoController(
     }
 
     @GetMapping("/v1/videos")
-    fun search(
+    fun getVideos(
         @RequestParam(name = "query", required = false) query: String?,
         @RequestParam(name = "sort_by", required = false) sortBy: SortKey?,
         @RequestParam(name = "best_for", required = false) bestFor: List<String>?,
@@ -124,7 +133,8 @@ class VideoController(
     }
 
     @PostMapping("/v1/videos/search")
-    fun adminSearch(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
+    @Deprecated("We should use one single search endpoint, e.g. /v1/videos instead")
+    fun getVideosAdmin(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
         val user = getCurrentUser()
         return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), Administrator)
             .map { video: Video -> videoToResourceConverter.convert(video = video, user = user) }
@@ -141,7 +151,7 @@ class VideoController(
     }
 
     @CrossOrigin(allowCredentials = "true")
-    @GetMapping(path = ["/v1/videos/{id}"])
+    @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,
         @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null
@@ -158,11 +168,6 @@ class VideoController(
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
 
         return ResponseEntity(resources, headers, HttpStatus.OK)
-    }
-
-    @DeleteMapping("/v1/videos/{id}")
-    fun removeVideo(@PathVariable("id") id: String?) {
-        deleteVideo(id, getCurrentUser())
     }
 
     @GetMapping("/v1/videos/{id}/transcript")
@@ -182,6 +187,28 @@ class VideoController(
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")
 
         return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
+    }
+
+    @RequestMapping(
+        path = ["/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}"],
+        method = [RequestMethod.HEAD]
+    )
+    fun getVideoByProviderId(
+        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
+    ): ResponseEntity<Void> {
+        val exists = videoRepository.existsVideoFromContentPartnerId(
+            ContentPartnerId(value = contentPartnerId),
+            contentPartnerVideoId
+        )
+
+        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
+        return ResponseEntity(status)
+    }
+
+    @DeleteMapping("/v1/videos/{id}")
+    fun removeVideo(@PathVariable("id") id: String?) {
+        deleteVideo(id, getCurrentUser())
     }
 
     @PostMapping("/v1/videos")
@@ -244,21 +271,20 @@ class VideoController(
     fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
 
-    @RequestMapping(
-        "/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}",
-        method = [RequestMethod.HEAD]
-    )
-    fun lookupVideoByProviderId(
-        @PathVariable("contentPartnerId") contentPartnerId: String,
-        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
-    ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = contentPartnerId),
-            contentPartnerVideoId
+    @PutMapping(path = ["/v1/videos/{id}/attachments"])
+    fun putAttachment(
+        @PathVariable id: String,
+        @Valid @RequestBody attachment: AttachmentRequest?
+    ): ResponseEntity<AttachmentResource> {
+        val newAttachment = addAttachment.toVideo(
+            user = getCurrentUser(),
+            videoId = VideoId(value = id),
+            attachment = attachment
+                ?: throw VideoServiceException(message = "You must provide an attachment request")
         )
 
-        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
-        return ResponseEntity(status)
+        val resource = attachmentToResourceConverter.convert(newAttachment)
+
+        return ResponseEntity(resource, HttpStatus.CREATED)
     }
 }
-

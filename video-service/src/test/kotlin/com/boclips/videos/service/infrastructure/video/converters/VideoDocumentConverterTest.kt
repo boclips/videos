@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
 import org.assertj.core.api.Assertions.assertThat
@@ -54,9 +55,12 @@ class VideoDocumentConverterTest {
                     )
                 )
             ),
-            ratings = listOf(UserRating(3,
-                UserId("user")
-            )),
+            ratings = listOf(
+                UserRating(
+                    3,
+                    UserId("user")
+                )
+            ),
             ageRange = AgeRange.bounded(11, 16),
             promoted = true
         )
@@ -65,6 +69,18 @@ class VideoDocumentConverterTest {
         val recoveredVideo = VideoDocumentConverter.toVideo(document)
 
         assertThat(recoveredVideo).isEqualTo(originalVideo)
+    }
+
+    @Test
+    fun `can convert attachments`() {
+        val originalVideo: Video = TestFactories.createVideo(
+            attachments = listOf(AttachmentFactory.sample())
+        )
+
+        val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+        val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+        assertThat(recoveredVideo.attachments).isEqualTo(originalVideo.attachments)
     }
 
     @Test

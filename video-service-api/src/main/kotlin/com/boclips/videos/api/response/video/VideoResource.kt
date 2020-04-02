@@ -5,6 +5,7 @@ import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
+import com.boclips.videos.api.response.collection.AttachmentResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -42,6 +43,9 @@ data class VideoResource(
     val promoted: Boolean? = null,
     @get:JsonView(PublicApiProjection::class)
     val language: LanguageResource? = null,
+    @get:JsonView(PublicApiProjection::class)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    val attachments: List<AttachmentResource> = emptyList(),
     @get:JsonView(BoclipsInternalProjection::class)
     val contentPartner: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)

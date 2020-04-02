@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
@@ -12,6 +13,7 @@ import java.time.Duration
 import java.util.Locale
 
 sealed class VideoUpdateCommand(val videoId: VideoId) {
+    class AddAttachment(videoId: VideoId, val attachment: Attachment) : VideoUpdateCommand(videoId)
     class ReplaceSubjects(videoId: VideoId, val subjects: List<Subject>) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)

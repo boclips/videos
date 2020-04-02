@@ -9,8 +9,9 @@ import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DurationFacet
@@ -20,6 +21,7 @@ import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.UserFactory
@@ -31,7 +33,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.Locale
 
-class xVideoToResourceConverterTest {
+class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
@@ -44,6 +46,7 @@ class xVideoToResourceConverterTest {
         type = ContentType.NEWS,
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
+        language = Locale("khm"),
         ageRange = AgeRange.bounded(min = 5, max = 11),
         ratings = listOf(
             UserRating(
@@ -52,9 +55,15 @@ class xVideoToResourceConverterTest {
                 )
             )
         ),
-        language = Locale("khm"),
         tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
-        promoted = true
+        promoted = true,
+        attachments = listOf(
+            AttachmentFactory.sample(
+                description = "some description",
+                type = AttachmentType.ACTIVITY,
+                linkToResource = "link"
+            )
+        )
     )
 
     private val youtubeVideo = createVideo(
@@ -66,7 +75,14 @@ class xVideoToResourceConverterTest {
         type = ContentType.INSTRUCTIONAL_CLIPS,
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
-        tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id"))
+        tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
+        attachments = listOf(
+            AttachmentFactory.sample(
+                description = "some description",
+                type = AttachmentType.ACTIVITY,
+                linkToResource = "link"
+            )
+        )
     )
 
     @BeforeEach
@@ -80,7 +96,8 @@ class xVideoToResourceConverterTest {
         videoToResourceConverter =
             VideoToResourceConverter(
                 videosLinkBuilder,
-                playbackToResourceConverter
+                playbackToResourceConverter,
+                AttachmentToResourceConverter(mock())
             )
     }
 
@@ -131,6 +148,11 @@ class xVideoToResourceConverterTest {
         assertThat(videoResource.language?.code).isEqualTo("khm")
         assertThat(videoResource.language?.displayName).isEqualTo("Central Khmer")
 
+        assertThat(videoResource.attachments).hasSize(1)
+        assertThat(videoResource.attachments[0].id).isNotNull()
+        assertThat(videoResource.attachments[0].type).isEqualTo("ACTIVITY")
+        assertThat(videoResource.attachments[0].description).isEqualTo("some description")
+
         val playbackResource = videoResource.playback!! as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
@@ -155,12 +177,19 @@ class xVideoToResourceConverterTest {
         )
         assertThat(videoResource.type!!.id).isEqualTo(3)
         assertThat(videoResource.type!!.name).isEqualTo("Instructional Clips")
+
         assertThat((videoResource.playback!! as YoutubePlaybackResource).type).isEqualTo("YOUTUBE")
         assertThat((videoResource.playback!! as YoutubePlaybackResource).duration).isEqualTo(Duration.ofSeconds(21))
         assertThat((videoResource.playback!! as YoutubePlaybackResource).id).isEqualTo("444")
+
         assertThat(videoResource.badges).isEqualTo(setOf("youtube"))
         assertThat(videoResource.legalRestrictions).isEqualTo("Many")
         assertThat(videoResource.bestFor!!.map { it.label }).containsOnly("tag-label")
+
+        assertThat(videoResource.attachments).hasSize(1)
+        assertThat(videoResource.attachments[0].id).isNotNull()
+        assertThat(videoResource.attachments[0].type).isEqualTo("ACTIVITY")
+        assertThat(videoResource.attachments[0].description).isEqualTo("some description")
     }
 
     @Test
@@ -202,12 +231,16 @@ class xVideoToResourceConverterTest {
                     total = 10,
                     subjects = listOf(SubjectFacet(subjectId = SubjectId("id"), total = 100)),
                     ageRanges = listOf(
-                        AgeRangeFacet(ageRangeId = AgeRangeId(
-                            "3-5"
-                        ), total = 3),
-                        AgeRangeFacet(ageRangeId = AgeRangeId(
-                            "5-11"
-                        ), total = 1)
+                        AgeRangeFacet(
+                            ageRangeId = AgeRangeId(
+                                "3-5"
+                            ), total = 3
+                        ),
+                        AgeRangeFacet(
+                            ageRangeId = AgeRangeId(
+                                "5-11"
+                            ), total = 1
+                        )
                     ),
                     durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10))
                 ),

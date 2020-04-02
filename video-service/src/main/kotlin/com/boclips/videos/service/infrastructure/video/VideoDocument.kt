@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -14,6 +15,7 @@ data class VideoDocument(
     val contentType: String? = null,
     val keywords: List<String>,
     val subjects: List<SubjectDocument>,
+    val attachments: List<AttachmentDocument> = emptyList(),
     val releaseDate: Date,
     val ingestedAt: String?,
     val legalRestrictions: String,

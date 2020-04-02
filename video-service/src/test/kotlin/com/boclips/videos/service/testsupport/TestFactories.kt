@@ -1,9 +1,9 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
@@ -101,7 +101,8 @@ object TestFactories {
             name = contentPartnerName
         ),
         videoReference: String = contentPartnerVideoId,
-        promoted: Boolean? = null
+        promoted: Boolean? = null,
+        attachments: List<Attachment> = emptyList()
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -125,7 +126,8 @@ object TestFactories {
             videoReference = videoReference,
             ratings = ratings,
             tags = tags,
-            promoted = promoted
+            promoted = promoted,
+            attachments = attachments
         )
     }
 

@@ -71,7 +71,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             HateoasLink.of(
                 WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .adminSearch(null)
+                        .getVideosAdmin(null)
                 ).withRel(Rels.ADMIN_SEARCH)
             )
         }
@@ -82,7 +82,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             HateoasLink.of(
                 WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .adminSearch(null)
+                        .getVideosAdmin(null)
                 ).withRel(Rels.ADMIN_VIDEO_SEARCH)
             )
         }

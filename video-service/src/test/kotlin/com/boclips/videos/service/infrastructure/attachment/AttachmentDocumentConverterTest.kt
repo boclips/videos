@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.attachment
 
 import com.boclips.videos.service.domain.model.attachment.AttachmentId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
@@ -23,5 +24,14 @@ class AttachmentDocumentConverterTest {
         assertThat(attachment.description).isEqualTo("description")
         assertThat(attachment.type).isEqualTo(AttachmentType.LESSON_PLAN)
         assertThat(attachment.linkToResource).isEqualTo("http://example.com/download")
+    }
+
+    @Test
+    fun `it can convert from domain to document and back`() {
+        val originalAttachment = AttachmentFactory.sample()
+        val document = AttachmentDocumentConverter.convert(originalAttachment)
+        val transformedAttachment = AttachmentDocumentConverter.convert(document)
+
+        assertThat(originalAttachment).isEqualTo(transformedAttachment)
     }
 }
