@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -245,6 +246,21 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             YoutubeScrapeIngest(
                 listOf("https://yt.com/channel")
             )
+        )
+    }
+
+    @Test
+    fun `invalid content types are ignored`() {
+        val contentPartner = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                contentTypes = listOf("NEWS", "STOCK", "WOAH_NATURE", "INSTRUCTIONAL")
+            )
+        )
+
+        assertThat(contentPartner.contentTypes).containsExactly(
+            ContentPartnerType.NEWS,
+            ContentPartnerType.STOCK,
+            ContentPartnerType.INSTRUCTIONAL
         )
     }
 }

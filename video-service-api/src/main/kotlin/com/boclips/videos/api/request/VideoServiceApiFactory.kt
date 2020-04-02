@@ -3,8 +3,8 @@ package com.boclips.videos.api.request
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -107,7 +107,8 @@ class VideoServiceApiFactory {
             educationalResources: String? = null,
             curriculumAligned: String? = null,
             bestForTags: List<String>? = null,
-            subjects: List<String>? = null
+            subjects: List<String>? = null,
+            contentTypes: List<String>? = null
         ): ContentPartnerRequest {
             return ContentPartnerRequest(
                 name = name,
@@ -130,7 +131,8 @@ class VideoServiceApiFactory {
                 educationalResources = educationalResources,
                 curriculumAligned = curriculumAligned,
                 bestForTags = bestForTags,
-                subjects = subjects
+                subjects = subjects,
+                contentTypes = contentTypes
             )
         }
 

@@ -65,7 +65,9 @@ class CreateContentPartner(
         }
 
         if (!upsertRequest.contentCategories.isNullOrEmpty()) {
-            if (upsertRequest.contentCategories?.any { request -> request !in ContentCategories.values().map { it.name } }!!) {
+            if (upsertRequest.contentCategories?.any { request ->
+                    request !in ContentCategories.values().map { it.name }
+                }!!) {
                 throw InvalidContentCategoryException()
             }
         }
@@ -97,7 +99,14 @@ class CreateContentPartner(
                     awards = upsertRequest.awards,
                     notes = upsertRequest.notes,
                     language = upsertRequest.language?.let(Locale::forLanguageTag),
-                    contentTypes = upsertRequest.contentTypes?.map(ContentPartnerType::valueOf),
+                    contentTypes = upsertRequest.contentTypes?.mapNotNull {
+                        when (it) {
+                            "NEWS" -> ContentPartnerType.NEWS
+                            "INSTRUCTIONAL" -> ContentPartnerType.INSTRUCTIONAL
+                            "STOCK" -> ContentPartnerType.STOCK
+                            else -> null
+                        }
+                    },
                     ingest = upsertRequest.ingest?.let { ingestDetailsToResourceConverter.fromResource(it) }
                         ?: ManualIngest,
                     deliveryFrequency = upsertRequest.deliveryFrequency,
