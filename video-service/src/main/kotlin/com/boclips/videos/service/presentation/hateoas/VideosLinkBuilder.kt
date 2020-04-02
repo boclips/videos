@@ -7,6 +7,7 @@ import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
@@ -25,6 +26,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val RATE = "rate"
         const val TAG = "tag"
         const val UPDATE = "update"
+        const val ADD_ATTACHMENT = "addAttachment"
     }
 
     fun self(videoId: String?): HateoasLink {
@@ -141,6 +143,21 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         .toUriString()
                         + "{?title,description,promoted,subjectIds,ageRangeIds}"
                     , UPDATE
+                )
+            )
+        }
+    }
+
+    fun addAttachment(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+        getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+            HateoasLink.of(
+                Link(
+                    getVideosRoot()
+                        .pathSegment(video.videoId.value)
+                        .pathSegment("attachments")
+                        .build()
+                        .toUriString()
+                    , ADD_ATTACHMENT
                 )
             )
         }

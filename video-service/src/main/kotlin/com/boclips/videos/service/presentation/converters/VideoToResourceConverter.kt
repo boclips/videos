@@ -123,6 +123,7 @@ class VideoToResourceConverter(
     private fun actionLinks(video: Video): List<HateoasLink> = listOfNotNull(
         videosLinkBuilder.rateLink(video),
         videosLinkBuilder.updateLink(video),
+        videosLinkBuilder.addAttachment(video),
         videosLinkBuilder.tagLink(video),
         videosLinkBuilder.transcriptLink(video)
     )
