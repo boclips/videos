@@ -17,7 +17,8 @@ class EsVideoQuery {
                 if (videoQuery.phrase.isNotBlank()) {
                     must(
                         QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchPhraseQuery(VideoDocument.TITLE, videoQuery.phrase).slop(1))
+                            .should(QueryBuilders.matchPhraseQuery(VideoDocument.TITLE, videoQuery.phrase).slop(2).boost(10F))
+                            .should(QueryBuilders.matchPhraseQuery(IndexConfiguration.unstemmed(VideoDocument.TITLE), videoQuery.phrase).slop(2).boost(10F))
                             .should(
                                 QueryBuilders.matchPhraseQuery(VideoDocument.DESCRIPTION, videoQuery.phrase).slop(1)
                             )

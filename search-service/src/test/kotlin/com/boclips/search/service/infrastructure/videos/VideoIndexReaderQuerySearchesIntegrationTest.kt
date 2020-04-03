@@ -451,4 +451,33 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         assertThat(results.elements).startsWith("3")
         assertThat(results.elements).hasSize(5)
     }
+
+    @Test
+    fun `prioritise video title exact matching over other fields`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "TED-Ed: Tim Seibles: First Kiss",
+                    description = """This animation is part of the TED-Ed series, "There's a Poem for That," which features animated interpretations of poems both old and new that give language to some of life's biggest feelings. [Poem by Tim Seibles, directed by Hannah Jacobs, music by Stephen LaRosa]."""
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2", title = "TED-ED: Why is glass transparent? - Mark Miodownik",
+                    description = "If you look through your glasses, binoculars or a window, you see the world on the other side. How is it that something so solid can be so invisible? Mark Miodownik melts the scientific secret behind amorphous solids. Glasses",
+                    transcript = "glasses lots of glasses" ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "TED-Ed: How do glasses help us see? - Andrew Bastawrous and Clare Gilbert",
+                    description = "Today, glasses help millions of people with poor vision be able to see clearly. But how? Andrew Bastawrous and Clare Gilbert help unravel the answer by explaining refraction - the ability of a transparent medium, like glass, water, or the eye, to change the direction of light passing through it."
+                )
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(query = VideoQuery("ted ed glasses"))
+        )
+
+        assertThat(results.elements).containsExactly("3","2","1")
+        assertThat(results.elements).hasSize(3)
+    }
 }
