@@ -73,13 +73,13 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     contentPartnerVideoId = "abc"
                 )
             }
-            val ageRange = saveAgeRange(min = 3, max = 9, id = "3to9", label = "3-9")
 
             videosClient.updateVideo(
                 createdVideo,
                 VideoServiceApiFactory.createUpdateVideoRequest(
                     title = "new title",
-                    ageRangeIds = listOf(ageRange.id.value)
+                    ageRangeMin = 3,
+                    ageRangeMax = 9
                 )
             )
             videosClient.updateVideoRating(createdVideo, 4)

@@ -5,5 +5,6 @@ data class UpdateVideoRequest(
     val description: String? = null,
     val promoted: Boolean? = null,
     val subjectIds: List<String>? = null,
-    val ageRangeIds: List<String>? = null
+    val ageRangeMin: Int? = null,
+    val ageRangeMax: Int? = null
 )

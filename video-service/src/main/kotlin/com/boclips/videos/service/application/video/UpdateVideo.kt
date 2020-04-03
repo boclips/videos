@@ -1,10 +1,8 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
-import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -16,8 +14,7 @@ import org.springframework.validation.annotation.Validated
 @Validated
 open class UpdateVideo(
     private val videoRepository: VideoRepository,
-    private val subjectRepository: SubjectRepository,
-    private val ageRangeRepository: AgeRangeRepository
+    private val subjectRepository: SubjectRepository
 ) {
 
     companion object : KLogging();
@@ -37,24 +34,13 @@ open class UpdateVideo(
         val updateSubjectsWereSetManually = updateRequest.subjectIds?.let {
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(VideoId(id), true)
         }
-        val updateAgeRangeIds = updateRequest.ageRangeIds?.let { idList ->
-            val ranges: List<AgeRange> = idList.mapNotNull { ageRangeRepository.findById(
-                AgeRangeId(
-                    it
-                )
-            ) }
-            val lowerBound = ranges.map { it.min }.min()
 
-            val rangeMax: Int? = if (ranges.map { it.max }.any { it == null }) null else {
-                ranges.mapNotNull { it.max }.max()
-            }
-
-            VideoUpdateCommand.ReplaceAgeRange(
-                VideoId(id), com.boclips.videos.service.domain.model.AgeRange.bounded(
-                    min = lowerBound, max = rangeMax
-                )
+        val ageRange = AgeRange.bounded(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax)
+        val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(
+            VideoId(id), AgeRange.bounded(
+                min = ageRange.min(), max = ageRange.max()
             )
-        }
+        )
 
         videoRepository.bulkUpdate(
             listOfNotNull(
@@ -63,7 +49,7 @@ open class UpdateVideo(
                 replacePromoted,
                 updateSubjectIds,
                 updateSubjectsWereSetManually,
-                updateAgeRangeIds
+                replaceAgeRange
             )
         )
 

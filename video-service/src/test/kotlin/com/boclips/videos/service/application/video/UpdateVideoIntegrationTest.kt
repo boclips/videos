@@ -25,8 +25,6 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             saveSubject(name = "Design"),
             saveSubject(name = "Art")
         )
-        createAgeRange(AgeRangeRequest(id = "early-years", min = 3, max = 7, label = "3-7"))
-
         val subjectIdList = subjectsList.map { it.id.value }
 
         updateVideo(
@@ -36,7 +34,8 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 description = "new description",
                 promoted = true,
                 subjectIds = subjectIdList,
-                ageRangeIds = listOf("early-years")
+                ageRangeMin = 3,
+                ageRangeMax = 7
             ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
@@ -86,33 +85,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateVideo(
             id = videoId.value,
-            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
-                ageRangeIds = listOf("thirteen-plus")
-            ),
-            user = UserFactory.sample(id = "admin@boclips.com")
-        )
-
-        val updatedVideo = videoRepository.find(videoId)!!
-
-        assertThat(updatedVideo.ageRange.min()).isEqualTo(13)
-        assertThat(updatedVideo.ageRange.max()).isNull()
-    }
-
-    @Test
-    fun `updates to unbounded agerange`() {
-        val videoId = saveVideo(
-            ageRange = AgeRange.bounded(min = 2, max = 10)
-        )
-
-        createAgeRange(AgeRangeRequest(id = "unbounded", min = 13, label = "13+"))
-
-        updateVideo(
-            id = videoId.value,
-            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
-                title = null,
-                description = "new description",
-                promoted = true,
-                ageRangeIds = listOf("unbounded")
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(ageRangeMin = 13
             ),
             user = UserFactory.sample(id = "admin@boclips.com")
         )

@@ -425,13 +425,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ageRange = BoundedAgeRange(min = 3, max = 10)
             ).value
 
-            val ageRanges = listOf(
-                createAgeRange(AgeRangeRequest(id = "early-years", min = 4, max = 7, label = "4-7")),
-                createAgeRange(AgeRangeRequest(id = "later-years", min = 7, max = 12, label = "7-12"))
-            )
-
             mockMvc.perform(
-                patch("/v1/videos/$videoToUpdate?ageRangeIds=${ageRanges[0].id.value},${ageRanges[1].id.value}")
+                patch("/v1/videos/$videoToUpdate?ageRangeMin=4&ageRangeMax=12")
                     .asBoclipsEmployee()
             )
                 .andExpect(status().isOk)
@@ -444,18 +439,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `updates the age range of a video to an unbounded range`() {
-            val videoToUpdate = saveVideo(
-                ageRange = BoundedAgeRange(min = 3, max = 10)
-            ).value
-
-            val ageRanges = listOf(
-                createAgeRange(AgeRangeRequest(id = "early-years", min = 14, max = 16, label = "14-16")),
-                createAgeRange(AgeRangeRequest(id = "later-years", min = 16, label = "16+"))
-            )
+        fun `updates the age range of a video to an unbounded upper range`() {
+            val videoToUpdate = saveVideo(ageRange = BoundedAgeRange(min = 3, max = 10)).value
 
             mockMvc.perform(
-                patch("/v1/videos/$videoToUpdate?ageRangeIds=${ageRanges[0].id.value},${ageRanges[1].id.value}")
+                patch("/v1/videos/$videoToUpdate?ageRangeMin=14")
                     .asBoclipsEmployee()
             )
                 .andExpect(status().isOk)

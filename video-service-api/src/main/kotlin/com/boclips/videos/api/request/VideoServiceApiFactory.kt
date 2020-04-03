@@ -74,14 +74,16 @@ class VideoServiceApiFactory {
             description: String? = "description",
             promoted: Boolean? = false,
             subjectIds: List<String>? = emptyList(),
-            ageRangeIds: List<String>? = emptyList()
+            ageRangeMin: Int? = null,
+            ageRangeMax: Int? = null
         ): UpdateVideoRequest {
             return UpdateVideoRequest(
                 title = title,
                 description = description,
                 promoted = promoted,
                 subjectIds = subjectIds,
-                ageRangeIds = ageRangeIds
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax
             )
         }
 

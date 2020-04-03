@@ -259,10 +259,9 @@ class VideoController(
     fun patchVideo(
         @PathVariable id: String,
         @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move these to updateRequest if the spring gods allow it
-        @RequestParam ageRangeIds: List<String>? = emptyList(),
         updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
-        val updateRequestWithPathParams = updateRequest.copy(subjectIds = subjectIds).copy(ageRangeIds = ageRangeIds)
+        val updateRequestWithPathParams = updateRequest.copy(subjectIds = subjectIds)
 
         return updateVideo(id, updateRequestWithPathParams, getCurrentUser()).let { this.getVideo(id) }
     }
