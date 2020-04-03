@@ -8,5 +8,7 @@ import org.springframework.stereotype.Component
 data class GcsProperties(
     var projectId: String = "",
     var secret: String = "",
-    var bucketName: String = ""
+    var bucketName: String = "",
+    var contractSecret: String = "",
+    var contractBucketName: String = ""
 )

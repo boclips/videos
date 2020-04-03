@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.closeTo
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
@@ -12,8 +13,10 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
 
 class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -151,4 +154,26 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.page.totalElements", equalTo(2)))
             .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
     }
+
+    @Test
+    fun `retrieves a signed link`() {
+        val sampleLink = URI("http://sample.com/").toURL()
+
+        fakeSignedLinkProvider.setLink(sampleLink)
+
+        val location = mockMvc.perform(
+            post("/v1/content-partner-contracts/signed-upload-link").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+                """{
+                    |   "filename": "myImage.png"
+                    |}
+                """.trimMargin()
+            )
+        )
+            .andExpect(status().isNoContent)
+            .andExpect(MockMvcResultMatchers.header().exists("Location"))
+            .andReturn().response.getHeaders("Location").first()
+
+        Assertions.assertThat(sampleLink.toString()).isEqualTo(location)
+    }
+
 }

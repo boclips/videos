@@ -106,6 +106,9 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(GET, "/v1/content-partner-contracts/*").hasRole(ROLE.VIEW_CONTENT_PARTNER_CONTRACTS)
             .antMatchers(GET, "/v1/content-partner-contracts").hasRole(ROLE.VIEW_CONTENT_PARTNER_CONTRACTS)
             .antMatchers(POST, "/v1/content-partner-contracts").hasRole(ROLE.INSERT_CONTENT_PARTNER_CONTRACTS)
+            .antMatchers(POST, "/v1/content-partner-contracts/signed-upload-link").run {
+                hasRole(ROLE.INSERT_CONTENT_PARTNER_CONTRACTS)
+            }
 
             .antMatchers(GET, "/v1/distribution-methods").hasRole(ROLE.VIEW_DISTRIBUTION_METHODS)
 

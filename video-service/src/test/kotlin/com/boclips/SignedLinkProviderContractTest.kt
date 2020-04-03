@@ -2,8 +2,9 @@ package com.boclips
 
 import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
-import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -26,14 +27,17 @@ class SignedLinkProviderContractTest {
 
 class SignedLinkProviderArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+        val config = loadGcsProperties()
         val testSignedLinkProvider = TestSignedLinkProvider()
             .also { it.setLink(URI("https://my.sample.com/link").toURL()) }
-        val gcsSignedLinkProvider = GcsSignedLinkProvider(
-            loadGcsProperties()
-        )
+        val marketingSignedLinkProvider =
+            ContentPartnerMarketingSignedLinkProvider(config)
+        val contractSignedLinkProvider =
+            ContentPartnerContractSignedLinkProvider(config)
         return Stream.of(
             testSignedLinkProvider,
-            gcsSignedLinkProvider
+            marketingSignedLinkProvider,
+            contractSignedLinkProvider
         ).map { Arguments.of(it) }
     }
 }
@@ -42,15 +46,27 @@ fun loadGcsProperties(): GcsProperties {
     val projectIdKey = "GCS_PROJECT_ID"
     val secretKey = "GCS_SECRET"
     val bucketKey = "GCS_BUCKET_NAME"
+    val contractSecretKey = "GCS_CONTRACT_SECRET"
+    val contractBucketKey = "GCS_CONTRACT_BUCKET_NAME"
     val projectId = System.getenv(projectIdKey)
     val secret = System.getenv(secretKey)
     val bucketName = System.getenv(bucketKey)
+    val contractSecret = System.getenv(contractSecretKey)
+    val contractBucketName = System.getenv(contractBucketKey)
 
-    if (projectId != null && secret != null && bucketName != null) {
+    if (
+        projectId != null &&
+        secret != null &&
+        bucketName != null &&
+        contractSecret != null &&
+        contractBucketName != null
+    ) {
         return GcsProperties(
             projectId = projectId,
             secret = secret,
-            bucketName = bucketName
+            bucketName = bucketName,
+            contractSecret = contractSecret,
+            contractBucketName = contractBucketName
         )
     }
 
@@ -65,6 +81,8 @@ fun loadGcsProperties(): GcsProperties {
     return GcsProperties(
         projectId = json[projectIdKey] as String,
         secret = json[secretKey] as String,
-        bucketName = json[bucketKey] as String
+        bucketName = json[bucketKey] as String,
+        contractSecret = json[contractSecretKey] as String,
+        contractBucketName = json[contractBucketKey] as String
     )
 }

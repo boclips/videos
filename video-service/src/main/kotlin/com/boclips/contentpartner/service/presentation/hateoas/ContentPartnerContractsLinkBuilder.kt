@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.presentation.hateoas
 
 import com.boclips.contentpartner.service.presentation.contract.ContentPartnerContractController
+import com.boclips.security.utils.UserExtractor
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
@@ -56,6 +57,17 @@ class ContentPartnerContractsLinkBuilder(private val uriComponentsBuilderFactory
             )
         }
     }
+
+    fun createSignedUploadLink(): Link? =
+        getIfHasRole(UserRoles.INSERT_CONTENT_PARTNER_CONTRACTS) {
+            Link(
+                getContentPartnerContractsRoot()
+                    .build()
+                    .toUriString()
+                    .plus("/signed-upload-link"),
+                "createContentPartnerContractsSignedUploadLink"
+            )
+        }
 
     private fun getContentPartnerContractsRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/content-partner-contracts")

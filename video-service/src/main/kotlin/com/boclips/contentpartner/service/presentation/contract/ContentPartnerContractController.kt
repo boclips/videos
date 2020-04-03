@@ -4,10 +4,12 @@ import com.boclips.contentpartner.service.application.contentpartnercontract.Cre
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
+import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
+import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
@@ -31,7 +33,8 @@ class ContentPartnerContractController(
     private val fetch: GetContentPartnerContracts,
     private val create: CreateContentPartnerContract,
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
-    private val linksBuilder: ContentPartnerContractsLinkBuilder
+    private val linksBuilder: ContentPartnerContractsLinkBuilder,
+    private val contractSignedLinkProvider: SignedLinkProvider
 ) : BaseController() {
     @GetMapping
     fun getAll(
@@ -72,5 +75,18 @@ class ContentPartnerContractController(
             print(e)
             throw e
         }
+    }
+
+    @PostMapping("/signed-upload-link")
+    fun signedLink(
+        @RequestBody signedLinkRequest: SignedLinkRequest
+    ): ResponseEntity<Void> {
+        val link = contractSignedLinkProvider.getLink(signedLinkRequest.filename)
+        return ResponseEntity(HttpHeaders().apply {
+            set(
+                "Location",
+                link.toString()
+            )
+        }, HttpStatus.NO_CONTENT)
     }
 }

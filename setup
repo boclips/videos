@@ -9,8 +9,8 @@ pushd video-service/src/test_youtube_contract/resources/
 echo "setting up YouTube contract tests"
 popd
 
-# Generate SignedLinkProvider contract test
+# Generate SignedLinkProvider contract tests
 pushd video-service/src/test/resources/
-./setup-content-partner-test
+./setup-contract-tests
 echo "setting up SignedLinkProvider contract tests"
 popd

@@ -39,7 +39,7 @@ class ContentPartnerController(
     private val fetchContentPartners: GetContentPartners,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter,
-    private val signedLinkProvider: SignedLinkProvider
+    private val marketingSignedLinkProvider: SignedLinkProvider
 ) : BaseController() {
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
@@ -105,7 +105,7 @@ class ContentPartnerController(
     fun signedUploadLink(
         @RequestBody signedLinkRequest: SignedLinkRequest
     ): ResponseEntity<Void> {
-        val link = signedLinkProvider.getLink(signedLinkRequest.filename)
+        val link = marketingSignedLinkProvider.getLink(signedLinkRequest.filename)
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",

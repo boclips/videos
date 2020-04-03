@@ -16,7 +16,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
-import com.boclips.contentpartner.service.infrastructure.GcsSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
@@ -121,8 +122,17 @@ class ApplicationContext(
     }
 
     @Bean
-    fun signedLinkProvider(config: GcsProperties): SignedLinkProvider {
-        return GcsSignedLinkProvider(config)
+    fun marketingSignedLinkProvider(config: GcsProperties): SignedLinkProvider {
+        return ContentPartnerMarketingSignedLinkProvider(
+            config
+        )
+    }
+
+    @Bean
+    fun contractSignedLinkProvider(config: GcsProperties): SignedLinkProvider {
+        return ContentPartnerContractSignedLinkProvider(
+            config
+        )
     }
 
     @Bean

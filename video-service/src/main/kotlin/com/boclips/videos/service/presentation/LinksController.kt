@@ -73,6 +73,7 @@ class LinksController(
                 contentPartnerContractsLinkBuilder.contentPartnerContractLink(null),
                 contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
                 contentPartnerContractsLinkBuilder.createContractLink(),
+                contentPartnerContractsLinkBuilder.createSignedUploadLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),
