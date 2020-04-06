@@ -159,7 +159,12 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 )
             )
             .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.type", equalTo("MRSS")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].ingest.urls", equalTo(listOf("http://mrss.feed", "http://mrss2.feed"))))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contentPartners[0].ingest.urls",
+                    equalTo(listOf("http://mrss.feed", "http://mrss2.feed"))
+                )
+            )
             .andExpect(jsonPath("$._embedded.contentPartners[0].deliveryFrequency", equalTo("P6M")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].marketingInformation.status", equalTo("PROMOTED")))
             .andExpect(
@@ -260,9 +265,24 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by ingest types`() {
-        saveContentPartner(name = "mrss", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MRSS, urls = listOf("http://feed.me")))
-        saveContentPartner(name = "yt", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.YOUTUBE, playlistIds = listOf("http://yt.com")))
-        saveContentPartner(name = "manual", ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL))
+        saveContentPartner(
+            name = "mrss",
+            ingest = ContentPartnerFactory.createIngestDetailsResource(
+                type = IngestType.MRSS,
+                urls = listOf("http://feed.me")
+            )
+        )
+        saveContentPartner(
+            name = "yt",
+            ingest = ContentPartnerFactory.createIngestDetailsResource(
+                type = IngestType.YOUTUBE,
+                playlistIds = listOf("http://yt.com")
+            )
+        )
+        saveContentPartner(
+            name = "manual",
+            ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL)
+        )
 
         mockMvc.perform(
             get("/v1/content-partners?ingestType=MRSS&ingestType=YOUTUBE").asBoclipsEmployee()
@@ -525,12 +545,13 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         fakeSignedLinkProvider.setLink(sampleLink)
 
         val location = mockMvc.perform(
-            post("/v1/content-partners/signed-upload-link").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
-                """{
+            post("/v1/content-partners/signed-upload-link").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{
                     |   "filename": "myImage.png"
                     |}
                 """.trimMargin()
-            )
+                )
         )
             .andExpect(status().isNoContent)
             .andExpect(header().exists("Location"))

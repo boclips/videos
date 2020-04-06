@@ -27,6 +27,7 @@ class LegalRestrictionsLinkBuilder {
 
     fun self(id: String): Link {
         return WebMvcLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(LegalRestrictionsController::class.java).getOne(id)).withSelfRel()
+            ControllerLinkBuilder.methodOn(LegalRestrictionsController::class.java).getOne(id)
+        ).withSelfRel()
     }
 }
