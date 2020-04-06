@@ -42,7 +42,8 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             contracts.map { contentPartnerContractRepository.create(it) }
 
             val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 10, page = 0))
-            assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }.toTypedArray())
+            assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }
+                .toTypedArray())
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
         }
 

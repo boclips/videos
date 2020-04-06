@@ -2,11 +2,9 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.video.exceptions.InvalidDateException
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
-import com.boclips.videos.service.application.video.exceptions.InvalidTypeException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

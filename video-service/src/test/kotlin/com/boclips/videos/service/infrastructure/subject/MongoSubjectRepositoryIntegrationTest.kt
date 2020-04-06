@@ -45,7 +45,8 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val subject4 = mongoSubjectRepository.create(name = "Subject4")
 
         val subjects = mongoSubjectRepository.findByOrderedIds(
-            listOf(maths.id.value, subject4.id.value, subject2.id.value, subject3.id.value))
+            listOf(maths.id.value, subject4.id.value, subject2.id.value, subject3.id.value)
+        )
 
         assertThat(subjects[0]).isEqualTo(maths)
         assertThat(subjects[1]).isEqualTo(subject4)

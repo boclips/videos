@@ -11,7 +11,7 @@ class EventBusConfiguration {
 
     @Bean
     @Profile("no-event-bus")
-    fun eventBus() : EventBus {
+    fun eventBus(): EventBus {
         return NullEventBus()
     }
 }

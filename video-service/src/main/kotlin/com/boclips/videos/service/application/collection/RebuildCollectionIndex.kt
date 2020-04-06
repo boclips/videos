@@ -4,8 +4,6 @@ import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 import mu.KLogging
-import org.springframework.scheduling.annotation.Async
-import java.util.concurrent.CompletableFuture
 
 open class RebuildCollectionIndex(
     private val collectionRepository: CollectionRepository,

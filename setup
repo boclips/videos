@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This assumes you have provisioned the machine
-ktlint --apply-to-idea-project
+ktlint applyToIDEA
 
 # Generate YouTube contract test configuration
 pushd video-service/src/test_youtube_contract/resources/

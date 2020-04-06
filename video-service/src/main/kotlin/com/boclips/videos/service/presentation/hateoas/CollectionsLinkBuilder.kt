@@ -7,8 +7,8 @@ import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.EventController
 import org.springframework.hateoas.Link

@@ -15,7 +15,7 @@ object IngestDetailsDocumentConverter {
     private const val YOUTUBE = "YOUTUBE"
 
     fun toIngestDetailsDocument(ingestDetails: IngestDetails): IngestDetailsDocument {
-        return when(ingestDetails) {
+        return when (ingestDetails) {
             ManualIngest -> IngestDetailsDocument(
                 type = MANUAL
             )
@@ -34,7 +34,7 @@ object IngestDetailsDocumentConverter {
     }
 
     fun toIngestDetails(document: IngestDetailsDocument): IngestDetails {
-        return when(document.type) {
+        return when (document.type) {
             MANUAL -> ManualIngest
             CUSTOM -> CustomIngest
             MRSS -> MrssFeedIngest(

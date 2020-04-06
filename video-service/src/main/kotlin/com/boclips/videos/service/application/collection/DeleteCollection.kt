@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.service.collection.CollectionReadService
 import com.boclips.videos.service.domain.service.collection.CollectionSearchService
 

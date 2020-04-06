@@ -2,11 +2,11 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerStatusRequest
-import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor

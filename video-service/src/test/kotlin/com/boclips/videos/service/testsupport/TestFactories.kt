@@ -29,6 +29,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -42,10 +43,7 @@ import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -53,6 +51,8 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument

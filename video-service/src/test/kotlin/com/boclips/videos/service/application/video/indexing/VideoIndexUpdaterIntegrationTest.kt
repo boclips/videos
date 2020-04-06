@@ -7,9 +7,9 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.EventConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -82,8 +82,11 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `add stream videos to non-legacy index only`() {
             val videos = listOf(
-                createVideo(setOf(DistributionMethod.STREAM)), createVideo(setOf(
-                    DistributionMethod.DOWNLOAD))
+                createVideo(setOf(DistributionMethod.STREAM)), createVideo(
+                    setOf(
+                        DistributionMethod.DOWNLOAD
+                    )
+                )
             )
 
             fakeEventBus.publish(
@@ -213,9 +216,10 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         val createdContentPartner = contentPartnerRepository.create(contentPartner)
 
         val video = videoRepository.create(
-            TestFactories.createVideo(contentPartnerId = ContentPartnerId(
-                value = createdContentPartner.contentPartnerId.value
-            )
+            TestFactories.createVideo(
+                contentPartnerId = ContentPartnerId(
+                    value = createdContentPartner.contentPartnerId.value
+                )
             )
         )
 

@@ -1,12 +1,12 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument

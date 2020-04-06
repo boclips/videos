@@ -16,5 +16,4 @@ object PedagogyInformationToResourceConverter {
                 ageRanges = AgeRangeToResourceConverter.convert(pedagogyInformation.ageRangeBuckets!!)
             )
         }
-
 }

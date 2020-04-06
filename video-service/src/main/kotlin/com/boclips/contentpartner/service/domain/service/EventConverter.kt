@@ -37,7 +37,7 @@ class EventConverter {
     }
 
     fun toIngestDetailsPayload(ingest: IngestDetails): EventBusIngestDetails {
-        val (type, urls) = when(ingest) {
+        val (type, urls) = when (ingest) {
             ManualIngest -> IngestType.MANUAL to null
             CustomIngest -> IngestType.CUSTOM to null
             is MrssFeedIngest -> IngestType.MRSS to ingest.urls

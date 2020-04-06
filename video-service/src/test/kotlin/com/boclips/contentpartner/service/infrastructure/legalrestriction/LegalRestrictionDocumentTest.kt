@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.infrastructure.legalrestriction
 
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
-import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

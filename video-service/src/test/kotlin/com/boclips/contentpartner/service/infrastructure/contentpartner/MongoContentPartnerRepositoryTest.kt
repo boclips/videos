@@ -6,11 +6,11 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
-import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
@@ -359,7 +359,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `replace delivery frequency`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner(deliveryFrequency = Period.ofMonths(1)))
+        val contentPartner =
+            mongoContentPartnerRepository.create(createContentPartner(deliveryFrequency = Period.ofMonths(1)))
 
         mongoContentPartnerRepository.update(
             listOf(

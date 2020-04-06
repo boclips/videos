@@ -7,11 +7,11 @@ import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntryStatus
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
-import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset

@@ -4,13 +4,13 @@ import com.boclips.contentpartner.service.application.contentpartner.ContentPart
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
@@ -299,7 +299,8 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceIngestDetails } as ContentPartnerUpdateCommand.ReplaceIngestDetails
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceIngestDetails } as ContentPartnerUpdateCommand.ReplaceIngestDetails
 
         assertThat(command.ingest).isEqualTo(
             MrssFeedIngest(
@@ -317,7 +318,8 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val command = commands.find { it is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency } as ContentPartnerUpdateCommand.ReplaceDeliveryFrequency
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency } as ContentPartnerUpdateCommand.ReplaceDeliveryFrequency
 
         assertThat(command.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }

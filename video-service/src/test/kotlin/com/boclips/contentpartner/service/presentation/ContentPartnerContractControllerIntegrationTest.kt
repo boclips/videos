@@ -162,7 +162,8 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
         fakeSignedLinkProvider.setLink(sampleLink)
 
         val location = mockMvc.perform(
-            post("/v1/content-partner-contracts/signed-upload-link").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+            post("/v1/content-partner-contracts/signed-upload-link").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(
                 """{
                     |   "filename": "myImage.png"
                     |}
@@ -175,5 +176,4 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
 
         Assertions.assertThat(sampleLink.toString()).isEqualTo(location)
     }
-
 }

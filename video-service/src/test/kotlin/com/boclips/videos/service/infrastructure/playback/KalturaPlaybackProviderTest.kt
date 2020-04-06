@@ -3,10 +3,10 @@ package com.boclips.videos.service.infrastructure.playback
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntryStatus
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
-import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset

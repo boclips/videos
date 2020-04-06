@@ -10,9 +10,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.contentpartner.Availability
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
-import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -84,7 +84,6 @@ class VideoMetadataConverterTest {
         )
     }
 
-
     @Test
     fun `tags news video`() {
         val video = TestFactories.createVideo(
@@ -95,7 +94,6 @@ class VideoMetadataConverterTest {
 
         assertThat(videoMetadata.tags).contains("news")
     }
-
 
     @Test
     fun `it doesn't tag videos without a match`() {

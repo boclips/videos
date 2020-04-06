@@ -2,10 +2,10 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested

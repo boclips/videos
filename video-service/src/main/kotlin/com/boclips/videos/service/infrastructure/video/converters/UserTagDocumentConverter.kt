@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.infrastructure.video.UserTagDocument
 import org.bson.types.ObjectId
 

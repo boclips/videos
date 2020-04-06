@@ -9,8 +9,8 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -60,7 +60,10 @@ class DisciplinesController(
     }
 
     @PutMapping("/{id}")
-    fun updateADiscipline(@Valid @PathVariable id: String, @RequestBody updateDisciplineRequest: UpdateDisciplineRequest): ResponseEntity<Any> {
+    fun updateADiscipline(
+        @Valid @PathVariable id: String,
+        @RequestBody updateDisciplineRequest: UpdateDisciplineRequest
+    ): ResponseEntity<Any> {
         updateDiscipline(id, updateDisciplineRequest)
 
         return ResponseEntity(HttpStatus.NO_CONTENT)

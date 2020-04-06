@@ -17,8 +17,8 @@ class GcsSignedLinkUtil {
 
             val storage: Storage = StorageOptions.newBuilder()
                 .setProjectId(options.projectId).setCredentials(
-                ServiceAccountCredentials.fromStream(options.secret.byteInputStream())
-            ).build().service
+                    ServiceAccountCredentials.fromStream(options.secret.byteInputStream())
+                ).build().service
 
             val objectName = UUID.randomUUID().toString()
 

@@ -60,7 +60,9 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
         })
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
-        assertThat(fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.title).isEqualTo("The new title")
+        assertThat(
+            fakeEventBus.getEventsOfType(CollectionUpdated::class.java).first().collection.title
+        ).isEqualTo("The new title")
     }
 
     @Test

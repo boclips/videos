@@ -5,8 +5,8 @@ import com.boclips.videos.service.application.subject.SubjectClassificationServi
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoPlaybackService
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

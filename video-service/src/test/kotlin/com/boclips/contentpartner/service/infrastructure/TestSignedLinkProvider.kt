@@ -13,7 +13,7 @@ class TestSignedLinkProvider : SignedLinkProvider {
     }
 
     override fun getLink(filename: String): URL = signedLink
-    
+
     fun clearLink() {
         signedLink = defaultLink
     }

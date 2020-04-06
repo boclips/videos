@@ -9,7 +9,8 @@ internal class ContentPartnerTest {
 
     @Test
     fun `is streamable if not hidden from stream`() {
-        val contentPartner = ContentPartnerFactory.createContentPartner(distributionMethods = setOf(DistributionMethod.STREAM))
+        val contentPartner =
+            ContentPartnerFactory.createContentPartner(distributionMethods = setOf(DistributionMethod.STREAM))
 
         assertThat(contentPartner.isStreamable()).isTrue()
     }

@@ -69,7 +69,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse video publishes events`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-123"))
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator()
+        )
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
@@ -98,7 +100,10 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse content partner videos publishes events`() {
         saveVideo(contentProvider = "Ted")
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES").asOperator())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES")
+                .asOperator()
+        )
             .andExpect(MockMvcResultMatchers.status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
@@ -113,7 +118,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
             contentProvider = "TheYoutuber"
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator()
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
@@ -131,13 +138,17 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `classify content partner videos publishes events`() {
         saveVideo(contentProvider = "AContentPartner")
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator()
+        )
             .andExpect(MockMvcResultMatchers.status().isAccepted)
     }
 
     @Test
     fun `classify content partner videos returns 403 when user is not allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher()
+        )
             .andExpect(MockMvcResultMatchers.status().isForbidden)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()

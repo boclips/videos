@@ -4,8 +4,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.CustomInge
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

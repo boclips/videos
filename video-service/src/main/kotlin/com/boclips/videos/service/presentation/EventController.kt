@@ -4,8 +4,8 @@ import com.boclips.videos.service.application.analytics.SaveCollectionInteracted
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
@@ -30,7 +30,10 @@ class EventController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @PostMapping("/v1/events/playback")
-    fun logPlaybackEvent(@RequestBody playbackEvent: CreatePlaybackEventCommand?, @CookieValue(Cookies.PLAYBACK_DEVICE) playbackDevice: String? = null): ResponseEntity<Void> {
+    fun logPlaybackEvent(
+        @RequestBody playbackEvent: CreatePlaybackEventCommand?,
+        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackDevice: String? = null
+    ): ResponseEntity<Void> {
         savePlaybackEvent.execute(playbackEvent, playbackDevice, getCurrentUser())
         return ResponseEntity(HttpStatus.CREATED)
     }
@@ -48,13 +51,20 @@ class EventController(
     }
 
     @PostMapping("v1/collections/{collectionId}/events")
-    fun logCollectionInteractedWithEvent(@PathVariable collectionId: String, @RequestBody data: CollectionInteractedWithEventCommand?): ResponseEntity<Void> {
+    fun logCollectionInteractedWithEvent(
+        @PathVariable collectionId: String,
+        @RequestBody data: CollectionInteractedWithEventCommand?
+    ): ResponseEntity<Void> {
         saveCollectionInteractedWithEvent.execute(collectionId, data, getCurrentUser())
         return ResponseEntity(HttpStatus.OK)
     }
 
     @PostMapping("/v1/videos/{videoId}/events", params = ["logVideoInteraction"])
-    fun logVideoInteractedWithEvent(@PathVariable videoId: String, @RequestParam logVideoInteraction: Boolean, @RequestParam type: String?): ResponseEntity<Void> {
+    fun logVideoInteractedWithEvent(
+        @PathVariable videoId: String,
+        @RequestParam logVideoInteraction: Boolean,
+        @RequestParam type: String?
+    ): ResponseEntity<Void> {
         saveVideoInteractedWithEvent.execute(videoId, type, getCurrentUser())
         return ResponseEntity(HttpStatus.OK)
     }

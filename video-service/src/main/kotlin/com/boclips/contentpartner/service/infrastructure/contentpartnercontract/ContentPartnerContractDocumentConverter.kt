@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartnercontract
 
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import mu.KLogging

@@ -2,10 +2,10 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
+import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId

@@ -104,7 +104,10 @@ class CollectionsController(
     }
 
     @PatchMapping("/{id}")
-    fun patchCollection(@PathVariable("id") id: String, @Valid @RequestBody request: UpdateCollectionRequest?): ResponseEntity<Void> {
+    fun patchCollection(
+        @PathVariable("id") id: String,
+        @Valid @RequestBody request: UpdateCollectionRequest?
+    ): ResponseEntity<Void> {
         updateCollection(id, request, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
@@ -150,13 +153,19 @@ class CollectionsController(
 
     @PutMapping("/{collection_id}/videos/{video_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun addVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): Any? {
+    fun addVideo(
+        @PathVariable("collection_id") collectionId: String?,
+        @PathVariable("video_id") videoId: String?
+    ): Any? {
         addVideoToCollection(collectionId = collectionId, videoId = videoId, requester = getCurrentUser())
         return null
     }
 
     @DeleteMapping("/{collection_id}/videos/{video_id}")
-    fun removeVideo(@PathVariable("collection_id") collectionId: String?, @PathVariable("video_id") videoId: String?): ResponseEntity<Void> {
+    fun removeVideo(
+        @PathVariable("collection_id") collectionId: String?,
+        @PathVariable("video_id") videoId: String?
+    ): ResponseEntity<Void> {
         removeVideoFromCollection(collectionId, videoId, getCurrentUser())
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

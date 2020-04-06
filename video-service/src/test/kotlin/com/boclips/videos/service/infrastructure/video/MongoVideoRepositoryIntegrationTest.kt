@@ -5,12 +5,12 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -495,9 +495,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
-                value = contentPartnerId
-            )
+            mongoVideoRepository.findByContentPartnerId(
+                contentPartnerId = ContentPartnerId(
+                    value = contentPartnerId
+                )
             )
 
         assertThat(videos).containsExactly(video1, video2)
@@ -535,9 +536,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
-            id
-        )
+        val videos = mongoVideoRepository.findByContentPartnerId(
+            contentPartnerId = ContentPartnerId(
+                id
+            )
         )
         assertThat(videos).containsExactly(video1, video2)
     }

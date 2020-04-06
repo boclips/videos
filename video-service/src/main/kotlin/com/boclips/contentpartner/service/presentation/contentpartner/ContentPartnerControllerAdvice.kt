@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.presentation.contentpartner
 
-import com.boclips.contentpartner.service.presentation.contentpartner.ContentPartnerController
 import com.boclips.videos.service.presentation.projections.ProjectionResolver
 import org.springframework.core.MethodParameter
 import org.springframework.http.MediaType

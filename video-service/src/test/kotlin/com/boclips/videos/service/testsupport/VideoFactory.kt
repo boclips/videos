@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.playback.Dimensions
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument

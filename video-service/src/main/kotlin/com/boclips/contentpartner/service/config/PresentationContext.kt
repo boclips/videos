@@ -4,8 +4,8 @@ import com.boclips.contentpartner.service.presentation.converters.ContentPartner
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

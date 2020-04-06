@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory

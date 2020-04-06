@@ -5,13 +5,13 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDeta
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 
 class IngestDetailsResourceConverter {
 
     fun convert(ingestDetails: IngestDetails): IngestDetailsResource {
-        return when(ingestDetails) {
+        return when (ingestDetails) {
             ManualIngest -> IngestDetailsResource.manual()
             CustomIngest -> IngestDetailsResource.custom()
             is MrssFeedIngest -> IngestDetailsResource.mrss(ingestDetails.urls)
@@ -20,7 +20,7 @@ class IngestDetailsResourceConverter {
     }
 
     fun fromResource(ingestDetailsResource: IngestDetailsResource): IngestDetails {
-        return when(ingestDetailsResource.type) {
+        return when (ingestDetailsResource.type) {
             IngestType.MANUAL -> ManualIngest
             IngestType.CUSTOM -> CustomIngest
             IngestType.MRSS -> MrssFeedIngest(

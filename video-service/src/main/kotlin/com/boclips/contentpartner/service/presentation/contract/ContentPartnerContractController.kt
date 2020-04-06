@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.presentation.contract
 
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
+import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId

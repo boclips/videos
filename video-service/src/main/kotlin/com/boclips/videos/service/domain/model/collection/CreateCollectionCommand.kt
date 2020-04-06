@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.collection
 
-import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.user.UserId
 
 data class CreateCollectionCommand(
     val owner: UserId,

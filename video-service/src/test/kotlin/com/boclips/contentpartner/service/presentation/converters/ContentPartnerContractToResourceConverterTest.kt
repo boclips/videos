@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.common.PageInfo
 import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.common.ResultsPage
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit

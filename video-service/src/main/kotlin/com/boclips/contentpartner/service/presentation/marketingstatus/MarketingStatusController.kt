@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.presentation.marketingstatus
 
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
+import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerStatusWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerStatusesResource
-import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

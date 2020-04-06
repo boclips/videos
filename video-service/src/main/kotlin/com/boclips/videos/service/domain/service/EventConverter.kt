@@ -8,13 +8,13 @@ import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
 import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
 

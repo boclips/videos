@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.infrastructure.agerange
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

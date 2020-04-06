@@ -5,10 +5,10 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import java.time.Duration
 import java.util.Locale
 

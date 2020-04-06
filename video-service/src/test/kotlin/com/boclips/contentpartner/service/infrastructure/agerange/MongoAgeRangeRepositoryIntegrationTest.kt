@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.infrastructure.agerange
 
-import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import org.assertj.core.api.Assertions.assertThat

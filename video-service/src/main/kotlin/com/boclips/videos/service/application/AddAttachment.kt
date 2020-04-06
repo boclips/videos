@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import org.bson.types.ObjectId
 
 class AddAttachment(private val videoRepository: VideoRepository) {

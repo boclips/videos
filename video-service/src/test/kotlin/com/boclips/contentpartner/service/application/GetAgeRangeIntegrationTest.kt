@@ -14,16 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired
 class GetAgeRangeIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var getAgeRange: GetAgeRange
+
     @Autowired
     lateinit var ageRangeRepository: AgeRangeRepository
 
     @Test
     fun `throws an not found exception when given age range is not found`() {
-        assertThrows<AgeRangeNotFoundException> { getAgeRange(
-            AgeRangeId(
-                "this does not exist"
+        assertThrows<AgeRangeNotFoundException> {
+            getAgeRange(
+                AgeRangeId(
+                    "this does not exist"
+                )
             )
-        ) }
+        }
     }
 
     @Test

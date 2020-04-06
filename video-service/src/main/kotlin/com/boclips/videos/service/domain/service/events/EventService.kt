@@ -23,11 +23,11 @@ import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.common.Do
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.EventConverter
 import java.time.ZonedDateTime
@@ -178,7 +178,8 @@ class EventService(val eventBus: EventBus) {
             )
             is CollectionUpdateCommand.Bookmark -> eventBus.publish(
                 msg(
-                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value).isBookmarked(true),
+                    CollectionBookmarkChanged.builder().collectionId(updateCommand.collectionId.value)
+                        .isBookmarked(true),
                     user = updateCommand.user
                 )
             )

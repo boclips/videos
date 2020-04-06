@@ -1,10 +1,10 @@
 package com.boclips.contentpartner.service.application.contentpartnercontract
 
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.presentation.converters.CurrencyConverter

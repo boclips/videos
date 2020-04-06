@@ -109,7 +109,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser().contentType(MediaType.APPLICATION_JSON)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(
@@ -148,7 +149,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser().contentType(MediaType.APPLICATION_JSON)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(
@@ -750,7 +752,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val collectionId =
             createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
 
-        mockMvc.perform(delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher("anotherteacher@gmail.com"))
+        mockMvc.perform(
+            delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).asTeacher("anotherteacher@gmail.com")
+        )
             .andExpect(status().isNotFound)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@gmail.com"))
@@ -941,12 +945,18 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     private fun renameCollection(collectionId: String, title: String) {
-        mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""").asTeacher())
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""")
+                .asTeacher()
+        )
             .andExpect(status().isNoContent)
     }
 
     private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
-        mockMvc.perform(patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"public": "true", "title": "$title"}""").asTeacher())
+        mockMvc.perform(
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"public": "true", "title": "$title"}""").asTeacher()
+        )
             .andExpect(status().isNoContent)
     }
 

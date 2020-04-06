@@ -35,7 +35,6 @@ import com.boclips.videos.service.application.subject.SubjectClassificationServi
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
-import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA

@@ -1,7 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -10,6 +9,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.mongodb.MongoClient

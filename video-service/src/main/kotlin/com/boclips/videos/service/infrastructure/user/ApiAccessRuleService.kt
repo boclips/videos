@@ -4,14 +4,14 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.Distributi
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.AccessRules
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import feign.FeignException
 import mu.KLogging

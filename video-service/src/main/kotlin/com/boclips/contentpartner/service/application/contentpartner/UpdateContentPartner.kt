@@ -8,8 +8,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
 import org.springframework.stereotype.Component
 
 @Component
