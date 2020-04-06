@@ -7,10 +7,6 @@ import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
-import com.boclips.videos.service.domain.model.SpecificAgeRange
-import com.boclips.videos.service.domain.model.UnknownAgeRange
-import com.boclips.videos.service.domain.model.UpperBoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject

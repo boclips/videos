@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -58,7 +58,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = SpecificAgeRange(min = 5, max = 7)
+            ageRange = FixedAgeRange(min = 5, max = 7)
         ).value
 
         youtubeVideoId = saveVideo(
@@ -68,7 +68,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRange = SpecificAgeRange(min = 7, max = 10)
+            ageRange = FixedAgeRange(min = 7, max = 10)
         ).value
 
         disabledVideoId = saveVideo(

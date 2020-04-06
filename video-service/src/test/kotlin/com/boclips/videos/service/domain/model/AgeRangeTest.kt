@@ -9,7 +9,7 @@ class AgeRangeTest {
     fun `min and max set`() {
         val ageRange = AgeRange.of(min = 3, max = 5)
 
-        val specificAgeRange = ageRange as SpecificAgeRange
+        val specificAgeRange = ageRange as FixedAgeRange
         assertThat(specificAgeRange.min).isEqualTo(3)
         assertThat(specificAgeRange.max).isEqualTo(5)
     }
@@ -18,7 +18,7 @@ class AgeRangeTest {
     fun `min set, no max set`() {
         val ageRange = AgeRange.of(min = 7, max = null)
 
-        val lowerBoundedAgeRange = ageRange as LowerBoundedAgeRange
+        val lowerBoundedAgeRange = ageRange as OpenEndedAgeRange
         assertThat(lowerBoundedAgeRange.min).isEqualTo(7)
     }
 
@@ -26,7 +26,7 @@ class AgeRangeTest {
     fun `min not set, max set`() {
         val ageRange = AgeRange.of(min = null, max = 16)
 
-        val upperBoundedAgeRange = ageRange as UpperBoundedAgeRange
+        val upperBoundedAgeRange = ageRange as CappedAgeRange
         assertThat(upperBoundedAgeRange.max).isEqualTo(16)
     }
 

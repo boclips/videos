@@ -6,33 +6,33 @@ sealed class AgeRange {
             return if (min == null && max == null) {
                 UnknownAgeRange
             } else if (min == null) {
-                UpperBoundedAgeRange(max!!)
+                CappedAgeRange(max!!)
             } else if (max == null) {
-                LowerBoundedAgeRange(min)
+                OpenEndedAgeRange(min)
             } else {
-                SpecificAgeRange(min, max)
+                FixedAgeRange(min, max)
             }
         }
     }
 
     fun min(): Int? {
         return when (this) {
-            is SpecificAgeRange -> this.min
-            is LowerBoundedAgeRange -> this.min
+            is FixedAgeRange -> this.min
+            is OpenEndedAgeRange -> this.min
             else -> null
         }
     }
 
     fun max(): Int? {
         return when (this) {
-            is SpecificAgeRange -> this.max
-            is UpperBoundedAgeRange -> this.max
+            is FixedAgeRange -> this.max
+            is CappedAgeRange -> this.max
             else -> null
         }
     }
 }
 
-data class SpecificAgeRange(val min: Int, val max: Int) : AgeRange()
-data class LowerBoundedAgeRange(val min: Int) : AgeRange()
-data class UpperBoundedAgeRange(val max: Int) : AgeRange()
+data class FixedAgeRange(val min: Int, val max: Int) : AgeRange()
+data class OpenEndedAgeRange(val min: Int) : AgeRange()
+data class CappedAgeRange(val max: Int) : AgeRange()
 object UnknownAgeRange : AgeRange()

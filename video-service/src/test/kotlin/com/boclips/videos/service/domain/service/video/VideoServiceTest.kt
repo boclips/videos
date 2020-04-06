@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -141,7 +141,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            assertThat(video.ageRange).isEqualTo(SpecificAgeRange(3, 7))
+            assertThat(video.ageRange).isEqualTo(FixedAgeRange(3, 7))
         }
 
         @Test

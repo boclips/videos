@@ -3,8 +3,8 @@ package com.boclips.videos.service.application.video
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
-import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.OpenEndedAgeRange
+import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -49,7 +49,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.promoted).isEqualTo(true)
         assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
         assertThat(updatedVideo.subjects.setManually).isTrue()
-        assertThat(updatedVideo.ageRange).isEqualTo(SpecificAgeRange(3, 7))
+        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(3, 7))
     }
 
     @Test
@@ -92,6 +92,6 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(videoId)!!
 
-        assertThat(updatedVideo.ageRange).isEqualTo(LowerBoundedAgeRange(13))
+        assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(13))
     }
 }

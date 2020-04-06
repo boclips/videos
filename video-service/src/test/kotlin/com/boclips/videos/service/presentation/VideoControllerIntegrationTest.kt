@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -57,7 +57,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = SpecificAgeRange(min = 5, max = 7)
+            ageRange = FixedAgeRange(min = 5, max = 7)
         ).value
 
         youtubeVideoId = saveVideo(
@@ -67,7 +67,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRange = SpecificAgeRange(min = 7, max = 10)
+            ageRange = FixedAgeRange(min = 7, max = 10)
         ).value
 
         disabledVideoId = saveVideo(
@@ -421,7 +421,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `updates the age range of a video`() {
             val videoToUpdate = saveVideo(
-                ageRange = SpecificAgeRange(min = 3, max = 10)
+                ageRange = FixedAgeRange(min = 3, max = 10)
             ).value
 
             mockMvc.perform(
@@ -439,7 +439,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates the age range of a video to an unbounded upper range`() {
-            val videoToUpdate = saveVideo(ageRange = SpecificAgeRange(min = 3, max = 10)).value
+            val videoToUpdate = saveVideo(ageRange = FixedAgeRange(min = 3, max = 10)).value
 
             mockMvc.perform(
                 patch("/v1/videos/$videoToUpdate?ageRangeMin=14")

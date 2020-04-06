@@ -2,9 +2,6 @@ package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionVisibility
-import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
-import com.boclips.videos.service.domain.model.SpecificAgeRange
-import com.boclips.videos.service.domain.model.UpperBoundedAgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 
 object CollectionMetadataConverter {
