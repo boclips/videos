@@ -75,7 +75,9 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.VIEW_AGE_RANGES,
                 UserRoles.INSERT_AGE_RANGES,
                 UserRoles.VIEW_ANY_COLLECTION,
-                UserRoles.VIEW_MARKETING_STATUSES
+                UserRoles.VIEW_MARKETING_STATUSES,
+                UserRoles.VIEW_LEGAL_RESTRICTIONS,
+                UserRoles.CREATE_LEGAL_RESTRICTIONS
             )
     )
 

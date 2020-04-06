@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLi
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.NewLegalRestrictionsLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -42,6 +43,7 @@ class LinksController(
     private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
     private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
     private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
+    private val newLegalRestrictionsLinkBuilder: NewLegalRestrictionsLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -74,6 +76,8 @@ class LinksController(
                 contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
                 contentPartnerContractsLinkBuilder.createContractLink(),
                 contentPartnerContractsLinkBuilder.createSignedUploadLink(),
+                newLegalRestrictionsLinkBuilder.newLegalRestrictionLink(null),
+                newLegalRestrictionsLinkBuilder.newLegalRestrictionsLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 videoTypeLinkBuilder.videoTypes(),
