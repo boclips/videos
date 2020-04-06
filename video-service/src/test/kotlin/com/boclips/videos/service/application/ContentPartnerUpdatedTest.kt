@@ -24,7 +24,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
             TestFactories.createVideo(
                 contentPartner = contentPartner,
                 legalRestrictions = "some restrictions",
-                ageRange = UnknownAgeRange()
+                ageRange = UnknownAgeRange
             )
         )
 

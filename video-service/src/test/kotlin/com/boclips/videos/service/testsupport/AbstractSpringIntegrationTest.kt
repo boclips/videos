@@ -253,7 +253,8 @@ abstract class AbstractSpringIntegrationTest {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = AgeRange.of(min = 7, max = 11),
+        ageRangeMin: Int? = 7,
+        ageRangeMax: Int? = 11,
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
@@ -293,8 +294,8 @@ abstract class AbstractSpringIntegrationTest {
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
                 analyseVideo = false,
-                ageRangeMin = ageRange.min(),
-                ageRangeMax = ageRange.max(),
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax,
                 subjects = subjectIds,
                 language = language
             )

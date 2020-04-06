@@ -117,12 +117,13 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     inner class CreateVideo {
         @Test
         fun `create video with an age range`() {
-            val ageRange = AgeRange.of(2, 5)
-            val videoId = saveVideo(ageRange = ageRange)
+            val videoId = saveVideo(ageRangeMin = 2, ageRangeMax = 5)
 
-            assertThat(videoService.getPlayableVideo(videoId, VideoAccess.Everything).ageRange).isEqualTo(
-                ageRange
-            )
+            val retrievedAgeRange = videoService.getPlayableVideo(videoId, VideoAccess.Everything).ageRange
+
+            assertThat(retrievedAgeRange.min()).isEqualTo(2)
+            assertThat(retrievedAgeRange.max()).isEqualTo(5)
+            assertThat(retrievedAgeRange.curatedManually).isFalse()
         }
 
         @Test
@@ -137,7 +138,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
                     contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
-                    ageRange = UnknownAgeRange()
+                    ageRange = UnknownAgeRange
                 )
             )
 

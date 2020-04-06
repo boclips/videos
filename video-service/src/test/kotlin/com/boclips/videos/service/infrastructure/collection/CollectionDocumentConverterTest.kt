@@ -48,7 +48,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.updatedAt).isEqualTo("2019-04-03T02:01:02Z")
         assertThat(collection.isPublic).isEqualTo(false)
         assertThat(collection.promoted).isEqualTo(false)
-        assertThat(collection.ageRange).isEqualTo(FixedAgeRange(min = 5, max = 10, curatedManually = false))
+        assertThat(collection.ageRange).isEqualTo(FixedAgeRange(min = 5, max = 10, curatedManually = true))
         assertThat(collection.bookmarks).containsExactly(
             UserId(
                 value = "user-1"

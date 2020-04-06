@@ -1,7 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.model.FixedAgeRange
-import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -57,7 +55,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = FixedAgeRange(min = 5, max = 7, curatedManually = false)
+            ageRangeMin = 5,
+            ageRangeMax = 7
         ).value
 
         youtubeVideoId = saveVideo(
@@ -67,7 +66,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRange = FixedAgeRange(min = 7, max = 10, curatedManually = false)
+            ageRangeMin = 7,
+            ageRangeMax = 10
         ).value
 
         disabledVideoId = saveVideo(
@@ -77,7 +77,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
             contentProvider = "disabled-cp",
-            ageRange = UnknownAgeRange(),
+            ageRangeMin = null,
+            ageRangeMax = null,
             distributionMethods = emptySet()
         ).value
     }
@@ -400,7 +401,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
                 duration = Duration.ofSeconds(6),
                 contentProvider = "max",
-                ageRange = UnknownAgeRange()
+                ageRangeMin = null,
+                ageRangeMax = null
             ).value
 
             val newSubject = saveSubject("Maths")
@@ -420,9 +422,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates the age range of a video`() {
-            val videoToUpdate = saveVideo(
-                ageRange = FixedAgeRange(min = 3, max = 10, curatedManually = false)
-            ).value
+            val videoToUpdate = saveVideo(ageRangeMin = 3, ageRangeMax = 10).value
 
             mockMvc.perform(
                 patch("/v1/videos/$videoToUpdate?ageRangeMin=4&ageRangeMax=12")
@@ -439,7 +439,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates the age range of a video to an unbounded upper range`() {
-            val videoToUpdate = saveVideo(ageRange = FixedAgeRange(min = 3, max = 10, curatedManually = false)).value
+            val videoToUpdate = saveVideo(ageRangeMin = 3, ageRangeMax = 10).value
 
             mockMvc.perform(
                 patch("/v1/videos/$videoToUpdate?ageRangeMin=14")

@@ -2,9 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.OpenEndedAgeRange
 import com.boclips.videos.service.domain.model.FixedAgeRange
+import com.boclips.videos.service.domain.model.OpenEndedAgeRange
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -49,7 +48,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.promoted).isEqualTo(true)
         assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
         assertThat(updatedVideo.subjects.setManually).isTrue()
-        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = false))
+        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = true))
     }
 
     @Test
@@ -77,21 +76,19 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updates to bounded agerange with no max`() {
-        val videoId = saveVideo(ageRange = AgeRange.of(min = 2, max = 10))
+    fun `updates to bounded age range with no max`() {
+        val videoId = saveVideo(ageRangeMin = 2, ageRangeMax = 10)
 
         createAgeRange(AgeRangeRequest(id = "thirteen-plus", min = 13, label = "13+"))
 
         updateVideo(
             id = videoId.value,
-            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
-                ageRangeMin = 13
-            ),
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(ageRangeMin = 13),
             user = UserFactory.sample(id = "admin@boclips.com")
         )
 
         val updatedVideo = videoRepository.find(videoId)!!
 
-        assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(min = 13, curatedManually = false))
+        assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(min = 13, curatedManually = true))
     }
 }

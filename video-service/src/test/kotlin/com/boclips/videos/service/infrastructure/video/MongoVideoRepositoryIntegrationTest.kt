@@ -207,11 +207,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val updatedAsset = mongoVideoRepository.update(
             VideoUpdateCommand.ReplaceAgeRange(
                 originalAsset.videoId,
-                AgeRange.of(3, 5)
+                AgeRange.of(min = 3, max = 5, curatedManually = true)
             )
         )
 
-        assertThat(updatedAsset.ageRange).isEqualTo(AgeRange.of(3, 5))
+        assertThat(updatedAsset.ageRange).isEqualTo(AgeRange.of(min = 3, max = 5, curatedManually = true))
     }
 
     @Test

@@ -28,7 +28,11 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
 
                     VideoUpdateCommand.ReplaceAgeRange(
                         videoId = video.videoId,
-                        ageRange = AgeRange.of(min = contentPartner.ageRange.min, max = contentPartner.ageRange.max)
+                        ageRange = AgeRange.of(
+                            min = contentPartner.ageRange.min,
+                            max = contentPartner.ageRange.max,
+                            curatedManually = false
+                        )
                     )
                 }
 

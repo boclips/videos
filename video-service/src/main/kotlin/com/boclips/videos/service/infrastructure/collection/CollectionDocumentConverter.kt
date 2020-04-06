@@ -45,7 +45,8 @@ object CollectionDocumentConverter {
             subjects = subjects,
             ageRange = AgeRange.of(
                 min = collectionDocument.ageRangeMin,
-                max = collectionDocument.ageRangeMax
+                max = collectionDocument.ageRangeMax,
+                curatedManually = true
             ),
             description = collectionDocument.description,
             attachments = collectionDocument.attachments?.map {

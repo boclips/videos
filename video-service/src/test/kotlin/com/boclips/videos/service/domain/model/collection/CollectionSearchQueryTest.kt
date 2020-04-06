@@ -153,9 +153,11 @@ class CollectionSearchQueryTest {
             pageSize = 0,
             permittedCollections = emptyList(),
             hasLessonPlans = null,
-            ageRanges = listOf(AgeRange.of(3,7))
+            ageRanges = listOf(AgeRange.of(min = 3, max = 7, curatedManually = true))
         )
 
-        assertThat(query.toSearchQuery().ageRanges).containsExactly(com.boclips.search.service.domain.videos.model.AgeRange(3, 7))
+        val expectedAgeRange = com.boclips.search.service.domain.videos.model.AgeRange(3, 7)
+
+        assertThat(query.toSearchQuery().ageRanges).containsExactly(expectedAgeRange)
     }
 }

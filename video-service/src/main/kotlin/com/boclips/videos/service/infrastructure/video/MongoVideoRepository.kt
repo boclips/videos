@@ -274,6 +274,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             )
             is ReplaceAgeRange -> combine(
                 set(
+                    VideoDocument::ageRangeSetManually,
+                    updateCommand.ageRange.curatedManually
+                ),
+                set(
                     VideoDocument::ageRangeMin,
                     updateCommand.ageRange.min()
                 ),

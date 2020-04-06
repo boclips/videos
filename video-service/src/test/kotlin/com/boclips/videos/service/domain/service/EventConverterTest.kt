@@ -5,8 +5,8 @@ import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -37,7 +37,7 @@ class EventConverterTest {
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
-            ageRange = AgeRange.of(5, 10)
+            ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true)
         )
 
         val videoEvent = converter.toVideoPayload(video)

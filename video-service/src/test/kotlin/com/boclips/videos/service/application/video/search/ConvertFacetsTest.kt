@@ -15,7 +15,7 @@ class FacetConverterTest {
 
     @Test
     fun `converts age range facets`() {
-        val ageRange = AgeRange.of(3, 5)
+        val ageRange = AgeRange.of(min = 3, max = 5, curatedManually = false)
         val facets = FacetConverter().invoke(ageRangesFacets = listOf(ageRange), durationFacets = null)
 
         assertThat(facets.ageRanges.first()).isEqualTo(ageRange)

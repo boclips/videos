@@ -39,7 +39,7 @@ class VideoRepositoryEventDecoratorTest : AbstractSpringIntegrationTest() {
         val subjects = listOf(subjectRepository.create("Maths"))
 
         val updateCommands = listOf(
-            VideoUpdateCommand.ReplaceAgeRange(video1, AgeRange.of(5, 11)),
+            VideoUpdateCommand.ReplaceAgeRange(video1, AgeRange.of(min = 5, max = 11, curatedManually = true)),
             VideoUpdateCommand.ReplaceSubjects(video2, subjects)
         )
 

@@ -145,7 +145,7 @@ class VideoService(
                 )
             )
                 ?.apply {
-                    ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
+                    ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max, curatedManually = false)
                 }
         }
 
