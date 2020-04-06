@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.collection
 
+import com.boclips.videos.service.domain.model.SpecificAgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
@@ -47,8 +48,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.updatedAt).isEqualTo("2019-04-03T02:01:02Z")
         assertThat(collection.isPublic).isEqualTo(false)
         assertThat(collection.promoted).isEqualTo(false)
-        assertThat(collection.ageRange.min()).isEqualTo(5)
-        assertThat(collection.ageRange.max()).isEqualTo(10)
+        assertThat(collection.ageRange).isEqualTo(SpecificAgeRange(5, 10))
         assertThat(collection.bookmarks).containsExactly(
             UserId(
                 value = "user-1"

@@ -61,7 +61,7 @@ class VideoDocumentConverterTest {
                     UserId("user")
                 )
             ),
-            ageRange = AgeRange.bounded(11, 16),
+            ageRange = AgeRange.of(11, 16),
             promoted = true
         )
 

@@ -6,26 +6,34 @@ import org.junit.jupiter.api.Test
 class AgeRangeTest {
 
     @Test
-    fun `bounded age range`() {
-        val ageRange = AgeRange.bounded(3, 5)
+    fun `min and max set`() {
+        val ageRange = AgeRange.of(min = 3, max = 5)
 
-        assertThat(ageRange.min()).isEqualTo(3)
-        assertThat(ageRange.max()).isEqualTo(5)
+        val specificAgeRange = ageRange as SpecificAgeRange
+        assertThat(specificAgeRange.min).isEqualTo(3)
+        assertThat(specificAgeRange.max).isEqualTo(5)
     }
 
     @Test
-    fun `bounded age range with no max`() {
-        val ageRange = AgeRange.bounded(7, null)
+    fun `min set, no max set`() {
+        val ageRange = AgeRange.of(min = 7, max = null)
 
-        assertThat(ageRange.min()).isEqualTo(7)
-        assertThat(ageRange.max()).isNull()
+        val lowerBoundedAgeRange = ageRange as LowerBoundedAgeRange
+        assertThat(lowerBoundedAgeRange.min).isEqualTo(7)
     }
 
     @Test
-    fun `unbounded age range`() {
-        val ageRange = AgeRange.unbounded()
+    fun `min not set, max set`() {
+        val ageRange = AgeRange.of(min = null, max = 16)
 
-        assertThat(ageRange.min()).isNull()
-        assertThat(ageRange.max()).isNull()
+        val upperBoundedAgeRange = ageRange as UpperBoundedAgeRange
+        assertThat(upperBoundedAgeRange.max).isEqualTo(16)
+    }
+
+    @Test
+    fun `min and max not set`() {
+        val ageRange = AgeRange.of(min = null, max = null)
+
+        assertThat(ageRange).isInstanceOf(UnknownAgeRange::class.java)
     }
 }

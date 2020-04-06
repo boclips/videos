@@ -47,7 +47,7 @@ class VideoToResourceConverterTest {
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         language = Locale("khm"),
-        ageRange = AgeRange.bounded(min = 5, max = 11),
+        ageRange = AgeRange.of(min = 5, max = 11),
         ratings = listOf(
             UserRating(
                 rating = 3, userId = UserId(

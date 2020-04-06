@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertThrows
 class ConvertAgeRangesTest {
     @Test
     fun `converts a valid age range`() {
-        assertThat(convertAgeRanges("3-7")).isEqualTo(AgeRange.bounded(3, 7))
+        assertThat(convertAgeRanges("3-7")).isEqualTo(AgeRange.of(3, 7))
     }
 
     @Test

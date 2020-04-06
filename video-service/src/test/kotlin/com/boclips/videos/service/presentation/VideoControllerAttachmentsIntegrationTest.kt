@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles
-import com.boclips.videos.service.domain.model.BoundedAgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -37,7 +37,7 @@ class VideoControllerAttachmentsIntegrationTest : AbstractSpringIntegrationTest(
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = BoundedAgeRange(min = 5, max = 7)
+            ageRange = SpecificAgeRange(min = 5, max = 7)
         ).value
     }
 

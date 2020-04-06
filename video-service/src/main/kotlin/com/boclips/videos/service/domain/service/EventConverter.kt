@@ -7,6 +7,10 @@ import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
+import com.boclips.videos.service.domain.model.UpperBoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -56,6 +60,22 @@ class EventConverter {
             .build()
     }
 
+    fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
+        return com.boclips.eventbus.domain.collection.Collection.builder()
+            .id(CollectionId(collection.id.value))
+            .createdAt(collection.createdAt)
+            .updatedAt(collection.updatedAt)
+            .title(collection.title)
+            .description(collection.description ?: "")
+            .subjects(toSubjectPayload(collection.subjects))
+            .videosIds(collection.videos.map { VideoId(it.value) })
+            .ownerId(UserId(collection.owner.value))
+            .isPublic(collection.isPublic)
+            .ageRange(toAgeRangePayload(collection.ageRange))
+            .bookmarks(collection.bookmarks.map { UserId(it.value) })
+            .build()
+    }
+
     private fun toDimensionsPayload(dimensions: Dimensions): EventDimensions {
         return EventDimensions(dimensions.width, dimensions.height)
     }
@@ -87,21 +107,5 @@ class EventConverter {
     private fun toContentPartnerPayload(contentPartner: ContentPartner):
         com.boclips.eventbus.domain.video.ContentPartner {
         return com.boclips.eventbus.domain.video.ContentPartner.of(contentPartner.name)
-    }
-
-    fun toCollectionPayload(collection: Collection): com.boclips.eventbus.domain.collection.Collection {
-        return com.boclips.eventbus.domain.collection.Collection.builder()
-            .id(CollectionId(collection.id.value))
-            .createdAt(collection.createdAt)
-            .updatedAt(collection.updatedAt)
-            .title(collection.title)
-            .description(collection.description ?: "")
-            .subjects(toSubjectPayload(collection.subjects))
-            .videosIds(collection.videos.map { VideoId(it.value) })
-            .ownerId(UserId(collection.owner.value))
-            .isPublic(collection.isPublic)
-            .ageRange(com.boclips.eventbus.domain.AgeRange(collection.ageRange.min(), collection.ageRange.max()))
-            .bookmarks(collection.bookmarks.map { UserId(it.value) })
-            .build()
     }
 }

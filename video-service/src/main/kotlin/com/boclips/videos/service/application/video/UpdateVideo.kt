@@ -35,12 +35,8 @@ open class UpdateVideo(
             VideoUpdateCommand.ReplaceSubjectsWereSetManually(VideoId(id), true)
         }
 
-        val ageRange = AgeRange.bounded(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax)
-        val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(
-            VideoId(id), AgeRange.bounded(
-                min = ageRange.min(), max = ageRange.max()
-            )
-        )
+        val ageRange = AgeRange.of(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax)
+        val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(videoId = VideoId(id), ageRange = ageRange)
 
         videoRepository.bulkUpdate(
             listOfNotNull(

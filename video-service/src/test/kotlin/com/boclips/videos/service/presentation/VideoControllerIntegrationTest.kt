@@ -1,8 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.service.domain.model.BoundedAgeRange
-import com.boclips.videos.service.domain.model.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -58,7 +57,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = BoundedAgeRange(min = 5, max = 7)
+            ageRange = SpecificAgeRange(min = 5, max = 7)
         ).value
 
         youtubeVideoId = saveVideo(
@@ -68,7 +67,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRange = BoundedAgeRange(min = 7, max = 10)
+            ageRange = SpecificAgeRange(min = 7, max = 10)
         ).value
 
         disabledVideoId = saveVideo(
@@ -78,7 +77,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
             contentProvider = "disabled-cp",
-            ageRange = UnboundedAgeRange,
+            ageRange = UnknownAgeRange,
             distributionMethods = emptySet()
         ).value
     }
@@ -382,9 +381,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `other roles are not authorised to add data to a video`() {
             mockMvc.perform(
-                    post("/v1/videos/99999").asIngestor()
-                        .contentType(MediaType.APPLICATION_JSON).content("{}")
-                )
+                post("/v1/videos/99999").asIngestor()
+                    .contentType(MediaType.APPLICATION_JSON).content("{}")
+            )
                 .andExpect(status().isForbidden)
         }
 
@@ -401,15 +400,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
                 duration = Duration.ofSeconds(6),
                 contentProvider = "max",
-                ageRange = UnboundedAgeRange
+                ageRange = UnknownAgeRange
             ).value
 
             val newSubject = saveSubject("Maths")
 
             mockMvc.perform(
-                    patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
-                        .asBoclipsEmployee()
-                )
+                patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
+                    .asBoclipsEmployee()
+            )
                 .andExpect(status().isOk)
 
             mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
@@ -422,7 +421,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `updates the age range of a video`() {
             val videoToUpdate = saveVideo(
-                ageRange = BoundedAgeRange(min = 3, max = 10)
+                ageRange = SpecificAgeRange(min = 3, max = 10)
             ).value
 
             mockMvc.perform(
@@ -440,7 +439,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updates the age range of a video to an unbounded upper range`() {
-            val videoToUpdate = saveVideo(ageRange = BoundedAgeRange(min = 3, max = 10)).value
+            val videoToUpdate = saveVideo(ageRange = SpecificAgeRange(min = 3, max = 10)).value
 
             mockMvc.perform(
                 patch("/v1/videos/$videoToUpdate?ageRangeMin=14")
@@ -466,9 +465,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("A tag")
 
             mockMvc.perform(
-                    patch(tagVideoUrl).content(tagUrl)
-                        .contentType("text/uri-list").asTeacher()
-                )
+                patch(tagVideoUrl).content(tagUrl)
+                    .contentType("text/uri-list").asTeacher()
+            )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -487,9 +486,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("Tag")
 
             mockMvc.perform(
-                    patch(tagVideoUrl).content(tagUrl)
-                        .contentType("text/uri-list").asTeacher()
-                )
+                patch(tagVideoUrl).content(tagUrl)
+                    .contentType("text/uri-list").asTeacher()
+            )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -717,11 +716,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `returns all enabled and disabled video by ID`() {
             mockMvc.perform(
-                    post("/v1/videos/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""")
-                        .asBoclipsEmployee()
-                )
+                post("/v1/videos/search")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""")
+                    .asBoclipsEmployee()
+            )
                 .andExpect(status().isCreated)
                 .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
@@ -739,10 +738,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `ignores unknown videos searching by IDs`() {
             mockMvc.perform(
-                    post("/v1/videos/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
-                )
+                post("/v1/videos/search")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
+            )
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
@@ -751,10 +750,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `dedupe videos searching by IDs`() {
             mockMvc.perform(
-                    post("/v1/videos/search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
-                )
+                post("/v1/videos/search")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
+            )
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$.page").doesNotExist())
@@ -771,9 +770,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                    MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc")
-                        .asIngestor()
-                )
+                MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc")
+                    .asIngestor()
+            )
                 .andExpect(status().isOk)
         }
 
@@ -813,13 +812,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
-                    """
+                """
                 {
                   "label": "$name",
                   "UserId": "User-1"
                 }
                 """.trimIndent()
-                )
+            )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         ).andReturn().response.getHeader("Location")!!

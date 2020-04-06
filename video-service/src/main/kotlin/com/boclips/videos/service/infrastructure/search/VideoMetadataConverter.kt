@@ -4,12 +4,14 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UpperBoundedAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.video.Availability
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
 object VideoMetadataConverter {

@@ -9,6 +9,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.convertAgeRange
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 import java.time.LocalDate
@@ -66,12 +67,7 @@ class VideoRequest(
                 releaseDateTo = releaseDateTo,
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
-                ageRanges = ageRanges?.map { ageRange ->
-                    com.boclips.search.service.domain.videos.model.AgeRange(
-                        ageRange.min(),
-                        ageRange.max()
-                    )
-                },
+                ageRanges = ageRanges?.map { ageRange -> convertAgeRange(ageRange) },
                 userSubjectIds = userSubjectIds,
                 subjectIds = subjectsRequest.ids,
                 subjectsSetManually = subjectsRequest.setManually,
@@ -80,12 +76,7 @@ class VideoRequest(
                 includedType = type,
                 excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
                 facetDefinition = FacetDefinition.Video(
-                    ageRangeBuckets = facets.ageRanges.map { ageRange ->
-                        com.boclips.search.service.domain.videos.model.AgeRange(
-                            ageRange.min(),
-                            ageRange.max()
-                        )
-                    },
+                    ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
                     duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) }
                 ),
                 permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),

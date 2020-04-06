@@ -3,6 +3,8 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -115,7 +117,7 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
     inner class CreateVideo {
         @Test
         fun `create video with an age range`() {
-            val ageRange = AgeRange.bounded(2, 5)
+            val ageRange = AgeRange.of(2, 5)
             val videoId = saveVideo(ageRange = ageRange)
 
             assertThat(videoService.getPlayableVideo(videoId, VideoAccess.Everything).ageRange).isEqualTo(
@@ -135,12 +137,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
                     contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
-                    ageRange = AgeRange.unbounded()
+                    ageRange = UnknownAgeRange
                 )
             )
 
-            assertThat(video.ageRange.min()).isEqualTo(3)
-            assertThat(video.ageRange.max()).isEqualTo(7)
+            assertThat(video.ageRange).isEqualTo(SpecificAgeRange(3, 7))
         }
 
         @Test

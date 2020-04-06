@@ -43,10 +43,10 @@ object CollectionDocumentConverter {
                 )
             }.toSet(),
             subjects = subjects,
-            ageRange = if (collectionDocument.ageRangeMin !== null) AgeRange.bounded(
+            ageRange = AgeRange.of(
                 min = collectionDocument.ageRangeMin,
                 max = collectionDocument.ageRangeMax
-            ) else AgeRange.unbounded(),
+            ),
             description = collectionDocument.description,
             attachments = collectionDocument.attachments?.map {
                 AttachmentDocumentConverter.convert(it)

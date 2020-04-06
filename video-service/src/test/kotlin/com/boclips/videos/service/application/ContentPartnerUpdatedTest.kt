@@ -4,6 +4,8 @@ import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.ContentPartner
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
 import com.boclips.eventbus.domain.contentpartner.IngestDetails
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -22,7 +24,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
             TestFactories.createVideo(
                 contentPartner = contentPartner,
                 legalRestrictions = "some restrictions",
-                ageRange = com.boclips.videos.service.domain.model.AgeRange.unbounded()
+                ageRange = UnknownAgeRange
             )
         )
 
@@ -44,8 +46,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo.contentPartner.name).isEqualTo("test-888")
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
-        assertThat(updatedVideo.ageRange.min()).isEqualTo(10)
-        assertThat(updatedVideo.ageRange.max()).isEqualTo(15)
+        assertThat(updatedVideo.ageRange).isEqualTo(SpecificAgeRange(10, 15))
     }
 
     @Test

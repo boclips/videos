@@ -50,7 +50,7 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.hasLessonPlans).isTrue()
         assertThat(query.ageRangeMin).isEqualTo(3)
         assertThat(query.ageRangeMax).isEqualTo(7)
-        assertThat(query.ageRanges).isEqualTo(listOf(AgeRange.bounded(3, 7)))
+        assertThat(query.ageRanges).isEqualTo(listOf(AgeRange.of(3, 7)))
     }
 
     @Test

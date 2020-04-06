@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.convertAgeRange
 
 class CollectionSearchQuery(
     val text: String?,
@@ -49,7 +50,7 @@ class CollectionSearchQuery(
         hasLessonPlans = this.hasLessonPlans,
         ageRangeMin = this.ageRangeMin,
         ageRangeMax = this.ageRangeMax,
-        ageRanges = this.ageRanges?.map { com.boclips.search.service.domain.videos.model.AgeRange(it.min(), it.max()) },
+        ageRanges = this.ageRanges?.map { convertAgeRange(it) },
         promoted = this.promoted
     )
 

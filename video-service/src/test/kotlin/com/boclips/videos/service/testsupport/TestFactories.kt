@@ -93,7 +93,7 @@ object TestFactories {
         language: Locale? = null,
         transcript: String? = null,
         topics: Set<Topic> = emptySet(),
-        ageRange: AgeRange = AgeRange.bounded(5, 12),
+        ageRange: AgeRange = AgeRange.of(5, 12),
         ratings: List<UserRating> = emptyList(),
         tags: List<UserTag> = emptyList(),
         contentPartner: ContentPartner = ContentPartner(
@@ -234,7 +234,7 @@ object TestFactories {
         createdByBoclips = createdByBoclips,
         bookmarks = bookmarks,
         subjects = subjects,
-        ageRange = AgeRange.bounded(ageRangeMin, ageRangeMax),
+        ageRange = AgeRange.of(ageRangeMin, ageRangeMax),
         description = description,
         attachments = attachments
     )

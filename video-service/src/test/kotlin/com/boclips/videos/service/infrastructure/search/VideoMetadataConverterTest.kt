@@ -40,7 +40,7 @@ class VideoMetadataConverterTest {
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             transcript = "a great transcript",
-            ageRange = AgeRange.bounded(5, 11),
+            ageRange = AgeRange.of(5, 11),
             subjects = setOf(
                 Subject(
                     id = SubjectId(value = "subject-id"),

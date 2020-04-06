@@ -37,7 +37,7 @@ class EventConverterTest {
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
-            ageRange = AgeRange.bounded(5, 10)
+            ageRange = AgeRange.of(5, 10)
         )
 
         val videoEvent = converter.toVideoPayload(video)

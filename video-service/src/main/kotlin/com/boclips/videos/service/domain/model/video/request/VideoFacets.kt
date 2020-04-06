@@ -5,12 +5,12 @@ import java.time.Duration
 
 data class VideoFacets(
     var ageRanges: List<AgeRange> = listOf(
-        AgeRange.bounded(3, 5),
-        AgeRange.bounded(5, 9),
-        AgeRange.bounded(9, 11),
-        AgeRange.bounded(11, 14),
-        AgeRange.bounded(14, 16),
-        AgeRange.bounded(16, 99)
+        AgeRange.of(3, 5),
+        AgeRange.of(5, 9),
+        AgeRange.of(9, 11),
+        AgeRange.of(11, 14),
+        AgeRange.of(14, 16),
+        AgeRange.of(16, 99)
     ),
     var durations: List<Pair<Duration, Duration>> = listOf(
         Pair(Duration.ZERO, Duration.ofMinutes(2)),

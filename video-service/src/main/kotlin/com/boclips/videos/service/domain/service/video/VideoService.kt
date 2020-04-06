@@ -9,7 +9,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.UnboundedAgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.DurationFacet
@@ -62,9 +62,7 @@ class VideoService(
         val subjectCounts = results.counts.getFacetCounts(FacetType.Subjects)
             .map { SubjectFacet(subjectId = SubjectId(it.id), total = it.hits) }
         val ageRangeCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
-            .map { AgeRangeFacet(ageRangeId = AgeRangeId(
-                it.id
-            ), total = it.hits) }
+            .map { AgeRangeFacet(ageRangeId = AgeRangeId(it.id), total = it.hits) }
         val durationCounts = results.counts.getFacetCounts(FacetType.Duration)
             .map { DurationFacet(durationId = it.id, total = it.hits) }
 
@@ -111,13 +109,7 @@ class VideoService(
     fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
         val results = videoSearchService.search(
             PaginatedSearchRequest(
-                query = VideoIdsRequest(
-                    ids = listOf(
-                        videoId
-                    )
-                ).toSearchQuery(
-                    videoAccess
-                ),
+                query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
                 windowSize = 1
             )
         )
@@ -146,18 +138,14 @@ class VideoService(
         }
 
         var ageRange = videoToBeCreated.ageRange
-        if (videoToBeCreated.ageRange is UnboundedAgeRange) {
+        if (videoToBeCreated.ageRange is UnknownAgeRange) {
             contentPartnerRepository.findById(
                 contentPartnerId = ContentPartnerId(
                     value = videoToBeCreated.contentPartner.contentPartnerId.value
                 )
             )
                 ?.apply {
-                    ageRange = if (this.ageRangeBuckets.min != null && this.ageRangeBuckets.max != null) {
-                        AgeRange.bounded(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
-                    } else {
-                        AgeRange.unbounded()
-                    }
+                    ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max)
                 }
         }
 

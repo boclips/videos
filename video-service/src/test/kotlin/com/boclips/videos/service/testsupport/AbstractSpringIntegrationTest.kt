@@ -2,9 +2,9 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
@@ -36,7 +36,6 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.BoundedAgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -254,10 +253,7 @@ abstract class AbstractSpringIntegrationTest {
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
         legalRestrictions: String = "",
-        ageRange: AgeRange = BoundedAgeRange(
-            min = 7,
-            max = 11
-        ),
+        ageRange: AgeRange = AgeRange.of(min = 7, max = 11),
         distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
@@ -313,7 +309,12 @@ abstract class AbstractSpringIntegrationTest {
         return createSubject(CreateSubjectRequest(name))
     }
 
-    fun saveAgeRange(id: String, min: Int, max: Int, label: String): com.boclips.contentpartner.service.domain.model.agerange.AgeRange {
+    fun saveAgeRange(
+        id: String,
+        min: Int,
+        max: Int,
+        label: String
+    ): com.boclips.contentpartner.service.domain.model.agerange.AgeRange {
         return createAgeRange(AgeRangeRequest(id = id, min = min, max = max, label = label))
     }
 

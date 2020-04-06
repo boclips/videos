@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.Collection
@@ -133,7 +134,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(updatedCollection.videos).contains(video2)
             assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
             assertThat(updatedCollection.isPublic).isEqualTo(true)
-            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.unbounded())
+            assertThat(updatedCollection.ageRange).isEqualTo(UnknownAgeRange)
         }
 
         @Test
@@ -256,7 +257,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
-            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, 5))
+            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.of(3, 5))
         }
 
         @Test
@@ -347,7 +348,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
-            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.bounded(3, null))
+            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.of(3, null))
         }
 
         @Test

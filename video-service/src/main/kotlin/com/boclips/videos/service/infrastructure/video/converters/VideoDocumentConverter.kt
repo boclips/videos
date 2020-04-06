@@ -1,6 +1,9 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.LowerBoundedAgeRange
+import com.boclips.videos.service.domain.model.SpecificAgeRange
+import com.boclips.videos.service.domain.model.UpperBoundedAgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -71,10 +74,7 @@ object VideoDocumentConverter {
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
-            ageRange = if (document.ageRangeMin !== null) AgeRange.bounded(
-                min = document.ageRangeMin,
-                max = document.ageRangeMax
-            ) else AgeRange.unbounded(),
+            ageRange = AgeRange.of(min = document.ageRangeMin, max = document.ageRangeMax),
             ratings = document.rating.map {
                 UserRatingDocumentConverter.toRating(
                     it
