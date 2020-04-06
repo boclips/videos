@@ -5,11 +5,12 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
-import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.request.SortKey
+import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
@@ -72,7 +73,7 @@ class SearchVideo(
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges?.map(::convertAgeRanges) ?: emptyList(),
-            ageRangesFacets = ageRangeFacets?.map(::convertAgeRanges),
+            ageRangesFacets = ageRangeFacets?.map(::convertAgeRangeFacets),
             subjects = subjects,
             subjectsSetManually = subjectsSetManually,
             promoted = promoted,

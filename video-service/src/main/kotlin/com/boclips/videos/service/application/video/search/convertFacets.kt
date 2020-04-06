@@ -1,11 +1,11 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
 import com.boclips.videos.service.domain.model.video.request.VideoFacets
 import java.time.Duration
 
 class FacetConverter {
-    operator fun invoke(ageRangesFacets: List<AgeRange>?, durationFacets: List<String>?): VideoFacets {
+    operator fun invoke(ageRangesFacets: List<FixedAgeRangeFacet>?, durationFacets: List<String>?): VideoFacets {
         return VideoFacets()
             .apply {
                 durationFacets.let {

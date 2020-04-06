@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
@@ -39,7 +40,7 @@ class GetVideosByQuery(
         ageRangeMin: Int?,
         ageRangeMax: Int?,
         ageRanges: List<AgeRange>,
-        ageRangesFacets: List<AgeRange>?,
+        ageRangesFacets: List<FixedAgeRangeFacet>?,
         subjects: Set<String>,
         promoted: Boolean?,
         contentPartnerNames: Set<String>,
