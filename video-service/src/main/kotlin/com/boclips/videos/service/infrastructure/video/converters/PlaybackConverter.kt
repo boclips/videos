@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.model.video.Dimensions
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
@@ -114,7 +114,10 @@ object PlaybackConverter : KLogging() {
         return VideoAsset(
             reference = asset.id!!,
             sizeKb = asset.sizeKb!!,
-            dimensions = Dimensions(asset.width!!, asset.height!!),
+            dimensions = Dimensions(
+                asset.width!!,
+                asset.height!!
+            ),
             bitrateKbps = asset.bitrateKbps!!
         )
     }

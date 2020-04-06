@@ -251,7 +251,7 @@ class ApplicationContext(
 
     @Bean
     fun videoAnalysisService(): VideoAnalysisService {
-        return VideoAnalysisService(videoRepository, videoService, eventBus, playbackRepository)
+        return VideoAnalysisService(videoRepository, eventBus, playbackRepository)
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 
 sealed class VideoFilter {
     data class ContentPartnerNameIs(val contentPartnerName: String) : VideoFilter()

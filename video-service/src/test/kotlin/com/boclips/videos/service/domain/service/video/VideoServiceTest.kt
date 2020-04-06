@@ -2,13 +2,12 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -137,7 +136,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             val video = videoService.create(
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
-                    contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
+                    contentPartnerId = ContentPartnerId(
+                        value = contentPartner.contentPartnerId.value
+                    ),
                     ageRange = UnknownAgeRange
                 )
             )
@@ -151,7 +152,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
 
             videoService.create(
                 TestFactories.createVideo(
-                    contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
+                    contentPartnerId = ContentPartnerId(
+                        value = contentPartner.contentPartnerId.value
+                    ),
                     videoReference = "video-123"
                 )
             )
@@ -159,7 +162,9 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
             assertThrows<VideoNotCreatedException> {
                 videoService.create(
                     TestFactories.createVideo(
-                        contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
+                        contentPartnerId = ContentPartnerId(
+                            value = contentPartner.contentPartnerId.value
+                        ),
                         videoReference = "video-123"
                     )
                 )

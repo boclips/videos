@@ -3,8 +3,8 @@ package com.boclips.videos.service.domain.service
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
-import com.boclips.videos.service.domain.model.video.Availability
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.Availability
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -34,7 +34,9 @@ class ContentPartnerServiceTest {
         val contentPartnerService = ContentPartnerService(contentPartnerRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+            contentPartnerService.findAvailabilityFor(
+                contentPartnerId = ContentPartnerId(value = "test")
+            )
 
         assertThat(availability).isEqualTo(Availability.STREAMING)
     }
@@ -46,7 +48,11 @@ class ContentPartnerServiceTest {
         val contentPartnerService = ContentPartnerService(contentPartnerRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+            contentPartnerService.findAvailabilityFor(
+                contentPartnerId = ContentPartnerId(
+                    value = "test"
+                )
+            )
 
         assertThat(availability).isEqualTo(Availability.DOWNLOAD)
     }

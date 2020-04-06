@@ -42,10 +42,10 @@ import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.Dimensions
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -178,7 +178,10 @@ object TestFactories {
         downloadUrl: String = "kaltura-download",
         createdAt: ZonedDateTime? = null,
         referenceId: String = "555",
-        originalDimensions: Dimensions? = Dimensions(width = 360, height = 480)
+        originalDimensions: Dimensions? = Dimensions(
+            width = 360,
+            height = 480
+        )
     ): StreamPlayback {
         return StreamPlayback(
             id = PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId),

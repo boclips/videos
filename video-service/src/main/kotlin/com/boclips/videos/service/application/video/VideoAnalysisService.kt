@@ -23,7 +23,6 @@ import java.util.Locale
 
 class VideoAnalysisService(
     private val videoRepository: VideoRepository,
-    private val videoService: VideoService,
     private val eventBus: EventBus,
     private val playbackRepository: PlaybackRepository
 ) {

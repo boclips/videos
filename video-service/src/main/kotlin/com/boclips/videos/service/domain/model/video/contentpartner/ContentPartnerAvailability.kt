@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.video
+package com.boclips.videos.service.domain.model.video.contentpartner
 
 enum class Availability {
     DOWNLOAD, STREAMING, ALL, NONE;

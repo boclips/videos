@@ -76,11 +76,15 @@ class RebuildVideoIndexTest {
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
                 videoId = videoId2,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.ContentPartnerId(bothContentPartnerId)
+                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                    bothContentPartnerId
+                )
             ),
             TestFactories.createVideo(
                 videoId = videoId3,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.ContentPartnerId(bothContentPartnerId)
+                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                    bothContentPartnerId
+                )
             )
         )
 
@@ -115,13 +119,13 @@ class RebuildVideoIndexTest {
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
                 videoId = streamableVideoId,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.ContentPartnerId(
+                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
                     streamableContentPartnerId
                 )
             ),
             TestFactories.createVideo(
                 videoId = downloadableVideoId,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.ContentPartnerId(
+                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
                     downloadContentPartnerId
                 )
             )

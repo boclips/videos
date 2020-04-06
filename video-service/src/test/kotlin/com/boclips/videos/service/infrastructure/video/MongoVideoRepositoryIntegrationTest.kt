@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -469,7 +469,9 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
-                    contentPartnerId = ContentPartnerId(value = contentPartnerId)
+                    contentPartnerId = ContentPartnerId(
+                        value = contentPartnerId
+                    )
                 )
             )
 
@@ -477,19 +479,26 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 2",
-                    contentPartnerId = ContentPartnerId(value = contentPartnerId)
+                    contentPartnerId = ContentPartnerId(
+                        value = contentPartnerId
+                    )
                 )
             )
 
         mongoVideoRepository.create(
             createVideo(
                 title = "Video 3",
-                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString())
+                contentPartnerId = ContentPartnerId(
+                    value = ObjectId().toHexString()
+                )
             )
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(value = contentPartnerId))
+            mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
+                value = contentPartnerId
+            )
+            )
 
         assertThat(videos).containsExactly(video1, video2)
     }
@@ -501,14 +510,18 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
-                    contentPartnerId = ContentPartnerId(id)
+                    contentPartnerId = ContentPartnerId(
+                        id
+                    )
                 )
             )
         val video2 =
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 2",
-                    contentPartnerId = ContentPartnerId(id)
+                    contentPartnerId = ContentPartnerId(
+                        id
+                    )
                 )
             )
 
@@ -516,11 +529,16 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             createVideo(
                 title = "Video 3",
-                contentPartnerId = ContentPartnerId(id2)
+                contentPartnerId = ContentPartnerId(
+                    id2
+                )
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(id))
+        val videos = mongoVideoRepository.findByContentPartnerId(contentPartnerId = ContentPartnerId(
+            id
+        )
+        )
         assertThat(videos).containsExactly(video1, video2)
     }
 

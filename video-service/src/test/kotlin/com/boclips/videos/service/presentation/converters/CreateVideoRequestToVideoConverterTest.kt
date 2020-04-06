@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCreateVideoRequest
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
 import org.assertj.core.api.Assertions.assertThat

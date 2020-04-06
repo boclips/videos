@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.Locale

@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
-import com.boclips.videos.service.domain.model.video.Dimensions
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
@@ -44,7 +44,10 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     downloadUrl = it.value.downloadUrl,
                     createdAt = it.value.createdAt,
                     assets = convertAndValidateAssetsToSet(assetsByEntryId[it.value.id]),
-                    originalDimensions = Dimensions(width = it.value.width, height = it.value.height)
+                    originalDimensions = Dimensions(
+                        width = it.value.width,
+                        height = it.value.height
+                    )
                 )
                 (it.key to videoPlayback)
             }

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.model.video
+package com.boclips.videos.service.domain.model.video.contentpartner
 
 data class ContentPartner(
     val contentPartnerId: ContentPartnerId,

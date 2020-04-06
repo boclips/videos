@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
 import org.bson.types.ObjectId
 
@@ -15,7 +15,9 @@ object ContentPartnerDocumentConverter {
 
     fun toContentPartner(document: ContentPartnerDocument): ContentPartner {
         return ContentPartner(
-            contentPartnerId = ContentPartnerId(value = document.id.toString()),
+            contentPartnerId = ContentPartnerId(
+                value = document.id.toString()
+            ),
             name = document.name
         )
     }

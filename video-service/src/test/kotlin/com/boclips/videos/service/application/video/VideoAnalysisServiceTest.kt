@@ -26,7 +26,7 @@ class VideoAnalysisServiceTest {
         videoService = mock()
         eventBus = mock()
         videoClassificationService =
-            VideoAnalysisService(videoRepository, videoService, eventBus, playbackRepository)
+            VideoAnalysisService(videoRepository, eventBus, playbackRepository)
     }
 
     @Test

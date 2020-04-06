@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.videos.service.domain.model.video.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import java.time.Duration
 import java.time.ZonedDateTime

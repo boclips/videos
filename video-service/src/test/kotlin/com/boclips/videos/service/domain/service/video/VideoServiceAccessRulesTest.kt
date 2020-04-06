@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -84,7 +84,11 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val secondExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
 
             val accessRule = VideoAccessRule.ExcludedContentPartners(
-                contentPartnerIds = setOf(ContentPartnerId(value = excludedContentPartnerId))
+                contentPartnerIds = setOf(
+                    ContentPartnerId(
+                        value = excludedContentPartnerId
+                    )
+                )
             )
 
             val videos = videoService.getPlayableVideos(
@@ -234,7 +238,11 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
 
             val accessRule = VideoAccessRule.ExcludedContentPartners(
-                contentPartnerIds = setOf(ContentPartnerId(value = excludedContentPartnerId))
+                contentPartnerIds = setOf(
+                    ContentPartnerId(
+                        value = excludedContentPartnerId
+                    )
+                )
             )
 
             val results = videoService.search(

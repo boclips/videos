@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -80,7 +80,11 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                 )
                 is AccessRuleResource.ExcludedVideoTypes -> extractExcludedContentTypes(it)
                 is AccessRuleResource.ExcludedContentPartners -> VideoAccessRule.ExcludedContentPartners(
-                    it.contentPartnerIds.map { id -> ContentPartnerId(id) }.toSet()
+                    it.contentPartnerIds.map { id ->
+                        ContentPartnerId(
+                            id
+                        )
+                    }.toSet()
                 )
                 is AccessRuleResource.IncludedCollections -> null
             }

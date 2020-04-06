@@ -6,7 +6,7 @@ import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -207,7 +207,9 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoAccess.accessRules).containsOnly(
                 VideoAccessRule.ExcludedContentPartners(
                     contentPartnerIds = setOf(
-                        ContentPartnerId(value = "content-partner-1")
+                        ContentPartnerId(
+                            value = "content-partner-1"
+                        )
                     )
                 )
             )

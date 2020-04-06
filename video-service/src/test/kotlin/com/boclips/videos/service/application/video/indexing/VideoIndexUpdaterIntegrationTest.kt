@@ -7,7 +7,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.service.EventConverter
@@ -213,7 +213,10 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         val createdContentPartner = contentPartnerRepository.create(contentPartner)
 
         val video = videoRepository.create(
-            TestFactories.createVideo(contentPartnerId = ContentPartnerId(value = createdContentPartner.contentPartnerId.value))
+            TestFactories.createVideo(contentPartnerId = ContentPartnerId(
+                value = createdContentPartner.contentPartnerId.value
+            )
+            )
         )
 
         reset(legacyVideoSearchService)

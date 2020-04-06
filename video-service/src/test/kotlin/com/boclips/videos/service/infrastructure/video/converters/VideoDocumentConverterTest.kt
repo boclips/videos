@@ -2,8 +2,8 @@ package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentPartner
-import com.boclips.videos.service.domain.model.video.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -30,7 +30,9 @@ class VideoDocumentConverterTest {
             contentPartnerName = "the contentPartner",
             contentPartnerVideoId = "the contentPartnerVideoId",
             contentPartner = ContentPartner(
-                contentPartnerId = ContentPartnerId(value = ObjectId().toHexString()),
+                contentPartnerId = ContentPartnerId(
+                    value = ObjectId().toHexString()
+                ),
                 name = "Some name"
             ),
             playback = TestFactories.createKalturaPlayback(),

@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.Dimensions
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -31,7 +31,10 @@ class EventConverterTest {
             contentPartnerName = "the content partner",
             playback = TestFactories.createKalturaPlayback(
                 duration = Duration.ofMinutes(2),
-                originalDimensions = Dimensions(1920, 1080),
+                originalDimensions = Dimensions(
+                    1920,
+                    1080
+                ),
                 assets = setOf(VideoFactory.createVideoAsset())
             ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),

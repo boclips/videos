@@ -5,6 +5,8 @@ import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
@@ -17,7 +19,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 
         val contentPartnerId =
-            com.boclips.videos.service.domain.model.video.ContentPartnerId(value = contentPartner.id.value)
+            ContentPartnerId(value = contentPartner.id.value)
 
         videoRepository.streamUpdate(VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartnerId)) { videos ->
             videos.flatMap { video ->
@@ -39,7 +41,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
                 listOfNotNull(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
-                        contentPartner = com.boclips.videos.service.domain.model.video.ContentPartner(
+                        contentPartner = ContentPartner(
                             contentPartnerId = contentPartnerId,
                             name = contentPartner.name
                         )
