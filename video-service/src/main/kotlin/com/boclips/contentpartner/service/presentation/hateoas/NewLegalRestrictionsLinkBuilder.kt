@@ -22,7 +22,7 @@ class NewLegalRestrictionsLinkBuilder(private val uriComponentsBuilderFactory: U
         return UserExtractor.getIfHasRole(UserRoles.VIEW_LEGAL_RESTRICTIONS) {
             linkTo(
                 methodOn(NewLegalRestrictionsController::class.java).getOne(id)
-            ).withRel("SingleLegalRestriction")
+            ).withRel("legalRestriction")
         }
     }
 
@@ -30,7 +30,7 @@ class NewLegalRestrictionsLinkBuilder(private val uriComponentsBuilderFactory: U
         return UserExtractor.getIfHasRole(UserRoles.VIEW_LEGAL_RESTRICTIONS) {
             linkTo(
                 methodOn(NewLegalRestrictionsController::class.java).getAll()
-            ).withRel("LegalRestrictions")
+            ).withRel("legalRestrictions")
         }
     }
 
