@@ -49,7 +49,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.promoted).isEqualTo(true)
         assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
         assertThat(updatedVideo.subjects.setManually).isTrue()
-        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(3, 7))
+        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = false))
     }
 
     @Test
@@ -92,6 +92,6 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(videoId)!!
 
-        assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(13))
+        assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(min = 13, curatedManually = false))
     }
 }

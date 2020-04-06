@@ -37,7 +37,7 @@ class VideoControllerAttachmentsIntegrationTest : AbstractSpringIntegrationTest(
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = FixedAgeRange(min = 5, max = 7)
+            ageRange = FixedAgeRange(min = 5, max = 7, curatedManually = false)
         ).value
     }
 

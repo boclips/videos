@@ -1,16 +1,18 @@
 package com.boclips.videos.service.domain.model
 
 sealed class AgeRange {
+    abstract val curatedManually: Boolean
+
     companion object {
-        fun of(min: Int?, max: Int?): AgeRange {
+        fun of(min: Int?, max: Int?, curatedManually: Boolean = false): AgeRange {
             return if (min == null && max == null) {
-                UnknownAgeRange
+                UnknownAgeRange(curatedManually = curatedManually)
             } else if (min == null) {
-                CappedAgeRange(max!!)
+                CappedAgeRange(max = max!!, curatedManually = curatedManually)
             } else if (max == null) {
-                OpenEndedAgeRange(min)
+                OpenEndedAgeRange(min = min, curatedManually = curatedManually)
             } else {
-                FixedAgeRange(min, max)
+                FixedAgeRange(min = min, max = max, curatedManually = curatedManually)
             }
         }
     }
@@ -32,7 +34,7 @@ sealed class AgeRange {
     }
 }
 
-data class FixedAgeRange(val min: Int, val max: Int) : AgeRange()
-data class OpenEndedAgeRange(val min: Int) : AgeRange()
-data class CappedAgeRange(val max: Int) : AgeRange()
-object UnknownAgeRange : AgeRange()
+data class FixedAgeRange(val min: Int, val max: Int, override val curatedManually: Boolean) : AgeRange()
+data class OpenEndedAgeRange(val min: Int, override val curatedManually: Boolean) : AgeRange()
+data class CappedAgeRange(val max: Int, override val curatedManually: Boolean) : AgeRange()
+data class UnknownAgeRange(override val curatedManually: Boolean = false) : AgeRange()

@@ -137,11 +137,11 @@ class VideoServiceTest : AbstractSpringIntegrationTest() {
                 TestFactories.createVideo(
                     contentPartnerName = "Our content partner",
                     contentPartnerId = ContentPartnerId(value = contentPartner.contentPartnerId.value),
-                    ageRange = UnknownAgeRange
+                    ageRange = UnknownAgeRange()
                 )
             )
 
-            assertThat(video.ageRange).isEqualTo(FixedAgeRange(3, 7))
+            assertThat(video.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = false))
         }
 
         @Test

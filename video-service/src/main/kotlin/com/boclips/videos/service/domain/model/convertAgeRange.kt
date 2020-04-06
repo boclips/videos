@@ -12,6 +12,6 @@ fun convertAgeRange(ageRange: AgeRange): com.boclips.search.service.domain.video
         is CappedAgeRange -> com.boclips.search.service.domain.videos.model.AgeRange(
             max = ageRange.max
         )
-        UnknownAgeRange -> com.boclips.search.service.domain.videos.model.AgeRange()
+        is UnknownAgeRange -> com.boclips.search.service.domain.videos.model.AgeRange()
     }
 }

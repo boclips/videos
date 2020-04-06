@@ -58,7 +58,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRange = FixedAgeRange(min = 5, max = 7)
+            ageRange = FixedAgeRange(min = 5, max = 7, curatedManually = false)
         ).value
 
         youtubeVideoId = saveVideo(
@@ -68,7 +68,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRange = FixedAgeRange(min = 7, max = 10)
+            ageRange = FixedAgeRange(min = 7, max = 10, curatedManually = false)
         ).value
 
         disabledVideoId = saveVideo(
@@ -78,7 +78,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
             contentProvider = "disabled-cp",
-            ageRange = UnknownAgeRange,
+            ageRange = UnknownAgeRange(),
             distributionMethods = emptySet()
         ).value
     }

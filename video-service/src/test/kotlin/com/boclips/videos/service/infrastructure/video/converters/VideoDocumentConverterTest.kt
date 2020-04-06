@@ -13,6 +13,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -81,6 +82,30 @@ class VideoDocumentConverterTest {
         val recoveredVideo = VideoDocumentConverter.toVideo(document)
 
         assertThat(recoveredVideo.attachments).isEqualTo(originalVideo.attachments)
+    }
+
+    @Nested
+    inner class AgeRanges {
+        @Test
+        fun `can convert age ranges that have not been curated`() {
+            val originalVideo: Video = TestFactories.createVideo(ageRange = AgeRange.of(3, 5, false))
+
+            val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+            val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+            assertThat(recoveredVideo.ageRange).isEqualTo(originalVideo.ageRange)
+        }
+
+        @Test
+        fun `can convert age ranges that have been curated`() {
+            val originalVideo: Video = TestFactories.createVideo(ageRange = AgeRange.of(3, 5, true))
+
+            val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+            val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+            assertThat(recoveredVideo.ageRange).isEqualTo(originalVideo.ageRange)
+            assertThat(recoveredVideo.ageRange.curatedManually).isEqualTo(originalVideo.ageRange.curatedManually)
+        }
     }
 
     @Test

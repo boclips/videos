@@ -37,6 +37,7 @@ object VideoDocumentConverter {
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
+            ageRangeSetManually = video.ageRange.curatedManually,
             rating = video.ratings.map {
                 UserRatingDocumentConverter.toDocument(
                     it
@@ -71,7 +72,11 @@ object VideoDocumentConverter {
             language = document.language?.let(Locale::forLanguageTag),
             transcript = document.transcript,
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
-            ageRange = AgeRange.of(min = document.ageRangeMin, max = document.ageRangeMax),
+            ageRange = AgeRange.of(
+                min = document.ageRangeMin,
+                max = document.ageRangeMax,
+                curatedManually = document.ageRangeSetManually ?: false
+            ),
             ratings = document.rating.map {
                 UserRatingDocumentConverter.toRating(
                     it

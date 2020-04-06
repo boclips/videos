@@ -134,7 +134,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(updatedCollection.videos).contains(video2)
             assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
             assertThat(updatedCollection.isPublic).isEqualTo(true)
-            assertThat(updatedCollection.ageRange).isEqualTo(UnknownAgeRange)
+            assertThat(updatedCollection.ageRange).isEqualTo(UnknownAgeRange())
         }
 
         @Test

@@ -18,13 +18,13 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Test
-    fun `update videos of updated content partner`() {
+    fun `updates name, legal restrictions and age ranges`() {
         val contentPartner = TestFactories.createContentPartner(name = "test-999")
         val video = videoRepository.create(
             TestFactories.createVideo(
                 contentPartner = contentPartner,
                 legalRestrictions = "some restrictions",
-                ageRange = UnknownAgeRange
+                ageRange = UnknownAgeRange()
             )
         )
 
@@ -46,11 +46,41 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo.contentPartner.name).isEqualTo("test-888")
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
-        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15))
+        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
     }
 
     @Test
-    fun `updates multiple videos`() {
+    fun `does not update age ranges if set manually`() {
+        val contentPartner = TestFactories.createContentPartner(name = "test-999")
+        val video = videoRepository.create(
+            TestFactories.createVideo(
+                contentPartner = contentPartner,
+                legalRestrictions = "some restrictions",
+                ageRange = FixedAgeRange(min = 3, max = 5, curatedManually = true)
+            )
+        )
+
+        fakeEventBus.publish(
+            com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
+                .contentPartner(
+                    ContentPartner.builder()
+                        .id(ContentPartnerId(contentPartner.contentPartnerId.value))
+                        .name("test-888")
+                        .legalRestrictions("some better restrictions")
+                        .ageRange(AgeRange.builder().min(10).max(15).build())
+                        .ingest(IngestDetails.builder().type("MANUAL").build())
+                        .build()
+                )
+                .build()
+        )
+
+        val updatedVideo = videoRepository.find(videoId = video.videoId)!!
+
+        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 5, curatedManually = true))
+    }
+
+    @Test
+    fun `updates videos of content partner`() {
         val contentPartner = TestFactories.createContentPartner(name = "test-999")
         val video1 = videoRepository.create(TestFactories.createVideo(contentPartner = contentPartner))
         val video2 = videoRepository.create(TestFactories.createVideo(contentPartner = contentPartner))

@@ -5,7 +5,6 @@ import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
@@ -22,6 +21,17 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
 
         videoRepository.streamUpdate(VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartnerId)) { videos ->
             videos.flatMap { video ->
+                val updateAgeRanges = video.ageRange.curatedManually.let { isCuratedManually ->
+                    if (isCuratedManually) {
+                        return@let null
+                    }
+
+                    VideoUpdateCommand.ReplaceAgeRange(
+                        videoId = video.videoId,
+                        ageRange = AgeRange.of(min = contentPartner.ageRange.min, max = contentPartner.ageRange.max)
+                    )
+                }
+
                 listOfNotNull(
                     VideoUpdateCommand.ReplaceContentPartner(
                         videoId = video.videoId,
@@ -30,10 +40,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
                             name = contentPartner.name
                         )
                     ),
-                    VideoUpdateCommand.ReplaceAgeRange(
-                        videoId = video.videoId,
-                        ageRange = AgeRange.of(min = contentPartner.ageRange.min, max = contentPartner.ageRange.max)
-                    ),
+                    updateAgeRanges,
                     contentPartner.legalRestrictions?.let {
                         VideoUpdateCommand.ReplaceLegalRestrictions(
                             videoId = video.videoId,
