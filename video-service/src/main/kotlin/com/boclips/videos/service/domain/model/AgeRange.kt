@@ -9,7 +9,7 @@ sealed class AgeRange(open val curatedManually: Boolean) {
                 CappedAgeRange(max = max!!, curatedManually = curatedManually)
             } else if (max == null) {
                 OpenEndedAgeRange(min = min, curatedManually = curatedManually)
-            } else if (min >= max) {
+            } else if (min > max) {
                 throw IllegalAgeRange()
             } else {
                 FixedAgeRange(min = min, max = max, curatedManually = curatedManually)
