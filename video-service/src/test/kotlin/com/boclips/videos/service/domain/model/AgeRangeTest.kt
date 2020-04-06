@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.model
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class AgeRangeTest {
 
@@ -38,5 +39,11 @@ class AgeRangeTest {
         val ageRange = AgeRange.of(min = null, max = null, curatedManually = true)
 
         assertThat(ageRange).isInstanceOf(UnknownAgeRange::class.java)
+    }
+
+    @Test
+    fun `cannot instantiate an Age Range where min greater or equals max`() {
+        assertThrows<IllegalAgeRange> { AgeRange.of(min = 10, max = 8, curatedManually = true) }
+        assertThrows<IllegalAgeRange> { AgeRange.of(min = 10, max = 10, curatedManually = true) }
     }
 }
