@@ -10,7 +10,7 @@ data class NewLegalRestrictionDocument(
     fun toNewLegalRestriction(): NewLegalRestriction {
         return NewLegalRestriction(
             id = id,
-            restrictions = restrictions
+            restrictions = restrictions.map { SingleLegalRestriction(id = it.id, text = it.text) }
         )
     }
 
@@ -18,7 +18,12 @@ data class NewLegalRestrictionDocument(
         fun toNewLegalRestrictionDocument(newLegalRestriction: NewLegalRestriction): NewLegalRestrictionDocument {
             return NewLegalRestrictionDocument(
                 id = newLegalRestriction.id,
-                restrictions = newLegalRestriction.restrictions
+                restrictions = newLegalRestriction.restrictions.map {
+                    SingleLegalRestriction(
+                        id = it.id,
+                        text = it.text
+                    )
+                }
             )
         }
     }
