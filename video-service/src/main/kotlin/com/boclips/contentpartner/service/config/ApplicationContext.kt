@@ -9,25 +9,24 @@ import com.boclips.contentpartner.service.application.contentpartner.GetContentP
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
-import com.boclips.contentpartner.service.application.newlegalrestriction.CreateNewLegalRestriction
-import com.boclips.contentpartner.service.application.newlegalrestriction.FindAllNewLegalRestrictions
-import com.boclips.contentpartner.service.application.newlegalrestriction.FindOneNewLegalRestriction
+import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.CreateContractLegalRestriction
+import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.FindAllContractLegalRestrictions
 import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.domain.model.newlegalrestriction.NewLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.converters.NewLegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.NewLegalRestrictionsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -38,7 +37,7 @@ class ApplicationContext(
     val contentPartnerRepository: ContentPartnerRepository,
     val ageRangeRepository: AgeRangeRepository,
     val contentPartnerContractRepository: ContentPartnerContractRepository,
-    val newLegalRestrictionsRepository: NewLegalRestrictionsRepository
+    val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository
 ) {
     @Bean
     fun getContentPartner(): GetContentPartner {
@@ -64,36 +63,27 @@ class ApplicationContext(
     }
 
     @Bean
-    fun findAllNewLegalRestrictions(): FindAllNewLegalRestrictions {
-        return FindAllNewLegalRestrictions(
-            newLegalRestrictionsRepository
+    fun findAllContractLegalRestrictions(): FindAllContractLegalRestrictions {
+        return FindAllContractLegalRestrictions(
+            contractLegalRestrictionsRepository
         )
     }
 
     @Bean
-    fun createNewLegalRestriction(): CreateNewLegalRestriction {
-        return CreateNewLegalRestriction(
-            newLegalRestrictionsRepository
+    fun createContractLegalRestriction(): CreateContractLegalRestriction {
+        return CreateContractLegalRestriction(
+            contractLegalRestrictionsRepository
         )
     }
 
     @Bean
-    fun findOneNewLegalRestriction(): FindOneNewLegalRestriction {
-        return FindOneNewLegalRestriction(
-            newLegalRestrictionsRepository
-        )
+    fun contractLegalRestrictionToResourceConverter(): ContractLegalRestrictionsToResourceConverter {
+        return ContractLegalRestrictionsToResourceConverter()
     }
 
     @Bean
-    fun newLegalRestrictionsConverter(): NewLegalRestrictionsToResourceConverter {
-        return NewLegalRestrictionsToResourceConverter()
-    }
-
-    @Bean
-    fun newLegalRestrictionsLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): NewLegalRestrictionsLinkBuilder {
-        return NewLegalRestrictionsLinkBuilder(
-            uriComponentsBuilderFactory
-        )
+    fun contractLegalRestrictionsLinkBuilder(): ContractLegalRestrictionsLinkBuilder {
+        return ContractLegalRestrictionsLinkBuilder()
     }
 
     @Bean

@@ -112,9 +112,9 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/distribution-methods").hasRole(ROLE.VIEW_DISTRIBUTION_METHODS)
 
-            .antMatchers(GET, "/v1/legal-restrictions").hasRole(ROLE.UPDATE_VIDEOS)
-            .antMatchers(GET, "/v1/legal-restrictions/*").hasRole(ROLE.UPDATE_VIDEOS)
-            .antMatchers(POST, "/v1/legal-restrictions").hasRole(ROLE.UPDATE_VIDEOS)
+            .antMatchers(GET, "/v1/legal-restrictions").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
+            .antMatchers(GET, "/v1/legal-restrictions/*").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
+            .antMatchers(POST, "/v1/legal-restrictions").hasRole(ROLE.CREATE_LEGAL_RESTRICTIONS)
 
             .antMatchers(GET, "/v1/age-ranges").hasRole(ROLE.VIEW_AGE_RANGES)
             .antMatchers(GET, "/v1/age-ranges/*").hasRole(ROLE.VIEW_AGE_RANGES)
@@ -122,9 +122,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(GET, "/v1/marketing-statuses").hasRole(ROLE.VIEW_MARKETING_STATUSES)
 
-            .antMatchers(GET, "/v1/new-legal-restrictions").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
-            .antMatchers(GET, "/v1/new-legal-restrictions/*/*").hasRole(ROLE.CREATE_LEGAL_RESTRICTIONS)
-            .antMatchers(POST, "/v1/new-legal-restrictions").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
+            .antMatchers(GET, "/v1/contract-legal-restrictions").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
+            .antMatchers(POST, "/v1/contract-legal-restrictions").hasRole(ROLE.CREATE_LEGAL_RESTRICTIONS)
 
             .anyRequest().denyAll()
     }

@@ -18,7 +18,7 @@ class DistributionMethodsLinkBuilderTest {
         val link = builder.distributionMethods()!!
 
         assertThat(link.href).isEqualTo("https://localhost/v1/distribution-methods")
-        assertThat(link.isTemplated).isFalse()
+        assertThat(link.isTemplated).isEqualTo(false)
     }
 
     @Test

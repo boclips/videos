@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.util.UriComponentsBuilder
 
-class ContentPartnerContractsLinkBuilderTest() {
+class ContentPartnerContractsLinkBuilderTest {
     private lateinit var contractsLinkBuilder: ContentPartnerContractsLinkBuilder
 
     @BeforeEach
@@ -28,7 +28,7 @@ class ContentPartnerContractsLinkBuilderTest() {
 
         assertThat(link.href).endsWith("/v1/content-partner-contracts{?size,page}")
         assertThat(link.rel.value()).isEqualTo(ContentPartnerContractsLinkBuilder.Rels.CONTENT_PARTNER_CONTRACTS)
-        assertThat(link.isTemplated).isTrue()
+        assertThat(link.isTemplated).isEqualTo(true)
     }
 
     @Test

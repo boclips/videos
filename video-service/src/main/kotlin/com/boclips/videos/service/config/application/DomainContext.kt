@@ -4,13 +4,13 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeReposito
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.domain.model.newlegalrestriction.NewLegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.contentpartner.MongoContentPartnerRepository
-import com.boclips.contentpartner.service.infrastructure.contentpartnercontract.ContentPartnerContractDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.contentpartnercontract.MongoContentPartnerContractRepository
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.contract.MongoContentPartnerContractRepository
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
-import com.boclips.contentpartner.service.infrastructure.newlegalrestriction.MongoNewLegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.users.api.httpclient.OrganisationsClient
@@ -170,8 +170,10 @@ class DomainContext(
     }
 
     @Bean
-    fun newLegalRestrictionsRepository(): NewLegalRestrictionsRepository {
-        return MongoNewLegalRestrictionsRepository(mongoClient)
+    fun contractLegalRestrictionsRepository(): ContractLegalRestrictionsRepository {
+        return MongoContractLegalRestrictionsRepository(
+            mongoClient
+        )
     }
 
     @Bean
