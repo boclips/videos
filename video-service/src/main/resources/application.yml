@@ -7,8 +7,8 @@ spring:
 logging:
   config: "classpath:logback.xml"
   level:
-    com.boclips.kalturaclient: debug
-    feign: debug
+    com.boclips.kalturaclient: info
+    feign: info
 
 management:
   endpoint:
