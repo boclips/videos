@@ -37,14 +37,14 @@ class ContentPartnerContractToResourceConverter(
             minimumPriceDescription = contract.minimumPriceDescription,
             remittanceCurrency = contract.remittanceCurrency?.currencyCode,
             restrictions = ContentPartnerContractRestrictionsResource(
-                clientFacing = contract.restrictions.clientFacing,
-                territory = contract.restrictions.territory,
-                licensing = contract.restrictions.licensing,
-                editing = contract.restrictions.editing,
-                marketing = contract.restrictions.marketing,
-                companies = contract.restrictions.companies,
-                payout = contract.restrictions.payout,
-                other = contract.restrictions.other
+                clientFacing = contract.restrictions?.clientFacing,
+                territory = contract.restrictions?.territory,
+                licensing = contract.restrictions?.licensing,
+                editing = contract.restrictions?.editing,
+                marketing = contract.restrictions?.marketing,
+                companies = contract.restrictions?.companies,
+                payout = contract.restrictions?.payout,
+                other = contract.restrictions?.other
             ),
             costs = ContentPartnerContractCostsResource(
                 minimumGuarantee = contract.costs.minimumGuarantee,

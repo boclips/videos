@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.domain.model.contentpartnercontract
 
 data class ContractRestrictions(
-    val clientFacing: List<String>,
+    val clientFacing: List<String>?,
     val territory: String?,
     val licensing: String?,
     val editing: String?,
