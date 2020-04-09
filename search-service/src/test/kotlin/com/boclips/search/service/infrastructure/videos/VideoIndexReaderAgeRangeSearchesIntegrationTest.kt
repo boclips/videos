@@ -21,10 +21,26 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "Pre-school", ageRangeMin = 3, ageRangeMax = 5),
-                SearchableVideoMetadataFactory.create(id = "Lower-Elementary", ageRangeMin = 5, ageRangeMax = 7),
-                SearchableVideoMetadataFactory.create(id = "Upper-Elementary", ageRangeMin = 7, ageRangeMax = 11),
-                SearchableVideoMetadataFactory.create(id = "Middle-School", ageRangeMin = 11, ageRangeMax = 14),
+                SearchableVideoMetadataFactory.create(
+                    id = "Pre-school",
+                    ageRangeMin = 3,
+                    ageRangeMax = 5
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "Lower-Elementary",
+                    ageRangeMin = 5,
+                    ageRangeMax = 7
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "Upper-Elementary",
+                    ageRangeMin = 7,
+                    ageRangeMax = 11
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "Middle-School",
+                    ageRangeMin = 11,
+                    ageRangeMax = 14
+                ),
                 SearchableVideoMetadataFactory.create(
                     id = "Middle-School-And-Up",
                     ageRangeMin = 11,
@@ -35,8 +51,16 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                     ageRangeMin = null,
                     ageRangeMax = 14
                 ),
-                SearchableVideoMetadataFactory.create(id = "Jr-High-School", ageRangeMin = 14, ageRangeMax = 16),
-                SearchableVideoMetadataFactory.create(id = "High-School", ageRangeMin = 16, ageRangeMax = null)
+                SearchableVideoMetadataFactory.create(
+                    id = "Jr-High-School",
+                    ageRangeMin = 14,
+                    ageRangeMax = 16
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "High-School",
+                    ageRangeMin = 16,
+                    ageRangeMax = null
+                )
             )
         )
     }
@@ -153,6 +177,44 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
             assertThat(results.elements).contains("Middle-School")
             assertThat(results.elements).contains("Middle-School-And-Up")
             assertThat(results.elements).contains("Jr-High-School")
+        }
+    }
+
+    @Nested
+    inner class AgeRangeBoostResults {
+        @Test
+        fun `boost bigger age range overlap between query and video`() {
+            val results = getSearchResults(
+                VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11)))
+            )
+
+            assertThat(results.elements).hasSize(5)
+            assertThat(results.elements[0]).isEqualTo("Upper-Elementary")
+            assertThat(results.elements[1]).isEqualTo("Middle-School-And-Down")
+            assertThat(results.elements).contains("Lower-Elementary")
+            assertThat(results.elements).contains("Middle-School")
+            assertThat(results.elements).contains("Middle-School-And-Up")
+        }
+
+        @Test
+        fun `boost bigger age range overlap between query and video with multiple ageRanges`() {
+            val results = getSearchResults(
+                VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11), AgeRange(min=14, max=16)))
+            )
+
+            assertThat(results.elements).hasSize(7)
+            val topResults = results.elements.subList(0,4);
+
+            assertThat(topResults).contains("Upper-Elementary")
+            assertThat(topResults).contains("Jr-High-School")
+            assertThat(topResults).contains("Middle-School-And-Down")
+            assertThat(topResults).contains("Middle-School-And-Up")
+
+            val lastResults = results.elements.subList(4, 7)
+
+            assertThat(lastResults).contains("Lower-Elementary")
+            assertThat(lastResults).contains("Middle-School")
+            assertThat(lastResults).contains("High-School")
         }
     }
 
