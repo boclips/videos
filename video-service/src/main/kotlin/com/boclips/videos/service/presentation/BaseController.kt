@@ -35,7 +35,6 @@ open class BaseController(
             isPermittedToViewCollections = userRequest?.hasRole(UserRoles.VIEW_COLLECTIONS) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
-            isPermittedToShareVideo = userRequest?.hasRole(UserRoles.SHARE_VIDEOS) ?: false,
             overrideIdSupplier = overrideIdSupplier,
             context = RequestContext(origin = referer),
             accessRulesSupplier = { user ->
@@ -53,7 +52,6 @@ object Administrator : User(
     isPermittedToViewAnyCollection = true,
     isPermittedToViewCollections = true,
     isPermittedToUpdateVideo = true,
-    isPermittedToShareVideo = true,
     context = RequestContext(origin = null),
     accessRulesSupplier = {
         AccessRules(

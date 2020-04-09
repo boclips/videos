@@ -20,62 +20,6 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Test
-    fun `matching fields are updated, subjects and subjectsWereSetManually included`() {
-        val videoId = saveVideo(title = "title", description = "description")
-        val subjectsList = listOf(
-            saveSubject(name = "Design"),
-            saveSubject(name = "Art")
-        )
-        val subjectIdList = subjectsList.map { it.id.value }
-
-        updateVideo(
-            id = videoId.value,
-            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
-                title = null,
-                description = "new description",
-                promoted = true,
-                subjectIds = subjectIdList,
-                ageRangeMin = 3,
-                ageRangeMax = 7
-            ),
-            user = UserFactory.sample(id = "admin@boclips.com")
-        )
-
-        val updatedVideo = videoRepository.find(videoId)!!
-
-        assertThat(updatedVideo.title).isEqualTo("title")
-        assertThat(updatedVideo.description).isEqualTo("new description")
-        assertThat(updatedVideo.promoted).isEqualTo(true)
-        assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
-        assertThat(updatedVideo.subjects.setManually).isTrue()
-        assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = true))
-    }
-
-    @Test
-    fun `with no subjects specified, subjectsWereSetManually stays false`() {
-        val videoId = saveVideo(
-            title = "title",
-            description = "description",
-            subjectIds = emptySet()
-        )
-        updateVideo(
-            id = videoId.value,
-            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(
-                title = null,
-                description = "new description",
-                promoted = true,
-                subjectIds = null
-            ),
-            user = UserFactory.sample(id = "admin@boclips.com")
-        )
-
-        val updatedVideo = videoRepository.find(videoId)!!
-
-        assertThat(updatedVideo.subjects.items).isEmpty()
-        assertThat(updatedVideo.subjects.setManually).isFalse()
-    }
-
-    @Test
     fun `updates to bounded age range with no max`() {
         val videoId = saveVideo(ageRangeMin = 2, ageRangeMax = 10)
 

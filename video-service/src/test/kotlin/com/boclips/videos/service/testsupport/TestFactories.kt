@@ -535,7 +535,6 @@ object UserFactory {
         id: String = "userio-123",
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
-        isPermittedToShareVideo: Boolean = false,
         overrideIdSupplier: () -> String? = { null },
         isAuthenticated: Boolean = true,
         accessRulesSupplier: (user: User) -> AccessRules = {
@@ -553,7 +552,6 @@ object UserFactory {
             isPermittedToUpdateVideo = true,
             isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
-            isPermittedToShareVideo = isPermittedToShareVideo,
             isPermittedToViewCollections = true,
             overrideIdSupplier = { overrideIdSupplier()?.let(::UserId) },
             accessRulesSupplier = accessRulesSupplier

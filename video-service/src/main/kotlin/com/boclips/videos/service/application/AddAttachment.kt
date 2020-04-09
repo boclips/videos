@@ -22,7 +22,7 @@ class AddAttachment(private val videoRepository: VideoRepository) {
             type = AttachmentType.valueOf(attachment.type)
         )
 
-        videoRepository.update(VideoUpdateCommand.AddAttachment(videoId = videoId, attachment = savedAttachment))
+        videoRepository.update(VideoUpdateCommand.ReplaceAttachment(videoId = videoId, attachment = savedAttachment))
 
         return savedAttachment
     }

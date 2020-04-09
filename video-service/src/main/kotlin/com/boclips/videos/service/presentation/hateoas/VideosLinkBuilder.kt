@@ -127,7 +127,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             else -> HateoasLink.of(
                 WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .patchTag(video.videoId.value, null)
+                        .patchUpdateTag(video.videoId.value, null)
                 ).withRel(Rels.TAG)
             )
         }

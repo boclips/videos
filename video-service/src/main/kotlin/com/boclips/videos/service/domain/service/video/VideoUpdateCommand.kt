@@ -13,7 +13,7 @@ import java.time.Duration
 import java.util.Locale
 
 sealed class VideoUpdateCommand(val videoId: VideoId) {
-    class AddAttachment(videoId: VideoId, val attachment: Attachment) : VideoUpdateCommand(videoId)
+    class ReplaceAttachment(videoId: VideoId, val attachment: Attachment) : VideoUpdateCommand(videoId)
     class ReplaceSubjects(videoId: VideoId, val subjects: List<Subject>) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)

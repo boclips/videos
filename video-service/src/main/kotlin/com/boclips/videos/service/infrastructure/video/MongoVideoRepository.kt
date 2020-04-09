@@ -302,7 +302,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::subjectsWereSetManually,
                 updateCommand.subjectsWereSetManually
             )
-            is VideoUpdateCommand.AddAttachment -> set(
+            is VideoUpdateCommand.ReplaceAttachment -> set(
                 VideoDocument::attachments, listOf(AttachmentDocumentConverter.convert(updateCommand.attachment))
             )
         }

@@ -548,8 +548,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `add attachment to video`() {
         val video = mongoVideoRepository.create(createVideo(attachments = emptyList()))
 
+        mongoVideoRepository.update(
+            VideoUpdateCommand.ReplaceAttachment(videoId = video.videoId, attachment = AttachmentFactory.sample())
+        )
+
         val updatedVideo = mongoVideoRepository.update(
-            VideoUpdateCommand.AddAttachment(
+            VideoUpdateCommand.ReplaceAttachment(
                 videoId = video.videoId,
                 attachment = AttachmentFactory.sample(
                     description = "description",

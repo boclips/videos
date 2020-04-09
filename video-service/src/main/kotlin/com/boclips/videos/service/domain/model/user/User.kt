@@ -10,7 +10,6 @@ open class User(
     val isPermittedToViewCollections: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
-    val isPermittedToShareVideo: Boolean,
     val overrideIdSupplier: () -> UserId? = { null },
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules

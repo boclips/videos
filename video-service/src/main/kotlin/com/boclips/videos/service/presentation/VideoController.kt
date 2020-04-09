@@ -212,7 +212,7 @@ class VideoController(
     }
 
     @PostMapping("/v1/videos")
-    fun postVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
+    fun postCreateVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
         val resource: VideoResource = try {
             createVideo(createVideoRequest)
                 .let { videoToResourceConverter.convert(it, getCurrentUser()) }
@@ -256,22 +256,19 @@ class VideoController(
         ).let { this.getVideo(id) }
 
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["!rating"])
-    fun patchVideo(
+    fun patchUpdateVideo(
         @PathVariable id: String,
-        @RequestParam subjectIds: List<String>? = emptyList(), //TODO: move these to updateRequest if the spring gods allow it
-        updateRequest: UpdateVideoRequest
+        @Valid updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
-        val updateRequestWithPathParams = updateRequest.copy(subjectIds = subjectIds)
-
-        return updateVideo(id, updateRequestWithPathParams, getCurrentUser()).let { this.getVideo(id) }
+        return updateVideo(id, updateRequest, getCurrentUser()).let { this.getVideo(id) }
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/tags"])
-    fun patchTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
+    fun patchUpdateTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
 
     @PutMapping(path = ["/v1/videos/{id}/attachments"])
-    fun putAttachment(
+    fun putCreateAttachment(
         @PathVariable id: String,
         @Valid @RequestBody attachment: AttachmentRequest?
     ): ResponseEntity<AttachmentResource> {
