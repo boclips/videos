@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.net.URI
 import java.time.Duration
 import java.time.LocalDate
 
@@ -166,7 +165,9 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val newSubject = saveSubject("Maths")
 
         mockMvc.perform(
-            patch("/v1/videos/${editedVideo.value}?subjectIds=${newSubject.id.value}")
+            patch("/v1/videos/${editedVideo.value}")
+                .content("""{ "subjectIds": ["${newSubject.id.value}"] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )
 
@@ -494,9 +495,12 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     private fun setPromoted(videoId: String, promoted: Boolean): ResultActions {
-        val updateLink = getUpdateLink(videoId).expand(mapOf("promoted" to promoted))
-
-        return mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
+        return mockMvc.perform(
+            patch("/v1/videos/$videoId")
+                .content("""{ "promoted": $promoted }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
     }
 
     private fun setRating(videoId: VideoId, rating: Int) {

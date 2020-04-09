@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.net.URI
 import java.time.Duration
 
 class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
@@ -73,15 +72,12 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     fun `update video metadata`() {
         val videoId = saveVideo(title = "Old title", description = "Old description").value
 
-        val updateLink = getUpdateLink(videoId).expand(
-            mapOf(
-                "title" to "New title",
-                "description" to "New description",
-                "promoted" to "true"
-            )
+        mockMvc.perform(
+            patch("/v1/videos/$videoId")
+                .content("""{ "title": "New title", "description": "New description", "promoted": true }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
         )
-
-        mockMvc.perform(patch(URI.create(updateLink)).asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.title", equalTo("New title")))
             .andExpect(jsonPath("$.description", equalTo("New description")))
@@ -123,7 +119,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         val newSubject = saveSubject("Maths")
 
         mockMvc.perform(
-            patch("/v1/videos/$videoToUpdate?subjectIds=${newSubject.id.value},${sampleSubject2.id.value}")
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "subjectIds": ["${newSubject.id.value}", "${sampleSubject2.id.value}"] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )
             .andExpect(status().isOk)
@@ -140,7 +138,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         val videoToUpdate = saveVideo(ageRangeMin = 3, ageRangeMax = 10).value
 
         mockMvc.perform(
-            patch("/v1/videos/$videoToUpdate?ageRangeMin=4&ageRangeMax=12")
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "ageRangeMin": 4, "ageRangeMax": 12 }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )
             .andExpect(status().isOk)
@@ -153,11 +153,13 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updates the age range of a video to an unbounded upper range`() {
+    fun `updates the age range of a video to an unbounded upper range as body payload`() {
         val videoToUpdate = saveVideo(ageRangeMin = 3, ageRangeMax = 10).value
 
         mockMvc.perform(
-            patch("/v1/videos/$videoToUpdate?ageRangeMin=14")
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "ageRangeMin": 14 }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         )
             .andExpect(status().isOk)

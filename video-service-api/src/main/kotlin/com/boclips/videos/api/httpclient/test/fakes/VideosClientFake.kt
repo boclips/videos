@@ -57,7 +57,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             title = updateVideoRequest.title ?: video.title,
             promoted = updateVideoRequest.promoted ?: video.promoted,
             subjects = updateVideoRequest.subjectIds?.let { subjects ->
-                subjects.split(",").map { SubjectResource(id = it) }.toSet()
+                subjects.map { SubjectResource(id = it) }.toSet()
             } ?: video.subjects
         )
 

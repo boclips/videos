@@ -36,7 +36,7 @@ interface VideosClient {
     fun createVideo(createVideoRequest: CreateVideoRequest): VideoResource
 
     @RequestLine("PATCH /v1/videos/{videoId}")
-    fun updateVideo(@Param("videoId") videoId: String, @QueryMap updateVideoRequest: UpdateVideoRequest)
+    fun updateVideo(@Param("videoId") videoId: String, updateVideoRequest: UpdateVideoRequest = UpdateVideoRequest())
 
     @RequestLine("DELETE /v1/videos/{videoId}")
     fun deleteVideo(@Param("videoId") videoId: String)

@@ -48,7 +48,7 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
             saveSubject(name = "Design"),
             saveSubject(name = "Art")
         )
-        val subjectIdList = subjectsList.joinToString(",") { it.id.value }
+        val subjectIdList = subjectsList.map { it.id.value }
 
         updateVideo(
             id = videoId.value,

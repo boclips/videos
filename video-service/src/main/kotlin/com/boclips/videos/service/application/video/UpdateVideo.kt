@@ -27,7 +27,7 @@ class UpdateVideo(
         val updateDescription =
             updateRequest.description?.let { VideoUpdateCommand.ReplaceDescription(VideoId(id), it) }
         val replacePromoted = updateRequest.promoted?.let { VideoUpdateCommand.ReplacePromoted(VideoId(id), it) }
-        val updateSubjectIds = updateRequest.subjectIds?.split(",")?.let { subjectIdList ->
+        val updateSubjectIds = updateRequest.subjectIds?.let { subjectIdList ->
             val allSubjects = subjectRepository.findAll()
             val validNewSubjects = allSubjects.filter { subjectIdList.contains(it.id.value) }
             VideoUpdateCommand.ReplaceSubjects(VideoId(id), validNewSubjects)

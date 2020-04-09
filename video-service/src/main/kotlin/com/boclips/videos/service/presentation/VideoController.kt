@@ -258,7 +258,7 @@ class VideoController(
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["!rating"])
     fun patchUpdateVideo(
         @PathVariable id: String,
-        @Valid updateRequest: UpdateVideoRequest
+        @RequestBody updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
         return updateVideo(id, updateRequest, getCurrentUser()).let { this.getVideo(id) }
     }

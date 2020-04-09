@@ -106,7 +106,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
             val videoId = saveVideo()
             updateVideo.invoke(
                 id = videoId.value,
-                updateRequest = UpdateVideoRequest(subjectIds = manuallySetSubject.id.value),
+                updateRequest = UpdateVideoRequest(subjectIds = listOf(manuallySetSubject.id.value)),
                 user = UserFactory.sample()
             )
 

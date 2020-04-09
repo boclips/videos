@@ -73,7 +73,7 @@ class VideoServiceApiFactory {
             title: String? = "video-title",
             description: String? = "description",
             promoted: Boolean? = false,
-            subjectIds: String? = null,
+            subjectIds: List<String>? = null,
             ageRangeMin: Int? = null,
             ageRangeMax: Int? = null,
             rating: Int? = null

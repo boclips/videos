@@ -123,7 +123,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
 
             videosClient.updateVideo(
                 editedVideo.value,
-                VideoServiceApiFactory.createUpdateVideoRequest(subjectIds = subject.id.value)
+                VideoServiceApiFactory.createUpdateVideoRequest(subjectIds = listOf(subject.id.value))
             )
 
             val allVideos = videosClient
