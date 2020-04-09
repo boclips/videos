@@ -6,8 +6,6 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asTeacher
-import com.damnhandy.uri.template.UriTemplate
-import com.jayway.jsonpath.JsonPath
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -171,14 +169,54 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.ageRange.label", equalTo("14+")))
     }
 
-    private fun getUpdateLink(videoId: String): UriTemplate {
-        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asBoclipsEmployee())
+    @Test
+    fun `updates a list of attachments`() {
+        val videoToUpdate = saveVideo().value
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
             .andExpect(status().isOk)
-            .andReturn().response.contentAsString
 
-        val link = JsonPath.parse(videoResponse).read<String>("$._links.update.href")
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.attachments", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.attachments[0].id").exists())
+            .andExpect(jsonPath("$.attachments[0].description").exists())
+            .andExpect(jsonPath("$.attachments[0].type").exists())
+            .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("alex.bagpipes.com")))
+    }
 
-        return UriTemplate.fromTemplate(link)
+    @Test
+    fun `updates of an attachment replaces existing attachments`() {
+        val videoToUpdate = saveVideo().value
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "attachments": [{ "linkToResource": "ben.chocolatefest.ch", "type": "ACTIVITY", "description": "A less amazing description" }] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.attachments", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.attachments[0].id").exists())
+            .andExpect(jsonPath("$.attachments[0].description").exists())
+            .andExpect(jsonPath("$.attachments[0].type").exists())
+            .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("alex.bagpipes.com")))
     }
 }
 

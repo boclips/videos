@@ -7,7 +7,6 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeReposito
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.videos.service.application.AddAttachment
 import com.boclips.videos.service.application.ContentPartnerUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
@@ -398,10 +397,5 @@ class ApplicationContext(
     @Bean
     fun getAllVideosById(): GetAllVideosById {
         return GetAllVideosById(videoService)
-    }
-
-    @Bean
-    fun addAttachment(videoRepository: VideoRepository): AddAttachment {
-        return AddAttachment(videoRepository = videoRepository)
     }
 }

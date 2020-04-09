@@ -1,16 +1,13 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.AdminSearchRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.response.collection.AttachmentResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
-import com.boclips.videos.service.application.AddAttachment
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -18,16 +15,13 @@ import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
-import com.boclips.videos.service.application.video.exceptions.VideoServiceException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
-import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
@@ -44,7 +38,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -64,9 +57,7 @@ class VideoController(
     private val objectMapper: ObjectMapper,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
-    private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val videoRepository: VideoRepository,
-    private val addAttachment: AddAttachment,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -266,21 +257,4 @@ class VideoController(
     @PatchMapping(path = ["/v1/videos/{id}/tags"])
     fun patchUpdateTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
-
-    @PutMapping(path = ["/v1/videos/{id}/attachments"])
-    fun putCreateAttachment(
-        @PathVariable id: String,
-        @Valid @RequestBody attachment: AttachmentRequest?
-    ): ResponseEntity<AttachmentResource> {
-        val newAttachment = addAttachment.toVideo(
-            user = getCurrentUser(),
-            videoId = VideoId(value = id),
-            attachment = attachment
-                ?: throw VideoServiceException(message = "You must provide an attachment request")
-        )
-
-        val resource = attachmentToResourceConverter.convert(newAttachment)
-
-        return ResponseEntity(resource, HttpStatus.CREATED)
-    }
 }
