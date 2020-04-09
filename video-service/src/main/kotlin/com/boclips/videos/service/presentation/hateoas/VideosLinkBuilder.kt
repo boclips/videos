@@ -141,7 +141,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         .pathSegment(video.videoId.value)
                         .build()
                         .toUriString()
-                        + "{?title,description,promoted,subjectIds,ageRangeMin,ageRangeMax}"
                     , UPDATE
                 )
             )
