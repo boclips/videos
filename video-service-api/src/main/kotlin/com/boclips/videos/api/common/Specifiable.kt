@@ -19,6 +19,7 @@ sealed class Specifiable<T> {
 }
 
 data class Specified<T>(val value: T) : Specifiable<T>()
+
 class ExplicitlyNull<T> : Specifiable<T>()
 
 class SpecifiableDeserializer constructor(
