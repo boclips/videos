@@ -72,7 +72,6 @@ class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.subjects.items).containsExactlyInAnyOrder(*subjectsList.toTypedArray())
         assertThat(updatedVideo.subjects.setManually).isTrue()
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = true))
-        assertThat(updatedVideo.ratings.map { it.rating }).containsExactly(4)
     }
 
     @Test
