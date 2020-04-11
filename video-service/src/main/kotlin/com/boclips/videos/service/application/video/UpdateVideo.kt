@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.AgeRange
@@ -21,7 +23,6 @@ class UpdateVideo(
     private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository
 ) {
-
     companion object : KLogging();
 
     operator fun invoke(id: String, updateRequest: UpdateVideoRequest, user: User) {
@@ -44,16 +45,7 @@ class UpdateVideo(
             AgeRange.of(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax, curatedManually = true)
         val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange)
 
-        val replaceAttachments = updateRequest.attachments?.map { attachment ->
-            val savedAttachment = Attachment(
-                attachmentId = AttachmentId(value = ObjectId().toHexString()),
-                description = attachment.description!!,
-                linkToResource = attachment.linkToResource,
-                type = AttachmentType.valueOf(attachment.type)
-            )
-
-            VideoUpdateCommand.ReplaceAttachment(videoId = videoId, attachment = savedAttachment)
-        } ?: emptyList()
+        val replaceAttachments = attachmentUpdates(updateRequest, videoId)
 
         videoRepository.bulkUpdate(
             listOfNotNull(
@@ -62,8 +54,9 @@ class UpdateVideo(
                 replacePromoted,
                 updateSubjectIds,
                 updateSubjectsWereSetManually,
-                replaceAgeRange
-            ) + replaceAttachments
+                replaceAgeRange,
+                replaceAttachments
+            )
         )
 
         updateRequest.rating?.let {
@@ -77,5 +70,28 @@ class UpdateVideo(
         }
 
         logger.info { "Successfully updated video $id" }
+    }
+
+    private fun attachmentUpdates(
+        updateRequest: UpdateVideoRequest,
+        videoId: VideoId
+    ): VideoUpdateCommand? {
+        return updateRequest.attachments.let {
+            when (it) {
+                is Specified -> {
+                    val attachments = it.value.map { attachment ->
+                        Attachment(
+                            attachmentId = AttachmentId(value = ObjectId().toHexString()),
+                            description = attachment.description!!,
+                            linkToResource = attachment.linkToResource,
+                            type = AttachmentType.valueOf(attachment.type)
+                        )
+                    }
+                    VideoUpdateCommand.ReplaceAttachments(videoId = videoId, attachments = attachments)
+                }
+                is ExplicitlyNull -> VideoUpdateCommand.RemoveAttachments(videoId = videoId)
+                null -> null
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request.video
 
+import com.boclips.videos.api.common.Specifiable
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import org.hibernate.validator.constraints.Range
 
@@ -12,5 +13,5 @@ data class UpdateVideoRequest(
     val ageRangeMax: Int? = null,
     @field:Range(min = 0, max = 5, message = "Rating must be between 1 and 5")
     var rating: Int? = null,
-    val attachments: List<AttachmentRequest>? = null
+    val attachments: Specifiable<List<AttachmentRequest>>? = null
 )

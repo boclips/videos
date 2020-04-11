@@ -218,5 +218,30 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.attachments[0].type").exists())
             .andExpect(jsonPath("$.attachments[0]._links.download.href", equalTo("alex.bagpipes.com")))
     }
+
+    @Test
+    fun `removes all attachments`() {
+        val videoToUpdate = saveVideo().value
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "attachments": [{ "linkToResource": "ben.chocolatefest.ch", "type": "ACTIVITY", "description": "A less amazing description" }] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "attachments": null }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.attachments").doesNotExist())
+    }
 }
 
