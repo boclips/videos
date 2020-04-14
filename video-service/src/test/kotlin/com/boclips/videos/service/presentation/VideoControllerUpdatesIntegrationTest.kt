@@ -241,7 +241,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.attachments").doesNotExist())
+            .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
     }
 }
 
