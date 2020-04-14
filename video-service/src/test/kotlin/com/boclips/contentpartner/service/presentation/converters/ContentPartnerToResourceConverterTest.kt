@@ -67,7 +67,6 @@ class ContentPartnerToResourceConverterTest {
 
         assertThat(contentPartnerResource.id).isNotEmpty()
         assertThat(contentPartnerResource.name).isNotEmpty()
-        assertThat(contentPartnerResource.ageRange).isNotNull
         assertThat(contentPartnerResource.official).isTrue()
         assertThat(contentPartnerResource.legalRestriction).isNotNull
         assertThat(contentPartnerResource.legalRestriction?.text).isEqualTo("Forbidden in the EU")
