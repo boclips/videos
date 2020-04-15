@@ -51,14 +51,14 @@ class LinksController(
     fun get(request: SecurityContextHolderAwareRequestWrapper): LinksResource {
         return LinksResource(
             links = listOfNotNull(
-                distributionMethodsLinkBuilder.distributionMethods(), //belongs to contentpartner-service links
-                videosLinkBuilder.videoLink(),
-                collectionsLinkBuilder.publicCollections(),
                 subjectsLinkBuilder.subjects(),
+                videosLinkBuilder.videoLink(),
                 videosLinkBuilder.adminSearchLink(),
                 videosLinkBuilder.adminVideoSearchLink(),
-                collectionsLinkBuilder.adminCollectionSearch(),
                 videosLinkBuilder.searchVideosLink(),
+                videoTypeLinkBuilder.videoTypes(),
+                collectionsLinkBuilder.adminCollectionSearch(),
+                collectionsLinkBuilder.publicCollections(),
                 collectionsLinkBuilder.bookmarkedCollections(),
                 collectionsLinkBuilder.promotedCollections(),
                 collectionsLinkBuilder.searchPublicCollections(),
@@ -69,6 +69,13 @@ class LinksController(
                 collectionsLinkBuilder.mySavedCollections(),
                 collectionsLinkBuilder.createCollection(),
                 legalRestrictionsLinkBuilder.getAllLink(),
+                disciplinesLinkBuilder.disciplines(),
+                tagsLinkBuilder.tags(),
+                eventsLinkBuilder.createPlaybackEventsLink(),
+                ageRangesLinkBuilder.ageRanges(),
+
+                // belong to contentpartner-service links
+                distributionMethodsLinkBuilder.distributionMethods(),
                 contentPartnersLinkBuilder.contentPartnerLink(null),
                 contentPartnersLinkBuilder.contentPartnersLink(),
                 contentPartnersLinkBuilder.contentPartnersSignedUploadLink(),
@@ -77,13 +84,8 @@ class LinksController(
                 contentPartnerContractsLinkBuilder.createContractLink(),
                 contentPartnerContractsLinkBuilder.createSignedUploadLink(),
                 contractLegalRestrictionsLinkBuilder.contractLegalRestrictions(),
-                disciplinesLinkBuilder.disciplines(),
-                tagsLinkBuilder.tags(),
-                videoTypeLinkBuilder.videoTypes(),
-                eventsLinkBuilder.createPlaybackEventsLink(),
-                contentCategoriesLinkBuilder.contentCategories(),
-                ageRangesLinkBuilder.ageRanges(),
-                marketingStatusLinkBuilder.marketingStatuses()
+                marketingStatusLinkBuilder.marketingStatuses(),
+                contentCategoriesLinkBuilder.contentCategories()
             )
         )
     }
