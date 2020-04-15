@@ -1,6 +1,5 @@
-package com.boclips.contentpartner.service.application
+package com.boclips.contentpartner.service.application.contentpartnercontract
 
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +14,7 @@ class GetContentPartnerContractsTest : AbstractSpringIntegrationTest() {
         val contractId = saveContentPartnerContract()
         val allContracts = getContentPartnerContracts(page = null, size = null)
 
-        assertThat(allContracts.elements.map { it.id }).containsExactly(contractId)
+        assertThat(allContracts.elements.map { it.id }).containsExactly(contractId.id)
     }
 
     @Test

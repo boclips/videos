@@ -16,7 +16,7 @@ import org.bson.types.ObjectId
 class CreateContentPartnerContract(
     private val contentPartnerContractRepository: ContentPartnerContractRepository
 ) {
-    operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContractId =
+    operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContract =
         contentPartnerContractRepository.create(
             ContentPartnerContract(
                 id = ObjectId().toHexString().let(::ContentPartnerContractId),

@@ -3,11 +3,12 @@ package com.boclips.contentpartner.service.presentation.contract
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
+import com.boclips.contentpartner.service.application.contentpartnercontract.UpdateContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.presentation.BaseController
-import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -32,6 +34,7 @@ class ContentPartnerContractController(
     private val fetchOne: GetContentPartnerContract,
     private val fetch: GetContentPartnerContracts,
     private val create: CreateContentPartnerContract,
+    private val update: UpdateContentPartnerContract,
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
     private val linksBuilder: ContentPartnerContractsLinkBuilder,
     private val contractSignedLinkProvider: SignedLinkProvider
@@ -67,7 +70,7 @@ class ContentPartnerContractController(
                 HttpHeaders().apply {
                     set(
                         "Location",
-                        linksBuilder.self(contractId.value).href
+                        linksBuilder.self(contractId.id.value).href
                     )
                 }, HttpStatus.CREATED
             )
@@ -75,6 +78,18 @@ class ContentPartnerContractController(
             print(e)
             throw e
         }
+    }
+
+    @PatchMapping("/{id}")
+    fun patchContract(
+        @PathVariable("id") contractId: String,
+        @Valid @RequestBody updateContentPartnerContract: ContentPartnerContractRequest
+    ): ResponseEntity<Void> {
+        update(
+            contractId, updateContentPartnerContract
+        )
+
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PostMapping("/signed-upload-link")

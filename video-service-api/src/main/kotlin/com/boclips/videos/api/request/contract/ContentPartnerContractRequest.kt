@@ -7,15 +7,15 @@ import org.springframework.lang.NonNull
 data class ContentPartnerContractRequest(
     @field:NonNull
     val contentPartnerName: String,
-    val contractDocument: String?,
-    val contractDates: ContentPartnerContractDatesResource?,
-    val contractIsRolling: Boolean?,
-    val daysBeforeTerminationWarning: Int?,
-    val yearsForMaximumLicense: Int?,
-    val daysForSellOffPeriod: Int?,
-    val royaltySplit: ContentPartnerContractRoyaltySplitResource?,
-    val minimumPriceDescription: String?,
-    val remittanceCurrency: String?,
-    val restrictions: ContentPartnerContractRestrictionsRequest?,
-    val costs: ContentPartnerContractCostsRequest?
+    val contractDocument: String? = null,
+    val contractDates: ContentPartnerContractDatesResource? = null,
+    val contractIsRolling: Boolean? = null,
+    val daysBeforeTerminationWarning: Int? = null,
+    val yearsForMaximumLicense: Int? = null,
+    val daysForSellOffPeriod: Int? = null,
+    val royaltySplit: ContentPartnerContractRoyaltySplitResource? = null,
+    val minimumPriceDescription: String? = null,
+    val remittanceCurrency: String? = null,
+    val restrictions: ContentPartnerContractRestrictionsRequest? = null,
+    val costs: ContentPartnerContractCostsRequest? = null
 )

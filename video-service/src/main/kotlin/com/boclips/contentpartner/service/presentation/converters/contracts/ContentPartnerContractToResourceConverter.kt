@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.presentation.converters
+package com.boclips.contentpartner.service.presentation.converters.contracts
 
 import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract

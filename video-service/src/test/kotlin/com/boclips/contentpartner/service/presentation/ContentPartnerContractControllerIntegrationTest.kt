@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -132,7 +133,7 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
         mockMvc.perform(get("/v1/content-partner-contracts").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(2)))
-            .andExpect(jsonPath("$._embedded.contracts[*].id", contains(firstContractId.value, secondContractId.value)))
+            .andExpect(jsonPath("$._embedded.contracts[*].id", contains(firstContractId.id.value, secondContractId.id.value)))
     }
 
     @Test
@@ -164,16 +165,85 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
         val location = mockMvc.perform(
             post("/v1/content-partner-contracts/signed-upload-link").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(
-                """{
+                    """{
                     |   "filename": "myImage.png"
                     |}
                 """.trimMargin()
-            )
+                )
         )
             .andExpect(status().isNoContent)
             .andExpect(MockMvcResultMatchers.header().exists("Location"))
             .andReturn().response.getHeaders("Location").first()
 
         Assertions.assertThat(sampleLink.toString()).isEqualTo(location)
+    }
+
+    @Test
+    fun `updates the contract`() {
+        val contract = saveContentPartnerContract(name = "okay videos")
+
+        val content = """
+            {
+                "contentPartnerName": "Related Content Partner",
+                "contractDocument": "http://server.com/oranges.png",
+                "contractDates": {
+                    "start": "2010-12-31", 
+                    "end": "2011-01-31"
+                },
+                "daysBeforeTerminationWarning": 30,
+                "yearsForMaximumLicense": 4,
+                "daysForSellOffPeriod": 12,
+                "royaltySplit": {
+                    "download": 19.333333,
+                    "streaming": 50
+                },
+                "minimumPriceDescription": "Minimum prices are cool",
+                "remittanceCurrency": "GBP",
+                "restrictions": {
+                    "clientFacing": ["Restriction 1", "Restriction 2"],
+                    "territory": "Austria",
+                    "licensing": "123456789",
+                    "editing": "no removal of logo",
+                    "marketing": "marketing info",
+                    "companies": "company one",
+                    "payout": "payout",
+                    "other": "other"
+                },
+                "costs": {
+                    "minimumGuarantee": [12.50],
+                    "upfrontLicense": 3.1,
+                    "recoupable": true,
+                    "technicalFee": 11.30
+                }
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(content)
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
+            .andExpect(jsonPath("$.contractDocument", equalTo("null")))
+            .andExpect(jsonPath("$.contractDates.start", equalTo("2010-12-31")))
+            .andExpect(jsonPath("$.contractDates.end", equalTo("2011-01-31")))
+            .andExpect(jsonPath("$.daysBeforeTerminationWarning", equalTo(30)))
+            .andExpect(jsonPath("$.yearsForMaximumLicense", equalTo(4)))
+            .andExpect(jsonPath("$.daysForSellOffPeriod", equalTo(12)))
+            .andExpect(jsonPath("$.royaltySplit.download", closeTo(19.333333, 0.0001)))
+            .andExpect(jsonPath("$.royaltySplit.streaming", closeTo(50.0, 0.0001)))
+            .andExpect(jsonPath("$.minimumPriceDescription", equalTo("Minimum prices are cool")))
+            .andExpect(jsonPath("$.remittanceCurrency", equalTo("GBP")))
+            .andExpect(jsonPath("$.costs.minimumGuarantee[0]", closeTo(12.5, 0.0001)))
+            .andExpect(jsonPath("$.costs.upfrontLicense", closeTo(3.1, 0.0001)))
+            .andExpect(jsonPath("$.costs.recoupable", equalTo(true)))
+            .andExpect(jsonPath("$.costs.technicalFee", closeTo(11.3, 0.0001)))
+            .andExpect(jsonPath("$.restrictions").exists())
+            .andExpect(jsonPath("$.costs").exists())
     }
 }

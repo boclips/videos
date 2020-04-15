@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.contentpartnercontract.Cre
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
@@ -332,7 +333,7 @@ abstract class AbstractSpringIntegrationTest {
         remittanceCurrency: String? = "GBP",
         restrictions: ContentPartnerContractRestrictionsRequest? = null,
         costs: ContentPartnerContractCostsRequest? = null
-    ): ContentPartnerContractId = createContentPartnerContract(
+    ): ContentPartnerContract = createContentPartnerContract(
         ContentPartnerContractRequest(
             contentPartnerName = name,
             contractDocument = contractDocument,

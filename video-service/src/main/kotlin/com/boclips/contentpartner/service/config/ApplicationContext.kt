@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.application.contentpartner.ContentPart
 import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartner
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
+import com.boclips.contentpartner.service.application.contentpartnercontract.ContractContentPartnerConverter
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
@@ -22,9 +23,14 @@ import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartn
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResourceConverter
-import com.boclips.contentpartner.service.presentation.converters.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractCostsConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractDatesToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRestrictionsConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
@@ -110,6 +116,17 @@ class ApplicationContext(
     }
 
     @Bean
+    fun contractContentPartnerConverter(): ContractContentPartnerConverter {
+        return ContractContentPartnerConverter(
+            contractDatesConverter(),
+            royaltySplitConverter(),
+            remittanceCurrencyConverter(),
+            restrictionsConverter(),
+            costsConverter()
+        )
+    }
+
+    @Bean
     fun contentPartnerContractsLinkBuilder(
         uriComponentsBuilderFactory: UriComponentsBuilderFactory
     ): ContentPartnerContractsLinkBuilder {
@@ -168,6 +185,21 @@ class ApplicationContext(
     @Bean
     fun ingestDetailsToResourceConverter(): IngestDetailsResourceConverter =
         IngestDetailsResourceConverter()
+
+    @Bean
+    fun contractDatesConverter(): ContractDatesToResourceConverter = ContractDatesToResourceConverter()
+
+    @Bean
+    fun royaltySplitConverter(): ContractRoyaltySplitConverter = ContractRoyaltySplitConverter()
+
+    @Bean
+    fun remittanceCurrencyConverter(): ContractRemittanceCurrencyConverter = ContractRemittanceCurrencyConverter()
+
+    @Bean
+    fun restrictionsConverter(): ContractRestrictionsConverter = ContractRestrictionsConverter()
+
+    @Bean
+    fun costsConverter(): ContractCostsConverter = ContractCostsConverter()
 
     @Bean
     fun getAllContentPartnerContracts(

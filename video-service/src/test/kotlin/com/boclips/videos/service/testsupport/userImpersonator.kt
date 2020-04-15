@@ -77,7 +77,8 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.VIEW_ANY_COLLECTION,
                 UserRoles.VIEW_MARKETING_STATUSES,
                 UserRoles.VIEW_LEGAL_RESTRICTIONS,
-                UserRoles.CREATE_LEGAL_RESTRICTIONS
+                UserRoles.CREATE_LEGAL_RESTRICTIONS,
+                UserRoles.UPDATE_CONTENT_PARTNER_CONTRACTS
             )
     )
 

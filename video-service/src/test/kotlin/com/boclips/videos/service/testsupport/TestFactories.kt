@@ -15,8 +15,13 @@ import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.SubjectResource
 import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.users.api.response.user.UserResource
+import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
+import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
+import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.service.domain.model.AccessRules
@@ -631,4 +636,117 @@ object ContentPartnerContractFactory {
             restrictions = restrictions,
             costs = costs
         )
+
+    fun contentPartnerContractRequest(
+        contentPartnerName: String? = null,
+        contractDocument: String? = "http://contractdocument.com",
+        contractDates: ContractDates? = ContractDates(
+            LocalDate.of(2011, 10, 10),
+            LocalDate.of(2012, 10, 31)
+        ),
+        contractIsRolling: Boolean? = true,
+        daysBeforeTerminationWarning: Int? = 30,
+        yearsForMaximumLicense: Int? = 5,
+        daysForSellOffPeriod: Int? = 60,
+        royaltySplit: ContractRoyaltySplit? =
+            ContractRoyaltySplit(
+                download = 10.1.toFloat(),
+                streaming = 20.5.toFloat()
+            ),
+        minimumPriceDescription: String? = "This is the minimum price",
+        remittanceCurrency: String? = "GBP",
+        restrictions: ContractRestrictions = ContractRestrictions(
+            clientFacing = listOf("restriction 1", "restriction 2"),
+            territory = "Australia",
+            licensing = "License 1",
+            editing = "Edit",
+            marketing = "Marketing info",
+            companies = "Companies info",
+            payout = "Payout info",
+            other = "Other info"
+        ),
+        costs: ContractCosts = ContractCosts(
+            minimumGuarantee = listOf(BigDecimal.ONE),
+            upfrontLicense = BigDecimal.ONE,
+            technicalFee = BigDecimal.ONE,
+            recoupable = true
+        )
+    ) = ContentPartnerContractRequest(
+        contentPartnerName = contentPartnerName ?: "content-partner-name",
+        contractDocument = contractDocument,
+        contractDates = contractDates.let {
+            ContentPartnerContractDatesResource(
+                start = it?.start.toString(),
+                end = it?.end.toString()
+            )
+        },
+        contractIsRolling = contractIsRolling,
+        daysBeforeTerminationWarning = daysBeforeTerminationWarning,
+        yearsForMaximumLicense = yearsForMaximumLicense,
+        daysForSellOffPeriod = daysForSellOffPeriod,
+        royaltySplit = royaltySplit.let {
+            ContentPartnerContractRoyaltySplitResource(
+                download = it?.download,
+                streaming = it?.streaming
+            )
+        },
+        minimumPriceDescription = minimumPriceDescription,
+        remittanceCurrency = remittanceCurrency.toString(),
+        restrictions = restrictions.let {
+            ContentPartnerContractRestrictionsRequest(
+                clientFacing = it.clientFacing,
+                territory = it.territory,
+                licensing = it.licensing,
+                editing = it.editing,
+                marketing = it.marketing,
+                companies = it.companies,
+                payout = it.payout,
+                other = it.other
+            )
+        },
+        costs = costs.let {
+            ContentPartnerContractCostsRequest(
+                minimumGuarantee = it.minimumGuarantee,
+                upfrontLicense = it.upfrontLicense,
+                technicalFee = it.technicalFee,
+                recoupable = it.recoupable
+            )
+        }
+    )
+}
+
+object ContractRestrictionsFactory {
+    fun sample(
+        clientFacing: List<String> = listOf("restriction one"),
+        territory: String = "territory",
+        licensing: String = "licensing",
+        editing: String = "editing",
+        marketing: String = "marketing",
+        companies: String = "companies",
+        payout: String = "payout",
+        other: String = "other"
+    ) = ContractRestrictions(
+        clientFacing = clientFacing,
+        territory = territory,
+        licensing = licensing,
+        editing = editing,
+        marketing = marketing,
+        companies = companies,
+        payout = payout,
+        other = other
+    )
+}
+
+object ContractCostsFactory {
+    fun sample(
+        minimumGuarantee: List<BigDecimal> = listOf(BigDecimal.ONE),
+        upfrontLicense: BigDecimal = BigDecimal.ONE,
+        technicalFee: BigDecimal = BigDecimal.ONE,
+        recoupable: Boolean = true
+    ) = ContractCosts(
+        minimumGuarantee = minimumGuarantee,
+        upfrontLicense = upfrontLicense,
+        technicalFee = technicalFee,
+        recoupable = recoupable
+    )
 }
