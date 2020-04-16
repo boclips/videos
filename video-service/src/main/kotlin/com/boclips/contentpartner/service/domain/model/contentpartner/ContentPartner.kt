@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.domain.model.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import java.time.Period
 import java.util.Locale
@@ -23,8 +24,10 @@ data class ContentPartner(
     val ingest: IngestDetails,
     val deliveryFrequency: Period?,
     val pedagogyInformation: PedagogyInformation?,
-    val marketingInformation: ContentPartnerMarketingInformation?
+    val marketingInformation: ContentPartnerMarketingInformation?,
+    val contract: ContentPartnerContract?
 ) {
+
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)
     }

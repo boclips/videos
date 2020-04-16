@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
@@ -12,6 +13,7 @@ import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.crea
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -60,7 +62,8 @@ class ContentPartnerToResourceConverterTest {
                 urls = listOf("https://feed.mrss")
             ),
             deliveryFrequency = Period.ofMonths(3),
-            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK)
+            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK),
+            contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED")
         )
 
         val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner)
@@ -88,5 +91,7 @@ class ContentPartnerToResourceConverterTest {
             )
         )
         assertThat(contentPartnerResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
+        assertThat(contentPartnerResource.contractId).isEqualTo("id")
+        assertThat(contentPartnerResource.contractName).isEqualTo("TED")
     }
 }

@@ -13,11 +13,13 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDeta
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
 import com.boclips.contentpartner.service.infrastructure.contentpartner.IngestDetailsDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -54,7 +56,8 @@ object ContentPartnerFactory {
         ingest: IngestDetails = ManualIngest,
         deliveryFrequency: Period? = null,
         pedagogyInformation: PedagogyInformation? = null,
-        marketingInformation: ContentPartnerMarketingInformation? = null
+        marketingInformation: ContentPartnerMarketingInformation? = null,
+        contract: ContentPartnerContract? = null
     ): ContentPartner {
         return ContentPartner(
             contentPartnerId = id,
@@ -74,7 +77,8 @@ object ContentPartnerFactory {
             ingest = ingest,
             deliveryFrequency = deliveryFrequency,
             marketingInformation = marketingInformation,
-            pedagogyInformation = pedagogyInformation
+            pedagogyInformation = pedagogyInformation,
+            contract = contract
         )
     }
 
@@ -91,7 +95,8 @@ object ContentPartnerFactory {
         contentTypes: List<String>? = emptyList(),
         ingest: IngestDetailsDocument? = null,
         isTranscriptProvided: Boolean? = null,
-        ageRanges: List<AgeRangeDocument>? = emptyList()
+        ageRanges: List<AgeRangeDocument>? = emptyList(),
+        contract: ContentPartnerContractDocument? = null
     ) = ContentPartnerDocument(
         id = objectId,
         youtubeChannelId = youtubeChannelId,
@@ -105,7 +110,8 @@ object ContentPartnerFactory {
         contentTypes = contentTypes,
         ingest = ingest,
         ageRanges = ageRanges,
-        isTranscriptProvided = isTranscriptProvided
+        isTranscriptProvided = isTranscriptProvided,
+        contract = contract
     )
 
     fun createIngestDetailsResource(

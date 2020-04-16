@@ -3,7 +3,7 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -105,7 +105,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val languageTag = Locale.forLanguageTag("spa");
+        val languageTag = Locale.forLanguageTag("spa")
         assertThat(contentPartnerWithCategory.language).isEqualTo(languageTag)
     }
 
@@ -154,7 +154,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a content partner with provided transcript `() {
-        val isTranscriptProvided = true;
+        val isTranscriptProvided = true
 
         val contentPartnerWithTranscript = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -169,7 +169,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a content partner with educational resources`() {
-        val educationalResources = "This is an educational resource";
+        val educationalResources = "This is an educational resource"
 
         val contentPartnerWithEducationalResources = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -184,7 +184,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a content partner with curriculum aligned`() {
-        val curriculumAligned = "This is a curriculum";
+        val curriculumAligned = "This is a curriculum"
 
         val contentPartnerWithCurriculumAligned = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -199,7 +199,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a content partner with best for tags`() {
-        val bestForTags = listOf("123", "345");
+        val bestForTags = listOf("123", "345")
 
         val contentPartnerWithBestForTags = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -212,7 +212,7 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a content partner with subjects`() {
-        val subjects = listOf("subject 1", "subject 2");
+        val subjects = listOf("subject 1", "subject 2")
 
         val contentPartnerWithBestForTags = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
@@ -247,5 +247,30 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
                 listOf("https://yt.com/channel")
             )
         )
+    }
+
+    @Test
+    fun `can create a content partner with contract information`() {
+        val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
+        val contentPartner = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                contractId = contractId.value
+            )
+        )
+
+        assertThat(contentPartner.contract?.id).isEqualTo(contractId)
+        assertThat(contentPartner.contract?.contentPartnerName).isEqualTo("hello")
+        assertThat(contentPartner.contract?.remittanceCurrency?.currencyCode).isEqualTo("GBP")
+    }
+
+    @Test
+    fun `throws when contract does not exists`() {
+        assertThrows<InvalidContractException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    contractId = "a contract"
+                )
+            )
+        }
     }
 }

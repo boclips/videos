@@ -16,6 +16,7 @@ import com.boclips.contentpartner.service.infrastructure.contentpartner.converte
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartnerDocument
 import com.boclips.videos.api.common.Specified
+import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
@@ -70,7 +71,8 @@ class ContentPartnerDocumentConverterTest {
                 ageRangeBuckets = AgeRangeBuckets(
                     listOf(ContentPartnerFactory.createAgeRange())
                 )
-            )
+            ),
+            contract = ContentPartnerContractFactory.sample()
         )
 
         val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)

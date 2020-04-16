@@ -621,6 +621,32 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         assertThat(sampleLink.toString()).isEqualTo(location)
     }
 
+    @Test
+    fun `create a content partner associated to a contract`() {
+        val contractId = saveContentPartnerContract(name = "a contract", remittanceCurrency = "USD").id
+
+        val content = """
+            {
+                "name": "a content partner",
+                "contractId": "${contractId.value}"
+            }
+        """
+
+        val contentPartnerUrl = mockMvc.perform(
+            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
+                content
+            )
+        )
+            .andExpect(status().isCreated)
+            .andExpect(header().exists("Location"))
+            .andReturn().response.getHeaders("Location").first()
+
+        mockMvc.perform(get(contentPartnerUrl).asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contractId", equalTo(contractId.value)))
+            .andExpect(jsonPath("$.contractName", equalTo("a contract")))
+    }
+
     @Nested
     inner class ContentPartnerResourceProjections {
         @Test

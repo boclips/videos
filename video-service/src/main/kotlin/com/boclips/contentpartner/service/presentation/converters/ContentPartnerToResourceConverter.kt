@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.presentation.converters
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.toLanguageResource
@@ -52,6 +51,8 @@ class ContentPartnerToResourceConverter(
                     ageRangeBuckets = contentPartner.ageRangeBuckets
                 )
             ),
+            contractId = contentPartner.contract?.id?.value,
+            contractName = contentPartner.contract?.contentPartnerName,
             _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
                 .map { it.rel to it }
                 .toMap()

@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.codecs.pojo.annotations.BsonId
@@ -31,6 +32,7 @@ data class ContentPartnerDocument(
     val educationalResources: String? = null,
     val curriculumAligned: String? = null,
     val bestForTags: List<String>? = null,
-    val subjects: List<String>? = null
+    val subjects: List<String>? = null,
+    val contract: ContentPartnerContractDocument?
 ) {
 }

@@ -38,7 +38,8 @@ data class ContentPartnerRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val bestForTags: List<String>? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
-    val subjects: List<String>? = null
+    val subjects: List<String>? = null,
+    val contractId: String? = null
 )
 
 

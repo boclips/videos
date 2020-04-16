@@ -64,7 +64,8 @@ class ApplicationContext(
         return CreateContentPartner(
             contentPartnerRepository,
             ageRangeRepository,
-            ingestDetailsToResourceConverter()
+            ingestDetailsToResourceConverter(),
+            contentPartnerContractRepository
         )
     }
 

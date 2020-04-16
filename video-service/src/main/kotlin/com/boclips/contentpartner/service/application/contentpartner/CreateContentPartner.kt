@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerHubspotIdExceptions
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
@@ -16,6 +17,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.Distributi
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
@@ -28,7 +31,8 @@ import java.util.Locale
 class CreateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val ageRangeRepository: AgeRangeRepository,
-    private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter
+    private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
+    private val contentPartnerContractRepository: ContentPartnerContractRepository
 ) {
     operator fun invoke(upsertRequest: ContentPartnerRequest): ContentPartner {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
@@ -70,6 +74,13 @@ class CreateContentPartner(
                 }!!) {
                 throw InvalidContentCategoryException()
             }
+        }
+
+        val contract = upsertRequest.contractId?.let {
+            val contractId = ContentPartnerContractId(it)
+
+            contentPartnerContractRepository.findById(contractId)
+                ?: throw InvalidContractException(contractId)
         }
 
         return contentPartnerRepository
@@ -120,7 +131,8 @@ class CreateContentPartner(
                             ageRanges
                         )
                     ),
-                    marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest)
+                    marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest),
+                    contract = contract
                 )
             )
     }

@@ -112,7 +112,8 @@ class VideoServiceApiFactory {
             curriculumAligned: String? = null,
             bestForTags: List<String>? = null,
             subjects: List<String>? = null,
-            contentTypes: List<String>? = null
+            contentTypes: List<String>? = null,
+            contractId: String? = null
         ): ContentPartnerRequest {
             return ContentPartnerRequest(
                 name = name,
@@ -136,7 +137,8 @@ class VideoServiceApiFactory {
                 curriculumAligned = curriculumAligned,
                 bestForTags = bestForTags,
                 subjects = subjects,
-                contentTypes = contentTypes
+                contentTypes = contentTypes,
+                contractId = contractId
             )
         }
 

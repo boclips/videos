@@ -16,6 +16,7 @@ import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocume
 import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
 import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerStatusDocument
 import com.boclips.contentpartner.service.infrastructure.contentpartner.MarketingInformationDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
@@ -93,7 +94,10 @@ object ContentPartnerDocumentConverter : KLogging() {
             educationalResources = contentPartner.pedagogyInformation?.educationalResources,
             curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
             bestForTags = contentPartner.pedagogyInformation?.bestForTags,
-            subjects = contentPartner.pedagogyInformation?.subjects
+            subjects = contentPartner.pedagogyInformation?.subjects,
+            contract = contentPartner.contract?.let { contract ->
+                ContentPartnerContractDocumentConverter().toDocument(contract)
+            }
         )
     }
 
@@ -174,8 +178,10 @@ object ContentPartnerDocumentConverter : KLogging() {
                         document.ageRanges
                     )
                 )
-            )
-
+            ),
+            contract = document.contract?.let {
+                ContentPartnerContractDocumentConverter().toContract(it)
+            }
         )
     }
 
