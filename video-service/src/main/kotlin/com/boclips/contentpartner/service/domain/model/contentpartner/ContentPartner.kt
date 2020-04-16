@@ -27,6 +27,7 @@ data class ContentPartner(
     val marketingInformation: ContentPartnerMarketingInformation?,
     val contract: ContentPartnerContract?
 ) {
+    val currency = contract?.remittanceCurrency ?: remittance?.currency
 
     fun isStreamable(): Boolean {
         return distributionMethods.contains(DistributionMethod.STREAM)

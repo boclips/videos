@@ -28,7 +28,7 @@ class ContentPartnerToResourceConverter(
                 contentPartner.distributionMethods
             ),
             description = contentPartner.description,
-            currency = contentPartner.remittance?.currency?.currencyCode,
+            currency = contentPartner.currency?.currencyCode,
             contentCategories = contentPartner.contentCategories?.map { toContentCategoryResource(it) },
             hubspotId = contentPartner.hubspotId,
             awards = contentPartner.awards,

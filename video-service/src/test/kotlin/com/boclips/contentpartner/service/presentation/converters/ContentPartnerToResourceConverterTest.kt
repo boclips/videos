@@ -94,4 +94,32 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.contractId).isEqualTo("id")
         assertThat(contentPartnerResource.contractName).isEqualTo("TED")
     }
+
+    @Test
+    fun `a contract currency takes precedence over a content partner currency`() {
+        val contentPartner = createContentPartner(
+            credit = Credit.PartnerCredit,
+            legalRestriction = ContentPartnerFactory.createLegalRestrictions(text = "Forbidden in the EU"),
+            distributionMethods = setOf(DistributionMethod.STREAM),
+            remittance = Remittance(
+                Currency.getInstance("GBP")
+            ),
+            description = "this is a description",
+            contentCategories = listOf("ANIMATION"),
+            hubspotId = "12345678d",
+            awards = "first award",
+            notes = "first note",
+            language = Locale.forLanguageTag("spa"),
+            ingest = MrssFeedIngest(
+                urls = listOf("https://feed.mrss")
+            ),
+            deliveryFrequency = Period.ofMonths(3),
+            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK),
+            contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED", remittanceCurrency = "USD")
+        )
+
+        val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner)
+
+        assertThat(contentPartnerResource.currency).isEqualTo("USD")
+    }
 }
