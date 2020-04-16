@@ -1,6 +1,8 @@
 package com.boclips.videos.api.request.video
 
 import com.boclips.videos.api.request.validators.Language
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -19,6 +21,7 @@ data class CreateVideoRequest(
     val description: String? = null,
 
     @field:NotNull(message = "Keywords are required")
+    @JsonSetter(contentNulls = Nulls.FAIL)
     val keywords: List<String>? = null,
 
     @field:NotNull(message = "Released on date is required")
@@ -34,6 +37,7 @@ data class CreateVideoRequest(
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
+    @JsonSetter(contentNulls = Nulls.FAIL)
     val subjects: Set<String>? = null,
     @field:Language
     val language: String? = null

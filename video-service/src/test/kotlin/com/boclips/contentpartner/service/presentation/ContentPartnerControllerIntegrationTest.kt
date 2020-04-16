@@ -45,22 +45,22 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
 
         mockMvc.perform(
-            post("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/search")
-                .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
-                .contentType(MediaType.TEXT_PLAIN)
-                .asIngestor()
-        )
+                post("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/search")
+                    .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .asIngestor()
+            )
             .andExpect(status().isOk)
     }
 
     @Test
     fun `post video lookup by provider id returns 404 when video does not exist`() {
         mockMvc.perform(
-            post("/v1/content-partners/ted/videos/search")
-                .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
-                .contentType(MediaType.TEXT_PLAIN)
-                .asIngestor()
-        )
+                post("/v1/content-partners/ted/videos/search")
+                    .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .asIngestor()
+            )
             .andExpect(status().isNotFound)
     }
 
@@ -86,16 +86,84 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         """
 
         mockMvc.perform(
-            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
-        )
+                post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
 
         mockMvc.perform(
-            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
-        )
+                post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
             .andExpect(status().isConflict)
             .andExpectApiErrorPayload()
+    }
+
+    @Test
+    fun `reject creating a content partner with null elements in list fields`() {
+        val listFieldNames = listOf(
+            "ageRanges",
+            "contentCategories",
+            "contentTypes",
+            "bestForTags",
+            "subjects"
+        )
+
+        val makeInvalidRequest = { fieldName: String ->
+            mockMvc.perform(
+                    post("/v1/content-partners")
+                        .asBoclipsEmployee()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                            {
+                                "name": "random name",
+                                "$fieldName": [null]
+                            }
+                            """.trimIndent()
+                        )
+                )
+                .andExpect(status().isBadRequest)
+        }
+
+        listFieldNames.map { makeInvalidRequest(it) }
+
+        //nested fields
+
+        mockMvc.perform(
+                post("/v1/content-partners")
+                    .asBoclipsEmployee()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                            "name": "random name",
+                            "marketingInformation": {
+                                "logos": [null]
+                            }
+                        }
+                    """
+                    )
+            )
+            .andExpect(status().isBadRequest)
+
+        mockMvc.perform(
+                post("/v1/content-partners")
+                    .asBoclipsEmployee()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                            "name": "random name",
+                            "marketingInformation": {
+                                "sampleVideos": [null]
+                            }
+                        }
+                    """
+                    )
+            )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -137,14 +205,15 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         """
 
         mockMvc.perform(
-            post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
-        )
+                post("/v1/content-partners").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
             .andExpect(status().isCreated)
             .andExpect(header().exists("Location"))
 
         mockMvc.perform(
-            get("/v1/content-partners?name=TED").asBoclipsEmployee()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?name=TED").asBoclipsEmployee()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED")))
@@ -249,8 +318,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         saveContentPartner(name = "goodbye")
 
         mockMvc.perform(
-            get("/v1/content-partners?name=hello").asBoclipsEmployee()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?name=hello").asBoclipsEmployee()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
@@ -279,8 +348,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
 
         mockMvc.perform(
-            get("/v1/content-partners?ingestType=MRSS&ingestType=YOUTUBE").asBoclipsEmployee()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?ingestType=MRSS&ingestType=YOUTUBE").asBoclipsEmployee()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", oneOf("mrss", "yt")))
             .andExpect(jsonPath("$._embedded.contentPartners[1].name", oneOf("mrss", "yt")))
@@ -291,8 +360,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         saveContentPartner(name = "hello", currency = "USD")
 
         mockMvc.perform(
-            get("/v1/content-partners?name=hello").asApiUser()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?name=hello").asApiUser()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
@@ -305,8 +374,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
 
         mockMvc.perform(
-            get("/v1/content-partners?official=true").asBoclipsEmployee()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?official=true").asBoclipsEmployee()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
@@ -318,8 +387,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
 
         mockMvc.perform(
-            get("/v1/content-partners?accreditedToYtChannelId=1234").asBoclipsEmployee()
-        ).andExpect(status().isOk)
+                get("/v1/content-partners?accreditedToYtChannelId=1234").asBoclipsEmployee()
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(false)))
@@ -357,8 +426,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(
-            get(contentPartnerUrl).asBoclipsEmployee()
-        )
+                get(contentPartnerUrl).asBoclipsEmployee()
+            )
             .andExpect(jsonPath("$.oneLineDescription", equalTo(oneLineDescription)))
             .andExpect(jsonPath("$.marketingInformation.status", equalTo(status.toString())))
     }
@@ -418,9 +487,9 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andReturn().response.getHeaders("Location").first()
 
         mockMvc.perform(
-            patch(cpUrl).asBoclipsEmployee()
-                .contentType(MediaType.APPLICATION_JSON).content(updatedContent)
-        )
+                patch(cpUrl).asBoclipsEmployee()
+                    .contentType(MediaType.APPLICATION_JSON).content(updatedContent)
+            )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(get(cpUrl).asBoclipsEmployee())
@@ -581,10 +650,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             )
 
             mockMvc.perform(
-                get(
-                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
-                ).asBoclipsEmployee()
-            ).andExpect(status().isOk)
+                    get(
+                        "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                    ).asBoclipsEmployee()
+                ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name", equalTo("hello")))
                 .andExpect(jsonPath("$.currency").exists())
@@ -603,10 +672,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.pedagogyInformation.subjects").exists())
 
             mockMvc.perform(
-                get(
-                    "/v1/content-partners?name=hello"
-                ).asBoclipsEmployee()
-            ).andExpect(status().isOk)
+                    get(
+                        "/v1/content-partners?name=hello"
+                    ).asBoclipsEmployee()
+                ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
                 .andExpect(jsonPath("$._embedded.contentPartners[0].currency").exists())
@@ -646,10 +715,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
 
             mockMvc.perform(
-                get(
-                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
-                ).asApiUser()
-            ).andExpect(status().isOk)
+                    get(
+                        "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                    ).asApiUser()
+                ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name", equalTo("hello")))
                 .andExpect(jsonPath("$.awards").exists())
@@ -673,10 +742,10 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 .andExpect(jsonPath("$.pedagogyInformation").doesNotExist())
 
             mockMvc.perform(
-                get(
-                    "/v1/content-partners?name=hello"
-                ).asApiUser()
-            ).andExpect(status().isOk)
+                    get(
+                        "/v1/content-partners?name=hello"
+                    ).asApiUser()
+                ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
                 .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
                 .andExpect(jsonPath("$._embedded.contentPartners[0].awards").exists())
