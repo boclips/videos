@@ -3,5 +3,6 @@ package com.boclips.contentpartner.service.domain.model
 import java.net.URL
 
 interface SignedLinkProvider {
-    fun getLink(filename: String): URL
+    fun signedPutLink(filename: String): URL
+    fun signedGetLink(link: URL): URL
 }

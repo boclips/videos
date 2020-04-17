@@ -9,12 +9,22 @@ import java.net.URL
 class ContentPartnerMarketingSignedLinkProvider(
     private val config: GcsProperties
 ) : SignedLinkProvider {
-    override fun getLink(filename: String): URL =
-        GcsSignedLinkUtil.getLink(
+    override fun signedPutLink(filename: String): URL =
+        GcsSignedLinkUtil.signedPutLink(
+            filename,
             SignedLinkOptions(
-                filename = filename,
                 bucketName = config.bucketName,
                 secret = config.secret,
+                projectId = config.projectId
+            )
+        )
+
+    override fun signedGetLink(link: URL): URL =
+        GcsSignedLinkUtil.signedGetLink(
+            link,
+            SignedLinkOptions(
+                bucketName = config.contractBucketName,
+                secret = config.contractSecret,
                 projectId = config.projectId
             )
         )

@@ -105,7 +105,7 @@ class ContentPartnerController(
     fun signedUploadLink(
         @RequestBody signedLinkRequest: SignedLinkRequest
     ): ResponseEntity<Void> {
-        val link = marketingSignedLinkProvider.getLink(signedLinkRequest.filename)
+        val link = marketingSignedLinkProvider.signedPutLink(signedLinkRequest.filename)
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",

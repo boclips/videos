@@ -21,7 +21,7 @@ class SignedLinkProviderContractTest {
     @ParameterizedTest
     @ArgumentsSource(SignedLinkProviderArgumentProvider::class)
     fun `generates a link`(provider: SignedLinkProvider) {
-        assertThat(provider.getLink("test-filename.png")).isNotNull()
+        assertThat(provider.signedPutLink("test-filename.png")).isNotNull()
     }
 }
 

@@ -12,7 +12,8 @@ class TestSignedLinkProvider : SignedLinkProvider {
         signedLink = link
     }
 
-    override fun getLink(filename: String): URL = signedLink
+    override fun signedPutLink(filename: String): URL = signedLink
+    override fun signedGetLink(link: URL): URL = signedLink
 
     fun clearLink() {
         signedLink = defaultLink

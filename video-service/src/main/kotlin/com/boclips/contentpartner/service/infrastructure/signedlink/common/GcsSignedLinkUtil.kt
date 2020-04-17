@@ -12,13 +12,16 @@ import java.util.concurrent.TimeUnit
 
 class GcsSignedLinkUtil {
     companion object {
-        fun getLink(options: SignedLinkOptions): URL {
-            // mostly taken from https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-object-java
-
-            val storage: Storage = StorageOptions.newBuilder()
+        private fun getStorage(options: SignedLinkOptions) =
+            StorageOptions.newBuilder()
                 .setProjectId(options.projectId).setCredentials(
                     ServiceAccountCredentials.fromStream(options.secret.byteInputStream())
                 ).build().service
+
+        fun signedPutLink(filename: String, options: SignedLinkOptions): URL {
+            // mostly taken from https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-object-java
+
+            val storage = getStorage(options)
 
             val objectName = UUID.randomUUID().toString()
 
@@ -33,7 +36,7 @@ class GcsSignedLinkUtil {
                 HashMap()
             extensionHeaders["Content-Type"] = "application/octet-stream"
             extensionHeaders["Content-Disposition"] =
-                "attachment; filename=\"${options.filename}\""
+                "attachment; filename=\"${filename}\""
 
             return storage.signUrl(
                 blobInfo,
@@ -44,11 +47,28 @@ class GcsSignedLinkUtil {
                 Storage.SignUrlOption.withV4Signature()
             )
         }
+
+        fun signedGetLink(link: URL, options: SignedLinkOptions): URL {
+            val storage = getStorage(options)
+
+            // Define Resource
+            val blobInfo: BlobInfo =
+                BlobInfo
+                    .newBuilder(BlobId.of(options.bucketName, link.toString().split('/').last()))
+                    .build()
+
+            return storage.signUrl(
+                blobInfo,
+                60,
+                TimeUnit.MINUTES,
+                Storage.SignUrlOption.httpMethod(HttpMethod.GET),
+                Storage.SignUrlOption.withV4Signature()
+            )
+        }
     }
 }
 
 data class SignedLinkOptions(
-    val filename: String,
     val bucketName: String,
     val secret: String,
     val projectId: String

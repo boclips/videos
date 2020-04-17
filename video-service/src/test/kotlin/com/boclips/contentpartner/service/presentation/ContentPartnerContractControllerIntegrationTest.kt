@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
+import java.net.URL
 
 class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -68,12 +69,14 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(status().isCreated)
             .andReturn().response.getHeaders("Location").first()
 
+        fakeSignedLinkProvider.setLink(URL("http://server.com/oranges.png#signed"))
+
         mockMvc.perform(
             get(contractUrl).asBoclipsEmployee()
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
-            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png")))
+            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png#signed")))
             .andExpect(jsonPath("$.contractDates.start", equalTo("2010-12-31")))
             .andExpect(jsonPath("$.contractDates.end", equalTo("2011-01-31")))
             .andExpect(jsonPath("$.daysBeforeTerminationWarning", equalTo(30)))
@@ -180,12 +183,14 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
 
     @Test
     fun `updates the contract`() {
+        fakeSignedLinkProvider.setLink(URL("http://server.com/oranges.png#signed"))
+
         val contract = saveContentPartnerContract(name = "okay videos")
 
         val content = """
             {
                 "contentPartnerName": "Related Content Partner",
-                "contractDocument": "http://server.com/oranges.png",
+                "contractDocument": "http://server.com/oranges.png#signed",
                 "contractDates": {
                     "start": "2010-12-31", 
                     "end": "2011-01-31"
@@ -229,7 +234,7 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
-            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png")))
+            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png#signed")))
             .andExpect(jsonPath("$.contractDates.start", equalTo("2010-12-31")))
             .andExpect(jsonPath("$.contractDates.end", equalTo("2011-01-31")))
             .andExpect(jsonPath("$.daysBeforeTerminationWarning", equalTo(30)))

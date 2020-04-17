@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.presentation.contract
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
+import com.boclips.contentpartner.service.application.contentpartnercontract.SignContentPartnerContractContractDocument
 import com.boclips.contentpartner.service.application.contentpartnercontract.UpdateContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
@@ -35,6 +36,7 @@ class ContentPartnerContractController(
     private val fetch: GetContentPartnerContracts,
     private val create: CreateContentPartnerContract,
     private val update: UpdateContentPartnerContract,
+    private val signContractDocument: SignContentPartnerContractContractDocument,
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
     private val linksBuilder: ContentPartnerContractsLinkBuilder,
     private val contractSignedLinkProvider: SignedLinkProvider
@@ -55,7 +57,9 @@ class ContentPartnerContractController(
             ContentPartnerContractId(
                 id!!
             )
-        )?.let(toResourceConverter::convert)
+        )
+            ?.let { signContractDocument(it) }
+            ?.let { toResourceConverter.convert(it) }
             ?: throw ContentPartnerContractNotFoundException("No content partner contract found with id=$id")
 
         return ResponseEntity(resource, HttpStatus.OK)
@@ -96,7 +100,7 @@ class ContentPartnerContractController(
     fun signedLink(
         @RequestBody signedLinkRequest: SignedLinkRequest
     ): ResponseEntity<Void> {
-        val link = contractSignedLinkProvider.getLink(signedLinkRequest.filename)
+        val link = contractSignedLinkProvider.signedPutLink(signedLinkRequest.filename)
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
