@@ -5,9 +5,16 @@ import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResou
 import java.time.LocalDate
 
 class ContractDatesToResourceConverter {
-    fun fromResource(contractDates: ContentPartnerContractDatesResource): ContractDates {
-        return contractDates.let {
-            ContractDates(start = LocalDate.parse(it.start), end = LocalDate.parse(it.end))
+    fun fromResource(contractDates: ContentPartnerContractDatesResource?): ContractDates? {
+        return contractDates?.let {
+            ContractDates(
+                start = it.start?.let { start ->
+                    LocalDate.parse(start)
+                },
+                end = it.end?.let { end ->
+                    LocalDate.parse(end)
+                }
+            )
         }
     }
 }

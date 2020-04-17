@@ -83,10 +83,12 @@ class ContractContentPartnerUpdateCreator(
 
     fun updateContractDates(): ContractContentPartnerUpdateCommand? {
         return updateContract.contractDates?.let {
-            ReplaceContractDates(
-                contractContentPartnerId = id,
-                contractDates = contractDatesConverter.fromResource(it)
-            )
+            contractDatesConverter.fromResource(it)?.let { dates ->
+                ReplaceContractDates(
+                    contractContentPartnerId = id,
+                    contractDates = dates
+                )
+            }
         }
     }
 
