@@ -102,6 +102,9 @@ class MongoContentPartnerContractRepository(
             is ContractContentPartnerUpdateCommand.ReplaceContentPartnerName
             -> set(ContentPartnerContractDocument::contentPartnerName, updateCommand.contentPartnerName)
 
+            is ContractContentPartnerUpdateCommand.ReplaceContractDocument
+            -> set(ContentPartnerContractDocument::contractDocument, updateCommand.contractDocument)
+
             is ContractContentPartnerUpdateCommand.ReplaceContractIsRolling
             -> set(ContentPartnerContractDocument::contractIsRolling, updateCommand.contractIsRolling)
 

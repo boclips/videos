@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContentPartnerName
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractDocument
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractIsRolling
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceCost
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceDaysBeforeTerminationWarning
@@ -51,7 +52,8 @@ class ContractContentPartnerConverter(
                 commandCreator.updateMinimumPriceDescription(),
                 commandCreator.updateRemittanceCurrency(),
                 commandCreator.updateRestrictions(),
-                commandCreator.updateCost()
+                commandCreator.updateCost(),
+                commandCreator.updateContractDocument()
             )
         }
 }
@@ -70,6 +72,15 @@ class ContractContentPartnerUpdateCreator(
             contractContentPartnerId = id,
             contentPartnerName = updateContract.contentPartnerName
         )
+    }
+
+    fun updateContractDocument(): ContractContentPartnerUpdateCommand? {
+        return updateContract.contractDocument?.let {
+            ReplaceContractDocument(
+                contractContentPartnerId = id,
+                contractDocument = it
+            )
+        }
     }
 
     fun updateContractIsRolling(): ContractContentPartnerUpdateCommand? {

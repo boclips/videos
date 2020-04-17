@@ -114,6 +114,24 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
     }
 
     @Test
+    fun `can replace document`() {
+        val original = ContentPartnerContractFactory.sample()
+        val contract = contentPartnerContractRepository.create(original)
+
+        contentPartnerContractRepository.update(
+            listOf(
+                ContractContentPartnerUpdateCommand.ReplaceContractDocument(
+                    contractContentPartnerId = contract.id,
+                    contractDocument = "http://www.google.com"
+                )
+            )
+        )
+
+        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        assertThat(updatedContract?.contractDocument.toString()).isEqualTo("http://www.google.com")
+    }
+
+    @Test
     fun `can replace years for maximum license`() {
         val original = ContentPartnerContractFactory.sample()
         val contract = contentPartnerContractRepository.create(original)

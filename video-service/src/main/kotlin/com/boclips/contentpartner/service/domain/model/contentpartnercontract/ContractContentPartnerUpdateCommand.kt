@@ -8,6 +8,11 @@ sealed class ContractContentPartnerUpdateCommand(val contractContentPartnerId: C
         val contentPartnerName: String
     ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
 
+    class ReplaceContractDocument(
+        contractContentPartnerId: ContentPartnerContractId,
+        val contractDocument: String
+    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+
     class ReplaceContractIsRolling(contractContentPartnerId: ContentPartnerContractId, val contractIsRolling: Boolean) :
         ContractContentPartnerUpdateCommand(contractContentPartnerId)
 
