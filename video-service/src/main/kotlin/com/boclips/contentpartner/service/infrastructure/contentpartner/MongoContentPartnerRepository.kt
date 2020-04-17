@@ -6,10 +6,13 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.ContentPartnerDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.DistributionMethodDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.IngestDetailsDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
@@ -75,6 +78,16 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
         }
 
         return findByQuery(toBsonIdFilter(contentPartnerId))
+    }
+
+    override fun findByContractId(contractId: ContentPartnerContractId): List<ContentPartner> {
+        return getContentPartnerCollection()
+            .find(
+                (ContentPartnerDocument::contract / ContentPartnerContractDocument::id) eq
+                    ObjectId(contractId.value)
+            )
+            .map { ContentPartnerDocumentConverter.toContentPartner(it) }
+            .toList()
     }
 
     override fun update(updateCommands: List<ContentPartnerUpdateCommand>) {
@@ -190,6 +203,10 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency -> set(
                 ContentPartnerDocument::deliveryFrequency,
                 updateCommand.deliveryFrequency.toString()
+            )
+            is ContentPartnerUpdateCommand.ReplaceContract -> set(
+                ContentPartnerDocument::contract,
+                ContentPartnerContractDocumentConverter().toDocument(updateCommand.contract)
             )
         }
 

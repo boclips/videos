@@ -14,6 +14,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
+import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -460,7 +461,10 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
             assertThat(updatedAsset.distributionMethods).isEmpty()
         }
+    }
 
+    @Nested
+    inner class UpdatingContentPartners {
         @Test
         fun `replaces educational resources`() {
             val contentPartner = mongoContentPartnerRepository.create(
@@ -525,6 +529,71 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
             assertThat(updatedAsset.pedagogyInformation?.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
+        }
+
+        @Test
+        fun `replaces contracts`() {
+            val oldContract = ContentPartnerContractFactory.sample(contentPartnerName = "old")
+            val contentPartner = mongoContentPartnerRepository.create(createContentPartner(contract = oldContract))
+
+            val newContract = ContentPartnerContractFactory.sample(contentPartnerName = "new")
+            mongoContentPartnerRepository.update(
+                listOf(
+                    ContentPartnerUpdateCommand.ReplaceContract(
+                        contentPartnerId = contentPartner.contentPartnerId,
+                        contract = newContract
+                    )
+                )
+            )
+
+            val updated = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            assertThat(updated.contract).isEqualTo(newContract)
+        }
+
+        @Nested
+        inner class FindByContractId {
+            @Test
+            fun `can find one by contract id`() {
+                val contract = ContentPartnerContractFactory.sample()
+                val contentPartner = mongoContentPartnerRepository.create(
+                    createContentPartner(
+                        contract = contract
+                    )
+                )
+
+                val retrievedContentPartners = mongoContentPartnerRepository.findByContractId(contractId = contract.id)
+
+                assertThat(retrievedContentPartners).containsExactly(contentPartner)
+            }
+
+            @Test
+            fun `can multiple by contract id`() {
+                val contract = ContentPartnerContractFactory.sample()
+                val firstContentPartner = mongoContentPartnerRepository.create(
+                    createContentPartner(
+                        contract = contract
+                    )
+                )
+
+                val secondContentPartner = mongoContentPartnerRepository.create(
+                    createContentPartner(
+                        contract = contract
+                    )
+                )
+
+                mongoContentPartnerRepository.create(
+                    createContentPartner(
+                        contract = null
+                    )
+                )
+
+                val retrievedContentPartners = mongoContentPartnerRepository.findByContractId(contractId = contract.id)
+
+                assertThat(retrievedContentPartners).containsExactlyInAnyOrder(
+                    firstContentPartner,
+                    secondContentPartner
+                )
+            }
         }
     }
 }

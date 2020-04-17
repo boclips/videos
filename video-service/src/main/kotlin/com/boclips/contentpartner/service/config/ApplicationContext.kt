@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.config
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.agerange.GetAgeRange
 import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerUpdatesConverter
+import com.boclips.contentpartner.service.application.contentpartner.ContractUpdated
 import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartner
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
@@ -68,6 +69,12 @@ class ApplicationContext(
             contentPartnerContractRepository
         )
     }
+
+    @Bean
+    fun contractUpdate(): ContractUpdated = ContractUpdated(
+        contractRepository = contentPartnerContractRepository,
+        contentPartnerRepository = contentPartnerRepository
+    )
 
     @Bean
     fun findAllContractLegalRestrictions(): FindAllContractLegalRestrictions {

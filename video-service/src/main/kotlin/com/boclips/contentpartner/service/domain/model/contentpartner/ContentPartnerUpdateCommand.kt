@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.domain.model.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import java.net.URL
 import java.time.Period
@@ -79,5 +80,8 @@ sealed class ContentPartnerUpdateCommand(val contentPartnerId: ContentPartnerId)
         ContentPartnerUpdateCommand(contentPartnerId)
 
     class ReplaceDeliveryFrequency(contentPartnerId: ContentPartnerId, val deliveryFrequency: Period) :
+        ContentPartnerUpdateCommand(contentPartnerId)
+
+    class ReplaceContract(contentPartnerId: ContentPartnerId, val contract: ContentPartnerContract) :
         ContentPartnerUpdateCommand(contentPartnerId)
 }
