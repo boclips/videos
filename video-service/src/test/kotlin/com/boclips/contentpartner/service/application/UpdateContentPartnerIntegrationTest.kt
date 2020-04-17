@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.contentpartner.UpdateContentPartner
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
@@ -19,6 +20,7 @@ import com.boclips.videos.service.domain.model.video.VideoRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Period
 
@@ -179,5 +181,15 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
             originalContentPartner.contentPartnerId
         )!!
         assertThat(updatedContentPartner.marketingInformation?.showreel).isNull()
+    }
+
+    @Test
+    fun `throws when contract id is invalid`() {
+        assertThrows<InvalidContractException> {
+            updateContentPartner(
+                contentPartnerId = "irrelevant",
+                upsertRequest = ContentPartnerRequest(contractId = "missing")
+            )
+        }
     }
 }

@@ -323,4 +323,20 @@ class ContentPartnerUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         assertThat(command.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
+
+    @Test
+    fun `creates command for updating contract`() {
+        val newContract = saveContentPartnerContract(name = "new name")
+
+        val commands = contentPartnerUpdatesConverter.convert(
+            originalContentPartner.contentPartnerId, ContentPartnerRequest(
+                contractId = newContract.id.value
+            )
+        )
+
+        val command =
+            commands.find { it is ContentPartnerUpdateCommand.ReplaceContract } as ContentPartnerUpdateCommand.ReplaceContract
+
+        assertThat(command.contract).isEqualTo(newContract)
+    }
 }

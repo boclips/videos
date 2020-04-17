@@ -1,11 +1,14 @@
 package com.boclips.contentpartner.service.application.contentpartner
 
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand.ReplaceDistributionMethods
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingStatusConverter
@@ -20,7 +23,8 @@ import java.util.Currency
 class ContentPartnerUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
     private val ageRangeRepository: AgeRangeRepository,
-    private val ingestDetailsResourceConverter: IngestDetailsResourceConverter
+    private val ingestDetailsResourceConverter: IngestDetailsResourceConverter,
+    private val contentPartnerContractRepository: ContentPartnerContractRepository
 ) {
     fun convert(
         id: ContentPartnerId,
@@ -55,7 +59,8 @@ class ContentPartnerUpdatesConverter(
                 commandCreator.updateBestForTags(),
                 commandCreator.updateSubjects(),
                 commandCreator.updateIngestDetails(),
-                commandCreator.updateDeliveryFrequency()
+                commandCreator.updateDeliveryFrequency(),
+                commandCreator.updateContract(contentPartnerContractRepository)
             )
         }
 }
@@ -211,5 +216,15 @@ class ContentPartnerUpdateCommandCreator(
     fun updateDeliveryFrequency(): ContentPartnerUpdateCommand.ReplaceDeliveryFrequency? =
         contentPartnerRequest.deliveryFrequency?.let {
             ContentPartnerUpdateCommand.ReplaceDeliveryFrequency(id, it)
+        }
+
+    fun updateContract(contentPartnerContractRepository: ContentPartnerContractRepository): ContentPartnerUpdateCommand.ReplaceContract? =
+        contentPartnerRequest.contractId?.let {
+            val contractId = ContentPartnerContractId(it)
+
+            val contract = contentPartnerContractRepository.findById(contractId)
+                ?: throw InvalidContractException(contractId)
+
+            ContentPartnerUpdateCommand.ReplaceContract(id, contract)
         }
 }

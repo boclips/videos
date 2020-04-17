@@ -1,10 +1,13 @@
 package com.boclips.contentpartner.service.application.contentpartner
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
@@ -21,8 +24,7 @@ class UpdateContentPartner(
     private val eventBus: EventBus
 ) {
     operator fun invoke(contentPartnerId: String, upsertRequest: ContentPartnerRequest): ContentPartner {
-        val id =
-            ContentPartnerId(value = contentPartnerId)
+        val id = ContentPartnerId(value = contentPartnerId)
 
         upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {

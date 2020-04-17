@@ -172,7 +172,8 @@ class ApplicationContext(
         return ContentPartnerUpdatesConverter(
             legalRestrictionsRepository,
             ageRangeRepository,
-            ingestDetailsToResourceConverter()
+            ingestDetailsToResourceConverter(),
+            contentPartnerContractRepository
         )
     }
 
