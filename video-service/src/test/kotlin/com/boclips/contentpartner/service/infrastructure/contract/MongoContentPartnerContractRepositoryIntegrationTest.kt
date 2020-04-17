@@ -2,9 +2,8 @@ package com.boclips.contentpartner.service.infrastructure.contract
 
 import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
@@ -44,7 +43,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceContentPartnerName(
+                ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
                     contractContentPartnerId = contract.id,
                     contentPartnerName = "Changed name"
                 )
@@ -62,7 +61,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceContractIsRolling(
+                ContentPartnerContractUpdateCommand.ReplaceContractIsRolling(
                     contractContentPartnerId = contract.id,
                     contractIsRolling = true
                 )
@@ -82,7 +81,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceContractDates(
+                ContentPartnerContractUpdateCommand.ReplaceContractDates(
                     contractContentPartnerId = contract.id,
                     contractDates = ContractDates(start, end)
                 )
@@ -102,7 +101,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceDaysBeforeTerminationWarning(
+                ContentPartnerContractUpdateCommand.ReplaceDaysBeforeTerminationWarning(
                     contractContentPartnerId = contract.id,
                     daysBeforeTerminationWarning = 99
                 )
@@ -120,7 +119,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceContractDocument(
+                ContentPartnerContractUpdateCommand.ReplaceContractDocument(
                     contractContentPartnerId = contract.id,
                     contractDocument = "http://www.google.com"
                 )
@@ -139,7 +138,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceYearsForMaximumLicense(
+                ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense(
                     contractContentPartnerId = contract.id,
                     yearsForMaximumLicense = 55
                 )
@@ -158,7 +157,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceDaysForSellOffPeriod(
+                ContentPartnerContractUpdateCommand.ReplaceDaysForSellOffPeriod(
                     contractContentPartnerId = contract.id,
                     daysForSellOffPeriod = 7
                 )
@@ -177,7 +176,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceRoyaltySplit(
+                ContentPartnerContractUpdateCommand.ReplaceRoyaltySplit(
                     contractContentPartnerId = contract.id,
                     royaltySplit = ContractRoyaltySplit(download = 0.7.toFloat(), streaming = 0.5.toFloat())
                 )
@@ -197,7 +196,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceMinimumPriceDescription(
+                ContentPartnerContractUpdateCommand.ReplaceMinimumPriceDescription(
                     contractContentPartnerId = contract.id,
                     minimumPriceDescription = "this is a minimum price - $99"
                 )
@@ -217,7 +216,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceRemittanceCurrency(
+                ContentPartnerContractUpdateCommand.ReplaceRemittanceCurrency(
                     contractContentPartnerId = contract.id,
                     remittanceCurrency = currency
                 )
@@ -237,7 +236,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceRestrictions(
+                ContentPartnerContractUpdateCommand.ReplaceRestrictions(
                     contractContentPartnerId = contract.id,
                     restrictions = restrictions
                 )
@@ -257,7 +256,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         contentPartnerContractRepository.update(
             listOf(
-                ContractContentPartnerUpdateCommand.ReplaceCost(
+                ContentPartnerContractUpdateCommand.ReplaceCost(
                     contractContentPartnerId = contract.id,
                     costs = costs
                 )
@@ -268,11 +267,68 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
         assertThat(updatedContract?.costs?.recoupable).isEqualTo(false)
     }
 
+    @Test
+    fun `returns result of update`() {
+        val original = ContentPartnerContractFactory.sample(contentPartnerName = "old")
+        val contract = contentPartnerContractRepository.create(original)
 
+        val updateNameCommand = ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
+            contractContentPartnerId = contract.id,
+            contentPartnerName = "new"
+        )
+        val result = contentPartnerContractRepository.update(
+            listOf(
+                updateNameCommand
+            )
+        )
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().contract).isEqualTo(contract.copy(contentPartnerName = "new"))
+        assertThat(result.first().commands).containsExactly(updateNameCommand)
+    }
+
+    @Test
+    fun `group update result by contract`() {
+        val firstContract = ContentPartnerContractFactory.sample(contentPartnerName = "first", id = ObjectId().toHexString())
+        val secondContract = ContentPartnerContractFactory.sample(contentPartnerName = "second", id = ObjectId().toHexString())
+
+        contentPartnerContractRepository.create(firstContract)
+        contentPartnerContractRepository.create(secondContract)
+
+        val updateFirstContract = ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
+            contractContentPartnerId = firstContract.id,
+            contentPartnerName = "first new"
+        )
+
+        val updateFirstContractAgain = ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense(
+            contractContentPartnerId = firstContract.id,
+            yearsForMaximumLicense = 10
+        )
+
+        val updateSecondContract = ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
+            contractContentPartnerId = secondContract.id,
+            contentPartnerName = "second new"
+        )
+
+        val updateResults = contentPartnerContractRepository.update(
+            listOf(
+                updateFirstContract,
+                updateFirstContractAgain,
+                updateSecondContract
+            )
+        )
+
+        assertThat(updateResults).hasSize(2)
+
+        assertThat(updateResults[0].contract.id).isEqualTo(firstContract.id)
+        assertThat(updateResults[0].commands).hasSize(2)
+
+        assertThat(updateResults[1].contract.id).isEqualTo(secondContract.id)
+        assertThat(updateResults[1].commands).hasSize(1)
+    }
 
     @Nested
     inner class FindAll {
-
         @Test
         fun `can find all contracts`() {
             val contracts = listOf(
@@ -319,6 +375,39 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(3)
             assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(1)
             assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(2)
+        }
+    }
+
+    @Nested
+    inner class FindAllByIds {
+        @Test
+        fun `can fetch all ids`() {
+            val contracts = listOf(
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 1"),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 2")
+            )
+
+            contracts.map { contentPartnerContractRepository.create(it) }
+
+            val retrievedContracts = contentPartnerContractRepository.findAllByIds(contracts.map { it.id })
+            assertThat(retrievedContracts).hasSize(2)
+            assertThat(retrievedContracts.map { it.contentPartnerName }).containsExactlyInAnyOrder(
+                "contract 1",
+                "contract 2"
+            )
+        }
+
+        @Test
+        fun `ignores missing ids`() {
+            val contracts = listOf(
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 1"),
+                ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 2")
+            )
+
+            contentPartnerContractRepository.create(contracts.first())
+
+            val retrievedContracts = contentPartnerContractRepository.findAllByIds(contracts.map { it.id })
+            assertThat(retrievedContracts).containsExactly(contracts.first())
         }
     }
 }

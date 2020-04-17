@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.common.ResultsPage
 interface ContentPartnerContractRepository {
     fun create(contract: ContentPartnerContract): ContentPartnerContract
     fun findById(id: ContentPartnerContractId): ContentPartnerContract?
+    fun findAllByIds(contractIds: List<ContentPartnerContractId>): List<ContentPartnerContract>
     fun findAll(pageRequest: PageRequest): ResultsPage<ContentPartnerContract>
-    fun update(contentPartnerUpdateCommands: List<ContractContentPartnerUpdateCommand>)
+    fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContractUpdateResult>
 }

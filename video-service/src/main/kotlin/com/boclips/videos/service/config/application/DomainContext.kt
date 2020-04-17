@@ -3,14 +3,16 @@ package com.boclips.videos.service.config.application
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.service.EventConverter
+import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContentPartnerContractRepositoryEventDecorator
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.contentpartner.MongoContentPartnerRepository
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contract.MongoContentPartnerContractRepository
-import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.users.api.httpclient.OrganisationsClient
@@ -144,9 +146,13 @@ class DomainContext(
     fun contentPartnerContractRepository(
         converter: ContentPartnerContractDocumentConverter
     ): ContentPartnerContractRepository {
-        return MongoContentPartnerContractRepository(
-            mongoClient,
-            converter
+        return ContentPartnerContractRepositoryEventDecorator(
+            MongoContentPartnerContractRepository(
+                mongoClient,
+                converter
+            ),
+            EventConverter(),
+            eventBus
         )
     }
 

@@ -229,7 +229,7 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
-            .andExpect(jsonPath("$.contractDocument", equalTo("null")))
+            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png")))
             .andExpect(jsonPath("$.contractDates.start", equalTo("2010-12-31")))
             .andExpect(jsonPath("$.contractDates.end", equalTo("2011-01-31")))
             .andExpect(jsonPath("$.daysBeforeTerminationWarning", equalTo(30)))

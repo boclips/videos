@@ -1,19 +1,19 @@
 package com.boclips.contentpartner.service.application.contentpartnercontract
 
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContentPartnerName
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractDocument
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceContractIsRolling
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceCost
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceDaysBeforeTerminationWarning
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceDaysForSellOffPeriod
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceMinimumPriceDescription
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceRemittanceCurrency
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceRoyaltySplit
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand.ReplaceYearsForMaximumLicense
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContentPartnerName
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractIsRolling
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceCost
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceDaysBeforeTerminationWarning
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceDaysForSellOffPeriod
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractDocument
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceMinimumPriceDescription
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceRemittanceCurrency
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceRestrictions
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractCostsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractDatesToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
@@ -31,7 +31,7 @@ class ContractContentPartnerConverter(
     fun convert(
         id: ContentPartnerContractId,
         updateContract: ContentPartnerContractRequest
-    ): List<ContractContentPartnerUpdateCommand> =
+    ): List<ContentPartnerContractUpdateCommand> =
         ContractContentPartnerUpdateCreator(
             id,
             updateContract,
@@ -67,14 +67,14 @@ class ContractContentPartnerUpdateCreator(
     private val restrictionsConverter: ContractRestrictionsConverter,
     private val costsConverter: ContractCostsConverter
 ) {
-    fun updateContractContentPartnerName(): ContractContentPartnerUpdateCommand? {
+    fun updateContractContentPartnerName(): ContentPartnerContractUpdateCommand? {
         return ReplaceContentPartnerName(
             contractContentPartnerId = id,
             contentPartnerName = updateContract.contentPartnerName
         )
     }
 
-    fun updateContractDocument(): ContractContentPartnerUpdateCommand? {
+    fun updateContractDocument(): ContentPartnerContractUpdateCommand? {
         return updateContract.contractDocument?.let {
             ReplaceContractDocument(
                 contractContentPartnerId = id,
@@ -83,7 +83,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateContractIsRolling(): ContractContentPartnerUpdateCommand? {
+    fun updateContractIsRolling(): ContentPartnerContractUpdateCommand? {
         return updateContract.contractIsRolling?.let {
             ReplaceContractIsRolling(
                 contractContentPartnerId = id,
@@ -92,7 +92,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateContractDates(): ContractContentPartnerUpdateCommand? {
+    fun updateContractDates(): ContentPartnerContractUpdateCommand? {
         return updateContract.contractDates?.let {
             contractDatesConverter.fromResource(it)?.let { dates ->
                 ReplaceContractDates(
@@ -103,7 +103,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateDaysBeforeTerminationWarning(): ContractContentPartnerUpdateCommand? {
+    fun updateDaysBeforeTerminationWarning(): ContentPartnerContractUpdateCommand? {
         return updateContract.daysBeforeTerminationWarning?.let {
             ReplaceDaysBeforeTerminationWarning(
                 contractContentPartnerId = id,
@@ -112,7 +112,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateYearsForMaximumLicense(): ContractContentPartnerUpdateCommand? {
+    fun updateYearsForMaximumLicense(): ContentPartnerContractUpdateCommand? {
         return updateContract.yearsForMaximumLicense?.let {
             ReplaceYearsForMaximumLicense(
                 contractContentPartnerId = id,
@@ -121,7 +121,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateDaysForSellOffPeriod(): ContractContentPartnerUpdateCommand? {
+    fun updateDaysForSellOffPeriod(): ContentPartnerContractUpdateCommand? {
         return updateContract.daysForSellOffPeriod?.let {
             ReplaceDaysForSellOffPeriod(
                 contractContentPartnerId = id,
@@ -130,7 +130,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateRoyaltySplit(): ContractContentPartnerUpdateCommand? {
+    fun updateRoyaltySplit(): ContentPartnerContractUpdateCommand? {
         return updateContract.royaltySplit?.let {
             ReplaceRoyaltySplit(
                 contractContentPartnerId = id,
@@ -139,7 +139,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateMinimumPriceDescription(): ContractContentPartnerUpdateCommand? {
+    fun updateMinimumPriceDescription(): ContentPartnerContractUpdateCommand? {
         return updateContract.minimumPriceDescription?.let {
             ReplaceMinimumPriceDescription(
                 contractContentPartnerId = id,
@@ -148,7 +148,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateRemittanceCurrency(): ContractContentPartnerUpdateCommand? {
+    fun updateRemittanceCurrency(): ContentPartnerContractUpdateCommand? {
         return updateContract.remittanceCurrency?.let {
             ReplaceRemittanceCurrency(
                 contractContentPartnerId = id,
@@ -157,7 +157,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateRestrictions(): ContractContentPartnerUpdateCommand? {
+    fun updateRestrictions(): ContentPartnerContractUpdateCommand? {
         return updateContract.restrictions?.let {
             ReplaceRestrictions(
                 contractContentPartnerId = id,
@@ -166,7 +166,7 @@ class ContractContentPartnerUpdateCreator(
         }
     }
 
-    fun updateCost(): ContractContentPartnerUpdateCommand? {
+    fun updateCost(): ContentPartnerContractUpdateCommand? {
         return updateContract.costs?.let {
             ReplaceCost(
                 contractContentPartnerId = id,

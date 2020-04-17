@@ -12,8 +12,6 @@ class UpdateContentPartnerContract
     (
     private val contractContentPartnerRepository: ContentPartnerContractRepository,
     private val contractContentPartnerUpdatesConverter: ContractContentPartnerConverter
-    // private val eventConverter: EventConverter,
-    // private val eventBus: EventBus
 ) {
     operator fun invoke(contractId: String, updateRequest: ContentPartnerContractRequest): ContentPartnerContract {
         val id = ContentPartnerContractId(contractId)

@@ -6,10 +6,13 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDeta
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
+import com.boclips.eventbus.domain.contract.ContractId
 import com.boclips.videos.api.common.IngestType
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
 import com.boclips.eventbus.domain.contentpartner.IngestDetails as EventBusIngestDetails
+import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 
 class EventConverter {
 
@@ -50,4 +53,9 @@ class EventConverter {
             .urls(urls)
             .build()
     }
+
+    fun toContractPayload(contract: ContentPartnerContract): EventBusContract =
+        EventBusContract.builder()
+            .contractId(ContractId.builder().value(contract.id.value).build())
+            .name(contract.contentPartnerName).build()
 }

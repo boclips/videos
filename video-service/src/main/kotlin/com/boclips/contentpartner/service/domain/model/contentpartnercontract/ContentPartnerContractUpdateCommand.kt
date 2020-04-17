@@ -2,58 +2,58 @@ package com.boclips.contentpartner.service.domain.model.contentpartnercontract
 
 import java.util.Currency
 
-sealed class ContractContentPartnerUpdateCommand(val contractContentPartnerId: ContentPartnerContractId) {
+sealed class ContentPartnerContractUpdateCommand(val contractContentPartnerId: ContentPartnerContractId) {
     class ReplaceContentPartnerName(
         contractContentPartnerId: ContentPartnerContractId,
         val contentPartnerName: String
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceContractDocument(
         contractContentPartnerId: ContentPartnerContractId,
         val contractDocument: String
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceContractIsRolling(contractContentPartnerId: ContentPartnerContractId, val contractIsRolling: Boolean) :
-        ContractContentPartnerUpdateCommand(contractContentPartnerId)
+        ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceContractDates(contractContentPartnerId: ContentPartnerContractId, val contractDates: ContractDates) :
-        ContractContentPartnerUpdateCommand(contractContentPartnerId)
+        ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceDaysBeforeTerminationWarning(
         contractContentPartnerId: ContentPartnerContractId,
         val daysBeforeTerminationWarning: Int
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceYearsForMaximumLicense(
         contractContentPartnerId: ContentPartnerContractId,
         val yearsForMaximumLicense: Int
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceDaysForSellOffPeriod(
         contractContentPartnerId: ContentPartnerContractId,
         val daysForSellOffPeriod: Int
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceRoyaltySplit(
         contractContentPartnerId: ContentPartnerContractId,
         val royaltySplit: ContractRoyaltySplit
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceMinimumPriceDescription(
         contractContentPartnerId: ContentPartnerContractId,
         val minimumPriceDescription: String
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceRemittanceCurrency(
         contractContentPartnerId: ContentPartnerContractId,
         val remittanceCurrency: Currency
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceRestrictions(
         contractContentPartnerId: ContentPartnerContractId,
         val restrictions: ContractRestrictions
-    ) : ContractContentPartnerUpdateCommand(contractContentPartnerId)
+    ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceCost(contractContentPartnerId: ContentPartnerContractId, val costs: ContractCosts) :
-        ContractContentPartnerUpdateCommand(contractContentPartnerId)
+        ContentPartnerContractUpdateCommand(contractContentPartnerId)
 }

@@ -6,7 +6,8 @@ import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractContentPartnerUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractUpdateResult
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
@@ -14,6 +15,7 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -63,6 +65,21 @@ class MongoContentPartnerContractRepository(
         return document
     }
 
+    override fun findAllByIds(contractIds: List<ContentPartnerContractId>): List<ContentPartnerContract> {
+        val uniqueContractIds = contractIds.distinct()
+        val uniqueObjectIds = uniqueContractIds.map { ObjectId(it.value) }
+
+        val contracts = getCollection()
+            .find(ContentPartnerContractDocument::id `in` uniqueObjectIds)
+            .map { document: ContentPartnerContractDocument ->
+                converter.toContract(document)
+            }
+            .map { it.id to it }
+            .toMap()
+
+        return uniqueContractIds.mapNotNull { contractId -> contracts[contractId] }
+    }
+
     override fun findAll(pageRequest: PageRequest): ResultsPage<ContentPartnerContract> {
         val count = getCollection().countDocuments()
 
@@ -81,12 +98,12 @@ class MongoContentPartnerContractRepository(
             }
     }
 
-    override fun update(contentPartnerUpdateCommands: List<ContractContentPartnerUpdateCommand>) {
-        if (contentPartnerUpdateCommands.isEmpty()) {
-            return
+    override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContractUpdateResult> {
+        if (contentPartnerContractUpdateCommands.isEmpty()) {
+            return emptyList()
         }
 
-        val updateDocs = contentPartnerUpdateCommands.map { updateCommand ->
+        val updateDocs = contentPartnerContractUpdateCommands.map { updateCommand ->
             UpdateOneModel<ContentPartnerContractDocument>(
                 toBsonIdFilter(updateCommand.contractContentPartnerId),
                 updateCommandsToBson(updateCommand)
@@ -95,72 +112,81 @@ class MongoContentPartnerContractRepository(
 
         val result = getCollection().bulkWrite(updateDocs)
         logger.info { "Bulk contract content partner update: $result" }
+
+        val commandsById = contentPartnerContractUpdateCommands.groupBy { it.contractContentPartnerId }
+
+        return findAllByIds(commandsById.keys.toList())
+            .map { ContractUpdateResult(it, commandsById[it.id].orEmpty()) }
     }
 
-    private fun updateCommandsToBson(updateCommand: ContractContentPartnerUpdateCommand): Bson {
+    private fun updateCommandsToBson(updateCommand: ContentPartnerContractUpdateCommand): Bson {
         val update = when (updateCommand) {
-            is ContractContentPartnerUpdateCommand.ReplaceContentPartnerName
-            -> set(ContentPartnerContractDocument::contentPartnerName, updateCommand.contentPartnerName)
+            is ContentPartnerContractUpdateCommand.ReplaceContentPartnerName ->
+                set(ContentPartnerContractDocument::contentPartnerName, updateCommand.contentPartnerName)
 
-            is ContractContentPartnerUpdateCommand.ReplaceContractDocument
-            -> set(ContentPartnerContractDocument::contractDocument, updateCommand.contractDocument)
-
-            is ContractContentPartnerUpdateCommand.ReplaceContractIsRolling
-            -> set(ContentPartnerContractDocument::contractIsRolling, updateCommand.contractIsRolling)
-
-            is ContractContentPartnerUpdateCommand.ReplaceContractDates
-            -> set(
-                ContentPartnerContractDocument::contractDates,
-                updateCommand.contractDates.let { ContractDatesDocument(it.start.toString(), it.end.toString()) })
-
-            is ContractContentPartnerUpdateCommand.ReplaceDaysBeforeTerminationWarning
-            -> set(
-                ContentPartnerContractDocument::daysBeforeTerminationWarning,
-                updateCommand.daysBeforeTerminationWarning
-            )
-
-            is ContractContentPartnerUpdateCommand.ReplaceYearsForMaximumLicense
-            -> set(ContentPartnerContractDocument::yearsForMaximumLicense, updateCommand.yearsForMaximumLicense)
-
-            is ContractContentPartnerUpdateCommand.ReplaceDaysForSellOffPeriod
-            -> set(ContentPartnerContractDocument::daysForSellOffPeriod, updateCommand.daysForSellOffPeriod)
-
-            is ContractContentPartnerUpdateCommand.ReplaceRoyaltySplit
-            -> set(ContentPartnerContractDocument::royaltySplit, updateCommand.royaltySplit.let {
-                ContractRoyaltySplitDocument(
-                    it.download, it.streaming
+            is ContentPartnerContractUpdateCommand.ReplaceContractDocument ->
+                set(
+                    ContentPartnerContractDocument::contractDocument,
+                    updateCommand.contractDocument
                 )
-            })
 
-            is ContractContentPartnerUpdateCommand.ReplaceMinimumPriceDescription
-            -> set(ContentPartnerContractDocument::minimumPriceDescription, updateCommand.minimumPriceDescription)
+            is ContentPartnerContractUpdateCommand.ReplaceContractIsRolling ->
+                set(ContentPartnerContractDocument::contractIsRolling, updateCommand.contractIsRolling)
 
-            is ContractContentPartnerUpdateCommand.ReplaceRemittanceCurrency
-            -> set(ContentPartnerContractDocument::remittanceCurrency, updateCommand.remittanceCurrency)
-
-            is ContractContentPartnerUpdateCommand.ReplaceRestrictions
-            -> set(ContentPartnerContractDocument::restrictions, updateCommand.restrictions.let {
-                ContractRestrictionsDocument(
-                    clientFacing = it.clientFacing,
-                    territory = it.territory,
-                    licensing = it.licensing,
-                    editing = it.editing,
-                    marketing = it.marketing,
-                    companies = it.companies,
-                    payout = it.payout,
-                    other = it.other
+            is ContentPartnerContractUpdateCommand.ReplaceContractDates ->
+                set(
+                    ContentPartnerContractDocument::contractDates,
+                    updateCommand.contractDates.let { ContractDatesDocument(it.start.toString(), it.end.toString()) }
                 )
-            })
 
-            is ContractContentPartnerUpdateCommand.ReplaceCost
-            -> set(ContentPartnerContractDocument::costs, updateCommand.costs.let {
-                ContractCostsDocument(
-                    minimumGuarantee = it.minimumGuarantee,
-                    upfrontLicense = it.upfrontLicense,
-                    technicalFee = it.technicalFee,
-                    recoupable = it.recoupable
+            is ContentPartnerContractUpdateCommand.ReplaceDaysBeforeTerminationWarning ->
+                set(
+                    ContentPartnerContractDocument::daysBeforeTerminationWarning,
+                    updateCommand.daysBeforeTerminationWarning
                 )
-            })
+
+            is ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense ->
+                set(ContentPartnerContractDocument::yearsForMaximumLicense, updateCommand.yearsForMaximumLicense)
+
+            is ContentPartnerContractUpdateCommand.ReplaceDaysForSellOffPeriod ->
+                set(ContentPartnerContractDocument::daysForSellOffPeriod, updateCommand.daysForSellOffPeriod)
+
+            is ContentPartnerContractUpdateCommand.ReplaceRoyaltySplit ->
+                set(ContentPartnerContractDocument::royaltySplit, updateCommand.royaltySplit.let {
+                    ContractRoyaltySplitDocument(
+                        it.download, it.streaming
+                    )
+                })
+
+            is ContentPartnerContractUpdateCommand.ReplaceMinimumPriceDescription ->
+                set(ContentPartnerContractDocument::minimumPriceDescription, updateCommand.minimumPriceDescription)
+
+            is ContentPartnerContractUpdateCommand.ReplaceRemittanceCurrency ->
+                set(ContentPartnerContractDocument::remittanceCurrency, updateCommand.remittanceCurrency)
+
+            is ContentPartnerContractUpdateCommand.ReplaceRestrictions ->
+                set(ContentPartnerContractDocument::restrictions, updateCommand.restrictions.let {
+                    ContractRestrictionsDocument(
+                        clientFacing = it.clientFacing,
+                        territory = it.territory,
+                        licensing = it.licensing,
+                        editing = it.editing,
+                        marketing = it.marketing,
+                        companies = it.companies,
+                        payout = it.payout,
+                        other = it.other
+                    )
+                })
+
+            is ContentPartnerContractUpdateCommand.ReplaceCost ->
+                set(ContentPartnerContractDocument::costs, updateCommand.costs.let {
+                    ContractCostsDocument(
+                        minimumGuarantee = it.minimumGuarantee,
+                        upfrontLicense = it.upfrontLicense,
+                        technicalFee = it.technicalFee,
+                        recoupable = it.recoupable
+                    )
+                })
 
         }
 
