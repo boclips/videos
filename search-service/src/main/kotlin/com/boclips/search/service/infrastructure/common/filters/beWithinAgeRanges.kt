@@ -17,7 +17,7 @@ fun beWithinAgeRanges(ageRanges: List<AgeRange>): BoolQueryBuilder? {
             ageRanges.forEach { ageRange ->
                 should(
                     TermsSetQueryBuilder(HasAgeRange.AGE_RANGE, ageRange.toRange()).setMinimumShouldMatchScript(
-                        Script(ScriptType.INLINE, DEFAULT_SCRIPT_LANG, "1", emptyMap())
+                        Script(ScriptType.INLINE, DEFAULT_SCRIPT_LANG, "2", emptyMap())
                     )
                 )
             }

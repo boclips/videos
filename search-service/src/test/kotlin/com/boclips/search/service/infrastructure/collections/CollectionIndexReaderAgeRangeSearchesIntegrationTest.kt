@@ -110,9 +110,8 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         fun `providing single range with min`() {
             val results = getSearchResults(CollectionQuery(ageRanges = listOf(AgeRange(min = 7))))
 
-            assertThat(results.elements).hasSize(7)
+            assertThat(results.elements).hasSize(6)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School")
@@ -125,9 +124,8 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
         fun `providing single range with min and max`() {
             val results = getSearchResults(CollectionQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))))
 
-            assertThat(results.elements).hasSize(3)
+            assertThat(results.elements).hasSize(2)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
         }
@@ -143,14 +141,13 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
                 )
             )
 
-            assertThat(results.elements).hasSize(6)
+            assertThat(results.elements).hasSize(4)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School")
             assertThat(results.elements).contains("Middle-School-And-Up")
-            assertThat(results.elements).contains("Jr-High-School")
+
         }
     }
 

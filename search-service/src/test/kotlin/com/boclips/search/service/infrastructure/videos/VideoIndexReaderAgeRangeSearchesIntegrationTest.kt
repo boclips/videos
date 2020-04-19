@@ -136,9 +136,8 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `providing single range with min`() {
             val results = getSearchResults(VideoQuery(ageRanges = listOf(AgeRange(min = 7))))
 
-            assertThat(results.elements).hasSize(7)
+            assertThat(results.elements).hasSize(6)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School")
@@ -151,9 +150,8 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `providing single range with min and max`() {
             val results = getSearchResults(VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))))
 
-            assertThat(results.elements).hasSize(3)
+            assertThat(results.elements).hasSize(2)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
         }
@@ -169,14 +167,12 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                 )
             )
 
-            assertThat(results.elements).hasSize(6)
+            assertThat(results.elements).hasSize(4)
 
-            assertThat(results.elements).contains("Lower-Elementary")
             assertThat(results.elements).contains("Middle-School-And-Down")
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School")
             assertThat(results.elements).contains("Middle-School-And-Up")
-            assertThat(results.elements).contains("Jr-High-School")
         }
     }
 
@@ -188,12 +184,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                 VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11)))
             )
 
-            assertThat(results.elements).hasSize(5)
+            assertThat(results.elements).hasSize(2)
             assertThat(results.elements[0]).isEqualTo("Upper-Elementary")
             assertThat(results.elements[1]).isEqualTo("Middle-School-And-Down")
-            assertThat(results.elements).contains("Lower-Elementary")
-            assertThat(results.elements).contains("Middle-School")
-            assertThat(results.elements).contains("Middle-School-And-Up")
+
+
         }
 
         @Test
@@ -202,19 +197,19 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                 VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11), AgeRange(min=14, max=16)))
             )
 
-            assertThat(results.elements).hasSize(7)
-            val topResults = results.elements.subList(0,4);
+            assertThat(results.elements).hasSize(4)
+
+            val topResults = results.elements.subList(0,1)
 
             assertThat(topResults).contains("Upper-Elementary")
-            assertThat(topResults).contains("Jr-High-School")
-            assertThat(topResults).contains("Middle-School-And-Down")
-            assertThat(topResults).contains("Middle-School-And-Up")
 
-            val lastResults = results.elements.subList(4, 7)
+            val bottomResults = results.elements.subList(1,4)
 
-            assertThat(lastResults).contains("Lower-Elementary")
-            assertThat(lastResults).contains("Middle-School")
-            assertThat(lastResults).contains("High-School")
+            assertThat(bottomResults).contains("Middle-School-And-Down")
+            assertThat(bottomResults).contains("Middle-School-And-Up")
+            assertThat(bottomResults).contains("Jr-High-School")
+
+
         }
     }
 
