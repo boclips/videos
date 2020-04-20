@@ -4,11 +4,11 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContentPartnerName
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractDocument
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractIsRolling
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceCost
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceDaysBeforeTerminationWarning
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceDaysForSellOffPeriod
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceContractDocument
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceMinimumPriceDescription
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceRemittanceCurrency
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceRestrictions
@@ -19,6 +19,8 @@ import com.boclips.contentpartner.service.presentation.converters.contracts.Cont
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRestrictionsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 
 class ContractContentPartnerConverter(
@@ -78,7 +80,10 @@ class ContractContentPartnerUpdateCreator(
         return updateContract.contractDocument?.let {
             ReplaceContractDocument(
                 contractContentPartnerId = id,
-                contractDocument = it
+                contractDocument = when (it) {
+                    is Specified -> it.value
+                    is ExplicitlyNull -> null
+                }
             )
         }
     }

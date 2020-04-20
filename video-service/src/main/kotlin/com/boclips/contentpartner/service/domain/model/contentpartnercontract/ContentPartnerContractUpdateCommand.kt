@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.domain.model.contentpartnercontract
 
+import com.boclips.videos.api.common.Specifiable
 import java.util.Currency
 
 sealed class ContentPartnerContractUpdateCommand(val contractContentPartnerId: ContentPartnerContractId) {
@@ -10,7 +11,7 @@ sealed class ContentPartnerContractUpdateCommand(val contractContentPartnerId: C
 
     class ReplaceContractDocument(
         contractContentPartnerId: ContentPartnerContractId,
-        val contractDocument: String
+        val contractDocument: String?
     ) : ContentPartnerContractUpdateCommand(contractContentPartnerId)
 
     class ReplaceContractIsRolling(contractContentPartnerId: ContentPartnerContractId, val contractIsRolling: Boolean) :

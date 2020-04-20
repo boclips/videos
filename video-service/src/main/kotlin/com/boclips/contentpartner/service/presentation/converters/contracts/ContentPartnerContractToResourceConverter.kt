@@ -21,7 +21,7 @@ class ContentPartnerContractToResourceConverter(
         return ContentPartnerContractResource(
             id = contract.id.value,
             contentPartnerName = contract.contentPartnerName,
-            contractDocument = contract.contractDocument.toString(),
+            contractDocument = contract.contractDocument?.toString(),
             contractDates = ContentPartnerContractDatesResource(
                 start = contract.contractDates?.start?.format(formatter),
                 end = contract.contractDates?.end?.format(formatter)

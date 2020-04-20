@@ -10,6 +10,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.presentation.converters.CurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.DateConverter
 import com.boclips.contentpartner.service.presentation.converters.UrlConverter
+import com.boclips.videos.api.common.ExplicitlyNull
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import org.bson.types.ObjectId
 
@@ -21,7 +23,12 @@ class CreateContentPartnerContract(
             ContentPartnerContract(
                 id = ObjectId().toHexString().let(::ContentPartnerContractId),
                 contentPartnerName = request.contentPartnerName,
-                contractDocument = request.contractDocument?.let(UrlConverter::convert),
+                contractDocument = when (request.contractDocument) {
+                    // https://discuss.kotlinlang.org/t/what-is-the-reason-behind-smart-cast-being-impossible-to-perform-when-referenced-class-is-in-another-module/2201/8
+                    is Specified -> UrlConverter.convert((request.contractDocument as Specified<String>).value)
+                    is ExplicitlyNull -> null
+                    null -> null
+                },
                 contractDates = ContractDates(
                     start = request.contractDates?.start?.let(DateConverter::convert),
                     end = request.contractDates?.end?.let(DateConverter::convert)

@@ -17,6 +17,7 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
@@ -338,7 +339,7 @@ abstract class AbstractSpringIntegrationTest {
     ): ContentPartnerContract = createContentPartnerContract(
         ContentPartnerContractRequest(
             contentPartnerName = name,
-            contractDocument = contractDocument,
+            contractDocument = contractDocument?.let { Specified(value = it) },
             contractDates = ContentPartnerContractDatesResource(
                 start = contractDateStart,
                 end = contractDateEnd

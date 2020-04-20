@@ -15,6 +15,7 @@ import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.SubjectResource
 import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.users.api.response.user.UserResource
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
@@ -673,7 +674,7 @@ object ContentPartnerContractFactory {
         )
     ) = ContentPartnerContractRequest(
         contentPartnerName = contentPartnerName ?: "content-partner-name",
-        contractDocument = contractDocument,
+        contractDocument = contractDocument?.let { Specified(value = it) },
         contractDates = contractDates.let {
             ContentPartnerContractDatesResource(
                 start = it?.start.toString(),

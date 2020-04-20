@@ -182,12 +182,12 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
     }
 
     @Test
-    fun `updates the contract`() {
+    fun `updates the contract, and ensures contract document deletion works correctly`() {
         fakeSignedLinkProvider.setLink(URL("http://server.com/oranges.png#signed"))
 
         val contract = saveContentPartnerContract(name = "okay videos")
 
-        val content = """
+        val fullUpdate = """
             {
                 "contentPartnerName": "Related Content Partner",
                 "contractDocument": "http://server.com/oranges.png#signed",
@@ -225,7 +225,7 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
 
         mockMvc.perform(
             patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
-                .contentType(MediaType.APPLICATION_JSON).content(content)
+                .contentType(MediaType.APPLICATION_JSON).content(fullUpdate)
         )
             .andExpect(status().isNoContent)
 
@@ -250,5 +250,41 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
             .andExpect(jsonPath("$.costs.technicalFee", closeTo(11.3, 0.0001)))
             .andExpect(jsonPath("$.restrictions").exists())
             .andExpect(jsonPath("$.costs").exists())
+
+        val noDeletionOfContract = """
+            {
+                "contentPartnerName": "Related Content Partner"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(noDeletionOfContract)
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png#signed")))
+
+        val withDeletionOfContract = """
+            {
+                "contentPartnerName": "Related Content Partner",
+                "contractDocument": null
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(withDeletionOfContract)
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(jsonPath("$.contractDocument", equalTo(null)))
     }
 }
