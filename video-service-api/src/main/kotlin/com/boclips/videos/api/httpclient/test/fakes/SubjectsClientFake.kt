@@ -27,10 +27,9 @@ class SubjectsClientFake : SubjectsClient, FakeClient<SubjectResource> {
         database.replace(id, SubjectResource(id = id, name = createSubjectRequest.name))
     }
 
-    override fun create(createSubjectRequest: CreateSubjectRequest): SubjectResource {
+    override fun create(createSubjectRequest: CreateSubjectRequest) {
         val resource = SubjectResource(id = "${id++}", name = createSubjectRequest.name)
         database[resource.id] = resource
-        return resource
     }
 
     override fun add(element: SubjectResource): SubjectResource {
