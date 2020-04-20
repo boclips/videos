@@ -61,7 +61,7 @@ class VideosLinkBuilderTest {
 
         val link = videosLinkBuilder.searchVideosLink()!!
 
-        assertThat(link.href).contains("/v1/videos{?query,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
+        assertThat(link.href).contains("/v1/videos{?query,id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
         assertThat(link.templated).isTrue()
     }
@@ -71,24 +71,6 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.searchVideosLink()
 
         assertThat(link).isNull()
-    }
-
-    @Test
-    fun `adminSearch link when user can search disabled videos`() {
-        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISABLED_VIDEOS)
-
-        val link = videosLinkBuilder.adminSearchLink()
-
-        assertThat(link?.href).isEqualTo("/v1/videos/search")
-        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.ADMIN_SEARCH)
-        assertThat(link?.templated).isFalse()
-    }
-
-    @Test
-    fun `adminSearch link returns null when user can't search disabled videos`() {
-        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
-
-        assertThat(videosLinkBuilder.adminSearchLink()).isNull()
     }
 
     @Test

@@ -84,11 +84,7 @@ class VideoService(
 
         val results = videoSearchService.search(
             PaginatedSearchRequest(
-                VideoIdsRequest(ids = videoIds)
-                    .toSearchQuery(
-                        videoAccess
-                    ),
-                windowSize = videoIds.size
+                VideoIdsRequest(ids = videoIds).toSearchQuery(videoAccess), windowSize = videoIds.size
             )
         )
 

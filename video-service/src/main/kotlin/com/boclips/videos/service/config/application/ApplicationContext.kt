@@ -48,7 +48,6 @@ import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
-import com.boclips.videos.service.application.video.search.GetAllVideosById
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
@@ -103,13 +102,11 @@ class ApplicationContext(
     @Bean
     fun searchVideo(
         getVideoById: GetVideoById,
-        getAllVideosById: GetAllVideosById,
         getVideosByQuery: GetVideosByQuery,
         searchQueryConverter: SearchQueryConverter
     ) = SearchVideo(
         getVideoById,
         getVideosByQuery,
-        getAllVideosById,
         videoRepository
     )
 
@@ -392,10 +389,5 @@ class ApplicationContext(
             userService,
             searchQueryConverter
         )
-    }
-
-    @Bean
-    fun getAllVideosById(): GetAllVideosById {
-        return GetAllVideosById(videoService)
     }
 }

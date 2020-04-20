@@ -609,60 +609,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
-    inner class SearchEndpoint {
-        // TODO: IDS
-        @Test
-        fun `returns all enabled and disabled video by ID`() {
-            mockMvc.perform(
-                post("/v1/videos/search")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ids": ["$disabledVideoId", "$kalturaVideoId", "$youtubeVideoId"]}""")
-                    .asBoclipsEmployee()
-            )
-                .andExpect(status().isCreated)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants eat a lot")))
-                .andExpect(
-                    jsonPath(
-                        "$._embedded.videos[0]._links.self.href",
-                        containsString("/videos/$disabledVideoId")
-                    )
-                )
-                .andExpect(jsonPath("$.page").doesNotExist())
-        }
-
-        // TODO: IDS
-        @Test
-        fun `ignores unknown videos searching by IDs`() {
-            mockMvc.perform(
-                post("/v1/videos/search")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ids": ["nonsense", "$disabledVideoId", "nonsense"]}""").asBoclipsEmployee()
-            )
-                .andExpect(status().isCreated)
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-        }
-
-        // TODO: IDS
-        @Test
-        fun `dedupe videos searching by IDs`() {
-            mockMvc.perform(
-                post("/v1/videos/search")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ids": ["$disabledVideoId", "$disabledVideoId"]}""").asBoclipsEmployee()
-            )
-                .andExpect(status().isCreated)
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$.page").doesNotExist())
-                .andExpect(jsonPath("$._links").doesNotExist())
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(disabledVideoId)))
-        }
-    }
-
-    @Nested
     inner class VideoExists {
         @Test
         fun `video lookup by provider id returns 200 when video exists`() {

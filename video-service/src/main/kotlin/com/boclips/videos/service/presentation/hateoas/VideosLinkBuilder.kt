@@ -20,8 +20,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val VIDEO = "video"
         const val LOG_VIDEO_INTERACTION = "logInteraction"
         const val SEARCH_VIDEOS = "searchVideos"
-        const val ADMIN_SEARCH = "adminSearch"
-        const val ADMIN_VIDEO_SEARCH = "adminVideoSearch"
         const val TRANSCRIPT = "transcript"
         const val RATE = "rate"
         const val TAG = "tag"
@@ -59,34 +57,12 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         getVideosRoot()
                             .build()
                             .toUriString()
-                            + "{?query,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}",
+                            + "{?query,id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}",
                         SEARCH_VIDEOS
                     )
                 )
             }
             else -> null
-        }
-    }
-
-    fun adminSearchLink(): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
-            HateoasLink.of(
-                WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .getVideosAdmin(null)
-                ).withRel(Rels.ADMIN_SEARCH)
-            )
-        }
-    }
-
-    fun adminVideoSearchLink(): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_DISABLED_VIDEOS) {
-            HateoasLink.of(
-                WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .getVideosAdmin(null)
-                ).withRel(Rels.ADMIN_VIDEO_SEARCH)
-            )
         }
     }
 

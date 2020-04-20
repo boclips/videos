@@ -53,8 +53,6 @@ class LinksController(
             links = listOfNotNull(
                 subjectsLinkBuilder.subjects(),
                 videosLinkBuilder.videoLink(),
-                videosLinkBuilder.adminSearchLink(),
-                videosLinkBuilder.adminVideoSearchLink(),
                 videosLinkBuilder.searchVideosLink(),
                 videoTypeLinkBuilder.videoTypes(),
                 collectionsLinkBuilder.adminCollectionSearch(),

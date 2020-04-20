@@ -1,13 +1,11 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.api.request.video.AdminSearchRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
-import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
@@ -16,7 +14,6 @@ import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -123,24 +120,6 @@ class VideoController(
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())
 
         return ResponseEntity(videosResource, HttpStatus.OK)
-    }
-
-    @PostMapping("/v1/videos/search")
-    @Deprecated("We should use one single search endpoint, e.g. /v1/videos instead")
-    fun getVideosAdmin(@RequestBody adminSearchRequest: AdminSearchRequest?): ResponseEntity<VideosResource> {
-        val user = getCurrentUser()
-        return searchVideo.byIds(adminSearchRequest?.ids ?: emptyList(), Administrator)
-            .map { video: Video -> videoToResourceConverter.convert(video = video, user = user) }
-            .let {
-                ResponseEntity(
-                    VideosResource(
-                        _embedded = VideosWrapperResource(videos = it, facets = null),
-                        _links = null,
-                        page = null
-                    ),
-                    HttpStatus.CREATED
-                )
-            }
     }
 
     @CrossOrigin(allowCredentials = "true")

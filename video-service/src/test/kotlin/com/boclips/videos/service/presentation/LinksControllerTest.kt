@@ -79,7 +79,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchVideos.href",
-                    containsString("{?query,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
+                    containsString("{?query,id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
                 )
             )
             .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
@@ -167,8 +167,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `as Boclips employee see admin links`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.adminSearch.href", containsString("/videos/search")))
-            .andExpect(jsonPath("$._links.adminVideoSearch.href", containsString("/videos/search")))
             .andExpect(
                 jsonPath(
                     "$._links.adminCollectionSearch.href",

@@ -17,7 +17,6 @@ import com.boclips.web.exceptions.ResourceNotFoundApiException
 class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getVideosByQuery: GetVideosByQuery,
-    private val getAllVideosById: GetAllVideosById,
     private val videoRepository: VideoRepository
 ) {
     companion object {
@@ -26,10 +25,6 @@ class SearchVideo(
 
     fun byId(id: String?, user: User): Video {
         return getVideoById(resolveToAssetId(id)!!, user)
-    }
-
-    fun byIds(ids: List<String>, user: User): List<Video> {
-        return getAllVideosById(ids.mapNotNull { this.resolveToAssetId(it, false) }, user)
     }
 
     fun byQuery(
@@ -59,7 +54,7 @@ class SearchVideo(
     ): ResultsPage<Video, VideoCounts> {
         return getVideosByQuery(
             query = query ?: "",
-            ids = ids,
+            ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),
             sortBy = sortBy,
             bestFor = bestFor,
             minDurationString = minDuration,
