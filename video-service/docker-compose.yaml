@@ -1,0 +1,17 @@
+version: '2'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+    container_name: elasticsearch
+    ports:
+    - 9200:9200
+    environment:
+    - "discovery.type=single-node"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    ports:
+    - 5601:5601
+  mongo:
+    image: mongo:3.6
+    ports:
+    - 27017:27017
