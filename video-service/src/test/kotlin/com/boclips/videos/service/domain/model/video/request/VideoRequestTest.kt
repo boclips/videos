@@ -15,45 +15,34 @@ import java.time.LocalDate
 class VideoRequestTest {
 
     @Test
-    fun `translate phrase query`() {
+    fun `pass phrase query through`() {
         val searchQuery = VideoRequest(
-            text = "normal phrase",
+            text = "some phrase",
             pageSize = 2,
             pageIndex = 0
         )
             .toQuery(videoAccess = VideoAccess.Everything)
 
-        assertThat(searchQuery.phrase).isEqualTo("normal phrase")
+        assertThat(searchQuery.phrase).isEqualTo("some phrase")
     }
 
     @Test
-    fun `translate single id query`() {
+    fun `pass ids through`() {
         val searchQuery = VideoRequest(
-            text = "id:11",
+            text = "any query",
+            ids = setOf("id 1", "id 2"),
             pageSize = 2,
             pageIndex = 0
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(videoAccess = VideoAccess.Everything)
 
-        assertThat(searchQuery.ids).containsExactly("11")
-    }
-
-    @Test
-    fun `translate multiple id query`() {
-        val searchQuery = VideoRequest(
-            text = "id:11,12,13",
-            pageSize = 2,
-            pageIndex = 0
-        )
-            .toQuery(VideoAccess.Everything)
-
-        assertThat(searchQuery.ids).containsExactly("11", "12", "13")
+        assertThat(searchQuery.ids).isEqualTo(setOf("id 1", "id 2"))
     }
 
     @Test
     fun `allows filtering by bestFor`() {
         val searchQuery = VideoRequest(
-            text = "id:3222",
+            text = "any query",
             bestFor = listOf("explainer"),
             pageSize = 2,
             pageIndex = 0

@@ -97,7 +97,7 @@ class RebuildVideoIndexTest {
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
-                ids = listOf(
+                ids = setOf(
                     videoId1,
                     videoId2,
                     videoId3
@@ -140,7 +140,7 @@ class RebuildVideoIndexTest {
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
-                ids = listOf(
+                ids = setOf(
                     streamableVideoId,
                     downloadableVideoId
                 )

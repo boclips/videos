@@ -22,6 +22,7 @@ enum class SortKey {
 
 class VideoRequest(
     val text: String,
+    val ids: Set<String> = emptySet(),
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
     val durationRanges: List<DurationRange>? = null,
@@ -55,50 +56,37 @@ class VideoRequest(
             }
         }
 
-        return parseIdsOrPhrase(this.text).let {
-            VideoQuery(
-                ids = it.ids,
-                phrase = it.phrase,
-                bestFor = bestFor,
-                durationRanges = durationRanges,
-                source = source,
-                sort = sort,
-                releaseDateFrom = releaseDateFrom,
-                releaseDateTo = releaseDateTo,
-                ageRangeMin = ageRangeMin,
-                ageRangeMax = ageRangeMax,
-                ageRanges = ageRanges?.map { ageRange -> convertAgeRange(ageRange) },
-                userSubjectIds = userSubjectIds,
-                subjectIds = subjectsRequest.ids,
-                subjectsSetManually = subjectsRequest.setManually,
-                promoted = promoted,
-                contentPartnerNames = contentPartnerNames,
-                includedType = type,
-                excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
-                facetDefinition = FacetDefinition.Video(
-                    ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
-                    duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) }
-                ),
-                permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
-                deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
-                excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess),
-                isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess)
-            )
-        }
+        return VideoQuery(
+            ids = ids,
+            phrase = text,
+            bestFor = bestFor,
+            durationRanges = durationRanges,
+            source = source,
+            sort = sort,
+            releaseDateFrom = releaseDateFrom,
+            releaseDateTo = releaseDateTo,
+            ageRangeMin = ageRangeMin,
+            ageRangeMax = ageRangeMax,
+            ageRanges = ageRanges?.map { ageRange -> convertAgeRange(ageRange) },
+            userSubjectIds = userSubjectIds,
+            subjectIds = subjectsRequest.ids,
+            subjectsSetManually = subjectsRequest.setManually,
+            promoted = promoted,
+            contentPartnerNames = contentPartnerNames,
+            includedType = type,
+            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
+            facetDefinition = FacetDefinition.Video(
+                ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
+                duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) }
+            ),
+            permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
+            deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
+            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(videoAccess),
+            isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess)
+        )
     }
 
     override fun toString(): String {
         return "Video Request: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
-    }
-
-    // TODO: this points to e modelling smell; perhaps we should model id query as a different type?
-    private fun parseIdsOrPhrase(query: String): VideoQuery {
-        val idQueryRegex = "id:(\\S+)".toRegex()
-        val match = idQueryRegex.matchEntire(query)
-        if (match != null) {
-            val ids = match.groupValues[1].split(',')
-            return VideoQuery(ids = ids)
-        }
-        return VideoQuery(phrase = query)
     }
 }

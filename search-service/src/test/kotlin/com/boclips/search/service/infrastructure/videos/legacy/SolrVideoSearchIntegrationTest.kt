@@ -81,7 +81,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = listOf("1", "2", "5")
+                    ids = setOf("1", "2", "5")
                 )
             )
         )
@@ -97,7 +97,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = listOf("10")
+                    ids = setOf("10")
                 )
             )
         )
@@ -119,7 +119,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = listOf("1", "2", "3")
+                    ids = setOf("1", "2", "3")
                 )
             )
         )
@@ -139,7 +139,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = listOf("1", "2")
+                    ids = setOf("1", "2")
                 )
             )
         )

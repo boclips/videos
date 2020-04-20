@@ -178,19 +178,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `can filter by id`() {
-        mockMvc.perform(get("/v1/videos?query=id:$kalturaVideoId,-1").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
-
-            .andExpect(jsonPath("$.page.size", equalTo(100)))
-            .andExpect(jsonPath("$.page.totalElements", equalTo(1)))
-            .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
-            .andExpect(jsonPath("$.page.number", equalTo(0)))
-    }
-
-    @Test
     fun `can filter by specified duration lower and upper bound`() {
         mockMvc.perform(get("/v1/videos?query=elephants&duration_min=PT0M&duration_max=PT2M").asTeacher())
             .andExpect(status().isOk)
@@ -245,6 +232,23 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `can filter by video id`() {
+        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `can filter by video ids`() {
+        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId&id=$youtubeVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(youtubeVideoId)))
     }
 
     @Test

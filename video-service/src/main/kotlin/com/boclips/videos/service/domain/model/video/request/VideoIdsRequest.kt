@@ -5,12 +5,11 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 
-class VideoIdsRequest(
-    val ids: List<VideoId>
-) {
+// TODO: IDS remove
+class VideoIdsRequest(val ids: List<VideoId>) {
     fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
         return VideoQuery(
-            ids = ids.map { it.value },
+            ids = ids.map { it.value }.toSet(),
             permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(
                 videoAccess
             ),

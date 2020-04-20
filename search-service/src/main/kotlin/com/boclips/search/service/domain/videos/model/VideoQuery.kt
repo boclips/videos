@@ -9,7 +9,7 @@ open class VideoQuery(
     phrase: String = "",
     sort: Sort<VideoMetadata>? = null,
     override val facetDefinition: FacetDefinition.Video? = null,
-    val ids: List<String> = emptyList(),
+    val ids: Set<String> = emptySet(),
     val bestFor: List<String>? = null,
     val durationRanges: List<DurationRange>? = null,
     val source: SourceType? = null,

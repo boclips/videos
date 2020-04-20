@@ -30,7 +30,7 @@ class VideoIndexReaderIdSearchesIntegrationTest : EmbeddedElasticSearchIntegrati
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(ids = listOf("2", "5")))
+            PaginatedSearchRequest(query = VideoQuery(ids = setOf("2", "5")))
         )
 
         assertThat(results.elements).containsExactly("2")

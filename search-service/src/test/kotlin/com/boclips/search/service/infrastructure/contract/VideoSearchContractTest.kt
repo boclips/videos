@@ -363,7 +363,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = listOf("1", "2", "3"),
+                    ids = setOf("1", "2", "3"),
                     excludedType = setOf(VideoType.NEWS, VideoType.STOCK)
                 )
             )
@@ -598,7 +598,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val query = VideoQuery(ids = listOf("1", "2", "3", "4"))
+        val query = VideoQuery(ids = setOf("1", "2", "3", "4"))
         assertThat(queryService.search(PaginatedSearchRequest(query = query)).counts.totalHits).isEqualTo(1)
 
         val results = queryService.search(
@@ -1349,7 +1349,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = listOf("1", "2"),
+                    ids = setOf("1", "2"),
                     permittedVideoIds = setOf("1", "3")
                 )
             )
@@ -1376,7 +1376,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = listOf("1", "2"),
+                    ids = setOf("1", "2"),
                     permittedVideoIds = emptySet()
                 )
             )
@@ -1403,7 +1403,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = listOf("1", "2"),
+                    ids = setOf("1", "2"),
                     permittedVideoIds = null
                 )
             )
@@ -1430,7 +1430,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = listOf("1", "2", "3"),
+                    ids = setOf("1", "2", "3"),
                     deniedVideoIds = setOf("1")
                 )
             )

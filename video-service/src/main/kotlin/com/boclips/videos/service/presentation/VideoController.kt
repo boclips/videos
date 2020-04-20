@@ -89,13 +89,14 @@ class VideoController(
         @RequestParam(name = "subjects_set_manually", required = false) subjectsSetManually: Boolean?,
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
-        @RequestParam(name = "type", required = false) type: Set<String>?
+        @RequestParam(name = "type", required = false) type: Set<String>?,
+        @RequestParam(name = "id", required = false) ids: Set<String>?
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
         val results = searchVideo.byQuery(
             query = query,
-            sortBy = sortBy,
+            ids = ids ?: emptySet(),
             bestFor = bestFor?.let { bestFor } ?: emptyList(),
             minDuration = minDuration,
             maxDuration = maxDuration,
@@ -103,8 +104,6 @@ class VideoController(
             durationFacets = durationFacets,
             releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
-            pageSize = pageSize,
-            pageNumber = pageNumber,
             source = source,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
@@ -115,7 +114,10 @@ class VideoController(
             promoted = promoted,
             contentPartnerNames = contentPartners ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
-            user = getCurrentUser()
+            user = getCurrentUser(),
+            sortBy = sortBy,
+            pageSize = pageSize,
+            pageNumber = pageNumber
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())

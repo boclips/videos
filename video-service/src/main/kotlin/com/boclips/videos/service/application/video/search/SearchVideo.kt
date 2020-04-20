@@ -25,7 +25,6 @@ class SearchVideo(
     }
 
     fun byId(id: String?, user: User): Video {
-
         return getVideoById(resolveToAssetId(id)!!, user)
     }
 
@@ -35,6 +34,7 @@ class SearchVideo(
 
     fun byQuery(
         query: String?,
+        ids: Set<String> = emptySet(),
         sortBy: SortKey? = null,
         bestFor: List<String>? = null,
         minDuration: String? = null,
@@ -59,6 +59,7 @@ class SearchVideo(
     ): ResultsPage<Video, VideoCounts> {
         return getVideosByQuery(
             query = query ?: "",
+            ids = ids,
             sortBy = sortBy,
             bestFor = bestFor,
             minDurationString = minDuration,

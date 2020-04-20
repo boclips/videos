@@ -27,6 +27,7 @@ class GetVideosByQuery(
 
     operator fun invoke(
         query: String,
+        ids: Set<String>,
         sortBy: SortKey?,
         bestFor: List<String>?,
         minDurationString: String?,
@@ -56,6 +57,7 @@ class GetVideosByQuery(
             user.let { userService.getSubjectIds(it.id.value) } ?: emptySet()
 
         val request = VideoRequest(
+            ids = ids,
             text = query,
             sortBy = sortBy,
             pageIndex = pageNumber,
