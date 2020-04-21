@@ -79,6 +79,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             ageRangeMax = null,
             distributionMethods = emptySet()
         ).value
+
+        addsAccessToStreamingVideos("teacher@gmail.com")
     }
 
     @Test

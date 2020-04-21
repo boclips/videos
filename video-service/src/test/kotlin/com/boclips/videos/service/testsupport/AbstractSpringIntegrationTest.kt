@@ -446,11 +446,14 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
+    fun addsAccessToStreamingVideos(userId: String) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.IncludedDistributionMethod(name = UUID.randomUUID().toString(),
-                    distributionMethods = includedDistributionMethods.map { it.name })
+            userId = userId,
+            accessRulesResource = AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedDistributionMethod(
+                    name = UUID.randomUUID().toString(),
+                    distributionMethods = listOf(DistributionMethodResource.STREAM.name)
+                )
             )
         )
     }

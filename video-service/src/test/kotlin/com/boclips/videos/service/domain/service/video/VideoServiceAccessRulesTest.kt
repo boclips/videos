@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -103,7 +104,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Searching {
         @Test
-        fun `always limits search to videos eligible for streaming`() {
+        fun `video access to everything gives access to both streaming and download`() {
             val streamContentPartner = saveContentPartner(
                 name = "stream",
                 distributionMethods = setOf(DistributionMethodResource.STREAM)
@@ -113,20 +114,19 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
 
-            val streamVideo =
-                saveVideo(title = "video", contentProviderId = streamContentPartner.contentPartnerId.value)
+            saveVideo(title = "video", contentProviderId = streamContentPartner.contentPartnerId.value)
             saveVideo(title = "video", contentProviderId = downloadContentPartner.contentPartnerId.value)
 
             val searchResults = videoService.search(
-                VideoRequest(
+                request = VideoRequest(
                     text = "video",
                     pageSize = 10,
                     pageIndex = 0
-                ), VideoAccess.Everything
+                ),
+                videoAccess = VideoAccess.Everything
             )
 
-            assertThat(searchResults.videos).hasSize(1)
-            assertThat(searchResults.videos.map { it.videoId }).containsExactly(streamVideo)
+            assertThat(searchResults.videos).hasSize(2)
         }
 
         @Test
@@ -140,7 +140,10 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
-                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
+                    listOf(
+                        VideoAccessRule.IncludedIds(setOf(firstVideo)),
+                        VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
+                    )
                 )
             )
 
@@ -159,7 +162,10 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
-                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
+                    listOf(
+                        VideoAccessRule.IncludedIds(setOf(firstVideo)),
+                        VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
+                    )
                 )
             )
 
@@ -177,7 +183,10 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
-                    listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo)))
+                    listOf(
+                        VideoAccessRule.ExcludedIds(setOf(firstVideo)),
+                        VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
+                    )
                 )
             )
 
@@ -192,6 +201,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val streamRule = VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
 
             val results = videoService.search(
                 VideoRequest(
@@ -199,7 +209,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule, streamRule)
                 )
             )
 
@@ -207,22 +217,22 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `excluded content types are not return in search results even when filtering by an excluded type`() {
+        fun `excluded content types are not returned in search results even when filtering by an excluded type`() {
             saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
             saveVideo(title = "Wild Elephant", type = ContentType.NEWS)
             val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
 
-            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val contentTypeRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val distributionRule = VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
 
             val results = videoService.search(
-                VideoRequest(
+                request = VideoRequest(
                     text = "Wild",
                     type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pageIndex = 0
-                ), VideoAccess.Rules(
-                    listOf(accessRule)
-                )
+                ),
+                videoAccess = VideoAccess.Rules(listOf(contentTypeRule, distributionRule))
             )
 
             assertThat(results.videos.map { it.videoId }).containsOnly(instructionalVideoId)
@@ -237,13 +247,15 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
 
-            val accessRule = VideoAccessRule.ExcludedContentPartners(
+            val contentPartnerRule = VideoAccessRule.ExcludedContentPartners(
                 contentPartnerIds = setOf(
                     ContentPartnerId(
                         value = excludedContentPartnerId
                     )
                 )
             )
+
+            val streamRule = VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.STREAM))
 
             val results = videoService.search(
                 VideoRequest(
@@ -252,7 +264,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(contentPartnerRule, streamRule)
                 )
             )
 

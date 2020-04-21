@@ -87,10 +87,13 @@ class VideoController(
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
         @RequestParam(name = "type", required = false) type: Set<String>?,
-        @RequestParam(name = "id", required = false) ids: Set<String>?
+        @RequestParam(name = "id", required = false) ids: Set<String>?,
+        @RequestParam(name = "ignore_access_rules", required = false) ignoreAccessRules: Boolean? = false
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
+        val currentUser = getCurrentUser()
+
         val results = searchVideo.byQuery(
             query = query,
             ids = ids ?: emptySet(),
@@ -111,13 +114,17 @@ class VideoController(
             promoted = promoted,
             contentPartnerNames = contentPartners ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
-            user = getCurrentUser(),
+            user = if (ignoreAccessRules == true && currentUser.isBoclipsEmployee) {
+                Administrator
+            } else {
+                currentUser
+            },
             sortBy = sortBy,
             pageSize = pageSize,
             pageNumber = pageNumber
         )
 
-        val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())
+        val videosResource = videoToResourceConverter.convert(resultsPage = results, user = currentUser)
 
         return ResponseEntity(videosResource, HttpStatus.OK)
     }

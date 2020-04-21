@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -16,7 +15,6 @@ import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -32,24 +30,9 @@ class VideoService(
 ) {
     companion object : KLogging()
 
-    private val defaultAccessRules = listOf(
-        VideoAccessRule.IncludedDistributionMethods(
-            setOf(
-                DistributionMethod.STREAM
-            )
-        )
-    )
-
     fun search(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
-        /**
-         * Default access rules aren't technically needed anymore as they have been added to the classroom content package.
-         * Though, as it's a legal restriction (can't get non-streamable videos) we might want to enforce it here as well.
-         * I guess it depends if we see this search method serving up just streamable videos.
-         */
-        val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
-
         val searchRequest = PaginatedSearchRequest(
-            query = request.toQuery(videoAccessWithDefaultRules),
+            query = request.toQuery(videoAccess),
             startIndex = convertPageToIndex(request.pageSize, request.pageIndex),
             windowSize = request.pageSize
         )
@@ -146,13 +129,6 @@ class VideoService(
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
-    }
-
-    private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {
-        return when (videoAccess) {
-            VideoAccess.Everything -> VideoAccess.Rules(defaultAccessRules)
-            is VideoAccess.Rules -> VideoAccess.Rules(videoAccess.accessRules + defaultAccessRules)
-        }
     }
 }
 

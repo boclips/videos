@@ -4,6 +4,7 @@ import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Nested
@@ -27,6 +28,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val secondContractedVideo = saveVideo(title = "This is a movie about something else")
 
             addAccessToVideoIds("api-user@gmail.com", firstContractedVideo.value, secondContractedVideo.value)
+            addsAccessToStreamingVideos("api-user@gmail.com")
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -45,7 +47,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "video included", contentProviderId = streamContentPartner.contentPartnerId.value)
             saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.contentPartnerId.value)
 
-            addsAccessToStreamingVideos("api-user@gmail.com", DistributionMethodResource.STREAM)
+            addsAccessToStreamingVideos("api-user@gmail.com")
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -58,6 +60,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val video = saveVideo(title = "Some Video")
             val excludedVideo = saveVideo(title = "Blacklisted Video")
 
+            addsAccessToStreamingVideos("api-user@gmail.com")
             removeAccessToVideo("api-user@gmail.com", excludedVideo.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
@@ -71,6 +74,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val stockVideo = saveVideo(title = "Some Video", type = ContentType.STOCK)
             saveVideo(title = "Some Video", type = ContentType.NEWS)
 
+            addsAccessToStreamingVideos("api-user@gmail.com")
             addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
@@ -88,12 +92,32 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.contentPartnerId.value)
             saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.contentPartnerId.value)
 
+            addsAccessToStreamingVideos("api-user@gmail.com")
             removeAccessToContentPartner("api-user@gmail.com", excludedContentPartner.contentPartnerId.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithAllowedContentPartner.value)))
+        }
+
+        @Test
+        fun `ignore access rules when backoffice user requests it`() {
+            saveVideo(title = "A non-contracted video")
+            val video = saveVideo(title = "Contracted video")
+
+            addAccessToVideoIds("api-user@boclips.com", video.value)
+
+            mockMvc.perform(get("/v1/videos?query=video&ignore_access_rules=true").asBoclipsEmployee(email = "api-user@boclips.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
+
+            addAccessToVideoIds("api-user@someone-else.com", video.value)
+            addsAccessToStreamingVideos("api-user@someone-else.com")
+
+            mockMvc.perform(get("/v1/videos?query=video&ignore_access_rules=true").asApiUser(email = "api-user@someone-else.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
         }
     }
 }
