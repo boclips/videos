@@ -1,10 +1,12 @@
 package com.boclips.contentpartner.service.application.contentpartnercontract
 
+import com.boclips.contentpartner.service.application.exceptions.ContractConflictException
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.presentation.converters.CurrencyConverter
@@ -18,8 +20,12 @@ import org.bson.types.ObjectId
 class CreateContentPartnerContract(
     private val contentPartnerContractRepository: ContentPartnerContractRepository
 ) {
-    operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContract =
-        contentPartnerContractRepository.create(
+    operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContract {
+        if (!isNameUnique(request)) {
+             throw ContractConflictException(request.contentPartnerName)
+        }
+
+        return contentPartnerContractRepository.create(
             ContentPartnerContract(
                 id = ObjectId().toHexString().let(::ContentPartnerContractId),
                 contentPartnerName = request.contentPartnerName,
@@ -61,4 +67,12 @@ class CreateContentPartnerContract(
                 )
             )
         )
+    }
+
+    private fun isNameUnique(request: ContentPartnerContractRequest): Boolean {
+        return contentPartnerContractRepository
+            .findAll(listOf(ContractFilter.NameFilter(request.contentPartnerName)))
+            .toList()
+            .isEmpty()
+    }
 }

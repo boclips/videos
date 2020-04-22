@@ -20,7 +20,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
 import java.net.URL
 
-class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class
+ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -107,6 +108,24 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
     }
 
     @Test
+    fun `a 409 when trying to create a contract with an pre-exisitng name`() {
+        saveContentPartnerContract(name = "already here")
+
+        mockMvc.perform(
+            post("/v1/content-partner-contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                        {
+                            "contentPartnerName": "already here"
+                        }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isConflict)
+            .andExpectApiErrorPayload()
+    }
+
+    @Test
     fun `creates contract with only required values and fetches it`() {
         val contractUrl = mockMvc.perform(
             post("/v1/content-partner-contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +155,12 @@ class ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegratio
         mockMvc.perform(get("/v1/content-partner-contracts").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(2)))
-            .andExpect(jsonPath("$._embedded.contracts[*].id", contains(firstContractId.id.value, secondContractId.id.value)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.contracts[*].id",
+                    contains(firstContractId.id.value, secondContractId.id.value)
+                )
+            )
     }
 
     @Test

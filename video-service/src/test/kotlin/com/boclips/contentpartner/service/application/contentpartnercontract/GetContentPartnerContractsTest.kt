@@ -19,8 +19,8 @@ class GetContentPartnerContractsTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can page contracts`() {
-        saveContentPartnerContract()
-        saveContentPartnerContract()
+        saveContentPartnerContract(name = "a")
+        saveContentPartnerContract(name = "b")
 
         val allContracts = getContentPartnerContracts(page = 0, size = 1)
 

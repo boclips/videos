@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractUpdateResult
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
@@ -16,6 +17,7 @@ import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
+import org.litote.kmongo.and
 import org.litote.kmongo.combine
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -96,6 +98,18 @@ class MongoContentPartnerContractRepository(
                     )
                 )
             }
+    }
+
+    override fun findAll(filters: List<ContractFilter>): Iterable<ContentPartnerContract> {
+        val bson = filters.fold(and()) { bson: Bson, filter: ContractFilter ->
+            and(
+                bson, when (filter) {
+                    is ContractFilter.NameFilter -> ContentPartnerContractDocument::contentPartnerName eq filter.name
+                }
+            )
+        }
+
+        return getCollection().find(bson).map(converter::toContract)
     }
 
     override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContractUpdateResult> {

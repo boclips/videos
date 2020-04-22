@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
@@ -375,6 +376,19 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(3)
             assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(1)
             assertThat(retrievedContracts.pageInfo.pageRequest.size).isEqualTo(2)
+        }
+
+        @Test
+        fun `find all by name filter`() {
+            val contracts = listOf(
+                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a")),
+                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a"))
+            )
+                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "b"))
+
+            val retrievedContracts = contentPartnerContractRepository.findAll(listOf(ContractFilter.NameFilter("a")))
+
+            assertThat(retrievedContracts).containsExactly(*contracts.toTypedArray())
         }
     }
 

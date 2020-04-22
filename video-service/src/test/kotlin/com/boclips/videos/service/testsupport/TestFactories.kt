@@ -622,7 +622,7 @@ object ContentPartnerContractFactory {
     ) =
         ContentPartnerContract(
             id = ContentPartnerContractId(
-                id ?: "5cf140c4c1475c47f7178678"
+                id ?: ObjectId().toHexString()
             ),
             contentPartnerName = contentPartnerName ?: "content-partner-name",
             contractDocument = URL(contractDocument),
