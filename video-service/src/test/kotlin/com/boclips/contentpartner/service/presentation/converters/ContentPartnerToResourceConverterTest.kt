@@ -5,12 +5,12 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.api.response.contentpartner.ContentTypeResource
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
@@ -83,7 +83,10 @@ class ContentPartnerToResourceConverterTest {
         assertThat(contentPartnerResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
         assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
         assertThat(contentPartnerResource.contentTypes).hasSize(2)
-        assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder("INSTRUCTIONAL", "STOCK")
+        assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder(
+            ContentTypeResource.INSTRUCTIONAL,
+            ContentTypeResource.STOCK
+        )
         assertThat(contentPartnerResource.ingest).isEqualTo(
             IngestDetailsResource(
                 type = IngestType.MRSS,
@@ -115,7 +118,11 @@ class ContentPartnerToResourceConverterTest {
             ),
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK),
-            contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED", remittanceCurrency = "USD")
+            contract = ContentPartnerContractFactory.sample(
+                id = "id",
+                contentPartnerName = "TED",
+                remittanceCurrency = "USD"
+            )
         )
 
         val contentPartnerResource = contentPartnerToResourceConverter.convert(contentPartner)

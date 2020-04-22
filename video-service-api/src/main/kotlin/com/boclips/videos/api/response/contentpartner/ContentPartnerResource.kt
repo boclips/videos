@@ -25,7 +25,7 @@ data class ContentPartnerResource(
     @get:JsonView(PublicApiProjection::class)
     val notes: String? = null,
     @get:JsonView(PublicApiProjection::class)
-    val contentTypes: List<String>? = emptyList(),
+    val contentTypes: List<ContentTypeResource>? = emptyList(),
     @get:JsonView(PublicApiProjection::class)
     val oneLineDescription: String? = null,
 

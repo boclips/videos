@@ -1,10 +1,12 @@
 package com.boclips.contentpartner.service.presentation.converters
 
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
 import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.contentpartner.ContentTypeResource
 import com.boclips.videos.api.response.contentpartner.toLanguageResource
 import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 
@@ -36,7 +38,13 @@ class ContentPartnerToResourceConverter(
             ingest = ingestDetailsToResourceConverter.convert(contentPartner.ingest),
             deliveryFrequency = contentPartner.deliveryFrequency,
             language = contentPartner.language?.let { it -> toLanguageResource(it) },
-            contentTypes = contentPartner.contentTypes?.map { it.name },
+            contentTypes = contentPartner.contentTypes?.map {
+                when (it) {
+                    ContentPartnerType.INSTRUCTIONAL -> ContentTypeResource.INSTRUCTIONAL
+                    ContentPartnerType.NEWS -> ContentTypeResource.NEWS
+                    ContentPartnerType.STOCK -> ContentTypeResource.STOCK
+                }
+            },
             oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,
             marketingInformation = MarketingInformationToResourceConverter.from(
                 contentPartner.marketingInformation
