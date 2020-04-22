@@ -32,7 +32,7 @@ object SearchableVideoMetadataFactory {
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
         meanRating: Double? = 5.0,
-        eligibleForStream: Boolean? = true,
+        eligibleForStream: Boolean = true,
         eligibleForDownload: Boolean = true
 
     ) = VideoMetadata(

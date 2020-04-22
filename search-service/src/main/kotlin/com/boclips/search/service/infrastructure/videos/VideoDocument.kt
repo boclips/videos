@@ -26,7 +26,7 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(PROMOTED) val promoted: Boolean?,
     @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
     @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?,
-    @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean? = true, //TODO make these non-optional after re-index
+    @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
     @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?
 ) : HasAgeRange {
     companion object {

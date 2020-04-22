@@ -36,7 +36,9 @@ class VideoDocumentConverterTest {
                 "ageRange": [3,4,5,6,7,8,9,10,11],
                 "type": "NEWS",
                 "subjectIds": ["boring-subject-id"],
-                "subjectNames": ["boring-subject-name"]
+                "subjectNames": ["boring-subject-name"],
+                "eligibleForStream": true,
+                "eligibleForDownload": true
             }
         """.trimIndent()
             )
@@ -67,7 +69,7 @@ class VideoDocumentConverterTest {
                 meanRating = null,
                 subjectsSetManually = null,
                 eligibleForStream = true,
-                eligibleForDownload = null
+                eligibleForDownload = true
             )
         )
     }
