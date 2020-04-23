@@ -32,7 +32,7 @@ class VideosLinkBuilderTest {
     fun `self link`() {
         val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/videos/self-test")
+        assertThat(link.href).endsWith("/v1/videos/self-test")
         assertThat(link.rel).isEqualTo("self")
         assertThat(link.templated).isFalse()
     }
@@ -41,7 +41,7 @@ class VideosLinkBuilderTest {
     fun `interaction link`() {
         val link = videosLinkBuilder.createVideoInteractedWithEvent(VideoResourceFactory.sample(id = "video-id").id)
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
+        assertThat(link.href).endsWith("/v1/videos/video-id/events?logVideoInteraction=true&type={type}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
         assertThat(link.templated).isTrue()
     }
@@ -50,7 +50,7 @@ class VideosLinkBuilderTest {
     fun `video link`() {
         val link = videosLinkBuilder.videoLink()
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/videos/{id}")
+        assertThat(link.href).endsWith("/v1/videos/{id}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VIDEO)
         assertThat(link.templated).isTrue()
     }
