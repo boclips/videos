@@ -58,6 +58,24 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `updating a content partner with the same name does not result in an error`() {
+            val contract = saveContentPartnerContract(name = "new")
+
+            val result = contractService.update(
+                SingleContractUpdate(
+                    contractId = contract.id, commands = listOf(
+                        ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
+                            contractContentPartnerId = contract.id,
+                            contentPartnerName = "new"
+                        )
+                    )
+                )
+            ) as UpdateContractResult.Success
+
+            assertThat(result.contract).isEqualTo(contract)
+        }
+
+        @Test
         fun `returns error when updating to a duplicate name`() {
             val contract = saveContentPartnerContract(name = "old")
             saveContentPartnerContract("i exist")

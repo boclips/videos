@@ -40,8 +40,11 @@ class ContractService(
         return singleContractUpdate
             .commands
             .filterIsInstance<ContentPartnerContractUpdateCommand.ReplaceContentPartnerName>()
-            .map { nameUpdate -> ContractFilter.NameFilter(nameUpdate.contentPartnerName) }
-            .let { nameFilters -> contractRepository.findAll(nameFilters).toList() }
+            .takeIf { it.isNotEmpty() }
+            ?.map { nameUpdates -> ContractFilter.NameFilter(nameUpdates.contentPartnerName) }
+            ?.let { nameFilters -> contractRepository.findAll(nameFilters).toList() }
+            ?.filter { it.id != singleContractUpdate.contractId }
+            ?: emptyList()
     }
 
     private fun isNameConflict(contract: ContentPartnerContract): Boolean {
