@@ -8,7 +8,6 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractFilter
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractUpdateResult
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
@@ -112,7 +111,7 @@ class MongoContentPartnerContractRepository(
         return getCollection().find(bson).map(converter::toContract)
     }
 
-    override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContractUpdateResult> {
+    override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContentPartnerContract> {
         if (contentPartnerContractUpdateCommands.isEmpty()) {
             return emptyList()
         }
@@ -130,7 +129,6 @@ class MongoContentPartnerContractRepository(
         val commandsById = contentPartnerContractUpdateCommands.groupBy { it.contractContentPartnerId }
 
         return findAllByIds(commandsById.keys.toList())
-            .map { ContractUpdateResult(it, commandsById[it.id].orEmpty()) }
     }
 
     private fun updateCommandsToBson(updateCommand: ContentPartnerContractUpdateCommand): Bson {

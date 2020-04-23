@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractUpdateResult
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contract.ContractUpdated
@@ -28,10 +27,10 @@ class ContentPartnerContractRepositoryEventDecorator(
         return contentPartnerContractRepository.findAll(pageRequest)
     }
 
-    override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContractUpdateResult> {
+    override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContentPartnerContract> {
         val updateResults = contentPartnerContractRepository.update(contentPartnerContractUpdateCommands)
 
-        publishContractsUpdated(updateResults.map { it.contract })
+        publishContractsUpdated(updateResults)
 
         return updateResults
     }

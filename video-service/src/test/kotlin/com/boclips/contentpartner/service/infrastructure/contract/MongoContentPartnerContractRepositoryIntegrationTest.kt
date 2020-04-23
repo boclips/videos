@@ -284,8 +284,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
         )
 
         assertThat(result).hasSize(1)
-        assertThat(result.first().contract).isEqualTo(contract.copy(contentPartnerName = "new"))
-        assertThat(result.first().commands).containsExactly(updateNameCommand)
+        assertThat(result.first()).isEqualTo(contract.copy(contentPartnerName = "new"))
     }
 
     @Test
@@ -321,11 +320,8 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
         assertThat(updateResults).hasSize(2)
 
-        assertThat(updateResults[0].contract.id).isEqualTo(firstContract.id)
-        assertThat(updateResults[0].commands).hasSize(2)
-
-        assertThat(updateResults[1].contract.id).isEqualTo(secondContract.id)
-        assertThat(updateResults[1].commands).hasSize(1)
+        assertThat(updateResults[0].id).isEqualTo(firstContract.id)
+        assertThat(updateResults[1].id).isEqualTo(secondContract.id)
     }
 
     @Nested

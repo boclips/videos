@@ -20,6 +20,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
@@ -108,10 +109,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun createContentPartnerContract(): CreateContentPartnerContract {
-        return CreateContentPartnerContract(
-            contentPartnerContractRepository
-        )
+    fun createContentPartnerContract(contractService: ContractService): CreateContentPartnerContract {
+        return CreateContentPartnerContract(contractService)
     }
 
     @Bean

@@ -277,7 +277,7 @@ ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest(
 
         val noDeletionOfContract = """
             {
-                "contentPartnerName": "Related Content Partner"
+                "contentPartnerName": "Updated Name"
             }
         """.trimIndent()
 
@@ -310,5 +310,23 @@ ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest(
             get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(jsonPath("$.contractDocument", equalTo(null)))
+    }
+
+    @Test
+    fun `gets a 409 when updating the name to a pre-existing contract`() {
+        saveContentPartnerContract(name = "already here")
+        val contract = saveContentPartnerContract(name = "change me")
+
+        val nameChange = """
+            {
+                "contentPartnerName": "already here"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(nameChange)
+        )
+            .andExpect(status().isConflict)
     }
 }

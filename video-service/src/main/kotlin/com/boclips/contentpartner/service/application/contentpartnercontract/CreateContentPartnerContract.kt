@@ -1,14 +1,14 @@
 package com.boclips.contentpartner.service.application.contentpartnercontract
 
 import com.boclips.contentpartner.service.application.exceptions.ContractConflictException
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.CreateContractResult
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
 import com.boclips.contentpartner.service.presentation.converters.CurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.DateConverter
 import com.boclips.contentpartner.service.presentation.converters.UrlConverter
@@ -18,14 +18,10 @@ import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
 import org.bson.types.ObjectId
 
 class CreateContentPartnerContract(
-    private val contentPartnerContractRepository: ContentPartnerContractRepository
+    private val contractService: ContractService
 ) {
     operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContract {
-        if (!isNameUnique(request)) {
-             throw ContractConflictException(request.contentPartnerName)
-        }
-
-        return contentPartnerContractRepository.create(
+        val result = contractService.create(
             ContentPartnerContract(
                 id = ObjectId().toHexString().let(::ContentPartnerContractId),
                 contentPartnerName = request.contentPartnerName,
@@ -67,12 +63,11 @@ class CreateContentPartnerContract(
                 )
             )
         )
-    }
 
-    private fun isNameUnique(request: ContentPartnerContractRequest): Boolean {
-        return contentPartnerContractRepository
-            .findAll(listOf(ContractFilter.NameFilter(request.contentPartnerName)))
-            .toList()
-            .isEmpty()
+        return when (result) {
+            is CreateContractResult.Success -> result.contract
+            is CreateContractResult.NameConflict ->
+                throw ContractConflictException(request.contentPartnerName)
+        }
     }
 }
