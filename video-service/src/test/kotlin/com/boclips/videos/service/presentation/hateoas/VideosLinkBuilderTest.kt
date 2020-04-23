@@ -82,7 +82,7 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNotNull
 
-        assertThat(link!!.href).isEqualTo("/v1/videos/$videoId/transcript")
+        assertThat(link!!.href).endsWith("/v1/videos/$videoId/transcript")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TRANSCRIPT)
         assertThat(link.templated).isFalse()
     }
@@ -189,7 +189,7 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNotNull
 
-        assertThat(link!!.href).isEqualTo("/v1/videos/$validVideoId/tags")
+        assertThat(link!!.href).endsWith("/v1/videos/$validVideoId/tags")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TAG)
         assertThat(link.templated).isFalse()
     }
