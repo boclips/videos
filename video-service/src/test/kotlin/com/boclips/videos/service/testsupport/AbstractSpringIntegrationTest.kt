@@ -25,8 +25,10 @@ import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
+import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -316,6 +318,10 @@ abstract class AbstractSpringIntegrationTest {
         label: String
     ): com.boclips.contentpartner.service.domain.model.agerange.AgeRange {
         return createAgeRange(AgeRangeRequest(id = id, min = min, max = max, label = label))
+    }
+
+    fun saveTag(label: String) : String {
+        return createTag(CreateTagRequest(label = label)).id
     }
 
     fun setVideoSubjects(videoId: String, vararg subjectIds: SubjectId) {

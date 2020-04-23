@@ -3,6 +3,9 @@ package com.boclips.videos.service.application.video
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.model.tag.TagRepository
+import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -14,7 +17,8 @@ import org.springframework.validation.annotation.Validated
 @Validated
 class UpdateVideo(
     private val videoRepository: VideoRepository,
-    private val subjectRepository: SubjectRepository
+    private val subjectRepository: SubjectRepository,
+    private val tagRepository: TagRepository
 ) {
     companion object : KLogging();
 
@@ -40,6 +44,11 @@ class UpdateVideo(
             .of(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax, curatedManually = true)
         val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange)
         val replaceAttachments = AttachmentRequestConverter().convert(videoId, updateRequest.attachments)
+        val replaceBestFor = updateRequest.tagId?.let {
+            tagRepository.findById(TagId(value = updateRequest.tagId!!))?.let {
+                VideoUpdateCommand.ReplaceTag(videoId = videoId, tag = UserTag(tag = it, userId = user.id))
+            }
+        }
 
         videoRepository.bulkUpdate(
             listOfNotNull(
@@ -49,7 +58,8 @@ class UpdateVideo(
                 updateSubjectIds,
                 updateManuallySetSubjects,
                 replaceAgeRange,
-                replaceAttachments
+                replaceAttachments,
+                replaceBestFor
             )
         )
 

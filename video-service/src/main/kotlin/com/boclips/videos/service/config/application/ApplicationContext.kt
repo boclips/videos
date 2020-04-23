@@ -135,7 +135,7 @@ class ApplicationContext(
 
     @Bean
     fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoRepository, subjectRepository)
+        return UpdateVideo(videoRepository, subjectRepository, tagRepository)
     }
 
     @Bean

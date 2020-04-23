@@ -16,5 +16,6 @@ data class UpdateVideoRequest(
     val ageRangeMax: Int? = null,
     @field:Range(min = 0, max = 5, message = "Rating must be between 1 and 5")
     var rating: Int? = null,
+    val tagId: String? = null,
     val attachments: Specifiable<List<AttachmentRequest>>? = null
 )

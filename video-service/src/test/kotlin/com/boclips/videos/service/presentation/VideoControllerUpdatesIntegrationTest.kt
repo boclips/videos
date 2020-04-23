@@ -170,6 +170,39 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updates and replaces the best for tag of a video`() {
+        val videoToUpdate = saveVideo().value
+        val tagId = saveTag("Brain break")
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "tagId": "$tagId" }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor[0].label", equalTo("Brain break")))
+
+        val replacingTagId = saveTag("Brain smash")
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "tagId": "$replacingTagId" }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.bestFor", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.bestFor[0].label", equalTo("Brain smash")))
+    }
+
+    @Test
     fun `updates a list of attachments`() {
         val videoToUpdate = saveVideo().value
 
