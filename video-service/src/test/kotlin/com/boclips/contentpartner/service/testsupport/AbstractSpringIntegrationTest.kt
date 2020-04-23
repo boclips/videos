@@ -8,7 +8,6 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -22,7 +21,7 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -337,7 +336,7 @@ abstract class AbstractSpringIntegrationTest {
         restrictions: ContentPartnerContractRestrictionsRequest? = null,
         costs: ContentPartnerContractCostsRequest? = null
     ): ContentPartnerContract = createContentPartnerContract(
-        ContentPartnerContractRequest(
+        CreateContractRequest(
             contentPartnerName = name,
             contractDocument = contractDocument?.let { Specified(value = it) },
             contractDates = ContentPartnerContractDatesResource(

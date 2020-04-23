@@ -2,7 +2,8 @@ package com.boclips.contentpartner.service.application.contentpartnercontract
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contract.ContractUpdated
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ class UpdateContentPartnerContractTest : AbstractSpringIntegrationTest() {
         val contract = saveContentPartnerContract(name = "old contract name")
         updateContentPartnerContract(
             contractId = contract.id.value,
-            updateRequest = ContentPartnerContractRequest(contentPartnerName = "new contract name")
+            updateRequest = UpdateContractRequest(contentPartnerName = "new contract name")
         )
 
         val event = fakeEventBus.getEventOfType(ContractUpdated::class.java)

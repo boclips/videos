@@ -21,7 +21,7 @@ import com.boclips.contentpartner.service.presentation.converters.contracts.Cont
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 
 class ContractContentPartnerConverter(
     private val contractDatesConverter: ContractDatesToResourceConverter,
@@ -32,7 +32,7 @@ class ContractContentPartnerConverter(
 ) {
     fun convert(
         id: ContentPartnerContractId,
-        updateContract: ContentPartnerContractRequest
+        updateContract: UpdateContractRequest
     ): List<ContentPartnerContractUpdateCommand> =
         ContractContentPartnerUpdateCreator(
             id,
@@ -62,7 +62,7 @@ class ContractContentPartnerConverter(
 
 class ContractContentPartnerUpdateCreator(
     val id: ContentPartnerContractId,
-    private val updateContract: ContentPartnerContractRequest,
+    private val updateContract: UpdateContractRequest,
     private val contractDatesConverter: ContractDatesToResourceConverter,
     private val royaltySplitConverter: ContractRoyaltySplitConverter,
     private val remittanceCurrencyConverter: ContractRemittanceCurrencyConverter,
@@ -70,10 +70,12 @@ class ContractContentPartnerUpdateCreator(
     private val costsConverter: ContractCostsConverter
 ) {
     fun updateContractContentPartnerName(): ContentPartnerContractUpdateCommand? {
-        return ReplaceContentPartnerName(
-            contractContentPartnerId = id,
-            contentPartnerName = updateContract.contentPartnerName
-        )
+        return updateContract.contentPartnerName?.let {
+            ReplaceContentPartnerName(
+                contractContentPartnerId = id,
+                contentPartnerName = it
+            )
+        }
     }
 
     fun updateContractDocument(): ContentPartnerContractUpdateCommand? {

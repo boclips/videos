@@ -13,7 +13,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
@@ -43,7 +43,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
     fun `creates command for Contract Is Rolling`() {
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(contentPartnerName = "name", contractIsRolling = true)
+            updateContract = UpdateContractRequest(contentPartnerName = "name", contractIsRolling = true)
         )
 
         val command =
@@ -64,7 +64,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 contractDates = contractDates
             )
@@ -81,7 +81,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
     fun `creates command for ReplaceDaysBeforeTerminationWarning`() {
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 daysBeforeTerminationWarning = 4
             )
@@ -97,7 +97,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
     fun `creates command for ReplaceYearsForMaximumLicense`() {
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 yearsForMaximumLicense = 7
             )
@@ -113,7 +113,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
     fun `creates command for ReplaceDaysForSellOffPeriod`() {
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 daysForSellOffPeriod = 22
             )
@@ -132,7 +132,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 royaltySplit = ContentPartnerContractRoyaltySplitResource(
                     download = download,
@@ -152,7 +152,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
     fun `creates command for ReplaceMinimumPriceDescription`() {
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 minimumPriceDescription = "minimum price"
             )
@@ -170,7 +170,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 remittanceCurrency = currency.toString()
             )
@@ -197,7 +197,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(
+            updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
                 restrictions = restrictions
             )
@@ -227,7 +227,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
         val commands = contractContentPartnerConverter.convert(
             id = contract.id,
-            updateContract = ContentPartnerContractRequest(contentPartnerName = "updated name", costs = costs)
+            updateContract = UpdateContractRequest(contentPartnerName = "updated name", costs = costs)
         )
 
         val command =

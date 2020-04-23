@@ -7,16 +7,15 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.SingleContractUpdate
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.UpdateContractResult
 import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 import org.springframework.stereotype.Component
 
 @Component
-class UpdateContentPartnerContract
-    (
+class UpdateContentPartnerContract(
     private val contractService: ContractService,
     private val contractContentPartnerUpdatesConverter: ContractContentPartnerConverter
 ) {
-    operator fun invoke(contractId: String, updateRequest: ContentPartnerContractRequest): ContentPartnerContract {
+    operator fun invoke(contractId: String, updateRequest: UpdateContractRequest): ContentPartnerContract {
         val id = ContentPartnerContractId(contractId)
 
         val updateCommands = contractContentPartnerUpdatesConverter.convert(id, updateRequest)

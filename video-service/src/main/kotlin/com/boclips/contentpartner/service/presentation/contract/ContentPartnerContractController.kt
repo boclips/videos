@@ -12,7 +12,8 @@ import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 import com.boclips.videos.api.response.contract.ContentPartnerContractResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
 import org.springframework.http.HttpHeaders
@@ -66,7 +67,7 @@ class ContentPartnerContractController(
     }
 
     @PostMapping
-    fun postContentPartnerContract(@Valid @RequestBody request: ContentPartnerContractRequest): ResponseEntity<Void> {
+    fun postContentPartnerContract(@Valid @RequestBody request: CreateContractRequest): ResponseEntity<Void> {
         try {
             val contractId = create(request)
 
@@ -87,7 +88,7 @@ class ContentPartnerContractController(
     @PatchMapping("/{id}")
     fun patchContract(
         @PathVariable("id") contractId: String,
-        @Valid @RequestBody updateContentPartnerContract: ContentPartnerContractRequest
+        @Valid @RequestBody updateContentPartnerContract: UpdateContractRequest
     ): ResponseEntity<Void> {
         update(
             contractId, updateContentPartnerContract

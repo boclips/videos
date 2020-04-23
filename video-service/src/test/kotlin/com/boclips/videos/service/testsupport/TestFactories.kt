@@ -17,7 +17,7 @@ import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.users.api.response.user.UserResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
@@ -672,7 +672,7 @@ object ContentPartnerContractFactory {
             technicalFee = BigDecimal.ONE,
             recoupable = true
         )
-    ) = ContentPartnerContractRequest(
+    ) = CreateContractRequest(
         contentPartnerName = contentPartnerName ?: "content-partner-name",
         contractDocument = contractDocument?.let { Specified(value = it) },
         contractDates = contractDates.let {

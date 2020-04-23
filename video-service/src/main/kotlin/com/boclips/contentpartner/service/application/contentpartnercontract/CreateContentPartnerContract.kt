@@ -14,13 +14,13 @@ import com.boclips.contentpartner.service.presentation.converters.DateConverter
 import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.contract.ContentPartnerContractRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
 import org.bson.types.ObjectId
 
 class CreateContentPartnerContract(
     private val contractService: ContractService
 ) {
-    operator fun invoke(request: ContentPartnerContractRequest): ContentPartnerContract {
+    operator fun invoke(request: CreateContractRequest): ContentPartnerContract {
         val result = contractService.create(
             ContentPartnerContract(
                 id = ObjectId().toHexString().let(::ContentPartnerContractId),
