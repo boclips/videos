@@ -91,6 +91,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(DELETE, "/v1/collections/*/videos/*").hasRole(ROLE.UPDATE_COLLECTIONS)
             .antMatchers(POST, "/v1/collections/*/events").hasRole(ROLE.VIEW_COLLECTIONS)
 
+            .antMatchers(GET, "/v1/suggestions*").hasAnyRole(ROLE.VIEW_VIDEOS, ROLE.VIEW_COLLECTIONS)
+
             .antMatchers(HEAD, "/v1/content-partners/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
             .antMatchers(POST, "/v1/content-partners/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
             .antMatchers(POST, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)

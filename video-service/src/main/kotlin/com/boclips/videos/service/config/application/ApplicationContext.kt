@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.legalrestriction.CreateLeg
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
+import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
@@ -25,6 +26,7 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
+import com.boclips.videos.service.application.search.FindSuggestions
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -109,6 +111,10 @@ class ApplicationContext(
         getVideosByQuery,
         videoRepository
     )
+
+    @Bean
+    fun suggestSearchQuery(contentPartnerRepository: ContentPartnerRepository): FindSuggestions =
+        FindSuggestions(contentPartnerRepository)
 
     @Bean
     fun createVideo(

@@ -172,6 +172,19 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
+    fun `find by matching names ignoring casing`() {
+        mongoContentPartnerRepository.create(createContentPartner(name = "TED"))
+        mongoContentPartnerRepository.create(createContentPartner(name = "TED-Ed"))
+        mongoContentPartnerRepository.create(createContentPartner(name = "BBC"))
+
+        val results = mongoContentPartnerRepository.findAllByNameMatch("ted")
+
+        assertThat(results).hasSize(2)
+        assertThat(results[0].name).isEqualTo("TED")
+        assertThat(results[1].name).isEqualTo("TED-Ed")
+    }
+
+    @Test
     fun `does not update given an empty list of update commands`() {
         Assertions.assertDoesNotThrow { mongoContentPartnerRepository.update(listOf()) }
     }
