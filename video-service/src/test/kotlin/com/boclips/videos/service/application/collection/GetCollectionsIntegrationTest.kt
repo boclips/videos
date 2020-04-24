@@ -1,7 +1,5 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.presentation.CollectionsController
@@ -9,12 +7,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
-import org.assertj.core.api.AbstractAssert
-import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.stream.Stream
 
 class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -212,40 +205,5 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
             specificIdsTests,
             publicOnlyTests
         ).flatten().stream()
-    }
-
-    class TestCaseProvider : ArgumentsProvider {
-        override fun provideArguments(context: ExtensionContext?): Stream<Arguments>? {
-            return testCases.map { Arguments.of(it, it.description) }
-        }
-    }
-
-    class CollectionsAssert(private val availableIds: List<CollectionId>, actual: ResultsPage<Collection, Nothing>) :
-        AbstractAssert<CollectionsAssert, ResultsPage<Collection, Nothing>>(actual, CollectionsAssert::class.java) {
-
-        fun containsCollectionsWithIds(expectedIds: Iterable<CollectionId>): CollectionsAssert {
-            if (!(actual.elements.map { it.id }.containsAll(expectedIds.toList()))
-                || actual.elements.toList().size != expectedIds.toList().size
-            ) {
-                failWithMessage(
-                    """Expecting to keep collections with indices:
-                    |${expectedIds.map { availableIds.indexOf(it) }}
-                    |However, we received collections with these indices instead: 
-                    |${actual.elements.map { availableIds.indexOf(it.id) }}
-                    |Please note, the index refers to the collection's position in the list passed to the test."""
-                        .trimMargin()
-                )
-            }
-            return this
-        }
-
-        companion object {
-            fun assertThat(
-                availableIds: List<CollectionId>,
-                actual: ResultsPage<Collection, Nothing>
-            ): CollectionsAssert {
-                return CollectionsAssert(availableIds, actual)
-            }
-        }
     }
 }

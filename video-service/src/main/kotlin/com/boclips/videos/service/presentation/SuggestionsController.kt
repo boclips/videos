@@ -1,13 +1,11 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.search.SuggestionsRequest
-import com.boclips.videos.api.response.search.ContentPartnerSuggestionResource
-import com.boclips.videos.api.response.search.SuggestionDetailsResource
 import com.boclips.videos.api.response.search.SuggestionsResource
-import com.boclips.videos.api.response.search.SuggestionsWrapperResource
 import com.boclips.videos.service.application.search.FindSuggestions
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.presentation.converters.SuggestionToResourceConverter
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,6 +18,7 @@ import javax.validation.Valid
 @RequestMapping("/v1")
 class SuggestionsController(
     private val findSuggestions: FindSuggestions,
+    private val suggestionToResourceConverter: SuggestionToResourceConverter,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -29,20 +28,8 @@ class SuggestionsController(
     fun getSuggestions(@Valid request: SuggestionsRequest): ResponseEntity<SuggestionsResource> {
         val suggestions = findSuggestions(request.query)
 
-        val suggestionsResource = SuggestionsResource(
-            _embedded = SuggestionsWrapperResource(
-                suggestions = SuggestionDetailsResource(
-                    contentPartners = suggestions.contentPartners.map {
-                        ContentPartnerSuggestionResource(
-                            name = it,
-                            _links = null
-                        )
-                    }
-                )
-            ),
-            _links = null
-        )
+        val resource = suggestionToResourceConverter.convert(suggestions)
 
-        return ResponseEntity(suggestionsResource, HttpStatus.OK)
+        return ResponseEntity(resource, HttpStatus.OK)
     }
 }
