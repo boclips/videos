@@ -49,6 +49,24 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         )
     }
 
+    fun searchVideosByText(query: String): HateoasLink? {
+        return when {
+            currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {
+                HateoasLink.of(
+                    Link(
+                        getVideosRoot()
+                            .queryParam("query", query)
+                            .build()
+                            .toUriString()
+                            + "{&id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}",
+                        SEARCH_VIDEOS
+                    )
+                )
+            }
+            else -> null
+        }
+    }
+
     fun searchVideosLink(): HateoasLink? {
         return when {
             currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {

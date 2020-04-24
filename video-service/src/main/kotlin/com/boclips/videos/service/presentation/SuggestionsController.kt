@@ -28,7 +28,7 @@ class SuggestionsController(
     fun getSuggestions(@Valid request: SuggestionsRequest): ResponseEntity<SuggestionsResource> {
         val suggestions = findSuggestions(request.query)
 
-        val resource = suggestionToResourceConverter.convert(suggestions)
+        val resource = suggestionToResourceConverter.convert(query = request.query, suggestions = suggestions)
 
         return ResponseEntity(resource, HttpStatus.OK)
     }

@@ -22,16 +22,21 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.suggestions.contentPartners", hasSize<String>(2)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.suggestionTerm", equalTo("ted")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.contentPartners", hasSize<String>(2)))
             .andExpect(
                 MockMvcResultMatchers.jsonPath(
-                    "$._embedded.suggestions.contentPartners[0].name",
+                    "$.contentPartners[0].name",
                     equalTo("TED")
                 )
             )
             .andExpect(
+                MockMvcResultMatchers.jsonPath("$.contentPartners[0]._links.searchVideos")
+                    .exists()
+            )
+            .andExpect(
                 MockMvcResultMatchers.jsonPath(
-                    "$._embedded.suggestions.contentPartners[1].name",
+                    "$.contentPartners[1].name",
                     equalTo("TED-Ed")
                 )
             )

@@ -6,6 +6,8 @@ import com.boclips.contentpartner.service.presentation.converters.LegalRestricti
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
+import com.boclips.videos.service.presentation.converters.SuggestionToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -33,5 +35,10 @@ class PresentationContext(
             ingestDetailsToResourceConverter = ingestDetailsToResourceConverter,
             legalRestrictionsToResourceConverter = legalRestrictionsToResourceConverter
         )
+    }
+
+    @Bean
+    fun getSuggestionConverter(videosLinkBuilder: VideosLinkBuilder): SuggestionToResourceConverter {
+        return SuggestionToResourceConverter(videosLinkBuilder)
     }
 }

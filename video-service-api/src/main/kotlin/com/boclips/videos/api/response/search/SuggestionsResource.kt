@@ -3,18 +3,11 @@ package com.boclips.videos.api.response.search
 import com.boclips.videos.api.response.HateoasLink
 import com.fasterxml.jackson.annotation.JsonInclude
 
-class SuggestionsResource(
-    var _embedded: SuggestionsWrapperResource,
+data class SuggestionsResource(
+    val suggestionTerm: String,
+    val contentPartners: List<ContentPartnerSuggestionResource>,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var _links: Map<String, HateoasLink>?
-)
-
-data class SuggestionsWrapperResource(
-    val suggestions: SuggestionDetailsResource
-)
-
-data class SuggestionDetailsResource(
-    val contentPartners: List<ContentPartnerSuggestionResource>
+    val _links: Map<String, HateoasLink>?
 )
 
 data class ContentPartnerSuggestionResource(

@@ -67,6 +67,17 @@ class VideosLinkBuilderTest {
     }
 
     @Test
+    fun `search link with query prepoulated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_VIDEOS)
+
+        val link = videosLinkBuilder.searchVideosByText("search")!!
+
+        assertThat(link.href).contains("/v1/videos?query=search{&id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
+        assertThat(link.templated).isTrue()
+    }
+
+    @Test
     fun `search link when not authenticated`() {
         val link = videosLinkBuilder.searchVideosLink()
 
@@ -118,9 +129,7 @@ class VideosLinkBuilderTest {
                     videoId = validVideoId,
                     ratings = listOf(
                         UserRating(
-                            rating = 3, userId = UserId(
-                                "another-teacher"
-                            )
+                            rating = 3, userId = UserId("another-teacher")
                         )
                     )
                 )
