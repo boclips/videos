@@ -15,6 +15,7 @@ import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.SuggestionLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -44,6 +45,7 @@ class LinksController(
     private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
     private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
     private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
+    private val suggestionLinkBuilder: SuggestionLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -71,6 +73,7 @@ class LinksController(
                 tagsLinkBuilder.tags(),
                 eventsLinkBuilder.createPlaybackEventsLink(),
                 ageRangesLinkBuilder.ageRanges(),
+                suggestionLinkBuilder.suggestions(),
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),

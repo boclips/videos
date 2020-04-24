@@ -76,13 +76,19 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.searchVideos.href", containsString("/videos")))
+            .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
                     "$._links.searchVideos.href",
                     containsString("{?query,id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}")
                 )
             )
-            .andExpect(jsonPath("$._links.searchVideos.templated", equalTo(true)))
+            .andExpect(
+                jsonPath(
+                    "$._links.suggestions.href",
+                    endsWith("suggestions?query={query}")
+                )
+            )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(
                 jsonPath(
@@ -144,8 +150,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.tags.href", endsWith("tags")))
 
             .andExpect(jsonPath("$._links.videos").doesNotExist())
-            .andExpect(jsonPath("$._links.adminSearch").doesNotExist())
-            .andExpect(jsonPath("$._links.adminVideoSearch").doesNotExist())
             .andExpect(jsonPath("$._links.adminCollectionSearch").doesNotExist())
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
