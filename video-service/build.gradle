@@ -90,6 +90,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation('org.springframework.retry:spring-retry')
 
+    implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE')
+
     implementation("org.mongodb:mongo-java-driver:3.10.1")
 
     implementation("io.micrometer:micrometer-core")
@@ -98,11 +100,8 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-web:0.128.0')
     implementation('com.github.boclips:boclips-spring-security:0.296.0')
     implementation("com.github.boclips:event-bus:2.15.1")
-
-    implementation("com.github.boclips:kaltura-client:0.117.0")
-
+    implementation('com.github.boclips:kaltura-client:0.122.0')
     implementation("com.github.boclips:user-service:v133")
-    implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE')
 
     // Required by user-service client
     implementation('io.github.openfeign:feign-core:10.7.0')

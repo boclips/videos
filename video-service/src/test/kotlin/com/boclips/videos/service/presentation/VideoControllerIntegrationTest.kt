@@ -231,6 +231,18 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `returns full projection with caption processing data`() {
+            fakeKalturaClient.requestCaptions("entry-id-123")
+
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId?projection=all").asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
+                .andExpect(jsonPath("$.captionStatus", equalTo("REQUESTED")))
+
+        }
+
+        @Test
         fun `returns links to hls stream and thumbnail`() {
             val playbackId = PlaybackId(PlaybackProviderType.KALTURA, "entry-id-123")
             val videoId = saveVideo(playbackId = playbackId)

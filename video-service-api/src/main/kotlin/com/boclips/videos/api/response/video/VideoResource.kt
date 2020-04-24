@@ -9,6 +9,7 @@ import com.boclips.videos.api.response.collection.AttachmentResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonView
 import java.time.LocalDate
 
@@ -53,6 +54,8 @@ data class VideoResource(
     val contentPartnerVideoId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val captionStatus: CaptionStatus? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)

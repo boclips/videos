@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
@@ -11,6 +12,7 @@ import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -51,6 +53,7 @@ class VideoController(
     private val updateVideo: UpdateVideo,
     private val rateVideo: RateVideo,
     private val videoTranscriptService: VideoTranscriptService,
+    private val videoCaptionService: VideoCaptionService,
     private val objectMapper: ObjectMapper,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
@@ -126,7 +129,8 @@ class VideoController(
     @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,
-        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null
+        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null,
+        @RequestParam(required = false) projection: Projection = Projection.details
     ): ResponseEntity<VideoResource> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
@@ -138,6 +142,13 @@ class VideoController(
 
         val resources: VideoResource = searchVideo.byId(id, getCurrentUser())
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
+            .let {
+                when (projection) {
+                    Projection.all -> videoCaptionService.withCaptionDetails(it)
+                    else -> it
+                }
+
+            }
 
         return ResponseEntity(resources, headers, HttpStatus.OK)
     }

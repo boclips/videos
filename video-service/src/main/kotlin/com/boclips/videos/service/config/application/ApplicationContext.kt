@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeReposito
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
+import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ContentPartnerUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
@@ -45,6 +46,7 @@ import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
@@ -157,6 +159,11 @@ class ApplicationContext(
     @Bean
     fun updateVideoTranscripts(): VideoTranscriptService {
         return VideoTranscriptService(videoRepository)
+    }
+
+    @Bean
+    fun videoCaptionService(kalturaClient: KalturaClient): VideoCaptionService {
+        return VideoCaptionService(kalturaClient)
     }
 
     @Bean

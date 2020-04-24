@@ -17,8 +17,8 @@ import com.boclips.users.api.response.TeacherPlatformAttributesResource
 import com.boclips.users.api.response.user.UserResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
-import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
@@ -394,9 +394,9 @@ object UserRatingFactory {
 }
 
 object PlaybackResourceFactory {
-    fun sample(type: String = "STREAM", downloadUrl: String? = "download-url") =
+    fun sample(id: String = "playback-id", type: String = "STREAM", downloadUrl: String? = "download-url") =
         StreamPlaybackResource(
-            id = "playback-id",
+            id = id,
             type = type,
             downloadUrl = downloadUrl,
             duration = Duration.ZERO,
