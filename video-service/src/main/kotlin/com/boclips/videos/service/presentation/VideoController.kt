@@ -130,7 +130,7 @@ class VideoController(
     fun getVideo(
         @PathVariable("id") id: String?,
         @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null,
-        @RequestParam(required = false) projection: Projection = Projection.details
+        @RequestParam(required = false) projection: Projection? = null
     ): ResponseEntity<VideoResource> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
