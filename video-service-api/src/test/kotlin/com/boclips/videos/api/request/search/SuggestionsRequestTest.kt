@@ -27,4 +27,10 @@ class SuggestionsRequestTest {
         assertThat(validator.validate(SuggestionsRequest(query = "abcabcabcabcabcabcaba")).first().message)
             .isEqualTo("Suggestion must contain between 3 and 20 characters.")
     }
+
+    @Test
+    fun `query must be set`() {
+        assertThat(validator.validate(SuggestionsRequest(query = null)).first().message)
+            .isEqualTo("Suggestion query must not be blank.")
+    }
 }

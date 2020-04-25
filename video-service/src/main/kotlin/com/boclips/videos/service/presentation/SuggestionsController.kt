@@ -26,10 +26,9 @@ class SuggestionsController(
 
     @GetMapping("/suggestions")
     fun getSuggestions(@Valid request: SuggestionsRequest): ResponseEntity<SuggestionsResource> {
-        val suggestions = findSuggestions(request.query)
-
-        val resource = suggestionToResourceConverter.convert(query = request.query, suggestions = suggestions)
-
+        val query = request.query!!
+        val suggestions = findSuggestions(query)
+        val resource = suggestionToResourceConverter.convert(query = query, suggestions = suggestions)
         return ResponseEntity(resource, HttpStatus.OK)
     }
 }
