@@ -98,7 +98,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation('com.github.boclips:boclips-spring-web:0.128.0')
-    implementation('com.github.boclips:boclips-spring-security:0.296.0')
+    implementation('com.github.boclips:boclips-spring-security:0.373.0')
     implementation("com.github.boclips:event-bus:2.15.1")
     implementation('com.github.boclips:kaltura-client:0.122.0')
     implementation("com.github.boclips:user-service:v133")
