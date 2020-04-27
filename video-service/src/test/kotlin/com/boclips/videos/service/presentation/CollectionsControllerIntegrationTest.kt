@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.TeacherPlatformAttributesResource
+import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId

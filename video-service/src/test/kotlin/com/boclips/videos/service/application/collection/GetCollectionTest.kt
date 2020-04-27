@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.TeacherPlatformAttributesResource
+import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
