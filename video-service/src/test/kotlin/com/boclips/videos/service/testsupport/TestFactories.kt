@@ -520,20 +520,6 @@ object SecurityUserFactory {
             authorities = roles.map { "ROLE_$it" }.toSet()
         )
     }
-
-    fun createClientUser(
-        id: String = "user-id",
-        organisationAccountId: String = "organisation-id",
-        subjects: List<SubjectResource> = emptyList(),
-        teacherPlatformAttributes: TeacherPlatformAttributesResource? = TeacherPlatformAttributesResource(null)
-    ): UserResource {
-        return UserResourceFactory.sample(
-            id = id,
-            organisationAccountId = organisationAccountId,
-            subjects = subjects,
-            teacherPlatformAttributes = teacherPlatformAttributes
-        )
-    }
 }
 
 object UserFactory {

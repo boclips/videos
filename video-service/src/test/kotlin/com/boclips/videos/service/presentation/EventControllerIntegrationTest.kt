@@ -40,12 +40,17 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `it uses user id provided via Boclips-User-Id header in the event when organisation allows that`() {
             val userId = aValidId()
             val overrideUserId = aValidId()
-            val accountId = aValidId()
+            val organisationId = aValidId()
 
-            usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
+            usersClient.add(UserResourceFactory.sample(
+                id = userId,
+                organisation = OrganisationResourceFactory.sampleDetails(
+                    id = organisationId
+                )
+            ))
             organisationsClient.add(
                 OrganisationResourceFactory.sample(
-                    id = accountId,
+                    id = organisationId,
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         allowsOverridingUserIds = true
                     )
@@ -78,12 +83,17 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val videoId = aValidId()
             val userId = aValidId()
             val overrideUserId = aValidId()
-            val accountId = aValidId()
+            val organisationId = aValidId()
 
-            usersClient.add(UserResourceFactory.sample(id = userId, organisationAccountId = accountId))
+            usersClient.add(UserResourceFactory.sample(
+                id = userId,
+                organisation = OrganisationResourceFactory.sampleDetails(
+                    id = organisationId
+                )
+            ))
             organisationsClient.add(
                 OrganisationResourceFactory.sample(
-                    id = accountId,
+                    id = organisationId,
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         allowsOverridingUserIds = false
                     )

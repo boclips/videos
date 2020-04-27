@@ -29,7 +29,7 @@ open class ApiUserService(
 
     override fun getOrganisationOfUser(userId: String): Organisation? {
         return try {
-            usersClient.getUser(userId).organisationAccountId
+            usersClient.getUser(userId).organisation?.id
                 ?.let { organisationsClient.getOrganisation(it) }
                 ?.let {
                     Organisation(

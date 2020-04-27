@@ -18,7 +18,9 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 subjects = listOf(SubjectResource("subject-1")),
-                organisationAccountId = "organisation-1",
+                organisation = OrganisationResourceFactory.sampleDetails(
+                    id = "organisation-1"
+                ),
                 id = "bob@boclips.com"
             )
         )
@@ -40,7 +42,9 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "bob@boclips.com",
-                organisationAccountId = "organisation-1",
+                organisation = OrganisationResourceFactory.sampleDetails(
+                    id = "organisation-1"
+                ),
                 subjects = listOf(SubjectResource("subject-1"))
             )
         )
@@ -58,9 +62,10 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "bob@boclips.com",
-                organisationAccountId = "organisation-1",
+                organisation = OrganisationResourceFactory.sampleDetails(
+                    id = "organisation-1"
+                ),
                 subjects = listOf(SubjectResource("subject-1"))
-
             )
         )
 
