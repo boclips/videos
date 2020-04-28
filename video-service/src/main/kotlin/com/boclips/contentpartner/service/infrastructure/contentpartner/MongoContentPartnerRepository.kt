@@ -95,7 +95,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
 
     override fun findAllByNameMatch(query: String): List<ContentPartner> {
         return getContentPartnerCollection().find(
-            ContentPartnerDocument::name regex Regex("TED", RegexOption.IGNORE_CASE)
+            ContentPartnerDocument::name regex Regex(query, RegexOption.IGNORE_CASE)
         )
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
             .toList()
