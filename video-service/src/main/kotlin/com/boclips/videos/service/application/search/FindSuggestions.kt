@@ -8,7 +8,9 @@ class FindSuggestions(private val contentPartnerRepository: ContentPartnerReposi
     companion object : KLogging()
 
     operator fun invoke(query: String): Suggestions {
-        val contentPartners = contentPartnerRepository.findAllByNameMatch(query).take(10).map { it.name }
+        val contentPartners = contentPartnerRepository.findByName(query)
+            .take(10)
+            .map { it.name }
 
         return Suggestions(contentPartners = contentPartners)
     }

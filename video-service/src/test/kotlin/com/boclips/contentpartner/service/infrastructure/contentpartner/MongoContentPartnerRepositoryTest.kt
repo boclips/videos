@@ -174,10 +174,11 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `find by matching names ignoring casing`() {
         mongoContentPartnerRepository.create(createContentPartner(name = "TED"))
+        mongoContentPartnerRepository.create(createContentPartner(name = "TED"))
         mongoContentPartnerRepository.create(createContentPartner(name = "TED-Ed"))
         mongoContentPartnerRepository.create(createContentPartner(name = "BBC"))
 
-        val results = mongoContentPartnerRepository.findAllByNameMatch("ted")
+        val results = mongoContentPartnerRepository.findByName("ted")
 
         assertThat(results).hasSize(2)
         assertThat(results[0].name).isEqualTo("TED")

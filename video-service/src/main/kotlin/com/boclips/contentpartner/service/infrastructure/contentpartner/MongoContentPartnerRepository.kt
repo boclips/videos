@@ -25,7 +25,6 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.`in`
 import org.litote.kmongo.and
 import org.litote.kmongo.combine
-import org.litote.kmongo.contains
 import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -33,7 +32,6 @@ import org.litote.kmongo.getCollection
 import org.litote.kmongo.ne
 import org.litote.kmongo.regex
 import org.litote.kmongo.set
-import org.litote.kmongo.text
 import java.time.Instant
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) :
@@ -93,10 +91,11 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             .toList()
     }
 
-    override fun findAllByNameMatch(query: String): List<ContentPartner> {
+    override fun findByName(query: String): List<ContentPartner> {
         return getContentPartnerCollection().find(
             ContentPartnerDocument::name regex Regex(query, RegexOption.IGNORE_CASE)
         )
+            .distinctBy(selector = { input -> input.name })
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
             .toList()
     }
