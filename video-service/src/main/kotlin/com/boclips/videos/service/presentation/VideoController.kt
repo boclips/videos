@@ -144,7 +144,7 @@ class VideoController(
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
             .let {
                 when (projection) {
-                    Projection.all -> videoCaptionService.withCaptionDetails(it)
+                    Projection.full -> videoCaptionService.withCaptionDetails(it)
                     else -> it
                 }
 

@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.hateoas
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.security.utils.UserExtractor.getIfAuthenticated
 import com.boclips.security.utils.UserExtractor.getIfHasRole
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
@@ -28,7 +29,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun self(videoId: String?): HateoasLink {
-        return HateoasLink.of(Link(getVideosRoot().pathSegment(videoId).build().toUriString(), "self"))
+        return HateoasLink.of(Link(getVideosRootWithParams().pathSegment(videoId).build().toUriString(), "self"))
     }
 
     fun videoLink(): HateoasLink {
@@ -159,4 +160,27 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/videos")
         .replaceQueryParams(null)
+
+    private fun getVideosRootWithParams() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/videos")
+
+    fun videoDetailsProjection(id: String?) = HateoasLink.of(
+        Link(
+            getVideosRoot().pathSegment(id)
+                .queryParam("projection", Projection.details)
+                .build()
+                .toUriString(),
+            "detailsProjection"
+        )
+    )
+
+    fun videoFullProjection(videoId: String?): HateoasLink = HateoasLink.of(
+        Link(
+            getVideosRoot().pathSegment(videoId)
+                .queryParam("projection", Projection.full)
+                .build()
+                .toUriString(),
+            "fullProjection"
+        )
+    )
 }
