@@ -29,17 +29,33 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun self(videoId: String?): HateoasLink {
-        return HateoasLink.of(Link(getVideosRootWithParams().pathSegment(videoId).build().toUriString(), "self"))
+        val shouldRemoveParams = uriComponentsBuilderFactory
+            .getInstance()
+            .build()
+            .pathSegments.last() == "videos"
+
+        val root = if (shouldRemoveParams) {
+            getVideosRootWithoutParams()
+        } else {
+            getVideosRootWithParams()
+        }
+
+        return HateoasLink.of(
+            Link(
+                root.pathSegment(videoId).build().toUriString(),
+                "self"
+            )
+        )
     }
 
     fun videoLink(): HateoasLink {
-        return HateoasLink.of(Link(getVideosRoot().pathSegment("{id}").build().toUriString(), VIDEO))
+        return HateoasLink.of(Link(getVideosRootWithoutParams().pathSegment("{id}").build().toUriString(), VIDEO))
     }
 
     fun createVideoInteractedWithEvent(videoId: String?): HateoasLink {
         return HateoasLink.of(
             Link(
-                getVideosRoot()
+                getVideosRootWithoutParams()
                     .pathSegment("$videoId")
                     .pathSegment("events")
                     .queryParam("logVideoInteraction", true)
@@ -55,7 +71,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {
                 HateoasLink.of(
                     Link(
-                        getVideosRoot()
+                        getVideosRootWithoutParams()
                             .queryParam("query", query)
                             .build()
                             .toUriString()
@@ -73,7 +89,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {
                 HateoasLink.of(
                     Link(
-                        getVideosRoot()
+                        getVideosRootWithoutParams()
                             .build()
                             .toUriString()
                             + "{?query,id,sort_by,duration,duration_facets,duration_min,duration_max,released_date_from,released_date_to,source,age_range_min,age_range_max,age_range,age_range_facets,size,page,subject,subjects_set_manually,promoted,content_partner,type}",
@@ -104,7 +120,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             getIfHasRole(UserRoles.RATE_VIDEOS) {
                 HateoasLink.of(
                     Link(
-                        getVideosRoot()
+                        getVideosRootWithoutParams()
                             .pathSegment(video.videoId.value)
                             .queryParam("rating", "{rating}")
                             .build()
@@ -132,7 +148,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         getIfHasRole(UserRoles.UPDATE_VIDEOS) {
             HateoasLink.of(
                 Link(
-                    getVideosRoot()
+                    getVideosRootWithoutParams()
                         .pathSegment(video.videoId.value)
                         .build()
                         .toUriString()
@@ -146,7 +162,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         getIfHasRole(UserRoles.UPDATE_VIDEOS) {
             HateoasLink.of(
                 Link(
-                    getVideosRoot()
+                    getVideosRootWithoutParams()
                         .pathSegment(video.videoId.value)
                         .pathSegment("attachments")
                         .build()
@@ -157,7 +173,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    private fun getVideosRoot() = uriComponentsBuilderFactory.getInstance()
+    private fun getVideosRootWithoutParams() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/videos")
         .replaceQueryParams(null)
 
@@ -166,7 +182,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
 
     fun videoDetailsProjection(id: String?) = HateoasLink.of(
         Link(
-            getVideosRoot().pathSegment(id)
+            getVideosRootWithoutParams().pathSegment(id)
                 .queryParam("projection", Projection.details)
                 .build()
                 .toUriString(),
@@ -176,7 +192,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
 
     fun videoFullProjection(videoId: String?): HateoasLink = HateoasLink.of(
         Link(
-            getVideosRoot().pathSegment(videoId)
+            getVideosRootWithoutParams().pathSegment(videoId)
                 .queryParam("projection", Projection.full)
                 .build()
                 .toUriString(),

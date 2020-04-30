@@ -52,6 +52,19 @@ class VideosLinkBuilderTest {
     }
 
     @Test
+    fun `video resource self link ignores params when requesting videos`() {
+        whenever(uriComponentsBuilderMock.getInstance()).thenReturn(
+            UriComponentsBuilder.fromHttpUrl("https://localhost/v1/videos?query=tom")
+        )
+
+        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
+
+        assertThat(link.href).endsWith("/v1/videos/self-test")
+        assertThat(link.rel).isEqualTo("self")
+        assertThat(link.templated).isFalse()
+    }
+
+    @Test
     fun `video resource self with details projection`() {
         whenever(uriComponentsBuilderMock.getInstance()).thenReturn(
             UriComponentsBuilder.fromHttpUrl("https://localhost/v1/videos/123?projection=details")

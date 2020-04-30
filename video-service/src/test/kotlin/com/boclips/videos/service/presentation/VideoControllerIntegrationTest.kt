@@ -15,6 +15,7 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -130,6 +131,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").exists())
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").exists())
                 .andExpect(jsonPath("$._embedded.videos[0].type").exists())
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href" , endsWith("/videos/$kalturaVideoId")))
         }
 
         @Test
