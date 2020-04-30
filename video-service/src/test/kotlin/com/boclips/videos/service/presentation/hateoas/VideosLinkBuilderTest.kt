@@ -20,20 +20,65 @@ class VideosLinkBuilderTest {
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private val validVideoId: String = ObjectId().toHexString()
 
+    val uriComponentsBuilderMock = mock<UriComponentsBuilderFactory>()
+
     @BeforeEach
     fun setUp() {
-        val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
+        whenever(uriComponentsBuilderMock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1"))
 
-        videosLinkBuilder = VideosLinkBuilder(mock)
+        videosLinkBuilder = VideosLinkBuilder(uriComponentsBuilderMock)
     }
 
     @Test
-    fun `self link`() {
+    fun `video resource self link`() {
         val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
 
         assertThat(link.href).endsWith("/v1/videos/self-test")
         assertThat(link.rel).isEqualTo("self")
+        assertThat(link.templated).isFalse()
+    }
+
+    @Test
+    fun `video resource self with full projection`() {
+        whenever(uriComponentsBuilderMock.getInstance()).thenReturn(
+            UriComponentsBuilder.fromHttpUrl("https://localhost/v1/videos/123?projection=full")
+        )
+
+        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
+
+        assertThat(link.href).endsWith("/v1/videos/self-test?projection=full")
+        assertThat(link.rel).isEqualTo("self")
+        assertThat(link.templated).isFalse()
+    }
+
+    @Test
+    fun `video resource self with details projection`() {
+        whenever(uriComponentsBuilderMock.getInstance()).thenReturn(
+            UriComponentsBuilder.fromHttpUrl("https://localhost/v1/videos/123?projection=details")
+        )
+
+        val link = videosLinkBuilder.self(VideoResourceFactory.sample(id = "self-test").id)
+
+        assertThat(link.href).endsWith("/v1/videos/self-test?projection=details")
+        assertThat(link.rel).isEqualTo("self")
+        assertThat(link.templated).isFalse()
+    }
+
+    @Test
+    fun `details projection link`() {
+        val link = videosLinkBuilder.videoDetailsProjection(VideoResourceFactory.sample(id = "self-test").id)
+
+        assertThat(link.href).endsWith("/v1/videos/self-test?projection=details")
+        assertThat(link.rel).isEqualTo("detailsProjection")
+        assertThat(link.templated).isFalse()
+    }
+
+    @Test
+    fun `full projection link`() {
+        val link = videosLinkBuilder.videoFullProjection(VideoResourceFactory.sample(id = "self-test").id)
+
+        assertThat(link.href).endsWith("/v1/videos/self-test?projection=full")
+        assertThat(link.rel).isEqualTo("fullProjection")
         assertThat(link.templated).isFalse()
     }
 

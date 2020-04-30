@@ -22,7 +22,7 @@ class CollectionResourceConverter(
         when (projection) {
             Projection.list -> buildCollectionListResource(collection, user)
             Projection.details -> buildCollectionDetailsResource(collection, user)
-            Projection.all -> buildCollectionDetailsResource(collection, user)
+            Projection.full -> buildCollectionDetailsResource(collection, user)
         }
 
     fun buildCollectionDetailsResource(collection: Collection, user: User): CollectionResource {
