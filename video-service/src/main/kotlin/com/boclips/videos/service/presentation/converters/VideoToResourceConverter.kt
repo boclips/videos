@@ -117,9 +117,7 @@ class VideoToResourceConverter(
     private fun resourceLinks(videoId: String) =
         listOfNotNull(
             videosLinkBuilder.self(videoId),
-            videosLinkBuilder.createVideoInteractedWithEvent(videoId),
-            videosLinkBuilder.videoDetailsProjection(videoId),
-            videosLinkBuilder.videoFullProjection(videoId)
+            videosLinkBuilder.createVideoInteractedWithEvent(videoId)
         )
 
     private fun actionLinks(video: Video): List<HateoasLink> = listOfNotNull(

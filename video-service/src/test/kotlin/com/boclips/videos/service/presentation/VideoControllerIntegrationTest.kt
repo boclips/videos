@@ -10,6 +10,7 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
+import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.URI
 import java.time.Duration
 import javax.servlet.http.Cookie
 
@@ -119,8 +121,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.type.id", equalTo(3)))
                 .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-                .andExpect(jsonPath("$._links.detailsProjection.href", containsString("/videos/$kalturaVideoId?projection=details")))
-                .andExpect(jsonPath("$._links.fullProjection.href", containsString("/videos/$kalturaVideoId?projection=full")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
 
@@ -234,7 +234,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns full projection with caption processing data`() {
             fakeKalturaClient.requestCaptions("entry-id-123")
 
-            mockMvc.perform(get("/v1/videos/$kalturaVideoId?projection=full").asBoclipsEmployee())
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId?projection=all").asBoclipsEmployee())
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
