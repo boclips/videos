@@ -14,7 +14,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import java.util.Locale
+import java.util.*
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
@@ -163,6 +163,27 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `replaces only caption content for caption content updates`() {
+        val playbackId = mediaEntryWithCaptionsByEntryId(
+            label = "English (auto-generated)",
+            language = KalturaLanguage.ENGLISH,
+            entryId = "entry-id",
+            captionContent = "Old Captions"
+        )
+
+        kalturaPlaybackProvider.overwriteCaptionContent(
+            playbackId,
+            "new captions"
+        )
+
+        val newCaptions = fakeKalturaClient.getCaptionFilesByEntryId("entry-id")
+        assertThat(newCaptions).hasSize(1)
+        assertThat(fakeKalturaClient.getCaptionContentByAssetId(newCaptions.first().id)).isEqualTo("new captions")
+        assertThat(newCaptions.first().label).isEqualTo("English (auto-generated)")
+        assertThat(newCaptions.first().language).isEqualTo(KalturaLanguage.ENGLISH)
+    }
+
+    @Test
     fun `deletes auto-generated captions when null`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
 
@@ -174,12 +195,14 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     private fun mediaEntryWithCaptionsByEntryId(
         label: String,
-        language: KalturaLanguage = KalturaLanguage.ENGLISH
+        language: KalturaLanguage = KalturaLanguage.ENGLISH,
+        entryId: String = "entry-id",
+        captionContent: String = "old captions"
     ): PlaybackId {
         val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
-        createMediaEntry(id = "entry-id")
-        fakeKalturaClient.createCaptionsFileWithEntryId("entry-id", existingCaptions, "old captions")
-        return PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-id")
+        createMediaEntry(id = entryId)
+        fakeKalturaClient.createCaptionsFileWithEntryId(entryId, existingCaptions, captionContent)
+        return PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId)
     }
 
     @Test

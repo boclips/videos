@@ -83,6 +83,21 @@ class PlaybackRepositoryTest {
     }
 
     @Test
+    fun `updates caption content`() {
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+
+        playbackRepository.uploadCaptions(playbackId, createCaptions())
+
+        assertThat(fakeKalturaClient.getCaptionFilesByEntryId("1")).isNotEmpty
+
+        playbackRepository.updateCaptionContent(playbackId, "New caption content")
+
+        assertThat(fakeKalturaClient.getCaptionContentByAssetId(fakeKalturaClient.getCaptionFilesByEntryId("1").first().id)).isEqualTo("New caption content")
+    }
+
+
+
+    @Test
     fun `throws on attempts to upload captions to youtube`() {
         val youtubeVideo = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "yt-123")
 

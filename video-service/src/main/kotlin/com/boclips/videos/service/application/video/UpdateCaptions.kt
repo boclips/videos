@@ -22,4 +22,13 @@ class UpdateCaptions(val videoRepository: VideoRepository, private val playbackR
             logger.info { "Failed to update captions for ${videoCaptionsCreated.videoId}" }
         }
     }
+
+    operator fun invoke(videoId: String, newCaptionContent: String) {
+            videoRepository.find(VideoId(value = videoId)).let { video ->
+                playbackRepository.updateCaptionContent(video?.playback!!.id, newCaptionContent)
+
+                logger.info { "Updated captions for ${video.videoId}" }
+            }
+    }
+
 }
