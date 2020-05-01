@@ -79,7 +79,9 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `details projection link`() {
-        val link = videosLinkBuilder.videoDetailsProjection(VideoResourceFactory.sample(id = "self-test").id)
+        setSecurityContext("teacher@boclips.com", UserRoles.BACKOFFICE)
+
+        val link = videosLinkBuilder.videoDetailsProjection(VideoResourceFactory.sample(id = "self-test").id)!!
 
         assertThat(link.href).endsWith("/v1/videos/self-test?projection=details")
         assertThat(link.rel).isEqualTo("detailsProjection")
@@ -88,7 +90,9 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `full projection link`() {
-        val link = videosLinkBuilder.videoFullProjection(VideoResourceFactory.sample(id = "self-test").id)
+        setSecurityContext("teacher@boclips.com", UserRoles.BACKOFFICE)
+
+        val link = videosLinkBuilder.videoFullProjection(VideoResourceFactory.sample(id = "self-test").id)!!
 
         assertThat(link.href).endsWith("/v1/videos/self-test?projection=full")
         assertThat(link.rel).isEqualTo("fullProjection")

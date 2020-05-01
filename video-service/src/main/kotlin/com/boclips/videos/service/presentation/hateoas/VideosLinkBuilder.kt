@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.security.utils.UserExtractor.getIfAuthenticated
+import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.HateoasLink
@@ -145,7 +146,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun updateLink(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-        getIfHasRole(UserRoles.UPDATE_VIDEOS) {
             HateoasLink.of(
                 Link(
                     getVideosRootWithoutParams()
@@ -155,11 +155,9 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     , UPDATE
                 )
             )
-        }
     }
 
     fun addAttachment(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-        getIfHasRole(UserRoles.UPDATE_VIDEOS) {
             HateoasLink.of(
                 Link(
                     getVideosRootWithoutParams()
@@ -170,7 +168,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     , ADD_ATTACHMENT
                 )
             )
-        }
     }
 
     private fun getVideosRootWithoutParams() = uriComponentsBuilderFactory.getInstance()
@@ -180,23 +177,38 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     private fun getVideosRootWithParams() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/videos")
 
-    fun videoDetailsProjection(id: String?) = HateoasLink.of(
-        Link(
-            getVideosRootWithoutParams().pathSegment(id)
-                .queryParam("projection", Projection.details)
-                .build()
-                .toUriString(),
-            "detailsProjection"
-        )
+    fun videoDetailsProjection(id: String?) = getIfHasAnyRole(
+        UserRoles.PUBLISHER,
+        UserRoles.BACKOFFICE,
+        UserRoles.BOCLIPS_SERVICE
     )
+    {
+        HateoasLink.of(
+            Link(
+                getVideosRootWithoutParams().pathSegment(id)
+                    .queryParam("projection", Projection.details)
+                    .build()
+                    .toUriString(),
+                "detailsProjection"
+            )
+        )
+    }
 
-    fun videoFullProjection(videoId: String?): HateoasLink = HateoasLink.of(
-        Link(
-            getVideosRootWithoutParams().pathSegment(videoId)
-                .queryParam("projection", Projection.full)
-                .build()
-                .toUriString(),
-            "fullProjection"
-        )
+    fun videoFullProjection(videoId: String?) = getIfHasAnyRole(
+        UserRoles.PUBLISHER,
+        UserRoles.BACKOFFICE,
+        UserRoles.BOCLIPS_SERVICE
     )
+    {
+        HateoasLink.of(
+            Link(
+                getVideosRootWithoutParams().pathSegment(videoId)
+                    .queryParam("projection", Projection.full)
+                    .build()
+                    .toUriString(),
+                "fullProjection"
+            )
+        )
+    }
 }
+
