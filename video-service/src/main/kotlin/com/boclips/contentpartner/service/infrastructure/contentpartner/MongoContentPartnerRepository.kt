@@ -248,11 +248,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
                         document
                     )
                 }
-
-        contentPartner?.let {
-            logger.info { "Found content partner ${it.contentPartnerId.value}" }
-        }
-
+        
         return contentPartner
     }
 
