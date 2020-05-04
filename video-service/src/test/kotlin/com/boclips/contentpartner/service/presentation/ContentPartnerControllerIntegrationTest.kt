@@ -16,6 +16,7 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.oneOf
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +36,13 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    lateinit var contractId: String
+
+    @BeforeEach
+    fun setUp() {
+        contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "USD").id.value
+    }
 
     @Test
     fun `post video lookup by provider id returns 200 when video exists`() {
@@ -81,7 +89,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "notes": "note one",
                 "hubspotId": "123456789",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
-                "language": "spa"
+                "language": "spa",
+                "contractId": "$contractId"
             }
         """
 
@@ -175,11 +184,11 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             {
                 "searchable": false,
                 "name": "TED",
-                "currency": "USD",
                 "description": "This is a description",
                 "awards": "award",
                 "notes": "note one",
                 "hubspotId": "123456789",
+                "contractId": "${contractId}",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
                 "contentTypes": ["NEWS","INSTRUCTIONAL"],
@@ -314,7 +323,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter content partners by name`() {
-        saveContentPartner(name = "hello", currency = "CAD")
+        saveContentPartner(name = "hello")
         saveContentPartner(name = "goodbye")
 
         mockMvc.perform(
@@ -323,7 +332,6 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("hello")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("CAD")))
     }
 
     @Test
@@ -412,7 +420,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "oneLineDescription": "$oneLineDescription",
                 "marketingInformation": {
                     "status": "$status"
-                }
+                },
+                "contractId": "$contractId"
             }
         """
 
@@ -582,7 +591,8 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
                 "searchable": false,
                 "name": "TED-ED",
                 "currency": "USD",
-                "ageRanges": ["early-years"]
+                "ageRanges": ["early-years"],
+                "contractId": "$contractId"
             }"""
 
         mockMvc.perform(

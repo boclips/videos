@@ -282,6 +282,7 @@ abstract class AbstractSpringIntegrationTest {
         subjects: List<String>? = null,
         contractId: String? = null
     ): ContentPartner {
+        val contract = contractId ?: saveContentPartnerContract(name = UUID.randomUUID().toString()).id.value
         val createdContentPartner = createContentPartner(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = name,
@@ -304,7 +305,7 @@ abstract class AbstractSpringIntegrationTest {
                 curriculumAligned = curriculumAligned,
                 bestForTags = bestForTags,
                 subjects = subjects,
-                contractId = contractId
+                contractId = contract
             )
         )
 
