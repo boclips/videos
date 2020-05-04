@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContentPartnerContractException
 import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -73,6 +74,34 @@ class CreateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(officialContentPartner.contentPartnerId).isNotEqualTo(youtubeContentPartner)
+    }
+
+    @Test
+    fun `cannot create an official content partner without a contract`() {
+        assertThrows<MissingContentPartnerContractException> {
+            createContentPartner(
+                VideoServiceApiFactory.createContentPartnerRequest(
+                    name = "Tsitsipas",
+                    ingest = IngestDetailsResource.manual(),
+                    contractId = null
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `can create a youtube scrape content partner without a contract`() {
+        val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
+
+        val youtubeContentPartner = createContentPartner(
+            VideoServiceApiFactory.createContentPartnerRequest(
+                name = "Tsitsipas",
+                accreditedToYtChannel = "23456789",
+                contractId = contractId.value
+            )
+        )
+
+        assertThat(youtubeContentPartner.contentPartnerId).isNotNull
     }
 
     @Test

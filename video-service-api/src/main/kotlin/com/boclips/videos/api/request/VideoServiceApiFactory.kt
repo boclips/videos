@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request
 
+import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
@@ -11,6 +12,7 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.sun.org.apache.xerces.internal.impl.dv.xs.IDREFDV
 import java.time.LocalDate
 import java.time.Period
 
@@ -103,7 +105,7 @@ class VideoServiceApiFactory {
             awards: String? = null,
             notes: String? = null,
             language: String? = null,
-            ingest: IngestDetailsResource? = null,
+            ingest: IngestDetailsResource? = IngestDetailsResource(type = IngestType.YOUTUBE, playlistIds = listOf("yt-id")),
             deliveryFrequency: Period? = null,
             oneLineDescription: String? = null,
             marketingInformation: ContentPartnerMarketingInformationRequest? = null,

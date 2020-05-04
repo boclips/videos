@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerH
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContentPartnerContractException
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
@@ -22,6 +23,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import org.bson.types.ObjectId
@@ -81,6 +83,12 @@ class CreateContentPartner(
 
             contentPartnerContractRepository.findById(contractId)
                 ?: throw InvalidContractException(contractId)
+        }
+
+        if(upsertRequest.ingest?.type != IngestType.YOUTUBE) {
+            if(upsertRequest.contractId.isNullOrBlank()) {
+                throw MissingContentPartnerContractException()
+            }
         }
 
         return contentPartnerRepository
