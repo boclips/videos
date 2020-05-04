@@ -1,9 +1,12 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.KalturaFactories
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
@@ -16,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
 
@@ -163,6 +164,42 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.transcript.href").exists())
+    }
+
+    @Test
+    fun `post request to a video's transcript endpoint updates its transcript`() {
+        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)"
+        )
+        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "previous captions content")
+
+        val content = """
+            {
+               "transcript": "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
+            }
+        """.trimIndent()
+
+
+        mockMvc.perform(post("/v1/videos/${video.value}/transcript").asBoclipsEmployee()
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/${video.value}/transcript").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(
+                content().string(
+                    equalTo("""
+                        We're quite content to be the odd<br>browser out.
+                        We don't have a fancy stock abbreviation <br>to go alongside our name in the press.
+                        We don't have a profit margin.""".trimIndent()
+                    )
+                )
+            )
+            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
     }
 
     private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {

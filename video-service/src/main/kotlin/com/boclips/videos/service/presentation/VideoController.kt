@@ -1,19 +1,10 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.CreateVideoRequest
-import com.boclips.videos.api.request.video.RateVideoRequest
-import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.request.video.*
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.video.VideoRepository
@@ -54,6 +45,7 @@ class VideoController(
     private val rateVideo: RateVideo,
     private val videoTranscriptService: VideoTranscriptService,
     private val videoCaptionService: VideoCaptionService,
+    private val updateCaptionContent: UpdateCaptionContent,
     private val objectMapper: ObjectMapper,
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
@@ -170,6 +162,13 @@ class VideoController(
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$videoTitle.txt\"")
 
         return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
+    }
+
+    @PostMapping("/v1/videos/{id}/transcript")
+    fun updateTranscript(@PathVariable("id") videoId: String?, @RequestBody updateCaptionRequest: UpdateVideoCaptionsRequest): ResponseEntity<String> {
+
+        updateCaptionContent(videoId!!, updateCaptionRequest.transcript!!)
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @RequestMapping(

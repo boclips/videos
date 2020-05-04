@@ -38,17 +38,7 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.BroadcastVideos
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoPlaybackService
-import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
@@ -69,8 +59,11 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
+import com.boclips.videos.service.domain.service.video.CaptionService
+import com.boclips.videos.service.domain.service.video.CaptionValidator
 import com.boclips.videos.service.domain.service.video.VideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
@@ -147,6 +140,11 @@ class ApplicationContext(
     }
 
     @Bean
+    fun updateCaptionContent(captionService: CaptionService): UpdateCaptionContent {
+        return UpdateCaptionContent(captionService)
+    }
+
+    @Bean
     fun tagVideo(): TagVideo {
         return TagVideo(videoRepository, tagRepository)
     }
@@ -164,6 +162,16 @@ class ApplicationContext(
     @Bean
     fun videoCaptionService(kalturaClient: KalturaClient): VideoCaptionService {
         return VideoCaptionService(kalturaClient)
+    }
+
+    @Bean
+    fun captionValidator(): CaptionValidator {
+        return ExoWebVTTValidator()
+    }
+
+    @Bean
+    fun captionService(captionValidator: CaptionValidator): CaptionService {
+        return CaptionService(videoRepository, playbackRepository, captionValidator)
     }
 
     @Bean

@@ -12,7 +12,6 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
-import com.sun.org.apache.xerces.internal.impl.dv.xs.IDREFDV
 import java.time.LocalDate
 import java.time.Period
 

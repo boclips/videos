@@ -1,12 +1,13 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.AVAILABLE
-import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.NOT_AVAILABLE
-import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.PROCESSING
-import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.REQUESTED
+import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.*
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
 class VideoCaptionService(val kalturaClient: KalturaClient) {
