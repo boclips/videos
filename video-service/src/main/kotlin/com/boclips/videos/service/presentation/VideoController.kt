@@ -4,6 +4,7 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.*
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -21,19 +22,8 @@ import mu.KLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CookieValue
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import org.springframework.web.bind.annotation.*
+import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -164,13 +154,6 @@ class VideoController(
         return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
     }
 
-    @PostMapping("/v1/videos/{id}/transcript")
-    fun updateTranscript(@PathVariable("id") videoId: String?, @RequestBody updateCaptionRequest: UpdateVideoCaptionsRequest): ResponseEntity<String> {
-
-        updateCaptionContent(videoId!!, updateCaptionRequest.transcript!!)
-        return ResponseEntity(HttpStatus.OK)
-    }
-
     @RequestMapping(
         path = ["/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}"],
         method = [RequestMethod.HEAD]
@@ -248,4 +231,27 @@ class VideoController(
     @PatchMapping(path = ["/v1/videos/{id}/tags"])
     fun patchUpdateTag(@PathVariable id: String, @RequestBody tagUrl: String?) =
         tagVideo(TagVideoRequest(id, tagUrl), getCurrentUser()).let { this.getVideo(id) }
+
+    @PutMapping("/v1/videos/{id}/captions")
+    fun updateCaptions(
+        @PathVariable("id") videoId: String?,
+        @RequestBody updateCaptionRequest: UpdateVideoCaptionsRequest
+    ): ResponseEntity<String> {
+        try {
+            updateCaptionContent(videoId!!, updateCaptionRequest.captions!!)
+        } catch (exception: InvalidWebVTTException) {
+            throw InvalidRequestApiException(
+                ExceptionDetails("WebVTT file provided is invalid", exception.message.orEmpty(), HttpStatus.BAD_REQUEST)
+            )
+        } catch (e: Exception) {
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Error updating captions",
+                    e.message.orEmpty(),
+                    HttpStatus.BAD_REQUEST
+                )
+            )
+        }
+        return ResponseEntity(HttpStatus.OK)
+    }
 }

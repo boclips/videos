@@ -166,42 +166,6 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             .andExpect(jsonPath("$._links.transcript.href").exists())
     }
 
-    @Test
-    fun `post request to a video's transcript endpoint updates its transcript`() {
-        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
-        val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
-            language = KalturaLanguage.ENGLISH,
-            label = "English (auto-generated)"
-        )
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "previous captions content")
-
-        val content = """
-            {
-               "transcript": "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
-            }
-        """.trimIndent()
-
-
-        mockMvc.perform(post("/v1/videos/${video.value}/transcript").asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content))
-            .andExpect(status().isOk)
-
-        mockMvc.perform(get("/v1/videos/${video.value}/transcript").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-            .andExpect(
-                content().string(
-                    equalTo("""
-                        We're quite content to be the odd<br>browser out.
-                        We don't have a fancy stock abbreviation <br>to go alongside our name in the press.
-                        We don't have a profit margin.""".trimIndent()
-                    )
-                )
-            )
-            .andExpect(header().string("Content-Disposition", equalTo("attachment; filename=\"Today_Video_.txt\"")))
-    }
-
     private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {
         val videoId = saveVideo(
             title = "Today Video?",
