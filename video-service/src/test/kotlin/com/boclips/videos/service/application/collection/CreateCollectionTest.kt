@@ -3,9 +3,9 @@ package com.boclips.videos.service.application.collection
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +20,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Autowired
-    lateinit var collectionReadService: CollectionReadService
+    lateinit var collectionRetrievalService: CollectionRetrievalService
 
     @Test
     fun `makes searchable if public`() {
@@ -31,7 +31,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionReadService.search(
+        val collections = collectionRetrievalService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
@@ -62,7 +62,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionReadService.search(
+        val collections = collectionRetrievalService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
@@ -92,7 +92,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
 
         createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
 
-        val collections = collectionReadService.search(
+        val collections = collectionRetrievalService.search(
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),

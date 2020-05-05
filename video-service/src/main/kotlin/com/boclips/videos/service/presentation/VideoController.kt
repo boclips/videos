@@ -8,7 +8,7 @@ import com.boclips.videos.service.application.collection.exceptions.InvalidWebVT
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride

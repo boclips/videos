@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
-class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
+class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var videoService: VideoService
+    lateinit var videoRetrievalService: VideoRetrievalService
 
     @Nested
     inner class GetPlayableVideos {
@@ -31,7 +31,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 setOf(firstVideoId, thirdVideoId)
             )
 
-            val videos = videoService.getPlayableVideos(
+            val videos = videoRetrievalService.getPlayableVideos(
                 listOf(firstVideoId, secondVideoId),
                 VideoAccess.Rules(listOf(accessRule))
             )
@@ -49,7 +49,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 setOf(firstVideoId, thirdVideoId)
             )
 
-            val videos = videoService.getPlayableVideos(
+            val videos = videoRetrievalService.getPlayableVideos(
                 listOf(firstVideoId, secondVideoId, thirdVideoId),
                 VideoAccess.Rules(listOf(accessRule))
             )
@@ -65,7 +65,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val videos = videoService.getPlayableVideos(
+            val videos = videoRetrievalService.getPlayableVideos(
                 listOf(stockVideoId, newsVideoId, instructionalVideoId), VideoAccess.Rules(
                     listOf(accessRule)
                 )
@@ -91,7 +91,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val videos = videoService.getPlayableVideos(
+            val videos = videoRetrievalService.getPlayableVideos(
                 listOf(allowedVideoId, firstExcludedVideoId, secondExcludedVideoId),
                 VideoAccess.Rules(listOf(accessRule))
             )
@@ -117,7 +117,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 saveVideo(title = "video", contentProviderId = streamContentPartner.contentPartnerId.value)
             saveVideo(title = "video", contentProviderId = downloadContentPartner.contentPartnerId.value)
 
-            val searchResults = videoService.search(
+            val searchResults = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "video",
                     pageSize = 10,
@@ -134,7 +134,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "access")
             saveVideo(title = "no access")
 
-            val searchResults = videoService.search(
+            val searchResults = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
@@ -153,7 +153,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "access")
             saveVideo(title = "no access")
 
-            val searchResults = videoService.search(
+            val searchResults = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
@@ -171,7 +171,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "Wild Elephant")
             val secondVideo = saveVideo(title = "Wild Rhino")
 
-            val searchResults = videoService.search(
+            val searchResults = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
@@ -193,7 +193,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val results = videoService.search(
+            val results = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
@@ -214,7 +214,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val results = videoService.search(
+            val results = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
                     type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
@@ -245,7 +245,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val results = videoService.search(
+            val results = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
                     type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
@@ -269,7 +269,7 @@ class VideoServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.STOCK))
 
             assertThrows<VideoNotFoundException> {
-                videoService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))
+                videoRetrievalService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))
             }
         }
     }

@@ -5,9 +5,9 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.model.collection.CollectionUpdateResult
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -132,7 +132,12 @@ class MongoCollectionRepository(
         logger.info("Updated collections: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
 
         return findAll(commands.map { it.collectionId }.toSet().toList())
-            .map { CollectionUpdateResult(it, commandsByCollectionId[it.id].orEmpty()) }
+            .map {
+                CollectionUpdateResult(
+                    it,
+                    commandsByCollectionId[it.id].orEmpty()
+                )
+            }
     }
 
     private fun bsonMetadataUpdate(commands: List<CollectionUpdateCommand>): List<Bson> {

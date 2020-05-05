@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.tag
 
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
-import com.boclips.videos.service.domain.model.tag.TagRepository
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.video.TagDocument
 import com.boclips.videos.service.infrastructure.video.UserTagDocument

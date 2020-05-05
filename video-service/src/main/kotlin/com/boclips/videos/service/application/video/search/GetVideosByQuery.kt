@@ -13,12 +13,12 @@ import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import mu.KLogging
 
 class GetVideosByQuery(
-    private val videoService: VideoService,
+    private val videoRetrievalService: VideoRetrievalService,
     private val eventService: EventService,
     private val userService: UserService,
     private val searchQueryConverter: SearchQueryConverter
@@ -81,7 +81,7 @@ class GetVideosByQuery(
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets)
         )
 
-        val videoSearchResponse = videoService.search(request = request, videoAccess = user.accessRules.videoAccess)
+        val videoSearchResponse = videoRetrievalService.searchPlaybableVideos(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
         eventService.saveSearchEvent(

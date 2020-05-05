@@ -4,7 +4,7 @@ import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.video.VideoCaptionsCreated
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import mu.KLogging
 
 class UpdateCaptions(val videoRepository: VideoRepository, private val playbackRepository: PlaybackRepository) {

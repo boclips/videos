@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -34,7 +34,7 @@ class DeleteCollectionTest : AbstractSpringIntegrationTest() {
         deleteCollection.invoke(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         val results =
-            collectionSearchService.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
+            collectionIndex.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
 
         assertThat(results.counts.totalHits).isEqualTo(0)
     }

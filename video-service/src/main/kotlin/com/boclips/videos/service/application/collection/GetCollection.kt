@@ -6,10 +6,10 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 
 class GetCollection(
-    private val collectionReadService: CollectionReadService
+    private val collectionRetrievalService: CollectionRetrievalService
 ) {
     operator fun invoke(
         collectionId: String,
@@ -18,7 +18,7 @@ class GetCollection(
         shareCode: String? = null
     ): Collection {
         val findCollectionResult =
-            collectionReadService.find(CollectionId(value = collectionId), user, referer, shareCode)
+            collectionRetrievalService.find(CollectionId(value = collectionId), user, referer, shareCode)
 
         if (findCollectionResult.collection != null) {
             return findCollectionResult.collection

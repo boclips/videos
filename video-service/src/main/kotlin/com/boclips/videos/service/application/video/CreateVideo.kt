@@ -13,14 +13,14 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
-import com.boclips.videos.service.domain.service.video.VideoService
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import io.micrometer.core.instrument.Counter
 import mu.KLogging
 
 class CreateVideo(
-    private val videoService: VideoService,
+    private val videoCreationService: VideoCreationService,
     private val subjectRepository: SubjectRepository,
     private val contentPartnerService: ContentPartnerService,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
@@ -54,7 +54,7 @@ class CreateVideo(
             )
 
         val createdVideo = try {
-            videoService.create(videoToBeCreated)
+            videoCreationService.create(videoToBeCreated)
         } catch (ex: VideoNotCreatedException) {
             throw VideoAssetAlreadyExistsException(ex.video.contentPartner.name, ex.video.videoReference)
         }

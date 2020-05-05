@@ -1,13 +1,13 @@
 package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import mu.KLogging
 
 open class RebuildVideoIndex(
     private val videoRepository: VideoRepository,
-    private val videoSearchService: VideoSearchService
+    private val videoIndex: VideoIndex
 ) {
     companion object : KLogging()
 
@@ -15,7 +15,7 @@ open class RebuildVideoIndex(
         logger.info("Starting a full reindex")
 
         videoRepository.streamAll { videos ->
-            videoSearchService.safeRebuildIndex(videos, notifier)
+            videoIndex.safeRebuildIndex(videos, notifier)
         }
 
         logger.info("Full reindex done")

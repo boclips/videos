@@ -2,9 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.OpenEndedAgeRange
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat

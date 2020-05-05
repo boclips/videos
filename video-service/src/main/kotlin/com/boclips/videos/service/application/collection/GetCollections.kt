@@ -4,10 +4,10 @@ import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 
 class GetCollections(
-    private val collectionReadService: CollectionReadService,
+    private val collectionRetrievalService: CollectionRetrievalService,
     private val collectionSearchQueryAssembler: CollectionSearchQueryAssembler
 ) {
     operator fun invoke(
@@ -31,6 +31,6 @@ class GetCollections(
             ageRange = collectionFilterRequest.getAgeRanges()
         )
 
-        return collectionReadService.search(assembledQuery, user)
+        return collectionRetrievalService.search(assembledQuery, user)
     }
 }

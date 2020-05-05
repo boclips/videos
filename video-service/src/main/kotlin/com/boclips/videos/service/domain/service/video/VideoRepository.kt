@@ -1,7 +1,9 @@
-package com.boclips.videos.service.domain.model.video
+package com.boclips.videos.service.domain.service.video
 
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 
 interface VideoRepository {
     fun find(videoId: VideoId): Video?

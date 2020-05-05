@@ -2,8 +2,8 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.VideoBroadcastRequested
-import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.EventConverter
+import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.events.EventConverter
 import mu.KLogging
 
 class BroadcastVideos(

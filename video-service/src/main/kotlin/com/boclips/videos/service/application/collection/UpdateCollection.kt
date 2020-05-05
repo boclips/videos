@@ -6,16 +6,16 @@ import com.boclips.videos.service.application.exceptions.OperationForbiddenExcep
 import com.boclips.videos.service.config.security.UserRoles.BACKOFFICE
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 
 class UpdateCollection(
-    private val collectionSearchService: CollectionSearchService,
+    private val collectionIndex: CollectionIndex,
     private val collectionRepository: CollectionRepository,
     private val collectionUpdatesConverter: CollectionUpdatesConverter,
-    private val collectionReadService: CollectionReadService
+    private val collectionRetrievalService: CollectionRetrievalService
 ) {
     operator fun invoke(collectionId: String, updateCollectionRequest: UpdateCollectionRequest?, requester: User) {
         updateCollectionRequest?.promoted?.let {
@@ -24,7 +24,7 @@ class UpdateCollection(
             }
         }
 
-        val collection = collectionReadService.findWritable(CollectionId(value = collectionId), user = requester)
+        val collection = collectionRetrievalService.findWritable(CollectionId(value = collectionId), user = requester)
             ?: throw CollectionNotFoundException(collectionId)
 
         val commands = collectionUpdatesConverter.convert(collection.id, updateCollectionRequest, requester)
@@ -32,7 +32,7 @@ class UpdateCollection(
         collectionRepository.update(*commands)
 
         collectionRepository.find(collection.id)?.let { updatedCollection ->
-            collectionSearchService.upsert(sequenceOf(updatedCollection))
+            collectionIndex.upsert(sequenceOf(updatedCollection))
         }
     }
 }

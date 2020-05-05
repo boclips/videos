@@ -3,16 +3,11 @@ package com.boclips.videos.service.application.video
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.api.response.video.CaptionStatus
-import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoService
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.PlaybackResourceFactory
 import com.boclips.videos.service.testsupport.VideoResourceFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class VideoCaptionServiceTest {

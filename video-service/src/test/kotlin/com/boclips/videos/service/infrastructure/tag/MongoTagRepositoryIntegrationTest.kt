@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.tag
 
-import com.boclips.videos.service.domain.model.tag.TagRepository
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat

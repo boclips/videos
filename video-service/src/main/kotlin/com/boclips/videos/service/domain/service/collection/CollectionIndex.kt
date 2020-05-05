@@ -6,4 +6,4 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.videos.service.domain.model.collection.Collection
 
-interface CollectionSearchService : IndexReader<CollectionMetadata, CollectionQuery>, IndexWriter<Collection>
+interface CollectionIndex : IndexReader<CollectionMetadata, CollectionQuery>, IndexWriter<Collection>

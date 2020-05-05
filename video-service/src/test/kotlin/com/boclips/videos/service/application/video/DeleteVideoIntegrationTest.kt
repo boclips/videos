@@ -3,12 +3,12 @@ package com.boclips.videos.service.application.video
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +22,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var deleteVideo: DeleteVideo
 
     @Autowired
-    lateinit var videoService: VideoService
+    lateinit var videoRetrievalService: VideoRetrievalService
 
     @Autowired
     lateinit var collectionRepository: CollectionRepository
@@ -33,7 +33,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         deleteVideo(videoId.value, UserFactory.sample())
 
-        assertThatThrownBy { videoService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
@@ -55,7 +55,7 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         deleteVideo(videoId.value, UserFactory.sample())
 
-        assertThatThrownBy { videoService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 

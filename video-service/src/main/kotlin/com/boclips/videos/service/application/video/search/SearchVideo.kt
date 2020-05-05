@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierExcep
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges

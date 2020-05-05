@@ -1,4 +1,7 @@
-package com.boclips.videos.service.domain.model.tag
+package com.boclips.videos.service.domain.service
+
+import com.boclips.videos.service.domain.model.tag.Tag
+import com.boclips.videos.service.domain.model.tag.TagId
 
 interface TagRepository {
     fun findAll(): List<Tag>

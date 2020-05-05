@@ -8,9 +8,9 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class RebuildVideoIndexTest {
-    lateinit var searchService: VideoSearchService
+    lateinit var index: VideoIndex
     lateinit var contentPartnerService: ContentPartnerService
 
     val streamableContentPartnerId = TestFactories.aValidId()
@@ -58,7 +58,7 @@ class RebuildVideoIndexTest {
         )
 
         contentPartnerService = ContentPartnerService(contentPartnerRepository)
-        searchService = DefaultVideoSearch(
+        index = DefaultVideoSearch(
             inMemorySearchService,
             inMemorySearchService,
             contentPartnerService
@@ -71,7 +71,7 @@ class RebuildVideoIndexTest {
         val videoId2 = TestFactories.aValidId()
         val videoId3 = TestFactories.aValidId()
 
-        searchService.upsert(sequenceOf(TestFactories.createVideo(videoId = videoId1)))
+        index.upsert(sequenceOf(TestFactories.createVideo(videoId = videoId1)))
 
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
@@ -90,7 +90,7 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            searchService
+            index
         )
 
         rebuildSearchIndex.invoke()
@@ -104,7 +104,7 @@ class RebuildVideoIndexTest {
                 )
             )
         )
-        val results = searchService.search(searchRequest)
+        val results = index.search(searchRequest)
 
         assertThat(results.elements).doesNotContain(videoId1)
         assertThat(results.elements).contains(videoId2)
@@ -133,7 +133,7 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            searchService
+            index
         )
 
         rebuildSearchIndex.invoke()
@@ -147,7 +147,7 @@ class RebuildVideoIndexTest {
             )
         )
 
-        val results = searchService.search(searchRequest)
+        val results = index.search(searchRequest)
         assertThat(results.elements).containsExactlyInAnyOrder(streamableVideoId, downloadableVideoId)
     }
 
@@ -161,7 +161,7 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            searchService
+            index
         )
 
         assertThrows<MongoClientException> {

@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.testsupport.AccessRulesFactory

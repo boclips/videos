@@ -21,9 +21,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
+class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var collectionReadService: CollectionReadService
+    lateinit var collectionRetrievalService: CollectionRetrievalService
 
     @Nested
     inner class SearchingForCollections {
@@ -41,7 +41,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val pagedCollectionResult = collectionReadService.search(
+            val pagedCollectionResult = collectionRetrievalService.search(
                 query = CollectionSearchQuery(
                     text = "a collection",
                     pageSize = 1,
@@ -113,7 +113,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 ageRangeMax = 7
             )
 
-            val results = collectionReadService.search(
+            val results = collectionRetrievalService.search(
                 query = collectionSearchQuery,
                 user = UserFactory.sample(id = "user-id-34")
             )
@@ -146,7 +146,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 hasLessonPlans = null
             )
 
-            collectionReadService.search(
+            collectionRetrievalService.search(
                 query = collectionSearchQuery,
                 user = UserFactory.sample(id = "user-id-34")
             )
@@ -168,7 +168,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `can find a collection by ID`() {
             val videoId = saveVideo()
             val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
-            val collection = collectionReadService.find(
+            val collection = collectionRetrievalService.find(
                 collectionId,
                 UserFactory.sample()
             ).collection!!
@@ -190,7 +190,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val collection = collectionReadService.find(
+            val collection = collectionRetrievalService.find(
                 collectionId, UserFactory.sample(accessRulesSupplier = {
                     AccessRulesFactory.sample(
                         videoAccess = VideoAccess.Rules(
@@ -215,7 +215,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `cannot find missing collection by ID`() {
 
             assertThat(
-                collectionReadService.find(
+                collectionRetrievalService.find(
                     CollectionId("nonexistent"),
                     UserFactory.sample()
                 ).collection
@@ -226,7 +226,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `cannot find collection that access rules do not permit`() {
             val collectionId = saveCollection()
             assertThat(
-                collectionReadService.find(
+                collectionRetrievalService.find(
                     collectionId, UserFactory.sample(accessRulesSupplier = {
                         AccessRulesFactory.sample(
                             collectionAccessRule = CollectionAccessRule.specificIds(
@@ -254,7 +254,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val collection = collectionReadService.find(
+            val collection = collectionRetrievalService.find(
                 collectionId,
                 UserFactory.sample(isAuthenticated = false),
                 "12345",
@@ -271,7 +271,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can find collection that we have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionReadService.findWritable(
+            val collection = collectionRetrievalService.findWritable(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = true)
             )!!
@@ -281,7 +281,7 @@ class CollectionReadServiceIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `cannot find collection if we don't have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionReadService.findWritable(
+            val collection = collectionRetrievalService.findWritable(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = false)
             )

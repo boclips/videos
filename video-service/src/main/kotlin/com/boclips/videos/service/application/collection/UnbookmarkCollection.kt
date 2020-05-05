@@ -3,19 +3,19 @@ package com.boclips.videos.service.application.collection
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 
 class UnbookmarkCollection(
     private val collectionRepository: CollectionRepository,
-    private val collectionSearchService: CollectionSearchService,
-    private val collectionReadService: CollectionReadService
+    private val collectionIndex: CollectionIndex,
+    private val collectionRetrievalService: CollectionRetrievalService
 ) {
     operator fun invoke(collectionId: String, user: User) {
-        val collection = collectionReadService.find(CollectionId(value = collectionId), user = user).collection
+        val collection = collectionRetrievalService.find(CollectionId(value = collectionId), user = user).collection
             ?: throw CollectionNotFoundException(collectionId)
 
         if (collection.isOwner(user)) throw CollectionIllegalOperationException(
@@ -26,6 +26,6 @@ class UnbookmarkCollection(
 
         val result = collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, user))
 
-        collectionSearchService.upsert(result.map { it.collection }.asSequence())
+        collectionIndex.upsert(result.map { it.collection }.asSequence())
     }
 }

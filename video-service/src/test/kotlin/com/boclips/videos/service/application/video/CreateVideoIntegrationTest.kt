@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +22,7 @@ import java.time.Duration
 class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videoService: VideoService
+    lateinit var videoRetrievalService: VideoRetrievalService
 
     @Autowired
     lateinit var videoCounter: Counter
@@ -43,7 +43,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
     }
 
     @Test
@@ -61,7 +61,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-        assertThat(videoService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
     }
 
     @Test
@@ -78,7 +78,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         assertThat(
-            videoService.search(
+            videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,
@@ -124,7 +124,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val video = videoService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything)
+        val video = videoRetrievalService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything)
 
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }

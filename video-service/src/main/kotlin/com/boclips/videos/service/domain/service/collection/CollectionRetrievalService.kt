@@ -9,22 +9,21 @@ import com.boclips.videos.service.domain.model.AccessError
 import com.boclips.videos.service.domain.model.AccessValidationResult
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.collection.FindCollectionResult
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
-class CollectionReadService(
+class CollectionRetrievalService(
     private val collectionRepository: CollectionRepository,
-    private val collectionSearchService: CollectionSearchService,
+    private val collectionIndex: CollectionIndex,
     private val collectionAccessService: CollectionAccessService,
     private val eventService: EventService,
-    private val videoService: VideoService
+    private val videoRetrievalService: VideoRetrievalService
 ) {
     companion object : KLogging()
 
@@ -35,7 +34,7 @@ class CollectionReadService(
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
-        val results = collectionSearchService.search(searchRequest)
+        val results = collectionIndex.search(searchRequest)
 
         val collectionIds = results.elements.map { CollectionId(value = it) }
         val collections = collectionRepository.findAll(collectionIds).map {
@@ -143,7 +142,7 @@ class CollectionReadService(
         }
 
     private fun withPermittedVideos(collection: Collection, videoAccess: VideoAccess): Collection =
-        videoService.getPlayableVideos(
+        videoRetrievalService.getPlayableVideos(
             videoIds = collection.videos,
             videoAccess = videoAccess
         )

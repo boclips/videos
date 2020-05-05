@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.disciplines
 
 import com.boclips.videos.api.request.discipline.UpdateDisciplineRequest
-import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 
 class UpdateDiscipline(

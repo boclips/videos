@@ -3,8 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoRepository
-
 
 class CaptionService(
     private val videoRepository: VideoRepository,

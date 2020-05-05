@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service.video
+package com.boclips.videos.service.domain.model.video
 
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts

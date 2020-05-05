@@ -8,9 +8,9 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
-import com.boclips.videos.service.domain.service.EventConverter
+import com.boclips.videos.service.domain.service.events.EventConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.any
@@ -91,7 +91,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .videos(videos.map { EventConverter()
+                        .toVideoPayload(it) })
                     .build()
             )
 
@@ -110,7 +111,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .videos(videos.map { EventConverter()
+                        .toVideoPayload(it) })
                     .build()
             )
 
@@ -137,7 +139,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter().toVideoPayload(it) })
+                    .videos(videos.map { EventConverter()
+                        .toVideoPayload(it) })
                     .build()
             )
 

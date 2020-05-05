@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import org.assertj.core.api.Assertions.assertThat

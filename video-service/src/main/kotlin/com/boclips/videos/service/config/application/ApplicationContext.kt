@@ -46,23 +46,24 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.TagRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.CaptionValidator
-import com.boclips.videos.service.domain.service.video.VideoSearchService
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoCreationService
+import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
@@ -76,13 +77,13 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-    val videoService: VideoService,
+    val videoRetrievalService: VideoRetrievalService,
     val videoRepository: VideoRepository,
-    val videoSearchService: VideoSearchService,
-    val collectionSearchService: CollectionSearchService,
+    val videoIndex: VideoIndex,
+    val collectionIndex: CollectionIndex,
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
-    val collectionReadService: CollectionReadService,
+    val collectionRetrievalService: CollectionRetrievalService,
     val collectionCreationService: CollectionCreationService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
@@ -94,7 +95,8 @@ class ApplicationContext(
     val contentPartnerService: ContentPartnerService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val accessRuleService: AccessRuleService
+    val accessRuleService: AccessRuleService,
+    val videoCreationService: VideoCreationService
 ) {
     @Bean
     fun searchVideo(
@@ -118,7 +120,7 @@ class ApplicationContext(
         subjectClassificationService: SubjectClassificationService
     ): CreateVideo {
         return CreateVideo(
-            videoService,
+            videoCreationService,
             subjectRepository,
             contentPartnerService,
             CreateVideoRequestToVideoConverter(),
@@ -176,12 +178,12 @@ class ApplicationContext(
 
     @Bean
     fun deleteVideos(): DeleteVideo {
-        return DeleteVideo(videoRepository, collectionRepository, videoSearchService, playbackRepository)
+        return DeleteVideo(videoRepository, collectionRepository, videoIndex, playbackRepository)
     }
 
     @Bean
     fun createCollection(): CreateCollection {
-        return CreateCollection(collectionCreationService, collectionSearchService)
+        return CreateCollection(collectionCreationService, collectionIndex)
     }
 
     @Bean
@@ -190,7 +192,7 @@ class ApplicationContext(
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder
     ): GetCollection {
-        return GetCollection(collectionReadService)
+        return GetCollection(collectionRetrievalService)
     }
 
     @Bean
@@ -201,7 +203,7 @@ class ApplicationContext(
         collectionFilterAssembler: CollectionSearchQueryAssembler
     ): GetCollections {
         return GetCollections(
-            collectionReadService,
+            collectionRetrievalService,
             collectionFilterAssembler
         )
     }
@@ -211,50 +213,50 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, collectionReadService)
+        return AddVideoToCollection(collectionRepository, collectionRetrievalService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, collectionReadService)
+        return RemoveVideoFromCollection(collectionRepository, collectionRetrievalService)
     }
 
     @Bean
     fun updateCollection(collectionUpdatesConverter: CollectionUpdatesConverter): UpdateCollection {
         return UpdateCollection(
-            collectionSearchService,
+            collectionIndex,
             collectionRepository,
             collectionUpdatesConverter,
-            collectionReadService
+            collectionRetrievalService
         )
     }
 
     @Bean
     fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, collectionSearchService, collectionReadService)
+        return BookmarkCollection(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
     fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, collectionSearchService, collectionReadService)
+        return UnbookmarkCollection(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
     fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionRepository, collectionSearchService, collectionReadService)
+        return DeleteCollection(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
     fun rebuildSearchIndex(): RebuildVideoIndex {
         return RebuildVideoIndex(
             videoRepository,
-            videoSearchService
+            videoIndex
         )
     }
 
     @Bean
     fun rebuildCollectionSearchIndex(): RebuildCollectionIndex {
-        return RebuildCollectionIndex(collectionRepository, collectionSearchService)
+        return RebuildCollectionIndex(collectionRepository, collectionIndex)
     }
 
     @Bean
@@ -283,7 +285,7 @@ class ApplicationContext(
 
     @Bean
     fun deleteSubject(): DeleteSubject {
-        return DeleteSubject(subjectRepository, collectionRepository, collectionSearchService)
+        return DeleteSubject(subjectRepository, collectionRepository, collectionIndex)
     }
 
     @Bean
@@ -366,7 +368,7 @@ class ApplicationContext(
         return VideoIndexUpdater(
             videoRepository,
             contentPartnerService,
-            videoSearchService,
+            videoIndex,
             legacyVideoSearchService
         )
     }
@@ -399,13 +401,13 @@ class ApplicationContext(
 
     @Bean
     fun getVideoById(): GetVideoById {
-        return GetVideoById(videoService)
+        return GetVideoById(videoRetrievalService)
     }
 
     @Bean
     fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {
         return GetVideosByQuery(
-            videoService,
+            videoRetrievalService,
             eventService,
             userService,
             searchQueryConverter

@@ -4,7 +4,7 @@ import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand

@@ -5,8 +5,8 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
@@ -21,12 +21,12 @@ import org.junit.jupiter.api.assertThrows
 
 class RebuildCollectionIndexTest {
 
-    lateinit var searchService: CollectionSearchService
+    lateinit var index: CollectionIndex
 
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = CollectionSearchServiceFake()
-        searchService = DefaultCollectionSearch(inMemorySearchService, inMemorySearchService)
+        index = DefaultCollectionSearch(inMemorySearchService, inMemorySearchService)
     }
 
     @Test
@@ -35,7 +35,7 @@ class RebuildCollectionIndexTest {
         val collectionId2 = CollectionId(TestFactories.aValidId())
         val collectionId3 = CollectionId(TestFactories.aValidId())
 
-        searchService.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1, isPublic = true)))
+        index.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1, isPublic = true)))
 
         val collectionRepository = mock<CollectionRepository> {
             on {
@@ -52,11 +52,11 @@ class RebuildCollectionIndexTest {
             }
         }
 
-        val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, searchService)
+        val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, index)
 
         rebuildSearchIndex()
 
-        val results = searchService.search(PaginatedSearchRequest(CollectionQuery(phrase = "collection")))
+        val results = index.search(PaginatedSearchRequest(CollectionQuery(phrase = "collection")))
 
         assertThat(results.elements).containsExactlyInAnyOrder(
             collectionId2.value,
@@ -72,7 +72,7 @@ class RebuildCollectionIndexTest {
             } doThrow (MongoClientException("Boom"))
         }
 
-        val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, searchService)
+        val rebuildSearchIndex = RebuildCollectionIndex(collectionRepository, index)
 
         assertThrows<MongoClientException> {
             rebuildSearchIndex()

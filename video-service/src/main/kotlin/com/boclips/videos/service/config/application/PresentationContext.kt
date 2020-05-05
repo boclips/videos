@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.presentation.converters.LegalRestricti
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.filter.ForwardedHeaderFilter
 
 @Configuration
-class PresentationContext(val videoService: VideoService) {
+class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
 
     @Bean
     fun forwardedHeaderFilter(): FilterRegistrationBean<ForwardedHeaderFilter> {
@@ -115,7 +115,7 @@ class PresentationContext(val videoService: VideoService) {
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,
-            videoService
+            videoRetrievalService
         )
     }
 }

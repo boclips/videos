@@ -6,8 +6,7 @@ import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoRepository
-import com.boclips.videos.service.domain.service.EventConverter
+import com.boclips.videos.service.domain.service.events.EventConverter
 
 class VideoRepositoryEventDecorator(private val videoRepository: VideoRepository, private val eventBus: EventBus) :
     VideoRepository by videoRepository {
@@ -44,11 +43,13 @@ class VideoRepositoryEventDecorator(private val videoRepository: VideoRepository
     }
 
     private fun publishVideoUpdated(video: Video) {
-        eventBus.publish(VideoUpdated.of(EventConverter().toVideoPayload(video)))
+        eventBus.publish(VideoUpdated.of(
+            EventConverter().toVideoPayload(video)))
     }
 
     private fun publishVideosUpdated(videos: List<Video>) {
-        eventBus.publish(VideosUpdated.builder().videos(videos.map { EventConverter().toVideoPayload(it) }).build())
+        eventBus.publish(VideosUpdated.builder().videos(videos.map { EventConverter()
+            .toVideoPayload(it) }).build())
     }
 
     private fun publishVideoCreated(video: Video) {

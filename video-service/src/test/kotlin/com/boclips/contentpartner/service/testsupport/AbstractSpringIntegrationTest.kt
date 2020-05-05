@@ -36,8 +36,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KAL
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.damnhandy.uri.template.UriTemplate
@@ -82,10 +82,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @Autowired
-    lateinit var videoSearchService: VideoSearchService
+    lateinit var videoIndex: VideoIndex
 
     @Autowired
-    lateinit var collectionSearchService: CollectionSearchService
+    lateinit var collectionIndex: CollectionIndex
 
     @Autowired
     lateinit var fakeSignedLinkProvider: TestSignedLinkProvider
@@ -158,8 +158,8 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        collectionSearchService.safeRebuildIndex(emptySequence())
-        videoSearchService.safeRebuildIndex(emptySequence())
+        collectionIndex.safeRebuildIndex(emptySequence())
+        videoIndex.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()

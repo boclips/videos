@@ -7,7 +7,7 @@ import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -43,7 +43,7 @@ class BookmarkCollectionTest : AbstractSpringIntegrationTest() {
 
         bookmarkCollection(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
-        val results = collectionSearchService.search(
+        val results = collectionIndex.search(
             searchRequest = PaginatedSearchRequest(
                 query = CollectionQuery(
                     visibilityForOwners = setOf(VisibilityForOwner(null, CollectionVisibilityQuery.publicOnly())),

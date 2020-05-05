@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.subject
 
-import com.boclips.videos.service.domain.model.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.service.collection.CollectionReadService
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -18,7 +18,7 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Autowired
-    lateinit var collectionReadService: CollectionReadService
+    lateinit var collectionRetrievalService: CollectionRetrievalService
 
     @Autowired
     lateinit var deleteSubject: DeleteSubject
@@ -39,7 +39,7 @@ class DeleteSubjectIntegrationTest : AbstractSpringIntegrationTest() {
         val privateCollection = collectionRepository.find(privateCollectionWithSubject)!!
         assertThat(privateCollection.subjects.map { it.id }).doesNotContain(subject.id)
 
-        val results = collectionReadService.search(
+        val results = collectionRetrievalService.search(
             CollectionSearchQuery(
                 subjectIds = listOf(subject.id.value),
                 text = null,

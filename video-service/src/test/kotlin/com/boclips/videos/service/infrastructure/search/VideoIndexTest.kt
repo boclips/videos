@@ -3,17 +3,17 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
+class VideoIndexTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var searchService: VideoSearchService
+    lateinit var index: VideoIndex
 
     @Test
     fun `upsert inserts videos`() {
@@ -28,10 +28,10 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
             type = ContentType.STOCK
         )
 
-        searchService.upsert(sequenceOf(videoNews, videoStock))
+        index.upsert(sequenceOf(videoNews, videoStock))
 
         assertThat(
-            searchService.search(
+            index.search(
                 PaginatedSearchRequest(
                     query = VideoQuery("isNews"),
                     startIndex = 0,
@@ -40,7 +40,7 @@ class VideoSearchServiceTest : AbstractSpringIntegrationTest() {
             ).elements
         ).isNotEmpty
         assertThat(
-            searchService.search(
+            index.search(
                 PaginatedSearchRequest(
                     query = VideoQuery("stock"),
                     startIndex = 0,

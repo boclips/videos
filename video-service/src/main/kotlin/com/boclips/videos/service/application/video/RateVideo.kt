@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.exceptions.OperationForbiddenExcep
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.validation.annotation.Validated

@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.service.domain.model.tag.TagRepository
-import com.boclips.videos.service.domain.model.video.VideoRepository
+import com.boclips.videos.service.domain.service.TagRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

@@ -28,7 +28,6 @@ import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.tag.TagResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -45,7 +44,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
@@ -99,7 +98,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var videoSearchService: VideoSearchServiceFake
 
     @Autowired
-    lateinit var collectionSearchService: CollectionSearchService
+    lateinit var collectionIndex: CollectionIndex
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -193,7 +192,7 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        collectionSearchService.safeRebuildIndex(emptySequence())
+        collectionIndex.safeRebuildIndex(emptySequence())
         videoSearchService.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()

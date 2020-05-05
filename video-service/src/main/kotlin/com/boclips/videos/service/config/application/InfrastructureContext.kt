@@ -2,8 +2,8 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
-import com.boclips.videos.service.domain.model.discipline.DisciplineRepository
-import com.boclips.videos.service.domain.model.tag.TagRepository
+import com.boclips.videos.service.domain.service.DisciplineRepository
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects

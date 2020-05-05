@@ -8,7 +8,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.video.VideoService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -16,7 +16,7 @@ class CollectionResourceConverter(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val attachmentsToResourceConverter: AttachmentToResourceConverter,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
-    private val videoService: VideoService
+    private val videoRetrievalService: VideoRetrievalService
 ) {
     fun buildCollectionResource(collection: Collection, projection: Projection, user: User) =
         when (projection) {
@@ -31,7 +31,7 @@ class CollectionResourceConverter(
             owner = collection.owner.value,
             title = collection.title,
             videos = videoToResourceConverter.convert(
-                videoService.getPlayableVideos(collection.videos, user.accessRules.videoAccess),
+                videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess),
                 user
             ),
             updatedAt = collection.updatedAt,

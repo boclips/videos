@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId

@@ -12,8 +12,8 @@ import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.ReindexProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.ContentPartnerService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import org.springframework.context.annotation.Bean
@@ -34,7 +34,7 @@ class SearchContext {
         elasticSearchClient: ElasticSearchClient,
         contentPartnerService: ContentPartnerService,
         reindexProperties: ReindexProperties
-    ): VideoSearchService {
+    ): VideoIndex {
         return DefaultVideoSearch(
             VideoIndexReader(elasticSearchClient.buildClient()),
             VideoIndexWriter.createInstance(
@@ -51,7 +51,7 @@ class SearchContext {
     fun collectionSearchService(
         elasticSearchClient: ElasticSearchClient,
         reindexProperties: ReindexProperties
-    ): CollectionSearchService {
+    ): CollectionIndex {
         return DefaultCollectionSearch(
             CollectionIndexReader(elasticSearchClient.buildClient()),
             CollectionIndexWriter.createInstance(

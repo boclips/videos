@@ -4,8 +4,8 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.videos.service.domain.service.ContentPartnerService
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
-import com.boclips.videos.service.domain.service.video.VideoSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.nhaarman.mockitokotlin2.mock
@@ -25,7 +25,7 @@ class SearchContextFake {
     fun videoMetadataSearchService(
         contentPartnerService: ContentPartnerService,
         videoSearchServiceFake: VideoSearchServiceFake
-    ): VideoSearchService {
+    ): VideoIndex {
         return DefaultVideoSearch(
             videoSearchServiceFake,
             videoSearchServiceFake,
@@ -34,7 +34,7 @@ class SearchContextFake {
     }
 
     @Bean
-    fun collectionMetadataSearchService(): CollectionSearchService {
+    fun collectionMetadataSearchService(): CollectionIndex {
         val inMemoryCollectionSearch = CollectionSearchServiceFake()
         return DefaultCollectionSearch(inMemoryCollectionSearch, inMemoryCollectionSearch)
     }

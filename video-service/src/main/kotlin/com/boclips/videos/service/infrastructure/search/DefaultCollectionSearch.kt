@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.videos.service.domain.service.collection.CollectionSearchService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
 
 class DefaultCollectionSearch(
     indexReader: IndexReader<CollectionMetadata, CollectionQuery>,
@@ -14,7 +14,7 @@ class DefaultCollectionSearch(
     indexReader,
     indexWriter
 ),
-    CollectionSearchService {
+    CollectionIndex {
 
     override fun convert(document: com.boclips.videos.service.domain.model.collection.Collection): CollectionMetadata {
         return CollectionMetadataConverter.convert(document)
