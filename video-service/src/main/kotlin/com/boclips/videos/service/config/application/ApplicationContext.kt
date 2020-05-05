@@ -38,7 +38,18 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.BroadcastVideos
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.UpdateCaptionContent
+import com.boclips.videos.service.application.video.UpdateCaptions
+import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.VideoCaptionService
+import com.boclips.videos.service.application.video.VideoPlaybackService
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
@@ -46,15 +57,14 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.TagRepository
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.DisciplineRepository
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -62,7 +72,9 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.CaptionValidator
 import com.boclips.videos.service.domain.service.video.VideoCreationService
+import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
@@ -177,8 +189,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun deleteVideos(): DeleteVideo {
-        return DeleteVideo(videoRepository, collectionRepository, videoIndex, playbackRepository)
+    fun deleteVideos(videoDeletionService: VideoDeletionService): DeleteVideo {
+        return DeleteVideo(videoDeletionService)
     }
 
     @Bean

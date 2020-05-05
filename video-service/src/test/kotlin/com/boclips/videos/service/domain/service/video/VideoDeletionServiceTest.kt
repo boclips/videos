@@ -1,25 +1,22 @@
-package com.boclips.videos.service.application.video
+package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
-
+class VideoDeletionServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var deleteVideo: DeleteVideo
+    lateinit var videoDeletionService: VideoDeletionService
 
     @Autowired
     lateinit var videoRetrievalService: VideoRetrievalService
@@ -31,21 +28,9 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting deletion of an existing video deletes the video`() {
         val videoId = saveVideo()
 
-        deleteVideo(videoId.value, UserFactory.sample())
+        videoDeletionService.delete(videoId, UserFactory.sample())
 
-        assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
-            .isInstanceOf(VideoNotFoundException::class.java)
-    }
-
-    @Test
-    fun `requesting deletion with blank video ID throws an exception`() {
-        assertThatThrownBy { deleteVideo("   ", UserFactory.sample()) }
-            .isInstanceOf(VideoNotFoundException::class.java)
-    }
-
-    @Test
-    fun `requesting deletion with null video ID throws an exception`() {
-        assertThatThrownBy { deleteVideo(null, UserFactory.sample()) }
+        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
@@ -53,9 +38,9 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `remove deletes a video from repository`() {
         val videoId = saveVideo(title = "Some title", description = "test description 3")
 
-        deleteVideo(videoId.value, UserFactory.sample())
+        videoDeletionService.delete(videoId, UserFactory.sample())
 
-        assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
@@ -63,9 +48,9 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `remove deletes a video from search service`() {
         val videoId = saveVideo(title = "Some title", description = "test description 3")
 
-        deleteVideo(videoId.value, UserFactory.sample())
+        videoDeletionService.delete(videoId, UserFactory.sample())
 
-        assertThat(
+        Assertions.assertThat(
             videoSearchService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
@@ -84,10 +69,10 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3"
         )
 
-        deleteVideo(videoId.value, UserFactory.sample())
+        videoDeletionService.delete(videoId, UserFactory.sample())
 
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "id-123")
-        assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))).isEmpty()
+        Assertions.assertThat(kalturaPlaybackProvider.retrievePlayback(listOf(playbackId))).isEmpty()
     }
 
     @Test
@@ -108,8 +93,8 @@ class DeleteVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        deleteVideo(videoId.value, UserFactory.sample())
+        videoDeletionService.delete(videoId, UserFactory.sample())
 
-        assertThat(collectionRepository.find(collectionId)!!.videos).doesNotContain(videoId)
+        Assertions.assertThat(collectionRepository.find(collectionId)!!.videos).doesNotContain(videoId)
     }
 }

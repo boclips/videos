@@ -19,22 +19,23 @@ import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
-import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoCreationService
-import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
+import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -73,6 +74,17 @@ class DomainContext(
         videoRepository: VideoRepository
     ): VideoCreationService {
         return VideoCreationService(contentPartnerRepository, videoRepository)
+    }
+
+    @Bean
+    fun videoDeletionService(
+        contentPartnerRepository: ContentPartnerRepository,
+        videoRepository: VideoRepository,
+        collectionRepository: CollectionRepository,
+        videoIndex: VideoIndex,
+        playbackRepository: PlaybackRepository
+    ): VideoDeletionService {
+        return VideoDeletionService(videoRepository, collectionRepository, videoIndex, playbackRepository)
     }
 
     @Bean
