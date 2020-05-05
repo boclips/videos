@@ -40,9 +40,9 @@ class InfrastructureContext(
 ) {
     @Primary
     @Bean
-    fun collectionRepository(eventService: EventService): CollectionRepository {
+    fun collectionRepository(eventService: EventService, collectionRepository: CollectionRepository): CollectionRepository {
         return CollectionRepositoryEventsDecorator(
-            mongoCollectionRepository,
+            collectionRepository,
             eventService
         )
     }

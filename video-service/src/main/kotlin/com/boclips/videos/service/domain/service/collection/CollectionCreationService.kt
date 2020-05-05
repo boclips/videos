@@ -9,12 +9,15 @@ import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 
 class CollectionCreationService(
     private val collectionRepository: CollectionRepository,
+    private val collectionIndex: CollectionIndex,
     private val collectionRetrievalService: CollectionRetrievalService
 ) {
     fun create(createCollectionCommand: CreateCollectionCommand, videos: List<VideoId>, user: User): Collection? {
         val createdCollection = collectionRepository.create(createCollectionCommand)
 
         addVideosToCollection(videos, createdCollection, user)
+
+        collectionIndex.upsert(sequenceOf(createdCollection))
 
         return collectionRetrievalService.find(createdCollection.id, user).collection
     }

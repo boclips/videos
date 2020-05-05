@@ -68,8 +68,8 @@ class CollectionRetrievalService(
         )
     }
 
-    fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult =
-        collectionRepository.find(id)?.let {
+    fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult {
+        return collectionRepository.find(id)?.let {
             val accessValidationResult = validateReadAccess(it, user, referer, shareCode)
             return if (accessValidationResult.successful) {
                 var collection = loadWithAccessibleVideos(it, user)
@@ -85,15 +85,17 @@ class CollectionRetrievalService(
                 error = AccessError.Default(id, user.id)
             )
         )
+    }
 
-    fun findWritable(id: CollectionId, user: User): Collection? =
-        collectionRepository.find(id)?.let {
+    fun findSpecificOrganisationOfUser(id: CollectionId, user: User): Collection? {
+        return collectionRepository.find(id)?.let {
             if (!hasWriteAccess(it, user)) {
                 null
             } else {
                 loadWithAccessibleVideos(it, user)
             }
         }
+    }
 
     private fun loadWithAccessibleAttachments(
         collection: Collection,

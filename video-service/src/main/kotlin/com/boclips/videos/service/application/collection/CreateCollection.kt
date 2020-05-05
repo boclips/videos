@@ -8,12 +8,8 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionIndex
 
-class CreateCollection(
-    private val collectionCreationService: CollectionCreationService,
-    private val collectionIndex: CollectionIndex
-) {
+class CreateCollection(private val collectionCreationService: CollectionCreationService) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest, requester: User): Collection {
         val createCollectionCommand = CreateCollectionCommand(
             owner = requester.id,
@@ -29,8 +25,6 @@ class CreateCollection(
         }
 
         return collectionCreationService.create(createCollectionCommand, videoIds, requester)
-            ?.also { createdCollection ->
-                collectionIndex.upsert(sequenceOf(createdCollection))
-            } ?: throw CollectionCreationException("Cannot find created collection")
+            ?: throw CollectionCreationException("Cannot find created collection")
     }
 }

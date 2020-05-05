@@ -61,11 +61,12 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
+import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -79,6 +80,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
@@ -98,6 +100,7 @@ class ApplicationContext(
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
     val collectionRetrievalService: CollectionRetrievalService,
+    val collectionUpdateService: CollectionUpdateService,
     val collectionCreationService: CollectionCreationService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
@@ -197,7 +200,7 @@ class ApplicationContext(
 
     @Bean
     fun createCollection(): CreateCollection {
-        return CreateCollection(collectionCreationService, collectionIndex)
+        return CreateCollection(collectionCreationService)
     }
 
     @Bean
@@ -227,12 +230,12 @@ class ApplicationContext(
 
     @Bean
     fun addVideoToCollection(): AddVideoToCollection {
-        return AddVideoToCollection(collectionRepository, collectionRetrievalService)
+        return AddVideoToCollection(collectionUpdateService)
     }
 
     @Bean
     fun removeVideoFromCollection(): RemoveVideoFromCollection {
-        return RemoveVideoFromCollection(collectionRepository, collectionRetrievalService)
+        return RemoveVideoFromCollection(collectionUpdateService)
     }
 
     @Bean
@@ -246,13 +249,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun bookmarkCollection(): BookmarkCollection {
-        return BookmarkCollection(collectionRepository, collectionIndex, collectionRetrievalService)
+    fun bookmarkCollection(collectionBookmarkService: CollectionBookmarkService): BookmarkCollection {
+        return BookmarkCollection(collectionBookmarkService)
     }
 
     @Bean
-    fun unbookmarkCollection(): UnbookmarkCollection {
-        return UnbookmarkCollection(collectionRepository, collectionIndex, collectionRetrievalService)
+    fun unbookmarkCollection(collectionBookmarkService: CollectionBookmarkService): UnbookmarkCollection {
+        return UnbookmarkCollection(collectionBookmarkService)
     }
 
     @Bean

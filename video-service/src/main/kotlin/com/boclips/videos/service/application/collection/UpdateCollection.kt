@@ -24,7 +24,7 @@ class UpdateCollection(
             }
         }
 
-        val collection = collectionRetrievalService.findWritable(CollectionId(value = collectionId), user = requester)
+        val collection = collectionRetrievalService.findSpecificOrganisationOfUser(CollectionId(value = collectionId), user = requester)
             ?: throw CollectionNotFoundException(collectionId)
 
         val commands = collectionUpdatesConverter.convert(collection.id, updateCollectionRequest, requester)

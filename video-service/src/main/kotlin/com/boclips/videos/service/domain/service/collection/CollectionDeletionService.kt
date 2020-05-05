@@ -11,7 +11,7 @@ class CollectionDeletionService(
     private val collectionRetrievalService: CollectionRetrievalService
 ) {
     fun delete(collectionId: CollectionId, user: User) {
-        collectionRetrievalService.findWritable(collectionId, user = user)
+        collectionRetrievalService.findSpecificOrganisationOfUser(collectionId, user = user)
             ?: throw CollectionNotFoundException(collectionId.value)
 
         collectionRepository.delete(collectionId, user)

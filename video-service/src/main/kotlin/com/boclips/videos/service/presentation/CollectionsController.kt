@@ -157,7 +157,7 @@ class CollectionsController(
         @PathVariable("collection_id") collectionId: String?,
         @PathVariable("video_id") videoId: String?
     ): Any? {
-        addVideoToCollection(collectionId = collectionId, videoId = videoId, requester = getCurrentUser())
+        addVideoToCollection(collectionId = collectionId, videoId = videoId, user = getCurrentUser())
         return null
     }
 

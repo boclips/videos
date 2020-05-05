@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 
+// TODO: converter should not depend on service
 class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
     fun convert(
         collectionId: CollectionId,

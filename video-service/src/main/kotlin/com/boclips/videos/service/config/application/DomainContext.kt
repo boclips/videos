@@ -21,11 +21,12 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
+import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
@@ -38,6 +39,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecor
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -108,9 +110,10 @@ class DomainContext(
     @Bean
     fun collectionCreationService(
         collectionRepository: CollectionRepository,
+        collectionIndex: CollectionIndex,
         collectionRetrievalService: CollectionRetrievalService
     ): CollectionCreationService {
-        return CollectionCreationService(collectionRepository, collectionRetrievalService)
+        return CollectionCreationService(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
@@ -120,6 +123,23 @@ class DomainContext(
         collectionIndex: CollectionIndex
     ): CollectionDeletionService {
         return CollectionDeletionService(collectionRepository, collectionIndex, collectionRetrievalService)
+    }
+
+    @Bean
+    fun collectionUpdateService(
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService
+    ): CollectionUpdateService {
+        return CollectionUpdateService(collectionRepository, collectionRetrievalService)
+    }
+
+    @Bean
+    fun collectionBookmarkService(
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
+    ): CollectionBookmarkService {
+        return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
     }
 
     @Bean
@@ -150,7 +170,10 @@ class DomainContext(
     }
 
     @Bean
-    fun playbackService(videoRepository: VideoRepository, playbackRepository: PlaybackRepository): PlaybackUpdateService {
+    fun playbackService(
+        videoRepository: VideoRepository,
+        playbackRepository: PlaybackRepository
+    ): PlaybackUpdateService {
         return PlaybackUpdateService(videoRepository, playbackRepository)
     }
 
