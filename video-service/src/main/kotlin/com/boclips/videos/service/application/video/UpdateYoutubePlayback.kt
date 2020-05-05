@@ -9,7 +9,7 @@ open class UpdateYoutubePlayback(
 ) {
     companion object : KLogging()
 
-    open fun updateYoutubeVideosPlayback() {
+    open operator fun invoke() {
         playbackService.updatePlaybackFor(filter = VideoFilter.IsYoutube)
     }
 }

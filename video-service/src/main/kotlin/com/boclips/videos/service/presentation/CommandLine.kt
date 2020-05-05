@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
+import com.boclips.videos.service.application.video.UpdateYoutubePlayback
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import mu.KLogging
@@ -15,7 +16,8 @@ class CommandLine(
     val env: Environment,
     val collectionIndex: RebuildCollectionIndex,
     val videoIndex: RebuildVideoIndex,
-    val rebuildLegacySearchIndex: RebuildLegacySearchIndex
+    val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
+    val updateYoutubePlayback: UpdateYoutubePlayback
 ) {
     companion object : KLogging()
 
@@ -32,6 +34,10 @@ class CommandLine(
             }
             "reindex-legacy" -> {
                 rebuildLegacySearchIndex.invoke(ConsoleProgressNotifier())
+                exitProcess(0)
+            }
+            "synchronise-youtube-playback" -> {
+                updateYoutubePlayback.invoke()
                 exitProcess(0)
             }
         }
