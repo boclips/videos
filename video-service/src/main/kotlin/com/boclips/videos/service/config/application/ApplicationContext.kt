@@ -62,6 +62,7 @@ import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
+import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
@@ -254,8 +255,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun deleteCollection(): DeleteCollection {
-        return DeleteCollection(collectionRepository, collectionIndex, collectionRetrievalService)
+    fun deleteCollection(collectionDeletionService: CollectionDeletionService): DeleteCollection {
+        return DeleteCollection(collectionDeletionService)
     }
 
     @Bean

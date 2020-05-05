@@ -22,6 +22,7 @@ import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
+import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
@@ -88,7 +89,7 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionReadService(
+    fun collectionRetrievalService(
         collectionRepository: CollectionRepository,
         collectionIndex: CollectionIndex,
         collectionAccessService: CollectionAccessService,
@@ -105,11 +106,20 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionWriteService(
+    fun collectionCreationService(
         collectionRepository: CollectionRepository,
         collectionRetrievalService: CollectionRetrievalService
     ): CollectionCreationService {
         return CollectionCreationService(collectionRepository, collectionRetrievalService)
+    }
+
+    @Bean
+    fun collectionDeletionService(
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
+    ): CollectionDeletionService {
+        return CollectionDeletionService(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean

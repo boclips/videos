@@ -1,9 +1,9 @@
-package com.boclips.videos.service.application.collection
+package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
-class DeleteCollectionTest : AbstractSpringIntegrationTest() {
+class CollectionDeletionServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var collectionRepository: CollectionRepository
 
