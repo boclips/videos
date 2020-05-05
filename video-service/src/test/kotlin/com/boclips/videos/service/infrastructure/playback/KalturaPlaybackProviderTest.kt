@@ -184,6 +184,20 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `retrieves captions content by playback id`() {
+        val playbackId = mediaEntryWithCaptionsByEntryId(
+            label = "English (auto-generated)",
+            language = KalturaLanguage.ENGLISH,
+            entryId = "entry-id",
+            captionContent = "Captions content to retrieve"
+        )
+
+        val content = kalturaPlaybackProvider.getCaptionContent(playbackId)
+
+        assertThat(content).isEqualTo("Captions content to retrieve")
+    }
+
+    @Test
     fun `deletes auto-generated captions when null`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
 

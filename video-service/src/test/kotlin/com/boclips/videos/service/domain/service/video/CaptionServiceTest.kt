@@ -17,6 +17,17 @@ internal class CaptionServiceTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Test
+    fun`retrieves the caption content of a video`() {
+        val video = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val existingCaptions = createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)"
+        )
+        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "captions content to retrieve")
+
+    }
+
+    @Test
     fun `Updates the caption content of a video`() {
         val video = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
         val existingCaptions = createKalturaCaptionAsset(

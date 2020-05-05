@@ -177,7 +177,7 @@ class ApplicationContext(
 
     @Bean
     fun videoCaptionService(kalturaClient: KalturaClient): VideoCaptionService {
-        return VideoCaptionService(kalturaClient)
+        return VideoCaptionService(kalturaClient, captionService())
     }
 
     @Bean
@@ -186,8 +186,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun captionService(captionValidator: CaptionValidator): CaptionService {
-        return CaptionService(videoRepository, playbackRepository, captionValidator)
+    fun captionService(): CaptionService {
+        return CaptionService(videoRepository, playbackRepository, captionValidator())
     }
 
     @Bean

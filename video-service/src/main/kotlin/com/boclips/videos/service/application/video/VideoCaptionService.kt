@@ -3,10 +3,13 @@ package com.boclips.videos.service.application.video
 import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.*
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.video.CaptionService
 import mu.KLogging
 
-class VideoCaptionService(val kalturaClient: KalturaClient) {
+class VideoCaptionService(val kalturaClient: KalturaClient, val captionService: CaptionService) {
     companion object : KLogging()
 
     fun withCaptionDetails(video: VideoResource): VideoResource {
@@ -21,4 +24,9 @@ class VideoCaptionService(val kalturaClient: KalturaClient) {
             }
         )
     }
+
+    fun getCaptionContent(videoId: String): CaptionsResource? {
+        return captionService.getCaptionContent(VideoId(videoId))?.let { CaptionsResource(content = it) }
+    }
+
 }

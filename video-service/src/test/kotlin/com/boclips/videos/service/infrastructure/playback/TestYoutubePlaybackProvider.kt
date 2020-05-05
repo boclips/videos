@@ -29,6 +29,10 @@ class TestYoutubePlaybackProvider :
             .toMap()
     }
 
+    override fun getCaptionContent(playbackId: PlaybackId): String? {
+        throw UnsupportedOperationException("YouTube captions not supported")
+    }
+
     override fun removePlayback(playbackId: PlaybackId) {
     }
 

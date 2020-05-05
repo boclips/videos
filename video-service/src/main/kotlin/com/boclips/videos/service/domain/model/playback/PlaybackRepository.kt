@@ -50,6 +50,10 @@ class PlaybackRepository(
         return getProvider(playbackId = playbackId).overwriteCaptionContent(playbackId, content)
     }
 
+    fun getCaptionContent(playbackId: PlaybackId): String? {
+        return getProvider(playbackId = playbackId).getCaptionContent(playbackId)
+    }
+
     fun getProviderMetadata(playbackId: PlaybackId): VideoProviderMetadata? {
         return getProviderMetadata(listOf(playbackId)).values.firstOrNull()
     }

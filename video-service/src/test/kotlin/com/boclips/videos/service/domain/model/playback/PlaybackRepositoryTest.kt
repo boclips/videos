@@ -96,6 +96,17 @@ class PlaybackRepositoryTest {
     }
 
 
+    @Test
+    fun `retrieves caption content`() {
+        val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
+        playbackRepository.uploadCaptions(playbackId, createCaptions(content = "My caption content"))
+        playbackRepository.getCaptionContent(playbackId)
+
+        val captionContent = playbackRepository.getCaptionContent(playbackId)
+
+        assertThat(captionContent).isEqualTo("My caption content")
+    }
+
 
     @Test
     fun `throws on attempts to upload captions to youtube`() {

@@ -1,7 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.kalturaclient.captionasset.resources.CaptionAssetListResource
+import com.boclips.kalturaclient.captionasset.resources.CaptionAssetResource
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.*
+import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
@@ -254,4 +257,13 @@ class VideoController(
         }
         return ResponseEntity(HttpStatus.OK)
     }
+
+    @GetMapping("/v1/videos/{id}/captions")
+    fun getCaptions(@PathVariable("id") videoId: String?) : ResponseEntity<CaptionsResource> {
+        videoCaptionService.getCaptionContent(videoId!!)?.let {
+            return ResponseEntity(it, HttpStatus.OK)
+        }
+        return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
 }
