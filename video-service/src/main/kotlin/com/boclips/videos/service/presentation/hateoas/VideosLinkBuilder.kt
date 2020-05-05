@@ -10,7 +10,8 @@ import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.CAPTIONS
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE_CAPTIONS
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_CAPTIONS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
@@ -28,7 +29,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val TAG = "tag"
         const val UPDATE = "update"
         const val ADD_ATTACHMENT = "addAttachment"
-        const val CAPTIONS = "captions"
+        const val GET_CAPTIONS = "getCaptions"
+        const val UPDATE_CAPTIONS = "updateCaptions"
     }
 
     fun self(videoId: String?): HateoasLink {
@@ -167,9 +169,25 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     .pathSegment("captions")
                     .build()
                     .toUriString()
-                , CAPTIONS
+                , UPDATE_CAPTIONS
             )
         )
+    }
+
+    fun getCaptions(): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+        getIfAuthenticated {
+            getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                HateoasLink.of(
+                    Link(
+                        getVideosRootWithoutParams()
+                            .pathSegment("{id}")
+                            .pathSegment("captions")
+                            .build()
+                            .toUriString()
+                    ).withRel(GET_CAPTIONS)
+                )
+            }
+        }
     }
 
     fun addAttachment(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {

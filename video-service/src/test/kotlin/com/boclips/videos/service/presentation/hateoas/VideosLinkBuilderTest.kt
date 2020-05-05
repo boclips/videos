@@ -324,7 +324,28 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNotNull
         assertThat(link?.href).contains("/v1/videos/$validVideoId/captions")
-        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.CAPTIONS)
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.UPDATE_CAPTIONS)
+    }
+
+    @Test
+    fun `get captions link is null when user is not allowed`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val link = videosLinkBuilder.getCaptions()
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `get captions link is there when user is allowed`() {
+        setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
+
+        val link = videosLinkBuilder.getCaptions()
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).contains("/v1/videos/{id}/captions")
+        assertThat(link?.templated).isTrue()
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.GET_CAPTIONS)
     }
 
     @Test

@@ -67,6 +67,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.ageRanges").doesNotExist())
             .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
+            .andExpect(jsonPath("$._links.getCaptions").doesNotExist())
     }
 
     @Test
@@ -150,6 +151,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.tags.href", endsWith("tags")))
 
             .andExpect(jsonPath("$._links.videos").doesNotExist())
+            .andExpect(jsonPath("$._links.getCaptions").doesNotExist())
             .andExpect(jsonPath("$._links.adminCollectionSearch").doesNotExist())
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
@@ -211,6 +213,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartnerContracts.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.contractLegalRestrictions.href", endsWith("/contract-legal-restrictions")))
             .andExpect(jsonPath("$._links.contractLegalRestrictions.templated", equalTo(false)))
+            .andExpect(jsonPath("$._links.getCaptions.href", endsWith("/captions")))
+            .andExpect(jsonPath("$._links.getCaptions.templated", equalTo(true)))
     }
 
     @Test
