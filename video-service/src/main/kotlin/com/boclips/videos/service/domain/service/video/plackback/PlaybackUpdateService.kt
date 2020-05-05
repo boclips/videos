@@ -7,21 +7,21 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
-open class PlaybackService(
+open class PlaybackUpdateService(
     private val videoRepository: VideoRepository,
     private val playbackRepository: PlaybackRepository
 ) {
     companion object : KLogging()
 
-    open fun updatePlaybackFor(filter: VideoFilter) {
+    open fun updatePlaybacksFor(filter: VideoFilter) {
         videoRepository.streamAll(filter) { sequence ->
             sequence.forEach { video ->
-                updatePlaybackFor(video)
+                updatePlaybacksFor(video)
             }
         }
     }
 
-    private fun updatePlaybackFor(video: Video) {
+    private fun updatePlaybacksFor(video: Video) {
         if (!video.isPlayable()) {
             logger.info { "Video ${video.videoId} has no playback information associated with it." }
             return

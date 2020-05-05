@@ -38,7 +38,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
-import com.boclips.videos.service.domain.service.video.plackback.PlaybackService
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -157,8 +157,8 @@ class DomainContext(
     }
 
     @Bean
-    fun playbackService(videoRepository: VideoRepository, playbackRepository: PlaybackRepository): PlaybackService {
-        return PlaybackService(videoRepository, playbackRepository)
+    fun playbackService(videoRepository: VideoRepository, playbackRepository: PlaybackRepository): PlaybackUpdateService {
+        return PlaybackUpdateService(videoRepository, playbackRepository)
     }
 
     @Bean

@@ -77,7 +77,7 @@ import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
-import com.boclips.videos.service.domain.service.video.plackback.PlaybackService
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
@@ -288,8 +288,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun videoPlaybackService(playbackService: PlaybackService): UpdateYoutubePlayback {
-        return UpdateYoutubePlayback(playbackService)
+    fun videoPlaybackService(playbackUpdateService: PlaybackUpdateService): UpdateYoutubePlayback {
+        return UpdateYoutubePlayback(playbackUpdateService)
     }
 
     @Bean

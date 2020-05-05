@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 
-class PlaybackServiceTest : AbstractSpringIntegrationTest() {
+class PlaybackUpdateServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var playbackService: PlaybackService
+    lateinit var playbackUpdateService: PlaybackUpdateService
 
     @Autowired
     lateinit var videoRepository: VideoRepository
@@ -29,7 +29,7 @@ class PlaybackServiceTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofSeconds(1000)
         )
 
-        playbackService.updatePlaybackFor(VideoFilter.IsKaltura)
+        playbackUpdateService.updatePlaybacksFor(VideoFilter.IsKaltura)
 
         val updatedAsset = videoRepository.find(videoId)!!
         Assertions.assertThat(updatedAsset.playback).isNotNull

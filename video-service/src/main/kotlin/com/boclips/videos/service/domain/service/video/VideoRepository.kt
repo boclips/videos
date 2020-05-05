@@ -14,12 +14,12 @@ interface VideoRepository {
     fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit)
     fun create(video: Video): Video
     fun update(command: VideoUpdateCommand): Video
-    fun delete(videoId: VideoId)
     fun bulkUpdate(commands: List<VideoUpdateCommand>): List<Video>
+    fun streamUpdate(consumer: (List<Video>) -> List<VideoUpdateCommand>)
+    fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>)
+    fun delete(videoId: VideoId)
     fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean
     fun existsVideoFromContentPartnerId(contentPartnerId: ContentPartnerId, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): VideoId?
-    fun streamUpdate(consumer: (List<Video>) -> List<VideoUpdateCommand>)
-    fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>)
 }
 
