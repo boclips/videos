@@ -64,7 +64,7 @@ import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository

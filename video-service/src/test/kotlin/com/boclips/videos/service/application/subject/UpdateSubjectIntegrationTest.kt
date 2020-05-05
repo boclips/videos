@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.subject
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.events.subject.SubjectChanged
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat

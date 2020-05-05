@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.exceptions.OperationForbiddenExcep
 import com.boclips.videos.service.config.security.UserRoles.BACKOFFICE
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex

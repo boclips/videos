@@ -30,7 +30,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateResult
+import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

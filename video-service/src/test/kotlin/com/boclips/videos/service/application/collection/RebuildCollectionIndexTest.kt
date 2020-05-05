@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.testsupport.TestFactories

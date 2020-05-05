@@ -7,7 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionUpdateComman
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 
 class VideoDeletionService(
     private val videoRepository: VideoRepository,

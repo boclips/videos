@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

@@ -26,7 +26,7 @@ import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateResult
+import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import java.time.ZonedDateTime

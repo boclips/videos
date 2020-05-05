@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat

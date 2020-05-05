@@ -2,7 +2,7 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.jayway.jsonpath.JsonPath

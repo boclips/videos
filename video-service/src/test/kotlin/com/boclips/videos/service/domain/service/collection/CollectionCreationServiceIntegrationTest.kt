@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.collection.CreateCollectionComman
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories

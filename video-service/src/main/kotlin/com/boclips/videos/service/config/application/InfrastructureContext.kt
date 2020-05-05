@@ -5,7 +5,10 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
+import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
@@ -23,6 +26,7 @@ import org.litote.kmongo.KMongo
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.task.TaskExecutor
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
@@ -34,6 +38,15 @@ class InfrastructureContext(
     val mongoProperties: MongoProperties,
     val tracer: Tracer
 ) {
+    @Primary
+    @Bean
+    fun collectionRepository(eventService: EventService): CollectionRepository {
+        return CollectionRepositoryEventsDecorator(
+            mongoCollectionRepository,
+            eventService
+        )
+    }
+
     @Bean
     fun apiAccessRuleService(usersClient: UsersClient): ApiAccessRuleService {
         return ApiAccessRuleService(usersClient)

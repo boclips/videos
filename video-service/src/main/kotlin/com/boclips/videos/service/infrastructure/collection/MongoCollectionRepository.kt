@@ -5,9 +5,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.infrastructure.DATABASE_NAME

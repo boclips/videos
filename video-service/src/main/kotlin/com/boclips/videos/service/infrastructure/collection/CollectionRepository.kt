@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service.collection
+package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
@@ -6,8 +6,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
-
-data class CollectionUpdateResult(val collection: Collection, val commands: List<CollectionUpdateCommand>)
 
 interface CollectionRepository {
     fun find(id: CollectionId): Collection?

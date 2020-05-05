@@ -24,8 +24,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionAccessServ
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.domain.service.collection.CollectionRepository
-import com.boclips.videos.service.domain.service.collection.CollectionRepositoryEventsDecorator
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -126,12 +125,6 @@ class DomainContext(
     @Bean
     fun collectionAccessService(userService: UserService): CollectionAccessService {
         return CollectionAccessService(userService)
-    }
-
-    @Primary
-    @Bean
-    fun collectionRepository(eventService: EventService): CollectionRepository {
-        return CollectionRepositoryEventsDecorator(mongoCollectionRepository, eventService)
     }
 
     @Bean

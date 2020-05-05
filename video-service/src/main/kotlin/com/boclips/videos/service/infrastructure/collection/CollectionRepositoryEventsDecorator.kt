@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service.collection
+package com.boclips.videos.service.infrastructure.collection
 
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionFilter

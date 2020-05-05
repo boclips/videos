@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionUpdateComman
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 
 class CollectionCreationService(
     private val collectionRepository: CollectionRepository,
