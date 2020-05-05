@@ -308,6 +308,26 @@ class VideosLinkBuilderTest {
     }
 
     @Test
+    fun `update captions link is null when user is not allowed`() {
+        setSecurityContext("teacher@boclips.com")
+
+        val link = videosLinkBuilder.updateCaptions(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `update captions link is there when user is allowed`() {
+        setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
+
+        val link = videosLinkBuilder.updateCaptions(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).contains("/v1/videos/$validVideoId/captions")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.CAPTIONS)
+    }
+
+    @Test
     fun `add attachment link is there when user is allowed`() {
         setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
 
