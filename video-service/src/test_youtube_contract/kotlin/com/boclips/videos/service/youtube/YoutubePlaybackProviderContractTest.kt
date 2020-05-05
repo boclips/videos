@@ -6,7 +6,7 @@ import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
-import com.boclips.videos.service.domain.service.video.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import org.assertj.core.api.Assertions.assertThat

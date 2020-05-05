@@ -4,7 +4,6 @@ import com.boclips.videos.service.application.exceptions.VideoNotAnalysableExcep
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import mu.KLogging
@@ -20,7 +19,6 @@ import java.util.Locale
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-    private val videoPlaybackService: VideoPlaybackService,
     private val broadcastVideos: BroadcastVideos,
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService,
@@ -28,12 +26,6 @@ class AdminController(
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging()
-
-    @PostMapping("/refresh_playbacks")
-    fun refreshVideoDurations(@RequestParam source: String?): ResponseEntity<Void> {
-        videoPlaybackService.requestUpdate(source)
-        return ResponseEntity(HttpStatus.OK)
-    }
 
     @PostMapping("/analyse_video/{videoId}")
     fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?): ResponseEntity<Void> {

@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service.video
+package com.boclips.videos.service.domain.service.video.plackback
 
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackId

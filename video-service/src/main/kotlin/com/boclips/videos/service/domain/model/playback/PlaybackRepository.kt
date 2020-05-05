@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.model.playback
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.domain.service.video.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import java.util.Locale
 
 class PlaybackRepository(

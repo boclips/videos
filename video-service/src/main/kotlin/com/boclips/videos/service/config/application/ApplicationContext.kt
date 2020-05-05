@@ -46,9 +46,9 @@ import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptionContent
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.UpdateYoutubePlayback
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoPlaybackService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
@@ -77,6 +77,7 @@ import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
@@ -287,8 +288,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun videoPlaybackService(): VideoPlaybackService {
-        return VideoPlaybackService(videoRepository, eventBus, playbackRepository)
+    fun videoPlaybackService(playbackService: PlaybackService): UpdateYoutubePlayback {
+        return UpdateYoutubePlayback(playbackService)
     }
 
     @Bean

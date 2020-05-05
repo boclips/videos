@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -27,43 +26,19 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `refresh playbacks returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
-    }
-
-    @Test
-    fun `refresh playbacks returns 200 OK when user is allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isOk)
-    }
-
-    @Test
-    fun `refresh only youtube playback information`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks?source=youtube").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isOk)
-    }
-
-    @Test
-    fun `refresh bad playback information returns 400`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks?source=BAD").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
-    }
-
-    @Test
-    fun `update youtube channel returns 403 when user is not allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/update_youtube_channel_names").asTeacher())
             .andExpect(status().isForbidden)
     }
 
     @Test
     fun `broadcast video events`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(status().isOk)
     }
 
     @Test
     fun `broadcast video events returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -72,7 +47,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US").asOperator()
         )
-            .andExpect(MockMvcResultMatchers.status().isAccepted)
+            .andExpect(status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
@@ -85,14 +60,14 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `analyse video returns 400 for youtube videos`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123"))
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId").asOperator())
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `analyse video returns 403 when user is not allowed`() {
         val videoId = saveVideo()
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(status().isForbidden)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
@@ -104,7 +79,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
             MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES")
                 .asOperator()
         )
-            .andExpect(MockMvcResultMatchers.status().isAccepted)
+            .andExpect(status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
 
@@ -121,7 +96,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=TheYoutuber").asOperator()
         )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(status().isBadRequest)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
@@ -129,7 +104,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `analyse content partner videos returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(status().isForbidden)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }
@@ -141,7 +116,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator()
         )
-            .andExpect(MockMvcResultMatchers.status().isAccepted)
+            .andExpect(status().isAccepted)
     }
 
     @Test
@@ -149,7 +124,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asTeacher()
         )
-            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(status().isForbidden)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
     }

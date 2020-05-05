@@ -31,13 +31,14 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackService
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
@@ -153,6 +154,11 @@ class DomainContext(
     fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider)
         : PlaybackRepository {
         return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
+    }
+
+    @Bean
+    fun playbackService(videoRepository: VideoRepository, playbackRepository: PlaybackRepository): PlaybackService {
+        return PlaybackService(videoRepository, playbackRepository)
     }
 
     @Bean

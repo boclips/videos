@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
-import com.boclips.videos.service.domain.service.video.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube

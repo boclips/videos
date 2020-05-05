@@ -6,11 +6,12 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
-import com.boclips.videos.service.domain.service.video.PlaybackProvider
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import java.time.Duration
 import java.util.Locale
 
-class TestYoutubePlaybackProvider : PlaybackProvider {
+class TestYoutubePlaybackProvider :
+    PlaybackProvider {
     private val playbackById = mutableMapOf<PlaybackId, YoutubePlayback>()
     private val providerMetadataById = mutableMapOf<PlaybackId, YoutubeMetadata>()
 
