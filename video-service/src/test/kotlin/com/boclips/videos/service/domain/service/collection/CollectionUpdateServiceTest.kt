@@ -4,7 +4,7 @@ import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -81,7 +81,11 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
 
-            collectionUpdateService.removeVideoToCollectionOfUser(collectionId, videoId, UserFactory.sample(id = "owner@collections.com"))
+            collectionUpdateService.removeVideoToCollectionOfUser(
+                collectionId,
+                videoId,
+                UserFactory.sample(id = "owner@collections.com")
+            )
 
             assertThat(collectionRepository.find(collectionId)?.videos).isEmpty()
         }
@@ -91,7 +95,11 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
             val videoId = saveVideo()
             val collectionId = saveCollection(owner = "owner@collection.com", videos = listOf(videoId.value))
 
-            collectionUpdateService.removeVideoToCollectionOfUser(collectionId, videoId, UserFactory.sample(id = "owner@collection.com"))
+            collectionUpdateService.removeVideoToCollectionOfUser(
+                collectionId,
+                videoId,
+                UserFactory.sample(id = "owner@collection.com")
+            )
 
             val event = fakeEventBus.getEventOfType(VideoRemovedFromCollection::class.java)
 
@@ -113,6 +121,46 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
                 )
             }
             assertThat(collectionRepository.find(collectionId)?.videos).isNotEmpty
+        }
+    }
+
+    @Nested
+    inner class ApplyUpdates() {
+        @Test
+        fun `saves update of legitimate collection owner`() {
+            val user = UserFactory.sample()
+            val collectionId = saveCollection(owner = user.id.value, public = false)
+
+            collectionUpdateService.updateCollectionAsOwner(
+                arrayOf(
+                    CollectionUpdateCommand.ChangeVisibility(
+                        collectionId = collectionId,
+                        isPublic = true,
+                        user = user
+                    )
+                )
+            )
+
+            val collection = collectionRepository.find(collectionId)!!
+
+            assertThat(collection.isPublic).isTrue()
+        }
+
+        @Test
+        fun `doese not save updates of someone else's collection`() {
+            val collectionId = saveCollection(owner = UserFactory.sample(id = "user").id.value, public = false)
+
+            assertThrows<CollectionIllegalOperationException> {
+                collectionUpdateService.updateCollectionAsOwner(
+                    arrayOf(
+                        CollectionUpdateCommand.ChangeVisibility(
+                            collectionId = collectionId,
+                            isPublic = true,
+                            user = UserFactory.sample(id = "another-user")
+                        )
+                    )
+                )
+            }
         }
     }
 }

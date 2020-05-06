@@ -129,9 +129,10 @@ class DomainContext(
     @Bean
     fun collectionUpdateService(
         collectionRepository: CollectionRepository,
-        collectionRetrievalService: CollectionRetrievalService
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
     ): CollectionUpdateService {
-        return CollectionUpdateService(collectionRepository, collectionRetrievalService)
+        return CollectionUpdateService(collectionRepository, collectionRetrievalService, collectionIndex)
     }
 
     @Bean

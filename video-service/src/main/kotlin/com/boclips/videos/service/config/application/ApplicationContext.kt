@@ -241,10 +241,8 @@ class ApplicationContext(
     @Bean
     fun updateCollection(collectionUpdatesConverter: CollectionUpdatesConverter): UpdateCollection {
         return UpdateCollection(
-            collectionIndex,
-            collectionRepository,
             collectionUpdatesConverter,
-            collectionRetrievalService
+            collectionUpdateService
         )
     }
 

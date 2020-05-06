@@ -10,11 +10,14 @@ import mu.KLogging
 
 class CollectionUpdateService(
     private val collectionRepository: CollectionRepository,
-    private val collectionRetrievalService: CollectionRetrievalService
+    private val collectionRetrievalService: CollectionRetrievalService,
+    private val collectionIndex: CollectionIndex
 ) {
     companion object : KLogging()
 
     fun addVideoToCollectionOfUser(collectionId: CollectionId, videoId: VideoId, user: User) {
+        throwIfNotOwner(collectionId, user)
+
         collectionRetrievalService.findSpecificOrganisationOfUser(id = collectionId, user = user)
             ?: throw CollectionIllegalOperationException(
                 userId = user.id,
@@ -32,12 +35,7 @@ class CollectionUpdateService(
     }
 
     fun removeVideoToCollectionOfUser(collectionId: CollectionId, videoId: VideoId, user: User) {
-        collectionRetrievalService.findSpecificOrganisationOfUser(collectionId, user = user)
-            ?: throw CollectionIllegalOperationException(
-                userId = user.id,
-                collectionId = collectionId.value,
-                operation = "Remove video from collection"
-            )
+        throwIfNotOwner(collectionId, user)
 
         collectionRepository.update(
             CollectionUpdateCommand.RemoveVideoFromCollection(
@@ -46,5 +44,36 @@ class CollectionUpdateService(
                 user = user
             )
         )
+    }
+
+    fun updateCollectionAsOwner(updates: Array<CollectionUpdateCommand>) {
+        if (updates.isEmpty()) {
+            return
+        }
+
+        updates.forEach { update ->
+            throwIfNotOwner(update.collectionId, update.user)
+        }
+
+        val update = collectionRepository.update(*updates)
+
+        update.map { result -> result.collection }.apply {
+            collectionIndex.upsert(this.asSequence())
+        }
+    }
+
+    private fun throwIfNotOwner(
+        collectionToBeUpdated: CollectionId,
+        user: User
+    ) {
+        (collectionRetrievalService.findSpecificOrganisationOfUser(
+            id = collectionToBeUpdated,
+            user = user
+        )
+            ?: throw CollectionIllegalOperationException(
+                userId = user.id,
+                collectionId = collectionToBeUpdated.value,
+                operation = "Update collection"
+            ))
     }
 }

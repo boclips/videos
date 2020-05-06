@@ -319,7 +319,7 @@ abstract class AbstractSpringIntegrationTest {
         return createAgeRange(AgeRangeRequest(id = id, min = min, max = max, label = label))
     }
 
-    fun saveTag(label: String) : String {
+    fun saveTag(label: String): String {
         return createTag(CreateTagRequest(label = label)).id
     }
 

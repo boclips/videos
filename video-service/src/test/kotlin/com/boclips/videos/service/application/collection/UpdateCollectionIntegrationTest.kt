@@ -7,9 +7,9 @@ import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
+import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
-import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
@@ -25,19 +25,6 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRepository: CollectionRepository
 
     @Test
-    fun `rename collection`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "original title")
-
-        updateCollection(
-            collectionId.value,
-            UpdateCollectionRequest(title = "new title"),
-            UserFactory.sample(id = "me@me.com")
-        )
-
-        assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("new title")
-    }
-
-    @Test
     fun `can promote a collection`() {
         setSecurityContext("boclipper@boclips.com", UserRoles.BACKOFFICE)
 
@@ -50,6 +37,19 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(collectionRepository.find(collectionId)!!.promoted).isTrue()
+    }
+
+    @Test
+    fun `rename collection`() {
+        val collectionId = saveCollection(owner = "me@me.com", title = "original title")
+
+        updateCollection(
+            collectionId.value,
+            UpdateCollectionRequest(title = "new title"),
+            UserFactory.sample(id = "me@me.com")
+        )
+
+        assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("new title")
     }
 
     @Test
@@ -146,24 +146,10 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `throws error when user doesn't own the collection`() {
-        val collectionId = saveCollection(owner = "me@me.com", title = "original title")
-
-        assertThrows<CollectionNotFoundException> {
-            updateCollection(
-                collectionId = collectionId.value,
-                updateCollectionRequest = UpdateCollectionRequest(title = "you have been pwned"),
-                requester = UserFactory.sample(id = "attacker@example.com")
-            )
-        }
-        assertThat(collectionRepository.find(collectionId)!!.title).isEqualTo("original title")
-    }
-
-    @Test
     fun `throws when collection doesn't exist`() {
         val collectionId = aValidId()
 
-        assertThrows<CollectionNotFoundException> {
+        assertThrows<CollectionIllegalOperationException> {
             updateCollection(
                 collectionId = collectionId,
                 updateCollectionRequest = UpdateCollectionRequest(title = "new title"),
