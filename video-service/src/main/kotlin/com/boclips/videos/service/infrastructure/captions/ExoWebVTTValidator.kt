@@ -19,6 +19,8 @@ class ExoWebVTTValidator() : CaptionValidator {
     private val WEBVTT_CUE_IDENTIFIER: Pattern = Pattern.compile(WEBVTT_CUE_IDENTIFIER_STRING)
     private val WEBVTT_TIMESTAMP_STRING: String = "(\\d+:)?[0-5]\\d:[0-5]\\d\\.\\d{3}"
     private val WEBVTT_TIMESTAMP: Pattern = Pattern.compile(WEBVTT_TIMESTAMP_STRING)
+    private val WEBVTT_NOTE_STRING: String = "NOTE"
+    private val WEBVTT_NOTE: Pattern = Pattern.compile(WEBVTT_NOTE_STRING)
 
     override fun checkValid(content: String): Boolean {
         try {
@@ -29,7 +31,8 @@ class ExoWebVTTValidator() : CaptionValidator {
     }
 
     override fun parse(content: String): ArrayList<String> {
-        val webvttData = BufferedReader(InputStreamReader(ByteArrayInputStream(content.toByteArray(Charsets.UTF_8)), "UTF-8"))
+        val lineBroken = content.replace("\\r\\n", System.lineSeparator())
+        val webvttData = BufferedReader(InputStreamReader(ByteArrayInputStream(lineBroken.toByteArray(Charsets.UTF_8)), "UTF-8"))
         var line: String?
 
         // file should start with "WEBVTT"
@@ -59,8 +62,15 @@ class ExoWebVTTValidator() : CaptionValidator {
             if ("" == line!!.trim { it <= ' ' }) {
                 continue
             }
-            // parse the cue identifier (if present) {
-            var matcher: Matcher = WEBVTT_CUE_IDENTIFIER.matcher(line)
+            // parse the note (if present) {
+            var matcher: Matcher = WEBVTT_NOTE.matcher(line)
+            if (matcher.find()) {
+                // ignore the note and the blank line under
+                webvttData.readLine()
+                line = webvttData.readLine()
+            }
+
+            matcher = WEBVTT_CUE_IDENTIFIER.matcher(line)
             if (matcher.find()) {
                 // ignore the identifier (we currently don't use it) and read the next line
                 line = webvttData.readLine()

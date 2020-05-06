@@ -21,9 +21,13 @@ internal class ExoWebVTTValidatorTest {
                         00:09.526 --> 00:11.324
                         We don't have a profit margin.""".trimIndent()
 
+    val validWebVTTContentWithNotes = """WEBVTT\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:00.000 --> 00:00:04.060\r\nWhile regaling you with daring stories from her youth,\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:04.060 --> 00:00:07.080\r\nit might be hard to believe your\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:07.080 --> 00:00:10.110\r\ngrandmother used to be a trapeze artist.\r\n\r\n""".trimIndent()
+
+
     @Test
     fun `validates correct caption content`() {
         assertThat(exoWebVTTParser.checkValid(validWebVTTContent)).isEqualTo(true)
+        assertThat(exoWebVTTParser.checkValid(validWebVTTContentWithNotes)).isEqualTo(true)
     }
 
     @Test
@@ -32,12 +36,12 @@ internal class ExoWebVTTValidatorTest {
     }
 
     @Test
-    fun `parses a transcript from valid webvtt captions`() {
-        val transcript = exoWebVTTParser.parse(validWebVTTContent)
+    fun `parses a transcript from valid webvtt captions and excludes notes`() {
+        val transcript = exoWebVTTParser.parse(validWebVTTContentWithNotes)
 
         assertThat(transcript).hasSize(3)
-        assertThat(transcript[0]).isEqualTo("We're quite content to be the odd<br>browser out.")
-        assertThat(transcript[1]).isEqualTo("We don't have a fancy stock abbreviation <br>to go alongside our name in the press.")
-        assertThat(transcript[2]).isEqualTo("We don't have a profit margin.")
+        assertThat(transcript[0]).isEqualTo("While regaling you with daring stories from her youth,")
+        assertThat(transcript[1]).isEqualTo("it might be hard to believe your")
+        assertThat(transcript[2]).isEqualTo("grandmother used to be a trapeze artist.")
     }
 }

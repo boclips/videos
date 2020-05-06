@@ -54,7 +54,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
 
         val content = """
             {
-               "captions": "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
+               "captions": "WEBVTT\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:00.000 --> 00:00:04.060\r\nWhile regaling you with daring stories from her youth,\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:04.060 --> 00:00:07.080\r\nit might be hard to believe your\r\n\r\nNOTE Confidence: 0.8984\r\n\r\n00:00:07.080 --> 00:00:10.110\r\ngrandmother used to be a trapeze artist.\r\n\r\n"
             }
         """.trimIndent()
 
@@ -69,9 +69,9 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 MockMvcResultMatchers.content().string(
                     Matchers.equalTo("""
-                        We're quite content to be the odd<br>browser out.
-                        We don't have a fancy stock abbreviation <br>to go alongside our name in the press.
-                        We don't have a profit margin.""".trimIndent()
+                        While regaling you with daring stories from her youth,
+                        it might be hard to believe your
+                        grandmother used to be a trapeze artist.""".trimIndent()
                     )
                 )
             )
