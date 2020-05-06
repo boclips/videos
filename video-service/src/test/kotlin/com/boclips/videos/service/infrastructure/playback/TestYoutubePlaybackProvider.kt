@@ -40,6 +40,10 @@ class TestYoutubePlaybackProvider :
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 
+    override fun setDefaultThumbnail(playbackId: PlaybackId) {
+        throw UnsupportedOperationException("YouTube thumbnails not supported")
+    }
+
     override fun overwriteCaptionContent(playbackId: PlaybackId, content: String) {
         throw UnsupportedOperationException("YouTube captions not supported")
     }

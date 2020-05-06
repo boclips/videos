@@ -74,9 +74,10 @@ class DomainContext(
     @Bean
     fun videoCreationService(
         contentPartnerRepository: ContentPartnerRepository,
-        videoRepository: VideoRepository
+        videoRepository: VideoRepository,
+        playbackRepository: PlaybackRepository
     ): VideoCreationService {
-        return VideoCreationService(contentPartnerRepository, videoRepository)
+        return VideoCreationService(contentPartnerRepository, videoRepository, playbackRepository)
     }
 
     @Bean

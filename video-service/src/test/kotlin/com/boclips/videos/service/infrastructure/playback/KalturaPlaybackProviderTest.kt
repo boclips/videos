@@ -14,7 +14,7 @@ import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
@@ -244,5 +244,16 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[playbackIdOfReady]).isNotNull
         assertThat(videosWithPlayback[playbackIdOfNonReady]).isNull()
+    }
+
+    @Test
+    fun `updates default thumbnail`() {
+        createMediaEntry(id = "entry-1")
+        val entryBefore = fakeKalturaClient.getBaseEntry("entry-1")
+
+        kalturaPlaybackProvider.setDefaultThumbnail(PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-1"))
+        val entryAfter = fakeKalturaClient.getBaseEntry("entry-1")
+
+        assertThat(entryAfter.thumbnailUrl).isNotEqualTo(entryBefore.thumbnailUrl)
     }
 }

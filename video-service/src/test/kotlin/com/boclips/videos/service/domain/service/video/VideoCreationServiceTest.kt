@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
@@ -7,12 +8,18 @@ import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartn
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoCreationService: VideoCreationService
+
+    @BeforeEach
+    fun setUp() {
+        fakeKalturaClient.addMediaEntry(MediaEntry.builder().id("entry-id").build())
+    }
 
     @Test
     fun `create video with no age range`() {
@@ -70,5 +77,16 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(video.tags.first().tag.label).isEqualTo(tagLabel)
+    }
+
+    @Test
+    fun `sets default thumbnail for Kaltura video`() {
+        val video = TestFactories.createVideo(playback = TestFactories.createKalturaPlayback())
+        val entryBefore = fakeKalturaClient.getBaseEntry(video.playback.id.value)
+
+        videoCreationService.create(video)
+        val entryAfter = fakeKalturaClient.getBaseEntry(video.playback.id.value)
+
+        assertThat(entryBefore.thumbnailUrl).isNotEqualTo(entryAfter.thumbnailUrl)
     }
 }

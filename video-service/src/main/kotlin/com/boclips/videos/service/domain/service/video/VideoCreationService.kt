@@ -4,11 +4,13 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
+import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Video
 
 class VideoCreationService(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val playbackRepository: PlaybackRepository
 ) {
     fun create(videoToBeCreated: Video): Video {
         if (videoRepository.existsVideoFromContentPartnerId(
@@ -30,6 +32,10 @@ class VideoCreationService(
                 ?.apply {
                     ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max, curatedManually = false)
                 }
+        }
+
+        if (videoToBeCreated.isBoclipsHosted()) {
+            playbackRepository.setDefaultThumbnail(videoToBeCreated.playback.id)
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
