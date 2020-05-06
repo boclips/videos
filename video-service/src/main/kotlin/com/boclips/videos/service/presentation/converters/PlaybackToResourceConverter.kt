@@ -36,6 +36,7 @@ class PlaybackToResourceConverter(
             this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
             this.playbacksLinkBuilder.downloadLink(videoPlayback),
             this.playbacksLinkBuilder.thumbnailLink(videoPlayback),
+            this.playbacksLinkBuilder.editThumbnailLink(videoPlayback),
             this.playbacksLinkBuilder.videoPreviewLink(videoPlayback),
             this.playbacksLinkBuilder.hlsStreamLink(videoPlayback)
         )

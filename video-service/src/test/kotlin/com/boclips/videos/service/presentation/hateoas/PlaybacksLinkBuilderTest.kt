@@ -95,6 +95,39 @@ internal class PlaybacksLinkBuilderTest {
 
             assertThat(link).isNull()
         }
+
+        @Test
+        fun `it returns the thumbnail editor link when kaltura video and user can update video`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+
+            val link = linkBuilder.editThumbnailLink(playback)
+
+            assertThat(link).isNotNull
+            assertThat(link!!.href).contains("thumbnail-entry-id/thumbnails")
+            assertThat(link.rel).isEqualTo("editThumbnail")
+        }
+
+        @Test
+        fun `no thumbnail editor link when youtube video`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createYoutubePlayback()
+
+            val link = linkBuilder.editThumbnailLink(playback)
+
+            assertThat(link).isNull()
+        }
+
+        @Test
+        fun `no thumbnail editor link when user does not have update video role`() {
+            setSecurityContext("teacher", UserRoles.VIEW_VIDEOS)
+
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+
+            val link = linkBuilder.editThumbnailLink(playback)
+
+            assertThat(link).isNull()
+        }
     }
 
     @Nested

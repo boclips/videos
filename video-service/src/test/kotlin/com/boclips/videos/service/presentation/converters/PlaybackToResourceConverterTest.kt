@@ -50,6 +50,7 @@ internal class PlaybackToResourceConverterTest {
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
         verify(playbacksLinkBuilder).downloadLink(kalturaPlayback)
         verify(playbacksLinkBuilder).thumbnailLink(kalturaPlayback)
+        verify(playbacksLinkBuilder).editThumbnailLink(kalturaPlayback)
         verify(playbacksLinkBuilder).videoPreviewLink(kalturaPlayback)
         verify(playbacksLinkBuilder).hlsStreamLink(kalturaPlayback)
     }

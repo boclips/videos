@@ -36,6 +36,18 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { HateoasLink(href = it, rel = "thumbnail") }
     }
 
+    fun editThumbnailLink(playback: VideoPlayback): HateoasLink? {
+        return when (playback) {
+            is StreamPlayback -> getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                HateoasLink(
+                    href = getKalturaThumbnailEditorUrl(playback),
+                    rel = "editThumbnail"
+                )
+            }
+            else -> null
+        }
+    }
+
     fun videoPreviewLink(playback: VideoPlayback): HateoasLink? {
         val href = when (playback) {
             is StreamPlayback -> kalturaClient.linkBuilder.getVideoPreviewUrl(playback.id.value)
@@ -54,5 +66,9 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         }
 
         return href?.let { HateoasLink(href = it, rel = "hlsStream") }
+    }
+
+    private fun getKalturaThumbnailEditorUrl(playback: StreamPlayback): String {
+        return "https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/${playback.id.value}/thumbnails"
     }
 }
