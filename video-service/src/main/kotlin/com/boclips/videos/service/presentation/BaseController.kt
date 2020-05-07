@@ -11,10 +11,15 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.http.CacheControl
+import org.springframework.http.ResponseEntity
+import java.util.concurrent.TimeUnit
 
 open class BaseController(
     private val accessRuleService: AccessRuleService,
-    private val getUserIdOverride: GetUserIdOverride
+    private val getUserIdOverride: GetUserIdOverride,
+    private val objectMapper: ObjectMapper
 ) {
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUserIfNotAnonymous()
@@ -42,6 +47,20 @@ open class BaseController(
             }
         )
     }
+
+    fun resourceCachedFor(maxAge: Long, unit: TimeUnit, obj: Any): ResponseEntity<ByteArray> =
+        obj
+            .run { objectMapper.writeValueAsBytes(this) }
+            .let { body ->
+                ResponseEntity.ok()
+                    .cacheControl(
+                        CacheControl
+                            .maxAge(maxAge, unit)
+                            .cachePublic()
+                    )
+                    .contentLength(body.size.toLong())
+                    .body(body)
+            }
 }
 
 object Administrator : User(
