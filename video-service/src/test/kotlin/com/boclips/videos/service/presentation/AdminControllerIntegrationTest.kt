@@ -24,12 +24,6 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `refresh playbacks returns 403 when user is not allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/refresh_playbacks").asTeacher())
-            .andExpect(status().isForbidden)
-    }
-
-    @Test
     fun `broadcast video events`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asOperator())
             .andExpect(status().isOk)
