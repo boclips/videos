@@ -238,7 +238,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns full projection with caption processing data`() {
-            fakeKalturaClient.requestCaptions("entry-id-123")
+            fakeKalturaClient.requestCaption("entry-id-123")
 
             mockMvc.perform(get("/v1/videos/$kalturaVideoId?projection=full").asBoclipsEmployee())
                 .andExpect(status().isOk)

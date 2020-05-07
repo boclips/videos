@@ -23,7 +23,7 @@ internal class CaptionServiceTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "captions content to retrieve")
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "captions content to retrieve")
 
     }
 
@@ -34,7 +34,7 @@ internal class CaptionServiceTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "previous captions content")
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
         captionService.updateCaptionContent(video, """WEBVTT FILE
 
@@ -50,10 +50,10 @@ internal class CaptionServiceTest : AbstractSpringIntegrationTest() {
                         00:09.526 --> 00:11.324
                         We don't have a profit margin.""".trimIndent())
 
-        val captionFiles = fakeKalturaClient.getCaptionFilesByEntryId("playback-id")
+        val captionFiles = fakeKalturaClient.getCaptionsForVideo("playback-id")
 
         assertThat(captionFiles).hasSize(1)
-        assertThat(fakeKalturaClient.getCaptionContentByAssetId(captionFiles.first().id)).isEqualTo("""WEBVTT FILE
+        assertThat(fakeKalturaClient.getCaptionContent(captionFiles.first().id)).isEqualTo("""WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -76,7 +76,7 @@ internal class CaptionServiceTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "previous captions content")
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
         captionService.updateCaptionContent(video, """WEBVTT FILE
 

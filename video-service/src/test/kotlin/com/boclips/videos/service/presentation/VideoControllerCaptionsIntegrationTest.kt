@@ -49,7 +49,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, "previous captions content").id
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content").id
 
 
         val content = """
@@ -115,7 +115,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             label = "English (auto-generated)"
         )
         val captionContent = "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
-        fakeKalturaClient.createCaptionsFileWithEntryId("playback-id", existingCaptions, captionContent).id
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, captionContent).id
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions").asBoclipsEmployee())

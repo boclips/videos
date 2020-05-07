@@ -1,7 +1,7 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource

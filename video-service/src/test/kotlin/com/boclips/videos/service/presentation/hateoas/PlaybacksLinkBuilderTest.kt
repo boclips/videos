@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.hateoas
 
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.PlaybackId

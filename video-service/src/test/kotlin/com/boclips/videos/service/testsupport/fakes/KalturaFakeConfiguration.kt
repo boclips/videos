@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile

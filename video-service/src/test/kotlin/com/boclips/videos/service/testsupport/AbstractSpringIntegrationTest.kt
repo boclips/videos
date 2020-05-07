@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus

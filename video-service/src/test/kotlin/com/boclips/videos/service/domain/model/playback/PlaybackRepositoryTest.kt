@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.playback
 
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -79,7 +79,7 @@ class PlaybackRepositoryTest {
 
         playbackRepository.uploadCaptions(playbackId, createCaptions())
 
-        assertThat(fakeKalturaClient.getCaptionFilesByEntryId("1")).isNotEmpty
+        assertThat(fakeKalturaClient.getCaptionsForVideo("1")).isNotEmpty
     }
 
     @Test
@@ -88,11 +88,11 @@ class PlaybackRepositoryTest {
 
         playbackRepository.uploadCaptions(playbackId, createCaptions())
 
-        assertThat(fakeKalturaClient.getCaptionFilesByEntryId("1")).isNotEmpty
+        assertThat(fakeKalturaClient.getCaptionsForVideo("1")).isNotEmpty
 
         playbackRepository.updateCaptionContent(playbackId, "New caption content")
 
-        assertThat(fakeKalturaClient.getCaptionContentByAssetId(fakeKalturaClient.getCaptionFilesByEntryId("1").first().id)).isEqualTo("New caption content")
+        assertThat(fakeKalturaClient.getCaptionContent(fakeKalturaClient.getCaptionsForVideo("1").first().id)).isEqualTo("New caption content")
     }
 
 

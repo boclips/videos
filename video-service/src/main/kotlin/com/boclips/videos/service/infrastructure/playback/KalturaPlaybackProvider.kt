@@ -30,9 +30,9 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
             return emptyMap()
         }
 
-        val assetsByEntryId = kalturaClient.getAssetsByEntryIds(entryIds)
+        val assetsByEntryId = kalturaClient.getVideoAssets(entryIds)
 
-        return kalturaClient.getEntriesByIds(entryIds)
+        return kalturaClient.getEntries(entryIds)
             .map { PlaybackId(KALTURA, it.key) to it.value }.toMap()
             .asSequence()
             .filter { it.value.status == MediaEntryStatus.READY }
@@ -56,7 +56,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
 
     override fun removePlayback(playbackId: PlaybackId) {
         try {
-            kalturaClient.deleteEntryById(playbackId.value)
+            kalturaClient.deleteEntry(playbackId.value)
         } catch (ex: KalturaClientApiException) {
             logger.error { "Failed to execute video from Kaltura: $ex" }
         }
@@ -76,21 +76,21 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         logger.info { "Uploading ${captionAsset.language} captions for ref id ${playbackId.value}" }
 
         val uploadedAsset =
-            kalturaClient.createCaptionsFileWithEntryId(playbackId.value, captionAsset, captions.content)
+            kalturaClient.createCaptionForVideo(playbackId.value, captionAsset, captions.content)
 
         logger.info { "Uploaded ${captionAsset.language} captions for ref id ${playbackId.value}: ${uploadedAsset.id}" }
     }
 
     override fun overwriteCaptionContent(playbackId: PlaybackId, content: String) {
         retrieveCaptionFiles(playbackId = playbackId).first().let { captions ->
-            kalturaClient.deleteCaptionContentByAssetId(captions.id)
-            kalturaClient.createCaptionsFileWithEntryId(playbackId.value, captions, content)
+            kalturaClient.deleteCaption(captions.id)
+            kalturaClient.createCaptionForVideo(playbackId.value, captions, content)
         }
     }
 
     override fun getCaptionContent(playbackId: PlaybackId): String? {
         return retrieveCaptionFiles(playbackId = playbackId).first().let { captions ->
-            kalturaClient.getCaptionContentByAssetId(captions.id)
+            kalturaClient.getCaptionContent(captions.id)
         }
     }
 
@@ -110,7 +110,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
             .find { video -> video.language == language && video.label.contains("(auto-generated)") }
             ?.let { video ->
                 logger.info { "There are already auto-generated ${language.getName()} captions for reference id ${playbackId.value}. Deleting." }
-                kalturaClient.deleteCaptionContentByAssetId(video.id)
+                kalturaClient.deleteCaption(video.id)
             }
     }
 
@@ -120,7 +120,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     }
 
     private fun retrieveCaptionFiles(playbackId: PlaybackId): List<CaptionAsset> {
-        return kalturaClient.getCaptionFilesByEntryId(playbackId.value)
+        return kalturaClient.getCaptionsForVideo(playbackId.value)
     }
 
     private fun convertAndValidateAssetsToSet(kalturaAssets: List<Asset>?): Set<VideoAsset> {

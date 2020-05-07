@@ -11,7 +11,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
