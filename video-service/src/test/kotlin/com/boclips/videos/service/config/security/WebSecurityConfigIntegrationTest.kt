@@ -80,6 +80,23 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `only boclipers can download video assets`() {
+        val videoId = saveVideo()
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/assets"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/assets").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/assets").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/${videoId.value}/assets").asBoclipsEmployee())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `only teachers can get videos`() {
         saveVideo()
 

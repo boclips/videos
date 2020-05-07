@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.playback
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionAsset
+import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.http.KalturaClientApiException
@@ -12,11 +13,14 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
+import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.CaptionFormat
+import com.boclips.videos.service.domain.model.video.UnknownCaptionFormatException
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging
-import java.util.*
+import java.util.Locale
 
 class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
     PlaybackProvider {
@@ -88,9 +92,19 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         }
     }
 
-    override fun getCaptionContent(playbackId: PlaybackId): String? {
-        return retrieveCaptionFiles(playbackId = playbackId).first().let { captions ->
-            kalturaClient.getCaptionContent(captions.id)
+    override fun getCaptions(playbackId: PlaybackId): List<Caption> {
+        return retrieveCaptionFiles(playbackId = playbackId).map { captions ->
+            Caption(
+                content = kalturaClient.getCaptionContent(captions.id),
+                format = when (captions.fileType) {
+                    KalturaCaptionFormat.SRT -> CaptionFormat.SRT
+                    KalturaCaptionFormat.DFXP -> CaptionFormat.DFXP
+                    KalturaCaptionFormat.WEBVTT -> CaptionFormat.WEBVTT
+                    KalturaCaptionFormat.CAP -> CaptionFormat.CAP
+                    else -> throw UnknownCaptionFormatException(playbackId, captions.fileType)
+                }
+            )
+
         }
     }
 

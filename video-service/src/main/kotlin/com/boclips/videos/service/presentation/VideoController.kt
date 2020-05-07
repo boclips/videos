@@ -1,21 +1,31 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.kalturaclient.captionasset.resources.CaptionAssetListResource
-import com.boclips.kalturaclient.captionasset.resources.CaptionAssetResource
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.*
+import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.GetVideoAssets
+import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.UpdateCaptionContent
+import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.VideoCaptionService
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
@@ -25,8 +35,20 @@ import mu.KLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.bind.annotation.CookieValue
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 import javax.validation.Valid
 
 @RestController
@@ -44,7 +66,8 @@ class VideoController(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val videoRepository: VideoRepository,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
+    accessRuleService: AccessRuleService,
+    private val getVideoAssets: GetVideoAssets
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -259,11 +282,13 @@ class VideoController(
     }
 
     @GetMapping("/v1/videos/{id}/captions")
-    fun getCaptions(@PathVariable("id") videoId: String?) : ResponseEntity<CaptionsResource> {
+    fun getCaptions(@PathVariable("id") videoId: String?): ResponseEntity<CaptionsResource> {
         videoCaptionService.getCaptionContent(videoId!!)?.let {
             return ResponseEntity(it, HttpStatus.OK)
         }
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
+    @GetMapping(value = ["/v1/videos/{id}/assets"])
+    fun getAssets(@PathVariable("id") videoId: String) = getVideoAssets(videoId, getCurrentUser())
 }

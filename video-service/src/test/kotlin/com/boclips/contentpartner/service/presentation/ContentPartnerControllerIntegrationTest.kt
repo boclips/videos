@@ -34,9 +34,6 @@ import java.time.Period
 
 class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
     lateinit var contractId: String
 
     @BeforeEach

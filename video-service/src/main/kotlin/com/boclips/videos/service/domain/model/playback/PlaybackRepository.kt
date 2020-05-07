@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.model.playback
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import java.util.Locale
 
@@ -50,8 +51,8 @@ class PlaybackRepository(
         return getProvider(playbackId = playbackId).overwriteCaptionContent(playbackId, content)
     }
 
-    fun getCaptionContent(playbackId: PlaybackId): String? {
-        return getProvider(playbackId = playbackId).getCaptionContent(playbackId)
+    fun getCaptions(playbackId: PlaybackId): List<Caption> {
+        return getProvider(playbackId = playbackId).getCaptions(playbackId)
     }
 
     fun getProviderMetadata(playbackId: PlaybackId): VideoProviderMetadata? {

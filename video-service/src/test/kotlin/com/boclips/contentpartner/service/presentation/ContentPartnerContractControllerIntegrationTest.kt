@@ -22,8 +22,6 @@ import java.net.URL
 
 class
 ContentPartnerContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var mockMvc: MockMvc
 
     @Test
     fun `creates contract with correct values and fetches it`() {

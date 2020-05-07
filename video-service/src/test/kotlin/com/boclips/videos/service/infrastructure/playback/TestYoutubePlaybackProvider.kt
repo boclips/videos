@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
+import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import java.time.Duration
 import java.util.Locale
@@ -29,7 +30,7 @@ class TestYoutubePlaybackProvider :
             .toMap()
     }
 
-    override fun getCaptionContent(playbackId: PlaybackId): String? {
+    override fun getCaptions(playbackId: PlaybackId): List<Caption> {
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 

@@ -18,8 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var mockMvc: MockMvc
 
     @Autowired
     lateinit var ageRangeRepository: AgeRangeRepository

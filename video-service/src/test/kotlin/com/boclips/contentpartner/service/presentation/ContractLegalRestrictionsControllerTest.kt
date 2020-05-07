@@ -15,8 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 internal class ContractLegalRestrictionsControllerTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var mockMvc: MockMvc
 
     @Autowired
     lateinit var repository: ContractLegalRestrictionsRepository

@@ -7,6 +7,8 @@ import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.CaptionFormat.WEBVTT
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
@@ -184,17 +186,19 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `retrieves captions content by playback id`() {
+    fun `retrieves captions by playback id`() {
         val playbackId = mediaEntryWithCaptionsByEntryId(
             label = "English (auto-generated)",
             language = KalturaLanguage.ENGLISH,
             entryId = "entry-id",
-            captionContent = "Captions content to retrieve"
+            captionContent = "Captions content to retrieve",
+            format = CaptionFormat.WEBVTT
+
         )
 
-        val content = kalturaPlaybackProvider.getCaptionContent(playbackId)
+        val captions = kalturaPlaybackProvider.getCaptions(playbackId)
 
-        assertThat(content).isEqualTo("Captions content to retrieve")
+        assertThat(captions).containsExactly(Caption(content = "Captions content to retrieve", format = WEBVTT))
     }
 
     @Test
@@ -211,9 +215,10 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         label: String,
         language: KalturaLanguage = KalturaLanguage.ENGLISH,
         entryId: String = "entry-id",
-        captionContent: String = "old captions"
+        captionContent: String = "old captions",
+        format: CaptionFormat = CaptionFormat.SRT
     ): PlaybackId {
-        val existingCaptions = createKalturaCaptionAsset(label = label, language = language)
+        val existingCaptions = createKalturaCaptionAsset(label = label, language = language, captionFormat = format)
         createMediaEntry(id = entryId)
         fakeKalturaClient.createCaptionForVideo(entryId, existingCaptions, captionContent)
         return PlaybackId(type = PlaybackProviderType.KALTURA, value = entryId)

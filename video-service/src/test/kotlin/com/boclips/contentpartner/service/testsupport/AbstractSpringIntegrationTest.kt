@@ -55,6 +55,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cache.CacheManager
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.time.Duration
@@ -77,6 +78,9 @@ import java.util.UUID
     "fake-user-service"
 )
 abstract class AbstractSpringIntegrationTest {
+
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
     @Autowired
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
@@ -209,12 +213,8 @@ abstract class AbstractSpringIntegrationTest {
         subjectIds: Set<String> = setOf()
     ): VideoId {
         val retrievedContentPartnerId = try {
-            createContentPartner(
-                ContentPartnerRequest(
-                    name = contentProvider,
-                    distributionMethods = distributionMethods
-                )
-            ).contentPartnerId
+            saveContentPartner(name = contentProvider,
+                distributionMethods = distributionMethods).contentPartnerId
         } catch (e: ContentPartnerConflictException) {
             getContentPartners.invoke(name = contentProvider).firstOrNull()!!.contentPartnerId
         }

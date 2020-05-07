@@ -41,6 +41,7 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.GetVideoAssets
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptionContent
@@ -428,4 +429,7 @@ class ApplicationContext(
             searchQueryConverter
         )
     }
+
+    @Bean
+    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) = GetVideoAssets(captionService, searchVideo)
 }

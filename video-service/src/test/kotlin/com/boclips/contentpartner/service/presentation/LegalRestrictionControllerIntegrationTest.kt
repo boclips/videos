@@ -16,9 +16,6 @@ import java.net.URI
 
 class LegalRestrictionControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
     @Test
     fun `create restrictions`() {
         val link = mockMvc.perform(post(createRestrictionsUrl(text = "my restrictions")).asBoclipsEmployee())

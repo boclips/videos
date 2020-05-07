@@ -1,8 +1,11 @@
 package com.boclips.videos.service.domain.model.playback
 
+import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
+import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.CaptionFormat
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
@@ -95,18 +98,15 @@ class PlaybackRepositoryTest {
         assertThat(fakeKalturaClient.getCaptionContent(fakeKalturaClient.getCaptionsForVideo("1").first().id)).isEqualTo("New caption content")
     }
 
-
     @Test
-    fun `retrieves caption content`() {
+    fun `retrieves captions`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
-        playbackRepository.uploadCaptions(playbackId, createCaptions(content = "My caption content"))
-        playbackRepository.getCaptionContent(playbackId)
+        playbackRepository.uploadCaptions(playbackId, createCaptions(content = "My caption content", format = CaptionsFormat.DFXP))
 
-        val captionContent = playbackRepository.getCaptionContent(playbackId)
+        val captionContent = playbackRepository.getCaptions(playbackId)
 
-        assertThat(captionContent).isEqualTo("My caption content")
+        assertThat(captionContent).containsExactly(Caption(content = "My caption content", format = CaptionFormat.DFXP))
     }
-
 
     @Test
     fun `throws on attempts to upload captions to youtube`() {
