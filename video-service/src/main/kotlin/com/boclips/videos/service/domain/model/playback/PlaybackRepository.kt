@@ -58,10 +58,6 @@ class PlaybackRepository(
         return getProviderMetadata(listOf(playbackId)).values.firstOrNull()
     }
 
-    fun setDefaultThumbnail(playbackId: PlaybackId) {
-        getProvider(playbackId).setDefaultThumbnail(playbackId)
-    }
-
     private fun getProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoProviderMetadata> {
         val kalturaProviderMetadataById =
             kalturaPlaybackProvider.retrieveProviderMetadata(playbackIds.filter { playbackId -> playbackId.type == KALTURA })

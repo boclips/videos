@@ -9,8 +9,7 @@ import com.boclips.videos.service.domain.model.video.Video
 
 class VideoCreationService(
     private val contentPartnerRepository: ContentPartnerRepository,
-    private val videoRepository: VideoRepository,
-    private val playbackRepository: PlaybackRepository
+    private val videoRepository: VideoRepository
 ) {
     fun create(videoToBeCreated: Video): Video {
         if (videoRepository.existsVideoFromContentPartnerId(
@@ -32,10 +31,6 @@ class VideoCreationService(
                 ?.apply {
                     ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max, curatedManually = false)
                 }
-        }
-
-        if (videoToBeCreated.isBoclipsHosted()) {
-            playbackRepository.setDefaultThumbnail(videoToBeCreated.playback.id)
         }
 
         return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))

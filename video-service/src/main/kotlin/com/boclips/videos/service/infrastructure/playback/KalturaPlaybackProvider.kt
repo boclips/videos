@@ -81,14 +81,6 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
         logger.info { "Uploaded ${captionAsset.language} captions for ref id ${playbackId.value}: ${uploadedAsset.id}" }
     }
 
-    override fun setDefaultThumbnail(playbackId: PlaybackId) {
-        logger.info { "Setting up default thumbnail for ${playbackId.value}" }
-
-        kalturaClient.updateDefaultThumbnailWithMiddleFrame(playbackId.value)
-
-        logger.info { "Set up default thumbnail for ${playbackId.value}" }
-    }
-
     override fun overwriteCaptionContent(playbackId: PlaybackId, content: String) {
         retrieveCaptionFiles(playbackId = playbackId).first().let { captions ->
             kalturaClient.deleteCaptionContentByAssetId(captions.id)

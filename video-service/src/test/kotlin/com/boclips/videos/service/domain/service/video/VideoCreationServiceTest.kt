@@ -16,11 +16,6 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoCreationService: VideoCreationService
 
-    @BeforeEach
-    fun setUp() {
-        fakeKalturaClient.addMediaEntry(MediaEntry.builder().id("entry-id").build())
-    }
-
     @Test
     fun `create video with no age range`() {
         createAgeRange(AgeRangeRequest(id = "early-years", min = 3, max = 7, label = "3-7"))
@@ -77,16 +72,5 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(video.tags.first().tag.label).isEqualTo(tagLabel)
-    }
-
-    @Test
-    fun `sets default thumbnail for Kaltura video`() {
-        val video = TestFactories.createVideo(playback = TestFactories.createKalturaPlayback())
-        val entryBefore = fakeKalturaClient.getBaseEntry(video.playback.id.value)
-
-        videoCreationService.create(video)
-        val entryAfter = fakeKalturaClient.getBaseEntry(video.playback.id.value)
-
-        assertThat(entryBefore.thumbnailUrl).isNotEqualTo(entryAfter.thumbnailUrl)
     }
 }
