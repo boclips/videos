@@ -2,7 +2,6 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.MvcMatchers.cacheableFor
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.concurrent.TimeUnit.HOURS
 
 class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -46,14 +44,13 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `gets a cacheable subject`() {
+    fun `gets a subject`() {
         val subjectUrl = createSubject("Mathematics")
             .andReturn().response.getHeader("Location")!!
         mockMvc.perform(get(subjectUrl))
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.name", equalTo("Mathematics")))
             .andExpect(jsonPath("$._links.self.href").exists())
-            .andExpect(cacheableFor(12, HOURS))
     }
 
     @Test
@@ -72,6 +69,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/subjects").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Cache-Control", equalTo("max-age=43200, public")))
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.subjects[0].name").exists())
@@ -83,7 +81,6 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._embedded.subjects[0]._links.update").doesNotExist())
             .andExpect(jsonPath("$._links.self").exists())
-            .andExpect(cacheableFor(12, HOURS))
     }
 
     @Test

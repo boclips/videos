@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
+import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -44,26 +45,32 @@ class SubjectController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
 
     @GetMapping("/{id}")
-    fun subject(@PathVariable id: String): ResponseEntity<ByteArray> = resourceCachedFor(
-        12, TimeUnit.HOURS, getSubject(id)
+    fun subject(@PathVariable id: String): SubjectResource {
+        return getSubject(id)
             .copy(_links = listOfNotNull(subjectsLinkBuilder.self(id)).map { it.rel to it }.toMap())
-    )
+    }
 
     @GetMapping
-    fun subjects(): ResponseEntity<ByteArray> = resourceCachedFor(
-        12, TimeUnit.HOURS, SubjectsResource(
-            _embedded = SubjectsWrapperResource(getSubjects().map {
-                it.copy(
-                    _links = listOfNotNull(
-                        subjectsLinkBuilder.self(it.id),
-                        subjectsLinkBuilder.updateSubject(it)
-                    )
-                        .map { it.rel to it }.toMap()
-                )
-            }),
-            _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
+    fun subjects(): ResponseEntity<SubjectsResource> = ResponseEntity.ok()
+        .cacheControl(
+            CacheControl
+                .maxAge(12, TimeUnit.HOURS)
+                .cachePublic()
         )
-    )
+        .body(
+            SubjectsResource(
+                _embedded = SubjectsWrapperResource(getSubjects().map {
+                    it.copy(
+                        _links = listOfNotNull(
+                            subjectsLinkBuilder.self(it.id),
+                            subjectsLinkBuilder.updateSubject(it)
+                        )
+                            .map { it.rel to it }.toMap()
+                    )
+                }),
+                _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
+            )
+        )
 
     @DeleteMapping("/{id}")
     fun removeSubjects(@PathVariable id: String): ResponseEntity<Void> {
