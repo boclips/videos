@@ -63,12 +63,13 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns list of subjects`() {
+    fun `returns a cacheable list of subjects`() {
         val createdSubject = saveSubject("Maths")
         saveSubject("French")
 
         mockMvc.perform(get("/v1/subjects").asTeacher())
             .andExpect(status().isOk)
+            .andExpect(header().string("Cache-Control", equalTo("max-age=43200, public")))
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.subjects[0].name").exists())
