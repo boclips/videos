@@ -1,6 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultMatcher
 import java.util.concurrent.TimeUnit
@@ -11,9 +11,9 @@ object MvcMatchers {
 
 class CacheableFor(private val seconds: Long) : ResultMatcher {
     override fun match(result: MvcResult) {
-        Assertions.assertThat(result.response.getHeaderValue("Cache-Control"))
+        assertThat(result.response.getHeaderValue("Cache-Control"))
             .isEqualTo("max-age=${seconds}, public")
-        Assertions.assertThat(result.response.getHeaderValue("Content-Length"))
+        assertThat(result.response.getHeaderValue("Content-Length"))
             .isEqualTo(result.response.contentAsString.length)
     }
 }
