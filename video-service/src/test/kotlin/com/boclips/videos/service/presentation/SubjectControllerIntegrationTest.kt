@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.cacheableFor
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
@@ -49,7 +50,9 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `gets a cacheable subject`() {
         val subjectUrl = createSubject("Mathematics")
             .andReturn().response.getHeader("Location")!!
+
         mockMvc.perform(get(subjectUrl))
+            .andExpect(halJson())
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath("$.name", equalTo("Mathematics")))
             .andExpect(jsonPath("$._links.self.href").exists())
@@ -72,6 +75,8 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/subjects"))
             .andExpect(status().isOk)
+            .andExpect(halJson())
+            .andExpect(cacheableFor(12, HOURS))
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
             .andExpect(jsonPath("$._embedded.subjects[0].name").exists())
@@ -83,7 +88,6 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._embedded.subjects[0]._links.update").doesNotExist())
             .andExpect(jsonPath("$._links.self").exists())
-            .andExpect(cacheableFor(12, HOURS))
     }
 
     @Test

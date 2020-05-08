@@ -12,8 +12,11 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.hateoas.MediaTypes
 import org.springframework.http.CacheControl
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 open class BaseController(
@@ -47,11 +50,12 @@ open class BaseController(
         )
     }
 
-    fun resourceCachedFor(maxAge: Long, unit: TimeUnit, obj: Any): ResponseEntity<ByteArray> =
+    fun halJsonCachedFor(maxAge: Long, unit: TimeUnit, obj: Any): ResponseEntity<ByteArray> =
         obj
             .run { jacksonObjectMapper().writeValueAsBytes(this) }
             .let { body ->
                 ResponseEntity.ok()
+                    .contentType(MediaType(MediaTypes.HAL_JSON, Charset.defaultCharset()))
                     .cacheControl(
                         CacheControl
                             .maxAge(maxAge, unit)

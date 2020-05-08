@@ -7,6 +7,13 @@ import java.util.concurrent.TimeUnit
 
 object MvcMatchers {
     fun cacheableFor(maxAge: Long, unit: TimeUnit) = CacheableFor(unit.toSeconds(maxAge))
+    fun halJson() = HalJson()
+}
+
+class HalJson : ResultMatcher {
+    override fun match(result: MvcResult) {
+        assertThat(result.response.contentType).isEqualTo("application/hal+json;charset=UTF-8")
+    }
 }
 
 class CacheableFor(private val seconds: Long) : ResultMatcher {
