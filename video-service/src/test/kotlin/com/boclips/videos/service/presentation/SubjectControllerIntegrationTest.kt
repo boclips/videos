@@ -70,7 +70,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val createdSubject = saveSubject("Maths")
         saveSubject("French")
 
-        mockMvc.perform(get("/v1/subjects").asTeacher())
+        mockMvc.perform(get("/v1/subjects"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.subjects[0].id").exists())
