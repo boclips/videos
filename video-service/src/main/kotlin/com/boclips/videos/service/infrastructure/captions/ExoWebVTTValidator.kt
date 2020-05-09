@@ -65,14 +65,18 @@ class ExoWebVTTValidator() : CaptionValidator {
             // parse the note (if present) {
             var matcher: Matcher = WEBVTT_NOTE.matcher(line)
             if (matcher.find()) {
-                // ignore the note and the blank line under
-                webvttData.readLine()
+                line = webvttData.readLine()
+            }
+            while (line != null && line!!.isEmpty()) {
                 line = webvttData.readLine()
             }
 
             matcher = WEBVTT_CUE_IDENTIFIER.matcher(line)
             if (matcher.find()) {
                 // ignore the identifier (we currently don't use it) and read the next line
+                line = webvttData.readLine()
+            }
+            while (line != null && line!!.isEmpty()) {
                 line = webvttData.readLine()
             }
 
