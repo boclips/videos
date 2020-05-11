@@ -5,6 +5,7 @@ import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,12 +20,18 @@ import java.time.Duration
 
 class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var kalturaVideoId: String
+    lateinit var youtubeVideoId: String
 
     @BeforeEach
     fun setUp() {
         kalturaVideoId = saveVideo(
             title = "6 little horses & a beautiful cow.",
             playbackId = PlaybackId(value = "entry-id-123", type = PlaybackProviderType.KALTURA)
+        ).value
+
+        youtubeVideoId = saveVideo(
+            title = "6 little horses & a beautiful cow.",
+            playbackId = TestFactories.createYoutubePlayback().id
         ).value
     }
 
@@ -44,6 +51,12 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `404 if no video asset`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `404 for non boclips hosted videos`() {
+        mockMvc.perform(get("/v1/videos/$youtubeVideoId/assets").asBoclipsEmployee())
             .andExpect(status().isNotFound)
     }
 }

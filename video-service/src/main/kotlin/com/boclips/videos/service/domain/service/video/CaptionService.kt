@@ -1,10 +1,10 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.VideoId
 
 class CaptionService(
@@ -14,9 +14,14 @@ class CaptionService(
 ) {
 
     fun getAvailableCaptions(videoId: VideoId): List<Caption> {
-        return videoRepository.find(videoId)?.let { video ->
-            playbackRepository.getCaptions(playbackId = video.playback.id)
-        } ?: throw VideoNotFoundException(videoId)
+        return videoRepository.find(videoId)
+            ?.let { video ->
+                if (video.isBoclipsHosted()) {
+                    playbackRepository.getCaptions(playbackId = video.playback.id)
+                } else {
+                    throw UnsupportedCaptionsException(video)
+                }
+            } ?: throw VideoNotFoundException(videoId)
     }
 
     fun getCaptionContent(videoId: VideoId): String? {
@@ -30,9 +35,11 @@ class CaptionService(
             videoRepository.find(videoId)?.let { video ->
                 playbackRepository.updateCaptionContent(video.playback.id, captionContent)
 
-                videoRepository.update(VideoUpdateCommand.ReplaceTranscript(
-                    video.videoId, captionValidator.parse(captionContent).joinToString(separator = "\n")
-                ))
+                videoRepository.update(
+                    VideoUpdateCommand.ReplaceTranscript(
+                        video.videoId, captionValidator.parse(captionContent).joinToString(separator = "\n")
+                    )
+                )
 
                 UpdateCaptions.logger.info { "Updated captions for ${video.videoId}" }
             }

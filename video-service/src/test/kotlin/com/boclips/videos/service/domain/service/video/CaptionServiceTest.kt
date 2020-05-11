@@ -1,22 +1,20 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.Caption
-import com.boclips.videos.service.domain.model.video.CaptionFormat.*
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.CaptionFormat.SRT
+import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.VideoFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
 
 class CaptionServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -61,6 +59,12 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `throws when attempting to fetch captions for a non boclips hosted video`() {
+        val videoId = saveVideo(playbackId = TestFactories.createYoutubePlayback().id)
+        assertThrows<UnsupportedCaptionsException> { captionService.getAvailableCaptions(videoId) }
+    }
+
+    @Test
     fun `Updates the caption content of a video`() {
         val video = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
         val existingCaptions = createKalturaCaptionAsset(
@@ -69,7 +73,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         )
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
-        captionService.updateCaptionContent(video, """WEBVTT FILE
+        captionService.updateCaptionContent(
+            video, """WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -81,12 +86,14 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent())
+                        We don't have a profit margin.""".trimIndent()
+        )
 
         val captionFiles = fakeKalturaClient.getCaptionsForVideo("playback-id")
 
         assertThat(captionFiles).hasSize(1)
-        assertThat(fakeKalturaClient.getCaptionContent(captionFiles.first().id)).isEqualTo("""WEBVTT FILE
+        assertThat(fakeKalturaClient.getCaptionContent(captionFiles.first().id)).isEqualTo(
+            """WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -98,8 +105,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent())
-
+                        We don't have a profit margin.""".trimIndent()
+        )
     }
 
     @Test
@@ -111,7 +118,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         )
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
-        captionService.updateCaptionContent(video, """WEBVTT FILE
+        captionService.updateCaptionContent(
+            video, """WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -123,14 +131,16 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent())
+                        We don't have a profit margin.""".trimIndent()
+        )
 
         val updatedVideo = videoRepository.find(video)
 
-        assertThat(updatedVideo?.transcript).isEqualTo("""
+        assertThat(updatedVideo?.transcript).isEqualTo(
+            """
                         We're quite content to be the odd<br>browser out.
                         We don't have a fancy stock abbreviation <br>to go alongside our name in the press.
-                        We don't have a profit margin.""".trimIndent())
+                        We don't have a profit margin.""".trimIndent()
+        )
     }
-
 }
