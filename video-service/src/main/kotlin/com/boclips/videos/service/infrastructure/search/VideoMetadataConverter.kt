@@ -1,9 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.SubjectMetadata
-import com.boclips.search.service.domain.videos.model.SubjectsMetadata
-import com.boclips.search.service.domain.videos.model.VideoMetadata
+import com.boclips.search.service.domain.videos.model.*
+import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -39,7 +37,8 @@ object VideoMetadataConverter {
             promoted = video.promoted,
             meanRating = video.getRatingAverage(),
             eligibleForStream = videoAvailability.isStreamable(),
-            eligibleForDownload = videoAvailability.isDownloadable()
+            eligibleForDownload = videoAvailability.isDownloadable(),
+            resources = attachmentTypes(video.attachments)
         )
     }
 
@@ -52,6 +51,9 @@ object VideoMetadataConverter {
 
         return tags.toList()
     }
+
+    private fun attachmentTypes(attachments: List<Attachment>): Set<String> =
+        attachments.mapTo(HashSet()) { it.type.toString() }
 
     private fun convertPlaybackTypeToSourceType(playbackType: PlaybackProviderType): SourceType =
         when (playbackType) {

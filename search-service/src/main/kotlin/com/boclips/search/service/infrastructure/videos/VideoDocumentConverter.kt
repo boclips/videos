@@ -34,7 +34,8 @@ object VideoDocumentConverter {
             promoted = video.promoted,
             meanRating = video.meanRating,
             eligibleForDownload = video.eligibleForDownload,
-            eligibleForStream = video.eligibleForStream
+            eligibleForStream = video.eligibleForStream,
+            resources = video.resources
         )
     }
 }

@@ -27,7 +27,8 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(MEAN_RATING) val meanRating: Double?,
     @param:JsonProperty(SUBJECTS_SET_MANUALLY) val subjectsSetManually: Boolean?,
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
-    @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?
+    @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?,
+    @param:JsonProperty(RESOURCES) val resources: Set<String>?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"
@@ -49,5 +50,6 @@ data class VideoDocument @JsonCreator constructor(
         const val SUBJECTS_SET_MANUALLY = "subjectsSetManually"
         const val ELIGIBLE_FOR_STREAM = "eligibleForStream"
         const val ELIGIBLE_FOR_DOWNLOAD = "eligibleForDownload"
+        const val RESOURCES = "resources"
     }
 }

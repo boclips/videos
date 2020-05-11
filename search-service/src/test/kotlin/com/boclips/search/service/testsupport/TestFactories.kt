@@ -33,8 +33,8 @@ object SearchableVideoMetadataFactory {
         promoted: Boolean? = null,
         meanRating: Double? = 5.0,
         eligibleForStream: Boolean = true,
-        eligibleForDownload: Boolean = true
-
+        eligibleForDownload: Boolean = true,
+        resources: Set<String> = emptySet()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -54,7 +54,8 @@ object SearchableVideoMetadataFactory {
         promoted = promoted,
         meanRating = meanRating,
         eligibleForStream = eligibleForStream,
-        eligibleForDownload = eligibleForDownload
+        eligibleForDownload = eligibleForDownload,
+        resources = resources
     )
 }
 
@@ -90,7 +91,8 @@ object TestFactories {
             meanRating = null,
             subjectsSetManually = null,
             eligibleForDownload = true,
-            eligibleForStream = true
+            eligibleForStream = true,
+            resources = emptySet()
         )
     }
 }

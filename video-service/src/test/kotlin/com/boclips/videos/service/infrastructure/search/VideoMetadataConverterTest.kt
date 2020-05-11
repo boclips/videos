@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -13,6 +14,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.contentpartner.Availability
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -51,7 +53,8 @@ class VideoMetadataConverterTest {
             ),
             subjectsSetManually = true,
             promoted = true,
-            ratings = emptyList()
+            ratings = emptyList(),
+            attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY))
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.NONE)
@@ -79,7 +82,8 @@ class VideoMetadataConverterTest {
                 promoted = true,
                 meanRating = null,
                 eligibleForStream = false,
-                eligibleForDownload = false
+                eligibleForDownload = false,
+                resources = setOf("ACTIVITY")
             )
         )
     }
