@@ -10,6 +10,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.allCriteria
 import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAggregation.Companion.aggregateAgeRanges
+import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentTypeAggregation.Companion.aggregateAttachmentTypes
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
 import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
 import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
@@ -50,6 +51,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 aggregation(aggregateSubjects(videoQuery))
                 aggregation(aggregateAgeRanges(videoQuery))
                 aggregation(aggregateDuration(videoQuery))
+                aggregation(aggregateAttachmentTypes(videoQuery))
                 videoQuery.sort?.let { applySort(it) }
             }
 

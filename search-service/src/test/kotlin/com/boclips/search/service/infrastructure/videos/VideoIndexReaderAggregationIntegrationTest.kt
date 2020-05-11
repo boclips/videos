@@ -406,5 +406,47 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(facetCounts).contains(Count(id = "PT20M-PT24H", hits = 0))
             }
         }
+
+        @Nested
+        inner class AttachmentTypesFacet {
+            @Test
+            fun `returns resource buckets when no filters are applied`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            durationSeconds = 70,
+                            attachmentTypes = setOf("Activity")
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "Banana apple",
+                            durationSeconds = 130,
+                            attachmentTypes = setOf("Lesson Guide")
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "Apple candy",
+                            durationSeconds = 310
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            phrase = "apple"
+                        )
+                    )
+                )
+                assertThat(results.counts.totalHits).isEqualTo(3)
+                val facetCounts = results.counts.getFacetCounts(FacetType.AttachmentTypes)
+
+                assertThat(facetCounts).contains(Count(id = "Lesson Guide", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "Activity", hits = 1))
+            }
+
+        }
     }
 }
