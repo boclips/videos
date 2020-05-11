@@ -26,13 +26,13 @@ class VideoIndexReaderAttachmentTypeIntegrationTest : EmbeddedElasticSearchInteg
                     id = "1",
                     title = "Apple banana candy",
                     durationSeconds = 70,
-                    attachmentTypes = setOf("ACTIVITY")
+                    attachmentTypes = setOf("Activity")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "Banana apple",
                     durationSeconds = 130,
-                    attachmentTypes = setOf("LESSON_GUIDE")
+                    attachmentTypes = setOf("Lesson Guide")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
@@ -45,7 +45,7 @@ class VideoIndexReaderAttachmentTypeIntegrationTest : EmbeddedElasticSearchInteg
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    attachmentTypes = setOf("LESSON_GUIDE")
+                    attachmentTypes = setOf("Lesson Guide")
                 )
             )
         )

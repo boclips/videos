@@ -83,7 +83,7 @@ class VideoMetadataConverterTest {
                 meanRating = null,
                 eligibleForStream = false,
                 eligibleForDownload = false,
-                attachmentTypes = setOf("ACTIVITY")
+                attachmentTypes = setOf("Activity")
             )
         )
     }

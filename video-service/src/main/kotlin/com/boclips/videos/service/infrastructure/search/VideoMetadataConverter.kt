@@ -53,7 +53,7 @@ object VideoMetadataConverter {
     }
 
     private fun attachmentTypes(attachments: List<Attachment>): Set<String> =
-        attachments.mapTo(HashSet()) { it.type.toString() }
+        attachments.mapTo(HashSet()) { it.type.label }
 
     private fun convertPlaybackTypeToSourceType(playbackType: PlaybackProviderType): SourceType =
         when (playbackType) {
