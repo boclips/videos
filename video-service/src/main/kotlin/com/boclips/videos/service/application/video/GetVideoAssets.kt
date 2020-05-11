@@ -4,10 +4,16 @@ import com.boclips.videos.service.application.video.exceptions.VideoCaptionNotFo
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.CaptionService
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
+import java.io.OutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class GetVideoAssets(
     private val captionService: CaptionService,
@@ -15,14 +21,22 @@ class GetVideoAssets(
 ) {
 
     companion object {
-        fun buildFilename(video: Video, caption: Caption) =
-            video.title
+        fun buildFilename(title: String) =
+            title
                 .replace(Regex("[^A-Za-z\\s\\d]+"), "")
                 .replace(Regex("[\\s]+"), "-")
-                .plus(".${caption.format.getFileExtension()}")
+
+        fun writeCompressedContent(outputStream: OutputStream, title: String, caption: Caption) {
+            ZipOutputStream(outputStream).let { archive ->
+                val subtitles = ZipEntry(buildFilename(title).plus(".${caption.format.getFileExtension()}"))
+                archive.putNextEntry(subtitles)
+                archive.write(caption.content.toByteArray())
+                archive.closeEntry()
+            }
+        }
     }
 
-    operator fun invoke(videoId: String, user: User): ResponseEntity<String> {
+    operator fun invoke(videoId: String, user: User): ResponseEntity<StreamingResponseBody> {
         val video = searchVideo.byId(videoId, user)
 
         val caption = try {
@@ -34,7 +48,8 @@ class GetVideoAssets(
         }
 
         return ResponseEntity.ok()
-            .header("Content-Disposition", "attachment; filename=\"${buildFilename(video, caption)}\"")
-            .body(caption.content)
+            .header("Content-Disposition", "attachment; filename=\"${buildFilename(video.title)}.zip\"")
+            .contentType(MediaType("application", "zip"))
+            .body(StreamingResponseBody { writeCompressedContent(it, video.title, caption) })
     }
 }

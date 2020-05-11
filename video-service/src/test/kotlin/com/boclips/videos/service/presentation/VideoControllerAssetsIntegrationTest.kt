@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,11 +42,18 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
             "entry-id-123", CaptionAsset.builder().fileType(CaptionFormat.WEBVTT).build(), "what a caption!"
         )
 
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
+        val contentAsByteArray = mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(content().contentType("text/plain;charset=UTF-8"))
-            .andExpect(content().string("what a caption!"))
-            .andExpect(header().string("Content-Disposition","attachment; filename=\"6-little-horses-a-beautiful-cow.vtt\""))
+            .andExpect(content().contentType("application/zip"))
+            .andExpect(
+                header().string(
+                    "Content-Disposition",
+                    "attachment; filename=\"6-little-horses-a-beautiful-cow.zip\""
+                )
+            )
+            .andReturn().response.contentAsByteArray
+
+        assertThat(contentAsByteArray).isNotEmpty()
     }
 
     @Test
