@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -357,5 +358,39 @@ class VideosLinkBuilderTest {
         assertThat(link).isNotNull
         assertThat(link?.href).contains("/v1/videos/$validVideoId/attachments")
         assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.ADD_ATTACHMENT)
+    }
+
+    @Test
+    fun `assets link is there when user is allowed`() {
+        setSecurityContext("boclip@boclips.com", UserRoles.DOWNLOAD_VIDEO)
+
+        val link = videosLinkBuilder.assets(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNotNull
+        assertThat(link?.href).contains("/v1/videos/$validVideoId/assets")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.ASSETS)
+    }
+
+    @Test
+    fun `assets link is not present with incorrect permission`() {
+        setSecurityContext("boclip@boclips.com")
+
+        val link = videosLinkBuilder.assets(createVideo(videoId = validVideoId))
+
+        assertThat(link).isNull()
+    }
+
+    @Test
+    fun `assets link is not present for a youtube video`() {
+        setSecurityContext("boclip@boclips.com")
+
+        val link = videosLinkBuilder.assets(
+            createVideo(
+                videoId = validVideoId,
+                playback = TestFactories.createYoutubePlayback()
+            )
+        )
+
+        assertThat(link).isNull()
     }
 }

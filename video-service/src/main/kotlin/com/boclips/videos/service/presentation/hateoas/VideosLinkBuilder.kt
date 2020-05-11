@@ -10,17 +10,18 @@ import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE_CAPTIONS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_CAPTIONS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE_CAPTIONS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.VIDEO
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
+        const val ASSETS = "assets"
         const val VIDEO = "video"
         const val LOG_VIDEO_INTERACTION = "logInteraction"
         const val SEARCH_VIDEOS = "searchVideos"
@@ -150,15 +151,15 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun updateLink(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-            HateoasLink.of(
-                Link(
-                    getVideosRootWithoutParams()
-                        .pathSegment(video.videoId.value)
-                        .build()
-                        .toUriString()
-                    , UPDATE
-                )
+        HateoasLink.of(
+            Link(
+                getVideosRootWithoutParams()
+                    .pathSegment(video.videoId.value)
+                    .build()
+                    .toUriString()
+                , UPDATE
             )
+        )
     }
 
     fun updateCaptions(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
@@ -191,16 +192,16 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun addAttachment(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-            HateoasLink.of(
-                Link(
-                    getVideosRootWithoutParams()
-                        .pathSegment(video.videoId.value)
-                        .pathSegment("attachments")
-                        .build()
-                        .toUriString()
-                    , ADD_ATTACHMENT
-                )
+        HateoasLink.of(
+            Link(
+                getVideosRootWithoutParams()
+                    .pathSegment(video.videoId.value)
+                    .pathSegment("attachments")
+                    .build()
+                    .toUriString()
+                , ADD_ATTACHMENT
             )
+        )
     }
 
     private fun getVideosRootWithoutParams() = uriComponentsBuilderFactory.getInstance()
@@ -243,5 +244,23 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             )
         )
     }
+
+    fun assets(video: Video): HateoasLink? =
+        takeIf { video.isBoclipsHosted() }?.let {
+            getIfHasAnyRole(UserRoles.DOWNLOAD_VIDEO)
+            {
+                HateoasLink.of(
+                    Link(
+                        getVideosRootWithoutParams()
+                            .pathSegment(video.videoId.value)
+                            .pathSegment("assets")
+                            .build()
+                            .toUriString(),
+                        Rels.ASSETS
+
+                    )
+                )
+            }
+        }
 }
 

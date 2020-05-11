@@ -124,6 +124,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
                 .andExpect(jsonPath("$._links.detailsProjection.href", containsString("/videos/$kalturaVideoId?projection=details")))
                 .andExpect(jsonPath("$._links.fullProjection.href", containsString("/videos/$kalturaVideoId?projection=full")))
+                .andExpect(jsonPath("$._links.assets.href", containsString("/videos/$kalturaVideoId/assets")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
 

@@ -70,7 +70,13 @@ class VideoToResourceConverter(
             promoted = video.promoted,
             language = video.language?.let { LanguageResource.from(it) },
             attachments = video.attachments.map { attachmentToResourceConverter.convert(it) },
-            _links = (resourceLinks(video.videoId.value) + actionLinks(video)).map { it.rel to it }.toMap()
+            _links = (
+                resourceLinks(video.videoId.value) +
+                    conditionalResourceLinks(video) +
+                    actionLinks(video)
+                )
+                .map { it.rel to it }
+                .toMap()
         )
     }
 
@@ -121,6 +127,10 @@ class VideoToResourceConverter(
             videosLinkBuilder.videoDetailsProjection(videoId),
             videosLinkBuilder.videoFullProjection(videoId)
         )
+
+    private fun conditionalResourceLinks(video: Video) = listOfNotNull(
+        videosLinkBuilder.assets(video)
+    )
 
     private fun actionLinks(video: Video): List<HateoasLink> = listOfNotNull(
         videosLinkBuilder.rateLink(video),
