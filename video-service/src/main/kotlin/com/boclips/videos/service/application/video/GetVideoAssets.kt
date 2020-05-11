@@ -34,7 +34,7 @@ class GetVideoAssets(
         }
 
         return ResponseEntity.ok()
-            .header("Content-Disposition", "attachment; filename=${buildFilename(video, caption)}")
+            .header("Content-Disposition", "attachment; filename=\"${buildFilename(video, caption)}\"")
             .body(caption.content)
     }
 }

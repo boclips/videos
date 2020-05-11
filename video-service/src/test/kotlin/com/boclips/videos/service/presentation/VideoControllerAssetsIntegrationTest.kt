@@ -45,7 +45,7 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(content().contentType("text/plain;charset=UTF-8"))
             .andExpect(content().string("what a caption!"))
-            .andExpect(header().string("Content-Disposition","attachment; filename=6-little-horses-a-beautiful-cow.vtt"))
+            .andExpect(header().string("Content-Disposition","attachment; filename=\"6-little-horses-a-beautiful-cow.vtt\""))
     }
 
     @Test
