@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
+import com.boclips.search.service.infrastructure.common.filters.filterByAttachmentTypes
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -21,6 +22,7 @@ class VideoFilterCriteria {
         const val SUBJECTS = "subjects-filter"
         const val AGE_RANGES = "age-ranges-filter"
         const val DURATION_RANGES = "duration-ranges-filter"
+        const val ATTACHMENT_TYPES = "attachment-types-filter"
 
         fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
             val boolQueryBuilder = boolQuery()
@@ -95,6 +97,10 @@ class VideoFilterCriteria {
 
             if (videoQuery.isEligibleForStream != null) {
                 boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
+            }
+
+            if(!videoQuery.attachmentTypes.isNullOrEmpty()) {
+                boolQueryBuilder.must(filterByAttachmentTypes(videoQuery.attachmentTypes))
             }
 
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->

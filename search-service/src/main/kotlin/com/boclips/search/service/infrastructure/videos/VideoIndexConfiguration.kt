@@ -32,7 +32,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.ELIGIBLE_FOR_DOWNLOAD to IndexConfiguration.Fields.boolean,
                 VideoDocument.ELIGIBLE_FOR_STREAM to IndexConfiguration.Fields.boolean,
                 VideoDocument.TAGS to keywordField,
-                VideoDocument.CONTENT_PARTNER_ID to IndexConfiguration.Fields.simpleText
+                VideoDocument.CONTENT_PARTNER_ID to IndexConfiguration.Fields.simpleText,
+                VideoDocument.ATTACHMENT_TYPES to IndexConfiguration.Fields.simpleTextArray
             )
         )
     }

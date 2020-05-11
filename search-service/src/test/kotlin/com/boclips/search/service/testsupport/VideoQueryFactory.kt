@@ -21,7 +21,8 @@ class VideoQueryFactory {
                 source = SourceType.BOCLIPS,
                 releaseDateFrom = LocalDate.of(2014, 1, 30),
                 releaseDateTo = LocalDate.of(2015, 1, 30),
-                promoted = true
+                promoted = true,
+                attachmentTypes = setOf("ACTIVITY")
             )
         }
 

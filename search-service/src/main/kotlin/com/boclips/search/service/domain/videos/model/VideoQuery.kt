@@ -28,5 +28,6 @@ open class VideoQuery(
     val excludedType: Set<VideoType> = emptySet(),
     val permittedVideoIds: Set<String>? = null,
     val deniedVideoIds: Set<String>? = null,
-    val isEligibleForStream: Boolean? = null
+    val isEligibleForStream: Boolean? = null,
+    val attachmentTypes: Set<String>? = null
 ) : SearchQuery<VideoMetadata>(phrase, sort, facetDefinition)

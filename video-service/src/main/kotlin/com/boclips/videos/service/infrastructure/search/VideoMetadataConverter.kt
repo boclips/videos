@@ -38,7 +38,7 @@ object VideoMetadataConverter {
             meanRating = video.getRatingAverage(),
             eligibleForStream = videoAvailability.isStreamable(),
             eligibleForDownload = videoAvailability.isDownloadable(),
-            resources = attachmentTypes(video.attachments)
+            attachmentTypes = attachmentTypes(video.attachments)
         )
     }
 
