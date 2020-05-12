@@ -5,7 +5,11 @@ import com.boclips.videos.service.domain.model.video.request.VideoFacets
 import java.time.Duration
 
 class FacetConverter {
-    operator fun invoke(ageRangesFacets: List<FixedAgeRangeFacet>?, durationFacets: List<String>?): VideoFacets {
+    operator fun invoke(
+        ageRangesFacets: List<FixedAgeRangeFacet>?,
+        durationFacets: List<String>?,
+        resourcesFacets: List<String>?
+    ): VideoFacets {
         return VideoFacets()
             .apply {
                 durationFacets.let {
@@ -22,6 +26,11 @@ class FacetConverter {
             .apply {
                 ageRangesFacets?.let { ageRangesFacets ->
                     ageRanges = ageRangesFacets
+                }
+            }
+            .apply {
+                resourcesFacets?.let { resourcesFacets ->
+                    resourceTypes = resourcesFacets
                 }
             }
     }

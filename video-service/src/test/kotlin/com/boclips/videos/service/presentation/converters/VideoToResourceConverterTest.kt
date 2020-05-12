@@ -12,13 +12,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -242,7 +236,8 @@ class VideoToResourceConverterTest {
                             ), total = 1
                         )
                     ),
-                    durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10))
+                    durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10)),
+                    attachmentTypes = listOf(AttachmentTypeFacet(attachmentType = "Activity", total = 5))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -257,6 +252,7 @@ class VideoToResourceConverterTest {
         assertThat(resultResource._embedded.facets?.ageRanges?.get("3-5")?.hits).isEqualTo(3)
         assertThat(resultResource._embedded.facets?.ageRanges?.get("5-11")?.hits).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.durations?.get("PT0S-PT1M")?.hits).isEqualTo(10)
+        assertThat(resultResource._embedded.facets?.resourceTypes?.get("Activity")?.hits).isEqualTo(5)
     }
 
     @Test

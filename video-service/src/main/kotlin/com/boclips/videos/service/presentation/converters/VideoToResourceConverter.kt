@@ -104,6 +104,9 @@ class VideoToResourceConverter(
                 }.toMap(),
                 durations = counts.durations.map {
                     it.durationId to VideoFacetResource(hits = it.total)
+                }.toMap(),
+                resourceTypes = counts.attachmentTypes.map {
+                    it.attachmentType to VideoFacetResource(hits = it.total)
                 }.toMap()
             )
         }

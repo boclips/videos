@@ -17,9 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 class UpdateVideoSubjectsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var updateVideo: UpdateVideo
-
-    @Autowired
     lateinit var videoRepository: VideoRepository
 
     @Autowired

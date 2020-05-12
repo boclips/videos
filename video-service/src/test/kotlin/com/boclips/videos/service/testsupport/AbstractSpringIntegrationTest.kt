@@ -19,6 +19,7 @@ import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.attachments.AttachmentRequest
@@ -27,6 +28,7 @@ import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -35,6 +37,7 @@ import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -73,8 +76,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Collections
-import java.util.UUID
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -111,6 +113,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var createVideo: CreateVideo
+
+    @Autowired
+    lateinit var updateVideo: UpdateVideo
 
     @Autowired
     lateinit var createCollection: CreateCollection
@@ -310,6 +315,13 @@ abstract class AbstractSpringIntegrationTest {
         return createSubject(CreateSubjectRequest(name))
     }
 
+    fun addVideoAttachment(attachment: AttachmentRequest, videoId: VideoId) {
+        updateVideo(
+            videoId.value,
+            UpdateVideoRequest(attachments = Specified(listOf(attachment))),
+            user = UserFactory.sample(boclipsEmployee = true)
+        )
+    }
     fun saveAgeRange(
         id: String,
         min: Int,

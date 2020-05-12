@@ -8,8 +8,8 @@ import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierExcep
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.request.SortKey
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
@@ -50,7 +50,9 @@ class SearchVideo(
         promoted: Boolean? = null,
         contentPartnerNames: Set<String> = emptySet(),
         type: Set<String> = emptySet(),
-        user: User
+        user: User,
+        resourceTypes: Set<String> = emptySet(),
+        resourceTypeFacets: List<String>? = null
     ): ResultsPage<Video, VideoCounts> {
         return getVideosByQuery(
             query = query ?: "",
@@ -75,7 +77,9 @@ class SearchVideo(
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type,
-            user = user
+            user = user,
+            resourceTypes = resourceTypes,
+            resourceTypeFacets = resourceTypeFacets
         )
     }
 

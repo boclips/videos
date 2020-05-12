@@ -22,9 +22,6 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
     @Autowired
     lateinit var videoRepository: VideoRepository
 
-    @Autowired
-    lateinit var updateVideo: UpdateVideo
-
     @Nested
     inner class PublishingEvents {
         @Test

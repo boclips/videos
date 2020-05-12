@@ -48,8 +48,10 @@ class GetVideosByQuery(
         type: Set<String>,
         user: User,
         subjectsSetManually: Boolean?,
-        releasedDateFrom: String?
-    ): ResultsPage<Video, VideoCounts> {
+        releasedDateFrom: String?,
+        resourceTypes: Set<String>,
+        resourceTypeFacets: List<String>?
+        ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
@@ -78,7 +80,8 @@ class GetVideosByQuery(
             promoted = promoted,
             contentPartnerNames = contentPartnerNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
-            facets = FacetConverter().invoke(ageRangesFacets, durationFacets)
+            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets),
+            attachmentTypes = resourceTypes
         )
 
         val videoSearchResponse = videoRetrievalService.searchPlaybableVideos(request = request, videoAccess = user.accessRules.videoAccess)

@@ -149,6 +149,18 @@ class VideoRequestTest {
     }
 
     @Test
+    fun `allows filtering by attachment type`() {
+        val searchQuery = VideoRequest(
+            text = "",
+            pageSize = 2,
+            pageIndex = 0,
+            attachmentTypes = setOf("Activity")
+        ).toQuery(VideoAccess.Everything)
+
+        assertThat(searchQuery.attachmentTypes).isEqualTo(setOf("Activity"))
+    }
+
+    @Test
     fun `limits query to specific ids`() {
         val firstId = TestFactories.createVideoId()
         val secondId = TestFactories.createVideoId()

@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.eventbus.events.video.VideosSearched
+import com.boclips.videos.api.request.attachments.AttachmentRequest
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -177,5 +179,48 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThat(results.pageInfo.totalElements).isEqualTo(1)
         assertThat(results.elements.toList().size).isEqualTo(1)
         assertThat(results.elements.first().title).isEqualTo("why are camels so tall 2")
+    }
+
+    @Test
+    fun `can filter by attachment type`() {
+        saveVideo(
+            title = "why are camels so tall 1"
+        )
+
+        saveVideo(
+            title = "why are camels so tall 2"
+        ).let { addVideoAttachment(
+            attachment = AttachmentRequest(
+                linkToResource = "https://www.boclips.com",
+                type = "ACTIVITY",
+                description = "a description"
+            ),
+            videoId = it
+        ) }
+
+        saveVideo(
+            title = "why are camels so tall 3"
+        ).let {
+            addVideoAttachment(
+                attachment = AttachmentRequest(
+                    linkToResource = "https://www.boclips.com",
+                    type = "LESSON_PLAN",
+                    description = "a description"
+                ),
+                videoId = it)
+        }
+
+        val results = searchVideo.byQuery(
+            query = "why are camels so tall",
+            pageSize = 20,
+            pageNumber = 0,
+            resourceTypes = setOf("Activity"),
+            user = UserFactory.sample()
+        )
+
+        assertThat(results.pageInfo.totalElements).isEqualTo(1)
+        assertThat(results.elements.first().title).isEqualTo("why are camels so tall 2")
+        assertThat(results.elements.first().attachments.size).isEqualTo(1)
+        assertThat(results.elements.first().attachments[0].type).isEqualTo(AttachmentType.ACTIVITY)
     }
 }

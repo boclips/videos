@@ -104,6 +104,16 @@ class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>()
             }
             .filter { entry ->
                 query.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
+            }.filter { entry ->
+                if (query.attachmentTypes.isEmpty()) {
+                    true
+                } else {
+                    query.attachmentTypes.any { queryAttachmentType ->
+                        entry.value.attachmentTypes?.any { videoAttachments ->
+                            videoAttachments.contains(queryAttachmentType)
+                        } ?: true
+                    }
+                }
             }
             .map { video -> video.key }
     }

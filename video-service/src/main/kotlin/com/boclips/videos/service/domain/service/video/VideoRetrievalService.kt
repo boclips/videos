@@ -7,15 +7,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoResults
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
@@ -60,6 +52,8 @@ class VideoRetrievalService(
             .map { AgeRangeFacet(ageRangeId = AgeRangeId(it.id), total = it.hits) }
         val durationCounts = results.counts.getFacetCounts(FacetType.Duration)
             .map { DurationFacet(durationId = it.id, total = it.hits) }
+        val attachmentTypeCounts = results.counts.getFacetCounts(FacetType.AttachmentTypes)
+            .map { AttachmentTypeFacet(attachmentType = it.id, total = it.hits) }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
@@ -69,7 +63,8 @@ class VideoRetrievalService(
                 total = results.counts.totalHits,
                 subjects = subjectCounts,
                 ageRanges = ageRangeCounts,
-                durations = durationCounts
+                durations = durationCounts,
+                attachmentTypes = attachmentTypeCounts
             )
         )
     }

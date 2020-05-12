@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.video.request
 
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import java.time.Duration
 
 data class VideoFacets(
@@ -17,7 +18,8 @@ data class VideoFacets(
         Pair(Duration.ofMinutes(5), Duration.ofMinutes(10)),
         Pair(Duration.ofMinutes(10), Duration.ofMinutes(20)),
         Pair(Duration.ofMinutes(20), Duration.ofHours(24))
-    )
+    ),
+    var resourceTypes: List<String> = listOf(AttachmentType.values().toString())
 )
 
 class FixedAgeRangeFacet(val min: Int, val max: Int)
