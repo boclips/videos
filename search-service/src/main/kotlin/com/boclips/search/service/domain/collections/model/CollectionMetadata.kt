@@ -15,5 +15,6 @@ data class CollectionMetadata(
     val promoted: Boolean?,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
-    val updatedAt: LocalDate
+    val updatedAt: LocalDate,
+    val attachmentTypes: Set<String>?
 )

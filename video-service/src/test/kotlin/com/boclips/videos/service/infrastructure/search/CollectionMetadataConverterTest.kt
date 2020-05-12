@@ -50,6 +50,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.title).isEqualTo("Collection with lesson plan")
         assertThat(collectionMetadata.visibility).isEqualTo(CollectionVisibility.PRIVATE)
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(true)
+        assertThat(collectionMetadata.attachmentTypes).isEqualTo(setOf("Lesson Guide"))
     }
 
     @Test

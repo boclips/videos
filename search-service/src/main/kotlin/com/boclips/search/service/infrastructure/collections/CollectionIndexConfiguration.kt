@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.infrastructure.IndexConfiguration
+import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.ATTACHMENT_TYPES
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.BOOKMARKED_BY
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.HAS_ATTACHMENTS
 import com.boclips.search.service.infrastructure.collections.CollectionDocument.Companion.OWNER
@@ -19,7 +20,8 @@ class CollectionIndexConfiguration : IndexConfiguration {
                 VISIBILITY to IndexConfiguration.Fields.simpleText,
                 SUBJECTS to IndexConfiguration.Fields.stringArray,
                 HAS_ATTACHMENTS to IndexConfiguration.Fields.boolean,
-                UPDATED_AT to IndexConfiguration.Fields.date
+                UPDATED_AT to IndexConfiguration.Fields.date,
+                ATTACHMENT_TYPES to IndexConfiguration.Fields.simpleTextArray
             )
         )
     }

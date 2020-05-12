@@ -28,7 +28,8 @@ class CollectionDocumentConverterTest {
                 "description": "Collection under test",
                 "hasLessonPlans": "false",
                 "ageRange": [],
-                "updatedAt": "2019-01-16T12:00:00.870Z"
+                "updatedAt": "2019-01-16T12:00:00.870Z",
+                "attachmentTypes": ["Lesson Guide"]
             }
         """.trimIndent()
             )
@@ -50,7 +51,8 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2019, Month.JANUARY, 16)
+                updatedAt = LocalDate.of(2019, Month.JANUARY, 16),
+                attachmentTypes = setOf("Lesson Guide")
             )
         )
     }
@@ -90,7 +92,8 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2018,Month.DECEMBER,19)
+                updatedAt = LocalDate.of(2018,Month.DECEMBER,19),
+                attachmentTypes = null
             )
         )
     }
@@ -110,7 +113,8 @@ class CollectionDocumentConverterTest {
             ageRangeMin = null,
             ageRangeMax = null,
             bookmarkedBy = setOf("juan"),
-            updatedAt = LocalDate.of(2000,Month.APRIL,12)
+            updatedAt = LocalDate.of(2000,Month.APRIL,12),
+            attachmentTypes = setOf("Activity")
         )
 
         val document = CollectionDocumentConverter().convertToDocument(metadata)
@@ -130,7 +134,8 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2000,Month.APRIL,12)
+                updatedAt = LocalDate.of(2000,Month.APRIL,12),
+                attachmentTypes = setOf("Activity")
             )
         )
     }
