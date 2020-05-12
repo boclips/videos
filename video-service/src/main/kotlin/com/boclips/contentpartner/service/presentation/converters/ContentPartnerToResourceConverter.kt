@@ -56,7 +56,7 @@ class ContentPartnerToResourceConverter(
                     curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
                     bestForTags = contentPartner.pedagogyInformation?.bestForTags,
                     subjects = contentPartner.pedagogyInformation?.subjects,
-                    ageRangeBuckets = contentPartner.ageRangeBuckets
+                    ageRangeBuckets = contentPartner.pedagogyInformation?.ageRangeBuckets
                 )
             ),
             contractId = contentPartner.contract?.id?.value,

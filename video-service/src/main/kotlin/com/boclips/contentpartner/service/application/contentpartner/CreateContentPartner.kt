@@ -98,9 +98,6 @@ class CreateContentPartner(
                         value = ObjectId().toHexString()
                     ),
                     name = name,
-                    ageRangeBuckets = AgeRangeBuckets(
-                        ageRanges
-                    ),
                     credit = upsertRequest.accreditedToYtChannelId?.let {
                         Credit
                             .YoutubeCredit(it)

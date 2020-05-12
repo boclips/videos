@@ -35,9 +35,6 @@ class ContentPartnerDocumentConverterTest {
                 value = ObjectId().toHexString()
             ),
             name = "The grandest content partner there ever lived",
-            ageRangeBuckets = AgeRangeBuckets(
-                listOf(ContentPartnerFactory.createAgeRange())
-            ),
             credit = Credit.PartnerCredit,
             legalRestriction = ContentPartnerFactory.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),

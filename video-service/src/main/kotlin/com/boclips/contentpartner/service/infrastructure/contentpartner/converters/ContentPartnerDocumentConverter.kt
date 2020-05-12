@@ -42,7 +42,7 @@ object ContentPartnerDocumentConverter : KLogging() {
                 else -> null
             },
             name = contentPartner.name,
-            ageRanges = contentPartner.ageRangeBuckets.ageRanges.map {
+            ageRanges = contentPartner.pedagogyInformation?.ageRangeBuckets?.ageRanges?.map {
                 AgeRangeDocumentConverter.toAgeRangeDocument(
                     it
                 )
@@ -102,11 +102,6 @@ object ContentPartnerDocumentConverter : KLogging() {
                 value = document.id.toString()
             ),
             name = document.name,
-            ageRangeBuckets = AgeRangeBuckets(
-                ageRanges = getAgeRangeBuckets(
-                    document.ageRanges
-                )
-            ),
             credit = document.youtubeChannelId?.let {
                 Credit.YoutubeCredit(
                     channelId = it

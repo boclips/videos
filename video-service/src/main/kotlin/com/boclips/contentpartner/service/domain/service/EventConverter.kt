@@ -20,7 +20,6 @@ import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusCont
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 
 class EventConverter {
-
     fun toContentPartnerPayload(contentPartner: ContentPartner): EventBusContentPartner {
         return EventBusContentPartner.builder()
             .id(ContentPartnerId(contentPartner.contentPartnerId.value))
@@ -30,8 +29,8 @@ class EventConverter {
             .marketing(convertMarketingDetails(contentPartner.marketingInformation))
             .ageRange(
                 AgeRange.builder()
-                    .min(contentPartner.ageRangeBuckets.min)
-                    .max(contentPartner.ageRangeBuckets.max)
+                    .min(contentPartner.pedagogyInformation?.ageRangeBuckets?.min)
+                    .max(contentPartner.pedagogyInformation?.ageRangeBuckets?.max)
                     .build()
             )
             .awards(contentPartner.awards)
@@ -65,6 +64,7 @@ class EventConverter {
             .contractId(contentPartner.contract?.id?.value)
             .awards(contentPartner.awards)
             .notes(contentPartner.notes)
+            .language(contentPartner.language)
             .build()
     }
 

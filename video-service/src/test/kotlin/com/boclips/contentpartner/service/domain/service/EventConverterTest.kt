@@ -68,6 +68,7 @@ class EventConverterTest {
         assertThat(details.contractId).isEqualTo("contract-id")
         assertThat(details.awards).isEqualTo("Outsell Company of the Year")
         assertThat(details.notes).isEqualTo("no notes yet")
+        assertThat(details.language).isEqualTo(Locale.CANADA_FRENCH)
     }
 
     @Test

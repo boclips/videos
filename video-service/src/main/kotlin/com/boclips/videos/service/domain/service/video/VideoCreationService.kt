@@ -4,7 +4,6 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
-import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.Video
 
 class VideoCreationService(
@@ -24,12 +23,16 @@ class VideoCreationService(
         var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnknownAgeRange) {
             contentPartnerRepository.findById(
-                contentPartnerId = ContentPartnerId(
-                    value = videoToBeCreated.contentPartner.contentPartnerId.value
+                    contentPartnerId = ContentPartnerId(
+                        value = videoToBeCreated.contentPartner.contentPartnerId.value
+                    )
                 )
-            )
                 ?.apply {
-                    ageRange = AgeRange.of(this.ageRangeBuckets.min, this.ageRangeBuckets.max, curatedManually = false)
+                    ageRange = AgeRange.of(
+                        this.pedagogyInformation?.ageRangeBuckets?.min,
+                        this.pedagogyInformation?.ageRangeBuckets?.max,
+                        curatedManually = false
+                    )
                 }
         }
 

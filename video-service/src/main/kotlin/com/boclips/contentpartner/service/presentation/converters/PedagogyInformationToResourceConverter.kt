@@ -13,7 +13,7 @@ object PedagogyInformationToResourceConverter {
                 bestForTags = pedagogyInformation.bestForTags,
                 subjects = pedagogyInformation.subjects,
                 educationalResources = pedagogyInformation.educationalResources,
-                ageRanges = AgeRangeToResourceConverter.convert(pedagogyInformation.ageRangeBuckets!!)
+                ageRanges = pedagogyInformation.ageRangeBuckets?.let { AgeRangeToResourceConverter.convert(it) }
             )
         }
 }

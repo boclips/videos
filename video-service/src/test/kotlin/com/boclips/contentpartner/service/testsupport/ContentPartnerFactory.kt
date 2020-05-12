@@ -39,9 +39,6 @@ object ContentPartnerFactory {
             ObjectId().toHexString()
         ),
         name: String = "TED",
-        ageRanges: AgeRangeBuckets = AgeRangeBuckets(
-            emptyList()
-        ),
         credit: Credit = Credit.PartnerCredit,
         legalRestriction: LegalRestriction? = null,
         distributionMethods: Set<DistributionMethod> = emptySet(),
@@ -62,7 +59,6 @@ object ContentPartnerFactory {
         return ContentPartner(
             contentPartnerId = id,
             name = name,
-            ageRangeBuckets = ageRanges,
             credit = credit,
             legalRestriction = legalRestriction,
             distributionMethods = distributionMethods,

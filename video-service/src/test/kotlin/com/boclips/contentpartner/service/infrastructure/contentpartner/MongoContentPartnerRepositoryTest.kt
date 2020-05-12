@@ -213,8 +213,10 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `replaces age range`() {
         val contentPartner = mongoContentPartnerRepository.create(
             createContentPartner(
-                ageRanges = AgeRangeBuckets(
-                    emptyList()
+                pedagogyInformation = PedagogyInformation(
+                    ageRangeBuckets = AgeRangeBuckets(
+                        emptyList()
+                    )
                 )
             )
         )
@@ -231,8 +233,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
-        assertThat(updatedAsset.ageRangeBuckets.min).isEqualTo(10)
-        assertThat(updatedAsset.ageRangeBuckets.max).isEqualTo(20)
+        assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.min).isEqualTo(10)
+        assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.max).isEqualTo(20)
     }
 
     @Test

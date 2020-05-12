@@ -118,15 +118,13 @@ class UpdateContentPartnerIntegrationTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java)
 
         assertThat(event.contentPartner.id.value).isEqualTo(originalContentPartner.contentPartnerId.value)
-        assertThat(event.contentPartner.language.isO3Language).isEqualTo("spa")
-        assertThat(event.contentPartner.description).isEqualTo(description)
-        assertThat(event.contentPartner.contentCategories).isEqualTo(contentCategories)
-        assertThat(event.contentPartner.contentTypes).isEqualTo(contentTypes)
-        assertThat(event.contentPartner.notes).isEqualTo(notes)
-        assertThat(event.contentPartner.hubspotId).isEqualTo(hubspotId)
+        assertThat(event.contentPartner.details.language.isO3Language).isEqualTo("spa")
+        assertThat(event.contentPartner.details.contentCategories).isEqualTo(contentCategories)
+        assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
+        assertThat(event.contentPartner.details.notes).isEqualTo(notes)
+        assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
-        assertThat(event.contentPartner.ingest.urls).containsExactly("https://feed.me")
-        assertThat(event.contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
+        assertThat(event.contentPartner.ingest.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test
