@@ -70,6 +70,17 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                     AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
                 }
             }
+            .filter { entry ->
+                if (query.attachmentTypes.isEmpty()) {
+                    true
+                } else {
+                    query.attachmentTypes.any { queryAttachmentType ->
+                        entry.value.attachmentTypes?.any { collectionAttachments ->
+                            collectionAttachments.contains(queryAttachmentType)
+                        } ?: true
+                    }
+                }
+            }
             .map { collection -> collection.key }
     }
 

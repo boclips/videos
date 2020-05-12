@@ -112,7 +112,7 @@ object SearchableCollectionMetadataFactory {
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         updatedAt: LocalDate = LocalDate.now(),
-        attachmentTypes: Set<String>? = null
+        attachmentTypes: Set<String> = emptySet()
     ) = CollectionMetadata(
         id = id,
         title = title,

@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
+import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
 import mu.KLogging
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -51,6 +52,11 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
         if (collectionQuery.subjectIds.isNotEmpty()) {
             boolQueryBuilder.filter(matchSubjects(collectionQuery.subjectIds))
         }
+
+        if (collectionQuery.attachmentTypes.isNotEmpty()) {
+            boolQueryBuilder.filter(matchAttachmentTypes(collectionQuery.attachmentTypes))
+        }
+
         boolQueryBuilder.filter(
             QueryBuilders.boolQuery().apply {
                 collectionQuery.visibilityForOwners.forEach { visibilityForOwner ->

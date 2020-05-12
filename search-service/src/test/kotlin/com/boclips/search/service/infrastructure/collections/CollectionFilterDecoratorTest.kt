@@ -11,7 +11,8 @@ class CollectionFilterDecoratorTest {
         val boolQuery = QueryBuilders.boolQuery()
         val collectionQuery = CollectionQuery(
             ageRangeMax = 10,
-            ageRangeMin = 5
+            ageRangeMin = 5,
+            attachmentTypes = setOf("Lesson Guide")
         )
 
         CollectionFilterDecorator(boolQuery).decorate(collectionQuery)
@@ -50,6 +51,23 @@ class CollectionFilterDecoratorTest {
                           "adjust_pure_negative" : true,
                           "boost" : 1.0,
                           "_name" : "age-ranges-filter"
+                        }
+                      },
+                      {
+                        "bool" : {
+                          "should" : [
+                            {
+                              "terms" : {
+                                "attachmentTypes" : [
+                                  "Lesson Guide"
+                                ],
+                                "boost" : 1.0
+                              }
+                            }
+                          ],
+                          "adjust_pure_negative" : true,
+                          "boost" : 1.0,
+                          "_name" : "attachment-types-filter"
                         }
                       },
                       {

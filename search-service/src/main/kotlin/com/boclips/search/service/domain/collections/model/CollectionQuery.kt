@@ -17,7 +17,8 @@ class CollectionQuery(
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
-    val promoted: Boolean? = null
+    val promoted: Boolean? = null,
+    val attachmentTypes: Set<String> = emptySet()
 ) : SearchQuery<CollectionMetadata>(phrase, sort, facetDefinition)
 
 data class VisibilityForOwner(

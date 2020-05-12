@@ -48,6 +48,34 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
     }
 
     @Test
+    fun `creates a new index and upserts the collections provided with attachment type`() {
+        indexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "1",
+                    title = "Beautiful Boy Dancing",
+                    description = "A verbose description about this collection"
+                ) ,
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    title = "Beautiful Boy Dancing",
+                    description = "A verbose description about this collection",
+                    attachmentTypes = setOf("Lesson Guide")
+                )
+            )
+        )
+
+        val results = indexReader.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(phrase = "Dancing", attachmentTypes = setOf("Lesson Guide"))
+            )
+        )
+
+        assertThat(results.counts.totalHits).isEqualTo(1)
+        assertThat(results.elements.first()).isEqualTo("2")
+    }
+
+    @Test
     fun `creates a new index and removes the outdated one`() {
         indexWriter.safeRebuildIndex(
             sequenceOf(
