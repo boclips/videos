@@ -32,7 +32,6 @@ class GetVideoAssets(
                 archive.putNextEntry(subtitles)
                 archive.write(caption.content.toByteArray())
                 archive.closeEntry()
-                archive.close()
             }
         }
     }
