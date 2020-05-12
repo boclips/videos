@@ -8,8 +8,11 @@ class VideoFilterCriteriaTest {
     @Test
     fun `creates video filters given query`() {
         val videoQuery = VideoQueryFactory.aRandomExample()
-        val expectedJson = VideoFilterCriteriaTest::class.java.classLoader.getResource("VideoFilterQuery.json")!!.readText()
+        val expectedQuery = VideoFilterCriteriaTest::class.java.classLoader.getResource("VideoFilterQuery.json")!!
+            .readText()
+            .trimEnd()
 
-        assertThat(VideoFilterCriteria.allCriteria(videoQuery).toString()).isEqualTo(expectedJson)
+        val generatedQuery = VideoFilterCriteria.allCriteria(videoQuery).toString()
+        assertThat(generatedQuery).isEqualTo(expectedQuery)
     }
 }

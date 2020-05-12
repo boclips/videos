@@ -6,7 +6,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
-import com.boclips.search.service.infrastructure.common.filters.filterByAttachmentTypes
+import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -100,7 +100,7 @@ class VideoFilterCriteria {
             }
 
             if(!videoQuery.attachmentTypes.isNullOrEmpty()) {
-                boolQueryBuilder.must(filterByAttachmentTypes(videoQuery.attachmentTypes))
+                boolQueryBuilder.must(matchAttachmentTypes(videoQuery.attachmentTypes))
             }
 
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->

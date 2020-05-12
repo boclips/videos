@@ -5,10 +5,9 @@ import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 
-fun filterByAttachmentTypes(includeTypes: Set<String>): BoolQueryBuilder? {
-    val queries = QueryBuilders.boolQuery().queryName(VideoFilterCriteria.ATTACHMENT_TYPES)
-    for (r: String in includeTypes) {
-        queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.ATTACHMENT_TYPES, r))
+fun matchAttachmentTypes(attachmentTypes: Set<String>): BoolQueryBuilder? {
+    return QueryBuilders.boolQuery().apply {
+        queryName(VideoFilterCriteria.ATTACHMENT_TYPES)
+        should(QueryBuilders.termsQuery(VideoDocument.ATTACHMENT_TYPES, attachmentTypes))
     }
-    return queries
 }

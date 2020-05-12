@@ -75,13 +75,11 @@
         "bool" : {
           "should" : [
             {
-              "match_phrase" : {
-                "attachmentTypes" : {
-                  "query" : "ACTIVITY",
-                  "slop" : 0,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
+              "terms" : {
+                "attachmentTypes" : [
+                  "ACTIVITY"
+                ],
+                "boost" : 1.0
               }
             }
           ],
