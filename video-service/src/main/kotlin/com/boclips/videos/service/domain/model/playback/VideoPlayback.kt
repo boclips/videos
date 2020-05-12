@@ -21,11 +21,16 @@ sealed class VideoPlayback {
         val downloadUrl: String,
         val createdAt: ZonedDateTime?,
         val assets: Set<VideoAsset>?,
-        val originalDimensions: Dimensions?
+        val originalDimensions: Dimensions?,
+        val thumbnailSecond: Int?
     ) : VideoPlayback()
 
     data class FaultyPlayback(
         override val id: PlaybackId,
         override val duration: Duration = Duration.ZERO
     ) : VideoPlayback()
+
+    companion object {
+        fun hasManuallySetThumbnail(playback: StreamPlayback): Boolean = playback.thumbnailSecond != null
+    }
 }

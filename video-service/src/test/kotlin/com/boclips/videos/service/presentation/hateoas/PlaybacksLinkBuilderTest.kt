@@ -74,6 +74,19 @@ internal class PlaybacksLinkBuilderTest {
         }
 
         @Test
+        fun `it returns the playback thumbnail by second if set when kaltura`() {
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", thumbnailSecond = 20)
+
+            val link = linkBuilder.thumbnailLink(playback)
+
+            assertThat(link).isNotNull
+            assertThat(link!!.href).contains("thumbnail-entry-id")
+            assertThat(link.href).contains("{thumbnailWidth}")
+            assertThat(link.href).contains("/vid_sec/20")
+            assertThat(link.rel).isEqualTo("thumbnail")
+        }
+
+        @Test
         fun `it returns the playback thumbnail when youtube`() {
             val playback = TestFactories.createYoutubePlayback(thumbnailUrl = "expected-thumbnail-url")
 
@@ -100,20 +113,39 @@ internal class PlaybacksLinkBuilderTest {
         fun `it returns the thumbnail editor link when kaltura video and user can update video`() {
             setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+            val video = TestFactories.createVideo(playback = playback)
 
-            val link = linkBuilder.editThumbnailLink(playback)
+            val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
 
-            assertThat(link).isNotNull
-            assertThat(link!!.href).contains("thumbnail-entry-id/thumbnails")
-            assertThat(link.rel).isEqualTo("editThumbnail")
+            assertThat(deleteLink).isNull()
+            assertThat(setLink).isNotNull
+            assertThat(setLink!!.href).contains("/v1/videos/${video.videoId.value}/playback{?thumbnailSecond}")
+            assertThat(setLink.rel).isEqualTo("setThumbnail")
+        }
+
+        @Test
+        fun `it returns the delete thumbnail link when thumbnail was manually set`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", thumbnailSecond = 20)
+            val video = TestFactories.createVideo(playback = playback)
+
+            val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
+
+            assertThat(setLink).isNull()
+            assertThat(deleteLink).isNotNull
+            assertThat(deleteLink!!.href).contains("/v1/videos/${video.videoId.value}/playback/thumbnail")
+            assertThat(deleteLink.rel).isEqualTo("deleteThumbnail")
         }
 
         @Test
         fun `no thumbnail editor link when youtube video`() {
             setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
             val playback = TestFactories.createYoutubePlayback()
+            val video = TestFactories.createVideo(playback = playback)
 
-            val link = linkBuilder.editThumbnailLink(playback)
+            val link = linkBuilder.setThumbnail(playback, videoId = video.videoId)
 
             assertThat(link).isNull()
         }
@@ -123,8 +155,9 @@ internal class PlaybacksLinkBuilderTest {
             setSecurityContext("teacher", UserRoles.VIEW_VIDEOS)
 
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+            val video = TestFactories.createVideo(playback = playback)
 
-            val link = linkBuilder.editThumbnailLink(playback)
+            val link = linkBuilder.setThumbnail(playback, videoId = video.videoId)
 
             assertThat(link).isNull()
         }

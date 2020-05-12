@@ -15,6 +15,7 @@ data class PlaybackDocument(
     val id: String,
     val entryId: String?,
     val thumbnailUrl: List<String>?,
+    val thumbnailSecond: Int?,
     val downloadUrl: String?,
     val lastVerified: Instant?,
     val duration: Int?,

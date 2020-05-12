@@ -313,6 +313,9 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoUpdateCommand.RemoveAttachments -> set(
                 VideoDocument::attachments, emptyList()
             )
+            is VideoUpdateCommand.ReplaceThumbnailSecond -> set(
+                VideoDocument::playback / PlaybackDocument::thumbnailSecond,
+                updateCommand.thumbnailSecond)
         }
     }
 

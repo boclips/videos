@@ -41,8 +41,10 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DeleteVideoThumbnail
 import com.boclips.videos.service.application.video.GetVideoAssets
 import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.SetVideoThumbnail
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptionContent
 import com.boclips.videos.service.application.video.UpdateCaptions
@@ -154,6 +156,16 @@ class ApplicationContext(
     @Bean
     fun rateVideo(): RateVideo {
         return RateVideo(videoRepository)
+    }
+
+    @Bean
+    fun setVideoThumbnail(): SetVideoThumbnail {
+        return SetVideoThumbnail(videoRepository)
+    }
+
+    @Bean
+    fun deleteVideoThumbnail(): DeleteVideoThumbnail {
+        return DeleteVideoThumbnail(videoRepository)
     }
 
     @Bean

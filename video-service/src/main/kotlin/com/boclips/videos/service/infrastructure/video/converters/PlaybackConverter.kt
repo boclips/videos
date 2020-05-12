@@ -24,6 +24,7 @@ object PlaybackConverter : KLogging() {
                 type = "KALTURA",
                 downloadUrl = videoPlayback.downloadUrl,
                 thumbnailUrl = null,
+                thumbnailSecond = videoPlayback.thumbnailSecond,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt(),
                 assets = videoPlayback.assets?.map { convertAssetsToDocument(it) },
@@ -40,7 +41,8 @@ object PlaybackConverter : KLogging() {
                 duration = videoPlayback.duration.seconds.toInt(),
                 assets = null,
                 originalWidth = null,
-                originalHeight = null
+                originalHeight = null,
+                thumbnailSecond = null
             )
             else -> throw IllegalStateException("Stream class ${videoPlayback.javaClass.name} not supported.")
         }
@@ -66,6 +68,7 @@ object PlaybackConverter : KLogging() {
                     referenceId = playbackDocument.id,
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     downloadUrl = playbackDocument.downloadUrl!!,
+                    thumbnailSecond = playbackDocument.thumbnailSecond,
                     assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet(),
                     createdAt = null,
                     originalDimensions = convertOriginalDimensions(

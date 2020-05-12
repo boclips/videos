@@ -6,9 +6,13 @@ import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.playback.VideoPlayback.Companion.hasManuallySetThumbnail
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.FaultyPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.presentation.VideoController
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,7 +32,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
 
     fun thumbnailLink(playback: VideoPlayback): HateoasLink? {
         val href = when (playback) {
-            is StreamPlayback -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
+            is StreamPlayback -> getKalturaThumbnailUrl(playback)
             is YoutubePlayback -> playback.thumbnailUrl
             is FaultyPlayback -> null
         }
@@ -36,13 +40,31 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { HateoasLink(href = it, rel = "thumbnail") }
     }
 
-    fun editThumbnailLink(playback: VideoPlayback): HateoasLink? {
+    fun setThumbnail(playback: VideoPlayback, videoId: VideoId): HateoasLink? {
         return when (playback) {
-            is StreamPlayback -> getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-                HateoasLink(
-                    href = getKalturaThumbnailEditorUrl(playback),
-                    rel = "editThumbnail"
-                )
+            is StreamPlayback -> takeUnless { hasManuallySetThumbnail(playback) }?.let {
+                getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                    HateoasLink.of(
+                        WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnail(null, videoId.value)
+                        ).withRel("setThumbnail")
+                    )
+                }
+            }
+            else -> null
+        }
+    }
+
+    fun deleteThumbnail(playback: VideoPlayback, videoId: VideoId): HateoasLink? {
+        return when (playback) {
+            is StreamPlayback -> takeIf { hasManuallySetThumbnail(playback) }?.let {
+                getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                    HateoasLink.of(
+                        WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).deleteManuallySetThumbnail(videoId.value)
+                        ).withRel("deleteThumbnail")
+                    )
+                }
             }
             else -> null
         }
@@ -68,7 +90,9 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { HateoasLink(href = it, rel = "hlsStream") }
     }
 
-    private fun getKalturaThumbnailEditorUrl(playback: StreamPlayback): String {
-        return "https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/${playback.id.value}/thumbnails"
+    private fun getKalturaThumbnailUrl(playback: StreamPlayback): String = if (playback.thumbnailSecond != null) {
+        kalturaClient.linkBuilder.getThumbnailUrlBySecond(playback.id.value, playback.thumbnailSecond)
+    } else {
+        kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
     }
 }

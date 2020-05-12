@@ -32,13 +32,14 @@ internal class PlaybackToResourceConverterTest {
             )
     }
 
-    val kalturaPlayback = TestFactories.createKalturaPlayback(downloadUrl = "https://download-url.com")
+    val kalturaPlayback = TestFactories.createKalturaPlayback(downloadUrl = "https://download-url.com", thumbnailSecond = 10)
 
     val youtubePlayback = TestFactories.createYoutubePlayback()
 
     @Test
     fun `converts a resource from a Kaltura playback`() {
-        val resource = this.playbackToResourceConverter.convert(kalturaPlayback)
+        val videoId = TestFactories.createVideoId()
+        val resource = this.playbackToResourceConverter.convert(kalturaPlayback, videoId)
         val content = resource as StreamPlaybackResource
 
         assertThat(content.duration).isEqualTo(kalturaPlayback.duration)
@@ -50,15 +51,16 @@ internal class PlaybackToResourceConverterTest {
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
         verify(playbacksLinkBuilder).downloadLink(kalturaPlayback)
         verify(playbacksLinkBuilder).thumbnailLink(kalturaPlayback)
-        verify(playbacksLinkBuilder).editThumbnailLink(kalturaPlayback)
+        verify(playbacksLinkBuilder).setThumbnail(kalturaPlayback, videoId)
         verify(playbacksLinkBuilder).videoPreviewLink(kalturaPlayback)
         verify(playbacksLinkBuilder).hlsStreamLink(kalturaPlayback)
     }
 
     @Test
     fun `converts a resource from a Youtube playback`() {
+        val videoId = TestFactories.createVideoId()
         val resource =
-            this.playbackToResourceConverter.convert(youtubePlayback) as YoutubePlaybackResource
+            this.playbackToResourceConverter.convert(youtubePlayback, videoId) as YoutubePlaybackResource
 
         assertThat(resource.duration).isEqualTo(youtubePlayback.duration)
         assertThat(resource.id).isEqualTo(youtubePlayback.id.value)

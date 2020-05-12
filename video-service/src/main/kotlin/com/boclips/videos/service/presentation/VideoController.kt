@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.SetThumbnailRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
@@ -12,8 +13,10 @@ import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DeleteVideoThumbnail
 import com.boclips.videos.service.application.video.GetVideoAssets
 import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.SetVideoThumbnail
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptionContent
 import com.boclips.videos.service.application.video.UpdateVideo
@@ -58,6 +61,8 @@ class VideoController(
     private val createVideo: CreateVideo,
     private val updateVideo: UpdateVideo,
     private val rateVideo: RateVideo,
+    private val setVideoThumbnail: SetVideoThumbnail,
+    private val deleteVideoThumbnail: DeleteVideoThumbnail,
     private val videoTranscriptService: VideoTranscriptService,
     private val videoCaptionService: VideoCaptionService,
     private val updateCaptionContent: UpdateCaptionContent,
@@ -252,6 +257,16 @@ class VideoController(
         @RequestBody updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
         return updateVideo(id, updateRequest, getCurrentUser()).let { this.getVideo(id) }
+    }
+
+    @PatchMapping(path = ["/v1/videos/{id}/playback"], params = ["thumbnailSecond"])
+    fun setThumbnail(@RequestParam(required = true) thumbnailSecond: Int?, @PathVariable id: String): ResponseEntity<VideoResource> {
+        return setVideoThumbnail(SetThumbnailRequest(thumbnailSecond, videoId = id)).let { this.getVideo(id) }
+    }
+
+    @DeleteMapping(path = ["/v1/videos/{id}/playback/thumbnail"])
+    fun deleteManuallySetThumbnail(@PathVariable id: String): ResponseEntity<VideoResource> {
+        return deleteVideoThumbnail(id).let { this.getVideo(id) }
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/tags"])

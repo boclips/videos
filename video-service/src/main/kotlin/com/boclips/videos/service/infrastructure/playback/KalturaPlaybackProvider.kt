@@ -46,6 +46,7 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                     referenceId = it.value.referenceId,
                     duration = it.value.duration,
                     downloadUrl = it.value.downloadUrl,
+                    thumbnailSecond = null,
                     createdAt = it.value.createdAt,
                     assets = convertAndValidateAssetsToSet(assetsByEntryId[it.value.id]),
                     originalDimensions = Dimensions(

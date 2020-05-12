@@ -57,7 +57,7 @@ class VideoToResourceConverter(
             contentPartnerId = video.contentPartner.contentPartnerId.value,
             contentPartnerVideoId = video.videoReference,
             releasedOn = video.releasedOn,
-            playback = playbackToResourceConverter.convert(video.playback),
+            playback = playbackToResourceConverter.convert(video.playback, video.videoId),
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             badges = convertBadges(video),
             type = VideoTypeResource(id = video.type.id, name = video.type.title),

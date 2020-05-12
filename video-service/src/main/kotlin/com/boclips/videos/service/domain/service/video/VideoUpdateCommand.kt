@@ -20,6 +20,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class RemoveSubject(videoId: VideoId, val subjectId: SubjectId) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
+    class ReplaceThumbnailSecond(videoId: VideoId, val thumbnailSecond: Int?) : VideoUpdateCommand(videoId)
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
     class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
     class ReplaceTopics(videoId: VideoId, val eventBus: Set<Topic>) : VideoUpdateCommand(videoId)

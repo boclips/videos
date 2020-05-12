@@ -1,18 +1,23 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.testsupport.*
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asIngestor
+import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
@@ -272,6 +277,48 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
+    }
+
+    @Test
+    fun `can set a thumbnailSecond`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
+
+        mockMvc.perform(
+            patch("/v1/videos/$kalturaVideoId/playback?thumbnailSecond=20")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*vid_sec/20")))
+            .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
+    }
+
+    @Test
+    fun `can remove the thumbnailSecond`() {
+        mockMvc.perform(
+            patch("/v1/videos/$kalturaVideoId/playback?thumbnailSecond=20")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            delete("/v1/videos/$kalturaVideoId/playback/thumbnail")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*/vid_slices/3/vid_slice/1")))
     }
 }
 
