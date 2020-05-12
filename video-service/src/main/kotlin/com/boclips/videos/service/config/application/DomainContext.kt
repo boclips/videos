@@ -30,6 +30,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateServ
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
+import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
@@ -162,6 +163,16 @@ class DomainContext(
     @Bean
     fun subjectRepository(): SubjectRepository {
         return SubjectRepositoryEventDecorator(mongoSubjectRepository, eventBus)
+    }
+
+    @Bean
+    fun subjectService(
+        subjectRepository: SubjectRepository,
+        collectionRepository: CollectionRepository,
+        videoRepository: VideoRepository,
+        collectionIndex: CollectionIndex
+    ): SubjectService {
+        return SubjectService(subjectRepository, videoRepository, collectionRepository)
     }
 
     @Bean

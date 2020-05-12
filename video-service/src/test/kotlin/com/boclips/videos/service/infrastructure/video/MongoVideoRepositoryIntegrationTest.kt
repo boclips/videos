@@ -9,8 +9,8 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -168,6 +168,25 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
         assertThat(updatedAsset.subjects.items).containsOnly(biology)
+    }
+
+    @Test
+    fun `remove subject`() {
+        val originalAsset = mongoVideoRepository.create(
+            createVideo(
+                title = "original title",
+                subjects = setOf(maths)
+            )
+        )
+
+        val updatedAsset = mongoVideoRepository.update(
+            VideoUpdateCommand.RemoveSubject(
+                videoId = originalAsset.videoId,
+                subjectId = maths.id
+            )
+        )
+
+        assertThat(updatedAsset.subjects.items).isEmpty()
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -16,6 +17,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceAttachments(videoId: VideoId, val attachments: List<Attachment>) : VideoUpdateCommand(videoId)
     class RemoveAttachments(videoId: VideoId) : VideoUpdateCommand(videoId)
     class ReplaceSubjects(videoId: VideoId, val subjects: List<Subject>) : VideoUpdateCommand(videoId)
+    class RemoveSubject(videoId: VideoId, val subjectId: SubjectId) : VideoUpdateCommand(videoId)
     class ReplaceDuration(videoId: VideoId, val duration: Duration) : VideoUpdateCommand(videoId)
     class ReplacePlayback(videoId: VideoId, val playback: VideoPlayback) : VideoUpdateCommand(videoId)
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)

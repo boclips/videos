@@ -5,8 +5,8 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
@@ -258,6 +258,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceSubjects -> set(
                 VideoDocument::subjects,
                 updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)
+            )
+            is VideoUpdateCommand.RemoveSubject -> pullByFilter(
+                VideoDocument::subjects,
+                SubjectDocument::id eq ObjectId(updateCommand.subjectId.value)
             )
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())
             is ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)

@@ -70,6 +70,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionRetrievalS
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
@@ -114,7 +115,8 @@ class ApplicationContext(
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val accessRuleService: AccessRuleService,
-    val videoCreationService: VideoCreationService
+    val videoCreationService: VideoCreationService,
+    val subjectService: SubjectService
 ) {
     @Bean
     fun searchVideo(
@@ -301,7 +303,7 @@ class ApplicationContext(
 
     @Bean
     fun deleteSubject(): DeleteSubject {
-        return DeleteSubject(subjectRepository, collectionRepository, collectionIndex)
+        return DeleteSubject(subjectService)
     }
 
     @Bean
@@ -316,7 +318,7 @@ class ApplicationContext(
 
     @Bean
     fun updateSubject(): UpdateSubject {
-        return UpdateSubject(subjectRepository, videoRepository, collectionRepository)
+        return UpdateSubject(subjectService)
     }
 
     @Bean
