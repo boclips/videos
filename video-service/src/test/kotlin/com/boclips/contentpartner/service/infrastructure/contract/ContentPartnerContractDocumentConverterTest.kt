@@ -2,7 +2,7 @@ package com.boclips.contentpartner.service.infrastructure.contract
 
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ContentPartnerContractDocumentConverterTest {
     @Test

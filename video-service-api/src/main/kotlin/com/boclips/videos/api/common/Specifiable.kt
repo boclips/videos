@@ -16,11 +16,21 @@ sealed class Specifiable<T> {
             is Specified -> Specified(value = f(value))
             is ExplicitlyNull -> ExplicitlyNull()
         }
+
+    abstract fun orNull(): T?
 }
 
-data class Specified<T>(val value: T) : Specifiable<T>()
+data class Specified<T>(val value: T) : Specifiable<T>() {
+    override fun orNull(): T? {
+        return value
+    }
+}
 
-class ExplicitlyNull<T> : Specifiable<T>()
+class ExplicitlyNull<T> : Specifiable<T>() {
+    override fun orNull(): T? {
+        return null
+    }
+}
 
 class SpecifiableDeserializer constructor(
     vc: Class<*>? = null

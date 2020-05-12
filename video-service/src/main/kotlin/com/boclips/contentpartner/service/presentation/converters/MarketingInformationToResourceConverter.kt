@@ -11,12 +11,7 @@ object MarketingInformationToResourceConverter {
             ContentPartnerMarketingResource(
                 status = it.status?.name,
                 logos = it.logos?.map { logoUrl -> logoUrl.toString() },
-                showreel = it.showreel?.let { showreel ->
-                    when (showreel) {
-                        is Specified -> showreel.value.toString()
-                        is ExplicitlyNull -> null
-                    }
-                },
+                showreel = it.showreel?.toString(),
                 sampleVideos = it.sampleVideos?.map { sampleVideoUrl -> sampleVideoUrl.toString() }
             )
         }

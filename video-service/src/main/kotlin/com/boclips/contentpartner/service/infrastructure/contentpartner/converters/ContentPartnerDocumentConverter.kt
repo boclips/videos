@@ -81,12 +81,7 @@ object ContentPartnerDocumentConverter : KLogging() {
                         null -> null
                     },
                     logos = it.logos?.map { logoUrl -> logoUrl.toString() },
-                    showreel = it.showreel?.let { showreel ->
-                        when (showreel) {
-                            is Specified -> showreel.value.toString()
-                            is ExplicitlyNull -> null
-                        }
-                    },
+                    showreel = it.showreel?.toString(),
                     sampleVideos = it.sampleVideos?.map { sampleVideoUrl -> sampleVideoUrl.toString() }
                 )
             },
@@ -162,8 +157,7 @@ object ContentPartnerDocumentConverter : KLogging() {
                         null -> null
                     },
                     logos = it.logos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl),
-                    showreel = it.showreel?.let(ContentPartnerDocumentConverter::safeToUrl)
-                        ?.let { url -> Specified(url) },
+                    showreel = it.showreel?.let(ContentPartnerDocumentConverter::safeToUrl),
                     sampleVideos = it.sampleVideos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl)
                 )
             },

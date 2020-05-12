@@ -59,7 +59,7 @@ class ContentPartnerDocumentConverterTest {
                 oneLineDescription = "1l",
                 status = ContentPartnerStatus.NEEDS_INTRODUCTION,
                 logos = listOf(URL("http://www.server.com/1.png")),
-                showreel = Specified(URL("http://www.server.com/2.png")),
+                showreel = URL("http://www.server.com/2.png"),
                 sampleVideos = listOf(URL("http://www.server.com/3.png"))
             ),
             pedagogyInformation = PedagogyInformation(

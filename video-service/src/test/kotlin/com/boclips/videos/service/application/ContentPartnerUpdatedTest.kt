@@ -3,7 +3,7 @@ package com.boclips.videos.service.application
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.ContentPartner
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
-import com.boclips.eventbus.domain.contentpartner.IngestDetails
+import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -36,7 +36,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
-                        .ingest(IngestDetails.builder().type("MANUAL").build())
+                        .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )
                 .build()
@@ -68,7 +68,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
-                        .ingest(IngestDetails.builder().type("MANUAL").build())
+                        .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )
                 .build()
@@ -95,7 +95,7 @@ class ContentPartnerUpdatedTest : AbstractSpringIntegrationTest() {
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
-                        .ingest(IngestDetails.builder().type("MANUAL").build())
+                        .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )
                 .build()
