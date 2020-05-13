@@ -4,9 +4,6 @@ import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
 import com.boclips.search.service.domain.collections.model.VisibilityForOwner
-import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
-import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
@@ -17,6 +14,7 @@ import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -168,10 +166,10 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         fun `can find a collection by ID`() {
             val videoId = saveVideo()
             val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
-            val collection = collectionRetrievalService.find(
+            val collection = collectionRetrievalService.findAnyCollection(
                 collectionId,
                 UserFactory.sample()
-            ).collection!!
+            )!!
             assertThat(collection.id).isEqualTo(collectionId)
             assertThat(collection.videos).containsExactly(videoId)
         }
@@ -190,7 +188,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 )
             )
 
-            val collection = collectionRetrievalService.find(
+            val collection = collectionRetrievalService.findAnyCollection(
                 collectionId, UserFactory.sample(accessRulesSupplier = {
                     AccessRulesFactory.sample(
                         videoAccess = VideoAccess.Rules(
@@ -205,7 +203,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                         )
                     )
                 })
-            ).collection!!
+            )!!
 
             assertThat(collection.id).isEqualTo(collectionId)
             assertThat(collection.videos).containsExactly(firstPermittedId)
@@ -213,56 +211,33 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `cannot find missing collection by ID`() {
-
             assertThat(
-                collectionRetrievalService.find(
+                collectionRetrievalService.findAnyCollection(
                     CollectionId("nonexistent"),
                     UserFactory.sample()
-                ).collection
+                )
             ).isNull()
         }
 
         @Test
+        @Disabled("At the moment we do not restrict access to specific collections")
         fun `cannot find collection that access rules do not permit`() {
-            val collectionId = saveCollection()
-            assertThat(
-                collectionRetrievalService.find(
-                    collectionId, UserFactory.sample(accessRulesSupplier = {
-                        AccessRulesFactory.sample(
-                            collectionAccessRule = CollectionAccessRule.specificIds(
-                                emptyList()
-                            )
-                        )
-                    })
-                ).collection
-            ).isNull()
-        }
-
-        @Test
-        fun `collection does not contain attachments for unauthenticated users with share code`() {
-            val collectionId = saveCollection(
-                owner = "12345", public = false, attachment = AttachmentRequest(
-                    linkToResource = "www.lesson-plan.com",
-                    description = "new description",
-                    type = "LESSON_PLAN"
-                )
-            )
-            usersClient.add(
-                UserResourceFactory.sample(
-                    id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
-                )
+            val collectionId = saveCollection(public = false, owner = "joe")
+            val user = UserFactory.sample(
+                id = "catherine",
+                accessRulesSupplier = {
+                    AccessRulesFactory.sample(
+                        collectionAccessRule = CollectionAccessRule.specificIds(emptyList())
+                    )
+                }
             )
 
-            val collection = collectionRetrievalService.find(
-                collectionId,
-                UserFactory.sample(isAuthenticated = false),
-                "12345",
-                "ABCD"
+            val collection = collectionRetrievalService.findAnyCollection(
+                id = collectionId,
+                user = user
+            )
 
-            ).collection!!
-
-            assertThat(collection.attachments.isEmpty()).isTrue()
+            assertThat(collection).isNull()
         }
     }
 
@@ -271,7 +246,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `can find collection that we have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionRetrievalService.findSpecificOrganisationOfUser(
+            val collection = collectionRetrievalService.findCollectionOfUser(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = true)
             )!!
@@ -281,7 +256,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `cannot find collection if we don't have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionRetrievalService.findSpecificOrganisationOfUser(
+            val collection = collectionRetrievalService.findCollectionOfUser(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = false)
             )

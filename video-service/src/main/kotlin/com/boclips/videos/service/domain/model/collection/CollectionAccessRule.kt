@@ -45,8 +45,7 @@ sealed class CollectionAccessRule {
             is SpecificIds ->
                 this.collectionIds.contains(collection.id)
             is SpecificOwner ->
-                collection.isPublic ||
-                    this.owner == collection.owner
+                this.owner == collection.owner
             Everything -> true
         }
     }

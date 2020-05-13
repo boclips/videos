@@ -145,8 +145,8 @@ class DomainContext(
     }
 
     @Bean
-    fun collectionAccessService(userService: UserService): CollectionAccessService {
-        return CollectionAccessService(userService)
+    fun collectionAccessService(): CollectionAccessService {
+        return CollectionAccessService()
     }
 
     @Bean

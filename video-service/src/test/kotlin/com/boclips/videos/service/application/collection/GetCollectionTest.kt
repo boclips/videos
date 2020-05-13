@@ -54,8 +54,8 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThrows<OperationForbiddenException> {
             getCollection(
-                savedCollectionId.value,
-                user = UserFactory.sample(id = "attacker@example.com")
+                collectionId = savedCollectionId.value,
+                user = UserFactory.sample(id = "attacker@example.com", isAuthenticated = false)
             )
         }
     }
@@ -81,7 +81,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `provides a public collection when the correct share code and ID combination is provided`() {
-        val savedCollectionId = saveCollection(public = true)
+        val savedCollectionId = saveCollection(public = true, owner = "12345")
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
@@ -99,7 +99,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `unauthenticated user has access to a private collection when the correct share code and referrer combination is provided`() {
+    fun `unauthenticated user has access to a private collection with correct share code and referrer`() {
         val savedCollectionId = saveCollection(owner = "12345", public = false)
         usersClient.add(
             UserResourceFactory.sample(
@@ -110,15 +110,16 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
         val retrievedCollection = getCollection(
             savedCollectionId.value,
-            user = UserFactory.sample(id = "anonymous", isAuthenticated = false),
+            user = UserFactory.sample(id = "anonymousUser", isAuthenticated = false),
             shareCode = "ABCD",
             referer = "12345"
         )
+
         assertThat(retrievedCollection.id.value).isEqualTo(savedCollectionId.value)
     }
 
     @Test
-    fun `authenticated user has access to a private collection when the correct share code and referrer combination is provided`() {
+    fun `authenticated user has access to a private collection with  correct share code and referrer`() {
         val savedCollectionId = saveCollection(owner = "12345", public = false)
         usersClient.add(
             UserResourceFactory.sample(
@@ -129,30 +130,11 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
         val retrievedCollection = getCollection(
             savedCollectionId.value,
-            user = UserFactory.sample(id = "anonymous", isAuthenticated = false),
+            user = UserFactory.sample(id = "anonymousUser", isAuthenticated = false),
             shareCode = "ABCD",
             referer = "12345"
         )
+
         assertThat(retrievedCollection.id.value).isEqualTo(savedCollectionId.value)
-    }
-
-    @Test
-    fun `user does not have access to private collection when referer id is not the owner of the collection`() {
-        val savedCollectionId = saveCollection(owner = "the-owner", public = false)
-        usersClient.add(
-            UserResourceFactory.sample(
-                id = "not-the-owner",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
-            )
-        )
-
-        assertThrows<OperationForbiddenException> {
-            getCollection(
-                savedCollectionId.value,
-                user = UserFactory.sample(id = "anonymous", isAuthenticated = false),
-                shareCode = "ABCD",
-                referer = "not-the-owner"
-            )
-        }
     }
 }

@@ -19,7 +19,7 @@ class CollectionCreationService(
 
         collectionIndex.upsert(sequenceOf(createdCollection))
 
-        return collectionRetrievalService.find(createdCollection.id, user).collection
+        return collectionRetrievalService.findAnyCollection(createdCollection.id, user)
     }
 
     private fun addVideosToCollection(

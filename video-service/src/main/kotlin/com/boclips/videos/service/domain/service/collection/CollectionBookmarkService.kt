@@ -13,7 +13,7 @@ class CollectionBookmarkService(
     private val collectionRepository: CollectionRepository
 ) {
     fun bookmark(collectionId: CollectionId, user: User) {
-        val collection = collectionRetrievalService.find(collectionId, user = user).collection
+        val collection = collectionRetrievalService.findAnyCollection(collectionId, user)
             ?: throw CollectionNotFoundException(collectionId.value)
 
         if (collection.owner == user.id) throw CollectionIllegalOperationException(
@@ -28,7 +28,7 @@ class CollectionBookmarkService(
     }
 
     fun unbookmark(collectionId: CollectionId, user: User) {
-        val collection = collectionRetrievalService.find(collectionId, user = user).collection
+        val collection = collectionRetrievalService.findAnyCollection(collectionId, user)
             ?: throw CollectionNotFoundException(collectionId.value)
 
         if (collection.isOwner(user)) throw CollectionIllegalOperationException(

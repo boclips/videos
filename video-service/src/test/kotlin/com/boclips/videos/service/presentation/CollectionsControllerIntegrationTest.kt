@@ -95,18 +95,18 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
         val makeInvalidRequest = { fieldName: String ->
             mockMvc.perform(
-                    post("/v1/collections")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                            """
+                post("/v1/collections")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                             {
                                 "title": "random name",
                                 "$fieldName": [null]
                             }
                             """.trimIndent()
-                        )
-                        .asBoclipsEmployee()
-                )
+                    )
+                    .asBoclipsEmployee()
+            )
                 .andExpect(status().isBadRequest)
         }
 
@@ -136,9 +136,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-                get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser()
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().isOk)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(
                 jsonPath(
@@ -176,9 +176,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
 
         mockMvc.perform(
-                get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser()
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().isOk)
+            get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(
                 jsonPath(
@@ -198,17 +198,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val phantomSubjectId = ObjectId().toHexString()
 
         mockMvc.perform(
-                post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                        """
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
                     {
                         "title": "a collection",
                         "subjects": ["$phantomSubjectId"]
                     }
                     """.trimIndent()
-                    )
-                    .asTeacher()
-            )
+                )
+                .asTeacher()
+        )
             .andExpect(status().isNotFound)
             .andExpect(
                 jsonPath(
@@ -234,18 +234,18 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             val newDescription = "brave, new description"
 
             mockMvc.perform(
-                    patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                            """
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                     {
                         "title": "$newTitle",
                         "description": "$newDescription",
                         "videos": ["$secondVideoId", "$thirdVideoId"]
                     }
                     """.trimIndent()
-                        )
-                        .asBoclipsEmployee()
-                )
+                    )
+                    .asBoclipsEmployee()
+            )
                 .andExpect(status().isNoContent)
 
             mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
@@ -265,16 +265,16 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             val collectionId = createCollection()
 
             mockMvc.perform(
-                    patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                            """
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                     {
                         "promoted": "true"
                     }
                     """.trimIndent()
-                        )
-                        .asBoclipsEmployee()
-                )
+                    )
+                    .asBoclipsEmployee()
+            )
                 .andExpect(status().isNoContent)
 
             mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
@@ -289,16 +289,16 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             val collectionId = createCollection()
 
             mockMvc.perform(
-                    patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                            """
+                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
                     {
                         "promoted": "true"
                     }
                     """.trimIndent()
-                        )
-                        .asTeacher()
-                )
+                    )
+                    .asTeacher()
+            )
                 .andExpect(status().isForbidden)
 
             mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
@@ -416,16 +416,16 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val collectionId = createCollection("a collection to test on")
 
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                        """
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
                     {
                         "title": "brave, new title"
                     }
                     """.trimIndent()
-                    )
-                    .asBoclipsEmployee()
-            )
+                )
+                .asBoclipsEmployee()
+        )
             .andExpect(status().isNoContent)
     }
 
@@ -585,11 +585,10 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Nested
     inner class ShareValidation {
-
         @Nested
         inner class AuthenticatedUser {
             @Test
-            fun `private collection providing a valid shareCode and referer is the owner of the collection`() {
+            fun `owner can access collection with share code and referer`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
                 usersClient.add(
                     UserResourceFactory.sample(
@@ -598,7 +597,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     )
                 )
 
-                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher())
+                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher(email = "12345"))
                     .andExpect(status().isOk)
                     .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                     .andExpect(jsonPath("$.id", equalTo(collectionId)))
@@ -606,37 +605,28 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             }
 
             @Test
-            fun `private collection providing a valid shareCode but referer is non-owner is forbidden`() {
+            fun `authenticated user can access collection with share code and referer`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
-                        teacherPlatformAttributes = TeacherPlatformAttributesResource("VALID")
-                    )
-                )
-                usersClient.add(
-                    UserResourceFactory.sample(
-                        id = "other",
-                        teacherPlatformAttributes = TeacherPlatformAttributesResource("CODE")
+                        teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "VALID")
                     )
                 )
 
-                mockMvc.perform(get("/v1/collections/$collectionId?referer=other&shareCode=CODE").asTeacher())
-                    .andExpect(status().isForbidden)
+                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher(email = "another-teacher"))
+                    .andExpect(status().isOk)
+                    .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                    .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                    .andExpect(jsonPath("$.title", equalTo("Some Private Collection")))
             }
 
             @Test
-            fun `providing a invalid shareCode is forbidden`() {
+            fun `authenticated users can access collections without share codes`() {
                 val collectionId = createCollection(owner = "12345", title = "Some Collection", public = false)
-                usersClient.add(
-                    UserResourceFactory.sample(
-                        id = "12345",
-                        teacherPlatformAttributes = TeacherPlatformAttributesResource("VALID")
-                    )
-                )
 
-                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=INVALID").asTeacher())
-                    .andExpect(status().isForbidden)
+                mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                    .andExpect(status().isOk)
             }
         }
 
@@ -644,7 +634,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         inner class NonAuthenticatedUser {
             @Test
             fun `providing a valid shareCode and referer`() {
-                val collectionId = createCollection(title = "Some Public Collection", public = true)
+                val collectionId = createCollection(title = "Some Public Collection", public = true, owner = "12345")
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -685,30 +675,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
                 mockMvc.perform(get("/v1/collections/$collectionId"))
                     .andExpect(status().isForbidden)
-            }
-
-            @Test
-            fun `does not return collection attachments`() {
-                usersClient.add(
-                    UserResourceFactory.sample(
-                        id = "12345",
-                        teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
-                    )
-                )
-                val collectionId = createCollection(title = "Some Public Collection", public = true)
-                updateCollectionAttachment(
-                    collectionId = collectionId,
-                    attachmentDescription = "test attachment",
-                    attachmentType = "LESSON_PLAN",
-                    attachmentURL = "www.google.com"
-                )
-
-                mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=TEST"))
-                    .andExpect(status().isOk)
-                    .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-                    .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                    .andExpect(jsonPath("$.title", equalTo("Some Public Collection")))
-                    .andExpect(jsonPath("$.attachments", hasSize<Any>(0)))
             }
         }
     }
@@ -780,9 +746,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
 
         mockMvc.perform(
-                delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .asTeacher("anotherteacher@gmail.com")
-            )
+            delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .asTeacher("anotherteacher@gmail.com")
+        )
             .andExpect(status().isNotFound)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@gmail.com"))
@@ -794,9 +760,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val collectionId = createCollectionWithTitle("My Collection for ages")
 
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ageRange": {"min": 10000, "max": 0}}""").asTeacher()
-            )
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": {"min": 10000, "max": 0}}""").asTeacher()
+        )
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(
@@ -809,9 +775,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `validates create collection request`() {
         mockMvc.perform(
-                post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"title": ""}""").asTeacher()
-            )
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content("""{"title": ""}""").asTeacher()
+        )
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(
@@ -829,9 +795,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.ageRange", nullValue()))
 
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"ageRange": {"min": 3, "max": 9}}""").asTeacher()
-            )
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"ageRange": {"min": 3, "max": 9}}""").asTeacher()
+        )
             .andExpect(status().isNoContent)
 
         getCollection(collectionId)
@@ -872,9 +838,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val germanSubject = saveSubject("German")
 
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"subjects": ["${frenchSubject.id.value}", "${germanSubject.id.value}"]}""").asTeacher()
-            )
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"subjects": ["${frenchSubject.id.value}", "${germanSubject.id.value}"]}""").asTeacher()
+        )
             .andExpect(status().isNoContent)
 
         updateCollectionToBePublicAndRename(collectionId, "My new shiny title")
@@ -928,9 +894,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         }
 
         mockMvc.perform(
-                get("/v1/collections?projection=list&public=true&bookmarked=true&page=0&size=30")
-                    .asBoclipsEmployee(email = "me@gmail.com")
-            )
+            get("/v1/collections?projection=list&public=true&bookmarked=true&page=0&size=30")
+                .asBoclipsEmployee(email = "me@gmail.com")
+        )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
@@ -974,17 +940,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     private fun renameCollection(collectionId: String, title: String) {
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""")
-                    .asTeacher()
-            )
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content("""{"title": "$title"}""")
+                .asTeacher()
+        )
             .andExpect(status().isNoContent)
     }
 
     private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
         mockMvc.perform(
-                patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                    .content("""{"public": "true", "title": "$title"}""").asTeacher()
-            )
+            patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
+                .content("""{"public": "true", "title": "$title"}""").asTeacher()
+        )
             .andExpect(status().isNoContent)
     }
 

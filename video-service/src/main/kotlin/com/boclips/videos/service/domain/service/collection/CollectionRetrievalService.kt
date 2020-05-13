@@ -5,12 +5,9 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
-import com.boclips.videos.service.domain.model.AccessError
-import com.boclips.videos.service.domain.model.AccessValidationResult
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
-import com.boclips.videos.service.domain.model.collection.FindCollectionResult
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
@@ -38,8 +35,8 @@ class CollectionRetrievalService(
         val results = collectionIndex.search(searchRequest)
 
         val collectionIds = results.elements.map { CollectionId(value = it) }
-        val collections = collectionRepository.findAll(collectionIds).map {
-            withPermittedVideos(it, accessRules.videoAccess)
+        val collections = collectionRepository.findAll(collectionIds).map { collections ->
+            addVideosToCollection(collections, accessRules.videoAccess)
         }
 
         eventService.saveResourcesSearched(
@@ -68,83 +65,35 @@ class CollectionRetrievalService(
         )
     }
 
-    fun find(id: CollectionId, user: User, referer: String? = null, shareCode: String? = null): FindCollectionResult {
-        return collectionRepository.find(id)?.let {
-            val accessValidationResult = validateReadAccess(it, user, referer, shareCode)
-            return if (accessValidationResult.successful) {
-                var collection = loadWithAccessibleVideos(it, user)
-                collection = loadWithAccessibleAttachments(collection, user, referer, shareCode)
+    fun findAnyCollection(id: CollectionId, user: User): Collection? {
+        val collection = collectionRepository.find(id)
 
-                FindCollectionResult.success(collection = collection)
+        return collection?.let {
+            return if (collectionAccessService.hasReadAccess(collection = collection, user = user)) {
+                addVideosToCollection(it, user.accessRules.videoAccess)
             } else {
-                FindCollectionResult.error(accessValidationResult = accessValidationResult)
+                null
             }
-        } ?: FindCollectionResult.error(
-            accessValidationResult = AccessValidationResult(
-                false,
-                error = AccessError.Default(id, user.id)
-            )
-        )
+        }
     }
 
-    fun findSpecificOrganisationOfUser(id: CollectionId, user: User): Collection? {
-        return collectionRepository.find(id)?.let {
-            if (!hasWriteAccess(it, user)) {
+    fun findCollectionOfUser(id: CollectionId, user: User): Collection? {
+        return collectionRepository.find(id)?.let { collection ->
+            if (!collectionAccessService.hasWriteAccess(collection, user).also {
+                    if (!it) {
+                        logger.info {
+                            "User ${user.id} does not have write access to Collection ${collection.id}"
+                        }
+                    }
+                }) {
                 null
             } else {
-                loadWithAccessibleVideos(it, user)
+                addVideosToCollection(collection, user.accessRules.videoAccess)
             }
         }
     }
 
-    private fun loadWithAccessibleAttachments(
-        collection: Collection,
-        user: User,
-        referer: String?,
-        shareCode: String?
-    ): Collection {
-        return if (!user.isAuthenticated && shareCode != null && referer != null) {
-            collection.copy(attachments = emptySet())
-        } else {
-            collection
-        }
-    }
-
-    private fun loadWithAccessibleVideos(
-        collection: Collection,
-        user: User
-    ): Collection {
-        val videoAccess = user.accessRules.videoAccess
-        return withPermittedVideos(collection, videoAccess)
-    }
-
-    private fun hasWriteAccess(
-        collection: Collection,
-        user: User
-    ): Boolean =
-        collectionAccessService.hasWriteAccess(collection, user).also {
-            if (!it) {
-                logger.info {
-                    "User ${user.id} does not have write access to Collection ${collection.id}"
-                }
-            }
-        }
-
-    private fun validateReadAccess(
-        collection: Collection,
-        user: User,
-        referer: String? = null,
-        shareCode: String? = null
-    ): AccessValidationResult =
-        collectionAccessService.validateReadAccess(collection, user, referer, shareCode).also {
-            if (!it.successful) {
-                logger.info {
-                    "User ${user.id} does not have read access to Collection ${collection.id}"
-                }
-            }
-        }
-
-    private fun withPermittedVideos(collection: Collection, videoAccess: VideoAccess): Collection =
+    private fun addVideosToCollection(collection: Collection, videoAccess: VideoAccess): Collection =
         videoRetrievalService.getPlayableVideos(
             videoIds = collection.videos,
             videoAccess = videoAccess

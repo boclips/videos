@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -18,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>) {

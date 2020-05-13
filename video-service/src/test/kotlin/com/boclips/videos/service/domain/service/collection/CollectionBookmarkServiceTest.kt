@@ -16,6 +16,7 @@ import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
@@ -64,7 +65,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
         fun `throws error when user owns the collection`() {
             val collectionId = saveCollection(owner = "owner@example.com", public = true)
 
-            org.junit.jupiter.api.assertThrows<CollectionIllegalOperationException> {
+            assertThrows<CollectionIllegalOperationException> {
                 collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "owner@example.com"))
             }
 
@@ -73,20 +74,8 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `throws error when collection is not public`() {
-            val collectionId = saveCollection(owner = "owner@example.com", public = false)
-
-            org.junit.jupiter.api.assertThrows<CollectionNotFoundException> {
-                collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "me@me.com"))
-            }
-
-            val collection = collectionRepository.find(collectionId)
-            Assertions.assertThat(collection!!.bookmarks).isEmpty()
-        }
-
-        @Test
         fun `throws when collection doesn't exist`() {
-            org.junit.jupiter.api.assertThrows<CollectionNotFoundException> {
+            assertThrows<CollectionNotFoundException> {
                 collectionBookmarkService.bookmark(
                     collectionId = CollectionId(TestFactories.aValidId()),
                     user = UserFactory.sample(id = "me@me.com")
@@ -148,7 +137,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `throws when collection doesn't exist`() {
-            org.junit.jupiter.api.assertThrows<CollectionNotFoundException> {
+            assertThrows<CollectionNotFoundException> {
                 collectionBookmarkService.unbookmark(
                     collectionId = CollectionId(TestFactories.aValidId()),
                     user = UserFactory.sample(id = "me@me.com")
@@ -160,20 +149,8 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
         fun `throws error when user owns the collection`() {
             val collectionId = saveCollection(owner = "owner@example.com", public = true)
 
-            org.junit.jupiter.api.assertThrows<CollectionIllegalOperationException> {
+            assertThrows<CollectionIllegalOperationException> {
                 collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "owner@example.com"))
-            }
-
-            val collection = collectionRepository.find(collectionId)
-            Assertions.assertThat(collection!!.bookmarks).isEmpty()
-        }
-
-        @Test
-        fun `throws error when collection is not public`() {
-            val collectionId = saveCollection(owner = "owner@example.com", public = false)
-
-            org.junit.jupiter.api.assertThrows<CollectionNotFoundException> {
-                collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "another-owner@example.com"))
             }
 
             val collection = collectionRepository.find(collectionId)

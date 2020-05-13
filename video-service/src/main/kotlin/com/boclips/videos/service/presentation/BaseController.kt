@@ -45,7 +45,11 @@ open class BaseController(
             overrideIdSupplier = overrideIdSupplier,
             context = RequestContext(origin = referer),
             accessRulesSupplier = { user ->
-                if (user.isAuthenticated) accessRuleService.getRules(user) else AccessRules.anonymousAccess()
+                if (user.isAuthenticated) {
+                    accessRuleService.getRules(user)
+                } else {
+                    AccessRules.anonymousAccess()
+                }
             }
         )
     }

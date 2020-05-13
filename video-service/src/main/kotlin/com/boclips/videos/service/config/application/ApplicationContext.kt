@@ -64,6 +64,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
+import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
 import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
@@ -219,12 +220,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getCollection(
-        videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter,
-        attachmentsLinkBuilder: AttachmentsLinkBuilder
-    ): GetCollection {
-        return GetCollection(collectionRetrievalService)
+    fun getCollection(collectionAccessService: CollectionAccessService): GetCollection {
+        return GetCollection(collectionRetrievalService, userService)
     }
 
     @Bean
@@ -445,5 +442,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) = GetVideoAssets(captionService, searchVideo)
+    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) =
+        GetVideoAssets(captionService, searchVideo)
 }
