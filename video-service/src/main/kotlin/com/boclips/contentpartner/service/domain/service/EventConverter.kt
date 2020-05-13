@@ -15,17 +15,28 @@ import com.boclips.eventbus.domain.contentpartner.ChannelTopLevelDetails
 import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
 import com.boclips.eventbus.domain.contract.ContractId
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.service.domain.model.subject.Subject
+import mu.KLogging
+import com.boclips.eventbus.domain.Subject as EventBusSubject
+import com.boclips.eventbus.domain.SubjectId as EventBusSubjectId
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
 import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 
 class EventConverter {
-    fun toContentPartnerPayload(contentPartner: ContentPartner): EventBusContentPartner {
+    companion object : KLogging()
+
+    fun toContentPartnerPayload(
+        contentPartner: ContentPartner, allSubjects: List<Subject> = listOf()
+    ): EventBusContentPartner {
+        val subjects = contentPartner.pedagogyInformation?.subjects?.mapNotNull {
+            allSubjects.find { subject -> subject.id.value == it }
+        }
         return EventBusContentPartner.builder()
             .id(ContentPartnerId(contentPartner.contentPartnerId.value))
             .name(contentPartner.name)
             .details(channelTopLevelDetails(contentPartner))
-            .pedagogy(convertPedagogyDetails(contentPartner.pedagogyInformation))
+            .pedagogy(convertPedagogyDetails(contentPartner.pedagogyInformation, subjects))
             .marketing(convertMarketingDetails(contentPartner.marketingInformation))
             .ageRange(
                 AgeRange.builder()
@@ -68,9 +79,12 @@ class EventConverter {
             .build()
     }
 
-    private fun convertPedagogyDetails(pedagogyInformation: PedagogyInformation?): ChannelPedagogyDetails {
+    private fun convertPedagogyDetails(
+        pedagogyInformation: PedagogyInformation?,
+        subjects: List<Subject>?
+    ): ChannelPedagogyDetails {
         return ChannelPedagogyDetails.builder()
-            .subjects(null)
+            .subjects(subjects?.map(::toSubjectPayload))
             .ageRange(
                 AgeRange.builder()
                     .min(pedagogyInformation?.ageRangeBuckets?.min)
@@ -106,4 +120,17 @@ class EventConverter {
             .contractId(ContractId.builder().value(contract.id.value).build())
             .name(contract.contentPartnerName)
             .build()
+
+    fun toSubjectPayload(subject: Subject): EventBusSubject =
+        subject.run {
+            EventBusSubject.builder()
+                .id(
+                    EventBusSubjectId
+                        .builder()
+                        .value(id.value)
+                        .build()
+                )
+                .name(name)
+                .build()
+        }
 }

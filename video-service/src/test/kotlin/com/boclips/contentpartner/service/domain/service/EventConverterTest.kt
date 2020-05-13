@@ -9,16 +9,11 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.INSTRUCTIONAL
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.NEWS
 import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.STOCK
-import com.boclips.contentpartner.service.domain.model.contentpartner.CustomIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
-import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.api.common.Specifiable
-import com.boclips.videos.api.common.Specified
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
+import com.boclips.videos.service.testsupport.SubjectFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.net.URL
@@ -81,7 +76,7 @@ class EventConverterTest {
         )
         val contentPartner = createContentPartner(
             pedagogyInformation = PedagogyInformation(
-                // subjects = listOf(...), TODO refactor subjects in CPC so we have their names
+                subjects = listOf("subject-1", "subject-2"),
                 ageRangeBuckets = ageRangeBuckets,
                 bestForTags = listOf("best-for-tag-1", "best-for-tag-2"),
                 curriculumAligned = "my cool curriculum",
@@ -90,7 +85,14 @@ class EventConverterTest {
             )
         )
 
-        val pedagogy = converter.toContentPartnerPayload(contentPartner).pedagogy
+        val pedagogy = converter.toContentPartnerPayload(
+            contentPartner = contentPartner,
+            allSubjects = listOf(
+                SubjectFactory.sample(id = "subject-1"),
+                SubjectFactory.sample(id = "subject-2"),
+                SubjectFactory.sample(id = "subject-3")
+            )
+        ).pedagogy
 
         assertThat(pedagogy).isNotNull
         assertThat(pedagogy.ageRange.min).isEqualTo(6)
@@ -99,6 +101,7 @@ class EventConverterTest {
         assertThat(pedagogy.curriculumAligned).isEqualTo("my cool curriculum")
         assertThat(pedagogy.educationalResources).isEqualTo("my cool educational resource")
         assertThat(pedagogy.transcriptProvided).isTrue()
+        assertThat(pedagogy.subjects.map { it.id.value }).containsExactly("subject-1", "subject-2")
     }
 
     @Test

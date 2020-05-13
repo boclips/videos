@@ -20,6 +20,7 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPar
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
@@ -36,6 +37,8 @@ import com.boclips.contentpartner.service.presentation.converters.contracts.Cont
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
+import com.boclips.eventbus.EventBus
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -45,7 +48,10 @@ class ApplicationContext(
     val contentPartnerRepository: ContentPartnerRepository,
     val ageRangeRepository: AgeRangeRepository,
     val contentPartnerContractRepository: ContentPartnerContractRepository,
-    val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository
+    val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
+    val subjectRepository: SubjectRepository,
+    val eventConverter: EventConverter,
+    val eventBus: EventBus
 ) {
     @Bean
     fun getContentPartner(): GetContentPartner {
@@ -67,7 +73,10 @@ class ApplicationContext(
             contentPartnerRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contentPartnerContractRepository
+            contentPartnerContractRepository,
+            subjectRepository,
+            eventConverter,
+            eventBus
         )
     }
 

@@ -20,12 +20,16 @@ import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyIn
 import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.bson.types.ObjectId
 import java.util.Currency
 import java.util.Locale
@@ -34,7 +38,10 @@ class CreateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
-    private val contentPartnerContractRepository: ContentPartnerContractRepository
+    private val contentPartnerContractRepository: ContentPartnerContractRepository,
+    private val subjectRepository: SubjectRepository,
+    private val eventConverter: EventConverter,
+    private val eventBus: EventBus
 ) {
     operator fun invoke(upsertRequest: ContentPartnerRequest): ContentPartner {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
@@ -42,6 +49,8 @@ class CreateContentPartner(
                 ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)
             }
         }
+
+        val allSubjects = subjectRepository.findAll()
 
         val methods = upsertRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
@@ -91,7 +100,7 @@ class CreateContentPartner(
             }
         }
 
-        return contentPartnerRepository
+        val createdContentPartner = contentPartnerRepository
             .create(
                 ContentPartner(
                     contentPartnerId = ContentPartnerId(
@@ -140,5 +149,14 @@ class CreateContentPartner(
                     contract = contract
                 )
             )
+
+        eventBus.publish(
+            ContentPartnerUpdated
+                .builder()
+                .contentPartner(eventConverter.toContentPartnerPayload(createdContentPartner, allSubjects))
+                .build()
+        )
+
+        return createdContentPartner
     }
 }

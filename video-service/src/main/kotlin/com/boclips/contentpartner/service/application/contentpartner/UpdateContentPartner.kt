@@ -13,6 +13,7 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,11 +21,14 @@ class UpdateContentPartner(
     private val contentPartnerRepository: ContentPartnerRepository,
     private val contentPartnerUpdatesConverter: ContentPartnerUpdatesConverter,
     private val createLegalRestrictions: CreateLegalRestrictions,
+    private val subjectRepository: SubjectRepository,
     private val eventConverter: EventConverter,
     private val eventBus: EventBus
 ) {
     operator fun invoke(contentPartnerId: String, upsertRequest: ContentPartnerRequest): ContentPartner {
         val id = ContentPartnerId(value = contentPartnerId)
+
+        val allSubjects = subjectRepository.findAll()
 
         upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
@@ -43,7 +47,7 @@ class UpdateContentPartner(
         eventBus.publish(
             ContentPartnerUpdated
                 .builder()
-                .contentPartner(eventConverter.toContentPartnerPayload(updatedContentPartner))
+                .contentPartner(eventConverter.toContentPartnerPayload(updatedContentPartner, allSubjects))
                 .build()
         )
 
