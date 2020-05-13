@@ -8,6 +8,7 @@ import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
@@ -108,7 +109,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     }
 
     override fun requestVideoCaptions(videoId: String) {
-        // Thanks for your request, much appreciated.
+        database[videoId] = database[videoId]?.copy(captionStatus = CaptionStatus.REQUESTED)
+            ?: VideoResource(id = videoId, captionStatus = CaptionStatus.REQUESTED, _links = emptyMap())
     }
 
     override fun add(element: VideoResource): VideoResource {
