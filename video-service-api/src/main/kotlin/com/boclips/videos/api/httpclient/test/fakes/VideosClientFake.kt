@@ -107,6 +107,10 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         TODO("not implemented")
     }
 
+    override fun requestVideoCaptions(videoId: String) {
+        // Thanks for your request, much appreciated.
+    }
+
     override fun add(element: VideoResource): VideoResource {
         database[element.id!!] = element
         return element
