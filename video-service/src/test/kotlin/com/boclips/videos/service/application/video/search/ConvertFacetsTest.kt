@@ -25,6 +25,6 @@ class FacetConverterTest {
     fun `converts attachment type facets`() {
         val facets = FacetConverter().invoke(ageRangesFacets = null, durationFacets = null, resourcesFacets = listOf("Activity"))
 
-        assertThat(facets.resourceTypes.first()).isEqualTo("Activity")
+        assertThat(facets.attachmentTypes.first()).isEqualTo("Activity")
     }
 }

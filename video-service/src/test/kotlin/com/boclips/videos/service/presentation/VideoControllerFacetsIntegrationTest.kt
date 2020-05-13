@@ -113,5 +113,35 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             DurationRange(Duration.ofMinutes(5), Duration.ofMinutes(10))
         )
     }
+
+    @Test
+    fun `contains counts for resource types`() {
+        videoSearchService.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.AttachmentTypes,
+                    counts = listOf(Count(id = "activity", hits = 94))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.facets.resourceTypes.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.resourceTypes.activity.hits", equalTo(94)))
+    }
+
+    @Test
+    fun `resource_type_facets overwrite default resource type facets`() {
+        mockMvc.perform(get("/v1/videos?query=content&resource_type_facets=Activity").asTeacher())
+            .andExpect(status().isOk)
+
+        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+
+        assertThat(lastSearchRequest.query.facetDefinition?.resourceTypes).containsExactly(
+            "Activity"
+        )
+    }
 }
 

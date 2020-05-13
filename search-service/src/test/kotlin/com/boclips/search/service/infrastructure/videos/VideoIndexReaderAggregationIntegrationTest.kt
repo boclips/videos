@@ -234,7 +234,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             phrase = "apple",
                             facetDefinition = FacetDefinition.Video(
                                 ageRangeBuckets = ageRangeBuckets,
-                                duration = emptyList()
+                                duration = emptyList(),
+                                resourceTypes = emptyList()
                             )
                         )
                     )

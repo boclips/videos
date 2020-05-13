@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.Video
@@ -78,7 +79,7 @@ class SearchVideo(
             contentPartnerNames = contentPartnerNames,
             type = type,
             user = user,
-            resourceTypes = resourceTypes,
+            resourceTypes = resourceTypes.mapTo(HashSet()) { AttachmentType.valueOf(it).label },
             resourceTypeFacets = resourceTypeFacets
         )
     }

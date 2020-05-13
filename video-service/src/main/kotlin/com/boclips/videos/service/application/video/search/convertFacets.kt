@@ -30,7 +30,7 @@ class FacetConverter {
             }
             .apply {
                 resourcesFacets?.let { resourcesFacets ->
-                    resourceTypes = resourcesFacets
+                    attachmentTypes = resourcesFacets
                 }
             }
     }

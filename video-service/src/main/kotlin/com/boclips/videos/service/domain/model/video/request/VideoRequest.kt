@@ -78,8 +78,8 @@ class VideoRequest(
             excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
             facetDefinition = FacetDefinition.Video(
                 ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
-                duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) }
-
+                duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
+                resourceTypes = facets.attachmentTypes
             ),
             permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
             deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -12,25 +13,16 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItem
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
 
@@ -362,6 +354,31 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(englishVideoId)))
+    }
+
+    @Test
+    fun `can filter by video resource types`() {
+        saveVideo()
+        val videoWithActivity = saveVideo()
+        val videoWithLessonPlan = saveVideo()
+
+        addVideoAttachment(attachment = AttachmentRequest(
+            linkToResource = "https://www.boclips.com",
+            type = "ACTIVITY",
+            description = "a description"),
+            videoId = videoWithActivity
+        )
+        addVideoAttachment(attachment = AttachmentRequest(
+            linkToResource = "https://www.boclips.com",
+            type = "LESSON_PLAN",
+            description = "a description"),
+            videoId = videoWithLessonPlan
+        )
+
+        mockMvc.perform(get("/v1/videos?resource_types=LESSON_PLAN").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithLessonPlan.value)))
     }
 
     @Test

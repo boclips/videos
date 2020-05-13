@@ -214,7 +214,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "why are camels so tall",
             pageSize = 20,
             pageNumber = 0,
-            resourceTypes = setOf("Activity"),
+            resourceTypes = setOf("ACTIVITY"),
             user = UserFactory.sample()
         )
 
