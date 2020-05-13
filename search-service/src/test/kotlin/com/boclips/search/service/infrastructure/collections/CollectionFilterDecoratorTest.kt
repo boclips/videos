@@ -12,7 +12,7 @@ class CollectionFilterDecoratorTest {
         val collectionQuery = CollectionQuery(
             ageRangeMax = 10,
             ageRangeMin = 5,
-            attachmentTypes = setOf("Lesson Guide")
+            resourceTypes = setOf("Lesson Guide")
         )
 
         CollectionFilterDecorator(boolQuery).decorate(collectionQuery)

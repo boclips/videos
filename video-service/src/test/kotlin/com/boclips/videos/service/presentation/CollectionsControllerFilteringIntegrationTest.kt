@@ -361,4 +361,26 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
+
+    @Test
+    fun `can filter collections by resource type`() {
+        val collectionWithLessonPlan = createCollectionWithTitle("My Collection with lesson guide")
+        val collectionWithoutLessonPlan = createCollectionWithTitle("My Collection without lesson guide")
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "My lesson plan",
+            attachmentURL = "http://www.boclips.com"
+        )
+        listOf(collectionWithLessonPlan, collectionWithoutLessonPlan).forEach {
+            updateCollectionToBePublic(it)
+        }
+
+        mockMvc.perform(
+            get("/v1/collections?resource_types=LESSON_PLAN").asTeacher("teacher@gmail.com")
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+    }
 }

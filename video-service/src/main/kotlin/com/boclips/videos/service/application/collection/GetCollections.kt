@@ -28,7 +28,8 @@ class GetCollections(
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,
             ageRangeMax = collectionFilterRequest.age_range_max,
-            ageRange = collectionFilterRequest.getAgeRanges()
+            ageRange = collectionFilterRequest.getAgeRanges(),
+            resourceTypes = collectionFilterRequest.resource_types
         )
 
         return collectionRetrievalService.search(assembledQuery, user)

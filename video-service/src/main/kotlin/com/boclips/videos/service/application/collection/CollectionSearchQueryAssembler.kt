@@ -27,7 +27,8 @@ class CollectionSearchQueryAssembler {
         user: User,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
-        ageRange: List<String>? = null
+        ageRange: List<String>? = null,
+        resourceTypes: Set<String>? = null
     ): CollectionSearchQuery {
         val collectionAccess = user.accessRules.collectionAccess
 
@@ -60,7 +61,8 @@ class CollectionSearchQueryAssembler {
             hasLessonPlans = hasLessonPlans,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
-            ageRanges = ageRange?.map(::convertAgeRanges)
+            ageRanges = ageRange?.map(::convertAgeRanges),
+            resourceTypes = resourceTypes
         )
     }
 

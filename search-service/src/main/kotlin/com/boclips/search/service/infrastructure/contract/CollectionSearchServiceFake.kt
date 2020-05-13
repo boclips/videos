@@ -71,10 +71,10 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 }
             }
             .filter { entry ->
-                if (query.attachmentTypes.isEmpty()) {
+                if (query.resourceTypes.isEmpty()) {
                     true
                 } else {
-                    query.attachmentTypes.any { queryAttachmentType ->
+                    query.resourceTypes.any { queryAttachmentType ->
                         entry.value.attachmentTypes?.any { collectionAttachments ->
                             collectionAttachments.contains(queryAttachmentType)
                         } ?: true

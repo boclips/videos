@@ -16,7 +16,8 @@ class CollectionFilterRequest(
     val subject: String? = null,
     val age_range_min: Int? = null,
     val age_range_max: Int? = null,
-    val age_range: String? = null
+    val age_range: String? = null,
+    val resource_types: Set<String>? = null
 ) {
     fun getAgeRanges(): List<String> {
         return age_range?.split(",") ?: emptyList()

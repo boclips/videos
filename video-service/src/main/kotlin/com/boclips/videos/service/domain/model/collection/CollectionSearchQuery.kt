@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.convertAgeRange
 
 class CollectionSearchQuery(
@@ -22,7 +23,8 @@ class CollectionSearchQuery(
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
-    val sort: CollectionSortKey? = null
+    val sort: CollectionSortKey? = null,
+    val resourceTypes: Set<String>? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
@@ -51,9 +53,9 @@ class CollectionSearchQuery(
         ageRangeMin = this.ageRangeMin,
         ageRangeMax = this.ageRangeMax,
         ageRanges = this.ageRanges?.map { convertAgeRange(it) },
-        promoted = this.promoted
+        promoted = this.promoted,
+        resourceTypes = this.resourceTypes?.mapTo(HashSet()) { AttachmentType.valueOf(it).label } ?: emptySet()
     )
-
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
 
     override fun toString(): String {

@@ -53,8 +53,8 @@ class CollectionFilterDecorator(private val boolQueryBuilder: BoolQueryBuilder) 
             boolQueryBuilder.filter(matchSubjects(collectionQuery.subjectIds))
         }
 
-        if (collectionQuery.attachmentTypes.isNotEmpty()) {
-            boolQueryBuilder.filter(matchAttachmentTypes(collectionQuery.attachmentTypes))
+        if (collectionQuery.resourceTypes.isNotEmpty()) {
+            boolQueryBuilder.filter(matchAttachmentTypes(collectionQuery.resourceTypes))
         }
 
         boolQueryBuilder.filter(

@@ -67,7 +67,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val results = indexReader.search(
             PaginatedSearchRequest(
-                query = CollectionQuery(phrase = "Dancing", attachmentTypes = setOf("Lesson Guide"))
+                query = CollectionQuery(phrase = "Dancing", resourceTypes = setOf("Lesson Guide"))
             )
         )
 
