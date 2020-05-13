@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.playback
 
 import com.boclips.eventbus.domain.video.Captions
+import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
@@ -106,6 +107,12 @@ class KalturaPlaybackProvider(private val kalturaClient: KalturaClient) :
                 }
             )
 
+        }
+    }
+
+    override fun requestCaptions(playbackId: PlaybackId) {
+        if (kalturaClient.getCaptionStatus(playbackId.value) == KalturaCaptionManager.CaptionStatus.NOT_AVAILABLE) {
+            kalturaClient.requestCaption(playbackId.value)
         }
     }
 

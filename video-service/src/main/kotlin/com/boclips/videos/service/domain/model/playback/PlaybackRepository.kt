@@ -55,6 +55,10 @@ class PlaybackRepository(
         return getProvider(playbackId = playbackId).getCaptions(playbackId)
     }
 
+    fun requestCaptions(playbackId: PlaybackId) {
+        getProvider(playbackId).requestCaptions(playbackId)
+    }
+
     fun getProviderMetadata(playbackId: PlaybackId): VideoProviderMetadata? {
         return getProviderMetadata(listOf(playbackId)).values.firstOrNull()
     }

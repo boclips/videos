@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.playback
 
+import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntryStatus
@@ -209,6 +210,26 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
         val allCaptions = fakeKalturaClient.getCaptionsForVideo(playbackId.value)
         assertThat(allCaptions).isEmpty()
+    }
+
+    @Test
+    fun `requests captions when not available`() {
+        createMediaEntry("123")
+
+        kalturaPlaybackProvider.requestCaptions(PlaybackId(value = "123", type = PlaybackProviderType.KALTURA))
+
+        val captionStatus = fakeKalturaClient.getCaptionStatus("123")
+        assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
+    }
+
+    @Test
+    fun `does not request captions when available`() {
+        val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
+
+        kalturaPlaybackProvider.requestCaptions(playbackId)
+
+        val captionStatus = fakeKalturaClient.getCaptionStatus(playbackId.value)
+        assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.AVAILABLE)
     }
 
     private fun mediaEntryWithCaptionsByEntryId(

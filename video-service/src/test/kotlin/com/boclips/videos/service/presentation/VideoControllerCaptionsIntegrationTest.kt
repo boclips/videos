@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -7,17 +8,18 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
-
 
 class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -121,5 +123,16 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions").asBoclipsEmployee())
             .andExpect(MockMvcResultMatchers.jsonPath("$.content").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.equalTo(captionContent)))
+    }
+
+    @Test
+    fun `requests captions for video successfully`() {
+        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions?generated=true").asBoclipsEmployee())
+            .andExpect(status().isAccepted)
+            .andExpect(content().string(""))
+
+        assertThat(fakeKalturaClient.getCaptionStatus("playback-id")).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
     }
 }

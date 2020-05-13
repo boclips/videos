@@ -296,6 +296,14 @@ class VideoController(
         return ResponseEntity(HttpStatus.OK)
     }
 
+    @PutMapping(value = ["/v1/videos/{id}/captions"], params = ["generated=true"])
+    fun generateCaptions(
+        @PathVariable("id") videoId: String?
+    ): ResponseEntity<String> {
+        videoCaptionService.requestCaptionIfMissing(videoId)
+        return ResponseEntity.accepted().build()
+    }
+
     @GetMapping("/v1/videos/{id}/captions")
     fun getCaptions(@PathVariable("id") videoId: String?): ResponseEntity<CaptionsResource> {
         videoCaptionService.getCaptionContent(videoId!!)?.let {

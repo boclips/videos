@@ -34,6 +34,10 @@ class TestYoutubePlaybackProvider :
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 
+    override fun requestCaptions(playbackId: PlaybackId) {
+        throw UnsupportedOperationException("YouTube captions not supported")
+    }
+
     override fun removePlayback(playbackId: PlaybackId) {
     }
 

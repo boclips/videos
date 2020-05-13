@@ -30,6 +30,12 @@ class CaptionService(
         }
     }
 
+    fun requestCaptionIfMissing(videoId: VideoId) {
+         videoRepository.find(videoId)?.let { video ->
+            playbackRepository.requestCaptions(playbackId = video.playback.id)
+        } ?: throw VideoNotFoundException(videoId)
+    }
+
     fun updateCaptionContent(videoId: VideoId, captionContent: String) {
         if (captionValidator.checkValid(captionContent)) {
             videoRepository.find(videoId)?.let { video ->

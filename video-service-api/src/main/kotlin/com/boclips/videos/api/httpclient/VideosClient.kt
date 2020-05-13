@@ -50,6 +50,9 @@ interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}/transcript")
     fun getVideoTranscript(@Param("videoId") videoId: String): String
 
+    @RequestLine("PUT /v1/videos/{videoId}/captions?generated=true")
+    fun requestVideoCaptions(@Param("videoId") videoId: String)
+
     companion object {
         @JvmStatic
         fun create(

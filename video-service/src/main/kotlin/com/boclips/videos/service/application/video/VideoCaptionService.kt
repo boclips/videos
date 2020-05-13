@@ -9,7 +9,9 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.CaptionService
 import mu.KLogging
 
-class VideoCaptionService(val kalturaClient: KalturaClient, val captionService: CaptionService) {
+class VideoCaptionService(
+    val kalturaClient: KalturaClient,
+    val captionService: CaptionService) {
     companion object : KLogging()
 
     fun withCaptionDetails(video: VideoResource): VideoResource {
@@ -29,4 +31,7 @@ class VideoCaptionService(val kalturaClient: KalturaClient, val captionService: 
         return captionService.getCaptionContent(VideoId(videoId))?.let { CaptionsResource(content = it) }
     }
 
+    fun requestCaptionIfMissing(videoId: String?) {
+        videoId?.let { captionService.requestCaptionIfMissing(VideoId(it)) }
+    }
 }
