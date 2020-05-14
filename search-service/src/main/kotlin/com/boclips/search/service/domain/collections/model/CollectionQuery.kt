@@ -10,6 +10,8 @@ class CollectionQuery(
     sort: Sort<CollectionMetadata>? = null,
     facetDefinition: FacetDefinition.Collection? = null,
     val visibilityForOwners: Set<VisibilityForOwner> = emptySet(),
+    val searchable: Boolean? = null,
+    val owner: String? = null,
     val subjectIds: List<String> = emptyList(),
     val permittedIds: List<String>? = null,
     val bookmarkedBy: String? = null,

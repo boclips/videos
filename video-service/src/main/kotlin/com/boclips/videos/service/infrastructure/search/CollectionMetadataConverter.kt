@@ -12,6 +12,7 @@ object CollectionMetadataConverter {
             subjectIds = collection.subjects.map { it.id.value },
             owner = collection.owner.value,
             visibility = if (collection.isPublic) CollectionVisibility.PUBLIC else CollectionVisibility.PRIVATE,
+            searchable = collection.isPublic,
             bookmarkedByUsers = collection.bookmarks.map { it.value }.toSet(),
             hasAttachments = collection.attachments.isNotEmpty(),
             hasLessonPlans = if (collection.attachments.isNotEmpty()) collection.attachments.any { it.type == AttachmentType.LESSON_PLAN } else false,

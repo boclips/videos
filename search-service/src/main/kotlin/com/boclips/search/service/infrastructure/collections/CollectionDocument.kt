@@ -9,6 +9,7 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
     @param:JsonProperty(VISIBILITY) val visibility: String?,
+    @param:JsonProperty(SEARCHABLE) val searchable: Boolean? = false,
     @param:JsonProperty(SUBJECTS) val subjects: List<String> = emptyList(),
     @param:JsonProperty(BOOKMARKED_BY) val bookmarkedBy: Set<String> = emptySet(),
     @param:JsonProperty(HAS_ATTACHMENTS) val hasAttachments: Boolean?,
@@ -26,6 +27,7 @@ data class CollectionDocument @JsonCreator constructor(
         const val ID = "id"
         const val TITLE = "title"
         const val VISIBILITY = "visibility"
+        const val SEARCHABLE = "searchable"
         const val SUBJECTS = "subjects"
         const val HAS_ATTACHMENTS = "hasAttachments"
         const val OWNER = "owner"

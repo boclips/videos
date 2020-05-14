@@ -28,6 +28,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.title).isEqualTo("Some Collection Title")
         assertThat(collectionMetadata.owner).isEqualTo("12903012381")
         assertThat(collectionMetadata.visibility).isEqualTo(CollectionVisibility.PRIVATE)
+        assertThat(collectionMetadata.searchable).isEqualTo(false)
         assertThat(collectionMetadata.bookmarkedByUsers).containsExactly("userId1")
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(false)
         assertThat(collectionMetadata.updatedAt).isEqualTo(updateDate.toLocalDate())
@@ -49,6 +50,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.id).isEqualTo("test-id")
         assertThat(collectionMetadata.title).isEqualTo("Collection with lesson plan")
         assertThat(collectionMetadata.visibility).isEqualTo(CollectionVisibility.PRIVATE)
+        assertThat(collectionMetadata.searchable).isEqualTo(false)
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(true)
         assertThat(collectionMetadata.attachmentTypes).isEqualTo(setOf("Lesson Guide"))
     }

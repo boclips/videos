@@ -11,8 +11,7 @@ import java.time.Month
 
 class CollectionDocumentConverterTest {
 
-    private val elasticSearchResultConverter =
-        CollectionDocumentConverter()
+    private val elasticSearchResultConverter = CollectionDocumentConverter()
 
     @Test
     fun `convert search hit`() {
@@ -42,6 +41,7 @@ class CollectionDocumentConverterTest {
                 id = "14",
                 title = "The title",
                 visibility = "public",
+                searchable = false,
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false,
                 owner = "juan",
@@ -83,6 +83,7 @@ class CollectionDocumentConverterTest {
                 id = "14",
                 title = "The title",
                 visibility = "public",
+                searchable = false,
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false,
                 owner = "juan",
@@ -92,7 +93,7 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2018,Month.DECEMBER,19),
+                updatedAt = LocalDate.of(2018, Month.DECEMBER, 19),
                 attachmentTypes = null
             )
         )
@@ -104,6 +105,7 @@ class CollectionDocumentConverterTest {
             id = "14",
             title = "The title",
             visibility = CollectionVisibility.PUBLIC,
+            searchable = true,
             subjects = listOf("crispity", "crunchy"),
             hasAttachments = false,
             owner = "juan",
@@ -113,7 +115,7 @@ class CollectionDocumentConverterTest {
             ageRangeMin = null,
             ageRangeMax = null,
             bookmarkedBy = setOf("juan"),
-            updatedAt = LocalDate.of(2000,Month.APRIL,12),
+            updatedAt = LocalDate.of(2000, Month.APRIL, 12),
             attachmentTypes = setOf("Activity")
         )
 
@@ -124,6 +126,7 @@ class CollectionDocumentConverterTest {
                 id = "14",
                 title = "The title",
                 visibility = "public",
+                searchable = true,
                 subjects = listOf("crispity", "crunchy"),
                 bookmarkedBy = setOf("juan"),
                 hasAttachments = false,
@@ -134,7 +137,7 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2000,Month.APRIL,12),
+                updatedAt = LocalDate.of(2000, Month.APRIL, 12),
                 attachmentTypes = setOf("Activity")
             )
         )

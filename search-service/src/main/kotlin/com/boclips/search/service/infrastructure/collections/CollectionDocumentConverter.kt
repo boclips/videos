@@ -27,6 +27,7 @@ class CollectionDocumentConverter {
                 CollectionVisibility.PUBLIC -> "public"
                 CollectionVisibility.PRIVATE -> "private"
             },
+            searchable = metadata.searchable,
             subjects = metadata.subjectIds,
             hasAttachments = metadata.hasAttachments,
             owner = metadata.owner,
