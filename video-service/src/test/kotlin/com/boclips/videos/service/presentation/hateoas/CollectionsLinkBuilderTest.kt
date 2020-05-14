@@ -50,7 +50,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.searchPublicCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
         assertThat(link.rel).isEqualTo("searchPublicCollections")
         assertThat(link.templated).isEqualTo(true)
     }
@@ -65,7 +65,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.searchCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
         assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.templated).isEqualTo(true)
     }

@@ -94,13 +94,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchPublicCollections.href",
-                    endsWith("collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range}")
+                    endsWith("collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",
-                    endsWith("collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range}")
+                    endsWith("collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
                 )
             )
             .andExpect(
