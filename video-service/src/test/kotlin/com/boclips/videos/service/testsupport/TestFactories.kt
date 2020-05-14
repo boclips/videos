@@ -491,7 +491,7 @@ object AccessRulesFactory {
     }
 
     fun publicOnly() =
-        sample(collectionAccessRule = CollectionAccessRule.public())
+        sample(collectionAccessRule = CollectionAccessRule.everything())
 
     fun specificIds(vararg collectionIds: CollectionId) =
         sample(collectionAccessRule = CollectionAccessRule.specificIds(collectionIds.toList()))

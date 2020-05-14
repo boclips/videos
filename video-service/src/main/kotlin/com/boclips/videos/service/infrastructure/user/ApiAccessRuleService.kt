@@ -116,8 +116,8 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
     fun getRulesRecoveryMethod(e: Exception): AccessRules {
         logger.warn { "Unable to retrieve access rules, defaulting to access to public collections. Cause: $e" }
         return AccessRules(
-            CollectionAccessRule.public(),
-            VideoAccess.Everything
+            collectionAccess = CollectionAccessRule.everything(),
+            videoAccess = VideoAccess.Everything
         )
     }
 }

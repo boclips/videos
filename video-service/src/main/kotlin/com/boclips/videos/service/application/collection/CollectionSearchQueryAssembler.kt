@@ -71,15 +71,6 @@ class CollectionSearchQueryAssembler {
 
 private fun CollectionAccessRule.getVisibility(public: Boolean?, owner: String?): Set<VisibilityForOwner> =
     when (this) {
-        CollectionAccessRule.PublicOnly -> {
-            if (public == false) throw OperationForbiddenException("User cannot access private collections")
-            setOf(
-                VisibilityForOwner(
-                    owner = owner,
-                    visibility = CollectionVisibilityQuery.publicOnly()
-                )
-            )
-        }
         is CollectionAccessRule.SpecificOwner -> {
             when (owner) {
                 null ->

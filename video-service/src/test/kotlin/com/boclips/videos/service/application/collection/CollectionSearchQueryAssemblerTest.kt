@@ -133,41 +133,6 @@ class CollectionSearchQueryAssemblerTest {
             )
         }
 
-        @Test
-        fun `cannot access private collections`() {
-            assertThrows<OperationForbiddenException> {
-                collectionSearchQueryAssembler(
-                    public = false,
-                    user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.publicOnly() })
-                )
-            }
-        }
-
-        @Test
-        fun `gets only other owner's public collections if no visibility specified`() {
-            val query = collectionSearchQueryAssembler(
-                public = null,
-                owner = "other-folk",
-                user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.publicOnly() })
-            )
-
-            assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
-                VisibilityForOwner(owner = "other-folk", visibility = publicOnly())
-            )
-        }
-
-        @Test
-        fun `gets all public collections if no visibility and owner specified`() {
-            val query = collectionSearchQueryAssembler(
-                public = null,
-                owner = null,
-                user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.publicOnly() })
-            )
-
-            assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
-                VisibilityForOwner(owner = null, visibility = publicOnly())
-            )
-        }
     }
 
     @Nested
@@ -343,17 +308,6 @@ class CollectionSearchQueryAssemblerTest {
         }
 
         @Test
-        fun `with public access, default to all public collections`() {
-            val query = collectionSearchQueryAssembler(
-                user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.publicOnly() })
-            )
-
-            assertThat(query.visibilityForOwners).containsExactlyInAnyOrder(
-                VisibilityForOwner(owner = null, visibility = publicOnly())
-            )
-        }
-
-        @Test
         fun `with owner access, take bookmarkedBy from access rule`() {
             val query = collectionSearchQueryAssembler(
                 user = UserFactory.sample(
@@ -388,21 +342,6 @@ class CollectionSearchQueryAssemblerTest {
                 )
             }
         }
-
-        @Test
-        fun `with public access, throw error when requesting bookmarked collections`() {
-            assertThrows<OperationForbiddenException> {
-                collectionSearchQueryAssembler(
-                    bookmarked = true,
-                    user = UserFactory.sample(accessRulesSupplier = {
-                        AccessRules(
-                            videoAccess = VideoAccess.Everything,
-                            collectionAccess = CollectionAccessRule.public()
-                        )
-                    })
-                )
-            }
-        }
     }
 
     private fun collectionSearchQueryAssembler(
@@ -418,7 +357,7 @@ class CollectionSearchQueryAssemblerTest {
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(
                 videoAccess = VideoAccess.Everything,
-                collectionAccess = CollectionAccessRule.public()
+                collectionAccess = CollectionAccessRule.everything()
             )
         }),
         ageRangeMin: Int? = null,

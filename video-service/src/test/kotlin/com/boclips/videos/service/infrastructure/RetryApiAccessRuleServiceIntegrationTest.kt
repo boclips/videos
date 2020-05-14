@@ -50,7 +50,7 @@ class RetryApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest()
 
         Assertions.assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess)
             .isEqualTo(
-                CollectionAccessRule.public()
+                CollectionAccessRule.everything()
             )
     }
 }
