@@ -63,7 +63,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/classify_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .antMatchers(POST, "/v1/admin/actions/broadcast_videos").hasRole(ROLE.UPDATE_VIDEOS)
-
+            .antMatchers(POST, "/v1/admin/actions/broadcast_channels").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
             .antMatchers(POST, "/v1/admin/actions/update_youtube_channel_names").hasRole(ROLE.UPDATE_VIDEOS)
 
             .antMatchers(GET, "/v1/content-warnings").hasRole(ROLE.VIEW_CONTENT_WARNINGS)

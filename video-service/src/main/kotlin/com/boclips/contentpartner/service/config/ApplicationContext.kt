@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.agerange.GetAgeRange
+import com.boclips.contentpartner.service.application.contentpartner.BroadcastChannels
 import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerUpdatesConverter
 import com.boclips.contentpartner.service.application.contentpartner.ContractUpdated
 import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
@@ -139,6 +140,21 @@ class ApplicationContext(
             remittanceCurrencyConverter(),
             restrictionsConverter(),
             costsConverter()
+        )
+    }
+
+    @Bean
+    fun broadcastChannels(
+        eventBus: EventBus,
+        eventConverter: EventConverter,
+        contentPartnerRepository: ContentPartnerRepository,
+        subjectRepository: SubjectRepository
+    ): BroadcastChannels {
+        return BroadcastChannels(
+            eventBus,
+            eventConverter,
+            contentPartnerRepository,
+            subjectRepository
         )
     }
 
