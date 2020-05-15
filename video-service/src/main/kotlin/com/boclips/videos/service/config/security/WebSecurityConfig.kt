@@ -66,6 +66,9 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(POST, "/v1/admin/actions/update_youtube_channel_names").hasRole(ROLE.UPDATE_VIDEOS)
 
+            .antMatchers(GET, "/v1/content-warnings").hasRole(ROLE.VIEW_CONTENT_WARNINGS)
+            .antMatchers(POST, "/v1/content-warnings").hasRole(ROLE.CREATE_CONTENT_WARNINGS)
+
             .antMatchers(DELETE, "/v1/videos/*").hasRole(ROLE.REMOVE_VIDEOS)
             .antMatchers(POST, "/v1/videos").hasRole(ROLE.INSERT_VIDEOS)
             .antMatchers(PATCH, "/v1/videos").hasRole(ROLE.UPDATE_VIDEOS)

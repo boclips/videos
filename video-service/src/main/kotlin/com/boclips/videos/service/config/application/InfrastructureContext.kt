@@ -3,15 +3,16 @@ package com.boclips.videos.service.config.application
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.service.DisciplineRepository
-import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.GetUserIdOverride
-import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
+import com.boclips.videos.service.infrastructure.contentwarning.MongoContentWarningRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
@@ -40,7 +41,10 @@ class InfrastructureContext(
 ) {
     @Primary
     @Bean
-    fun collectionRepository(eventService: EventService, collectionRepository: CollectionRepository): CollectionRepository {
+    fun collectionRepository(
+        eventService: EventService,
+        collectionRepository: CollectionRepository
+    ): CollectionRepository {
         return CollectionRepositoryEventsDecorator(
             collectionRepository,
             eventService
@@ -114,5 +118,12 @@ class InfrastructureContext(
         mongoSubjectRepository: MongoSubjectRepository
     ): DisciplineRepository {
         return MongoDisciplineRepository(mongoClient, mongoSubjectRepository)
+    }
+
+    @Bean
+    fun mongoContentWarning(
+        mongoClient: MongoClient
+    ): MongoContentWarningRepository {
+        return MongoContentWarningRepository(mongoClient)
     }
 }

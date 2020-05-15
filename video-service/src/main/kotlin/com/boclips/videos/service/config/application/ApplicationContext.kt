@@ -22,6 +22,8 @@ import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.contentwarning.CreateContentWarning
+import com.boclips.videos.service.application.contentwarning.GetAllContentWarnings
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -62,6 +64,7 @@ import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
@@ -119,7 +122,8 @@ class ApplicationContext(
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val accessRuleService: AccessRuleService,
     val videoCreationService: VideoCreationService,
-    val subjectService: SubjectService
+    val subjectService: SubjectService,
+    val contentWarningRepository: ContentWarningRepository
 ) {
     @Bean
     fun searchVideo(
@@ -442,6 +446,11 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) =
-        GetVideoAssets(captionService, searchVideo)
+    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) = GetVideoAssets(captionService, searchVideo)
+
+    @Bean
+    fun getAllContentWarnings() = GetAllContentWarnings(contentWarningRepository)
+
+    @Bean
+    fun createContentWarning() = CreateContentWarning(contentWarningRepository)
 }

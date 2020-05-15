@@ -33,6 +33,7 @@ import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.contentwarning.CreateContentWarning
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.tag.CreateTag
@@ -167,6 +168,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var collectionSubjects: CollectionSubjects
+
+    @Autowired
+    lateinit var createContentWarning: CreateContentWarning
 
     @Autowired
     lateinit var cacheManager: CacheManager

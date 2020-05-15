@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
+import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
@@ -90,6 +91,11 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
             playbackToResourceConverter = playbackToResourceConverter,
             attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder)
         )
+    }
+
+    @Bean
+    fun contentWarningToResourceConverter(): ContentWarningToResourceConverter {
+        return ContentWarningToResourceConverter()
     }
 
     @Bean
