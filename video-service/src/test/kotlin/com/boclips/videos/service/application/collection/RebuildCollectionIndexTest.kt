@@ -35,7 +35,7 @@ class RebuildCollectionIndexTest {
         val collectionId2 = CollectionId(TestFactories.aValidId())
         val collectionId3 = CollectionId(TestFactories.aValidId())
 
-        index.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1, isPublic = true)))
+        index.upsert(sequenceOf(TestFactories.createCollection(id = collectionId1, curated = true)))
 
         val collectionRepository = mock<CollectionRepository> {
             on {
@@ -45,8 +45,8 @@ class RebuildCollectionIndexTest {
 
                 consumer(
                     sequenceOf(
-                        TestFactories.createCollection(id = collectionId2, title = "collection", isPublic = true),
-                        TestFactories.createCollection(id = collectionId3, title = "collection", isPublic = false)
+                        TestFactories.createCollection(id = collectionId2, title = "collection", curated = true),
+                        TestFactories.createCollection(id = collectionId3, title = "collection", curated = false)
                     )
                 )
             }

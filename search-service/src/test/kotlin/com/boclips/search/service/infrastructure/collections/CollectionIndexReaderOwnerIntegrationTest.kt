@@ -1,9 +1,6 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -28,12 +25,10 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
-                    visibility = CollectionVisibility.PUBLIC,
                     owner = "juan-123"
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
-                    visibility = CollectionVisibility.PRIVATE,
                     owner = "juan-123"
                 ),
                 SearchableCollectionMetadataFactory.create(id = "3", owner = "pablo-123")
@@ -43,12 +38,8 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
         val results = collectionIndexReader.search(
             PaginatedSearchRequest(
                 query = CollectionQuery(
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(
-                            owner = "juan-123",
-                            visibility = CollectionVisibilityQuery.All
-                        )
-                    )
+                    owner = "juan-123",
+                    searchable = null
                 )
             )
         )
@@ -61,7 +52,6 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
-                    visibility = CollectionVisibility.PUBLIC,
                     owner = "juan"
                 )
             )
@@ -70,12 +60,8 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
         val results = collectionIndexReader.search(
             PaginatedSearchRequest(
                 query = CollectionQuery(
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(
-                            owner = "jose",
-                            visibility = CollectionVisibilityQuery.All
-                        )
-                    )
+                    owner = "jose",
+                    searchable = null
                 )
             )
         )

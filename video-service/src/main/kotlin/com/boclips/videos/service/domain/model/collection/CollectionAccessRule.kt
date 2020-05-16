@@ -4,7 +4,6 @@ import com.boclips.videos.service.domain.model.user.UserId
 
 sealed class CollectionAccessRule {
     data class SpecificOwner(val owner: UserId) : CollectionAccessRule() {
-        fun isMe(user: UserId) = owner == user
         override fun toString() = "SpecificOwner($owner)"
     }
 

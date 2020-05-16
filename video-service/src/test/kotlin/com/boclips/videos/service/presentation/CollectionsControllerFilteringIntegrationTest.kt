@@ -114,19 +114,19 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `cannot fetch private collection when owner does not match user`() {
+    fun `can fetch collections from another owner`() {
         createCollection("collection 1")
 
-        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com&public=false").asTeacher("notTheOwner@gmail.com"))
-            .andExpect(status().isForbidden)
+        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
     }
 
     @Test
-    fun `searching for public collections returns public collections only`() {
-        updateCollectionToBePublic(createCollection("five ponies were eating grass"))
-        updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
-        createCollection(title = "the car was owned by a private individual", public = false)
-        createCollection(title = "while the truck was company property", public = false)
+    fun `filtering by curated collections returns curated collections only`() {
+        updateCollectionToBeCurated(createCollection("five ponies were eating grass"))
+        updateCollectionToBeCurated(createCollection("while a car and a truck crashed"))
+        createCollection(title = "the car was owned by a private individual", curated = false)
+        createCollection(title = "while the truck was company property", curated = false)
 
         mockMvc.perform(get("/v1/collections?public=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
@@ -136,10 +136,10 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `filter all public collections and use pagination`() {
+    fun `filter all curated collections and use pagination`() {
         val collectionId = createCollection("collection 1")
-        updateCollectionToBePublic(collectionId)
-        updateCollectionToBePublic(createCollection("collection 2"))
+        updateCollectionToBeCurated(collectionId)
+        updateCollectionToBeCurated(createCollection("collection 2"))
         updateCollectionAttachment(
             collectionId = collectionId,
             attachmentType = "LESSON_PLAN",
@@ -147,7 +147,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             attachmentURL = "http://www.google.com"
         )
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&curated=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
@@ -166,7 +166,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(jsonPath("$._embedded.collections[0]._links.bookmark.href").exists())
             .andExpect(jsonPath("$._embedded.collections[0]._links.unbookmark").doesNotExist())
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&public=true").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&curated=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
@@ -181,11 +181,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         val upperCollectionId = createCollection("upper")
         updateCollectionAgeRange(lowerCollectionId, ageRangeMin = 3, ageRangeMax = 5)
         updateCollectionAgeRange(upperCollectionId, ageRangeMin = 5, ageRangeMax = 7)
-        updateCollectionToBePublic(lowerCollectionId)
-        updateCollectionToBePublic(upperCollectionId)
+        updateCollectionToBeCurated(lowerCollectionId)
+        updateCollectionToBeCurated(upperCollectionId)
 
         mockMvc.perform(
-            get("/v1/collections?projection=list&page=0&size=5&public=true&age_range_min=5&age_range_max=7").asTeacher(
+            get("/v1/collections?projection=list&page=0&size=5&curated=true&age_range_min=5&age_range_max=7").asTeacher(
                 email = "notTheOwner@gmail.com"
             )
         )
@@ -201,11 +201,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         val upperCollectionId = createCollection("upper")
         updateCollectionAgeRange(lowerCollectionId, ageRangeMin = 3, ageRangeMax = 4)
         updateCollectionAgeRange(upperCollectionId, ageRangeMin = 5, ageRangeMax = 7)
-        updateCollectionToBePublic(lowerCollectionId)
-        updateCollectionToBePublic(upperCollectionId)
+        updateCollectionToBeCurated(lowerCollectionId)
+        updateCollectionToBeCurated(upperCollectionId)
 
         mockMvc.perform(
-            get("/v1/collections?projection=list&page=0&size=5&public=true&age_range=5-7,50-55").asTeacher(
+            get("/v1/collections?projection=list&page=0&size=5&curated=true&age_range=5-7,50-55").asTeacher(
                 email = "notTheOwner@gmail.com"
             )
         )
@@ -216,12 +216,12 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `query search public collections`() {
-        updateCollectionToBePublic(createCollection("five ponies were eating grass"))
-        updateCollectionToBePublic(createCollection("while a car and a truck crashed"))
-        createCollection(title = "the truck was blue and yellow", public = true)
+    fun `query search curated collections`() {
+        updateCollectionToBeCurated(createCollection("five ponies were eating grass"))
+        updateCollectionToBeCurated(createCollection("while a car and a truck crashed"))
+        createCollection(title = "the truck was blue and yellow", curated = true)
 
-        mockMvc.perform(get("/v1/collections?public=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?curated=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
@@ -230,9 +230,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
     @Test
     fun `query search all collections`() {
-        createCollection(title = "five ponies were eating grass", public = true)
-        createCollection(title = "the truck was blue and yellow", public = false)
-        createCollection(title = "while a car and a truck crashed", public = true)
+        createCollection(title = "five ponies were eating grass", curated = true)
+        createCollection(title = "the truck was blue and yellow", curated = false)
+        createCollection(title = "while a car and a truck crashed", curated = true)
 
         mockMvc.perform(
             get("/v1/collections?query=truck").asUserWithRoles(
@@ -252,10 +252,10 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         val teacher = "teacher"
         val stranger = "stranger"
 
-        createCollection(title = "mine", public = true, owner = teacher)
-        createCollection(title = "strangers", public = true, owner = stranger)
-        createCollection(title = "another collection", public = true, owner = teacher)
-        createCollection(title = "bookmarked", public = true, owner = stranger).apply {
+        createCollection(title = "mine", curated = true, owner = teacher)
+        createCollection(title = "strangers", curated = true, owner = stranger)
+        createCollection(title = "another collection", curated = true, owner = teacher)
+        createCollection(title = "bookmarked", curated = true, owner = stranger).apply {
             bookmarkCollection(this, teacher)
         }
 
@@ -270,7 +270,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `can filter public collections by multiple subjects with commas`() {
+    fun `can filter curated collections by multiple subjects with commas`() {
         val frenchCollection = createCollectionWithTitle("French Collection for with Subjects")
         val germanCollection = createCollectionWithTitle("German Collection for with Subjects")
         val collectionWithoutSubjects = createCollectionWithTitle("My Collection for without Subjects")
@@ -287,12 +287,12 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
                 .content("""{"subjects": ["${germanSubject.id.value}"]}""").asTeacher()
         )
 
-        updateCollectionToBePublic(frenchCollection)
-        updateCollectionToBePublic(germanCollection)
-        updateCollectionToBePublic(collectionWithoutSubjects)
+        updateCollectionToBeCurated(frenchCollection)
+        updateCollectionToBeCurated(germanCollection)
+        updateCollectionToBeCurated(collectionWithoutSubjects)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.id.value},${germanSubject.id.value}&public=true")
+            get("/v1/collections?subject=${frenchSubject.id.value},${germanSubject.id.value}&curated=true")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)
@@ -300,7 +300,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `public collections filtered by subject only gets collections with lesson plan first`() {
+    fun `curated collections filtered by subject only gets collections with lesson plan first`() {
         val collectionWithLessonPlan1 = createCollectionWithTitle("With lesson plan 1")
         val collectionWithoutLessonPlan = createCollectionWithTitle("No lesson plan")
         val collectionWithLessonPlan2 = createCollectionWithTitle("With lesson plan 2")
@@ -321,7 +321,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         listOf(collectionWithLessonPlan1, collectionWithoutLessonPlan, collectionWithLessonPlan2).forEach {
-            updateCollectionToBePublic(it)
+            updateCollectionToBeCurated(it)
             mockMvc.perform(
                 MockMvcRequestBuilders.patch(selfLink(it)).contentType(MediaType.APPLICATION_JSON)
                     .content("""{"subjects": ["${subject.id.value}"]}""").asTeacher()
@@ -329,7 +329,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         mockMvc.perform(
-            get("/v1/collections?subject=${subject.id.value}&public=true")
+            get("/v1/collections?subject=${subject.id.value}&curated=true")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)
@@ -340,7 +340,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `can filter public collections by subjects`() {
+    fun `can filter curated collections by subjects`() {
         val frenchCollection = createCollectionWithTitle("My Collection for with Subjects")
         val unclassifiedCollection = createCollectionWithTitle("My Collection for without Subjects")
 
@@ -351,11 +351,11 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
                 .content("""{"subjects": ["${frenchSubject.id.value}"]}""").asTeacher()
         )
 
-        updateCollectionToBePublic(frenchCollection)
-        updateCollectionToBePublic(unclassifiedCollection)
+        updateCollectionToBeCurated(frenchCollection)
+        updateCollectionToBeCurated(unclassifiedCollection)
 
         mockMvc.perform(
-            get("/v1/collections?subject=${frenchSubject.id.value}&projection=details&public=true")
+            get("/v1/collections?subject=${frenchSubject.id.value}&projection=details&curated=true")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)
@@ -374,7 +374,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             attachmentURL = "http://www.boclips.com"
         )
         listOf(collectionWithLessonPlan, collectionWithoutLessonPlan).forEach {
-            updateCollectionToBePublic(it)
+            updateCollectionToBeCurated(it)
         }
 
         mockMvc.perform(

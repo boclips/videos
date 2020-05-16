@@ -15,7 +15,7 @@ data class Collection(
     val videos: List<VideoId>,
     val createdAt: ZonedDateTime,
     val updatedAt: ZonedDateTime,
-    val isPublic: Boolean,
+    val isCurated: Boolean,
     val promoted: Boolean,
     val createdByBoclips: Boolean,
     val bookmarks: Set<UserId>,

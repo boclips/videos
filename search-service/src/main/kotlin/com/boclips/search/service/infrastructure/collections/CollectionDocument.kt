@@ -8,7 +8,6 @@ import java.time.LocalDate
 data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
-    @param:JsonProperty(VISIBILITY) val visibility: String?,
     @param:JsonProperty(SEARCHABLE) val searchable: Boolean? = false,
     @param:JsonProperty(SUBJECTS) val subjects: List<String> = emptyList(),
     @param:JsonProperty(BOOKMARKED_BY) val bookmarkedBy: Set<String> = emptySet(),

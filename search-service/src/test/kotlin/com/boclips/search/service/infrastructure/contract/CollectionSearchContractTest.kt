@@ -2,9 +2,6 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
@@ -58,7 +55,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                 SearchableCollectionMetadataFactory.create(
                     id = "1",
                     title = "Gentleman Dancing",
-                    visibility = CollectionVisibility.PRIVATE
+                    searchable = false
                 )
             )
         )
@@ -197,6 +194,31 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
     @ParameterizedTest
     @ArgumentsSource(CollectionSearchProvider::class)
+    fun `finds all collections by specific IDs`(
+        readService: IndexReader<CollectionMetadata, CollectionQuery>,
+        writeService: IndexWriter<CollectionMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1"),
+                SearchableCollectionMetadataFactory.create(id = "2", searchable = false),
+                SearchableCollectionMetadataFactory.create(id = "3")
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(
+                query = CollectionQuery(
+                    permittedIds = listOf("1", "2")
+                )
+            )
+        )
+
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CollectionSearchProvider::class)
     fun `combines own collections with bookmarked collections`(
         readService: IndexReader<CollectionMetadata, CollectionQuery>,
         writeService: IndexWriter<CollectionMetadata>
@@ -236,10 +258,9 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         val results = readService.search(
             PaginatedSearchRequest(
                 query = CollectionQuery(
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
-                    ),
+                    owner = "teacher",
                     bookmarkedBy = "teacher",
+                    searchable = null,
                     sort = Sort.ByField(CollectionMetadata::updatedAt, SortOrder.DESC)
                 )
             )
@@ -252,7 +273,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
     @ParameterizedTest
     @ArgumentsSource(CollectionSearchProvider::class)
-    fun `does not combine public collections with bookmarked collections, without an owner`(
+    fun `can retrieve bookmarked collections of owner`(
         readService: IndexReader<CollectionMetadata, CollectionQuery>,
         writeService: IndexWriter<CollectionMetadata>
     ) {
@@ -278,66 +299,13 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         val results = readService.search(
             PaginatedSearchRequest(
-                query = CollectionQuery(
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly())
-                    ),
-                    bookmarkedBy = "teacher"
-                )
+                query = CollectionQuery(bookmarkedBy = "teacher")
             )
         )
 
         assertThat(results.elements).hasSize(1)
         assertThat(results.elements).containsExactly("101")
         assertThat(results.counts.totalHits).isEqualTo(1)
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(CollectionSearchProvider::class)
-    fun `paginates results`(
-        readService: IndexReader<CollectionMetadata, CollectionQuery>,
-        writeService: IndexWriter<CollectionMetadata>
-    ) {
-        writeService.safeRebuildIndex(
-            sequenceOf(
-                SearchableCollectionMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
-                SearchableCollectionMetadataFactory.create(
-                    id = "2",
-                    title = "Beer"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "3",
-                    title = "Mixed-race couple playing piano with a dog and a gentleman"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "4",
-                    title = "Who are you, really? I am GENTLEman"
-                )
-            )
-        )
-
-        val page1 =
-            readService.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        "gentleman"
-                    ), startIndex = 0, windowSize = 2
-                )
-            )
-        val page2 =
-            readService.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        "gentleman"
-                    ), startIndex = 2, windowSize = 2
-                )
-            )
-
-        assertThat(page1.elements).hasSize(2)
-        assertThat(page1.counts.totalHits).isEqualTo(3)
-
-        assertThat(page2.elements).hasSize(1)
-        assertThat(page2.counts.totalHits).isEqualTo(3)
     }
 
     @ParameterizedTest
@@ -356,43 +324,6 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         writeService.removeFromSearch("1")
-
-        assertThat(
-            readService.search(
-                PaginatedSearchRequest(
-                    query = CollectionQuery(
-                        "gentleman"
-                    )
-                )
-            ).elements.isEmpty()
-        )
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(CollectionSearchProvider::class)
-    fun `can bulk remove collections from index`(
-        readService: IndexReader<CollectionMetadata, CollectionQuery>,
-        writeService: IndexWriter<CollectionMetadata>
-    ) {
-        writeService.safeRebuildIndex(
-            sequenceOf(
-
-                SearchableCollectionMetadataFactory.create(
-                    id = "1",
-                    title = "White Gentleman Dancing"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "2",
-                    title = "White Gentleman Dancing"
-                ),
-                SearchableCollectionMetadataFactory.create(
-                    id = "3",
-                    title = "White Gentleman Dancing"
-                )
-            )
-        )
-
-        writeService.bulkRemoveFromSearch(listOf("1", "2", "3"))
 
         assertThat(
             readService.search(

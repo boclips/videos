@@ -158,7 +158,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeVisibility(
                     collectionId = CollectionId(collectionId),
-                    isPublic = true,
+                    curated = true,
                     user = UserFactory.sample(id = "user@example.com")
                 )
             )
@@ -179,7 +179,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeVisibility(
                     collectionId = CollectionId(collectionId),
-                    isPublic = false,
+                    curated = false,
                     user = UserFactory.sample()
                 )
             )

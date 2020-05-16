@@ -48,7 +48,7 @@ class MongoCollectionRepository(
             videos = emptyList(),
             createdAt = Instant.now(),
             updatedAt = Instant.now(),
-            visibility = if (command.public) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
+            visibility = if (command.curated) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE,
             createdByBoclips = command.createdByBoclips,
             promoted = false,
             subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray())

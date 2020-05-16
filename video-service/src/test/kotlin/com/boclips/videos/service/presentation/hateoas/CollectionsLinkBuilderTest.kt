@@ -471,7 +471,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                isPublic = true,
+                curated = true,
                 owner = "another-user"
             ),
             user = user
@@ -492,7 +492,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                isPublic = true,
+                curated = true,
                 owner = "another-user"
             ),
             user = user
@@ -516,7 +516,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                isPublic = false,
+                curated = false,
                 owner = "another-user"
             ),
             user = user
@@ -535,7 +535,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                isPublic = false,
+                curated = false,
                 owner = user.id.value
             ),
             user = user
@@ -554,7 +554,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                isPublic = false,
+                curated = false,
                 owner = "another-user",
                 bookmarks = setOf(user.id)
             ),
@@ -574,7 +574,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                isPublic = true,
+                curated = true,
                 owner = "another-user",
                 bookmarks = setOf(user.id)
             ),
@@ -590,26 +590,6 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
-    fun `unbookmark when not public`() {
-        val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
-        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
-
-        val user = UserFactory.sample()
-
-        val link = collectionsLinkBuilder.unbookmark(
-            collection = TestFactories.createCollection(
-                isPublic = false,
-                owner = "another-user",
-                bookmarks = setOf(user.id)
-            ),
-            user = user
-        )
-
-        assertThat(link).isNull()
-    }
-
-    @Test
     fun `unbookmark when mine`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
@@ -619,7 +599,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                isPublic = true,
+                curated = true,
                 owner = user.id.value,
                 bookmarks = setOf(user.id)
             ),
@@ -639,7 +619,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                isPublic = true,
+                curated = true,
                 owner = "another-user"
             ),
             user = user

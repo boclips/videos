@@ -36,7 +36,7 @@ class CollectionUpdates {
             )
             is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(
                 command.collectionId,
-                command.isPublic
+                command.curated
             )
             is CollectionUpdateCommand.ChangePromotion -> changePromotion(
                 command.collectionId,

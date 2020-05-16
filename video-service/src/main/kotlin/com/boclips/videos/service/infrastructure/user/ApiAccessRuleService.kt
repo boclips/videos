@@ -44,6 +44,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                 videoAccess = getVideoAccessRule(it)
             )
         }
+
         logger.info { "Retrieved access rules for user ${user.id.value}" }
         return accessRules
     }
@@ -58,10 +59,9 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
             }
 
         return when {
-            collectionIds.isNotEmpty() -> CollectionAccessRule.specificIds(
-                collectionIds
-            )
             user.isPermittedToViewAnyCollection -> CollectionAccessRule.everything()
+            collectionIds.isNotEmpty() -> CollectionAccessRule.specificIds(collectionIds)
+            collectionIds.isEmpty() -> CollectionAccessRule.everything() // TODO: remove this rule and replace with access rule
             else -> CollectionAccessRule.asOwner(user.id)
         }
     }

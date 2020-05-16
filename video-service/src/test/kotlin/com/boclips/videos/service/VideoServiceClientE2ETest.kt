@@ -142,9 +142,9 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
         @Test
         fun `can fetch one and many collections, including details`() {
             val savedVideoId = saveVideo()
-            val savedCollectionId = saveCollection(owner = "the@owner.com", public = true)
+            val savedCollectionId = saveCollection(owner = "the@owner.com", curated = true)
             val collectionWithVideos =
-                saveCollection(owner = "another@owner.com", public = true, videos = listOf(savedVideoId.value))
+                saveCollection(owner = "another@owner.com", curated = true, videos = listOf(savedVideoId.value))
 
             val collectionsClient = CollectionsClient.create(
                 apiUrl = "http://localhost:$randomServerPort",

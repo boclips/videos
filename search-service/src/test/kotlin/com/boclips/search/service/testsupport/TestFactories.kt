@@ -1,7 +1,6 @@
 package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectMetadata
@@ -101,14 +100,13 @@ object SearchableCollectionMetadataFactory {
     fun create(
         id: String = "id1",
         title: String = "",
-        visibility: CollectionVisibility = CollectionVisibility.PUBLIC,
-        searchable: Boolean = false,
         subjects: List<String> = emptyList(),
         hasAttachments: Boolean = false,
         owner: String = "some-user-id",
         bookmarkedBy: Set<String> = setOf(owner),
         description: String = "some default description",
         hasLessonPlans: Boolean? = null,
+        searchable: Boolean? = null,
         promoted: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
@@ -118,14 +116,13 @@ object SearchableCollectionMetadataFactory {
         id = id,
         title = title,
         subjectIds = subjects,
-        visibility = visibility,
-        searchable = searchable,
+        curated = searchable,
+        promoted = promoted,
         owner = owner,
         bookmarkedByUsers = bookmarkedBy,
         hasAttachments = hasAttachments,
         description = description,
         hasLessonPlans = hasLessonPlans,
-        promoted = promoted,
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         updatedAt = updatedAt,

@@ -9,7 +9,6 @@ class CollectionQuery(
     phrase: String = "",
     sort: Sort<CollectionMetadata>? = null,
     facetDefinition: FacetDefinition.Collection? = null,
-    val visibilityForOwners: Set<VisibilityForOwner> = emptySet(),
     val searchable: Boolean? = null,
     val owner: String? = null,
     val subjectIds: List<String> = emptyList(),
@@ -22,8 +21,3 @@ class CollectionQuery(
     val promoted: Boolean? = null,
     val resourceTypes: Set<String> = emptySet()
 ) : SearchQuery<CollectionMetadata>(phrase, sort, facetDefinition)
-
-data class VisibilityForOwner(
-    val owner: String?,
-    val visibility: CollectionVisibilityQuery
-)

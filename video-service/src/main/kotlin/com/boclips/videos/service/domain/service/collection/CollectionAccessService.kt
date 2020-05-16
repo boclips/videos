@@ -12,17 +12,11 @@ class CollectionAccessService {
         return hasAccess(collection = collection, readOnly = true, user = user)
     }
 
-    // TODO: These rules are dubious, defy the point of access rules
-    private fun hasAccess(
-        collection: Collection,
-        readOnly: Boolean,
-        user: User
-    ): Boolean {
+    private fun hasAccess(collection: Collection, readOnly: Boolean, user: User): Boolean {
         return when {
             collection.owner == user.id -> true
             user.isPermittedToViewAnyCollection -> true
             readOnly && user.accessRules.collectionAccess.allowsAccessTo(collection) -> true
-            readOnly && user.isAuthenticated -> true // this should be removed with comprehensive use of access rules
             else -> false
         }
     }

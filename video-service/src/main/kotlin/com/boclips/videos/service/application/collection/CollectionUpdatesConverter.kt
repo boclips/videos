@@ -30,7 +30,7 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
             updateCollectionRequest.isPublic?.let {
                 CollectionUpdateCommand.ChangeVisibility(
                     collectionId = collectionId,
-                    isPublic = it,
+                    curated = it,
                     user = user
                 )
             },

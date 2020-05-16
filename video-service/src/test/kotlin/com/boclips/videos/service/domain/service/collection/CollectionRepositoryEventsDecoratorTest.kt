@@ -27,7 +27,7 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
                 owner = UserId(TestFactories.aValidId()),
                 title = "My new collection",
                 createdByBoclips = false,
-                public = false
+                curated = false
             )
         )
 

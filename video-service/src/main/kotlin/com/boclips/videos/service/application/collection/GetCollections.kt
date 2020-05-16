@@ -17,7 +17,6 @@ class GetCollections(
         val assembledQuery = collectionSearchQueryAssembler(
             query = collectionFilterRequest.query,
             subjects = collectionFilterRequest.subject?.split(",")?.toList() ?: emptyList(),
-            public = collectionFilterRequest.public,
             bookmarked = collectionFilterRequest.bookmarked ?: false,
             owner = collectionFilterRequest.owner,
             page = collectionFilterRequest.page,
@@ -25,6 +24,7 @@ class GetCollections(
             sort = collectionFilterRequest.sort_by,
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             promoted = collectionFilterRequest.promoted,
+            curated = collectionFilterRequest.public,
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,
             ageRangeMax = collectionFilterRequest.age_range_max,

@@ -2,13 +2,10 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -160,18 +157,14 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
             collectionIndexReader.search(
                 PaginatedSearchRequest(
                     query = CollectionQuery(
-                        visibilityForOwners = setOf(
-                            VisibilityForOwner(owner = "teacher", visibility = CollectionVisibilityQuery.All)
-                        ),
+                        owner = "teacher",
+                        searchable = null,
                         bookmarkedBy = "teacher"
                     )
                 )
             )
 
-        Assertions.assertThat(results.elements).hasSize(2)
-        Assertions.assertThat(results.elements).contains("100")
-        Assertions.assertThat(results.elements).contains("101")
-        Assertions.assertThat(results.elements).doesNotContain("102")
+        Assertions.assertThat(results.elements).containsExactly("100", "101")
     }
 
     @Test
@@ -238,5 +231,50 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
             )
 
         Assertions.assertThat(results.elements).containsExactly("3")
+    }
+
+    @Test
+    fun `paginates results`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(id = "1", title = "White Gentleman Dancing"),
+                SearchableCollectionMetadataFactory.create(
+                    id = "2",
+                    title = "Beer"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "3",
+                    title = "Mixed-race couple playing piano with a dog and a gentleman"
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "4",
+                    title = "Who are you, really? I am GENTLEman"
+                )
+            )
+        )
+
+        val page1 =
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "gentleman"
+                    ), startIndex = 0, windowSize = 2
+                )
+            )
+
+        val page2 =
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        "gentleman"
+                    ), startIndex = 2, windowSize = 2
+                )
+            )
+
+        Assertions.assertThat(page1.elements).hasSize(2)
+        Assertions.assertThat(page1.counts.totalHits).isEqualTo(3)
+
+        Assertions.assertThat(page2.elements).hasSize(1)
+        Assertions.assertThat(page2.counts.totalHits).isEqualTo(3)
     }
 }

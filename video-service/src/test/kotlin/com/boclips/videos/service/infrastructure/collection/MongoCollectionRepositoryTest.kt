@@ -41,7 +41,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                         owner = owner,
                         title = "",
                         createdByBoclips = false,
-                        public = false
+                        curated = false
                     )
                 ).id
             val id2 =
@@ -50,7 +50,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                         owner = owner,
                         title = "",
                         createdByBoclips = false,
-                        public = false
+                        curated = false
                     )
                 ).id
             val id3 =
@@ -59,7 +59,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                         owner = owner,
                         title = "",
                         createdByBoclips = false,
-                        public = false
+                        curated = false
                     )
                 ).id
 
@@ -91,7 +91,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Collection vs Playlist",
                     createdByBoclips = false,
-                    public = true,
+                    curated = true,
                     subjects = setOf(math.id, physics.id)
                 )
             )
@@ -109,7 +109,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Collection vs Playlist",
                     createdByBoclips = false,
-                    public = true
+                    curated = true
                 )
             )
 
@@ -133,7 +133,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(updatedCollection.videos).hasSize(1)
             assertThat(updatedCollection.videos).contains(video2)
             assertThat(updatedCollection.title).isEqualTo("Collection vs Playlist")
-            assertThat(updatedCollection.isPublic).isEqualTo(true)
+            assertThat(updatedCollection.isCurated).isEqualTo(true)
             assertThat(updatedCollection.ageRange).isEqualTo(UnknownAgeRange)
         }
 
@@ -144,7 +144,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -168,18 +168,18 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
-            assertThat(collection.isPublic).isEqualTo(false)
+            assertThat(collection.isCurated).isEqualTo(false)
 
             collectionRepository.update(
-                CollectionUpdateCommand.ChangeVisibility(collection.id, isPublic = true, user = UserFactory.sample())
+                CollectionUpdateCommand.ChangeVisibility(collection.id, curated = true, user = UserFactory.sample())
             )
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
-            assertThat(updatedCollection.isPublic).isEqualTo(true)
+            assertThat(updatedCollection.isCurated).isEqualTo(true)
         }
 
         @Test
@@ -189,7 +189,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Alex's Amazing Collection",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -217,7 +217,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Alex's Amazing Collection",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -247,7 +247,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -267,7 +267,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Collection vs Playlist",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -308,7 +308,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Collection vs Playlist",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -333,7 +333,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -358,7 +358,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -385,7 +385,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "My Videos",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -450,7 +450,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             collectionRepository.update(
                 CollectionUpdateCommand.ChangeVisibility(
                     collectionId = collection.id,
-                    isPublic = true,
+                    curated = true,
                     user = UserFactory.sample()
                 ),
                 CollectionUpdateCommand.RenameCollection(
@@ -472,7 +472,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 // )
             )
 
-            assertThat(collectionRepository.find(collection.id)!!.isPublic).isTrue()
+            assertThat(collectionRepository.find(collection.id)!!.isCurated).isTrue()
             assertThat(collectionRepository.find(collection.id)!!.updatedAt).isAfterOrEqualTo(collection.updatedAt)
             assertThat(collectionRepository.find(collection2.id)!!.title).isEqualTo("New Collection title")
             assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfterOrEqualTo(collection2.updatedAt)
@@ -515,7 +515,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     owner = UserId(value = "user1"),
                     title = "Starting Title",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
 
@@ -545,7 +545,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val collection = collectionRepository.find(CollectionId(value = "5c55697860fef77aa4af323a"))!!
 
-            assertThat(collection.isPublic).isEqualTo(false)
+            assertThat(collection.isCurated).isEqualTo(false)
         }
     }
 
@@ -556,7 +556,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
                 createdByBoclips = false,
-                public = false
+                curated = false
             )
         )
         collectionRepository.create(
@@ -564,7 +564,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
                 createdByBoclips = false,
-                public = false
+                curated = false
             )
         )
         val c3 = collectionRepository.create(
@@ -572,7 +572,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 owner = UserId(value = "user1"),
                 title = "Starting Title",
                 createdByBoclips = false,
-                public = false
+                curated = false
             )
         )
         collectionRepository.update(CollectionUpdateCommand.ChangeVisibility(c1.id, true, UserFactory.sample()))
@@ -597,7 +597,7 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 owner = owner,
                 title = title,
                 createdByBoclips = createdByBoclips,
-                public = public
+                curated = public
             )
         )
     }

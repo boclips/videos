@@ -19,7 +19,8 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId, val user: U
     class RenameCollection(collectionId: CollectionId, val title: String, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
-    class ChangeVisibility(collectionId: CollectionId, val isPublic: Boolean, user: User) :
+    //TODO: change to ChangeCurationStatus
+    class ChangeVisibility(collectionId: CollectionId, val curated: Boolean, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
     class ChangePromotion(collectionId: CollectionId, val promoted: Boolean, user: User) :

@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.model.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.request.collection.CollectionSortKey
@@ -13,7 +12,7 @@ import com.boclips.videos.service.domain.model.convertAgeRange
 class CollectionSearchQuery(
     val text: String?,
     val subjectIds: List<String>,
-    val visibilityForOwners: Set<VisibilityForOwner>,
+    val owner: String? = null,
     val bookmarkedBy: String? = null,
     val pageSize: Int,
     val pageIndex: Int,
@@ -23,13 +22,15 @@ class CollectionSearchQuery(
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
+    val curated: Boolean? = null,
     val sort: CollectionSortKey? = null,
     val resourceTypes: Set<String>? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
         subjectIds = this.subjectIds,
-        visibilityForOwners = this.visibilityForOwners,
+        searchable = this.curated,
+        owner = this.owner,
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },
         sort = when (this.sort) {
@@ -56,6 +57,7 @@ class CollectionSearchQuery(
         promoted = this.promoted,
         resourceTypes = this.resourceTypes?.mapTo(HashSet()) { AttachmentType.valueOf(it).label } ?: emptySet()
     )
+
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
 
     override fun toString(): String {

@@ -61,12 +61,12 @@ class VideoServiceApiFactory {
             title: String? = "collection title",
             description: String? = null,
             videos: List<String> = listOf(),
-            public: Boolean? = null
+            curated: Boolean? = null
         ) = CreateCollectionRequest(
             title = title,
             description = description,
             videos = videos,
-            public = public
+            public = curated
         )
 
         @JvmStatic

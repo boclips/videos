@@ -27,7 +27,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",
                 createdByBoclips = false,
-                public = false,
+                curated = false,
                 description = "A long long time ago, in a land far far far away",
                 subjects = emptySet()
             ),
@@ -44,7 +44,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
         )
         assertThat(retrievedCollection.title).isEqualTo("Wow, did you see that?")
         assertThat(retrievedCollection.createdByBoclips).isFalse()
-        assertThat(retrievedCollection.isPublic).isFalse()
+        assertThat(retrievedCollection.isCurated).isFalse()
         assertThat(retrievedCollection.description).isEqualTo("A long long time ago, in a land far far far away")
         assertThat(retrievedCollection.subjects).isEmpty()
 
@@ -60,7 +60,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",
                 createdByBoclips = false,
-                public = false,
+                curated = false,
                 description = "A long long time ago, in a land far far far away",
                 subjects = emptySet()
             ),
@@ -79,7 +79,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                 owner = UserId(value = "123"),
                 title = "Wow, did you see that?",
                 createdByBoclips = false,
-                public = false,
+                curated = false,
                 description = "A long long time ago, in a land far far far away",
                 subjects = emptySet()
             ),

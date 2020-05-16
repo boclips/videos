@@ -7,7 +7,7 @@ data class CreateCollectionCommand(
     val owner: UserId,
     val title: String,
     val createdByBoclips: Boolean,
-    val public: Boolean,
+    val curated: Boolean,
     val description: String? = null,
     val subjects: Set<SubjectId> = emptySet()
 )

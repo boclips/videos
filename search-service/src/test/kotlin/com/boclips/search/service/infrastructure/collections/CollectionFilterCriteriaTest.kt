@@ -2,20 +2,18 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import org.assertj.core.api.Assertions
-import org.elasticsearch.index.query.QueryBuilders
 import org.junit.jupiter.api.Test
 
-class CollectionFilterDecoratorTest {
+class CollectionFilterCriteriaTest {
     @Test
     fun `attaches all filters for collection`() {
-        val boolQuery = QueryBuilders.boolQuery()
         val collectionQuery = CollectionQuery(
             ageRangeMax = 10,
             ageRangeMin = 5,
             resourceTypes = setOf("Lesson Guide")
         )
 
-        CollectionFilterDecorator(boolQuery).decorate(collectionQuery)
+        val boolQuery = CollectionFilterCriteria.allCriteria(collectionQuery)
 
         Assertions.assertThat(boolQuery.toString()).isEqualTo(
             """

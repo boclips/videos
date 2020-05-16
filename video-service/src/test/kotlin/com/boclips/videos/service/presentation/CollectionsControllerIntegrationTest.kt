@@ -119,13 +119,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             createCollection(
                 title = "collection with lesson plans",
                 description = "collection with a LESSON_PLAN attachment"
-            ).apply {
-                updateCollectionToBePublic(this)
-            }
+            )
 
-        createCollection("collection without lesson plans").apply {
-            updateCollectionToBePublic(this)
-        }
+        createCollection("collection without lesson plans")
 
         updateCollectionAttachment(
             collectionId = collectionWithLessonPlan,
@@ -134,9 +130,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             attachmentURL = "http://www.google.com"
         )
 
-
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&has_lesson_plans=true").asApiUser()
+            get("/v1/collections?query=collection&has_lesson_plans=true").asApiUser()
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
@@ -154,9 +149,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             createCollection(
                 title = "collection with lesson plans",
                 description = "collection with a LESSON_PLAN attachment"
-            ).apply {
-                updateCollectionToBePublic(this)
-            }
+            )
 
         updateCollectionAttachment(
             collectionId = collectionWithLessonPlan,
@@ -165,18 +158,11 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             attachmentURL = "http://www.google.com"
         )
 
-        createCollection("collection without lesson plans 1").apply {
-            updateCollectionToBePublic(this)
-        }
-        createCollection("collection without lesson plans 2").apply {
-            updateCollectionToBePublic(this)
-        }
-
-
-
+        createCollection("collection without lesson plans 1")
+        createCollection("collection without lesson plans 2")
 
         mockMvc.perform(
-            get("/v1/collections?public=true&query=collection&has_lesson_plans=false").asApiUser()
+            get("/v1/collections?query=collection&has_lesson_plans=false").asApiUser()
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
@@ -340,7 +326,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `collection is not mine if I did not create it`() {
         val collectionId = createCollection("collection from a teacher")
-        updateCollectionToBePublic(collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
             .andExpect(status().isOk)
@@ -352,18 +337,15 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     fun `get all promoted collections`() {
         val promotedCollectionIds: Array<String> = (1..10).asIterable().map {
             createCollection("collection$it").apply {
-                updateCollectionToBePublic(this)
                 updateCollectionToBePromoted(this)
             }
         }.toTypedArray()
 
         (1..10).asIterable().map {
-            createCollection("collection$it").apply {
-                updateCollectionToBePublic(this)
-            }
+            createCollection("collection$it")
         }
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=30&promoted=true&public=true").asTeacher(email = "random@gmail.com"))
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=30&promoted=true").asTeacher(email = "random@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(10)))
@@ -372,18 +354,10 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `get bookmarked collections correctly paginated, prioritising collections with attachments`() {
-        val collectionId = createCollection("collection 1").apply {
-            updateCollectionToBePublic(this)
+        createCollection("collection 1").apply {
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
-        updateCollectionAttachment(
-            collectionId = collectionId,
-            attachmentType = "LESSON_PLAN",
-            attachmentDescription = "my description",
-            attachmentURL = "http://www.google.com"
-        )
         createCollection("collection 2").apply {
-            updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
 
@@ -394,7 +368,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next.href").exists())
@@ -405,7 +379,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next").doesNotExist())
@@ -431,9 +405,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `bookmark collections returns updated collection`() {
-        val collectionId = createCollection("collection 1").apply {
-            updateCollectionToBePublic(this)
-        }
+        val collectionId = createCollection("collection 1")
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
@@ -451,7 +423,6 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `unbookmark collections returns updated collection`() {
         val collectionId = createCollection("collection 1").apply {
-            updateCollectionToBePublic(this)
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
 
@@ -475,7 +446,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                 owner = UserId("teacher@gmail.com"),
                 title = "Collection",
                 createdByBoclips = false,
-                public = false
+                curated = false
             )
         ).id.value
 
@@ -509,9 +480,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `fetching a public collection owned by other teacher omits edit links`() {
+    fun `fetching a curated collection owned by other teacher omits edit links`() {
         val collectionId = createCollection("collection from a teacher")
-        updateCollectionToBePublic(collectionId)
+        updateCollectionToBeCurated(collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
             .andExpect(status().isOk)
@@ -574,7 +545,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `fetching a collection as a user with a SelectedContent contract for it`() {
-        val collectionId = createCollection(title = "Some Non Public Collection", public = false)
+        val collectionId = createCollection(title = "Some Non curated Collection", curated = false)
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asApiUser(email = "api-user@gmail.com"))
@@ -589,7 +560,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         inner class AuthenticatedUser {
             @Test
             fun `owner can access collection with share code and referer`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
+                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", curated = false)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -606,7 +577,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `authenticated user can access collection with share code and referer`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", public = false)
+                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", curated = false)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -623,7 +594,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `authenticated users can access collections without share codes`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Collection", public = false)
+                val collectionId = createCollection(owner = "12345", title = "Some Collection", curated = false)
 
                 mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
                     .andExpect(status().isOk)
@@ -634,7 +605,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         inner class NonAuthenticatedUser {
             @Test
             fun `providing a valid shareCode and referer`() {
-                val collectionId = createCollection(title = "Some Public Collection", public = true, owner = "12345")
+                val collectionId = createCollection(title = "Some curated Collection", curated = true, owner = "12345")
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -646,12 +617,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     .andExpect(status().isOk)
                     .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                     .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                    .andExpect(jsonPath("$.title", equalTo("Some Public Collection")))
+                    .andExpect(jsonPath("$.title", equalTo("Some curated Collection")))
             }
 
             @Test
             fun `providing an invalid shareCode and referer`() {
-                val collectionId = createCollection(title = "Some Public Collection", public = true)
+                val collectionId = createCollection(title = "Some curated Collection", curated = true)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -665,7 +636,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `not providing a shareCode or referer returns forbidden`() {
-                val collectionId = createCollection(title = "Some Public Collection", public = true)
+                val collectionId = createCollection(title = "Some curated Collection", curated = true)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -689,7 +660,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     owner = UserId(email),
                     title = "My Special Collection",
                     createdByBoclips = false,
-                    public = false
+                    curated = false
                 )
             )
                 .id.value
@@ -711,23 +682,23 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `mark a collection as public and private`() {
+    fun `mark a collection as curated or not`() {
         val collectionId = createCollectionWithTitle("My Special Collection")
 
-        assertCollectionIsPrivate(collectionId)
-        updateCollectionToBePublic(collectionId)
-        assertCollectionIsPublic(collectionId)
+        assertCollectionIsNotCurated(collectionId)
+        updateCollectionToBeCurated(collectionId)
+        assertCollectionIsCurated(collectionId)
     }
 
     @Test
     fun `change more than one property of a collection`() {
         val collectionId = createCollectionWithTitle("My Special Collection")
 
-        assertCollectionIsPrivate(collectionId)
+        assertCollectionIsNotCurated(collectionId)
         assertCollectionName(collectionId, "My Special Collection")
-        updateCollectionToBePublicAndRename(collectionId, "New Name")
+        updateCollectionToBeCuratedAndRename(collectionId, "New Name")
         assertCollectionName(collectionId, "New Name")
-        assertCollectionIsPublic(collectionId)
+        assertCollectionIsCurated(collectionId)
     }
 
     @Test
@@ -743,7 +714,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `cannot delete a collection of another user`() {
         val collectionId =
-            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", isPublic = true)
+            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", curated = true)
 
         mockMvc.perform(
             delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
@@ -843,7 +814,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         )
             .andExpect(status().isNoContent)
 
-        updateCollectionToBePublicAndRename(collectionId, "My new shiny title")
+        updateCollectionToBeCuratedAndRename(collectionId, "My new shiny title")
 
         getCollection(collectionId).andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
     }
@@ -885,16 +856,14 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `will return a superuser's bookmarked collections`() {
         createCollection("collection 1").apply {
-            updateCollectionToBePublic(this)
             bookmarkCollection(this, "me@gmail.com")
         }
         createCollection("collection 2").apply {
-            updateCollectionToBePublic(this)
             bookmarkCollection(this, "notMe@gmail.com")
         }
 
         mockMvc.perform(
-            get("/v1/collections?projection=list&public=true&bookmarked=true&page=0&size=30")
+            get("/v1/collections?projection=list&bookmarked=true&page=0&size=30")
                 .asBoclipsEmployee(email = "me@gmail.com")
         )
             .andExpect(status().isOk)
@@ -946,7 +915,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isNoContent)
     }
 
-    private fun updateCollectionToBePublicAndRename(collectionId: String, title: String) {
+    private fun updateCollectionToBeCuratedAndRename(collectionId: String, title: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
                 .content("""{"public": "true", "title": "$title"}""").asTeacher()
@@ -954,11 +923,11 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isNoContent)
     }
 
-    private fun assertCollectionIsPublic(collectionId: String) {
+    private fun assertCollectionIsCurated(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(true)))
     }
 
-    private fun assertCollectionIsPrivate(collectionId: String) {
+    private fun assertCollectionIsNotCurated(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(false)))
     }
 

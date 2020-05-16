@@ -1,11 +1,9 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -23,10 +21,10 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRetrievalService: CollectionRetrievalService
 
     @Test
-    fun `makes searchable if public`() {
+    fun `makes searchable if curated`() {
         val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
-            public = true
+            curated = true
         )
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
@@ -35,12 +33,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(
-                    VisibilityForOwner(
-                        owner = null,
-                        visibility = CollectionVisibilityQuery.publicOnly()
-                    )
-                ),
+                curated = null,
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null,
@@ -57,7 +50,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     fun `makes searchable if private`() {
         val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
-            public = false
+            curated = false
         )
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
@@ -66,12 +59,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(
-                    VisibilityForOwner(
-                        owner = null,
-                        visibility = CollectionVisibilityQuery.privateOnly()
-                    )
-                ),
+                owner = null,
+                curated = null,
                 pageSize = 1,
                 pageIndex = 0,
                 hasLessonPlans = null,
@@ -96,12 +85,8 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                visibilityForOwners = setOf(
-                    VisibilityForOwner(
-                        owner = null,
-                        visibility = CollectionVisibilityQuery.privateOnly()
-                    )
-                ),
+                owner = null,
+                curated = null,
                 pageSize = 1,
                 pageIndex = 0,
                 hasLessonPlans = null,
@@ -110,7 +95,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             user = UserFactory.sample()
         ).elements
 
-        assertThat(collections.first().isPublic).isFalse()
+        assertThat(collections.first().isCurated).isFalse()
     }
 
     @Test

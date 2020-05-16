@@ -2,9 +2,9 @@ package com.boclips.videos.service.testsupport
 
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
-import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.jayway.jsonpath.JsonPath
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,12 +36,12 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollection(
         title: String = "a collection name",
         description: String = "a description",
-        public: Boolean = false,
+        curated: Boolean = false,
         owner: String = "teacher@gmail.com"
     ) =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
-                """{"title": "$title", "description": "$description", "public": $public}"""
+                """{"title": "$title", "description": "$description", "public": $curated}"""
             ).asTeacher(owner)
         )
             .andExpect(status().isCreated)
@@ -63,7 +63,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isOk)
     }
 
-    fun updateCollectionToBePublic(collectionId: String) {
+    fun updateCollectionToBeCurated(collectionId: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"public": "true"}"""
@@ -120,14 +120,14 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollectionWithTitle(
         title: String,
         email: String = "teacher@gmail.com",
-        isPublic: Boolean = false
+        curated: Boolean = false
     ): String {
         return collectionRepository.create(
             CreateCollectionCommand(
                 owner = UserId(email),
                 title = title,
                 createdByBoclips = false,
-                public = isPublic
+                curated = curated
             )
         ).id.value
     }

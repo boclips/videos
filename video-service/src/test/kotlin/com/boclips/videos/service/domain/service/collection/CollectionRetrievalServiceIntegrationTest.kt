@@ -2,8 +2,6 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.domain.ResourceType
 import com.boclips.eventbus.events.resource.ResourcesSearched
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
@@ -46,12 +44,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                     pageIndex = 0,
                     subjectIds = emptyList(),
                     permittedCollections = null,
-                    visibilityForOwners = setOf(
-                        VisibilityForOwner(
-                            owner = null,
-                            visibility = CollectionVisibilityQuery.privateOnly()
-                        )
-                    ),
+                    curated = false,
                     hasLessonPlans = null
                 ),
 
@@ -100,12 +93,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 pageIndex = 0,
                 subjectIds = emptyList(),
                 permittedCollections = null,
-                visibilityForOwners = setOf(
-                    VisibilityForOwner(
-                        owner = null,
-                        visibility = CollectionVisibilityQuery.privateOnly()
-                    )
-                ),
+                curated = false,
                 hasLessonPlans = null,
                 ageRangeMin = 5,
                 ageRangeMax = 7
@@ -135,12 +123,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 pageIndex = 0,
                 subjectIds = emptyList(),
                 permittedCollections = null,
-                visibilityForOwners = setOf(
-                    VisibilityForOwner(
-                        owner = null,
-                        visibility = CollectionVisibilityQuery.privateOnly()
-                    )
-                ),
+                curated = false,
                 hasLessonPlans = null
             )
 
@@ -165,7 +148,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `can find a collection by ID`() {
             val videoId = saveVideo()
-            val collectionId = saveCollection(videos = listOf(videoId.value), public = true)
+            val collectionId = saveCollection(videos = listOf(videoId.value), curated = true)
             val collection = collectionRetrievalService.findAnyCollection(
                 collectionId,
                 UserFactory.sample()
@@ -222,7 +205,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         @Disabled("At the moment we do not restrict access to specific collections")
         fun `cannot find collection that access rules do not permit`() {
-            val collectionId = saveCollection(public = false, owner = "joe")
+            val collectionId = saveCollection(curated = false, owner = "joe")
             val user = UserFactory.sample(
                 id = "catherine",
                 accessRulesSupplier = {

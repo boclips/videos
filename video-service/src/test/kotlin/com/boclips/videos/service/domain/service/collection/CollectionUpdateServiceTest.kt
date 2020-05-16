@@ -129,13 +129,13 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
         @Test
         fun `saves update of legitimate collection owner`() {
             val user = UserFactory.sample()
-            val collectionId = saveCollection(owner = user.id.value, public = false)
+            val collectionId = saveCollection(owner = user.id.value, curated = false)
 
             collectionUpdateService.updateCollectionAsOwner(
                 arrayOf(
                     CollectionUpdateCommand.ChangeVisibility(
                         collectionId = collectionId,
-                        isPublic = true,
+                        curated = true,
                         user = user
                     )
                 )
@@ -143,19 +143,19 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
 
             val collection = collectionRepository.find(collectionId)!!
 
-            assertThat(collection.isPublic).isTrue()
+            assertThat(collection.isCurated).isTrue()
         }
 
         @Test
         fun `doese not save updates of someone else's collection`() {
-            val collectionId = saveCollection(owner = UserFactory.sample(id = "user").id.value, public = false)
+            val collectionId = saveCollection(owner = UserFactory.sample(id = "user").id.value, curated = false)
 
             assertThrows<CollectionIllegalOperationException> {
                 collectionUpdateService.updateCollectionAsOwner(
                     arrayOf(
                         CollectionUpdateCommand.ChangeVisibility(
                             collectionId = collectionId,
-                            isPublic = true,
+                            curated = true,
                             user = UserFactory.sample(id = "another-user")
                         )
                     )

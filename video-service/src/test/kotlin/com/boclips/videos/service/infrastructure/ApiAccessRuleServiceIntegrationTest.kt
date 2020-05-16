@@ -5,13 +5,11 @@ import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -19,7 +17,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>) {
@@ -62,13 +59,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun `returns default when content package cannot be found`() {
         val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
 
-        assertThat(accessRules.collectionAccess).isEqualTo(
-            CollectionAccessRule.asOwner(
-                me = UserId(
-                    value = "test-user"
-                )
-            )
-        )
+        assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.everything())
 
         assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
     }
@@ -76,19 +67,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class CollectionsAccess {
         @Test
-        fun `has access specific user's collections when no contracts specified`() {
+        fun `has access specific all collections when no contracts specified`() {
             createAccessRulesResource("test-user", emptyList())
 
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
-            assertThat(accessRules.collectionAccess).isEqualTo(
-                CollectionAccessRule.SpecificOwner(
-                    owner = UserId(
-                        value = user.id.value
-                    )
-                )
-            )
+            assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.Everything)
         }
 
         @Test

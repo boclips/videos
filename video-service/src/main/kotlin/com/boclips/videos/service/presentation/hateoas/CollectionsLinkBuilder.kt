@@ -227,7 +227,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun bookmark(collection: Collection, user: User): HateoasLink? =
-        if (getCurrentUserIfNotAnonymous() == null || collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
+        if (getCurrentUserIfNotAnonymous() == null || collection.isBookmarkedBy(user) || collection.isOwner(user)) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collection.id.value)
@@ -237,7 +237,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
 
     fun unbookmark(collection: Collection, user: User): HateoasLink? {
-        return if (!collection.isBookmarkedBy(user) || collection.isOwner(user) || !collection.isPublic) {
+        return if (!collection.isBookmarkedBy(user) || collection.isOwner(user)) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collection.id.value)

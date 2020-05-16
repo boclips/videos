@@ -60,7 +60,7 @@ class CollectionUpdatesConverterTest {
             )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
-        assertThat(command.isPublic).isEqualTo(true)
+        assertThat(command.curated).isEqualTo(true)
         assertThat(commands).hasSize(1)
     }
 
@@ -74,7 +74,7 @@ class CollectionUpdatesConverterTest {
             )
 
         val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
-        assertThat(command.isPublic).isEqualTo(false)
+        assertThat(command.curated).isEqualTo(false)
         assertThat(commands).hasSize(1)
     }
 

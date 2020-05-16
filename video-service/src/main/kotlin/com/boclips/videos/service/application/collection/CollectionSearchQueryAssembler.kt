@@ -1,13 +1,10 @@
 package com.boclips.videos.service.application.collection
 
-import com.boclips.search.service.domain.collections.model.CollectionVisibilityQuery
-import com.boclips.search.service.domain.collections.model.VisibilityForOwner
 import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import mu.KLogging
@@ -16,8 +13,8 @@ class CollectionSearchQueryAssembler {
     operator fun invoke(
         query: String? = null,
         subjects: List<String>? = null,
-        public: Boolean? = null,
         promoted: Boolean? = null,
+        curated: Boolean? = null,
         bookmarked: Boolean? = null,
         owner: String? = null,
         page: Int? = null,
@@ -49,7 +46,17 @@ class CollectionSearchQueryAssembler {
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
             bookmarkedBy = bookmarker?.value,
-            visibilityForOwners = collectionAccess.getVisibility(public = public, owner = owner),
+            curated = curated,
+            promoted = promoted,
+            hasLessonPlans = hasLessonPlans,
+            owner = when (owner) {
+                null -> when (collectionAccess) {
+                    is CollectionAccessRule.SpecificOwner -> collectionAccess.owner.value
+                    is CollectionAccessRule.SpecificIds -> null
+                    CollectionAccessRule.Everything -> null
+                }
+                else -> owner
+            },
             permittedCollections = when (collectionAccess) {
                 is CollectionAccessRule.SpecificIds -> collectionAccess.collectionIds.toList()
                 else -> null
@@ -57,8 +64,6 @@ class CollectionSearchQueryAssembler {
             pageSize = size ?: CollectionsController.COLLECTIONS_PAGE_SIZE,
             pageIndex = page ?: 0,
             sort = sort,
-            promoted = promoted,
-            hasLessonPlans = hasLessonPlans,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             ageRanges = ageRange?.map(::convertAgeRanges),
@@ -68,77 +73,3 @@ class CollectionSearchQueryAssembler {
 
     companion object : KLogging()
 }
-
-private fun CollectionAccessRule.getVisibility(public: Boolean?, owner: String?): Set<VisibilityForOwner> =
-    when (this) {
-        is CollectionAccessRule.SpecificOwner -> {
-            when (owner) {
-                null ->
-                    when (public) {
-                        true -> setOf(
-                            VisibilityForOwner(
-                                owner = null,
-                                visibility = CollectionVisibilityQuery.publicOnly()
-                            )
-                        )
-                        false -> setOf(
-                            VisibilityForOwner(
-                                owner = this.owner.value,
-                                visibility = CollectionVisibilityQuery.privateOnly()
-                            )
-                        )
-                        null -> setOf(
-                            VisibilityForOwner(owner = null, visibility = CollectionVisibilityQuery.publicOnly()),
-                            VisibilityForOwner(
-                                owner = this.owner.value,
-                                visibility = CollectionVisibilityQuery.privateOnly()
-                            )
-                        )
-                    }
-                else ->
-                    setOf(
-                        VisibilityForOwner(
-                            owner = owner,
-                            visibility = when (public) {
-                                true -> CollectionVisibilityQuery.publicOnly()
-                                false ->
-                                    if (this.isMe(owner))
-                                        CollectionVisibilityQuery.privateOnly()
-                                    else
-                                        throw OperationForbiddenException(
-                                            "User is not authorized to access private collections of owner with ID $owner"
-                                        )
-                                null ->
-                                    if (this.isMe(owner))
-                                        CollectionVisibilityQuery.All
-                                    else
-                                        CollectionVisibilityQuery.publicOnly()
-                            }
-                        )
-                    )
-            }
-        }
-
-        is CollectionAccessRule.SpecificIds ->
-            allAccess(public, owner)
-        CollectionAccessRule.Everything ->
-            allAccess(public, owner)
-    }
-
-fun allAccess(public: Boolean?, owner: String?) =
-    if (public == null && owner == null)
-        setOf()
-    else
-        setOf(
-            VisibilityForOwner(
-                owner = owner,
-                visibility = when (public) {
-                    true -> CollectionVisibilityQuery.publicOnly()
-                    false -> CollectionVisibilityQuery.privateOnly()
-                    null -> CollectionVisibilityQuery.All
-                }
-            )
-        )
-
-fun CollectionAccessRule.SpecificOwner.isMe(userIdValue: String?) =
-    userIdValue?.let { this.isMe(UserId(it)) } == true

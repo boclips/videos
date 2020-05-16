@@ -1,6 +1,5 @@
 package com.boclips.search.service.infrastructure.collections
 
-import com.boclips.search.service.domain.collections.model.CollectionVisibility
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
@@ -40,7 +39,6 @@ class CollectionDocumentConverterTest {
             CollectionDocument(
                 id = "14",
                 title = "The title",
-                visibility = "public",
                 searchable = false,
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false,
@@ -82,7 +80,6 @@ class CollectionDocumentConverterTest {
             CollectionDocument(
                 id = "14",
                 title = "The title",
-                visibility = "public",
                 searchable = false,
                 subjects = listOf("crispity", "crunchy"),
                 hasAttachments = false,
@@ -104,7 +101,6 @@ class CollectionDocumentConverterTest {
         val metadata = SearchableCollectionMetadataFactory.create(
             id = "14",
             title = "The title",
-            visibility = CollectionVisibility.PUBLIC,
             searchable = true,
             subjects = listOf("crispity", "crunchy"),
             hasAttachments = false,
@@ -125,7 +121,6 @@ class CollectionDocumentConverterTest {
             CollectionDocument(
                 id = "14",
                 title = "The title",
-                visibility = "public",
                 searchable = true,
                 subjects = listOf("crispity", "crunchy"),
                 bookmarkedBy = setOf("juan"),

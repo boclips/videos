@@ -28,25 +28,24 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 if (subjectQuery(query)) entry.value.subjectIds.any { query.subjectIds.contains(it) } else true
             }
             .filter { entry ->
-                val visibilityMatches = if (query.visibilityForOwners.isNotEmpty()) query.visibilityForOwners.any {
-                    it.visibility.contains(entry.value.visibility)
-                        && it.owner?.let { owner -> owner == entry.value.owner } ?: true
-                } else true
-
-                val bookmarkMatches =
-                    if (bookmarkQuery(query)) entry.value.bookmarkedByUsers.contains(query.bookmarkedBy) else true
-
-                if (query.visibilityForOwners.any { it.owner != null } && bookmarkQuery(query)) {
-                    bookmarkMatches || visibilityMatches
-                } else {
-                    bookmarkMatches && visibilityMatches
-                }
-            }
-            .filter { entry ->
                 if (query.hasLessonPlans != null) query.hasLessonPlans == entry.value.hasLessonPlans else true
             }
             .filter { entry ->
                 if (query.promoted != null) query.promoted == entry.value.promoted else true
+            }
+            .filter { entry ->
+                if (query.searchable != null) query.searchable == entry.value.curated else true
+            }
+            .filter { entry ->
+                if (query.owner != null && query.bookmarkedBy != null) {
+                    val isOwner = query.owner == entry.value.owner
+                    val isBookmarked = entry.value.bookmarkedByUsers.contains(query.bookmarkedBy)
+                    isOwner || isBookmarked
+                } else if (query.owner != null) {
+                    query.owner == entry.value.owner
+                } else if (query.bookmarkedBy != null) {
+                    entry.value.bookmarkedByUsers.contains(query.bookmarkedBy)
+                } else true
             }
             .filter { entry ->
                 if (query.permittedIds != null)
@@ -89,7 +88,4 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
 
     private fun phraseQuery(collectionQuery: CollectionQuery) =
         collectionQuery.phrase.isNotEmpty()
-
-    private fun bookmarkQuery(collectionQuery: CollectionQuery) =
-        collectionQuery.bookmarkedBy != null
 }

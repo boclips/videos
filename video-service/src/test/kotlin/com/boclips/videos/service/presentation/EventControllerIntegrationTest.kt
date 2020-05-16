@@ -313,7 +313,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `posted collection interaction events are being saved`() {
-        val collectionId = saveCollection(public = true)
+        val collectionId = saveCollection(curated = true)
 
         val collectionInteractedWithLink = mockMvc.perform(get("/v1/collections/${collectionId.value}").asTeacher())
             .andExpect(status().isOk)
