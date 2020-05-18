@@ -12,7 +12,6 @@ import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.collection.GetCollectionsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
@@ -60,7 +59,6 @@ import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResu
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
-import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import org.bson.types.ObjectId
 import java.math.BigDecimal
@@ -152,30 +150,6 @@ object TestFactories {
         Tag(
             id = TagId(id), label = label
         )
-
-    object GetCollectionsRequestFactory {
-        fun sample(
-            query: String? = null,
-            subjects: List<String> = emptyList(),
-            owner: String? = null,
-            page: Int = 0,
-            size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
-            public: Boolean? = null,
-            bookmarked: Boolean? = null
-        ): GetCollectionsRequest {
-            return GetCollectionsRequest(
-                query = query,
-                subject = if (subjects.isNotEmpty()) subjects.joinToString(",") else null,
-                public = public,
-                owner = owner,
-                page = page,
-                size = size,
-                bookmarked = bookmarked
-            )
-        }
-
-        fun unfiltered() = sample()
-    }
 
     fun createKalturaPlayback(
         entryId: String = "entry-id",

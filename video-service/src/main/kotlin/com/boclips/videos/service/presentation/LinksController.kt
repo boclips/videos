@@ -62,6 +62,7 @@ class LinksController(
                 videoTypeLinkBuilder.videoTypes(),
                 collectionsLinkBuilder.adminCollectionSearch(),
                 collectionsLinkBuilder.publicCollections(),
+                collectionsLinkBuilder.discoverCollections(),
                 collectionsLinkBuilder.bookmarkedCollections(),
                 collectionsLinkBuilder.promotedCollections(),
                 collectionsLinkBuilder.searchPublicCollections(),

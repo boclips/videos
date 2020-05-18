@@ -34,13 +34,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.publicCollections.href",
-                    endsWith("collections?projection=list&public=true&page=0&size=30")
+                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.promotedCollections.href",
-                    endsWith("collections?projection=list&promoted=true&public=true&page=0&size=30")
+                    endsWith("collections?projection=list&promoted=true&discoverable=true&page=0&size=30")
                 )
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
@@ -94,7 +94,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchPublicCollections.href",
-                    endsWith("collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+                    endsWith("collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
                 )
             )
             .andExpect(
@@ -106,19 +106,25 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.publicCollections.href",
-                    endsWith("collections?projection=list&public=true&page=0&size=30")
+                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._links.discoverCollections.href",
+                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.promotedCollections.href",
-                    endsWith("collections?projection=list&promoted=true&public=true&page=0&size=30")
+                    endsWith("collections?projection=list&promoted=true&discoverable=true&page=0&size=30")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.bookmarkedCollections.href",
-                    endsWith("collections?projection=list&public=true&bookmarked=true&page=0&size=30")
+                    endsWith("collections?projection=list&discoverable=true&bookmarked=true&page=0&size=30")
                 )
             )
             .andExpect(

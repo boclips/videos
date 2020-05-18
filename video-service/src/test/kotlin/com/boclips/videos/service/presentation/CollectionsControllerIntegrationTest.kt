@@ -60,7 +60,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                         "title": "a collection",
                         "description": "a description",
                         "videos": ["$firstVideoId", "$secondVideoId"],
-                        "public": true,
+                        "discoverable": true,
                         "subjects": ["${math.id.value}", "${physics.id.value}"]
                     }
                     """.trimIndent()
@@ -921,7 +921,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     private fun updateCollectionToBeDiscoverableAndRename(collectionId: String, title: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
-                .content("""{"public": "true", "title": "$title"}""").asTeacher()
+                .content("""{"discoverable": "true", "title": "$title"}""").asTeacher()
         )
             .andExpect(status().isNoContent)
     }

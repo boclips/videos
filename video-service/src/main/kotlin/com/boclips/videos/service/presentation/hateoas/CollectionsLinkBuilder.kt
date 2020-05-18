@@ -78,11 +78,27 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return HateoasLink(
             href = getCollectionsRoot()
                 .queryParam("projection", projection)
-                .queryParam("public", true)
+                .queryParam("discoverable", true)
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .toUriString(),
             rel = "publicCollections"
+        )
+    }
+
+    fun discoverCollections(
+        projection: Projection = Projection.list,
+        page: Int = 0,
+        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
+    ): HateoasLink {
+        return HateoasLink(
+            href = getCollectionsRoot()
+                .queryParam("projection", projection)
+                .queryParam("discoverable", true)
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .toUriString(),
+            rel = "discoverCollections"
         )
     }
 
@@ -95,7 +111,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             href = getCollectionsRoot()
                 .queryParam("projection", projection)
                 .queryParam("promoted", true)
-                .queryParam("public", true)
+                .queryParam("discoverable", true)
                 .queryParam("page", page)
                 .queryParam("size", size)
                 .toUriString(),
@@ -110,7 +126,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
             HateoasLink(
                 href = getCollectionsRoot()
-                    .queryParam("public", true)
+                    .queryParam("discoverable", true)
                     .toUriString() + "{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}",
                 rel = "searchPublicCollections"
             )
@@ -146,7 +162,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             HateoasLink(
                 href = getCollectionsRoot()
                     .queryParam("projection", projection)
-                    .queryParam("public", true)
+                    .queryParam("discoverable", true)
                     .queryParam("bookmarked", true)
                     .queryParam("page", page)
                     .queryParam("size", size)

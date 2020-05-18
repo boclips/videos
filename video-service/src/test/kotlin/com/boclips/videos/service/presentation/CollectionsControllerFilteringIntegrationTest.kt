@@ -10,6 +10,7 @@ import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -128,11 +129,23 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         createCollection(title = "the car was owned by a private individual", discoverable = false)
         createCollection(title = "while the truck was company property", discoverable = false)
 
-        mockMvc.perform(get("/v1/collections?public=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?discoverable=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
+    }
+
+    @Test
+    fun `filtering by undiscoverable collections returns discoverable collections only`() {
+        updateCollectionToBeDiscoverable(createCollection("five ponies were eating grass"))
+        createCollection(title = "while the truck", discoverable = false)
+
+        mockMvc.perform(get("/v1/collections?discoverable=false&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while the truck")))
     }
 
     @Test

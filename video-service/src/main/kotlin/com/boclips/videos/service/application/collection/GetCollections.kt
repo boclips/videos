@@ -24,7 +24,7 @@ class GetCollections(
             sort = collectionFilterRequest.sort_by,
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             promoted = collectionFilterRequest.promoted,
-            discoverable = collectionFilterRequest.public,
+            discoverable = collectionFilterRequest.discoverable ?: collectionFilterRequest.public,
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,
             ageRangeMax = collectionFilterRequest.age_range_max,

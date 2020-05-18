@@ -27,7 +27,15 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                     user = user
                 )
             },
+            //TODO: Remove
             updateCollectionRequest.isPublic?.let {
+                CollectionUpdateCommand.ChangeDiscoverability(
+                    collectionId = collectionId,
+                    discoverable = it,
+                    user = user
+                )
+            },
+            updateCollectionRequest.discoverable?.let {
                 CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = collectionId,
                     discoverable = it,

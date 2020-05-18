@@ -41,7 +41,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     ) =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
-                """{"title": "$title", "description": "$description", "public": $discoverable}"""
+                """{"title": "$title", "description": "$description", "discoverable": $discoverable}"""
             ).asTeacher(owner)
         )
             .andExpect(status().isCreated)
@@ -66,7 +66,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun updateCollectionToBeDiscoverable(collectionId: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
-                """{"public": "true"}"""
+                """{"discoverable": "true"}"""
             ).asTeacher()
         )
             .andExpect(status().isNoContent)

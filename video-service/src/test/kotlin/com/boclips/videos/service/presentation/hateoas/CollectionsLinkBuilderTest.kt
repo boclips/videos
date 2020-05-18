@@ -36,8 +36,24 @@ class CollectionsLinkBuilderTest {
             size = 2
         )
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&page=0&size=2")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2")
         assertThat(link.rel).isEqualTo("publicCollections")
+    }
+
+    @Test
+    fun `discover collections`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.discoverCollections(
+            projection = Projection.details,
+            page = 0,
+            size = 2
+        )
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2")
+        assertThat(link.rel).isEqualTo("discoverCollections")
     }
 
     @Test
@@ -50,7 +66,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.searchPublicCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?public=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
         assertThat(link.rel).isEqualTo("searchPublicCollections")
         assertThat(link.templated).isEqualTo(true)
     }
@@ -84,7 +100,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&public=true&bookmarked=true&page=0&size=2")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&bookmarked=true&page=0&size=2")
         assertThat(link.rel).isEqualTo("bookmarkedCollections")
     }
 
@@ -344,12 +360,12 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when self link`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=true&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=true&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.self()
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&public=true&page=0&size=2")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&discoverable=true&page=0&size=2")
         assertThat(link.rel).isEqualTo("self")
     }
 
@@ -367,7 +383,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when details`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.projections().details()
@@ -378,7 +394,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasPath("/v1/collections")
         assertThat(url).hasParameter("projection", "details")
         assertThat(url).hasNoParameter("projection", "list")
-        assertThat(url).hasParameter("public", "false")
+        assertThat(url).hasParameter("discoverable", "false")
         assertThat(url).hasParameter("owner", "pony")
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
@@ -389,7 +405,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when list`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=details&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=details&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.projections().list()
@@ -400,7 +416,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasPath("/v1/collections")
         assertThat(url).hasParameter("projection", "list")
         assertThat(url).hasNoParameter("projection", "details")
-        assertThat(url).hasParameter("public", "false")
+        assertThat(url).hasParameter("discoverable", "false")
         assertThat(url).hasParameter("owner", "pony")
         assertThat(url).hasParameter("page", "0")
         assertThat(url).hasParameter("size", "2")
@@ -411,7 +427,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when next link and more pages`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.next(PageInfo(true, 1001, PageRequest(page = 0, size = 1000)))
@@ -421,7 +437,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections")
         assertThat(url).hasParameter("projection", "list")
-        assertThat(url).hasParameter("public", "false")
+        assertThat(url).hasParameter("discoverable", "false")
         assertThat(url).hasParameter("owner", "pony")
         assertThat(url).hasParameter("page", "1")
         assertThat(url).hasNoParameter("page", "0")
@@ -433,7 +449,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when next link and no more pages`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.next(PageInfo(false, 1, PageRequest(page = 0, size = 1000)))
@@ -444,7 +460,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `when next link and no page parameter sets second page`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val link = collectionsLinkBuilder.next(PageInfo(true, 1001, PageRequest(page = 0, size = 1000)))
@@ -454,7 +470,7 @@ class CollectionsLinkBuilderTest {
         assertThat(url).hasHost("localhost")
         assertThat(url).hasPath("/v1/collections")
         assertThat(url).hasParameter("projection", "list")
-        assertThat(url).hasParameter("public", "false")
+        assertThat(url).hasParameter("discoverable", "false")
         assertThat(url).hasParameter("owner", "pony")
         assertThat(url).hasParameter("page", "1")
         assertThat(url).hasParameter("size", "2")
@@ -464,7 +480,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `bookmark when anonymous`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -485,7 +501,7 @@ class CollectionsLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
 
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -509,7 +525,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `bookmark when not public`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -528,7 +544,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `bookmark when mine`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -547,7 +563,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `bookmark when public but already bookmarked`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -567,7 +583,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `unbookmark when public and bookmarked`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -592,7 +608,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `unbookmark when mine`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()
@@ -612,7 +628,7 @@ class CollectionsLinkBuilderTest {
     @Test
     fun `unbookmark when public but not bookmarked`() {
         val mock = mock<UriComponentsBuilderFactory>()
-        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&public=false&owner=pony&page=0&size=2"))
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1/collections?projection=list&discoverable=false&owner=pony&page=0&size=2"))
         val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
 
         val user = UserFactory.sample()

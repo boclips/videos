@@ -20,7 +20,6 @@ class CollectionDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
-                "visibility": "public",
                 "subjects": ["crispity", "crunchy"],
                 "owner": "juan",
                 "description": "Collection under test",
@@ -63,7 +62,6 @@ class CollectionDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
-                "visibility": "public",
                 "subjects": ["crispity", "crunchy"],
                 "owner": "juan",
                 "description": "Collection under test",
