@@ -7,7 +7,7 @@ object RefererHeaderExtractor {
     fun getReferer(): String? {
         return RequestContextHolder.getRequestAttributes().let {
             when (it) {
-                is ServletRequestAttributes -> it.request.getHeader("Referer")
+                is ServletRequestAttributes -> it.request.getHeader("Boclips-Referer") ?: it.request.getHeader("Referer")
                 else -> null
             }
         }

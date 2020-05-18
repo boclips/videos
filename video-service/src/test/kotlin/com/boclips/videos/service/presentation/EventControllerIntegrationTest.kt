@@ -337,4 +337,31 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.userId).isEqualTo("john@teacher.com")
     }
+
+    @Test
+    fun `posted collection interaction events with a boclips-referer will overwrite existing referer`() {
+        val collectionId = saveCollection(discoverable = true)
+
+        val collectionInteractedWithLink = mockMvc.perform(get("/v1/collections/${collectionId.value}").asTeacher())
+            .andExpect(status().isOk)
+            .andReturnLink(CollectionsLinkBuilder.Rels.LOG_COLLECTION_INTERACTION)
+            .expand()
+
+        mockMvc.perform(
+            post(collectionInteractedWithLink)
+                .asTeacher()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Boclips-Referer", "http://www.boclips.com")
+                .header("Referer", "http://www.bad-url.com")
+                .content(
+                    """{
+                    "subtype": "NAVIGATE_TO_COLLECTION_DETAILS"
+                    }""".trimMargin()
+                )
+        )
+            .andExpect(status().isOk)
+
+        val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
+        assertThat(event.url).isEqualTo("http://www.boclips.com")
+    }
 }
