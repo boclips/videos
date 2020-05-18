@@ -179,8 +179,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     ): HateoasLink? {
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
-                href = collectionsLink(projection = projection, page = page, size = size)
-                    .queryParam("owner", currentUser)
+                href = userCollectionsLink(user = currentUser, projection = projection, page = page, size = size)
                     .toUriString(),
                 rel = "myCollections"
             )
@@ -301,8 +300,22 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         .queryParam("page", page)
         .queryParam("size", size)
 
+    private fun userCollectionsLink(
+        projection: Projection,
+        page: Int,
+        size: Int,
+        user: String
+    ) = getUserCollectionsRoot(user)
+        .queryParam("projection", projection)
+        .queryParam("page", page)
+        .queryParam("size", size)
+
     private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/collections")
+        .replaceQueryParams(null)
+
+    private fun getUserCollectionsRoot(userId: String) = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/users/$userId/collections")
         .replaceQueryParams(null)
 
     class ProjectionsCollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {

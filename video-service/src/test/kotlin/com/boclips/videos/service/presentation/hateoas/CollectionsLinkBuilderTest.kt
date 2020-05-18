@@ -129,7 +129,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=list&page=0&size=2&owner=user1")
+        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?projection=list&page=0&size=2")
         assertThat(link.rel).isEqualTo("myCollections")
     }
 

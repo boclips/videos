@@ -18,6 +18,7 @@ import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
+import com.boclips.videos.service.application.collection.GetCollectionsOfUser
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
@@ -92,10 +93,7 @@ import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
-import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
-import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import io.micrometer.core.instrument.Counter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -230,16 +228,16 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getCollections(
-        videosLinkBuilder: VideosLinkBuilder,
-        playbackToResourceConverter: PlaybackToResourceConverter,
-        attachmentsLinkBuilder: AttachmentsLinkBuilder,
-        collectionFilterAssembler: CollectionSearchQueryAssembler
-    ): GetCollections {
+    fun getCollections(collectionFilterAssembler: CollectionSearchQueryAssembler): GetCollections {
         return GetCollections(
             collectionRetrievalService,
             collectionFilterAssembler
         )
+    }
+
+    @Bean
+    fun getCollectionsOfUser(collectionFilterAssembler: CollectionSearchQueryAssembler): GetCollectionsOfUser {
+        return GetCollectionsOfUser(collectionRetrievalService, collectionFilterAssembler)
     }
 
     @Bean
@@ -447,7 +445,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) = GetVideoAssets(captionService, searchVideo)
+    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) =
+        GetVideoAssets(captionService, searchVideo)
 
     @Bean
     fun getContentWarning() = GetContentWarning(contentWarningRepository)

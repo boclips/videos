@@ -10,7 +10,6 @@ import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import com.boclips.videos.service.testsupport.asUserWithRoles
-import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -258,28 +257,6 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("the truck was blue and yellow")))
             .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("while a car and a truck crashed")))
-    }
-
-    @Test
-    fun `query search for my collections and my bookmarked collections sorted by update date descending`() {
-        val teacher = "teacher"
-        val stranger = "stranger"
-
-        createCollection(title = "mine", discoverable = true, owner = teacher)
-        createCollection(title = "strangers", discoverable = true, owner = stranger)
-        createCollection(title = "another collection", discoverable = true, owner = teacher)
-        createCollection(title = "bookmarked", discoverable = true, owner = stranger).apply {
-            bookmarkCollection(this, teacher)
-        }
-
-        mockMvc.perform(
-            get("/v1/collections?owner=$teacher&bookmarked=true&sort_by=UPDATED_AT").asTeacher(teacher)
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(3)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("bookmarked")))
-            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("another collection")))
-            .andExpect(jsonPath("$._embedded.collections[2].title", equalTo("mine")))
     }
 
     @Test
