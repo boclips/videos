@@ -446,7 +446,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                 owner = UserId("teacher@gmail.com"),
                 title = "Collection",
                 createdByBoclips = false,
-                curated = false
+                discoverable = false
             )
         ).id.value
 
@@ -480,9 +480,9 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `fetching a curated collection owned by other teacher omits edit links`() {
+    fun `fetching a discoverable collection owned by other teacher omits edit links`() {
         val collectionId = createCollection("collection from a teacher")
-        updateCollectionToBeCurated(collectionId)
+        updateCollectionToBeDiscoverable(collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher("anotherteacher@boclips.com"))
             .andExpect(status().isOk)
@@ -545,7 +545,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `fetching a collection as a user with a SelectedContent contract for it`() {
-        val collectionId = createCollection(title = "Some Non curated Collection", curated = false)
+        val collectionId = createCollection(title = "Some undiscoverable Collection", discoverable = false)
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asApiUser(email = "api-user@gmail.com"))
@@ -560,7 +560,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         inner class AuthenticatedUser {
             @Test
             fun `owner can access collection with share code and referer`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", curated = false)
+                val collectionId =
+                    createCollection(owner = "12345", title = "Some Private Collection", discoverable = false)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -577,7 +578,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `authenticated user can access collection with share code and referer`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Private Collection", curated = false)
+                val collectionId =
+                    createCollection(owner = "12345", title = "Some Private Collection", discoverable = false)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -594,7 +596,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `authenticated users can access collections without share codes`() {
-                val collectionId = createCollection(owner = "12345", title = "Some Collection", curated = false)
+                val collectionId = createCollection(owner = "12345", title = "Some Collection", discoverable = false)
 
                 mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
                     .andExpect(status().isOk)
@@ -605,7 +607,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         inner class NonAuthenticatedUser {
             @Test
             fun `providing a valid shareCode and referer`() {
-                val collectionId = createCollection(title = "Some curated Collection", curated = true, owner = "12345")
+                val collectionId =
+                    createCollection(title = "Some discoverable Collection", discoverable = true, owner = "12345")
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -617,12 +620,12 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     .andExpect(status().isOk)
                     .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                     .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                    .andExpect(jsonPath("$.title", equalTo("Some curated Collection")))
+                    .andExpect(jsonPath("$.title", equalTo("Some discoverable Collection")))
             }
 
             @Test
             fun `providing an invalid shareCode and referer`() {
-                val collectionId = createCollection(title = "Some curated Collection", curated = true)
+                val collectionId = createCollection(title = "Some discoverable Collection", discoverable = true)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -636,7 +639,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
             @Test
             fun `not providing a shareCode or referer returns forbidden`() {
-                val collectionId = createCollection(title = "Some curated Collection", curated = true)
+                val collectionId = createCollection(title = "Some discoverable Collection", discoverable = true)
                 usersClient.add(
                     UserResourceFactory.sample(
                         id = "12345",
@@ -660,7 +663,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     owner = UserId(email),
                     title = "My Special Collection",
                     createdByBoclips = false,
-                    curated = false
+                    discoverable = false
                 )
             )
                 .id.value
@@ -682,23 +685,23 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `mark a collection as curated or not`() {
+    fun `mark a collection as discoverable or not`() {
         val collectionId = createCollectionWithTitle("My Special Collection")
 
-        assertCollectionIsNotCurated(collectionId)
-        updateCollectionToBeCurated(collectionId)
-        assertCollectionIsCurated(collectionId)
+        assertCollectionIsNotDiscoverable(collectionId)
+        updateCollectionToBeDiscoverable(collectionId)
+        assertCollectionIsDiscoverable(collectionId)
     }
 
     @Test
     fun `change more than one property of a collection`() {
         val collectionId = createCollectionWithTitle("My Special Collection")
 
-        assertCollectionIsNotCurated(collectionId)
+        assertCollectionIsNotDiscoverable(collectionId)
         assertCollectionName(collectionId, "My Special Collection")
-        updateCollectionToBeCuratedAndRename(collectionId, "New Name")
+        updateCollectionToBeDiscoverableAndRename(collectionId, "New Name")
         assertCollectionName(collectionId, "New Name")
-        assertCollectionIsCurated(collectionId)
+        assertCollectionIsDiscoverable(collectionId)
     }
 
     @Test
@@ -714,7 +717,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `cannot delete a collection of another user`() {
         val collectionId =
-            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", curated = true)
+            createCollectionWithTitle(title = "My Special Collection", email = "teacher@gmail.com", discoverable = true)
 
         mockMvc.perform(
             delete(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
@@ -814,7 +817,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         )
             .andExpect(status().isNoContent)
 
-        updateCollectionToBeCuratedAndRename(collectionId, "My new shiny title")
+        updateCollectionToBeDiscoverableAndRename(collectionId, "My new shiny title")
 
         getCollection(collectionId).andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
     }
@@ -915,7 +918,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isNoContent)
     }
 
-    private fun updateCollectionToBeCuratedAndRename(collectionId: String, title: String) {
+    private fun updateCollectionToBeDiscoverableAndRename(collectionId: String, title: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON)
                 .content("""{"public": "true", "title": "$title"}""").asTeacher()
@@ -923,11 +926,11 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isNoContent)
     }
 
-    private fun assertCollectionIsCurated(collectionId: String) {
+    private fun assertCollectionIsDiscoverable(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(true)))
     }
 
-    private fun assertCollectionIsNotCurated(collectionId: String) {
+    private fun assertCollectionIsNotDiscoverable(collectionId: String) {
         getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(false)))
     }
 

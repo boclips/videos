@@ -27,7 +27,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `propagates the OperationForbiddenException for public collection with invalid shareCode`() {
-        val savedCollectionId = saveCollection(curated = true)
+        val savedCollectionId = saveCollection(discoverable = true)
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
@@ -49,7 +49,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
     fun `propagates the OperationForbiddenException for private collection without share code`() {
         val savedCollectionId = saveCollection(
             owner = "me@me.com",
-            curated = false
+            discoverable = false
         )
 
         assertThrows<OperationForbiddenException> {
@@ -81,7 +81,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `provides a public collection when the correct share code and ID combination is provided`() {
-        val savedCollectionId = saveCollection(curated = true, owner = "12345")
+        val savedCollectionId = saveCollection(discoverable = true, owner = "12345")
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
@@ -100,7 +100,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `unauthenticated user has access to a private collection with correct share code and referrer`() {
-        val savedCollectionId = saveCollection(owner = "12345", curated = false)
+        val savedCollectionId = saveCollection(owner = "12345", discoverable = false)
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
@@ -120,7 +120,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `authenticated user has access to a private collection with  correct share code and referrer`() {
-        val savedCollectionId = saveCollection(owner = "12345", curated = false)
+        val savedCollectionId = saveCollection(owner = "12345", discoverable = false)
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",

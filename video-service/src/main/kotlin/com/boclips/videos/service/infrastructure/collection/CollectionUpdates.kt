@@ -34,9 +34,9 @@ class CollectionUpdates {
                 command.collectionId,
                 command.title
             )
-            is CollectionUpdateCommand.ChangeVisibility -> changeVisibility(
+            is CollectionUpdateCommand.ChangeDiscoverability -> changeDiscoverability(
                 command.collectionId,
-                command.curated
+                command.discoverable
             )
             is CollectionUpdateCommand.ChangePromotion -> changePromotion(
                 command.collectionId,
@@ -137,11 +137,9 @@ class CollectionUpdates {
         return set(CollectionDocument::title, title)
     }
 
-    private fun changeVisibility(collectionId: CollectionId, isPublic: Boolean): Bson {
-        val visibility = if (isPublic) CollectionVisibilityDocument.PUBLIC else CollectionVisibilityDocument.PRIVATE
-
-        logger.info { "Prepare visibility change of collection $collectionId to $visibility" }
-        return set(CollectionDocument::visibility, visibility)
+    private fun changeDiscoverability(collectionId: CollectionId, isDiscoverable: Boolean): Bson {
+        logger.info { "Prepare discoverability change of collection $collectionId to $isDiscoverable" }
+        return set(CollectionDocument::discoverable, isDiscoverable)
     }
 
     private fun changePromotion(collectionId: CollectionId, promoted: Boolean): Bson {

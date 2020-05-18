@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
     fun `returns collections user is contracted to when they have any SelectedContent contracts`() {
-        val firstCollection = createCollection(title = "My First Collection", curated = true)
-        val secondCollection = createCollection(title = "My Second Collection", curated = false)
-        createCollection(title = "My Third Collection", curated = false)
+        val firstCollection = createCollection(title = "My First Collection", discoverable = true)
+        val secondCollection = createCollection(title = "My Second Collection", discoverable = false)
+        createCollection(title = "My Third Collection", discoverable = false)
 
         createIncludedCollectionsAccessRules("api-user@gmail.com", firstCollection, secondCollection)
 
@@ -39,7 +39,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
     @Test
     fun `returns collections with shallow video information by default`() {
-        val collectionId = createCollection(title = "A Collection", curated = false)
+        val collectionId = createCollection(title = "A Collection", discoverable = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
 
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
@@ -64,7 +64,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
     @Test
     fun `returns collections with deep video information when details projection is used`() {
-        val collectionId = createCollection(title = "A Collection", curated = false)
+        val collectionId = createCollection(title = "A Collection", discoverable = false)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
@@ -104,7 +104,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
     inner class VideoContracts {
         @Test
         fun `limits videos returned on a collection search results to contracted ones`() {
-            val collectionId = createCollection(title = "A Collection", curated = false)
+            val collectionId = createCollection(title = "A Collection", discoverable = false)
             val contractedVideoId = saveVideo()
             val nonContractedVideoId = saveVideo()
             addVideo(collectionId, contractedVideoId.value)
@@ -126,7 +126,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
         @Test
         fun `limits videos returned on a single collection to contracted ones`() {
-            val collectionId = createCollection(title = "A Collection", curated = false)
+            val collectionId = createCollection(title = "A Collection", discoverable = false)
             val contractedVideoId = saveVideo()
             val nonContractedVideoId = saveVideo()
             addVideo(collectionId, contractedVideoId.value)

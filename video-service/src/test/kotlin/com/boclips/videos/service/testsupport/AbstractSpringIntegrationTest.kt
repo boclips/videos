@@ -366,7 +366,7 @@ abstract class AbstractSpringIntegrationTest {
             owner = request.owner,
             title = request.title,
             videos = request.videos,
-            curated = request.public,
+            discoverable = request.public,
             bookmarkedBy = request.bookmarkedBy,
             subjects = request.subjects
         )
@@ -376,7 +376,7 @@ abstract class AbstractSpringIntegrationTest {
         owner: String = "owner@me.com",
         title: String = "collection title",
         videos: List<String> = emptyList(),
-        curated: Boolean = false,
+        discoverable: Boolean = false,
         bookmarkedBy: String? = null,
         subjects: Set<Subject> = emptySet(),
         ageRangeMin: Int? = null,
@@ -393,7 +393,7 @@ abstract class AbstractSpringIntegrationTest {
         updateCollection(
             collectionId = collectionId.value,
             updateCollectionRequest = UpdateCollectionRequest(
-                isPublic = curated,
+                isPublic = discoverable,
                 subjects = subjects.map { it.id.value }.toSet(),
                 ageRange = com.boclips.videos.api.request.agerange.AgeRangeRequest(ageRangeMin, ageRangeMax),
                 attachment = attachment

@@ -36,12 +36,12 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollection(
         title: String = "a collection name",
         description: String = "a description",
-        curated: Boolean = false,
+        discoverable: Boolean = false,
         owner: String = "teacher@gmail.com"
     ) =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
-                """{"title": "$title", "description": "$description", "public": $curated}"""
+                """{"title": "$title", "description": "$description", "public": $discoverable}"""
             ).asTeacher(owner)
         )
             .andExpect(status().isCreated)
@@ -63,7 +63,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             .andExpect(status().isOk)
     }
 
-    fun updateCollectionToBeCurated(collectionId: String) {
+    fun updateCollectionToBeDiscoverable(collectionId: String) {
         mockMvc.perform(
             patch(selfLink(collectionId)).contentType(MediaType.APPLICATION_JSON).content(
                 """{"public": "true"}"""
@@ -120,14 +120,14 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
     fun createCollectionWithTitle(
         title: String,
         email: String = "teacher@gmail.com",
-        curated: Boolean = false
+        discoverable: Boolean = false
     ): String {
         return collectionRepository.create(
             CreateCollectionCommand(
                 owner = UserId(email),
                 title = title,
                 createdByBoclips = false,
-                curated = curated
+                discoverable = discoverable
             )
         ).id.value
     }

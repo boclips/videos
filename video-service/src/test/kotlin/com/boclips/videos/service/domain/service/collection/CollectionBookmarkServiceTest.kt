@@ -28,7 +28,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
     inner class Bookmark {
         @Test
         fun `collection bookmarks are saved`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true)
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true)
 
             collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
@@ -43,7 +43,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `collection bookmarks are updated for search`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true)
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true)
 
             collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
@@ -62,7 +62,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `throws error when user owns the collection`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true)
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true)
 
             assertThrows<CollectionIllegalOperationException> {
                 collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "owner@example.com"))
@@ -84,7 +84,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `logs an event`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true)
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true)
 
             collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "someone@else.com"))
 
@@ -142,7 +142,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `throws error when user owns the collection`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true)
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true)
 
             assertThrows<CollectionIllegalOperationException> {
                 collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "owner@example.com"))
@@ -154,7 +154,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `logs an event`() {
-            val collectionId = saveCollection(owner = "owner@example.com", curated = true, bookmarkedBy = "me@me.com")
+            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true, bookmarkedBy = "me@me.com")
 
             collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 

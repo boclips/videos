@@ -22,7 +22,7 @@ class CollectionDocumentConverter {
         return CollectionDocument(
             id = metadata.id,
             title = metadata.title,
-            searchable = metadata.curated,
+            searchable = metadata.discoverable,
             subjects = metadata.subjectIds,
             hasAttachments = metadata.hasAttachments,
             owner = metadata.owner,

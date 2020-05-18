@@ -16,7 +16,7 @@ class CollectionMetadataConverterTest {
             id = CollectionId(value = "test-id"),
             title = "Some Collection Title",
             owner = "12903012381",
-            curated = false,
+            discoverable = false,
             bookmarks = setOf(UserId(value = "userId1")),
             updatedAt = updateDate
         )
@@ -26,7 +26,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.id).isEqualTo("test-id")
         assertThat(collectionMetadata.title).isEqualTo("Some Collection Title")
         assertThat(collectionMetadata.owner).isEqualTo("12903012381")
-        assertThat(collectionMetadata.curated).isEqualTo(false)
+        assertThat(collectionMetadata.discoverable).isEqualTo(false)
         assertThat(collectionMetadata.bookmarkedByUsers).containsExactly("userId1")
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(false)
         assertThat(collectionMetadata.updatedAt).isEqualTo(updateDate.toLocalDate())
@@ -38,7 +38,7 @@ class CollectionMetadataConverterTest {
             id = CollectionId(value = "test-id"),
             title = "Collection with lesson plan",
             owner = "12903012381",
-            curated = false,
+            discoverable = false,
             bookmarks = setOf(UserId(value = "userId1")),
             attachments = setOf(AttachmentFactory.sampleWithLessonPlan())
         )
@@ -47,7 +47,7 @@ class CollectionMetadataConverterTest {
 
         assertThat(collectionMetadata.id).isEqualTo("test-id")
         assertThat(collectionMetadata.title).isEqualTo("Collection with lesson plan")
-        assertThat(collectionMetadata.curated).isEqualTo(false)
+        assertThat(collectionMetadata.discoverable).isEqualTo(false)
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(true)
         assertThat(collectionMetadata.attachmentTypes).isEqualTo(setOf("Lesson Guide"))
     }
@@ -58,7 +58,7 @@ class CollectionMetadataConverterTest {
             id = CollectionId(value = "test-id"),
             title = "Collection with lesson plan",
             owner = "12903012381",
-            curated = false,
+            discoverable = false,
             bookmarks = setOf(UserId(value = "userId1")),
             attachments = setOf(AttachmentFactory.sampleWithLessonPlan()),
             ageRangeMin = 3,

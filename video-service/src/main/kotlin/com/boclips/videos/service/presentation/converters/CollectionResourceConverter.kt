@@ -35,7 +35,7 @@ class CollectionResourceConverter(
                 user
             ),
             updatedAt = collection.updatedAt,
-            public = collection.isCurated,
+            public = collection.discoverable,
             promoted = collection.promoted,
             mine = collection.isOwner(user),
             bookmarked = collection.isBookmarkedBy(user),
@@ -67,7 +67,7 @@ class CollectionResourceConverter(
             title = collection.title,
             videos = videoToResourceConverter.convertVideoIds(collection.videos),
             updatedAt = collection.updatedAt,
-            public = collection.isCurated,
+            public = collection.discoverable,
             promoted = collection.promoted,
             mine = collection.isOwner(user),
             bookmarked = collection.isBookmarkedBy(user),

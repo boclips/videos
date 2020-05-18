@@ -21,10 +21,10 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     lateinit var collectionRetrievalService: CollectionRetrievalService
 
     @Test
-    fun `makes searchable if curated`() {
+    fun `makes searchable if discoverable`() {
         val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
-            curated = true
+            discoverable = true
         )
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
@@ -33,7 +33,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             CollectionSearchQuery(
                 text = "title",
                 subjectIds = emptyList(),
-                curated = null,
+                discoverable = null,
                 pageSize = 1,
                 pageIndex = 0,
                 permittedCollections = null,
@@ -50,7 +50,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
     fun `makes searchable if private`() {
         val createRequest = VideoServiceApiFactory.createCollectionRequest(
             title = "title",
-            curated = false
+            discoverable = false
         )
 
         val collection = createCollection(createRequest, UserFactory.sample(id = "some@teacher.com"))
@@ -60,7 +60,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 text = "title",
                 subjectIds = emptyList(),
                 owner = null,
-                curated = null,
+                discoverable = null,
                 pageSize = 1,
                 pageIndex = 0,
                 hasLessonPlans = null,
@@ -86,7 +86,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
                 text = "title",
                 subjectIds = emptyList(),
                 owner = null,
-                curated = null,
+                discoverable = null,
                 pageSize = 1,
                 pageIndex = 0,
                 hasLessonPlans = null,
@@ -95,7 +95,7 @@ class CreateCollectionTest : AbstractSpringIntegrationTest() {
             user = UserFactory.sample()
         ).elements
 
-        assertThat(collections.first().isCurated).isFalse()
+        assertThat(collections.first().discoverable).isFalse()
     }
 
     @Test

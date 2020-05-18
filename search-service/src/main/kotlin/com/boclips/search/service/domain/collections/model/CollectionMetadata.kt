@@ -6,7 +6,7 @@ data class CollectionMetadata(
     val id: String,
     val title: String,
     val subjectIds: List<String>,
-    val curated: Boolean?,
+    val discoverable: Boolean?,
     val owner: String,
     val bookmarkedByUsers: Set<String>,
     val hasAttachments: Boolean,

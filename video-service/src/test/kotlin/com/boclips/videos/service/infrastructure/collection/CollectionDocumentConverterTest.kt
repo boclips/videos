@@ -13,14 +13,14 @@ import java.time.ZonedDateTime
 
 class CollectionDocumentConverterTest {
 
-    val collectionDocument = CollectionDocument(
+    private val collectionDocument = CollectionDocument(
         id = ObjectId(),
         owner = "Hans",
         title = "A truly amazing collection",
         videos = emptyList(),
         createdAt = ZonedDateTime.of(2019, 3, 2, 1, 2, 3, 0, ZoneOffset.UTC).toInstant(),
         updatedAt = ZonedDateTime.of(2019, 4, 3, 2, 1, 2, 0, ZoneOffset.UTC).toInstant(),
-        visibility = CollectionVisibilityDocument.PRIVATE,
+        discoverable = false,
         createdByBoclips = false,
         bookmarks = setOf("user-1"),
         subjects = setOf(TestFactories.createSubjectDocument(name = "subject-1")),
@@ -46,7 +46,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.title).isEqualTo("A truly amazing collection")
         assertThat(collection.createdAt).isEqualTo("2019-03-02T01:02:03Z")
         assertThat(collection.updatedAt).isEqualTo("2019-04-03T02:01:02Z")
-        assertThat(collection.isCurated).isEqualTo(false)
+        assertThat(collection.discoverable).isEqualTo(false)
         assertThat(collection.promoted).isEqualTo(false)
         assertThat(collection.ageRange).isEqualTo(FixedAgeRange(min = 5, max = 10, curatedManually = true))
         assertThat(collection.bookmarks).containsExactly(

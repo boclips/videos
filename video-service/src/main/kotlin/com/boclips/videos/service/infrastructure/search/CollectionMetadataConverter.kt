@@ -10,7 +10,7 @@ object CollectionMetadataConverter {
             title = collection.title,
             subjectIds = collection.subjects.map { it.id.value },
             owner = collection.owner.value,
-            curated = collection.isCurated,
+            discoverable = collection.discoverable,
             bookmarkedByUsers = collection.bookmarks.map { it.value }.toSet(),
             hasAttachments = collection.attachments.isNotEmpty(),
             hasLessonPlans = if (collection.attachments.isNotEmpty()) collection.attachments.any { it.type == AttachmentType.LESSON_PLAN } else false,

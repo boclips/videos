@@ -22,7 +22,6 @@ object CollectionDocumentConverter {
                 name = it.name
             )
         }.toSet()
-        val isCurated = collectionDocument.visibility == CollectionVisibilityDocument.PUBLIC
 
         return Collection(
             id = CollectionId(value = collectionDocument.id.toHexString()),
@@ -34,7 +33,7 @@ object CollectionDocumentConverter {
                 ZoneOffset.UTC
             ),
             updatedAt = ZonedDateTime.ofInstant(collectionDocument.updatedAt, ZoneOffset.UTC),
-            isCurated = isCurated,
+            discoverable = collectionDocument.discoverable,
             promoted = collectionDocument.promoted ?: false,
             createdByBoclips = collectionDocument.createdByBoclips ?: false,
             bookmarks = collectionDocument.bookmarks.map {

@@ -15,7 +15,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -30,7 +30,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = listOf("subject"),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -50,7 +50,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = emptyList(),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -70,7 +70,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "a dog",
             subjectIds = emptyList(),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -91,7 +91,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = emptyList(),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -112,7 +112,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = emptyList(),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = null,
@@ -133,7 +133,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = listOf(CollectionId("some-collection-id")),
@@ -148,7 +148,7 @@ class CollectionSearchQueryTest {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
-            curated = null,
+            discoverable = null,
             pageIndex = 0,
             pageSize = 0,
             permittedCollections = emptyList(),

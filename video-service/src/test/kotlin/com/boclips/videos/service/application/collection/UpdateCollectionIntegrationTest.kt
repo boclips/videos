@@ -93,7 +93,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `logs an event when changing visibility`() {
-        val collectionId = saveCollection(owner = "me@me.com", curated = false)
+        val collectionId = saveCollection(owner = "me@me.com", discoverable = false)
 
         updateCollection(
             collectionId = collectionId.value,

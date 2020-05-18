@@ -116,7 +116,7 @@ object SearchableCollectionMetadataFactory {
         id = id,
         title = title,
         subjectIds = subjects,
-        curated = searchable,
+        discoverable = searchable,
         promoted = promoted,
         owner = owner,
         bookmarkedByUsers = bookmarkedBy,

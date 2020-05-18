@@ -34,7 +34,7 @@ class CollectionSearchServiceFake : AbstractInMemoryFake<CollectionQuery, Collec
                 if (query.promoted != null) query.promoted == entry.value.promoted else true
             }
             .filter { entry ->
-                if (query.searchable != null) query.searchable == entry.value.curated else true
+                if (query.searchable != null) query.searchable == entry.value.discoverable else true
             }
             .filter { entry ->
                 if (query.owner != null && query.bookmarkedBy != null) {

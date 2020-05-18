@@ -28,9 +28,9 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                 )
             },
             updateCollectionRequest.isPublic?.let {
-                CollectionUpdateCommand.ChangeVisibility(
+                CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = collectionId,
-                    curated = it,
+                    discoverable = it,
                     user = user
                 )
             },

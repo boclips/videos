@@ -130,12 +130,12 @@ class EventService(val eventBus: EventBus) {
                         user = updateCommand.user
                     )
                 )
-            is CollectionUpdateCommand.ChangeVisibility ->
+            is CollectionUpdateCommand.ChangeDiscoverability ->
                 eventBus.publish(
                     msg(
                         builder = CollectionVisibilityChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .isPublic(updateCommand.curated),
+                            .isPublic(updateCommand.discoverable),
                         user = updateCommand.user
                     )
                 )

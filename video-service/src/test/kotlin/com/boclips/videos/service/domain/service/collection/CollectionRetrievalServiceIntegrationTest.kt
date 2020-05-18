@@ -44,7 +44,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                     pageIndex = 0,
                     subjectIds = emptyList(),
                     permittedCollections = null,
-                    curated = false,
+                    discoverable = false,
                     hasLessonPlans = null
                 ),
 
@@ -93,7 +93,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 pageIndex = 0,
                 subjectIds = emptyList(),
                 permittedCollections = null,
-                curated = false,
+                discoverable = false,
                 hasLessonPlans = null,
                 ageRangeMin = 5,
                 ageRangeMax = 7
@@ -123,7 +123,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 pageIndex = 0,
                 subjectIds = emptyList(),
                 permittedCollections = null,
-                curated = false,
+                discoverable = false,
                 hasLessonPlans = null
             )
 
@@ -148,7 +148,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `can find a collection by ID`() {
             val videoId = saveVideo()
-            val collectionId = saveCollection(videos = listOf(videoId.value), curated = true)
+            val collectionId = saveCollection(videos = listOf(videoId.value), discoverable = true)
             val collection = collectionRetrievalService.findAnyCollection(
                 collectionId,
                 UserFactory.sample()
@@ -205,7 +205,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         @Disabled("At the moment we do not restrict access to specific collections")
         fun `cannot find collection that access rules do not permit`() {
-            val collectionId = saveCollection(curated = false, owner = "joe")
+            val collectionId = saveCollection(discoverable = false, owner = "joe")
             val user = UserFactory.sample(
                 id = "catherine",
                 accessRulesSupplier = {

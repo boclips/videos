@@ -471,7 +471,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                curated = true,
+                discoverable = true,
                 owner = "another-user"
             ),
             user = user
@@ -492,7 +492,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                curated = true,
+                discoverable = true,
                 owner = "another-user"
             ),
             user = user
@@ -516,7 +516,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                curated = false,
+                discoverable = false,
                 owner = "another-user"
             ),
             user = user
@@ -535,7 +535,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                curated = false,
+                discoverable = false,
                 owner = user.id.value
             ),
             user = user
@@ -554,7 +554,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                curated = false,
+                discoverable = false,
                 owner = "another-user",
                 bookmarks = setOf(user.id)
             ),
@@ -574,7 +574,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                curated = true,
+                discoverable = true,
                 owner = "another-user",
                 bookmarks = setOf(user.id)
             ),
@@ -599,7 +599,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                curated = true,
+                discoverable = true,
                 owner = user.id.value,
                 bookmarks = setOf(user.id)
             ),
@@ -619,7 +619,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                curated = true,
+                discoverable = true,
                 owner = "another-user"
             ),
             user = user

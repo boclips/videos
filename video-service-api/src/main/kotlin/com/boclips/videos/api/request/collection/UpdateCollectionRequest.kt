@@ -8,7 +8,7 @@ import javax.validation.Valid
 
 class UpdateCollectionRequest(
     var title: String? = null,
-    var isPublic: Boolean? = null, //TODO: rename to curated
+    var isPublic: Boolean? = null, //TODO: rename to discoverable
     @JsonSetter(contentNulls = Nulls.FAIL)
     var subjects: Set<String>? = null,
     var description: String? = null,

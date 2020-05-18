@@ -37,7 +37,7 @@ class CollectionSearchQueryAssemblerTest {
 
         assertThat(query.text).isEqualTo("minute physics")
         assertThat(query.subjectIds).containsOnly("Physics")
-        assertThat(query.curated).isEqualTo(null)
+        assertThat(query.discoverable).isEqualTo(null)
         assertThat(query.owner).isEqualTo("other-id")
         assertThat(query.bookmarkedBy).isEqualTo("my-id")
         assertThat(query.pageIndex).isEqualTo(1)
@@ -97,7 +97,7 @@ class CollectionSearchQueryAssemblerTest {
                 user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.superuser() })
             )
 
-            assertThat(query.curated).isNull()
+            assertThat(query.discoverable).isNull()
         }
 
         @Test
@@ -107,7 +107,7 @@ class CollectionSearchQueryAssemblerTest {
             )
 
             assertThat(query.owner).isEqualTo("me")
-            assertThat(query.curated).isNull()
+            assertThat(query.discoverable).isNull()
         }
 
         @Test
@@ -120,7 +120,7 @@ class CollectionSearchQueryAssemblerTest {
                 })
             )
 
-            assertThat(query.curated).isNull()
+            assertThat(query.discoverable).isNull()
             assertThat(query.permittedCollections).containsExactly(CollectionId("blah"))
         }
 

@@ -156,9 +156,9 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.ChangeVisibility(
+                command = CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = CollectionId(collectionId),
-                    curated = true,
+                    discoverable = true,
                     user = UserFactory.sample(id = "user@example.com")
                 )
             )
@@ -177,9 +177,9 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         eventService.saveUpdateCollectionEvent(
             createCollectionUpdateResult(
-                command = CollectionUpdateCommand.ChangeVisibility(
+                command = CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = CollectionId(collectionId),
-                    curated = false,
+                    discoverable = false,
                     user = UserFactory.sample()
                 )
             )

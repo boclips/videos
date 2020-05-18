@@ -13,7 +13,7 @@ data class CollectionDocument(
     val videos: List<String>,
     val createdAt: Instant?,
     val updatedAt: Instant,
-    val visibility: CollectionVisibilityDocument?,
+    val discoverable: Boolean = false,
     val createdByBoclips: Boolean?,
     val promoted: Boolean? = false,
     val bookmarks: Set<String> = emptySet(),

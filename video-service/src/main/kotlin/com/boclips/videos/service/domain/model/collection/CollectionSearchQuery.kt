@@ -22,14 +22,14 @@ class CollectionSearchQuery(
     val ageRangeMax: Int? = null,
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
-    val curated: Boolean? = null,
+    val discoverable: Boolean? = null,
     val sort: CollectionSortKey? = null,
     val resourceTypes: Set<String>? = null
 ) {
     fun toSearchQuery() = CollectionQuery(
         phrase = this.text ?: "",
         subjectIds = this.subjectIds,
-        searchable = this.curated,
+        searchable = this.discoverable,
         owner = this.owner,
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },

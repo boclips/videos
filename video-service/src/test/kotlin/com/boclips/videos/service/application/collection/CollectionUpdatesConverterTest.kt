@@ -59,8 +59,8 @@ class CollectionUpdatesConverterTest {
                 UserFactory.sample()
             )
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
-        assertThat(command.curated).isEqualTo(true)
+        val command = commands.first() as CollectionUpdateCommand.ChangeDiscoverability
+        assertThat(command.discoverable).isEqualTo(true)
         assertThat(commands).hasSize(1)
     }
 
@@ -73,8 +73,8 @@ class CollectionUpdatesConverterTest {
                 UserFactory.sample()
             )
 
-        val command = commands.first() as CollectionUpdateCommand.ChangeVisibility
-        assertThat(command.curated).isEqualTo(false)
+        val command = commands.first() as CollectionUpdateCommand.ChangeDiscoverability
+        assertThat(command.discoverable).isEqualTo(false)
         assertThat(commands).hasSize(1)
     }
 

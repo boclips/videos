@@ -14,7 +14,7 @@ class CollectionSearchQueryAssembler {
         query: String? = null,
         subjects: List<String>? = null,
         promoted: Boolean? = null,
-        curated: Boolean? = null,
+        discoverable: Boolean? = null,
         bookmarked: Boolean? = null,
         owner: String? = null,
         page: Int? = null,
@@ -46,7 +46,7 @@ class CollectionSearchQueryAssembler {
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
             bookmarkedBy = bookmarker?.value,
-            curated = curated,
+            discoverable = discoverable,
             promoted = promoted,
             hasLessonPlans = hasLessonPlans,
             owner = when (owner) {
