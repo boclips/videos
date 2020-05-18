@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.presentation.legalrestriction
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
-import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionResource
 import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
@@ -24,7 +23,7 @@ class LegalRestrictionsController(
     private val findLegalRestrictions: FindLegalRestrictions,
     private val findAllLegalRestrictions: FindAllLegalRestrictions,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
-) : BaseController() {
+)  {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

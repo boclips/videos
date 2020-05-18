@@ -1,6 +1,5 @@
 package com.boclips.contentpartner.service.presentation.distributionmethod
 
-import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 import com.boclips.videos.api.response.contentpartner.DistributionMethodWrapper
 import com.boclips.videos.api.response.contentpartner.DistributionMethodsResource
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/distribution-methods")
-class DistributionMethodsController : BaseController() {
+class DistributionMethodsController  {
     @GetMapping
     fun getDistributionMethods(): DistributionMethodsResource {
         return DistributionMethodsResource(

@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.application.contentpartner.GetContentP
 import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
 import com.boclips.contentpartner.service.application.contentpartner.UpdateContentPartner
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
-import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
@@ -40,7 +39,7 @@ class ContentPartnerController(
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter,
     private val marketingSignedLinkProvider: SignedLinkProvider
-) : BaseController() {
+) {
     @PostMapping("/{contentPartnerId}/videos/search")
     fun postSearchVideoByProviderId(
         @PathVariable("contentPartnerId") contentPartnerId: String,

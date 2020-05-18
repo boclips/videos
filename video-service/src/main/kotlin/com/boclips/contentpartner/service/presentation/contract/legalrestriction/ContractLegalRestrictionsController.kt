@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.presentation.contract.legalrestrictio
 
 import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.CreateContractLegalRestriction
 import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.FindAllContractLegalRestrictions
-import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.videos.api.request.contract.legalrestrictions.CreateContractLegalRestrictionRequest
 import com.boclips.videos.api.response.contract.legalrestrictions.ContractLegalRestrictionsResource
@@ -21,7 +20,7 @@ class ContractLegalRestrictionsController(
     private val fetchAll: FindAllContractLegalRestrictions,
     private val createLegalRestrictions: CreateContractLegalRestriction,
     private val toResourceConverter: ContractLegalRestrictionsToResourceConverter
-) : BaseController() {
+)  {
 
     @GetMapping
     fun getAll(): ResponseEntity<ContractLegalRestrictionsResource> {

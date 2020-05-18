@@ -8,7 +8,6 @@ import com.boclips.contentpartner.service.application.contentpartnercontract.Upd
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.presentation.BaseController
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
@@ -41,7 +40,7 @@ class ContentPartnerContractController(
     private val toResourceConverter: ContentPartnerContractToResourceConverter,
     private val linksBuilder: ContentPartnerContractsLinkBuilder,
     private val contractSignedLinkProvider: SignedLinkProvider
-) : BaseController() {
+) {
     @GetMapping
     fun getAll(
         @RequestParam(name = "size", required = false) size: Int?,
