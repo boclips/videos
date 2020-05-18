@@ -33,14 +33,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
-                    "$._links.publicCollections.href",
-                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
-                )
-            )
-            .andExpect(
-                jsonPath(
                     "$._links.promotedCollections.href",
-                    endsWith("collections?projection=list&promoted=true&discoverable=true&page=0&size=30")
+                    endsWith("collections?projection=list&promoted=true&page=0&size=30")
                 )
             )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
@@ -93,50 +87,26 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(
                 jsonPath(
-                    "$._links.searchPublicCollections.href",
-                    endsWith("collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
-                )
-            )
-            .andExpect(
-                jsonPath(
                     "$._links.searchCollections.href",
-                    endsWith("collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$._links.publicCollections.href",
-                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
+                    endsWith("collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.discoverCollections.href",
-                    endsWith("collections?projection=list&discoverable=true&page=0&size=30")
+                    endsWith("collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.promotedCollections.href",
-                    endsWith("collections?projection=list&promoted=true&discoverable=true&page=0&size=30")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$._links.bookmarkedCollections.href",
-                    endsWith("collections?projection=list&discoverable=true&bookmarked=true&page=0&size=30")
+                    endsWith("collections?projection=list&promoted=true&page=0&size=30")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.myCollections.href",
-                    endsWith("/v1/users/teacher@teacher.com/collections?projection=list&page=0&size=30")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$._links.mySavedCollections.href",
-                    endsWith("collections?projection=list&page=0&size=30&owner=teacher@teacher.com&bookmarked=true&sort_by=UPDATED_AT")
+                    endsWith("/v1/users/teacher@teacher.com/collections?projection=list&page=0&size=30{&query,subject,bookmarked,age_range,resource_types}")
                 )
             )
             .andExpect(
@@ -179,12 +149,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `as Boclips employee see admin links`() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(
-                jsonPath(
-                    "$._links.adminCollectionSearch.href",
-                    containsString("/collections{?query,subject,projection,page,size}")
-                )
-            )
             .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
             .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
             .andExpect(
@@ -241,7 +205,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `as subject classifier I can link to any users collection included when user has access rights`() {
         mockMvc.perform(get("/v1").asSubjectClassifier())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.collectionsByOwner.href", containsString("/collections?")))
+            .andExpect(jsonPath("$._links.collectionsByOwner.href", containsString("users/%7BuserId%7D/collections")))
     }
 
     @Test
