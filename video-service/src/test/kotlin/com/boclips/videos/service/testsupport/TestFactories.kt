@@ -12,6 +12,7 @@ import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videos.api.common.Specified
+import com.boclips.videos.api.request.collection.GetCollectionsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
@@ -152,7 +153,7 @@ object TestFactories {
             id = TagId(id), label = label
         )
 
-    object CollectionsRequestFactory {
+    object GetCollectionsRequestFactory {
         fun sample(
             query: String? = null,
             subjects: List<String> = emptyList(),
@@ -161,8 +162,8 @@ object TestFactories {
             size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE,
             public: Boolean? = null,
             bookmarked: Boolean? = null
-        ): CollectionsController.CollectionsRequest {
-            return CollectionsController.CollectionsRequest(
+        ): GetCollectionsRequest {
+            return GetCollectionsRequest(
                 query = query,
                 subject = if (subjects.isNotEmpty()) subjects.joinToString(",") else null,
                 public = public,

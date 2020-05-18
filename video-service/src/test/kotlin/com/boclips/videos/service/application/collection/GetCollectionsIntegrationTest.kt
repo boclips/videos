@@ -1,23 +1,19 @@
 package com.boclips.videos.service.application.collection
 
+import com.boclips.videos.api.request.collection.GetCollectionsRequest
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.presentation.CollectionsController
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AccessRulesFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
-import org.springframework.beans.factory.annotation.Autowired
 
 class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var getCollections: GetCollections
-
     data class TestCase(
         val description: String,
         val availableCollections: List<SaveCollectionRequest>,
         val chooseExpectedCollections: (List<CollectionId>) -> List<CollectionId>,
-        val filter: CollectionsController.CollectionsRequest,
+        val filter: GetCollectionsRequest,
         val buildUserWithAccessRules: (List<CollectionId>) -> User
     )
 
@@ -31,7 +27,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { it },
-                    filter = TestFactories.CollectionsRequestFactory.unfiltered(),
+                    filter = TestFactories.GetCollectionsRequestFactory.unfiltered(),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
 
                 ),
@@ -42,7 +38,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it.first()) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = true),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = true),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
 
                 ),
@@ -53,7 +49,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it.last()) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = false),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = false),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
                 ),
                 TestCase(
@@ -63,7 +59,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(public = true, bookmarkedBy = "another-user", owner = "different-user")
                     ),
                     chooseExpectedCollections = { listOf(it.first()) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(bookmarked = true),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(bookmarked = true),
                     buildUserWithAccessRules = {
                         UserFactory.sample(
                             id = "super-user",
@@ -84,7 +80,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { it.dropLast(1) },
-                    filter = TestFactories.CollectionsRequestFactory.unfiltered(),
+                    filter = TestFactories.GetCollectionsRequestFactory.unfiltered(),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
                 ),
                 TestCase(
@@ -96,7 +92,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[0], it[2]) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = true),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = true),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
                 ),
                 TestCase(
@@ -108,7 +104,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     { listOf(it[1]) },
-                    TestFactories.CollectionsRequestFactory.sample(public = false),
+                    TestFactories.GetCollectionsRequestFactory.sample(public = false),
                     buildUserWithAccessRules = { UserFactory.sample(accessRulesSupplier = { access }) }
                 )
             )
@@ -125,7 +121,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[0], it[3]) },
-                    filter = TestFactories.CollectionsRequestFactory.unfiltered(),
+                    filter = TestFactories.GetCollectionsRequestFactory.unfiltered(),
                     buildUserWithAccessRules = { collectionIds ->
                         UserFactory.sample(accessRulesSupplier = {
                             AccessRulesFactory.specificIds(collectionIds[0], collectionIds[3])
@@ -141,7 +137,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[0]) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = true),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = true),
                     buildUserWithAccessRules = { collectionIds ->
                         UserFactory.sample(accessRulesSupplier = {
                             AccessRulesFactory.specificIds(collectionIds[0], collectionIds[3])
@@ -157,7 +153,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[3]) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = false),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = false),
                     buildUserWithAccessRules = { collectionIds ->
                         UserFactory.sample(accessRulesSupplier = {
                             AccessRulesFactory.specificIds(collectionIds[0], collectionIds[3])
@@ -177,7 +173,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[0], it[2]) },
-                    filter = TestFactories.CollectionsRequestFactory.unfiltered(),
+                    filter = TestFactories.GetCollectionsRequestFactory.unfiltered(),
                     buildUserWithAccessRules = {
                         UserFactory.sample(accessRulesSupplier = { access })
                     }
@@ -191,7 +187,7 @@ class GetCollectionsIntegrationTest : AbstractSpringIntegrationTest() {
                         SaveCollectionRequest(owner = "another-user", public = false)
                     ),
                     chooseExpectedCollections = { listOf(it[0], it[2]) },
-                    filter = TestFactories.CollectionsRequestFactory.sample(public = true),
+                    filter = TestFactories.GetCollectionsRequestFactory.sample(public = true),
                     buildUserWithAccessRules = {
                         UserFactory.sample(accessRulesSupplier = { access })
                     }

@@ -61,20 +61,6 @@ class CollectionsController(
         const val COLLECTIONS_PAGE_SIZE = 30
     }
 
-    data class CollectionsRequest(
-        val query: String? = null,
-        val public: Boolean? = null,
-        val bookmarked: Boolean? = null,
-        val owner: String? = null,
-        val page: Int? = null,
-        val size: Int? = null,
-        val projection: Projection? = Projection.list,
-        val hasLessonPlans: Boolean? = null,
-        val subject: String? = null
-    ) {
-        val subjects = subject?.split(",") ?: emptyList()
-    }
-
     @GetMapping
     fun getFilteredCollections(collectionFilterRequest: CollectionFilterRequest): ResponseEntity<MappingJacksonValue> {
         val user = getCurrentUser()
