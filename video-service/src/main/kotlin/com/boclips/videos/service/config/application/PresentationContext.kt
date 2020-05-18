@@ -14,6 +14,7 @@ import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
@@ -94,8 +95,11 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
     }
 
     @Bean
-    fun contentWarningToResourceConverter(): ContentWarningToResourceConverter {
-        return ContentWarningToResourceConverter()
+    fun contentWarningLinkBuilder(): ContentWarningLinkBuilder = ContentWarningLinkBuilder()
+
+    @Bean
+    fun contentWarningToResourceConverter(contentWarningLinkBuilder: ContentWarningLinkBuilder): ContentWarningToResourceConverter {
+        return ContentWarningToResourceConverter(contentWarningLinkBuilder)
     }
 
     @Bean

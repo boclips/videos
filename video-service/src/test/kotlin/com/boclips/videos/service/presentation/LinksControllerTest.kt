@@ -215,6 +215,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contractLegalRestrictions.templated", equalTo(false)))
             .andExpect(jsonPath("$._links.getCaptions.href", endsWith("/captions")))
             .andExpect(jsonPath("$._links.getCaptions.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.contentWarnings.href", endsWith("/content-warnings")))
+            .andExpect(jsonPath("$._links.contentWarnings.templated", equalTo(false)))
     }
 
     @Test

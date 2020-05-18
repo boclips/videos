@@ -9,6 +9,8 @@ import com.boclips.videos.service.infrastructure.video.converters.ContentWarning
 import com.mongodb.MongoClient
 import mu.KLogging
 import org.bson.types.ObjectId
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 class MongoContentWarningRepository(
@@ -16,6 +18,11 @@ class MongoContentWarningRepository(
 ) : ContentWarningRepository {
     companion object : KLogging() {
         const val collectionName = "contentWarnings"
+    }
+
+    override fun findById(id: ContentWarningId): ContentWarning? {
+        return getCollection().findOne(ContentWarningDocument::id eq ObjectId(id.value))
+            ?.let { ContentWarningDocumentConverter.toContentWarning(it) }
     }
 
     override fun findAll(): List<ContentWarning> =

@@ -24,6 +24,7 @@ import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.application.contentwarning.CreateContentWarning
 import com.boclips.videos.service.application.contentwarning.GetAllContentWarnings
+import com.boclips.videos.service.application.contentwarning.GetContentWarning
 import com.boclips.videos.service.application.disciplines.CreateDiscipline
 import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
@@ -447,6 +448,9 @@ class ApplicationContext(
 
     @Bean
     fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) = GetVideoAssets(captionService, searchVideo)
+
+    @Bean
+    fun getContentWarning() = GetContentWarning(contentWarningRepository)
 
     @Bean
     fun getAllContentWarnings() = GetAllContentWarnings(contentWarningRepository)

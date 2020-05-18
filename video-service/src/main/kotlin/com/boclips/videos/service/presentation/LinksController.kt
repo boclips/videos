@@ -12,6 +12,7 @@ import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
@@ -30,22 +31,23 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1")
 class LinksController(
-    private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val videosLinkBuilder: VideosLinkBuilder,
+    private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val subjectsLinkBuilder: SubjectsLinkBuilder,
+    private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
+    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
+    private val tagsLinkBuilder: TagsLinkBuilder,
+    private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
+    private val suggestionLinkBuilder: SuggestionLinkBuilder,
+    private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder,
-    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
-    private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
-    private val tagsLinkBuilder: TagsLinkBuilder,
-    private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
-    private val eventsLinkBuilder: EventsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
-    private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
-    private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
-    private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
     private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
-    private val suggestionLinkBuilder: SuggestionLinkBuilder,
+    private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
+    private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
+    private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
+    private val eventsLinkBuilder: EventsLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -70,6 +72,7 @@ class LinksController(
                 collectionsLinkBuilder.mySavedCollections(),
                 collectionsLinkBuilder.createCollection(),
                 legalRestrictionsLinkBuilder.getAllLink(),
+                contentWarningLinkBuilder.getAllLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
                 eventsLinkBuilder.createPlaybackEventsLink(),
