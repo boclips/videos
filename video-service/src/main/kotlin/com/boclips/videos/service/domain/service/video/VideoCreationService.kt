@@ -23,10 +23,10 @@ class VideoCreationService(
         var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnknownAgeRange) {
             contentPartnerRepository.findById(
-                    contentPartnerId = ContentPartnerId(
-                        value = videoToBeCreated.contentPartner.contentPartnerId.value
-                    )
+                contentPartnerId = ContentPartnerId(
+                    value = videoToBeCreated.contentPartner.contentPartnerId.value
                 )
+            )
                 ?.apply {
                     ageRange = AgeRange.of(
                         this.pedagogyInformation?.ageRangeBuckets?.min,

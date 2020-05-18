@@ -83,7 +83,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(jsonPath("$.ageRange").doesNotExist())
             .andExpect(jsonPath("$.subjects", hasSize<Any>(2)))
             .andExpect(jsonPath("$.subjects[*].id", containsInAnyOrder(math.id.value, physics.id.value)))
-            .andExpect(jsonPath("$.public", equalTo(true)))
+            .andExpect(jsonPath("$.discoverable", equalTo(true)))
     }
 
     @Test
@@ -927,11 +927,11 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     private fun assertCollectionIsDiscoverable(collectionId: String) {
-        getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(true)))
+        getCollection(collectionId).andExpect(jsonPath("$.discoverable", equalTo(true)))
     }
 
     private fun assertCollectionIsNotDiscoverable(collectionId: String) {
-        getCollection(collectionId).andExpect(jsonPath("$.public", equalTo(false)))
+        getCollection(collectionId).andExpect(jsonPath("$.discoverable", equalTo(false)))
     }
 
     private fun assertCollectionName(collectionId: String, expectedTitle: String) {
