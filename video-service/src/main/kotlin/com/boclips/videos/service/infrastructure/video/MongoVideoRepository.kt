@@ -29,6 +29,7 @@ import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentCo
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.ContentPartnerDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.ContentWarningDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
 import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
@@ -315,7 +316,12 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             )
             is VideoUpdateCommand.ReplaceThumbnailSecond -> set(
                 VideoDocument::playback / PlaybackDocument::thumbnailSecond,
-                updateCommand.thumbnailSecond)
+                updateCommand.thumbnailSecond
+            )
+            is VideoUpdateCommand.ReplaceContentWarnings -> set(
+                VideoDocument::contentWarnings,
+                updateCommand.contentWarnings.map { ContentWarningDocumentConverter.toDocument(it) }
+            )
         }
     }
 

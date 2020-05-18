@@ -1,6 +1,8 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
@@ -65,7 +67,8 @@ class VideoDocumentConverterTest {
                 )
             ),
             ageRange = AgeRange.of(min = 11, max = 16, curatedManually = true),
-            promoted = true
+            promoted = true,
+            contentWarnings = listOf(ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Warning 1"))
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalVideo)

@@ -24,7 +24,8 @@ import org.springframework.hateoas.PagedModel
 class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
     private val playbackToResourceConverter: PlaybackToResourceConverter,
-    private val attachmentToResourceConverter: AttachmentToResourceConverter
+    private val attachmentToResourceConverter: AttachmentToResourceConverter,
+    private val contentWarningToResourceConverter: ContentWarningToResourceConverter
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
         return videos.map { video -> convert(video, user) }
@@ -70,6 +71,7 @@ class VideoToResourceConverter(
             promoted = video.promoted,
             language = video.language?.let { LanguageResource.from(it) },
             attachments = video.attachments.map { attachmentToResourceConverter.convert(it) },
+            contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             _links = (
                 resourceLinks(video.videoId.value) +
                     conditionalResourceLinks(video) +

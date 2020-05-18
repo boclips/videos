@@ -10,9 +10,18 @@ import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DurationFacet
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -57,6 +66,10 @@ class VideoToResourceConverterTest {
                 type = AttachmentType.ACTIVITY,
                 linkToResource = "link"
             )
+        ),
+        contentWarnings = listOf(
+            ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Warning"),
+            ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Other disclaimer")
         )
     )
 
@@ -91,7 +104,8 @@ class VideoToResourceConverterTest {
             VideoToResourceConverter(
                 videosLinkBuilder,
                 playbackToResourceConverter,
-                AttachmentToResourceConverter(mock())
+                AttachmentToResourceConverter(mock()),
+                ContentWarningToResourceConverter(mock())
             )
     }
 
@@ -146,6 +160,10 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.attachments[0].id).isNotNull()
         assertThat(videoResource.attachments[0].type).isEqualTo("ACTIVITY")
         assertThat(videoResource.attachments[0].description).isEqualTo("some description")
+
+        assertThat(videoResource.contentWarnings).hasSize(2)
+        assertThat(videoResource.contentWarnings!![0].label).isEqualTo("Warning")
+        assertThat(videoResource.contentWarnings!![1].label).isEqualTo("Other disclaimer")
 
         val playbackResource = videoResource.playback!! as StreamPlaybackResource
         assertThat(playbackResource.type).isEqualTo("STREAM")

@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.Attachment
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
@@ -34,6 +35,9 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceLegalRestrictions(videoId: VideoId, val text: String) : VideoUpdateCommand(videoId)
     class ReplacePromoted(videoId: VideoId, val promoted: Boolean) : VideoUpdateCommand(videoId)
     class ReplaceSubjectsWereSetManually(videoId: VideoId, val subjectsWereSetManually: Boolean) :
+        VideoUpdateCommand(videoId)
+
+    class ReplaceContentWarnings(videoId: VideoId, val contentWarnings: List<ContentWarning>) :
         VideoUpdateCommand(videoId)
 }
 

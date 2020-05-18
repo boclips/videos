@@ -30,6 +30,7 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -104,7 +105,8 @@ object TestFactories {
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
-        attachments: List<Attachment> = emptyList()
+        attachments: List<Attachment> = emptyList(),
+        contentWarnings: List<ContentWarning> = emptyList()
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -129,7 +131,8 @@ object TestFactories {
             ratings = ratings,
             tags = tags,
             promoted = promoted,
-            attachments = attachments
+            attachments = attachments,
+            contentWarnings = contentWarnings
         )
     }
 

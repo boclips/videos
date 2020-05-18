@@ -134,6 +134,32 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `it updates the content warnings of the given video`() {
+        val sampleWarning1 = saveContentWarning("Warning 1")
+        val sampleWarning2 = saveContentWarning("Other warning")
+
+        val videoToUpdate = saveVideo().value
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contentWarnings", hasSize<Int>(0)))
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "contentWarningIds": ["${sampleWarning1.id.value}", "${sampleWarning2.id.value}"] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contentWarnings", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.contentWarnings[0].label", equalTo("Warning 1")))
+            .andExpect(jsonPath("$.contentWarnings[1].label", equalTo("Other warning")))
+    }
+
+    @Test
     fun `updates the age range of a video`() {
         val videoToUpdate = saveVideo(ageRangeMin = 3, ageRangeMax = 10).value
 

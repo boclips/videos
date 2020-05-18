@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -18,7 +19,8 @@ import org.springframework.validation.annotation.Validated
 class UpdateVideo(
     private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val contentWarningRepository: ContentWarningRepository
 ) {
     companion object : KLogging();
 
@@ -38,6 +40,10 @@ class UpdateVideo(
                 val validNewSubjects = allSubjects.filter { subjectIdList.contains(it.id.value) }
                 VideoUpdateCommand.ReplaceSubjects(videoId, validNewSubjects)
             }
+        val updateContentWarnings = updateRequest.contentWarningIds?.let { contentWarningIds ->
+            val newContentWarnings = contentWarningRepository.findAll().filter { contentWarningIds.contains(it.id.value) }
+            VideoUpdateCommand.ReplaceContentWarnings(videoId, newContentWarnings)
+        }
         val updateManuallySetSubjects = updateRequest.subjectIds
             ?.let { VideoUpdateCommand.ReplaceSubjectsWereSetManually(videoId, true) }
         val ageRange = AgeRange
@@ -57,6 +63,7 @@ class UpdateVideo(
                 replacePromoted,
                 updateSubjectIds,
                 updateManuallySetSubjects,
+                updateContentWarnings,
                 replaceAgeRange,
                 replaceAttachments,
                 replaceBestFor

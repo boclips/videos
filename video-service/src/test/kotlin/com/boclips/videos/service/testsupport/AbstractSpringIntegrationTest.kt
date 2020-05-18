@@ -25,6 +25,7 @@ import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCol
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.contentwarning.CreateContentWarningRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -41,6 +42,7 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
@@ -77,7 +79,8 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Collections
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -326,6 +329,7 @@ abstract class AbstractSpringIntegrationTest {
             user = UserFactory.sample(boclipsEmployee = true)
         )
     }
+
     fun saveAgeRange(
         id: String,
         min: Int,
@@ -405,6 +409,8 @@ abstract class AbstractSpringIntegrationTest {
 
         return collectionId
     }
+
+    fun saveContentWarning(label: String): ContentWarning = createContentWarning(CreateContentWarningRequest(label))
 
     fun saveContentPartner(
         name: String = "TeD",

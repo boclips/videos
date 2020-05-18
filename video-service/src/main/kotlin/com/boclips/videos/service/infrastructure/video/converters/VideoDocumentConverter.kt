@@ -50,7 +50,8 @@ object VideoDocumentConverter {
             },
             promoted = video.promoted,
             subjectsWereSetManually = video.subjects.setManually,
-            attachments = video.attachments.map { AttachmentDocumentConverter.convert(it) }
+            attachments = video.attachments.map { AttachmentDocumentConverter.convert(it) },
+            contentWarnings = video.contentWarnings?.map { ContentWarningDocumentConverter.toDocument(it) }
         )
     }
 
@@ -88,7 +89,8 @@ object VideoDocumentConverter {
                 )
             },
             promoted = document.promoted,
-            attachments = document.attachments.map { AttachmentDocumentConverter.convert(it) }
+            attachments = document.attachments.map { AttachmentDocumentConverter.convert(it) },
+            contentWarnings = document.contentWarnings?.map { ContentWarningDocumentConverter.toContentWarning(it) }
         )
     }
 

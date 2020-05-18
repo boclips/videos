@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.model.video
 
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.Attachment
+import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.UserId
@@ -30,7 +31,8 @@ data class Video(
     val ratings: List<UserRating>,
     val tags: List<UserTag>,
     val promoted: Boolean?,
-    val attachments: List<Attachment>
+    val attachments: List<Attachment>,
+    val contentWarnings: List<ContentWarning>?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

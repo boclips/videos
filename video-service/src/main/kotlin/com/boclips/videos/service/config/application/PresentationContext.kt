@@ -85,12 +85,14 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
     fun videoConverter(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
-        attachmentsLinkBuilder: AttachmentsLinkBuilder
+        attachmentsLinkBuilder: AttachmentsLinkBuilder,
+        contentWarningLinkBuilder: ContentWarningLinkBuilder
     ): VideoToResourceConverter {
         return VideoToResourceConverter(
             videosLinkBuilder = videosLinkBuilder,
             playbackToResourceConverter = playbackToResourceConverter,
-            attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder)
+            attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder),
+            contentWarningToResourceConverter = ContentWarningToResourceConverter(contentWarningLinkBuilder)
         )
     }
 
@@ -115,13 +117,15 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsToResourceConverter: AttachmentToResourceConverter,
+        contentWarningToResourceConverter: ContentWarningToResourceConverter,
         collectionsLinkBuilder: CollectionsLinkBuilder
     ): CollectionResourceConverter {
         return CollectionResourceConverter(
             VideoToResourceConverter(
                 videosLinkBuilder,
                 playbackToResourceConverter,
-                attachmentsToResourceConverter
+                attachmentsToResourceConverter,
+                contentWarningToResourceConverter
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,
