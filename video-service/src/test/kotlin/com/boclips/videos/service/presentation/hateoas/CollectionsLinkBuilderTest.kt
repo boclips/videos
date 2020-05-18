@@ -25,6 +25,22 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
+    fun `when public collections`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.publicCollections(
+            projection = Projection.details,
+            page = 0,
+            size = 2
+        )
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2")
+        assertThat(link.rel).isEqualTo("publicCollections")
+    }
+
+    @Test
     fun `discover collections`() {
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
@@ -36,8 +52,23 @@ class CollectionsLinkBuilderTest {
             size = 2
         )
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2")
         assertThat(link.rel).isEqualTo("discoverCollections")
+    }
+
+    @Test
+    fun `when searching public collections`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.searchPublicCollections()!!
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?discoverable=true{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+        assertThat(link.rel).isEqualTo("searchPublicCollections")
+        assertThat(link.templated).isEqualTo(true)
     }
 
     @Test
@@ -50,9 +81,38 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.searchCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
         assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.templated).isEqualTo(true)
+    }
+
+    @Test
+    fun `bookmarked collections when authenticated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_COLLECTIONS)
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.bookmarkedCollections(
+            projection = Projection.details,
+            page = 0,
+            size = 2
+        )!!
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&bookmarked=true&page=0&size=2")
+        assertThat(link.rel).isEqualTo("bookmarkedCollections")
+    }
+
+    @Test
+    fun `bookmarked collections when anonymous`() {
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.bookmarkedCollections()
+
+        assertThat(link).isNull()
     }
 
     @Test
@@ -69,7 +129,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?projection=list&page=0&size=2{&query,subject,bookmarked,age_range,resource_types}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?projection=list&page=0&size=2")
         assertThat(link.rel).isEqualTo("myCollections")
     }
 
