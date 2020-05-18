@@ -2,6 +2,8 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.config.properties.KeycloakProperties
+import com.boclips.videos.service.config.security.AppKeycloakConfigResolver
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.TagRepository
@@ -23,11 +25,13 @@ import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
 import io.opentracing.Tracer
 import io.opentracing.contrib.mongo.common.TracingCommandListener
+import org.keycloak.adapters.KeycloakConfigResolver
 import org.litote.kmongo.KMongo
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor
@@ -125,5 +129,11 @@ class InfrastructureContext(
         mongoClient: MongoClient
     ): MongoContentWarningRepository {
         return MongoContentWarningRepository(mongoClient)
+    }
+
+    @Bean
+    @Profile("!test")
+    fun keycloakConfigResolver(keycloakProperties: KeycloakProperties): KeycloakConfigResolver {
+        return AppKeycloakConfigResolver(keycloakProperties)
     }
 }
