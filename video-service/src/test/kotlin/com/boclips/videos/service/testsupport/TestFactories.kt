@@ -521,7 +521,7 @@ object UserFactory {
             isBoclipsEmployee = boclipsEmployee,
             context = RequestContext(origin = "https://teachers.boclips.com"),
             isPermittedToUpdateVideo = true,
-            isPermittedToViewAnyCollection = isPermittedToViewAnyCollection,
+            isPermittedToModifyAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToViewCollections = true,
             overrideIdSupplier = { overrideIdSupplier()?.let(::UserId) },

@@ -229,7 +229,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `can find collection that we have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionRetrievalService.findCollectionOfUser(
+            val collection = collectionRetrievalService.findOwnCollection(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = true)
             )!!
@@ -239,7 +239,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `cannot find collection if we don't have write access to`() {
             val collectionId = saveCollection()
-            val collection = collectionRetrievalService.findCollectionOfUser(
+            val collection = collectionRetrievalService.findOwnCollection(
                 collectionId,
                 UserFactory.sample(isPermittedToViewAnyCollection = false)
             )

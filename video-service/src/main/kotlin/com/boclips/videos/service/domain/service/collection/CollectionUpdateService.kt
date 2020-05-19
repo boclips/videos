@@ -18,7 +18,7 @@ class CollectionUpdateService(
     fun addVideoToCollectionOfUser(collectionId: CollectionId, videoId: VideoId, user: User) {
         throwIfNotOwner(collectionId, user)
 
-        collectionRetrievalService.findCollectionOfUser(id = collectionId, user = user)
+        collectionRetrievalService.findOwnCollection(id = collectionId, user = user)
             ?: throw CollectionIllegalOperationException(
                 userId = user.id,
                 collectionId = collectionId.value,
@@ -66,7 +66,7 @@ class CollectionUpdateService(
         collectionToBeUpdated: CollectionId,
         user: User
     ) {
-        (collectionRetrievalService.findCollectionOfUser(
+        (collectionRetrievalService.findOwnCollection(
             id = collectionToBeUpdated,
             user = user
         )

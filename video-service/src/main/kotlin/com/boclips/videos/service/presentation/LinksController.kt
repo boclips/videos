@@ -56,22 +56,21 @@ class LinksController(
         return LinksResource(
             links = listOfNotNull(
                 subjectsLinkBuilder.subjects(),
+
                 videosLinkBuilder.videoLink(),
                 videosLinkBuilder.getCaptions(),
                 videosLinkBuilder.searchVideosLink(),
+
                 videoTypeLinkBuilder.videoTypes(),
-                collectionsLinkBuilder.adminCollectionSearch(),
-                collectionsLinkBuilder.publicCollections(),
+
                 collectionsLinkBuilder.discoverCollections(),
-                collectionsLinkBuilder.bookmarkedCollections(),
                 collectionsLinkBuilder.promotedCollections(),
-                collectionsLinkBuilder.searchPublicCollections(),
                 collectionsLinkBuilder.searchCollections(),
                 collectionsLinkBuilder.collection(null),
-                collectionsLinkBuilder.collectionsByOwner(),
-                collectionsLinkBuilder.myCollections(),
+                collectionsLinkBuilder.myOwnCollections(),
                 collectionsLinkBuilder.mySavedCollections(),
                 collectionsLinkBuilder.createCollection(),
+
                 legalRestrictionsLinkBuilder.getAllLink(),
                 contentWarningLinkBuilder.getAllLink(),
                 disciplinesLinkBuilder.disciplines(),

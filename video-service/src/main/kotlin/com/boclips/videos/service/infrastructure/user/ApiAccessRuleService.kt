@@ -59,7 +59,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
             }
 
         return when {
-            user.isPermittedToViewAnyCollection -> CollectionAccessRule.everything()
+            user.isPermittedToModifyAnyCollection -> CollectionAccessRule.everything()
             collectionIds.isNotEmpty() -> CollectionAccessRule.specificIds(collectionIds)
             collectionIds.isEmpty() -> CollectionAccessRule.everything() // TODO: remove this rule and replace with access rule
             else -> CollectionAccessRule.asOwner(user.id)

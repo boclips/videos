@@ -77,7 +77,7 @@ class CollectionRetrievalService(
         }
     }
 
-    fun findCollectionOfUser(id: CollectionId, user: User): Collection? {
+    fun findOwnCollection(id: CollectionId, user: User): Collection? {
         return collectionRepository.find(id)?.let { collection ->
             if (!collectionAccessService.hasWriteAccess(collection, user).also {
                     if (!it) {

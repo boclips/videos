@@ -15,7 +15,7 @@ class CollectionAccessService {
     private fun hasAccess(collection: Collection, readOnly: Boolean, user: User): Boolean {
         return when {
             collection.owner == user.id -> true
-            user.isPermittedToViewAnyCollection -> true
+            user.isPermittedToModifyAnyCollection -> true
             readOnly && user.accessRules.collectionAccess.allowsAccessTo(collection) -> true
             else -> false
         }

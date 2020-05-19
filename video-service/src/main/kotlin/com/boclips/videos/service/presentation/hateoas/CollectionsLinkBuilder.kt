@@ -14,6 +14,7 @@ import com.boclips.videos.service.presentation.EventController
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.stereotype.Component
+import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
@@ -70,22 +71,6 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
-    fun publicCollections(
-        projection: Projection = Projection.list,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink {
-        return HateoasLink(
-            href = getCollectionsRoot()
-                .queryParam("projection", projection)
-                .queryParam("discoverable", true)
-                .queryParam("page", page)
-                .queryParam("size", size)
-                .toUriString(),
-            rel = "publicCollections"
-        )
-    }
-
     fun discoverCollections(
         projection: Projection = Projection.list,
         page: Int = 0,
@@ -119,100 +104,34 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         )
     }
 
-    fun searchPublicCollections(
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
-            HateoasLink(
-                href = getCollectionsRoot()
-                    .queryParam("discoverable", true)
-                    .toUriString() + "{&query,subject,projection,page,size,age_range_min,age_range_max,age_range,resource_types}",
-                rel = "searchPublicCollections"
-            )
-        }
-    }
-
-    fun adminCollectionSearch(): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
-            HateoasLink(
-                href = getCollectionsRoot()
-                    .toUriString() + "{?query,subject,projection,page,size}",
-                rel = "adminCollectionSearch"
-            )
-        }
-    }
-
     fun searchCollections(): HateoasLink? {
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
             HateoasLink(
                 href = getCollectionsRoot()
-                    .toUriString() + "{?query,subject,public,projection,page,size,age_range_min,age_range_max,age_range,resource_types}",
+                    .toUriString() + "{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}",
                 rel = "searchCollections"
             )
         }
     }
 
-    fun bookmarkedCollections(
-        projection: Projection = Projection.list,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
-            HateoasLink(
-                href = getCollectionsRoot()
-                    .queryParam("projection", projection)
-                    .queryParam("discoverable", true)
-                    .queryParam("bookmarked", true)
-                    .queryParam("page", page)
-                    .queryParam("size", size)
-                    .toUriString(),
-                rel = "bookmarkedCollections"
-            )
-        }
-    }
-
-    fun myCollections(
-        projection: Projection = Projection.list,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink? {
+    fun myOwnCollections(): HateoasLink? {
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
-                href = userCollectionsLink(user = currentUser, projection = projection, page = page, size = size)
-                    .toUriString(),
+                href = getUserCollectionsRoot(userId = currentUser)
+                    .queryParam("bookmarked", false)
+                    .toUriString() + "{&projection,page,size,sort_by}",
                 rel = "myCollections"
             )
         }
     }
 
-    fun mySavedCollections(
-        projection: Projection = Projection.list,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink? {
+    fun mySavedCollections(): HateoasLink? {
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
-                href = collectionsLink(projection = projection, page = page, size = size)
-                    .queryParam("owner", currentUser)
-                    .queryParam("bookmarked", true)
+                href = getUserCollectionsRoot(userId = currentUser)
                     .queryParam("sort_by", CollectionSortKey.UPDATED_AT)
-                    .toUriString(),
+                    .toUriString() + "{&projection,page,size}",
                 rel = "mySavedCollections"
-            )
-        }
-    }
-
-    fun collectionsByOwner(
-        projection: Projection = Projection.list,
-        page: Int = 0,
-        size: Int = CollectionsController.COLLECTIONS_PAGE_SIZE
-    ): HateoasLink? {
-        return getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
-            HateoasLink(
-                href = collectionsLink(projection = projection, page = page, size = size)
-                    .toUriString(),
-                rel = "collectionsByOwner"
             )
         }
     }
@@ -294,21 +213,6 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
             )
         }
     }
-
-    private fun collectionsLink(projection: Projection, page: Int, size: Int) = getCollectionsRoot()
-        .queryParam("projection", projection)
-        .queryParam("page", page)
-        .queryParam("size", size)
-
-    private fun userCollectionsLink(
-        projection: Projection,
-        page: Int,
-        size: Int,
-        user: String
-    ) = getUserCollectionsRoot(user)
-        .queryParam("projection", projection)
-        .queryParam("page", page)
-        .queryParam("size", size)
 
     private fun getCollectionsRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/collections")
