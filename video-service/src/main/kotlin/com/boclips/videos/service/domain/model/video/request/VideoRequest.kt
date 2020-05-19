@@ -17,6 +17,8 @@ import java.time.LocalDate
 enum class SortKey {
     RELEASE_DATE,
     RATING,
+    TITLE_DESC,
+    TITLE_ASC,
     RANDOM
 }
 
@@ -52,6 +54,14 @@ class VideoRequest(
                 SortKey.RATING -> Sort.ByField(
                     order = SortOrder.DESC,
                     fieldName = VideoMetadata::meanRating
+                )
+                SortKey.TITLE_DESC -> Sort.ByField(
+                    order = SortOrder.DESC,
+                    fieldName = VideoMetadata::title
+                )
+                SortKey.TITLE_ASC -> Sort.ByField(
+                    order = SortOrder.ASC,
+                    fieldName = VideoMetadata::title
                 )
                 SortKey.RANDOM -> Sort.ByRandom<VideoMetadata>()
             }

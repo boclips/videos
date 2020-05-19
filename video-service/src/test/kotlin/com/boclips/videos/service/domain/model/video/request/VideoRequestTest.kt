@@ -69,6 +69,38 @@ class VideoRequestTest {
     }
 
     @Test
+    fun `allows ordering of results by title descending`() {
+        val searchQuery = VideoRequest(
+            text = "testing",
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.TITLE_DESC
+        )
+            .toQuery(VideoAccess.Everything)
+
+        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.DESC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::title)
+    }
+
+    @Test
+    fun `allows ordering of results by title ascending`() {
+        val searchQuery = VideoRequest(
+            text = "testing",
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.TITLE_ASC
+        )
+            .toQuery(VideoAccess.Everything)
+
+        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.ASC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::title)
+    }
+
+    @Test
     fun `allows ordering of results by random`() {
         val searchQuery = VideoRequest(
             text = "testing",
