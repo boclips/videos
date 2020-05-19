@@ -82,7 +82,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 .queryParam("discoverable", true)
                 .queryParam("page", page)
                 .queryParam("size", size)
-                .toUriString(),
+                .toUriString() + "{&query,subject}",
             rel = "discoverCollections"
         )
     }

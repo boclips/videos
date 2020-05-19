@@ -36,7 +36,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2{&query,subject}")
         assertThat(link.rel).isEqualTo("discoverCollections")
     }
 
