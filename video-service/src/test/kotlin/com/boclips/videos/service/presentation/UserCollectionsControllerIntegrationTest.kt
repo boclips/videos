@@ -39,4 +39,21 @@ class UserCollectionsControllerIntegrationTest : AbstractCollectionsControllerIn
             )
             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.collections[2].title", Matchers.equalTo("mine")))
     }
+
+    @Test
+    fun `users collections filtering out bookmarks`() {
+        createCollection(title = "mine", discoverable = true, owner = "teacher")
+        createCollection(title = "bookmarked", discoverable = true, owner = "stranger").apply {
+            bookmarkCollection(this, "teacher")
+        }
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/users/teacher/collections?bookmarked=false").asTeacher("teacher")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.collections", Matchers.hasSize<Any>(1)))
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("$._embedded.collections[0].title", Matchers.equalTo("mine"))
+            )
+    }
 }

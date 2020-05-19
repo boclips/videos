@@ -19,7 +19,7 @@ class GetCollectionsOfUser(
         val assembledQuery = collectionSearchQueryAssembler(
             query = request.query,
             subjects = request.subject?.split(",")?.toList() ?: emptyList(),
-            bookmarked = true,
+            bookmarked = request.bookmarked ?: true,
             owner = owner.value,
             page = request.page,
             size = request.size,
