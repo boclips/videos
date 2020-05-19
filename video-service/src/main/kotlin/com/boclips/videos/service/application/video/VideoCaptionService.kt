@@ -32,6 +32,6 @@ class VideoCaptionService(
     }
 
     fun requestCaptionIfMissing(videoId: String?) {
-        videoId?.let { captionService.requestCaptionIfMissing(VideoId(it)) }
+        videoId?.let { captionService.requestCaption(VideoId(it)) }
     }
 }

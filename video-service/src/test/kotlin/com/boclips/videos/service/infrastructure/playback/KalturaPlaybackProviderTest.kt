@@ -216,7 +216,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `requests captions when not available`() {
         createMediaEntry("123")
 
-        kalturaPlaybackProvider.requestCaptions(PlaybackId(value = "123", type = PlaybackProviderType.KALTURA))
+        kalturaPlaybackProvider.requestCaptionsIfNotAvailable(PlaybackId(value = "123", type = PlaybackProviderType.KALTURA))
 
         val captionStatus = fakeKalturaClient.getCaptionStatus("123")
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
@@ -226,7 +226,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `does not request captions when available`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
 
-        kalturaPlaybackProvider.requestCaptions(playbackId)
+        kalturaPlaybackProvider.requestCaptionsIfNotAvailable(playbackId)
 
         val captionStatus = fakeKalturaClient.getCaptionStatus(playbackId.value)
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.AVAILABLE)

@@ -272,7 +272,10 @@ abstract class AbstractSpringIntegrationTest {
             DistributionMethodResource.STREAM
         ),
         subjectIds: Set<String> = setOf(),
-        language: String? = null
+        language: String? = null,
+        width: Int = 1920,
+        height: Int = 1080,
+        assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080))
     ): VideoId {
         val retrievedContentPartnerId =
             saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).contentPartnerId.value
@@ -280,7 +283,10 @@ abstract class AbstractSpringIntegrationTest {
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
                 id = playbackId.value,
-                duration = duration
+                duration = duration,
+                assets = assets,
+                width = width,
+                height = height
             )
             YOUTUBE -> {
                 fakeYoutubePlaybackProvider.addVideo(

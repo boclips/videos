@@ -23,7 +23,11 @@ sealed class VideoPlayback {
         val assets: Set<VideoAsset>?,
         val originalDimensions: Dimensions?,
         val thumbnailSecond: Int?
-    ) : VideoPlayback()
+    ) : VideoPlayback() {
+        fun hasOriginalOrFHDResolution(): Boolean {
+            return assets?.any { it.dimensions.isFHD() || it.dimensions.height == originalDimensions?.height } ?: false
+        }
+    }
 
     data class FaultyPlayback(
         override val id: PlaybackId,
