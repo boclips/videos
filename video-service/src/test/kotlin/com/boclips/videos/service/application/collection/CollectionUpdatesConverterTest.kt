@@ -55,7 +55,7 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(isPublic = true),
+                UpdateCollectionRequest(discoverable = true),
                 UserFactory.sample()
             )
 
@@ -69,7 +69,7 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(isPublic = false),
+                UpdateCollectionRequest(discoverable = false),
                 UserFactory.sample()
             )
 
@@ -83,7 +83,7 @@ class CollectionUpdatesConverterTest {
         val commands =
             collectionUpdatesConverter.convert(
                 CollectionId("testId"),
-                UpdateCollectionRequest(title = "some title", isPublic = true),
+                UpdateCollectionRequest(title = "some title", discoverable = true),
                 UserFactory.sample()
             )
 

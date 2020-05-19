@@ -26,7 +26,7 @@ class GetCollectionsOfUser(
             sort = request.sort_by,
             hasLessonPlans = request.has_lesson_plans,
             promoted = request.promoted,
-            discoverable = request.discoverable ?: request.public,
+            discoverable = request.discoverable,
             user = requester,
             ageRangeMin = request.age_range_min,
             ageRangeMax = request.age_range_max,

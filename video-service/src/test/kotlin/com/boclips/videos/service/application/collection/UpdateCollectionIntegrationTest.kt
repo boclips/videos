@@ -97,7 +97,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateCollection(
             collectionId = collectionId.value,
-            updateCollectionRequest = UpdateCollectionRequest(isPublic = true),
+            updateCollectionRequest = UpdateCollectionRequest(discoverable = true),
             requester = UserFactory.sample(id = "me@me.com")
         )
 

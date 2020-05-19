@@ -14,7 +14,6 @@ data class CollectionResource(
     val title: String? = null,
     val videos: List<VideoResource>,
     val updatedAt: ZonedDateTime? = null,
-    val public: Boolean? = null,
     val discoverable: Boolean? = null,
     val promoted: Boolean? = null,
     @get:JsonIgnore

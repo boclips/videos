@@ -4,7 +4,6 @@ import com.boclips.videos.api.request.Projection
 
 class CollectionFilterRequest(
     val query: String? = null,
-    val public: Boolean? = null, //TODO: remove
     val discoverable: Boolean? = null,
     val bookmarked: Boolean? = null,
     val promoted: Boolean? = null,

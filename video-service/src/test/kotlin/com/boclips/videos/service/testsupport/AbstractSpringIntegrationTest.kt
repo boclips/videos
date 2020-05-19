@@ -393,7 +393,7 @@ abstract class AbstractSpringIntegrationTest {
         updateCollection(
             collectionId = collectionId.value,
             updateCollectionRequest = UpdateCollectionRequest(
-                isPublic = discoverable,
+                discoverable = discoverable,
                 subjects = subjects.map { it.id.value }.toSet(),
                 ageRange = com.boclips.videos.api.request.agerange.AgeRangeRequest(ageRangeMin, ageRangeMax),
                 attachment = attachment

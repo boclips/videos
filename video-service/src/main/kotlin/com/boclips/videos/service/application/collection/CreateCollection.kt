@@ -16,7 +16,7 @@ class CreateCollection(private val collectionCreationService: CollectionCreation
             title = createCollectionRequest.title!!,
             description = createCollectionRequest.description,
             createdByBoclips = requester.isBoclipsEmployee,
-            discoverable = createCollectionRequest.discoverable ?: createCollectionRequest.public ?: false,
+            discoverable = createCollectionRequest.discoverable ?: false,
             subjects = createCollectionRequest.subjects.map { SubjectId(it) }.toSet()
         )
 

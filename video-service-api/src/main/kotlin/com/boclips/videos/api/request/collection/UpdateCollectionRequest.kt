@@ -8,17 +8,15 @@ import javax.validation.Valid
 
 class UpdateCollectionRequest(
     var title: String? = null,
-    var isPublic: Boolean? = null, //TODO: remove
     var discoverable: Boolean? = null,
+    var promoted: Boolean? = null,
+    var description: String? = null,
+    @field:Valid
+    var ageRange: AgeRangeRequest? = null,
+    var attachment: AttachmentRequest? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     var subjects: Set<String>? = null,
-    var description: String? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
-    var videos: List<String>? = null,
-    var attachment: AttachmentRequest? = null,
-    var promoted: Boolean? = null,
-
-    @field:Valid
-    var ageRange: AgeRangeRequest? = null
+    var videos: List<String>? = null
 )
 

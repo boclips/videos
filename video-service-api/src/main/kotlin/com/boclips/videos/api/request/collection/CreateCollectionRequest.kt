@@ -11,7 +11,6 @@ data class CreateCollectionRequest(
     val description: String? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val videos: List<String> = emptyList(),
-    val public: Boolean? = null, //TODO: remove
     val discoverable: Boolean? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val subjects: Set<String> = emptySet()

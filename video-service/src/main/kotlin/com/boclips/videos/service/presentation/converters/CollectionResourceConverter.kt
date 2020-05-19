@@ -35,7 +35,6 @@ class CollectionResourceConverter(
                 user
             ),
             updatedAt = collection.updatedAt,
-            public = collection.discoverable,
             discoverable = collection.discoverable,
             promoted = collection.promoted,
             mine = collection.isOwner(user),
@@ -68,7 +67,6 @@ class CollectionResourceConverter(
             title = collection.title,
             videos = videoToResourceConverter.convertVideoIds(collection.videos),
             updatedAt = collection.updatedAt,
-            public = collection.discoverable,
             discoverable = collection.discoverable,
             promoted = collection.promoted,
             mine = collection.isOwner(user),

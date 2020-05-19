@@ -160,7 +160,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(2)
 
             val collections = collectionsClient.getCollections(
-                CollectionFilterRequest(owner = "another@owner.com", public = true, projection = Projection.details)
+                CollectionFilterRequest(owner = "another@owner.com", discoverable = true, projection = Projection.details)
             )._embedded.collections
 
             assertThat(collections).hasSize(1)

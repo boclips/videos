@@ -66,7 +66,7 @@ class VideoServiceApiFactory {
             title = title,
             description = description,
             videos = videos,
-            public = discoverable
+            discoverable = discoverable
         )
 
         @JvmStatic
