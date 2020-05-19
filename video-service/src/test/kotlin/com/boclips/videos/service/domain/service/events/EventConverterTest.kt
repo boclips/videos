@@ -130,16 +130,19 @@ class EventConverterTest {
             createdAt = ZonedDateTime.of(2017, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC),
             updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC)
         )
-        val privateCollection = TestFactories.createCollection(discoverable = false)
+        val nonDiscoverableCollection = TestFactories.createCollection(discoverable = false)
 
         val publicCollectionEvent = converter.toCollectionPayload(publicCollection)
-        val privateCollectionEvent = converter.toCollectionPayload(privateCollection)
+        val nonDiscoverableCollectionEvent = converter.toCollectionPayload(nonDiscoverableCollection)
+
+        assertThat(nonDiscoverableCollectionEvent.isPublic).isFalse()
+        assertThat(nonDiscoverableCollectionEvent.isDiscoverable).isFalse()
 
         assertThat(publicCollectionEvent.id.value).isEqualTo(id)
         assertThat(publicCollectionEvent.title).isEqualTo("collection title")
         assertThat(publicCollectionEvent.description).isEqualTo("collection description")
         assertThat(publicCollectionEvent.isPublic).isTrue()
-        assertThat(privateCollectionEvent.isPublic).isFalse()
+        assertThat(publicCollectionEvent.isDiscoverable).isTrue()
         assertThat(publicCollectionEvent.videosIds).containsExactly(com.boclips.eventbus.domain.video.VideoId(videoId))
         assertThat(publicCollectionEvent.subjects).containsExactly(Subject(SubjectId("subject-id"), "subject name"))
         assertThat(publicCollectionEvent.ownerId.value).isEqualTo("user-id")

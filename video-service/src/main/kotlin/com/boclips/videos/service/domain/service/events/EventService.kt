@@ -135,7 +135,8 @@ class EventService(val eventBus: EventBus) {
                     msg(
                         builder = CollectionVisibilityChanged.builder()
                             .collectionId(updateCommand.collectionId.value)
-                            .isPublic(updateCommand.discoverable),
+                            .isPublic(updateCommand.discoverable)
+                            .isDiscoverable(updateCommand.discoverable),
                         user = updateCommand.user
                     )
                 )

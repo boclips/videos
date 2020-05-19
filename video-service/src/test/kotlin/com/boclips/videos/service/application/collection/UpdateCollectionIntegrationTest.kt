@@ -106,6 +106,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId.value)
         assertThat(event.userId).isEqualTo("me@me.com")
         assertThat(event.isPublic).isTrue()
+        assertThat(event.isDiscoverable).isTrue()
     }
 
     @Test

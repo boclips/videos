@@ -67,6 +67,7 @@ class EventConverter {
             .videosIds(collection.videos.map { VideoId(it.value) })
             .ownerId(UserId(collection.owner.value))
             .isPublic(collection.discoverable)
+            .isDiscoverable(collection.discoverable)
             .ageRange(toAgeRangePayload(collection.ageRange))
             .bookmarks(collection.bookmarks.map { UserId(it.value) })
             .build()

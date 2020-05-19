@@ -151,7 +151,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun collectionMadePublic() {
+    fun collectionMadeDiscoverable() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
@@ -169,10 +169,11 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.collectionId).isEqualTo(collectionId)
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.isPublic).isTrue()
+        assertThat(event.isDiscoverable).isTrue()
     }
 
     @Test
-    fun collectionMadePrivate() {
+    fun collectionMadeNonDiscoverable() {
         val collectionId = aValidId()
 
         eventService.saveUpdateCollectionEvent(
@@ -188,6 +189,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
         assertThat(event.isPublic).isFalse()
+        assertThat(event.isDiscoverable).isFalse()
     }
 
     @Test
