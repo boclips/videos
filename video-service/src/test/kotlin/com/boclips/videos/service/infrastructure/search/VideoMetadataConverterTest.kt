@@ -63,6 +63,7 @@ class VideoMetadataConverterTest {
             VideoMetadata(
                 id = videoId,
                 title = "video title",
+                rawTitle = "video title",
                 description = "video description",
                 contentProvider = "content partner",
                 contentPartnerId = "content-partner-id",

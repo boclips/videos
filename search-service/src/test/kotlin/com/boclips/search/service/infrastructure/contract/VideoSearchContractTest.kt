@@ -748,6 +748,50 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
+    fun `returns a list sorted by title ascending`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "bTitle",
+                    title = "Beautiful Person Dancing"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "aTitle",
+                    title = "An other Beautiful Person Dancing"
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "dTitle",
+                    title = "Dog dancing"
+                ), SearchableVideoMetadataFactory.create(
+                    id = "wTitle",
+                    title = "Weather report dancing"
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    phrase = "dancing",
+                    sort = Sort.ByField(
+                        fieldName = VideoMetadata::rawTitle,
+                        order = SortOrder.ASC
+                    )
+                ),
+                startIndex = 0,
+                windowSize = 20
+            )
+        )
+
+        assertThat(results.elements).isEqualTo(listOf("aTitle", "bTitle", "dTitle", "wTitle"))
+        assertThat(results.counts.totalHits).isEqualTo(4)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
     fun `returns a randomly sorted list`(
         queryService: IndexReader<VideoMetadata, VideoQuery>,
         adminService: IndexWriter<VideoMetadata>

@@ -16,6 +16,7 @@ class VideoIndexConfiguration : IndexConfiguration {
         return mapOf(
             "properties" to mapOf(
                 VideoDocument.TITLE to IndexConfiguration.Fields.freeText,
+                VideoDocument.RAW_TITLE to keywordField,
                 VideoDocument.DESCRIPTION to IndexConfiguration.Fields.freeText,
                 VideoDocument.SUBJECT_IDS to IndexConfiguration.Fields.simpleTextArray,
                 VideoDocument.SUBJECT_NAMES to IndexConfiguration.Fields.stringArray,

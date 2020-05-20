@@ -57,11 +57,11 @@ class VideoRequest(
                 )
                 SortKey.TITLE_DESC -> Sort.ByField(
                     order = SortOrder.DESC,
-                    fieldName = VideoMetadata::title
+                    fieldName = VideoMetadata::rawTitle
                 )
                 SortKey.TITLE_ASC -> Sort.ByField(
                     order = SortOrder.ASC,
-                    fieldName = VideoMetadata::title
+                    fieldName = VideoMetadata::rawTitle
                 )
                 SortKey.RANDOM -> Sort.ByRandom<VideoMetadata>()
             }

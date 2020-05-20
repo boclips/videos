@@ -37,6 +37,7 @@ object SearchableVideoMetadataFactory {
     ) = VideoMetadata(
         id = id,
         title = title,
+        rawTitle = title,
         description = description,
         contentProvider = contentProvider,
         contentPartnerId = contentPartnerId,
@@ -71,6 +72,7 @@ object TestFactories {
         return VideoDocument(
             id = "1",
             title = "title",
+            rawTitle = "title",
             description = "description",
             contentProvider = "contentProvider",
             contentPartnerId = "cp-123456",

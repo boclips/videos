@@ -21,6 +21,7 @@ class VideoDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
+                "rawTitle": "The title",
                 "description": "The description",
                 "contentProvider": "TED Talks",
                 "contentPartnerId": "123",
@@ -51,6 +52,7 @@ class VideoDocumentConverterTest {
             VideoDocument(
                 id = "14",
                 title = "The title",
+                rawTitle = "The title",
                 description = "The description",
                 contentProvider = "TED Talks",
                 contentPartnerId = "123",
@@ -84,6 +86,7 @@ class VideoDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
+                "rawTitle": "The title",
                 "description": "The description",
                 "contentProvider": "TED Talks",
                 "contentPartnerId": "123",  
@@ -108,6 +111,7 @@ class VideoDocumentConverterTest {
         val video = VideoMetadata(
             id = "id",
             title = "title",
+            rawTitle = "title",
             description = "description",
             contentProvider = "contentProvider",
             contentPartnerId = "cp-123",
@@ -137,6 +141,7 @@ class VideoDocumentConverterTest {
             VideoDocument(
                 id = "id",
                 title = "title",
+                rawTitle = "title",
                 description = "description",
                 contentProvider = "contentProvider",
                 contentPartnerId = "cp-123",
@@ -167,6 +172,7 @@ class VideoDocumentConverterTest {
         val video = VideoMetadata(
             id = "id",
             title = "title",
+            rawTitle = "title",
             description = "description",
             contentProvider = "contentProvider",
             contentPartnerId = "cp-123",
@@ -203,6 +209,7 @@ class VideoDocumentConverterTest {
             {
                 "id": "14",
                 "title": "The title",
+                "rawTitle": "The title",
                 "description": "The description",
                 "contentProvider": "TED Talks",
                 "contentPartnerId": "123",

@@ -5,6 +5,7 @@ import java.time.LocalDate
 data class VideoMetadata(
     val id: String,
     val title: String,
+    val rawTitle: String,
     val description: String,
     val contentProvider: String,
     val contentPartnerId: String,

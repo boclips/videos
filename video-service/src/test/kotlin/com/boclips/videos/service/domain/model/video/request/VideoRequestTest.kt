@@ -81,7 +81,7 @@ class VideoRequestTest {
         val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.DESC)
-        assertThat(sort.fieldName).isEqualTo(VideoMetadata::title)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::rawTitle)
     }
 
     @Test
@@ -97,7 +97,7 @@ class VideoRequestTest {
         val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.ASC)
-        assertThat(sort.fieldName).isEqualTo(VideoMetadata::title)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::rawTitle)
     }
 
     @Test

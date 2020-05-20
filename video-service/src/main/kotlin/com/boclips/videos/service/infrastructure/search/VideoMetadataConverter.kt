@@ -18,6 +18,7 @@ object VideoMetadataConverter {
         return VideoMetadata(
             id = video.videoId.value,
             title = video.title,
+            rawTitle = video.title,
             description = video.description,
             contentProvider = video.contentPartner.name,
             contentPartnerId = video.contentPartner.contentPartnerId.value,

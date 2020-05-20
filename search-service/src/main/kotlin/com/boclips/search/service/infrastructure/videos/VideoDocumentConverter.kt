@@ -15,6 +15,7 @@ object VideoDocumentConverter {
         return VideoDocument(
             id = video.id,
             title = video.title,
+            rawTitle = video.rawTitle,
             description = video.description,
             contentProvider = video.contentProvider,
             contentPartnerId = video.contentPartnerId,
