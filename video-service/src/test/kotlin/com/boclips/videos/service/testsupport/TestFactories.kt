@@ -468,14 +468,11 @@ object AccessRulesFactory {
         )
     }
 
-    fun publicOnly() =
+    fun everything() =
         sample(collectionAccessRule = CollectionAccessRule.everything())
 
     fun specificIds(vararg collectionIds: CollectionId) =
         sample(collectionAccessRule = CollectionAccessRule.specificIds(collectionIds.toList()))
-
-    fun superuser(): AccessRules =
-        sample(collectionAccessRule = CollectionAccessRule.everything())
 
     fun asOwner(ownerId: String): AccessRules =
         sample(

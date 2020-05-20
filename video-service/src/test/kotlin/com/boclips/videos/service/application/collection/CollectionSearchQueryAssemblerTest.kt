@@ -24,12 +24,12 @@ class CollectionSearchQueryAssemblerTest {
             query = "minute physics",
             subjects = listOf("Physics"),
             bookmarked = true,
+            owner = "other-id",
             page = 1,
             size = 30,
             sort = CollectionSortKey.TITLE,
-            user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
-            owner = "other-id",
             hasLessonPlans = true,
+            user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
             ageRangeMin = 3,
             ageRangeMax = 7,
             ageRange = listOf("3-7")
@@ -92,15 +92,6 @@ class CollectionSearchQueryAssemblerTest {
         }
 
         @Test
-        fun `with superuser access, default to no visibility constraints`() {
-            val query = collectionSearchQueryAssembler(
-                user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.superuser() })
-            )
-
-            assertThat(query.discoverable).isNull()
-        }
-
-        @Test
         fun `with owner access, default to all public and private owned collections`() {
             val query = collectionSearchQueryAssembler(
                 user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("me") })
@@ -127,22 +118,22 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with owner access, take bookmarkedBy from access rule`() {
             val query = collectionSearchQueryAssembler(
+                bookmarked = true,
                 user = UserFactory.sample(
                     id = "authenticated",
-                    accessRulesSupplier = { AccessRulesFactory.asOwner(ownerId = "access") }),
-                bookmarked = true
+                    accessRulesSupplier = { AccessRulesFactory.asOwner(ownerId = "access") })
             )
 
             assertThat(query.bookmarkedBy).isEqualTo("access")
         }
 
         @Test
-        fun `with superuser access, take bookmarkedBy from passed-in user`() {
+        fun `with access to everything, take bookmarkedBy from passed-in user`() {
             val query = collectionSearchQueryAssembler(
+                bookmarked = true,
                 user = UserFactory.sample(
                     id = "authenticated",
-                    accessRulesSupplier = { AccessRulesFactory.superuser() }),
-                bookmarked = true
+                    accessRulesSupplier = { AccessRulesFactory.everything() })
             )
 
             assertThat(query.bookmarkedBy).isEqualTo("authenticated")
@@ -159,6 +150,30 @@ class CollectionSearchQueryAssemblerTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun `when access to everything respects discoverable flag`() {
+        val query = collectionSearchQueryAssembler(
+            discoverable = false,
+            user = UserFactory.sample(accessRulesSupplier = {
+                AccessRulesFactory.everything()
+            })
+        )
+
+        assertThat(query.discoverable).isFalse()
+    }
+
+    @Test
+    fun `when elaborate access rules are in place defaults discoverable to null`() {
+        val query = collectionSearchQueryAssembler(
+            discoverable = false,
+            user = UserFactory.sample(accessRulesSupplier = {
+                AccessRulesFactory.specificIds()
+            })
+        )
+
+        assertThat(query.discoverable).isNull()
     }
 
     private fun collectionSearchQueryAssembler(
@@ -178,11 +193,13 @@ class CollectionSearchQueryAssemblerTest {
         }),
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
-        ageRange: List<String>? = null
+        ageRange: List<String>? = null,
+        discoverable: Boolean = true
     ) = CollectionSearchQueryAssembler()(
         query = query,
         subjects = subjects,
         bookmarked = bookmarked,
+        discoverable = discoverable,
         owner = owner,
         page = page,
         size = size,

@@ -46,7 +46,10 @@ class CollectionSearchQueryAssembler {
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
             bookmarkedBy = bookmarker?.value,
-            discoverable = discoverable,
+            discoverable = when(collectionAccess) {
+                CollectionAccessRule.Everything -> discoverable
+                else -> null
+            },
             promoted = promoted,
             hasLessonPlans = hasLessonPlans,
             owner = when (owner) {

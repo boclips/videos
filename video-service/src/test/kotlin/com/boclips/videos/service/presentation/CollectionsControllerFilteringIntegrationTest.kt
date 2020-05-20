@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
     fun `gets all user collections with full details, prioritising collections with attachments`() {
-        val collectionId = createCollection("collection 1")
-        createCollection("collection 2")
+        val collectionId = createCollection(title = "collection 1", discoverable = true)
+        createCollection(title = "collection 2", discoverable = true)
         addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
         updateCollectionAttachment(
             collectionId = collectionId,
@@ -59,8 +59,9 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
     @Test
     fun `gets all user collections with basic video details, prioritising collections with attachments`() {
-        val collectionId = createCollection("collection 1")
-        createCollection("collection 2")
+        val collectionId = createCollection(title = "collection 1", discoverable = true)
+        createCollection(title = "collection 2", discoverable = false)
+
         val savedVideoId = saveVideo(title = "a video title")
         addVideo(collectionId, savedVideoId.value)
         updateCollectionAttachment(
@@ -73,7 +74,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(true)))
@@ -93,7 +94,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     @Test
     fun `get another users private collections`() {
         val savedVideoId = saveVideo()
-        val collectionId = createCollection()
+        val collectionId = createCollection(discoverable = true)
         addVideo(collectionId, savedVideoId.value)
 
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asSubjectClassifier())
@@ -115,7 +116,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
 
     @Test
     fun `can fetch collections from another owner`() {
-        createCollection("collection 1")
+        createCollection(title = "collection 1")
 
         mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
             .andExpect(status().isOk)
@@ -254,9 +255,8 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("the truck was blue and yellow")))
-            .andExpect(jsonPath("$._embedded.collections[1].title", equalTo("while a car and a truck crashed")))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
     }
 
     @Test

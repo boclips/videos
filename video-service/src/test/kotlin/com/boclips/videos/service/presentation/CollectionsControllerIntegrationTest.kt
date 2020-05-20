@@ -118,10 +118,11 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val collectionWithLessonPlan =
             createCollection(
                 title = "collection with lesson plans",
-                description = "collection with a LESSON_PLAN attachment"
+                description = "collection with a LESSON_PLAN attachment",
+                discoverable = true
             )
 
-        createCollection("collection without lesson plans")
+        createCollection("collection without lesson plans", discoverable = true)
 
         updateCollectionAttachment(
             collectionId = collectionWithLessonPlan,
@@ -148,7 +149,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         val collectionWithLessonPlan =
             createCollection(
                 title = "collection with lesson plans",
-                description = "collection with a LESSON_PLAN attachment"
+                description = "collection with a LESSON_PLAN attachment",
+                discoverable = true
             )
 
         updateCollectionAttachment(
@@ -158,8 +160,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             attachmentURL = "http://www.google.com"
         )
 
-        createCollection("collection without lesson plans 1")
-        createCollection("collection without lesson plans 2")
+        createCollection("collection without lesson plans 1", discoverable = true)
+        createCollection("collection without lesson plans 2", discoverable = true)
 
         mockMvc.perform(
             get("/v1/collections?query=collection&has_lesson_plans=false").asApiUser()
@@ -336,7 +338,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     @Test
     fun `get all promoted collections`() {
         val promotedCollectionIds: Array<String> = (1..10).asIterable().map {
-            createCollection("collection$it").apply {
+            createCollection(title = "collection$it", discoverable = true).apply {
                 updateCollectionToBePromoted(this)
             }
         }.toTypedArray()
@@ -354,10 +356,10 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `get bookmarked collections correctly paginated, prioritising collections with attachments`() {
-        createCollection("collection 1").apply {
+        createCollection(title = "collection 1", discoverable = true).apply {
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
-        createCollection("collection 2").apply {
+        createCollection(title = "collection 2", discoverable = true).apply {
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
 
@@ -858,10 +860,10 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
 
     @Test
     fun `will return a superuser's bookmarked collections`() {
-        createCollection("collection 1").apply {
+        createCollection("collection 1", discoverable = true).apply {
             bookmarkCollection(this, "me@gmail.com")
         }
-        createCollection("collection 2").apply {
+        createCollection("collection 2", discoverable = true).apply {
             bookmarkCollection(this, "notMe@gmail.com")
         }
 
