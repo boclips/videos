@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.application.legalrestriction.CreateLeg
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
@@ -136,8 +136,8 @@ class ApplicationContext(
     )
 
     @Bean
-    fun suggestSearchQuery(contentPartnerRepository: ContentPartnerRepository): FindSuggestions =
-        FindSuggestions(contentPartnerRepository)
+    fun suggestSearchQuery(channelRepository: ChannelRepository): FindSuggestions =
+        FindSuggestions(channelRepository)
 
     @Bean
     fun createVideo(

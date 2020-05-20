@@ -1,7 +1,7 @@
 package com.boclips.videos.service.config.application
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
@@ -63,7 +63,7 @@ class DomainContext(
 
     @Bean
     fun videoService(
-        contentPartnerRepository: ContentPartnerRepository,
+        channelRepository: ChannelRepository,
         videoRepository: VideoRepository,
         videoIndex: VideoIndex,
         playbackRepository: PlaybackRepository,
@@ -74,15 +74,15 @@ class DomainContext(
 
     @Bean
     fun videoCreationService(
-        contentPartnerRepository: ContentPartnerRepository,
+        channelRepository: ChannelRepository,
         videoRepository: VideoRepository
     ): VideoCreationService {
-        return VideoCreationService(contentPartnerRepository, videoRepository)
+        return VideoCreationService(channelRepository, videoRepository)
     }
 
     @Bean
     fun videoDeletionService(
-        contentPartnerRepository: ContentPartnerRepository,
+        channelRepository: ChannelRepository,
         videoRepository: VideoRepository,
         collectionRepository: CollectionRepository,
         videoIndex: VideoIndex,
@@ -201,7 +201,7 @@ class DomainContext(
     }
 
     @Bean
-    fun contentPartnerRepository(): ContentPartnerRepository {
+    fun contentPartnerRepository(): ChannelRepository {
         return MongoContentPartnerRepository(
             mongoClient
         )

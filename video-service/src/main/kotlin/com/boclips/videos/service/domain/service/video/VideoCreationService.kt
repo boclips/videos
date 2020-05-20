@@ -1,13 +1,13 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.Video
 
 class VideoCreationService(
-    private val contentPartnerRepository: ContentPartnerRepository,
+    private val channelRepository: ChannelRepository,
     private val videoRepository: VideoRepository
 ) {
     fun create(videoToBeCreated: Video): Video {
@@ -22,8 +22,8 @@ class VideoCreationService(
 
         var ageRange = videoToBeCreated.ageRange
         if (videoToBeCreated.ageRange is UnknownAgeRange) {
-            contentPartnerRepository.findById(
-                contentPartnerId = ContentPartnerId(
+            channelRepository.findById(
+                channelId = ChannelId(
                     value = videoToBeCreated.contentPartner.contentPartnerId.value
                 )
             )

@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.application.contentpartner
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -13,7 +13,7 @@ class ContractUpdatedTest : AbstractSpringIntegrationTest() {
     lateinit var contractRepository: ContentPartnerContractRepository
 
     @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
+    lateinit var channelRepository: ChannelRepository
 
     @Test
     fun `updating a contract also updates any associated content partners`() {
@@ -30,7 +30,7 @@ class ContractUpdatedTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updateContentPartner = contentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+        val updateContentPartner = channelRepository.findById(contentPartner.id)!!
 
         assertThat(updateContentPartner.contract?.contentPartnerName).isEqualTo("new contract")
     }

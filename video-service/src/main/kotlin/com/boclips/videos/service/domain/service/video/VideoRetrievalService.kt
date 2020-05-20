@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException

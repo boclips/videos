@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video.indexing
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -32,7 +32,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Autowired
-    lateinit var contentPartnerRepository: ContentPartnerRepository
+    lateinit var channelRepository: ChannelRepository
 
     @Nested
     inner class OnVideoCreated {
@@ -216,12 +216,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             distributionMethods = distributionMethods
         )
 
-        val createdContentPartner = contentPartnerRepository.create(contentPartner)
+        val createdContentPartner = channelRepository.create(contentPartner)
 
         val video = videoRepository.create(
             TestFactories.createVideo(
                 contentPartnerId = ContentPartnerId(
-                    value = createdContentPartner.contentPartnerId.value
+                    value = createdContentPartner.id.value
                 )
             )
         )

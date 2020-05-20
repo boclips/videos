@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.application.contentpartner.BroadcastChannels
+import com.boclips.contentpartner.service.application.channel.BroadcastChannels
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.BroadcastVideos

@@ -76,8 +76,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `does not have access to excluded content partners`() {
-            val allowedContentPartnerId = saveContentPartner(name = "Tina").contentPartnerId.value
-            val excludedContentPartnerId = saveContentPartner(name = "Turner").contentPartnerId.value
+            val allowedContentPartnerId = saveContentPartner(name = "Tina").id.value
+            val excludedContentPartnerId = saveContentPartner(name = "Turner").id.value
 
             val allowedVideoId = saveVideo(contentProviderId = allowedContentPartnerId)
             val firstExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
@@ -114,8 +114,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             )
 
             val streamVideo =
-                saveVideo(title = "video", contentProviderId = streamContentPartner.contentPartnerId.value)
-            saveVideo(title = "video", contentProviderId = downloadContentPartner.contentPartnerId.value)
+                saveVideo(title = "video", contentProviderId = streamContentPartner.id.value)
+            saveVideo(title = "video", contentProviderId = downloadContentPartner.id.value)
 
             val searchResults = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
@@ -230,8 +230,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `does not have access to excluded content partners`() {
-            val allowedContentPartnerId = saveContentPartner(name = "Tuner").contentPartnerId.value
-            val excludedContentPartnerId = saveContentPartner(name = "Tina").contentPartnerId.value
+            val allowedContentPartnerId = saveContentPartner(name = "Tuner").id.value
+            val excludedContentPartnerId = saveContentPartner(name = "Tina").id.value
 
             val allowedVideoId = saveVideo(title = "Wild Elephant", contentProviderId = allowedContentPartnerId)
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)

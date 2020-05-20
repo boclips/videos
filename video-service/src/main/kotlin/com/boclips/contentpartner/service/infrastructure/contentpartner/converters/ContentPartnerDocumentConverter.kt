@@ -1,16 +1,16 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner.converters
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.Credit
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
@@ -18,8 +18,6 @@ import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentP
 import com.boclips.contentpartner.service.infrastructure.contentpartner.MarketingInformationDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
-import com.boclips.videos.api.common.ExplicitlyNull
-import com.boclips.videos.api.common.Specified
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -34,50 +32,50 @@ object ContentPartnerDocumentConverter : KLogging() {
         ageRangeBuckets?.map { AgeRangeDocumentConverter.toAgeRange(it) }
             ?: emptyList()
 
-    fun toContentPartnerDocument(contentPartner: ContentPartner): ContentPartnerDocument {
+    fun toContentPartnerDocument(channel: Channel): ContentPartnerDocument {
         return ContentPartnerDocument(
-            id = ObjectId(contentPartner.contentPartnerId.value),
-            youtubeChannelId = when (contentPartner.credit) {
-                is Credit.YoutubeCredit -> contentPartner.credit.channelId
+            id = ObjectId(channel.id.value),
+            youtubeChannelId = when (channel.credit) {
+                is Credit.YoutubeCredit -> channel.credit.channelId
                 else -> null
             },
-            name = contentPartner.name,
-            ageRanges = contentPartner.pedagogyInformation?.ageRangeBuckets?.ageRanges?.map {
+            name = channel.name,
+            ageRanges = channel.pedagogyInformation?.ageRangeBuckets?.ageRanges?.map {
                 AgeRangeDocumentConverter.toAgeRangeDocument(
                     it
                 )
             },
-            legalRestrictions = contentPartner.legalRestriction?.let {
+            legalRestrictions = channel.legalRestriction?.let {
                 LegalRestrictionsDocument.from(
                     it
                 )
             },
-            distributionMethods = contentPartner.distributionMethods
+            distributionMethods = channel.distributionMethods
                 .map(DistributionMethodDocumentConverter::toDocument)
                 .toSet(),
-            remittanceCurrency = contentPartner.remittance?.currency?.currencyCode,
-            description = contentPartner.description,
-            contentCategories = contentPartner.contentCategories,
-            hubspotId = contentPartner.hubspotId,
-            awards = contentPartner.awards,
-            notes = contentPartner.notes,
-            language = contentPartner.language?.toLanguageTag(),
-            contentTypes = contentPartner.contentTypes?.map { it.name },
+            remittanceCurrency = channel.remittance?.currency?.currencyCode,
+            description = channel.description,
+            contentCategories = channel.contentCategories,
+            hubspotId = channel.hubspotId,
+            awards = channel.awards,
+            notes = channel.notes,
+            language = channel.language?.toLanguageTag(),
+            contentTypes = channel.contentTypes?.map { it.name },
             ingest = IngestDetailsDocumentConverter.toIngestDetailsDocument(
-                contentPartner.ingest
+                channel.ingest
             ),
-            deliveryFrequency = contentPartner.deliveryFrequency?.toString(),
-            marketingInformation = contentPartner.marketingInformation?.let {
+            deliveryFrequency = channel.deliveryFrequency?.toString(),
+            marketingInformation = channel.marketingInformation?.let {
                 MarketingInformationDocument(
                     oneLineDescription = it.oneLineDescription,
                     status = when (it.status) {
-                        ContentPartnerStatus.NEEDS_INTRODUCTION -> ContentPartnerStatusDocument.NEEDS_INTRODUCTION
-                        ContentPartnerStatus.HAVE_REACHED_OUT -> ContentPartnerStatusDocument.HAVE_REACHED_OUT
-                        ContentPartnerStatus.NEEDS_CONTENT -> ContentPartnerStatusDocument.NEEDS_CONTENT
-                        ContentPartnerStatus.WAITING_FOR_INGEST -> ContentPartnerStatusDocument.WAITING_FOR_INGEST
-                        ContentPartnerStatus.SHOULD_ADD_TO_SITE -> ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE
-                        ContentPartnerStatus.SHOULD_PROMOTE -> ContentPartnerStatusDocument.SHOULD_PROMOTE
-                        ContentPartnerStatus.PROMOTED -> ContentPartnerStatusDocument.PROMOTED
+                        ChannelStatus.NEEDS_INTRODUCTION -> ContentPartnerStatusDocument.NEEDS_INTRODUCTION
+                        ChannelStatus.HAVE_REACHED_OUT -> ContentPartnerStatusDocument.HAVE_REACHED_OUT
+                        ChannelStatus.NEEDS_CONTENT -> ContentPartnerStatusDocument.NEEDS_CONTENT
+                        ChannelStatus.WAITING_FOR_INGEST -> ContentPartnerStatusDocument.WAITING_FOR_INGEST
+                        ChannelStatus.SHOULD_ADD_TO_SITE -> ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE
+                        ChannelStatus.SHOULD_PROMOTE -> ContentPartnerStatusDocument.SHOULD_PROMOTE
+                        ChannelStatus.PROMOTED -> ContentPartnerStatusDocument.PROMOTED
                         null -> null
                     },
                     logos = it.logos?.map { logoUrl -> logoUrl.toString() },
@@ -85,20 +83,20 @@ object ContentPartnerDocumentConverter : KLogging() {
                     sampleVideos = it.sampleVideos?.map { sampleVideoUrl -> sampleVideoUrl.toString() }
                 )
             },
-            isTranscriptProvided = contentPartner.pedagogyInformation?.isTranscriptProvided,
-            educationalResources = contentPartner.pedagogyInformation?.educationalResources,
-            curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
-            bestForTags = contentPartner.pedagogyInformation?.bestForTags,
-            subjects = contentPartner.pedagogyInformation?.subjects,
-            contract = contentPartner.contract?.let { contract ->
+            isTranscriptProvided = channel.pedagogyInformation?.isTranscriptProvided,
+            educationalResources = channel.pedagogyInformation?.educationalResources,
+            curriculumAligned = channel.pedagogyInformation?.curriculumAligned,
+            bestForTags = channel.pedagogyInformation?.bestForTags,
+            subjects = channel.pedagogyInformation?.subjects,
+            contract = channel.contract?.let { contract ->
                 ContentPartnerContractDocumentConverter().toDocument(contract)
             }
         )
     }
 
-    fun toContentPartner(document: ContentPartnerDocument): ContentPartner {
-        return ContentPartner(
-            contentPartnerId = ContentPartnerId(
+    fun toContentPartner(document: ContentPartnerDocument): Channel {
+        return Channel(
+            id = ChannelId(
                 value = document.id.toString()
             ),
             name = document.name,
@@ -124,12 +122,12 @@ object ContentPartnerDocumentConverter : KLogging() {
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.mapNotNull {
                 when (it) {
-                    "NEWS" -> ContentPartnerType.NEWS
-                    "INSTRUCTIONAL" -> ContentPartnerType.INSTRUCTIONAL
-                    "STOCK" -> ContentPartnerType.STOCK
+                    "NEWS" -> ContentType.NEWS
+                    "INSTRUCTIONAL" -> ContentType.INSTRUCTIONAL
+                    "STOCK" -> ContentType.STOCK
                     else -> {
                         logger.warn {
-                            "$it is not a valid type. Valid types are ${ContentPartnerType.values()
+                            "$it is not a valid type. Valid types are ${ContentType.values()
                                 .joinToString(prefix = "[", postfix = "]") { value -> value.name }}"
                         }
                         null
@@ -139,16 +137,16 @@ object ContentPartnerDocumentConverter : KLogging() {
             ingest = document.ingest?.let(IngestDetailsDocumentConverter::toIngestDetails) ?: ManualIngest,
             deliveryFrequency = document.deliveryFrequency?.let { Period.parse(it) },
             marketingInformation = document.marketingInformation?.let {
-                ContentPartnerMarketingInformation(
+                MarketingInformation(
                     oneLineDescription = it.oneLineDescription,
                     status = when (it.status) {
-                        ContentPartnerStatusDocument.NEEDS_INTRODUCTION -> ContentPartnerStatus.NEEDS_INTRODUCTION
-                        ContentPartnerStatusDocument.HAVE_REACHED_OUT -> ContentPartnerStatus.HAVE_REACHED_OUT
-                        ContentPartnerStatusDocument.NEEDS_CONTENT -> ContentPartnerStatus.NEEDS_CONTENT
-                        ContentPartnerStatusDocument.WAITING_FOR_INGEST -> ContentPartnerStatus.WAITING_FOR_INGEST
-                        ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE -> ContentPartnerStatus.SHOULD_ADD_TO_SITE
-                        ContentPartnerStatusDocument.SHOULD_PROMOTE -> ContentPartnerStatus.SHOULD_PROMOTE
-                        ContentPartnerStatusDocument.PROMOTED -> ContentPartnerStatus.PROMOTED
+                        ContentPartnerStatusDocument.NEEDS_INTRODUCTION -> ChannelStatus.NEEDS_INTRODUCTION
+                        ContentPartnerStatusDocument.HAVE_REACHED_OUT -> ChannelStatus.HAVE_REACHED_OUT
+                        ContentPartnerStatusDocument.NEEDS_CONTENT -> ChannelStatus.NEEDS_CONTENT
+                        ContentPartnerStatusDocument.WAITING_FOR_INGEST -> ChannelStatus.WAITING_FOR_INGEST
+                        ContentPartnerStatusDocument.SHOULD_ADD_TO_SITE -> ChannelStatus.SHOULD_ADD_TO_SITE
+                        ContentPartnerStatusDocument.SHOULD_PROMOTE -> ChannelStatus.SHOULD_PROMOTE
+                        ContentPartnerStatusDocument.PROMOTED -> ChannelStatus.PROMOTED
                         null -> null
                     },
                     logos = it.logos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl),

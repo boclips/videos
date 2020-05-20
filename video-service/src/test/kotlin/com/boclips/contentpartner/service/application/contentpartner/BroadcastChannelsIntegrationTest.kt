@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.application.contentpartner
 
+import com.boclips.contentpartner.service.application.channel.BroadcastChannels
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.eventbus.events.contentpartner.BroadcastChannelRequested
 import org.assertj.core.api.Assertions.assertThat

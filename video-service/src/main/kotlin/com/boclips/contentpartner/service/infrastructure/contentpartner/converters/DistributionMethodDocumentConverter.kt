@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.infrastructure.UnknownDeliveryMethodException
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 

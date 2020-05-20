@@ -1,12 +1,12 @@
 package com.boclips.contentpartner.service.domain.service
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.CustomIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.ChannelMarketingDetails
@@ -27,37 +27,37 @@ class EventConverter {
     companion object : KLogging()
 
     fun toContentPartnerPayload(
-        contentPartner: ContentPartner, allSubjects: List<Subject> = listOf()
+        channel: Channel, allSubjects: List<Subject> = listOf()
     ): EventBusContentPartner {
-        val subjects = contentPartner.pedagogyInformation?.subjects?.mapNotNull {
+        val subjects = channel.pedagogyInformation?.subjects?.mapNotNull {
             allSubjects.find { subject -> subject.id.value == it }
         }
         return EventBusContentPartner.builder()
-            .id(ContentPartnerId(contentPartner.contentPartnerId.value))
-            .name(contentPartner.name)
-            .details(channelTopLevelDetails(contentPartner))
-            .pedagogy(convertPedagogyDetails(contentPartner.pedagogyInformation, subjects))
-            .marketing(convertMarketingDetails(contentPartner.marketingInformation))
+            .id(ContentPartnerId(channel.id.value))
+            .name(channel.name)
+            .details(channelTopLevelDetails(channel))
+            .pedagogy(convertPedagogyDetails(channel.pedagogyInformation, subjects))
+            .marketing(convertMarketingDetails(channel.marketingInformation))
             .ageRange(
                 AgeRange.builder()
-                    .min(contentPartner.pedagogyInformation?.ageRangeBuckets?.min)
-                    .max(contentPartner.pedagogyInformation?.ageRangeBuckets?.max)
+                    .min(channel.pedagogyInformation?.ageRangeBuckets?.min)
+                    .max(channel.pedagogyInformation?.ageRangeBuckets?.max)
                     .build()
             )
-            .awards(contentPartner.awards)
-            .description(contentPartner.description)
-            .contentTypes(contentPartner.contentTypes?.map { it.name })
-            .contentCategories(contentPartner.contentCategories)
-            .language(contentPartner.language)
-            .hubspotId(contentPartner.hubspotId)
-            .notes(contentPartner.notes)
-            .legalRestrictions(contentPartner.legalRestriction?.text)
-            .ingest(toIngestDetailsPayload(contentPartner))
-            .deliveryFrequency(contentPartner.deliveryFrequency)
+            .awards(channel.awards)
+            .description(channel.description)
+            .contentTypes(channel.contentTypes?.map { it.name })
+            .contentCategories(channel.contentCategories)
+            .language(channel.language)
+            .hubspotId(channel.hubspotId)
+            .notes(channel.notes)
+            .legalRestrictions(channel.legalRestriction?.text)
+            .ingest(toIngestDetailsPayload(channel))
+            .deliveryFrequency(channel.deliveryFrequency)
             .build()
     }
 
-    private fun convertMarketingDetails(marketingInformation: ContentPartnerMarketingInformation?): ChannelMarketingDetails {
+    private fun convertMarketingDetails(marketingInformation: MarketingInformation?): ChannelMarketingDetails {
         return ChannelMarketingDetails.builder()
             .status(marketingInformation?.status?.name)
             .oneLineIntro(marketingInformation?.oneLineDescription)
@@ -67,15 +67,15 @@ class EventConverter {
             .build()
     }
 
-    private fun channelTopLevelDetails(contentPartner: ContentPartner): ChannelTopLevelDetails? {
+    private fun channelTopLevelDetails(channel: Channel): ChannelTopLevelDetails? {
         return ChannelTopLevelDetails.builder()
-            .contentTypes(contentPartner.contentTypes?.map { it.name })
-            .contentCategories(contentPartner.contentCategories)
-            .hubspotId(contentPartner.hubspotId)
-            .contractId(contentPartner.contract?.id?.value)
-            .awards(contentPartner.awards)
-            .notes(contentPartner.notes)
-            .language(contentPartner.language)
+            .contentTypes(channel.contentTypes?.map { it.name })
+            .contentCategories(channel.contentCategories)
+            .hubspotId(channel.hubspotId)
+            .contractId(channel.contract?.id?.value)
+            .awards(channel.awards)
+            .notes(channel.notes)
+            .language(channel.language)
             .build()
     }
 
@@ -98,8 +98,8 @@ class EventConverter {
             .build()
     }
 
-    fun toIngestDetailsPayload(contentPartner: ContentPartner): EventBusIngestDetails {
-        val ingest = contentPartner.ingest
+    fun toIngestDetailsPayload(channel: Channel): EventBusIngestDetails {
+        val ingest = channel.ingest
         val (type, urls) = when (ingest) {
             ManualIngest -> IngestType.MANUAL to null
             CustomIngest -> IngestType.CUSTOM to null
@@ -111,7 +111,7 @@ class EventConverter {
             .builder()
             .type(type.name)
             .urls(urls)
-            .deliveryFrequency(contentPartner.deliveryFrequency)
+            .deliveryFrequency(channel.deliveryFrequency)
             .build()
     }
 

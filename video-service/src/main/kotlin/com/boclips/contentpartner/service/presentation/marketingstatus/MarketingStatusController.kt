@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.marketingstatus
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
+import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerStatusWrapperResource
 import com.boclips.videos.api.response.contentpartner.ContentPartnerStatusesResource
@@ -17,7 +17,7 @@ class MarketingStatusController(private val marketingStatusLinkBuilder: Marketin
         marketingStatusLinkBuilder.self().let { self ->
             ContentPartnerStatusesResource(
                 _embedded = ContentPartnerStatusWrapperResource(
-                    statuses = ContentPartnerStatus.values().map {
+                    statuses = ChannelStatus.values().map {
                         it.name
                     }
                 ),

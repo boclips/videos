@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video.indexing
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
@@ -36,28 +36,28 @@ class RebuildVideoIndexTest {
     fun setUp() {
         val inMemorySearchService = VideoSearchServiceFake()
 
-        val contentPartnerRepository: ContentPartnerRepository = getMockContentPartnerRepo(
+        val channelRepository: ChannelRepository = getMockContentPartnerRepo(
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(
+                id = ChannelId(
                     bothContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
             ),
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(
+                id = ChannelId(
                     streamableContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.STREAM)
             ),
             com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner(
-                id = ContentPartnerId(
+                id = ChannelId(
                     downloadContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
         )
 
-        contentPartnerService = ContentPartnerService(contentPartnerRepository)
+        contentPartnerService = ContentPartnerService(channelRepository)
         index = DefaultVideoSearch(
             inMemorySearchService,
             inMemorySearchService,
@@ -181,10 +181,10 @@ class RebuildVideoIndexTest {
         }
     }
 
-    private fun getMockContentPartnerRepo(vararg contentPartners: ContentPartner): ContentPartnerRepository {
+    private fun getMockContentPartnerRepo(vararg channels: Channel): ChannelRepository {
         return mock() {
-            contentPartners.forEach {
-                on { findById(it.contentPartnerId) } doReturn it
+            channels.forEach {
+                on { findById(it.id) } doReturn it
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
@@ -8,7 +7,6 @@ import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartn
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -28,7 +26,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
             TestFactories.createVideo(
                 contentPartnerName = "Our content partner",
                 contentPartnerId = ContentPartnerId(
-                    value = contentPartner.contentPartnerId.value
+                    value = contentPartner.id.value
                 ),
                 ageRange = UnknownAgeRange
             )
@@ -44,7 +42,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
         videoCreationService.create(
             TestFactories.createVideo(
                 contentPartnerId = ContentPartnerId(
-                    value = contentPartner.contentPartnerId.value
+                    value = contentPartner.id.value
                 ),
                 videoReference = "video-123"
             )
@@ -54,7 +52,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
             videoCreationService.create(
                 TestFactories.createVideo(
                     contentPartnerId = ContentPartnerId(
-                        value = contentPartner.contentPartnerId.value
+                        value = contentPartner.id.value
                     ),
                     videoReference = "video-123"
                 )

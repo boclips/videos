@@ -42,8 +42,8 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveContentPartner(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
 
             val streamVideo =
-                saveVideo(title = "video included", contentProviderId = streamContentPartner.contentPartnerId.value)
-            saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.contentPartnerId.value)
+                saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
+            saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.id.value)
 
             addsAccessToStreamingVideos("api-user@gmail.com", DistributionMethodResource.STREAM)
 
@@ -85,10 +85,10 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val excludedContentPartner = saveContentPartner(name = "Tiner")
 
             val videoWithAllowedContentPartner =
-                saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.contentPartnerId.value)
-            saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.contentPartnerId.value)
+                saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.id.value)
+            saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.id.value)
 
-            removeAccessToContentPartner("api-user@gmail.com", excludedContentPartner.contentPartnerId.value)
+            removeAccessToContentPartner("api-user@gmail.com", excludedContentPartner.id.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

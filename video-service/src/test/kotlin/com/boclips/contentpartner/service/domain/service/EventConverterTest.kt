@@ -3,14 +3,14 @@ package com.boclips.contentpartner.service.domain.service
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.INSTRUCTIONAL
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.NEWS
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType.STOCK
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
+import com.boclips.contentpartner.service.domain.model.channel.ContentType.INSTRUCTIONAL
+import com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS
+import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.SubjectFactory
@@ -30,7 +30,7 @@ class EventConverterTest {
         val name = "CP name"
 
         val contentPartner = createContentPartner(
-            id = ContentPartnerId(id),
+            id = ChannelId(id),
             name = name
         )
 
@@ -86,7 +86,7 @@ class EventConverterTest {
         )
 
         val pedagogy = converter.toContentPartnerPayload(
-            contentPartner = contentPartner,
+            channel = contentPartner,
             allSubjects = listOf(
                 SubjectFactory.sample(id = "subject-1"),
                 SubjectFactory.sample(id = "subject-2"),
@@ -120,8 +120,8 @@ class EventConverterTest {
     @Test
     fun `convert marketing details`() {
         val contentPartner = createContentPartner(
-            marketingInformation = ContentPartnerMarketingInformation(
-                status = ContentPartnerStatus.PROMOTED,
+            marketingInformation = MarketingInformation(
+                status = ChannelStatus.PROMOTED,
                 oneLineDescription = "What a great content partner",
                 logos = listOf(URL("https://cp.com/logo.jpg")),
                 showreel = URL("https://google.com/"),

@@ -1,14 +1,14 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerFilter
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.Credit
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Period
 
-class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
+class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mongoContentPartnerRepository: MongoContentPartnerRepository
 
@@ -30,9 +30,9 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `can create a content partner`() {
         val contentPartner = createContentPartner()
 
-        val createdAsset = mongoContentPartnerRepository.create(contentPartner = contentPartner)
+        val createdAsset = mongoContentPartnerRepository.create(channel = contentPartner)
 
-        assertThat(createdAsset.contentPartnerId.value).isEqualTo(contentPartner.contentPartnerId.value)
+        assertThat(createdAsset.id.value).isEqualTo(contentPartner.id.value)
     }
 
     @Test
@@ -41,7 +41,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             createContentPartner()
         )
 
-        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
+        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.id)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
@@ -49,7 +49,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `findById does not throw for invalid object id`() {
         val retrievedAsset = mongoContentPartnerRepository.findById(
-            ContentPartnerId(
+            ChannelId(
                 "invalid-hex-string"
             )
         )
@@ -62,10 +62,10 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         val contentPartnerIds = listOf(
             mongoContentPartnerRepository.create(
                 createContentPartner(name = "hello")
-            ).contentPartnerId,
+            ).id,
             mongoContentPartnerRepository.create(
                 createContentPartner(name = "hello")
-            ).contentPartnerId
+            ).id
         )
 
         mongoContentPartnerRepository.create(
@@ -73,42 +73,42 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
         )
 
         val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.NameFilter(name = "hello")))
+            mongoContentPartnerRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
 
-        assertThat(retrievedContentPartners.map { it.contentPartnerId }).isEqualTo(contentPartnerIds)
+        assertThat(retrievedContentPartners.map { it.id }).isEqualTo(contentPartnerIds)
     }
 
     @Test
     fun `find all by official filter`() {
         val officialContentPartnerId = mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.PartnerCredit)
-        ).contentPartnerId
+        ).id
 
 
         mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
-        ).contentPartnerId
+        ).id
 
         val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ContentPartnerFilter.OfficialFilter(official = true)))
+            mongoContentPartnerRepository.findAll(listOf(ChannelFilter.OfficialFilter(official = true)))
 
-        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(officialContentPartnerId)
+        assertThat(retrievedContentPartners.map { it.id }).containsExactly(officialContentPartnerId)
     }
 
     @Test
     fun `find all by accredited to youtube channel id`() {
         mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.PartnerCredit)
-        ).contentPartnerId
+        ).id
 
         val accreditedToYtChannelContentPartner = mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
-        ).contentPartnerId
+        ).id
 
         val retrievedContentPartners =
             mongoContentPartnerRepository.findAll(
                 listOf(
-                    ContentPartnerFilter.AccreditedTo(
+                    ChannelFilter.AccreditedTo(
                         Credit.YoutubeCredit(
                             channelId = "123"
                         )
@@ -116,7 +116,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
                 )
             )
 
-        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(
+        assertThat(retrievedContentPartners.map { it.id }).containsExactly(
             accreditedToYtChannelContentPartner
         )
     }
@@ -125,25 +125,25 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
     fun `find all with multiple filters`() {
         val toBeFoundContentPartnerId = mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
-        ).contentPartnerId
+        ).id
 
         mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
-        ).contentPartnerId
+        ).id
 
         mongoContentPartnerRepository.create(
             createContentPartner(credit = Credit.PartnerCredit, name = "hello")
-        ).contentPartnerId
+        ).id
 
         val retrievedContentPartners =
             mongoContentPartnerRepository.findAll(
                 listOf(
-                    ContentPartnerFilter.OfficialFilter(official = false),
-                    ContentPartnerFilter.NameFilter(name = "hello")
+                    ChannelFilter.OfficialFilter(official = false),
+                    ChannelFilter.NameFilter(name = "hello")
                 )
             )
 
-        assertThat(retrievedContentPartners.map { it.contentPartnerId }).containsExactly(toBeFoundContentPartnerId)
+        assertThat(retrievedContentPartners.map { it.id }).containsExactly(toBeFoundContentPartnerId)
     }
 
     @Test
@@ -154,7 +154,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
         )
 
-        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.contentPartnerId)
+        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.id)
 
         assertThat(retrievedAsset).isEqualTo(originalContentPartner)
     }
@@ -198,14 +198,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceName(
-                    contentPartnerId = contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceName(
+                    channelId = contentPartner.id,
                     name = "new name"
                 )
             )
         )
 
-        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedAsset?.name).isEqualTo("new name")
     }
 
@@ -223,8 +223,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceAgeRanges(
-                    contentPartnerId = contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceAgeRanges(
+                    channelId = contentPartner.id,
                     ageRangeBuckets = AgeRangeBuckets(
                         listOf(ContentPartnerFactory.createAgeRange(min = 10, max = 20))
                     )
@@ -232,7 +232,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
         )
 
-        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
         assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.min).isEqualTo(10)
         assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.max).isEqualTo(20)
     }
@@ -250,14 +250,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceLegalRestrictions(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceLegalRestrictions(
+                    contentPartner.id,
                     legalRestrictions
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.legalRestriction).isEqualTo(legalRestrictions)
     }
 
@@ -268,14 +268,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceCurriculumAligned(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceCurriculumAligned(
+                    contentPartner.id,
                     curriculumAligned
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
     }
 
@@ -286,14 +286,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceIsTranscriptProvided(
+                    contentPartner.id,
                     isTranscriptProvided
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
     }
 
@@ -304,14 +304,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceEducationalResources(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceEducationalResources(
+                    contentPartner.id,
                     educationalResources
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
     }
 
@@ -322,14 +322,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceBestForTags(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceBestForTags(
+                    contentPartner.id,
                     bestForTags
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
     }
 
@@ -340,14 +340,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceSubjects(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceSubjects(
+                    contentPartner.id,
                     subjects
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 
@@ -357,8 +357,8 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceIngestDetails(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceIngestDetails(
+                    contentPartner.id,
                     YoutubeScrapeIngest(
                         listOf("http://youtube.com/channel")
                     )
@@ -366,7 +366,7 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.ingest).isEqualTo(
             YoutubeScrapeIngest(
                 listOf("http://youtube.com/channel")
@@ -381,14 +381,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
         mongoContentPartnerRepository.update(
             listOf(
-                ContentPartnerUpdateCommand.ReplaceDeliveryFrequency(
-                    contentPartner.contentPartnerId,
+                ChannelUpdateCommand.ReplaceDeliveryFrequency(
+                    contentPartner.id,
                     Period.ofYears(1)
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)
+        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
         assertThat(updatedContentPartner?.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
@@ -404,14 +404,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceDistributionMethods(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                    ChannelUpdateCommand.ReplaceDistributionMethods(
+                        channelId = contentPartner.id,
                         distributionMethods = setOf(DistributionMethod.STREAM)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(setOf(DistributionMethod.STREAM))
         }
 
@@ -425,14 +425,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceDistributionMethods(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                    ChannelUpdateCommand.ReplaceDistributionMethods(
+                        channelId = contentPartner.id,
                         distributionMethods = setOf(DistributionMethod.DOWNLOAD)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(setOf(DistributionMethod.DOWNLOAD))
         }
 
@@ -446,14 +446,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceDistributionMethods(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                    ChannelUpdateCommand.ReplaceDistributionMethods(
+                        channelId = contentPartner.id,
                         distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
         }
 
@@ -467,14 +467,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceDistributionMethods(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                    ChannelUpdateCommand.ReplaceDistributionMethods(
+                        channelId = contentPartner.id,
                         distributionMethods = emptySet()
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.distributionMethods).isEmpty()
         }
     }
@@ -493,13 +493,13 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceEducationalResources(
-                        contentPartner.contentPartnerId, "New Resource"
+                    ChannelUpdateCommand.ReplaceEducationalResources(
+                        contentPartner.id, "New Resource"
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.pedagogyInformation?.educationalResources).isEqualTo("New Resource")
         }
 
@@ -515,13 +515,13 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceBestForTags(
-                        contentPartner.contentPartnerId, listOf("555", "666")
+                    ChannelUpdateCommand.ReplaceBestForTags(
+                        contentPartner.id, listOf("555", "666")
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.pedagogyInformation?.bestForTags).containsExactlyInAnyOrder("555", "666")
         }
 
@@ -537,13 +537,13 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
 
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceSubjects(
-                        contentPartner.contentPartnerId, listOf("subject 3", "subject 4")
+                    ChannelUpdateCommand.ReplaceSubjects(
+                        contentPartner.id, listOf("subject 3", "subject 4")
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updatedAsset.pedagogyInformation?.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
         }
 
@@ -555,14 +555,14 @@ class MongoContentPartnerRepositoryIntegrationTest : AbstractSpringIntegrationTe
             val newContract = ContentPartnerContractFactory.sample(contentPartnerName = "new")
             mongoContentPartnerRepository.update(
                 listOf(
-                    ContentPartnerUpdateCommand.ReplaceContract(
-                        contentPartnerId = contentPartner.contentPartnerId,
+                    ChannelUpdateCommand.ReplaceContract(
+                        channelId = contentPartner.id,
                         contract = newContract
                     )
                 )
             )
 
-            val updated = mongoContentPartnerRepository.findById(contentPartner.contentPartnerId)!!
+            val updated = mongoContentPartnerRepository.findById(contentPartner.id)!!
             assertThat(updated.contract).isEqualTo(newContract)
         }
 

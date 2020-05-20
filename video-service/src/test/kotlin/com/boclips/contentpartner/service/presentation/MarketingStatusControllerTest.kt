@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerStatus
+import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asUserWithRoles
@@ -26,7 +26,7 @@ class MarketingStatusControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._embedded.statuses",
-                    hasSize<Int>(ContentPartnerStatus.values().size)
+                    hasSize<Int>(ChannelStatus.values().size)
                 )
             )
             .andExpect(jsonPath("$._links.self.href", endsWith(getStatusesLink)))

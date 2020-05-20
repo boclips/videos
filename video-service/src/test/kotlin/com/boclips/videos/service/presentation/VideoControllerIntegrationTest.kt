@@ -425,7 +425,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val contentPartnerId = saveContentPartner().contentPartnerId.value
+            val contentPartnerId = saveContentPartner().id.value
 
             val content = """
             {
@@ -460,7 +460,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `create new video with subjects`() {
             val subjectId = saveSubject("Maths").id
-            val contentPartnerId = saveContentPartner().contentPartnerId.value
+            val contentPartnerId = saveContentPartner().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -499,7 +499,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `create new video with a language`() {
-            val contentPartnerId = saveContentPartner().contentPartnerId.value
+            val contentPartnerId = saveContentPartner().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -538,7 +538,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns a helpful error message when request is not valid`() {
-            val contentPartnerId = saveContentPartner().contentPartnerId.value
+            val contentPartnerId = saveContentPartner().id.value
 
             val content = """
             {
@@ -559,7 +559,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val contentPartnerId = saveContentPartner(name = "AP").contentPartnerId.value
+            val contentPartnerId = saveContentPartner(name = "AP").id.value
 
             val content = """
             {
@@ -635,7 +635,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/abc")
+                MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.id.value}/videos/abc")
                     .asIngestor()
             )
                 .andExpect(status().isOk)

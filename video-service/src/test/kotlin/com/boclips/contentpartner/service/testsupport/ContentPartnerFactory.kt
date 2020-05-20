@@ -1,18 +1,17 @@
 package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
-import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.contentpartner.IngestDetails
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.Credit
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
@@ -35,7 +34,7 @@ object ContentPartnerFactory {
     }
 
     fun createContentPartner(
-        id: ContentPartnerId = ContentPartnerId(
+        id: ChannelId = ChannelId(
             ObjectId().toHexString()
         ),
         name: String = "TED",
@@ -49,15 +48,15 @@ object ContentPartnerFactory {
         awards: String? = null,
         notes: String? = null,
         language: Locale? = null,
-        contentTypes: List<ContentPartnerType>? = emptyList(),
+        contentTypes: List<ContentType>? = emptyList(),
         ingest: IngestDetails = ManualIngest,
         deliveryFrequency: Period? = null,
         pedagogyInformation: PedagogyInformation? = null,
-        marketingInformation: ContentPartnerMarketingInformation? = null,
+        marketingInformation: MarketingInformation? = null,
         contract: ContentPartnerContract? = null
-    ): ContentPartner {
-        return ContentPartner(
-            contentPartnerId = id,
+    ): Channel {
+        return Channel(
+            id = id,
             name = name,
             credit = credit,
             legalRestriction = legalRestriction,

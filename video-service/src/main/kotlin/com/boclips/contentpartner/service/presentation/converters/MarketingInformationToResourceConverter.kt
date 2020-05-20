@@ -1,12 +1,10 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerMarketingInformation
-import com.boclips.videos.api.common.ExplicitlyNull
-import com.boclips.videos.api.common.Specified
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.videos.api.response.contentpartner.ContentPartnerMarketingResource
 
 object MarketingInformationToResourceConverter {
-    fun from(marketingInformation: ContentPartnerMarketingInformation?) =
+    fun from(marketingInformation: MarketingInformation?) =
         marketingInformation?.let {
             ContentPartnerMarketingResource(
                 status = it.status?.name,

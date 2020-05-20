@@ -1,12 +1,12 @@
 package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
-import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
+import com.boclips.contentpartner.service.application.channel.CreateChannel
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
@@ -19,7 +19,6 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
@@ -107,13 +106,13 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createCollection: CreateCollection
 
     @Autowired
-    lateinit var createContentPartner: CreateContentPartner
+    lateinit var createChannel: CreateChannel
 
     @Autowired
     lateinit var createAgeRange: CreateAgeRange
 
     @Autowired
-    lateinit var getContentPartners: GetContentPartners
+    lateinit var getChannels: GetChannels
 
     @Autowired
     lateinit var mongoClient: MongoClient
@@ -214,9 +213,9 @@ abstract class AbstractSpringIntegrationTest {
     ): VideoId {
         val retrievedContentPartnerId = try {
             saveContentPartner(name = contentProvider,
-                distributionMethods = distributionMethods).contentPartnerId
+                distributionMethods = distributionMethods).id
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(name = contentProvider).firstOrNull()!!.contentPartnerId
+            getChannels.invoke(name = contentProvider).firstOrNull()!!.id
         }
 
         when (playbackId.type) {
@@ -281,9 +280,9 @@ abstract class AbstractSpringIntegrationTest {
         bestForTags: List<String>? = null,
         subjects: List<String>? = null,
         contractId: String? = null
-    ): ContentPartner {
+    ): Channel {
         val contract = contractId ?: saveContentPartnerContract(name = UUID.randomUUID().toString()).id.value
-        val createdContentPartner = createContentPartner(
+        val createdContentPartner = createChannel(
             VideoServiceApiFactory.createContentPartnerRequest(
                 name = name,
                 ageRanges = ageRanges,

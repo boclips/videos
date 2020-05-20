@@ -1,10 +1,10 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.Credit
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
@@ -62,7 +62,7 @@ class ContentPartnerToResourceConverterTest {
                 urls = listOf("https://feed.mrss")
             ),
             deliveryFrequency = Period.ofMonths(3),
-            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK),
+            contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED")
         )
 
@@ -117,7 +117,7 @@ class ContentPartnerToResourceConverterTest {
                 urls = listOf("https://feed.mrss")
             ),
             deliveryFrequency = Period.ofMonths(3),
-            contentTypes = listOf(ContentPartnerType.INSTRUCTIONAL, ContentPartnerType.STOCK),
+            contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(
                 id = "id",
                 contentPartnerName = "TED",

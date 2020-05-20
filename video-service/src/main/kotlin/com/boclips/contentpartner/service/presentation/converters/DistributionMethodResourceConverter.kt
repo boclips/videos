@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
 
 object DistributionMethodResourceConverter {

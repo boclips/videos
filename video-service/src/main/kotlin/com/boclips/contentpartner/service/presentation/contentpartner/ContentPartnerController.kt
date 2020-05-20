@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.presentation.contentpartner
 
-import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
-import com.boclips.contentpartner.service.application.contentpartner.UpdateContentPartner
+import com.boclips.contentpartner.service.application.channel.CreateChannel
+import com.boclips.contentpartner.service.application.channel.GetChannel
+import com.boclips.contentpartner.service.application.channel.GetChannels
+import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
@@ -32,10 +32,10 @@ import javax.validation.constraints.NotBlank
 @RequestMapping("/v1/content-partners")
 class ContentPartnerController(
     private val videoRepository: VideoRepository,
-    private val createContentPartner: CreateContentPartner,
-    private val updateContentPartner: UpdateContentPartner,
-    private val fetchContentPartner: GetContentPartner,
-    private val fetchContentPartners: GetContentPartners,
+    private val createChannel: CreateChannel,
+    private val updateChannel: UpdateChannel,
+    private val fetchChannel: GetChannel,
+    private val fetchChannels: GetChannels,
     private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
     private val contentPartnerToResourceConverter: ContentPartnerToResourceConverter,
     private val marketingSignedLinkProvider: SignedLinkProvider
@@ -56,7 +56,7 @@ class ContentPartnerController(
 
     @GetMapping
     fun getContentPartners(contentPartnerFilterRequest: ContentPartnerFilterRequest): ContentPartnersResource {
-        val contentPartners = fetchContentPartners(
+        val contentPartners = fetchChannels(
             name = contentPartnerFilterRequest.name,
             official = contentPartnerFilterRequest.official,
             accreditedToYtChannelId = contentPartnerFilterRequest.accreditedToYtChannelId,
@@ -72,7 +72,7 @@ class ContentPartnerController(
 
     @GetMapping("/{id}")
     fun getContentPartner(@PathVariable("id") @NotBlank contentPartnerId: String?): ResponseEntity<ContentPartnerResource> {
-        val contentPartnerResource = fetchContentPartner(contentPartnerId!!)
+        val contentPartnerResource = fetchChannel(contentPartnerId!!)
             .let { contentPartnerToResourceConverter.convert(it) }
             .copy(_links = listOf(contentPartnersLinkBuilder.self(contentPartnerId)).map { it.rel to it }.toMap())
 
@@ -81,12 +81,12 @@ class ContentPartnerController(
 
     @PostMapping
     fun postContentPartner(@Valid @RequestBody upsertContentPartnerRequest: ContentPartnerRequest): ResponseEntity<Void> {
-        val contentPartner = createContentPartner(upsertContentPartnerRequest)
+        val contentPartner = createChannel(upsertContentPartnerRequest)
 
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
-                contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value).href
+                contentPartnersLinkBuilder.self(contentPartner.id.value).href
             )
         }, HttpStatus.CREATED)
     }
@@ -96,7 +96,7 @@ class ContentPartnerController(
         @PathVariable("id") contentPartnerId: String,
         @Valid @RequestBody updateUpsertContentPartnerRequest: ContentPartnerRequest
     ): ResponseEntity<Void> {
-        updateContentPartner(contentPartnerId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
+        updateChannel(channelId = contentPartnerId, upsertRequest = updateUpsertContentPartnerRequest)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 

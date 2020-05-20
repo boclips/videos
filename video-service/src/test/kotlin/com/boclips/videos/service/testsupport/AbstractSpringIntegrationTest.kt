@@ -1,11 +1,11 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
-import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
+import com.boclips.contentpartner.service.application.channel.CreateChannel
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
+import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -125,10 +125,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createCollection: CreateCollection
 
     @Autowired
-    lateinit var createContentPartner: CreateContentPartner
+    lateinit var createChannel: CreateChannel
 
     @Autowired
-    lateinit var getContentPartners: GetContentPartners
+    lateinit var getChannels: GetChannels
 
     @Autowired
     lateinit var updateCollection: UpdateCollection
@@ -278,7 +278,7 @@ abstract class AbstractSpringIntegrationTest {
         assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080))
     ): VideoId {
         val retrievedContentPartnerId =
-            saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).contentPartnerId.value
+            saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -424,9 +424,9 @@ abstract class AbstractSpringIntegrationTest {
         accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null
-    ): ContentPartner {
+    ): Channel {
         val createdContentPartner = try {
-            createContentPartner(
+            createChannel(
                 VideoServiceApiFactory.createContentPartnerRequest(
                     name = name,
                     ageRanges = ageRanges,
@@ -436,7 +436,7 @@ abstract class AbstractSpringIntegrationTest {
                 )
             )
         } catch (e: ContentPartnerConflictException) {
-            getContentPartners.invoke(name = name).first()
+            getChannels.invoke(name = name).first()
         }
 
         fakeEventBus.clearState()

@@ -52,7 +52,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
 
             assertThrows<Exception> {
                 videosClient.probeVideoReference(
-                    contentPartnerId = contentPartner.contentPartnerId.value,
+                    contentPartnerId = contentPartner.id.value,
                     contentPartnerVideoId = "abc"
                 )
             }
@@ -60,7 +60,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             val createdVideo =
                 videosClient.createVideo(
                     VideoServiceApiFactory.createCreateVideoRequest(
-                        providerId = contentPartner.contentPartnerId.value,
+                        providerId = contentPartner.id.value,
                         providerVideoId = "abc",
                         playbackId = "123"
                     )
@@ -69,7 +69,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(videosClient.getVideo(createdVideo)).isNotNull
             assertDoesNotThrow {
                 videosClient.probeVideoReference(
-                    contentPartnerId = contentPartner.contentPartnerId.value,
+                    contentPartnerId = contentPartner.id.value,
                     contentPartnerVideoId = "abc"
                 )
             }

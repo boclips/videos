@@ -1,11 +1,11 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerFilter
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.ContentPartnerDocumentConverter
@@ -35,37 +35,37 @@ import org.litote.kmongo.set
 import java.time.Instant
 
 class MongoContentPartnerRepository(val mongoClient: MongoClient) :
-    ContentPartnerRepository {
+    ChannelRepository {
 
     companion object : KLogging() {
         const val collectionName = "contentPartners"
     }
 
-    override fun create(contentPartner: ContentPartner): ContentPartner {
+    override fun create(channel: Channel): Channel {
         val contentPartnerDocument =
             ContentPartnerDocumentConverter.toContentPartnerDocument(
-                contentPartner
+                channel
             )
 
         getContentPartnerCollection()
             .insertOne(contentPartnerDocument.copy(createdAt = Instant.now(), lastModified = Instant.now()))
 
-        val createdContentPartner = findById(contentPartner.contentPartnerId) ?: throw ResourceNotFoundApiException(
+        val createdContentPartner = findById(channel.id) ?: throw ResourceNotFoundApiException(
             error = "Content partner not found",
-            message = "There has been an error in creating the content partner. Content partner id: ${contentPartner.contentPartnerId.value} could not be found."
+            message = "There has been an error in creating the content partner. Content partner id: ${channel.id.value} could not be found."
         )
 
-        logger.info { "Created contentPartner ${createdContentPartner.contentPartnerId.value}" }
+        logger.info { "Created contentPartner ${createdContentPartner.id.value}" }
 
         return createdContentPartner
     }
 
-    override fun findAll(): MongoIterable<ContentPartner> =
+    override fun findAll(): MongoIterable<Channel> =
         getContentPartnerCollection().find()
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
 
-    override fun findAll(filters: List<ContentPartnerFilter>): Iterable<ContentPartner> {
-        val bson: Bson = filters.fold(and()) { bson: Bson, filter: ContentPartnerFilter ->
+    override fun findAll(filters: List<ChannelFilter>): Iterable<Channel> {
+        val bson: Bson = filters.fold(and()) { bson: Bson, filter: ChannelFilter ->
             and(bson, filterCommandsToBson(filter))
         }
 
@@ -73,15 +73,15 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             .map { ContentPartnerDocumentConverter.toContentPartner(it) }
     }
 
-    override fun findById(contentPartnerId: ContentPartnerId): ContentPartner? {
-        if (!ObjectId.isValid(contentPartnerId.value)) {
+    override fun findById(channelId: ChannelId): Channel? {
+        if (!ObjectId.isValid(channelId.value)) {
             return null
         }
 
-        return findByQuery(toBsonIdFilter(contentPartnerId))
+        return findByQuery(toBsonIdFilter(channelId))
     }
 
-    override fun findByContractId(contractId: ContentPartnerContractId): List<ContentPartner> {
+    override fun findByContractId(contractId: ContentPartnerContractId): List<Channel> {
         return getContentPartnerCollection()
             .find(
                 (ContentPartnerDocument::contract / ContentPartnerContractDocument::id) eq
@@ -91,7 +91,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             .toList()
     }
 
-    override fun findByName(query: String): List<ContentPartner> {
+    override fun findByName(query: String): List<Channel> {
         return getContentPartnerCollection().find(
             ContentPartnerDocument::name regex Regex(query, RegexOption.IGNORE_CASE)
         )
@@ -100,14 +100,14 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             .toList()
     }
 
-    override fun update(updateCommands: List<ContentPartnerUpdateCommand>) {
+    override fun update(updateCommands: List<ChannelUpdateCommand>) {
         if (updateCommands.isEmpty()) {
             return
         }
 
         val updateDocs = updateCommands.map { updateCommand ->
             UpdateOneModel<ContentPartnerDocument>(
-                toBsonIdFilter(updateCommand.contentPartnerId),
+                toBsonIdFilter(updateCommand.channelId),
                 updateCommandsToBson(updateCommand)
             )
         }
@@ -116,105 +116,105 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
         logger.info { "Bulk content partner update: $result" }
     }
 
-    private fun updateCommandsToBson(updateCommand: ContentPartnerUpdateCommand): Bson {
+    private fun updateCommandsToBson(updateCommand: ChannelUpdateCommand): Bson {
         val update = when (updateCommand) {
-            is ContentPartnerUpdateCommand.ReplaceName -> set(ContentPartnerDocument::name, updateCommand.name)
-            is ContentPartnerUpdateCommand.ReplaceAgeRanges ->
+            is ChannelUpdateCommand.ReplaceName -> set(ContentPartnerDocument::name, updateCommand.name)
+            is ChannelUpdateCommand.ReplaceAgeRanges ->
                 set(
                     ContentPartnerDocument::ageRanges,
                     updateCommand.ageRangeBuckets.ageRanges.map { AgeRangeDocumentConverter.toAgeRangeDocument(it) }
                 )
-            is ContentPartnerUpdateCommand.ReplaceDistributionMethods ->
+            is ChannelUpdateCommand.ReplaceDistributionMethods ->
                 set(
                     ContentPartnerDocument::distributionMethods,
                     updateCommand.distributionMethods.map(DistributionMethodDocumentConverter::toDocument).toSet()
                 )
-            is ContentPartnerUpdateCommand.ReplaceLegalRestrictions ->
+            is ChannelUpdateCommand.ReplaceLegalRestrictions ->
                 set(
                     ContentPartnerDocument::legalRestrictions,
                     LegalRestrictionsDocument.from(updateCommand.legalRestriction)
                 )
-            is ContentPartnerUpdateCommand.ReplaceCurrency -> set(
+            is ChannelUpdateCommand.ReplaceCurrency -> set(
                 ContentPartnerDocument::remittanceCurrency,
                 updateCommand.currency.currencyCode
             )
-            is ContentPartnerUpdateCommand.ReplaceContentTypes -> set(
+            is ChannelUpdateCommand.ReplaceContentTypes -> set(
                 ContentPartnerDocument::contentTypes,
                 updateCommand.contentType
             )
-            is ContentPartnerUpdateCommand.ReplaceContentCategories -> set(
+            is ChannelUpdateCommand.ReplaceContentCategories -> set(
                 ContentPartnerDocument::contentCategories,
                 updateCommand.contentCategories
             )
-            is ContentPartnerUpdateCommand.ReplaceLanguage -> set(
+            is ChannelUpdateCommand.ReplaceLanguage -> set(
                 ContentPartnerDocument::language,
                 updateCommand.language
             )
-            is ContentPartnerUpdateCommand.ReplaceDescription -> set(
+            is ChannelUpdateCommand.ReplaceDescription -> set(
                 ContentPartnerDocument::description,
                 updateCommand.description
             )
-            is ContentPartnerUpdateCommand.ReplaceAwards -> set(
+            is ChannelUpdateCommand.ReplaceAwards -> set(
                 ContentPartnerDocument::awards,
                 updateCommand.awards
             )
-            is ContentPartnerUpdateCommand.ReplaceHubspotId -> set(
+            is ChannelUpdateCommand.ReplaceHubspotId -> set(
                 ContentPartnerDocument::hubspotId,
                 updateCommand.hubspotId
             )
-            is ContentPartnerUpdateCommand.ReplaceNotes -> set(
+            is ChannelUpdateCommand.ReplaceNotes -> set(
                 ContentPartnerDocument::notes,
                 updateCommand.notes
             )
-            is ContentPartnerUpdateCommand.ReplaceMarketingStatus -> set(
+            is ChannelUpdateCommand.ReplaceMarketingStatus -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::status,
                 updateCommand.status
             )
-            is ContentPartnerUpdateCommand.ReplaceMarketingLogos -> set(
+            is ChannelUpdateCommand.ReplaceMarketingLogos -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::logos,
                 updateCommand.logos.map { it.toString() }
             )
-            is ContentPartnerUpdateCommand.ReplaceMarketingShowreel -> set(
+            is ChannelUpdateCommand.ReplaceMarketingShowreel -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::showreel,
                 updateCommand.showreel.toString()
             )
-            is ContentPartnerUpdateCommand.ReplaceMarketingSampleVideos -> set(
+            is ChannelUpdateCommand.ReplaceMarketingSampleVideos -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::sampleVideos,
                 updateCommand.sampleVideos.map { it.toString() }
             )
-            is ContentPartnerUpdateCommand.ReplaceOneLineDescription -> set(
+            is ChannelUpdateCommand.ReplaceOneLineDescription -> set(
                 ContentPartnerDocument::marketingInformation / MarketingInformationDocument::oneLineDescription,
                 updateCommand.oneLineDescription
             )
-            is ContentPartnerUpdateCommand.ReplaceIsTranscriptProvided -> set(
+            is ChannelUpdateCommand.ReplaceIsTranscriptProvided -> set(
                 ContentPartnerDocument::isTranscriptProvided,
                 updateCommand.isTranscriptProvided
             )
-            is ContentPartnerUpdateCommand.ReplaceEducationalResources -> set(
+            is ChannelUpdateCommand.ReplaceEducationalResources -> set(
                 ContentPartnerDocument::educationalResources,
                 updateCommand.educationalResources
             )
-            is ContentPartnerUpdateCommand.ReplaceCurriculumAligned -> set(
+            is ChannelUpdateCommand.ReplaceCurriculumAligned -> set(
                 ContentPartnerDocument::curriculumAligned,
                 updateCommand.curriculumAligned
             )
-            is ContentPartnerUpdateCommand.ReplaceBestForTags -> set(
+            is ChannelUpdateCommand.ReplaceBestForTags -> set(
                 ContentPartnerDocument::bestForTags,
                 updateCommand.bestForTags
             )
-            is ContentPartnerUpdateCommand.ReplaceSubjects -> set(
+            is ChannelUpdateCommand.ReplaceSubjects -> set(
                 ContentPartnerDocument::subjects,
                 updateCommand.subjects
             )
-            is ContentPartnerUpdateCommand.ReplaceIngestDetails -> set(
+            is ChannelUpdateCommand.ReplaceIngestDetails -> set(
                 ContentPartnerDocument::ingest,
                 IngestDetailsDocumentConverter.toIngestDetailsDocument(updateCommand.ingest)
             )
-            is ContentPartnerUpdateCommand.ReplaceDeliveryFrequency -> set(
+            is ChannelUpdateCommand.ReplaceDeliveryFrequency -> set(
                 ContentPartnerDocument::deliveryFrequency,
                 updateCommand.deliveryFrequency.toString()
             )
-            is ContentPartnerUpdateCommand.ReplaceContract -> set(
+            is ChannelUpdateCommand.ReplaceContract -> set(
                 ContentPartnerDocument::contract,
                 ContentPartnerContractDocumentConverter().toDocument(updateCommand.contract)
             )
@@ -223,24 +223,24 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
         return combine(update, set(ContentPartnerDocument::lastModified, Instant.now()))
     }
 
-    private fun filterCommandsToBson(filter: ContentPartnerFilter): Bson =
+    private fun filterCommandsToBson(filter: ChannelFilter): Bson =
         when (filter) {
-            is ContentPartnerFilter.NameFilter -> ContentPartnerDocument::name eq filter.name
-            is ContentPartnerFilter.OfficialFilter -> if (filter.official) {
+            is ChannelFilter.NameFilter -> ContentPartnerDocument::name eq filter.name
+            is ChannelFilter.OfficialFilter -> if (filter.official) {
                 ContentPartnerDocument::youtubeChannelId eq null
             } else {
                 ContentPartnerDocument::youtubeChannelId ne null
             }
-            is ContentPartnerFilter.AccreditedTo -> when (filter.credit) {
+            is ChannelFilter.AccreditedTo -> when (filter.credit) {
                 is Credit.YoutubeCredit -> ContentPartnerDocument::youtubeChannelId eq filter.credit.channelId
                 Credit.PartnerCredit -> ContentPartnerDocument::youtubeChannelId ne null
             }
-            is ContentPartnerFilter.HubspotIdFilter -> ContentPartnerDocument::hubspotId eq filter.hubspotId
-            is ContentPartnerFilter.IngestTypesFilter ->
+            is ChannelFilter.HubspotIdFilter -> ContentPartnerDocument::hubspotId eq filter.hubspotId
+            is ChannelFilter.IngestTypesFilter ->
                 ContentPartnerDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }
         }
 
-    private fun findByQuery(mongoQuery: Bson): ContentPartner? {
+    private fun findByQuery(mongoQuery: Bson): Channel? {
         val contentPartner =
             getContentPartnerCollection().findOne(mongoQuery)
                 ?.let { document: ContentPartnerDocument ->
@@ -257,7 +257,7 @@ class MongoContentPartnerRepository(val mongoClient: MongoClient) :
             collectionName
         )
 
-    private fun toBsonIdFilter(contentPartnerId: ContentPartnerId): Bson {
-        return ContentPartnerDocument::id eq ObjectId(contentPartnerId.value)
+    private fun toBsonIdFilter(channelId: ChannelId): Bson {
+        return ContentPartnerDocument::id eq ObjectId(channelId.value)
     }
 }

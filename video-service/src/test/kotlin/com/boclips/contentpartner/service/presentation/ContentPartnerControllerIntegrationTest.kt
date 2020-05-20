@@ -19,9 +19,7 @@ import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -50,7 +48,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
         )
 
         mockMvc.perform(
-            post("/v1/content-partners/${contentPartner.contentPartnerId.value}/videos/search")
+            post("/v1/content-partners/${contentPartner.id.value}/videos/search")
                 .content("https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/")
                 .contentType(MediaType.TEXT_PLAIN)
                 .asIngestor()
@@ -613,7 +611,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `enables content partner for streaming`() {
-        val id = saveContentPartner().contentPartnerId.value
+        val id = saveContentPartner().id.value
 
         mockMvc.perform(
             patch("/v1/content-partners/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
@@ -678,7 +676,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Nested
-    inner class ContentPartnerResourceProjections {
+    inner class ChannelResourceProjections {
         @Test
         fun `boclips internal user has access to all fields`() {
             val contentPartner = saveContentPartner(
@@ -707,7 +705,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
             mockMvc.perform(
                 get(
-                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                    "/v1/content-partners/${contentPartner.id.value}"
                 ).asBoclipsEmployee()
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").exists())
@@ -772,7 +770,7 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
 
             mockMvc.perform(
                 get(
-                    "/v1/content-partners/${contentPartner.contentPartnerId.value}"
+                    "/v1/content-partners/${contentPartner.id.value}"
                 ).asApiUser()
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").exists())

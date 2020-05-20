@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerType
-import com.boclips.contentpartner.service.domain.model.contentpartner.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartner.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.Credit
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.contentpartner.ContentTypeResource
@@ -15,53 +15,53 @@ class ContentPartnerToResourceConverter(
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
-    fun convert(contentPartner: ContentPartner): ContentPartnerResource {
+    fun convert(channel: Channel): ContentPartnerResource {
         return ContentPartnerResource(
-            id = contentPartner.contentPartnerId.value,
-            name = contentPartner.name,
-            official = when (contentPartner.credit) {
+            id = channel.id.value,
+            name = channel.name,
+            official = when (channel.credit) {
                 is Credit.PartnerCredit -> true
                 is Credit.YoutubeCredit -> false
             },
-            legalRestriction = contentPartner.legalRestriction?.let {
+            legalRestriction = channel.legalRestriction?.let {
                 legalRestrictionsToResourceConverter.convert(it)
             },
             distributionMethods = DistributionMethodResourceConverter.toDeliveryMethodResources(
-                contentPartner.distributionMethods
+                channel.distributionMethods
             ),
-            description = contentPartner.description,
-            currency = contentPartner.currency?.currencyCode,
-            contentCategories = contentPartner.contentCategories?.map { toContentCategoryResource(it) },
-            hubspotId = contentPartner.hubspotId,
-            awards = contentPartner.awards,
-            notes = contentPartner.notes,
-            ingest = ingestDetailsToResourceConverter.convert(contentPartner.ingest),
-            deliveryFrequency = contentPartner.deliveryFrequency,
-            language = contentPartner.language?.let { it -> toLanguageResource(it) },
-            contentTypes = contentPartner.contentTypes?.map {
+            description = channel.description,
+            currency = channel.currency?.currencyCode,
+            contentCategories = channel.contentCategories?.map { toContentCategoryResource(it) },
+            hubspotId = channel.hubspotId,
+            awards = channel.awards,
+            notes = channel.notes,
+            ingest = ingestDetailsToResourceConverter.convert(channel.ingest),
+            deliveryFrequency = channel.deliveryFrequency,
+            language = channel.language?.let { it -> toLanguageResource(it) },
+            contentTypes = channel.contentTypes?.map {
                 when (it) {
-                    ContentPartnerType.INSTRUCTIONAL -> ContentTypeResource.INSTRUCTIONAL
-                    ContentPartnerType.NEWS -> ContentTypeResource.NEWS
-                    ContentPartnerType.STOCK -> ContentTypeResource.STOCK
+                    ContentType.INSTRUCTIONAL -> ContentTypeResource.INSTRUCTIONAL
+                    ContentType.NEWS -> ContentTypeResource.NEWS
+                    ContentType.STOCK -> ContentTypeResource.STOCK
                 }
             },
-            oneLineDescription = contentPartner.marketingInformation?.oneLineDescription,
+            oneLineDescription = channel.marketingInformation?.oneLineDescription,
             marketingInformation = MarketingInformationToResourceConverter.from(
-                contentPartner.marketingInformation
+                channel.marketingInformation
             ),
             pedagogyInformation = PedagogyInformationToResourceConverter.from(
                 pedagogyInformation = PedagogyInformation(
-                    isTranscriptProvided = contentPartner.pedagogyInformation?.isTranscriptProvided,
-                    educationalResources = contentPartner.pedagogyInformation?.educationalResources,
-                    curriculumAligned = contentPartner.pedagogyInformation?.curriculumAligned,
-                    bestForTags = contentPartner.pedagogyInformation?.bestForTags,
-                    subjects = contentPartner.pedagogyInformation?.subjects,
-                    ageRangeBuckets = contentPartner.pedagogyInformation?.ageRangeBuckets
+                    isTranscriptProvided = channel.pedagogyInformation?.isTranscriptProvided,
+                    educationalResources = channel.pedagogyInformation?.educationalResources,
+                    curriculumAligned = channel.pedagogyInformation?.curriculumAligned,
+                    bestForTags = channel.pedagogyInformation?.bestForTags,
+                    subjects = channel.pedagogyInformation?.subjects,
+                    ageRangeBuckets = channel.pedagogyInformation?.ageRangeBuckets
                 )
             ),
-            contractId = contentPartner.contract?.id?.value,
-            contractName = contentPartner.contract?.contentPartnerName,
-            _links = listOf(contentPartnersLinkBuilder.self(contentPartner.contentPartnerId.value))
+            contractId = channel.contract?.id?.value,
+            contractName = channel.contract?.contentPartnerName,
+            _links = listOf(contentPartnersLinkBuilder.self(channel.id.value))
                 .map { it.rel to it }
                 .toMap()
         )

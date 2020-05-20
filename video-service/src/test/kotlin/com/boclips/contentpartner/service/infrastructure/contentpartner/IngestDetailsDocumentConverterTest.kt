@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.CustomIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.ManualIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.contentpartner.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.IngestDetailsDocumentConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

@@ -1,15 +1,15 @@
 package com.boclips.videos.service.domain.service
 
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.Availability
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import org.springframework.stereotype.Component
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId as ContentPartnerServiceContentPartnerId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId as ContentPartnerServiceContentPartnerId
 
 @Component
-class ContentPartnerService(val contentPartnerRepository: ContentPartnerRepository) {
+class ContentPartnerService(val channelRepository: ChannelRepository) {
     var idCache: Pair<ContentPartnerId, Availability>? = null
 
     fun findById(id: String): ContentPartner? {
@@ -21,7 +21,7 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
 
         return ContentPartner(
             contentPartnerId = ContentPartnerId(
-                value = contentPartner.contentPartnerId.value
+                value = contentPartner.id.value
             ),
             name = contentPartner.name
         )
@@ -34,8 +34,8 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
             }
         }
 
-        return (contentPartnerRepository.findById(
-            contentPartnerId = ContentPartnerServiceContentPartnerId(
+        return (channelRepository.findById(
+            channelId = ContentPartnerServiceContentPartnerId(
                 value = contentPartnerId.value
             )
         )?.let {
@@ -51,9 +51,9 @@ class ContentPartnerService(val contentPartnerRepository: ContentPartnerReposito
             }
     }
 
-    private fun find(contentPartnerId: ContentPartnerId): com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartner? {
-        return contentPartnerRepository.findById(
-            com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerId(
+    private fun find(contentPartnerId: ContentPartnerId): com.boclips.contentpartner.service.domain.model.channel.Channel? {
+        return channelRepository.findById(
+            com.boclips.contentpartner.service.domain.model.channel.ChannelId(
                 value = contentPartnerId.value
             )
         )

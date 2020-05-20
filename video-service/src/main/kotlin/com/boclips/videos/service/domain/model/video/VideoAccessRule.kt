@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.contentpartner.service.domain.model.contentpartner.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 
 sealed class VideoAccessRule {

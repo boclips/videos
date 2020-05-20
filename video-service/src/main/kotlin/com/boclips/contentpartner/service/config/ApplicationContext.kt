@@ -2,12 +2,12 @@ package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.agerange.GetAgeRange
-import com.boclips.contentpartner.service.application.contentpartner.BroadcastChannels
-import com.boclips.contentpartner.service.application.contentpartner.ContentPartnerUpdatesConverter
-import com.boclips.contentpartner.service.application.contentpartner.ContractUpdated
-import com.boclips.contentpartner.service.application.contentpartner.CreateContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartner
-import com.boclips.contentpartner.service.application.contentpartner.GetContentPartners
+import com.boclips.contentpartner.service.application.channel.BroadcastChannels
+import com.boclips.contentpartner.service.application.channel.ChannelUpdatesConverter
+import com.boclips.contentpartner.service.application.channel.ContractUpdated
+import com.boclips.contentpartner.service.application.channel.CreateChannel
+import com.boclips.contentpartner.service.application.channel.GetChannel
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.application.contentpartnercontract.ContractContentPartnerConverter
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
@@ -17,7 +17,7 @@ import com.boclips.contentpartner.service.application.contentpartnercontract.leg
 import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.contentpartner.ContentPartnerRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
@@ -46,7 +46,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration("contentPartnerApplicationContext")
 class ApplicationContext(
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val contentPartnerRepository: ContentPartnerRepository,
+    val channelRepository: ChannelRepository,
     val ageRangeRepository: AgeRangeRepository,
     val contentPartnerContractRepository: ContentPartnerContractRepository,
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
@@ -55,23 +55,23 @@ class ApplicationContext(
     val eventBus: EventBus
 ) {
     @Bean
-    fun getContentPartner(): GetContentPartner {
-        return GetContentPartner(
-            contentPartnerRepository
+    fun getContentPartner(): GetChannel {
+        return GetChannel(
+            channelRepository
         )
     }
 
     @Bean
-    fun getContentPartners(): GetContentPartners {
-        return GetContentPartners(
-            contentPartnerRepository
+    fun getContentPartners(): GetChannels {
+        return GetChannels(
+            channelRepository
         )
     }
 
     @Bean
-    fun createContentPartner(): CreateContentPartner {
-        return CreateContentPartner(
-            contentPartnerRepository,
+    fun createContentPartner(): CreateChannel {
+        return CreateChannel(
+            channelRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
             contentPartnerContractRepository,
@@ -82,10 +82,11 @@ class ApplicationContext(
     }
 
     @Bean
-    fun contractUpdate(): ContractUpdated = ContractUpdated(
-        contractRepository = contentPartnerContractRepository,
-        contentPartnerRepository = contentPartnerRepository
-    )
+    fun contractUpdate(): ContractUpdated =
+        ContractUpdated(
+            contractRepository = contentPartnerContractRepository,
+            channelRepository = channelRepository
+        )
 
     @Bean
     fun findAllContractLegalRestrictions(): FindAllContractLegalRestrictions {
@@ -147,13 +148,13 @@ class ApplicationContext(
     fun broadcastChannels(
         eventBus: EventBus,
         eventConverter: EventConverter,
-        contentPartnerRepository: ContentPartnerRepository,
+        channelRepository: ChannelRepository,
         subjectRepository: SubjectRepository
     ): BroadcastChannels {
         return BroadcastChannels(
             eventBus,
             eventConverter,
-            contentPartnerRepository,
+            channelRepository,
             subjectRepository
         )
     }
@@ -192,8 +193,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun contentPartnerUpdatesConverter(): ContentPartnerUpdatesConverter {
-        return ContentPartnerUpdatesConverter(
+    fun contentPartnerUpdatesConverter(): ChannelUpdatesConverter {
+        return ChannelUpdatesConverter(
             legalRestrictionsRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
