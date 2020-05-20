@@ -14,6 +14,8 @@ data class CollectionResource(
     val title: String? = null,
     val videos: List<VideoResource>,
     val updatedAt: ZonedDateTime? = null,
+    @Deprecated("This has been deprecated for discoverable. This exists for ViewSonics - once they confirm we can delete")
+    val public: Boolean? = null,
     val discoverable: Boolean? = null,
     val promoted: Boolean? = null,
     @get:JsonIgnore
