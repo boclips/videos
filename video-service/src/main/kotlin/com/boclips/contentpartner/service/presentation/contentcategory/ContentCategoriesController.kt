@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.presentation.contentcategory
 
-import com.boclips.videos.api.response.contentpartner.ContentCategoriesResource
-import com.boclips.videos.api.response.contentpartner.ContentCategoriesWrapperResource
-import com.boclips.videos.api.response.contentpartner.ContentCategoryResource
+import com.boclips.videos.api.response.channel.ContentCategoriesResource
+import com.boclips.videos.api.response.channel.ContentCategoriesWrapperResource
+import com.boclips.videos.api.response.channel.ContentCategoryResource
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService

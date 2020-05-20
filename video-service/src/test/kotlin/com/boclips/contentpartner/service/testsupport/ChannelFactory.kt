@@ -20,7 +20,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
 import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId

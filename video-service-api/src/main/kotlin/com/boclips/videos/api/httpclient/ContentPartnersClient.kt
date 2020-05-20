@@ -2,10 +2,10 @@ package com.boclips.videos.api.httpclient
 
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
-import com.boclips.videos.api.request.contentpartner.ContentPartnerFilterRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
-import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
-import com.boclips.videos.api.response.contentpartner.ContentPartnersResource
+import com.boclips.videos.api.request.channel.ChannelFilterRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.channel.LegacyContentPartnersResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger
@@ -20,13 +20,13 @@ import feign.slf4j.Slf4jLogger
 
 interface ContentPartnersClient {
     @RequestLine("GET /v1/content-partners")
-    fun getContentPartners(@QueryMap contentPartnerFilterRequest: ContentPartnerFilterRequest = ContentPartnerFilterRequest()): ContentPartnersResource
+    fun getContentPartners(@QueryMap channelFilterRequest: ChannelFilterRequest = ChannelFilterRequest()): LegacyContentPartnersResource
 
     @RequestLine("GET /v1/content-partners/{contentPartnerId}")
-    fun getContentPartner(@Param("contentPartnerId") contentPartnerId: String): ContentPartnerResource
+    fun getContentPartner(@Param("contentPartnerId") contentPartnerId: String): ChannelResource
 
     @RequestLine("POST /v1/content-partners")
-    fun create(upsertContentPartnerRequest: ContentPartnerRequest)
+    fun create(upsertChannelRequest: ChannelRequest)
 
     companion object {
         @JvmStatic

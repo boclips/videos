@@ -4,10 +4,10 @@ import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.agerange.GetAgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.response.contentpartner.AgeRangeResource
-import com.boclips.videos.api.response.contentpartner.AgeRangesResource
-import com.boclips.videos.api.response.contentpartner.AgeRangesWrapperResource
+import com.boclips.videos.api.request.channel.AgeRangeRequest
+import com.boclips.videos.api.response.channel.AgeRangeResource
+import com.boclips.videos.api.response.channel.AgeRangesResource
+import com.boclips.videos.api.response.channel.AgeRangesWrapperResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

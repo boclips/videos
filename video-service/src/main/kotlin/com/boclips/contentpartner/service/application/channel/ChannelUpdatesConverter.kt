@@ -17,7 +17,7 @@ import com.boclips.contentpartner.service.presentation.converters.IngestDetailsR
 import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
 import java.util.Currency
 
 class ChannelUpdatesConverter(
@@ -28,11 +28,11 @@ class ChannelUpdatesConverter(
 ) {
     fun convert(
         id: ChannelId,
-        upsertContentPartnerRequest: ContentPartnerRequest
+        upsertChannelRequest: ChannelRequest
     ): List<ChannelUpdateCommand> =
         ChannelUpdateCommandCreator(
             id,
-            upsertContentPartnerRequest,
+            upsertChannelRequest,
             ingestDetailsResourceConverter
         ).let { commandCreator ->
             listOfNotNull(
@@ -67,12 +67,12 @@ class ChannelUpdatesConverter(
 
 class ChannelUpdateCommandCreator(
     val id: ChannelId,
-    private val contentPartnerRequest: ContentPartnerRequest,
+    private val channelRequest: ChannelRequest,
     private val ingestDetailsResourceConverter: IngestDetailsResourceConverter
 ) {
 
     fun updateHiddenDeliveryMethods(): ChannelUpdateCommand? {
-        return contentPartnerRequest.distributionMethods
+        return channelRequest.distributionMethods
             ?.let {
                 DistributionMethodResourceConverter.toDistributionMethods(it)
             }
@@ -82,12 +82,12 @@ class ChannelUpdateCommandCreator(
     }
 
     fun updateName(): ChannelUpdateCommand.ReplaceName? =
-        contentPartnerRequest.name?.let {
+        channelRequest.name?.let {
             ChannelUpdateCommand.ReplaceName(channelId = id, name = it)
         }
 
     fun updateAgeRanges(ageRangeRepository: AgeRangeRepository): ChannelUpdateCommand.ReplaceAgeRanges? =
-        contentPartnerRequest.ageRanges?.let {
+        channelRequest.ageRanges?.let {
             val ageRanges = it.mapNotNull { ageRangeId ->
                 ageRangeRepository.findById(
                     AgeRangeId(
@@ -102,7 +102,7 @@ class ChannelUpdateCommandCreator(
         }
 
     fun updateLegalRestrictions(legalRestrictionsRepository: LegalRestrictionsRepository): ChannelUpdateCommand.ReplaceLegalRestrictions? =
-        contentPartnerRequest.legalRestrictions
+        channelRequest.legalRestrictions
             ?.let { restrictionsRequest ->
                 legalRestrictionsRepository.findById(
                     LegalRestrictionsId(
@@ -113,62 +113,62 @@ class ChannelUpdateCommandCreator(
             ?.let { restrictions -> ChannelUpdateCommand.ReplaceLegalRestrictions(id, restrictions) }
 
     fun updateCurrency(): ChannelUpdateCommand.ReplaceCurrency? =
-        contentPartnerRequest.currency?.let {
+        channelRequest.currency?.let {
             ChannelUpdateCommand.ReplaceCurrency(id, Currency.getInstance(it))
         }
 
     fun updateContentPartnerTypes(): ChannelUpdateCommand.ReplaceContentTypes? =
-        contentPartnerRequest.contentTypes?.let { contentTypes ->
+        channelRequest.contentTypes?.let { contentTypes ->
             ChannelUpdateCommand.ReplaceContentTypes(id, contentTypes.mapNotNull { it })
         }
 
     fun updateContentContentCategories(): ChannelUpdateCommand.ReplaceContentCategories? =
-        contentPartnerRequest.contentCategories?.let { contentCategories ->
+        channelRequest.contentCategories?.let { contentCategories ->
             ChannelUpdateCommand.ReplaceContentCategories(id, contentCategories)
         }
 
     fun updateContentLanguage(): ChannelUpdateCommand.ReplaceLanguage? =
-        contentPartnerRequest.language?.let { language ->
+        channelRequest.language?.let { language ->
             ChannelUpdateCommand.ReplaceLanguage(id, language)
         }
 
     fun updateDescription(): ChannelUpdateCommand.ReplaceDescription? =
-        contentPartnerRequest.description?.let { description ->
+        channelRequest.description?.let { description ->
             ChannelUpdateCommand.ReplaceDescription(id, description)
         }
 
     fun updateAwards(): ChannelUpdateCommand.ReplaceAwards? =
-        contentPartnerRequest.awards?.let { awards ->
+        channelRequest.awards?.let { awards ->
             ChannelUpdateCommand.ReplaceAwards(id, awards)
         }
 
     fun updateHubspotId(): ChannelUpdateCommand.ReplaceHubspotId? =
-        contentPartnerRequest.hubspotId?.let { hubspotId ->
+        channelRequest.hubspotId?.let { hubspotId ->
             ChannelUpdateCommand.ReplaceHubspotId(id, hubspotId)
         }
 
     fun updateNotes(): ChannelUpdateCommand.ReplaceNotes? =
-        contentPartnerRequest.notes?.let { notes ->
+        channelRequest.notes?.let { notes ->
             ChannelUpdateCommand.ReplaceNotes(id, notes)
         }
 
     fun updateOneLineDescription(): ChannelUpdateCommand.ReplaceOneLineDescription? =
-        contentPartnerRequest.oneLineDescription?.let {
+        channelRequest.oneLineDescription?.let {
             ChannelUpdateCommand.ReplaceOneLineDescription(id, it)
         }
 
     fun updateMarketingStatus(): ChannelUpdateCommand.ReplaceMarketingStatus? =
-        contentPartnerRequest.marketingInformation?.status?.let {
+        channelRequest.marketingInformation?.status?.let {
             ChannelUpdateCommand.ReplaceMarketingStatus(id, ContentPartnerMarketingStatusConverter.convert(it))
         }
 
     fun updateMarketingLogos(): ChannelUpdateCommand.ReplaceMarketingLogos? =
-        contentPartnerRequest.marketingInformation?.logos?.let {
+        channelRequest.marketingInformation?.logos?.let {
             ChannelUpdateCommand.ReplaceMarketingLogos(id, it.map(UrlConverter::convert))
         }
 
     fun updateMarketingShowreel(): ChannelUpdateCommand.ReplaceMarketingShowreel? =
-        contentPartnerRequest.marketingInformation?.showreel?.let {
+        channelRequest.marketingInformation?.showreel?.let {
             ChannelUpdateCommand.ReplaceMarketingShowreel(
                 id,
                 when (it) {
@@ -179,47 +179,47 @@ class ChannelUpdateCommandCreator(
         }
 
     fun updateMarketingSampleVideos(): ChannelUpdateCommand.ReplaceMarketingSampleVideos? =
-        contentPartnerRequest.marketingInformation?.sampleVideos?.let {
+        channelRequest.marketingInformation?.sampleVideos?.let {
             ChannelUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(UrlConverter::convert))
         }
 
     fun updateIsTranscriptProvided(): ChannelUpdateCommand.ReplaceIsTranscriptProvided? =
-        contentPartnerRequest.isTranscriptProvided?.let {
+        channelRequest.isTranscriptProvided?.let {
             ChannelUpdateCommand.ReplaceIsTranscriptProvided(id, it)
         }
 
     fun updateEducationalResources(): ChannelUpdateCommand.ReplaceEducationalResources? =
-        contentPartnerRequest.educationalResources?.let {
+        channelRequest.educationalResources?.let {
             ChannelUpdateCommand.ReplaceEducationalResources(id, it)
         }
 
     fun updateCurriculumAligned(): ChannelUpdateCommand.ReplaceCurriculumAligned? =
-        contentPartnerRequest.curriculumAligned?.let {
+        channelRequest.curriculumAligned?.let {
             ChannelUpdateCommand.ReplaceCurriculumAligned(id, it)
         }
 
     fun updateBestForTags(): ChannelUpdateCommand.ReplaceBestForTags? =
-        contentPartnerRequest.bestForTags?.let {
+        channelRequest.bestForTags?.let {
             ChannelUpdateCommand.ReplaceBestForTags(id, it)
         }
 
     fun updateSubjects(): ChannelUpdateCommand.ReplaceSubjects? =
-        contentPartnerRequest.subjects?.let {
+        channelRequest.subjects?.let {
             ChannelUpdateCommand.ReplaceSubjects(id, it)
         }
 
     fun updateIngestDetails(): ChannelUpdateCommand.ReplaceIngestDetails? =
-        contentPartnerRequest.ingest?.let {
+        channelRequest.ingest?.let {
             ChannelUpdateCommand.ReplaceIngestDetails(id, ingestDetailsResourceConverter.fromResource(it))
         }
 
     fun updateDeliveryFrequency(): ChannelUpdateCommand.ReplaceDeliveryFrequency? =
-        contentPartnerRequest.deliveryFrequency?.let {
+        channelRequest.deliveryFrequency?.let {
             ChannelUpdateCommand.ReplaceDeliveryFrequency(id, it)
         }
 
     fun updateContract(contentPartnerContractRepository: ContentPartnerContractRepository): ChannelUpdateCommand.ReplaceContract? =
-        contentPartnerRequest.contractId?.let {
+        channelRequest.contractId?.let {
             val contractId = ContentPartnerContractId(it)
 
             val contract = contentPartnerContractRepository.findById(contractId)

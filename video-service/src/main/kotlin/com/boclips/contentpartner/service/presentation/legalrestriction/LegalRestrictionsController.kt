@@ -4,8 +4,8 @@ import com.boclips.contentpartner.service.application.legalrestriction.CreateLeg
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
-import com.boclips.videos.api.response.contentpartner.LegalRestrictionResource
-import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
+import com.boclips.videos.api.response.channel.LegalRestrictionResource
+import com.boclips.videos.api.response.channel.LegalRestrictionsResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

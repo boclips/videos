@@ -3,7 +3,7 @@ package com.boclips.contentpartner.service.application.agerange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.channel.AgeRangeRequest
 
 class CreateAgeRange(private val ageRangeRepository: AgeRangeRepository) {
     operator fun invoke(createAgeRange: AgeRangeRequest): AgeRange {

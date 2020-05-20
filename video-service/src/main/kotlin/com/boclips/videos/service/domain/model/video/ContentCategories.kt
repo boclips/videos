@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.api.response.contentpartner.ContentCategoryResource
+import com.boclips.videos.api.response.channel.ContentCategoryResource
 
 enum class ContentCategories(val value: String) {
     VIRTUAL_REALITY_360("360 and Virtual reality"),

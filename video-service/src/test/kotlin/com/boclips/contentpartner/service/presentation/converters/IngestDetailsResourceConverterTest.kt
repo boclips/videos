@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

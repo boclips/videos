@@ -10,11 +10,11 @@ import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
+import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -45,7 +45,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                 name = "My content partner",
                 distributionMethods = emptySet(),
                 legalRestrictions = null,
-                marketingInformation = ContentPartnerMarketingInformationRequest(
+                marketingInformation = MarketingInformationRequest(
                     showreel = Specified("http://www.server.com/showreel.mov")
                 )
             )
@@ -60,7 +60,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
         updateChannel(
             channelId = originalChannel.id.value,
-            upsertRequest = ContentPartnerRequest(
+            upsertRequest = ChannelRequest(
                 name = "My better content partner",
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
@@ -97,7 +97,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
         updateChannel(
             channelId = originalChannel.id.value,
-            upsertRequest = ContentPartnerRequest(
+            upsertRequest = ChannelRequest(
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -131,7 +131,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     fun `legal restrictions get created when id not set`() {
         updateChannel(
             channelId = originalChannel.id.value,
-            upsertRequest = ContentPartnerRequest(
+            upsertRequest = ChannelRequest(
                 legalRestrictions = LegalRestrictionsRequest(
                     id = "",
                     text = "New legal restrictions"
@@ -149,8 +149,8 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     fun `marketing showreel preserved when showreel is updated to null`() {
         updateChannel(
             channelId = originalChannel.id.value,
-            upsertRequest = ContentPartnerRequest(
-                marketingInformation = ContentPartnerMarketingInformationRequest(
+            upsertRequest = ChannelRequest(
+                marketingInformation = MarketingInformationRequest(
                     showreel = null
                 )
             )
@@ -168,8 +168,8 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     fun `marketing showreel preserved when showreel is updated with a value of ExplicitlyNull`() {
         updateChannel(
             channelId = originalChannel.id.value,
-            upsertRequest = ContentPartnerRequest(
-                marketingInformation = ContentPartnerMarketingInformationRequest(
+            upsertRequest = ChannelRequest(
+                marketingInformation = MarketingInformationRequest(
                     showreel = ExplicitlyNull()
                 )
             )
@@ -186,7 +186,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThrows<InvalidContractException> {
             updateChannel(
                 channelId = "irrelevant",
-                upsertRequest = ContentPartnerRequest(contractId = "missing")
+                upsertRequest = ChannelRequest(contractId = "missing")
             )
         }
     }

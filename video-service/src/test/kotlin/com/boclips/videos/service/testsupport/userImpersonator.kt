@@ -35,6 +35,7 @@ fun MockHttpServletRequestBuilder.asApiUser(email: String = "api-user@gmail.com"
                 UserRoles.VIEW_VIDEO_TYPES,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.VIEW_CONTENT_PARTNERS,
+                UserRoles.VIEW_CHANNELS,
                 UserRoles.API,
                 UserRoles.VIEW_CONTENT_CATEGORIES
             )
@@ -65,6 +66,9 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.VIEW_CONTENT_PARTNERS,
                 UserRoles.INSERT_CONTENT_PARTNERS,
                 UserRoles.UPDATE_CONTENT_PARTNERS,
+                UserRoles.VIEW_CHANNELS,
+                UserRoles.INSERT_CHANNELS,
+                UserRoles.UPDATE_CHANNELS,
                 UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS,
                 UserRoles.INSERT_CONTENT_PARTNER_CONTRACTS,
                 UserRoles.VIEW_DISCIPLINES,

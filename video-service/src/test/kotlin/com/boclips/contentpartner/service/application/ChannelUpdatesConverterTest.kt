@@ -8,11 +8,11 @@ import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.request.channel.AgeRangeRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
+import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +42,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating distribution methods`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 name = "Hello",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
@@ -57,7 +57,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating the name`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 name = "Hello"
             )
         )
@@ -71,11 +71,18 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating the age range`() {
-        createAgeRange(AgeRangeRequest(id = "early-years", label = "label", min = 1, max = 3))
+        createAgeRange(
+            AgeRangeRequest(
+                id = "early-years",
+                label = "label",
+                min = 1,
+                max = 3
+            )
+        )
 
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 ageRanges = listOf("early-years"),
                 name = null,
                 accreditedToYtChannelId = "test"
@@ -95,7 +102,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 legalRestrictions = LegalRestrictionsRequest(
                     id = legalRestrictions.id.value
                 )
@@ -114,7 +121,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner types`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 contentTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
             )
         )
@@ -129,7 +136,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner categories`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 contentCategories = listOf("DOCUMENTARY_SHORTS", "ANIMATION")
             )
         )
@@ -144,7 +151,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner language`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 language = "spa"
             )
         )
@@ -159,7 +166,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner description`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 description = "This is a new description"
             )
         )
@@ -174,7 +181,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner awards`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 awards = "This is a new award"
             )
         )
@@ -189,7 +196,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner hubspot id`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 hubspotId = "1a2s3d4f5g6h7j8k9l"
             )
         )
@@ -204,7 +211,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner notes`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 notes = "this is a note"
             )
         )
@@ -219,7 +226,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner transcript value`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 isTranscriptProvided = true
             )
         )
@@ -234,7 +241,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner educational resources`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 educationalResources = "This is a resource"
             )
         )
@@ -249,7 +256,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner best for tags`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 bestForTags = listOf("123", "456")
             )
         )
@@ -264,7 +271,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner curriculum`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 curriculumAligned = "curriculum"
             )
         )
@@ -279,7 +286,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates command for updating content partner subjects`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 subjects = listOf("subject 1", "subject 2")
             )
         )
@@ -294,7 +301,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates a command for updating ingest details`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 ingest = IngestDetailsResource.mrss("https://mrss.feed")
             )
         )
@@ -313,7 +320,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     fun `creates a command for updating delivery frequency`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
-            upsertContentPartnerRequest = ContentPartnerRequest(
+            upsertChannelRequest = ChannelRequest(
                 deliveryFrequency = Period.ofMonths(3)
             )
         )
@@ -329,7 +336,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val newContract = saveContentPartnerContract(name = "new name")
 
         val commands = channelUpdatesConverter.convert(
-            originalChannel.id, ContentPartnerRequest(
+            originalChannel.id, ChannelRequest(
                 contractId = newContract.id.value
             )
         )

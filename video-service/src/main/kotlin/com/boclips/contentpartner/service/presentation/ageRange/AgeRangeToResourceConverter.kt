@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation.ageRange
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.videos.api.response.contentpartner.AgeRangeBucketsResource
+import com.boclips.videos.api.response.channel.AgeRangeBucketsResource
 
 class AgeRangeToResourceConverter {
     companion object {

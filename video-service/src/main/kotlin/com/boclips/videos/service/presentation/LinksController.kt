@@ -1,9 +1,10 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
@@ -40,7 +41,8 @@ class LinksController(
     private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
     private val suggestionLinkBuilder: SuggestionLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
-    private val contentPartnersLinkBuilder: ContentPartnersLinkBuilder,
+    private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
+    private val channelLinkBuilder: ChannelLinkBuilder,
     private val contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
     private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
@@ -81,9 +83,12 @@ class LinksController(
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),
-                contentPartnersLinkBuilder.contentPartnerLink(null),
-                contentPartnersLinkBuilder.contentPartnersLink(),
-                contentPartnersLinkBuilder.contentPartnersSignedUploadLink(),
+                legacyContentPartnerLinkBuilder.contentPartnerLink(null),
+                legacyContentPartnerLinkBuilder.contentPartnersLink(),
+                legacyContentPartnerLinkBuilder.contentPartnersSignedUploadLink(),
+                channelLinkBuilder.channelLink(null),
+                channelLinkBuilder.channelsLink(),
+                channelLinkBuilder.channelsSignedUploadLink(),
                 contentPartnerContractsLinkBuilder.contentPartnerContractLink(null),
                 contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
                 contentPartnerContractsLinkBuilder.createContractLink(),

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
@@ -16,7 +16,14 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create video with no age range`() {
-        createAgeRange(AgeRangeRequest(id = "early-years", min = 3, max = 7, label = "3-7"))
+        createAgeRange(
+            AgeRangeRequest(
+                id = "early-years",
+                min = 3,
+                max = 7,
+                label = "3-7"
+            )
+        )
         val contentPartner = saveContentPartner(
             name = "Our content partner",
             ageRanges = listOf("early-years")

@@ -2,9 +2,9 @@ package com.boclips.contentpartner.service.presentation.converters
 
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
-import com.boclips.videos.api.response.contentpartner.LegalRestrictionResource
-import com.boclips.videos.api.response.contentpartner.LegalRestrictionsResource
-import com.boclips.videos.api.response.contentpartner.LegalRestrictionsWrapper
+import com.boclips.videos.api.response.channel.LegalRestrictionResource
+import com.boclips.videos.api.response.channel.LegalRestrictionsResource
+import com.boclips.videos.api.response.channel.LegalRestrictionsWrapper
 
 class LegalRestrictionsToResourceConverter(private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder) {
     fun convert(legalRestriction: LegalRestriction): LegalRestrictionResource {

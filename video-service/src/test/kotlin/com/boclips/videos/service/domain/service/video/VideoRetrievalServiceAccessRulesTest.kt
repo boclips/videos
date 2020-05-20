@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess

@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation.ageRange
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
-import com.boclips.videos.api.response.contentpartner.AgeRangeResource
+import com.boclips.videos.api.response.channel.AgeRangeResource
 
 class AgeRangeResourceConverter(
     private val ageRangeLinkBuilder: AgeRangeLinkBuilder

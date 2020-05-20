@@ -263,19 +263,19 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(contentPartners.map { it.name }).containsExactlyInAnyOrder("TED", "YoutubeChannel")
 
             val officialContentPartners = contentPartnersClient.getContentPartners(
-                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(official = true)
+                channelFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(official = true)
             )._embedded.contentPartners
             assertThat(officialContentPartners).hasSize(1)
             assertThat(officialContentPartners.first().name).isEqualTo("TED")
 
             val namedContentPartners = contentPartnersClient.getContentPartners(
-                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(name = "YoutubeChannel")
+                channelFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(name = "YoutubeChannel")
             )._embedded.contentPartners
             assertThat(namedContentPartners).hasSize(1)
             assertThat(namedContentPartners.first().name).isEqualTo("YoutubeChannel")
 
             val accreditedToContentPartners = contentPartnersClient.getContentPartners(
-                contentPartnerFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(accreditedToYtChannel = "YT-123")
+                channelFilterRequest = VideoServiceApiFactory.contentPartnerFilterRequest(accreditedToYtChannel = "YT-123")
             )._embedded.contentPartners
             assertThat(accreditedToContentPartners).hasSize(1)
             assertThat(accreditedToContentPartners.first().name).isEqualTo("YoutubeChannel")

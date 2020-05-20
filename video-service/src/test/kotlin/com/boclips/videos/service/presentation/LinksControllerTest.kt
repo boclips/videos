@@ -61,6 +61,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
             .andExpect(jsonPath("$._links.getCaptions").doesNotExist())
+            .andExpect(jsonPath("$._links.channels").doesNotExist())
+            .andExpect(jsonPath("$._links.channel").doesNotExist())
     }
 
     @Test
@@ -137,6 +139,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.distributionMethods").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartner").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
+            .andExpect(jsonPath("$._links.channels").doesNotExist())
+            .andExpect(jsonPath("$._links.channel").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnerContract").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnersSignedUploadLink").doesNotExist())
@@ -164,6 +168,15 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
             .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.channels.href", containsString("/channels")))
+            .andExpect(
+                jsonPath(
+                    "$._links.channelsSignedUploadLink.href",
+                    containsString("/channels/signed-upload-link")
+                )
+            )
+            .andExpect(jsonPath("$._links.channel.href", containsString("/channels/{id}")))
+            .andExpect(jsonPath("$._links.channel.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
                     "$._links.contentPartnerContract.href",

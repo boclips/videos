@@ -8,8 +8,8 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
-import com.boclips.videos.api.request.contentpartner.LegalRestrictionsRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.springframework.stereotype.Component
 
@@ -22,7 +22,7 @@ class UpdateChannel(
     private val eventConverter: EventConverter,
     private val eventBus: EventBus
 ) {
-    operator fun invoke(channelId: String, upsertRequest: ContentPartnerRequest): Channel {
+    operator fun invoke(channelId: String, upsertRequest: ChannelRequest): Channel {
         val id = ChannelId(value = channelId)
 
         val allSubjects = subjectRepository.findAll()

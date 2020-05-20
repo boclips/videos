@@ -18,13 +18,13 @@ import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.ContentPartnerMarketingInformationRequest
+import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
+import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -273,7 +273,7 @@ abstract class AbstractSpringIntegrationTest {
         ingest: IngestDetailsResource? = null,
         deliveryFrequency: Period? = null,
         oneLineDescription: String? = null,
-        marketingInformation: ContentPartnerMarketingInformationRequest? = null,
+        marketingInformation: MarketingInformationRequest? = null,
         isTranscriptProvided: Boolean? = null,
         educationalResources: String? = null,
         curriculumAligned: String? = null,

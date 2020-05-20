@@ -1,5 +1,6 @@
 package com.boclips.videos.api.request.contentpartner
 
+import com.boclips.videos.api.request.channel.CurrencyCodeValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

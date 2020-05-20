@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.presentation.distributionmethod
 
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
-import com.boclips.videos.api.response.contentpartner.DistributionMethodWrapper
-import com.boclips.videos.api.response.contentpartner.DistributionMethodsResource
+import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.api.response.channel.DistributionMethodWrapper
+import com.boclips.videos.api.response.channel.DistributionMethodsResource
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

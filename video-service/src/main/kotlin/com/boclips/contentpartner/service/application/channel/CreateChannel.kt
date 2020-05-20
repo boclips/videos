@@ -27,7 +27,7 @@ import com.boclips.contentpartner.service.presentation.converters.ContentPartner
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.api.request.contentpartner.ContentPartnerRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.service.domain.model.video.ContentCategories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.bson.types.ObjectId
@@ -43,7 +43,7 @@ class CreateChannel(
     private val eventConverter: EventConverter,
     private val eventBus: EventBus
 ) {
-    operator fun invoke(upsertRequest: ContentPartnerRequest): Channel {
+    operator fun invoke(upsertRequest: ChannelRequest): Channel {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
             AgeRangeId(rawAgeRangeId).let { ageRangeId ->
                 ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)

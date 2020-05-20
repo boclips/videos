@@ -24,13 +24,13 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.contentwarning.CreateContentWarningRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
+import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -342,7 +342,14 @@ abstract class AbstractSpringIntegrationTest {
         max: Int,
         label: String
     ): com.boclips.contentpartner.service.domain.model.agerange.AgeRange {
-        return createAgeRange(AgeRangeRequest(id = id, min = min, max = max, label = label))
+        return createAgeRange(
+            AgeRangeRequest(
+                id = id,
+                min = min,
+                max = max,
+                label = label
+            )
+        )
     }
 
     fun saveTag(label: String): String {

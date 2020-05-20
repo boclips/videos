@@ -114,6 +114,18 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(GET, "/v1/content-partners/*").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
             .antMatchers(PUT, "/v1/content-partners/*/legal-restrictions").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
 
+            .antMatchers(HEAD, "/v1/channels/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
+            .antMatchers(POST, "/v1/channels/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
+            .antMatchers(POST, "/v1/channels").hasRole(ROLE.INSERT_CHANNELS)
+            .antMatchers(GET, "/v1/channels").hasRole(ROLE.VIEW_CHANNELS)
+            .antMatchers(POST, "/v1/channels/signed-upload-link").run {
+                hasAnyRole(ROLE.INSERT_CHANNELS, ROLE.UPDATE_CHANNELS)
+            }
+            .antMatchers(PATCH, "/v1/channels/*").hasRole(ROLE.UPDATE_CHANNELS)
+            .antMatchers(PUT, "/v1/channels/*").hasRole(ROLE.UPDATE_CHANNELS)
+            .antMatchers(GET, "/v1/channels/*").hasRole(ROLE.VIEW_CHANNELS)
+            .antMatchers(PUT, "/v1/channels/*/legal-restrictions").hasRole(ROLE.UPDATE_CHANNELS)
+
             .antMatchers(GET, "/v1/content-partner-contracts/*").hasRole(ROLE.VIEW_CONTENT_PARTNER_CONTRACTS)
             .antMatchers(GET, "/v1/content-partner-contracts").hasRole(ROLE.VIEW_CONTENT_PARTNER_CONTRACTS)
             .antMatchers(POST, "/v1/content-partner-contracts").hasRole(ROLE.INSERT_CONTENT_PARTNER_CONTRACTS)

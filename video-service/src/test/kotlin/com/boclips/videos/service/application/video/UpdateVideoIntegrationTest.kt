@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
+import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.service.domain.model.OpenEndedAgeRange
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -18,7 +18,13 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `updates to bounded age range with no max`() {
         val videoId = saveVideo(ageRangeMin = 2, ageRangeMax = 10)
 
-        createAgeRange(AgeRangeRequest(id = "thirteen-plus", min = 13, label = "13+"))
+        createAgeRange(
+            AgeRangeRequest(
+                id = "thirteen-plus",
+                min = 13,
+                label = "13+"
+            )
+        )
 
         updateVideo(
             id = videoId.value,
