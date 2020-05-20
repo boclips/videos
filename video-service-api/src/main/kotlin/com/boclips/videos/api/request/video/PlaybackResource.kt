@@ -3,6 +3,7 @@ package com.boclips.videos.api.request.video
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.response.HateoasLink
+import com.boclips.videos.api.response.video.CaptionStatus
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -38,6 +39,8 @@ data class StreamPlaybackResource(
     override var duration: Duration? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     var referenceId: String?,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val maxResolutionAvailable: Boolean? = null,
     @get:JsonIgnore
     override val downloadUrl: String? = null,
     override val _links: Map<String, HateoasLink>? = null

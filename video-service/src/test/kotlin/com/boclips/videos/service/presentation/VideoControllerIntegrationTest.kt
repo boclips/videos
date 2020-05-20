@@ -100,6 +100,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").exists())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.maxResolutionAvailable", equalTo(true)))
                 .andExpect(jsonPath("$.playback.duration", equalTo("PT1M")))
                 .andExpect(jsonPath("$.playback.streamUrl").doesNotExist())
                 .andExpect(jsonPath("$.playback.thumbnailUrl").doesNotExist())

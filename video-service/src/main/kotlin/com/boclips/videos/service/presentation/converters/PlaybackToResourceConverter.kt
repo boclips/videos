@@ -21,6 +21,7 @@ class PlaybackToResourceConverter(
                 duration = playback.duration,
                 id = playback.id.value,
                 referenceId = playback.referenceId,
+                maxResolutionAvailable = playback.hasOriginalOrFHDResolution(),
                 _links = links(playback, videoId).map { it.rel to it }.toMap()
             )
         }

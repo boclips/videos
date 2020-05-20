@@ -3,9 +3,12 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
+import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
+import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.VideoFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
@@ -32,7 +35,12 @@ internal class PlaybackToResourceConverterTest {
             )
     }
 
-    val kalturaPlayback = TestFactories.createKalturaPlayback(downloadUrl = "https://download-url.com", thumbnailSecond = 10)
+    val kalturaPlayback = TestFactories.createKalturaPlayback(
+        downloadUrl = "https://download-url.com",
+        thumbnailSecond = 10,
+        originalDimensions = Dimensions(100,100),
+        assets = setOf(VideoFactory.createVideoAsset(dimensions = Dimensions(100,100)))
+    )
 
     val youtubePlayback = TestFactories.createYoutubePlayback()
 
@@ -46,6 +54,7 @@ internal class PlaybackToResourceConverterTest {
         assertThat(content.downloadUrl).isEqualTo("https://download-url.com")
         assertThat(content.id).isEqualTo(kalturaPlayback.id.value)
         assertThat(content.referenceId).isEqualTo(kalturaPlayback.referenceId)
+        assertThat(content.maxResolutionAvailable).isEqualTo(true)
 
         verify(eventsLinkBuilder).createPlaybackEventLink()
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
