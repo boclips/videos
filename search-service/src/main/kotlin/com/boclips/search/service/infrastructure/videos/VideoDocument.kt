@@ -8,7 +8,7 @@ import java.time.LocalDate
 data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(TITLE) val title: String,
-    @param:JsonProperty(RAW_TITLE) val rawTitle: String,
+    @param:JsonProperty(RAW_TITLE) val rawTitle: String? = "",
     @param:JsonProperty(DESCRIPTION) val description: String,
     @param:JsonProperty(CONTENT_PROVIDER) val contentProvider: String,
     @param:JsonProperty(CONTENT_PARTNER_ID) val contentPartnerId: String?,
