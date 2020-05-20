@@ -4,6 +4,7 @@ import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
@@ -43,6 +44,10 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
 
         database[resourceId] = resource
         return resource
+    }
+
+    override fun update(collectionId: String, update: UpdateCollectionRequest): Void {
+        TODO("not implemented")
     }
 
     override fun getCollections(collectionFilterRequest: CollectionFilterRequest): CollectionsResource {

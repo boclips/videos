@@ -5,9 +5,10 @@ import com.boclips.videos.api.httpclient.ContentPartnersClient
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
-import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -147,16 +148,14 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 tokenFactory = TestTokenFactory(
                     "the@owner.com",
                     UserRoles.VIEW_COLLECTIONS,
-                    UserRoles.INSERT_COLLECTIONS
+                    UserRoles.INSERT_COLLECTIONS,
+                    UserRoles.UPDATE_COLLECTIONS
                 )
             )
 
             val savedVideoId = saveVideo()
 
             val collection1 =
-                collectionsClient.create(CreateCollectionRequest(title = "collection title", discoverable = true))
-
-            val collection2 =
                 collectionsClient.create(
                     CreateCollectionRequest(
                         title = "collection title",
@@ -165,12 +164,26 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     )
                 )
 
-            assertThat(collectionsClient.getCollection(collectionId = collection1.id!!)).isNotNull
+            val retrievedCollection = collectionsClient.getCollection(collectionId = collection1.id!!)
+            assertThat(retrievedCollection).isNotNull
+            assertThat(retrievedCollection.attachments).isEmpty()
 
-            val detailedCollection = collectionsClient.getCollection(collection2.id!!, Projection.details)
-            assertThat(detailedCollection.videos.first().title).isNotBlank()
+            collectionsClient.update(
+                collectionId = collection1.id!!,
+                update = UpdateCollectionRequest(
+                    attachment = AttachmentRequest(
+                        linkToResource = "some-link",
+                        description = "some description",
+                        type = "LESSON_PLAN"
+                    )
+                )
+            )
 
-            assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(2)
+            val updatedCollection = collectionsClient.getCollection(collectionId = collection1.id!!)
+            assertThat(updatedCollection).isNotNull
+            assertThat(updatedCollection.attachments).isNotEmpty()
+
+            assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(1)
         }
     }
 

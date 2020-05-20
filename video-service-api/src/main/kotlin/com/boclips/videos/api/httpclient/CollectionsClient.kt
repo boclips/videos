@@ -5,6 +5,7 @@ import com.boclips.videos.api.httpclient.helper.TokenFactory
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,10 +25,19 @@ interface CollectionsClient {
     fun getCollections(@QueryMap collectionFilterRequest: CollectionFilterRequest = CollectionFilterRequest()): CollectionsResource
 
     @RequestLine("GET /v1/collections/{collectionId}?projection={projection}")
-    fun getCollection(@Param("collectionId") collectionId: String, @Param("projection") projection: Projection? = null): CollectionResource
+    fun getCollection(
+        @Param("collectionId") collectionId: String,
+        @Param("projection") projection: Projection? = null
+    ): CollectionResource
 
     @RequestLine("POST /v1/collections")
     fun create(createCollectionRequest: CreateCollectionRequest): CollectionResource
+
+    @RequestLine("PATCH /v1/collections/{collectionId}")
+    fun update(
+        @Param("collectionId") collectionId: String,
+        update: UpdateCollectionRequest
+    ): Void
 
     companion object {
         @JvmStatic
