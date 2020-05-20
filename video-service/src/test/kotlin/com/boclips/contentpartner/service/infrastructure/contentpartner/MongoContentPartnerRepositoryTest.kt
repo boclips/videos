@@ -11,9 +11,10 @@ import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformati
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
+import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
@@ -24,31 +25,31 @@ import java.time.Period
 
 class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var mongoContentPartnerRepository: MongoContentPartnerRepository
+    lateinit var mongoChannelRepository: MongoChannelRepository
 
     @Test
     fun `can create a content partner`() {
-        val contentPartner = createContentPartner()
+        val channel = createChannel()
 
-        val createdAsset = mongoContentPartnerRepository.create(channel = contentPartner)
+        val createdAsset = mongoChannelRepository.create(channel = channel)
 
-        assertThat(createdAsset.id.value).isEqualTo(contentPartner.id.value)
+        assertThat(createdAsset.id.value).isEqualTo(channel.id.value)
     }
 
     @Test
     fun find() {
-        val originalContentPartner = mongoContentPartnerRepository.create(
-            createContentPartner()
+        val originalChannel = mongoChannelRepository.create(
+            createChannel()
         )
 
-        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.id)
+        val retrievedAsset = mongoChannelRepository.findById(originalChannel.id)
 
-        assertThat(retrievedAsset).isEqualTo(originalContentPartner)
+        assertThat(retrievedAsset).isEqualTo(originalChannel)
     }
 
     @Test
     fun `findById does not throw for invalid object id`() {
-        val retrievedAsset = mongoContentPartnerRepository.findById(
+        val retrievedAsset = mongoChannelRepository.findById(
             ChannelId(
                 "invalid-hex-string"
             )
@@ -59,54 +60,54 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find all by name filter`() {
-        val contentPartnerIds = listOf(
-            mongoContentPartnerRepository.create(
-                createContentPartner(name = "hello")
+        val channelIds = listOf(
+            mongoChannelRepository.create(
+                createChannel(name = "hello")
             ).id,
-            mongoContentPartnerRepository.create(
-                createContentPartner(name = "hello")
+            mongoChannelRepository.create(
+                createChannel(name = "hello")
             ).id
         )
 
-        mongoContentPartnerRepository.create(
-            createContentPartner(name = "good day")
+        mongoChannelRepository.create(
+            createChannel(name = "good day")
         )
 
-        val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
+        val retrievedChannel =
+            mongoChannelRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
 
-        assertThat(retrievedContentPartners.map { it.id }).isEqualTo(contentPartnerIds)
+        assertThat(retrievedChannel.map { it.id }).isEqualTo(channelIds)
     }
 
     @Test
     fun `find all by official filter`() {
-        val officialContentPartnerId = mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.PartnerCredit)
+        val officialChannelId = mongoChannelRepository.create(
+            createChannel(credit = Credit.PartnerCredit)
         ).id
 
 
-        mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+        mongoChannelRepository.create(
+            createChannel(credit = Credit.YoutubeCredit(channelId = "123"))
         ).id
 
-        val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(listOf(ChannelFilter.OfficialFilter(official = true)))
+        val retrievedChannels =
+            mongoChannelRepository.findAll(listOf(ChannelFilter.OfficialFilter(official = true)))
 
-        assertThat(retrievedContentPartners.map { it.id }).containsExactly(officialContentPartnerId)
+        assertThat(retrievedChannels.map { it.id }).containsExactly(officialChannelId)
     }
 
     @Test
     fun `find all by accredited to youtube channel id`() {
-        mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.PartnerCredit)
+        mongoChannelRepository.create(
+            createChannel(credit = Credit.PartnerCredit)
         ).id
 
-        val accreditedToYtChannelContentPartner = mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"))
+        val accreditedToYtChannelId = mongoChannelRepository.create(
+            createChannel(credit = Credit.YoutubeCredit(channelId = "123"))
         ).id
 
-        val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(
+        val retrievedChannels =
+            mongoChannelRepository.findAll(
                 listOf(
                     ChannelFilter.AccreditedTo(
                         Credit.YoutubeCredit(
@@ -116,56 +117,56 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-        assertThat(retrievedContentPartners.map { it.id }).containsExactly(
-            accreditedToYtChannelContentPartner
+        assertThat(retrievedChannels.map { it.id }).containsExactly(
+            accreditedToYtChannelId
         )
     }
 
     @Test
     fun `find all with multiple filters`() {
-        val toBeFoundContentPartnerId = mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
+        val toBeFoundChannelId = mongoChannelRepository.create(
+            createChannel(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
         ).id
 
-        mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
+        mongoChannelRepository.create(
+            createChannel(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
         ).id
 
-        mongoContentPartnerRepository.create(
-            createContentPartner(credit = Credit.PartnerCredit, name = "hello")
+        mongoChannelRepository.create(
+            createChannel(credit = Credit.PartnerCredit, name = "hello")
         ).id
 
-        val retrievedContentPartners =
-            mongoContentPartnerRepository.findAll(
+        val retrievedChannels =
+            mongoChannelRepository.findAll(
                 listOf(
                     ChannelFilter.OfficialFilter(official = false),
                     ChannelFilter.NameFilter(name = "hello")
                 )
             )
 
-        assertThat(retrievedContentPartners.map { it.id }).containsExactly(toBeFoundContentPartnerId)
+        assertThat(retrievedChannels.map { it.id }).containsExactly(toBeFoundChannelId)
     }
 
     @Test
     fun `find by youtube channel name`() {
-        val originalContentPartner = mongoContentPartnerRepository.create(
-            createContentPartner(
+        val originalChannel = mongoChannelRepository.create(
+            createChannel(
                 credit = Credit.YoutubeCredit(channelId = "123")
             )
         )
 
-        val retrievedAsset = mongoContentPartnerRepository.findById(originalContentPartner.id)
+        val retrievedAsset = mongoChannelRepository.findById(originalChannel.id)
 
-        assertThat(retrievedAsset).isEqualTo(originalContentPartner)
+        assertThat(retrievedAsset).isEqualTo(originalChannel)
     }
 
     @Test
-    fun `find all content partners`() {
-        mongoContentPartnerRepository.create(
-            createContentPartner(name = "my bloody valentine")
+    fun `find all channel`() {
+        mongoChannelRepository.create(
+            createChannel(name = "my bloody valentine")
         )
 
-        val retrievedAsset = mongoContentPartnerRepository.findAll()
+        val retrievedAsset = mongoChannelRepository.findAll()
 
         assertThat(retrievedAsset).hasSize(1)
         assertThat(retrievedAsset.first()!!.name).isEqualTo("my bloody valentine")
@@ -173,12 +174,12 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find by matching names ignoring casing`() {
-        mongoContentPartnerRepository.create(createContentPartner(name = "TED"))
-        mongoContentPartnerRepository.create(createContentPartner(name = "TED"))
-        mongoContentPartnerRepository.create(createContentPartner(name = "TED-Ed"))
-        mongoContentPartnerRepository.create(createContentPartner(name = "BBC"))
+        mongoChannelRepository.create(createChannel(name = "TED"))
+        mongoChannelRepository.create(createChannel(name = "TED"))
+        mongoChannelRepository.create(createChannel(name = "TED-Ed"))
+        mongoChannelRepository.create(createChannel(name = "BBC"))
 
-        val results = mongoContentPartnerRepository.findByName("ted")
+        val results = mongoChannelRepository.findByName("ted")
 
         assertThat(results).hasSize(2)
         assertThat(results[0].name).isEqualTo("TED")
@@ -187,32 +188,32 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not update given an empty list of update commands`() {
-        Assertions.assertDoesNotThrow { mongoContentPartnerRepository.update(listOf()) }
+        Assertions.assertDoesNotThrow { mongoChannelRepository.update(listOf()) }
     }
 
     @Test
     fun `replaces name`() {
-        val contentPartner = mongoContentPartnerRepository.create(
-            createContentPartner(name = "my bloody valentine")
+        val channel = mongoChannelRepository.create(
+            createChannel(name = "my bloody valentine")
         )
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceName(
-                    channelId = contentPartner.id,
+                    channelId = channel.id,
                     name = "new name"
                 )
             )
         )
 
-        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)
+        val updatedAsset = mongoChannelRepository.findById(channel.id)
         assertThat(updatedAsset?.name).isEqualTo("new name")
     }
 
     @Test
     fun `replaces age range`() {
-        val contentPartner = mongoContentPartnerRepository.create(
-            createContentPartner(
+        val channel = mongoChannelRepository.create(
+            createChannel(
                 pedagogyInformation = PedagogyInformation(
                     ageRangeBuckets = AgeRangeBuckets(
                         emptyList()
@@ -221,144 +222,144 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceAgeRanges(
-                    channelId = contentPartner.id,
+                    channelId = channel.id,
                     ageRangeBuckets = AgeRangeBuckets(
-                        listOf(ContentPartnerFactory.createAgeRange(min = 10, max = 20))
+                        listOf(ChannelFactory.createAgeRange(min = 10, max = 20))
                     )
                 )
             )
         )
 
-        val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+        val updatedAsset = mongoChannelRepository.findById(channel.id)!!
         assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.min).isEqualTo(10)
         assertThat(updatedAsset.pedagogyInformation?.ageRangeBuckets?.max).isEqualTo(20)
     }
 
     @Test
     fun `replace legal restrictions`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val legalRestrictions =
             LegalRestriction(
                 id = LegalRestrictionsId(
-                    ContentPartnerFactory.aValidId()
+                    ChannelFactory.aValidId()
                 ),
                 text = "New restrictions"
             )
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceLegalRestrictions(
-                    contentPartner.id,
+                    channel.id,
                     legalRestrictions
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.legalRestriction).isEqualTo(legalRestrictions)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.legalRestriction).isEqualTo(legalRestrictions)
     }
 
     @Test
     fun `replace curriculumAligned`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val curriculumAligned = "this is a curriculum"
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceCurriculumAligned(
-                    contentPartner.id,
+                    channel.id,
                     curriculumAligned
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
     }
 
     @Test
     fun `replace isTranscriptProvided`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val isTranscriptProvided = true
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceIsTranscriptProvided(
-                    contentPartner.id,
+                    channel.id,
                     isTranscriptProvided
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
     }
 
     @Test
     fun `replace educational resources`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val educationalResources = "this is a educational resource"
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceEducationalResources(
-                    contentPartner.id,
+                    channel.id,
                     educationalResources
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
     }
 
     @Test
     fun `replace best for tags`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val bestForTags = listOf("123", "456")
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceBestForTags(
-                    contentPartner.id,
+                    channel.id,
                     bestForTags
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
     }
 
     @Test
     fun `replace subjects`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner())
+        val channel = mongoChannelRepository.create(createChannel())
         val subjects = listOf("subject 1", "subject 2")
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceSubjects(
-                    contentPartner.id,
+                    channel.id,
                     subjects
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.pedagogyInformation?.subjects).isEqualTo(subjects)
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 
     @Test
     fun `replace ingest details`() {
-        val contentPartner = mongoContentPartnerRepository.create(createContentPartner(ingest = ManualIngest))
+        val channel = mongoChannelRepository.create(createChannel(ingest = ManualIngest))
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceIngestDetails(
-                    contentPartner.id,
+                    channel.id,
                     YoutubeScrapeIngest(
                         listOf("http://youtube.com/channel")
                     )
@@ -366,8 +367,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.ingest).isEqualTo(
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.ingest).isEqualTo(
             YoutubeScrapeIngest(
                 listOf("http://youtube.com/channel")
             )
@@ -376,193 +377,193 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replace delivery frequency`() {
-        val contentPartner =
-            mongoContentPartnerRepository.create(createContentPartner(deliveryFrequency = Period.ofMonths(1)))
+        val channel =
+            mongoChannelRepository.create(createChannel(deliveryFrequency = Period.ofMonths(1)))
 
-        mongoContentPartnerRepository.update(
+        mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceDeliveryFrequency(
-                    contentPartner.id,
+                    channel.id,
                     Period.ofYears(1)
                 )
             )
         )
 
-        val updatedContentPartner = mongoContentPartnerRepository.findById(contentPartner.id)
-        assertThat(updatedContentPartner?.deliveryFrequency).isEqualTo(Period.ofYears(1))
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Nested
     inner class OverridingDistributionMethods {
         @Test
         fun `replaces with stream`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     distributionMethods = emptySet()
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = contentPartner.id,
+                        channelId = channel.id,
                         distributionMethods = setOf(DistributionMethod.STREAM)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(setOf(DistributionMethod.STREAM))
         }
 
         @Test
         fun `replaces with download`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     distributionMethods = emptySet()
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = contentPartner.id,
+                        channelId = channel.id,
                         distributionMethods = setOf(DistributionMethod.DOWNLOAD)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(setOf(DistributionMethod.DOWNLOAD))
         }
 
         @Test
         fun `replaces with all`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     distributionMethods = emptySet()
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = contentPartner.id,
+                        channelId = channel.id,
                         distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
         }
 
         @Test
         fun `replaces with empty`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     distributionMethods = emptySet()
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = contentPartner.id,
+                        channelId = channel.id,
                         distributionMethods = emptySet()
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.distributionMethods).isEmpty()
         }
     }
 
     @Nested
-    inner class UpdatingContentPartners {
+    inner class UpdatingChannels {
         @Test
         fun `replaces educational resources`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     pedagogyInformation = PedagogyInformation(
                         educationalResources = "this is a resource"
                     )
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceEducationalResources(
-                        contentPartner.id, "New Resource"
+                        channel.id, "New Resource"
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.pedagogyInformation?.educationalResources).isEqualTo("New Resource")
         }
 
         @Test
         fun `replaces best for tags`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     pedagogyInformation = PedagogyInformation(
                         bestForTags = listOf("123", "345")
                     )
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceBestForTags(
-                        contentPartner.id, listOf("555", "666")
+                        channel.id, listOf("555", "666")
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.pedagogyInformation?.bestForTags).containsExactlyInAnyOrder("555", "666")
         }
 
         @Test
         fun `replaces subjects`() {
-            val contentPartner = mongoContentPartnerRepository.create(
-                createContentPartner(
+            val channel = mongoChannelRepository.create(
+                createChannel(
                     pedagogyInformation = PedagogyInformation(
                         subjects = listOf("subject 1", "subject 2")
                     )
                 )
             )
 
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceSubjects(
-                        contentPartner.id, listOf("subject 3", "subject 4")
+                        channel.id, listOf("subject 3", "subject 4")
                     )
                 )
             )
 
-            val updatedAsset = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedAsset.pedagogyInformation?.subjects).containsExactlyInAnyOrder("subject 3", "subject 4")
         }
 
         @Test
         fun `replaces contracts`() {
             val oldContract = ContentPartnerContractFactory.sample(contentPartnerName = "old")
-            val contentPartner = mongoContentPartnerRepository.create(createContentPartner(contract = oldContract))
+            val channel = mongoChannelRepository.create(createChannel(contract = oldContract))
 
             val newContract = ContentPartnerContractFactory.sample(contentPartnerName = "new")
-            mongoContentPartnerRepository.update(
+            mongoChannelRepository.update(
                 listOf(
                     ChannelUpdateCommand.ReplaceContract(
-                        channelId = contentPartner.id,
+                        channelId = channel.id,
                         contract = newContract
                     )
                 )
             )
 
-            val updated = mongoContentPartnerRepository.findById(contentPartner.id)!!
+            val updated = mongoChannelRepository.findById(channel.id)!!
             assertThat(updated.contract).isEqualTo(newContract)
         }
 
@@ -571,43 +572,43 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             @Test
             fun `can find one by contract id`() {
                 val contract = ContentPartnerContractFactory.sample()
-                val contentPartner = mongoContentPartnerRepository.create(
-                    createContentPartner(
+                val channel = mongoChannelRepository.create(
+                    createChannel(
                         contract = contract
                     )
                 )
 
-                val retrievedContentPartners = mongoContentPartnerRepository.findByContractId(contractId = contract.id)
+                val retrievedChannels = mongoChannelRepository.findByContractId(contractId = contract.id)
 
-                assertThat(retrievedContentPartners).containsExactly(contentPartner)
+                assertThat(retrievedChannels).containsExactly(channel)
             }
 
             @Test
             fun `can multiple by contract id`() {
                 val contract = ContentPartnerContractFactory.sample()
-                val firstContentPartner = mongoContentPartnerRepository.create(
-                    createContentPartner(
+                val firstChannel = mongoChannelRepository.create(
+                    createChannel(
                         contract = contract
                     )
                 )
 
-                val secondContentPartner = mongoContentPartnerRepository.create(
-                    createContentPartner(
+                val secondChannel = mongoChannelRepository.create(
+                    createChannel(
                         contract = contract
                     )
                 )
 
-                mongoContentPartnerRepository.create(
-                    createContentPartner(
+                mongoChannelRepository.create(
+                    createChannel(
                         contract = null
                     )
                 )
 
-                val retrievedContentPartners = mongoContentPartnerRepository.findByContractId(contractId = contract.id)
+                val retrievedChannels = mongoChannelRepository.findByContractId(contractId = contract.id)
 
-                assertThat(retrievedContentPartners).containsExactlyInAnyOrder(
-                    firstContentPartner,
-                    secondContentPartner
+                assertThat(retrievedChannels).containsExactlyInAnyOrder(
+                    firstChannel,
+                    secondChannel
                 )
             }
         }

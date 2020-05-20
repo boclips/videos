@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.infrastructure.contentpartner.converters
+package com.boclips.contentpartner.service.infrastructure.channel.converters
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.Channel
@@ -13,9 +13,9 @@ import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformati
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
-import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerStatusDocument
-import com.boclips.contentpartner.service.infrastructure.contentpartner.MarketingInformationDocument
+import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
+import com.boclips.contentpartner.service.infrastructure.channel.ContentPartnerStatusDocument
+import com.boclips.contentpartner.service.infrastructure.channel.MarketingInformationDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -27,13 +27,13 @@ import java.time.Period
 import java.util.Currency
 import java.util.Locale
 
-object ContentPartnerDocumentConverter : KLogging() {
+object ChannelDocumentConverter : KLogging() {
     private fun getAgeRangeBuckets(ageRangeBuckets: List<AgeRangeDocument>?) =
         ageRangeBuckets?.map { AgeRangeDocumentConverter.toAgeRange(it) }
             ?: emptyList()
 
-    fun toContentPartnerDocument(channel: Channel): ContentPartnerDocument {
-        return ContentPartnerDocument(
+    fun toChannelDocument(channel: Channel): ChannelDocument {
+        return ChannelDocument(
             id = ObjectId(channel.id.value),
             youtubeChannelId = when (channel.credit) {
                 is Credit.YoutubeCredit -> channel.credit.channelId
@@ -94,7 +94,7 @@ object ContentPartnerDocumentConverter : KLogging() {
         )
     }
 
-    fun toContentPartner(document: ContentPartnerDocument): Channel {
+    fun toChannel(document: ChannelDocument): Channel {
         return Channel(
             id = ChannelId(
                 value = document.id.toString()
@@ -149,9 +149,9 @@ object ContentPartnerDocumentConverter : KLogging() {
                         ContentPartnerStatusDocument.PROMOTED -> ChannelStatus.PROMOTED
                         null -> null
                     },
-                    logos = it.logos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl),
-                    showreel = it.showreel?.let(ContentPartnerDocumentConverter::safeToUrl),
-                    sampleVideos = it.sampleVideos?.mapNotNull(ContentPartnerDocumentConverter::safeToUrl)
+                    logos = it.logos?.mapNotNull(ChannelDocumentConverter::safeToUrl),
+                    showreel = it.showreel?.let(ChannelDocumentConverter::safeToUrl),
+                    sampleVideos = it.sampleVideos?.mapNotNull(ChannelDocumentConverter::safeToUrl)
                 )
             },
             pedagogyInformation = PedagogyInformation(
@@ -172,7 +172,7 @@ object ContentPartnerDocumentConverter : KLogging() {
         )
     }
 
-    private fun reconstructDistributionMethods(document: ContentPartnerDocument): Set<DistributionMethod> {
+    private fun reconstructDistributionMethods(document: ChannelDocument): Set<DistributionMethod> {
         return document.distributionMethods?.let {
             convertDistributionMethodsFromDocument(
                 it
@@ -182,8 +182,8 @@ object ContentPartnerDocumentConverter : KLogging() {
         )
     }
 
-    private fun convertToDefaultDistributionMethods(contentPartnerDocument: ContentPartnerDocument): Set<DistributionMethod> {
-        return if (!contentPartnerDocument.youtubeChannelId.isNullOrBlank()) {
+    private fun convertToDefaultDistributionMethods(channelDocument: ChannelDocument): Set<DistributionMethod> {
+        return if (!channelDocument.youtubeChannelId.isNullOrBlank()) {
             setOf(DistributionMethod.STREAM)
         } else {
             DistributionMethod.ALL

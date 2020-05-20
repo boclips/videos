@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.infrastructure.UnknownDeliveryMethodException
-import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.DistributionMethodDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.channel.converters.DistributionMethodDocumentConverter
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

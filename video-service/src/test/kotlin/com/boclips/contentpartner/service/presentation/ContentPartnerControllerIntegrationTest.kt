@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contentpartner.AgeRangeRequest
@@ -333,21 +333,21 @@ class ContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() 
     fun `can filter content partners by ingest types`() {
         saveContentPartner(
             name = "mrss",
-            ingest = ContentPartnerFactory.createIngestDetailsResource(
+            ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.MRSS,
                 urls = listOf("http://feed.me")
             )
         )
         saveContentPartner(
             name = "yt",
-            ingest = ContentPartnerFactory.createIngestDetailsResource(
+            ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.YOUTUBE,
                 playlistIds = listOf("http://yt.com")
             )
         )
         saveContentPartner(
             name = "manual",
-            ingest = ContentPartnerFactory.createIngestDetailsResource(type = IngestType.MANUAL)
+            ingest = ChannelFactory.createIngestDetailsResource(type = IngestType.MANUAL)
         )
 
         mockMvc.perform(

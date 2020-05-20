@@ -1,11 +1,11 @@
-package com.boclips.contentpartner.service.infrastructure.contentpartner.converters
+package com.boclips.contentpartner.service.infrastructure.channel.converters
 
 import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
 import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
-import com.boclips.contentpartner.service.infrastructure.contentpartner.IngestDetailsDocument
+import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
 
 object IngestDetailsDocumentConverter {
 

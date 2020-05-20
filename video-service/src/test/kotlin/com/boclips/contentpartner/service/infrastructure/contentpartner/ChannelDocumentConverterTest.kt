@@ -12,9 +12,9 @@ import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
-import com.boclips.contentpartner.service.infrastructure.contentpartner.converters.ContentPartnerDocumentConverter
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartnerDocument
+import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -35,7 +35,7 @@ class ChannelDocumentConverterTest {
             ),
             name = "The grandest content partner there ever lived",
             credit = Credit.PartnerCredit,
-            legalRestriction = ContentPartnerFactory.createLegalRestrictions(),
+            legalRestriction = ChannelFactory.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(
                 Currency.getInstance("GBP")
@@ -65,22 +65,22 @@ class ChannelDocumentConverterTest {
                 bestForTags = listOf("123", "345"),
                 subjects = listOf("subject 1", "subjects 2"),
                 ageRangeBuckets = AgeRangeBuckets(
-                    listOf(ContentPartnerFactory.createAgeRange())
+                    listOf(ChannelFactory.createAgeRange())
                 )
             ),
             contract = ContentPartnerContractFactory.sample()
         )
 
-        val document = ContentPartnerDocumentConverter.toContentPartnerDocument(original)
-        val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
+        val document = ChannelDocumentConverter.toChannelDocument(original)
+        val convertedAsset = ChannelDocumentConverter.toChannel(document)
 
         assertThat(convertedAsset).isEqualTo(original)
     }
 
     @Test
     fun `ingest defaults to manual when not specified in the document`() {
-        val document = createContentPartnerDocument(ingest = null)
-        val contentPartner = ContentPartnerDocumentConverter.toContentPartner(document)
+        val document = createChannelDocument(ingest = null)
+        val contentPartner = ChannelDocumentConverter.toChannel(document)
 
         assertThat(contentPartner.ingest).isEqualTo(ManualIngest)
     }
@@ -89,67 +89,67 @@ class ChannelDocumentConverterTest {
     inner class DistributionMethods {
         @Test
         fun `the content partner is available on all distribution methods by default`() {
-            val document = createContentPartnerDocument(distributionMethods = null)
+            val document = createChannelDocument(distributionMethods = null)
 
-            val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
+            val convertedAsset = ChannelDocumentConverter.toChannel(document)
             assertThat(convertedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
         }
 
         @Test
         fun `the content partner from youtube is not available for download by default`() {
-            val document = createContentPartnerDocument(
+            val document = createChannelDocument(
                 distributionMethods = null,
                 youtubeChannelId = "Awesome channel"
             )
 
-            val convertedAsset = ContentPartnerDocumentConverter.toContentPartner(document)
+            val convertedAsset = ChannelDocumentConverter.toChannel(document)
             assertThat(convertedAsset.distributionMethods).containsOnly(DistributionMethod.STREAM)
         }
 
         @Test
         fun `the content partner is available on all distribution methods`() {
-            val contentPartner = ContentPartnerFactory.createContentPartner(
+            val contentPartner = ChannelFactory.createChannel(
                 distributionMethods = emptySet()
             )
 
-            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
-            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+            val contentPartnerDocument = ChannelDocumentConverter.toChannelDocument(contentPartner)
+            val convertedContentPartner = ChannelDocumentConverter.toChannel(contentPartnerDocument)
 
             assertThat(convertedContentPartner.id.value).isEqualTo(contentPartner.id.value)
         }
 
         @Test
         fun `the content partner is not available at all`() {
-            val contentPartner = ContentPartnerFactory.createContentPartner(
+            val contentPartner = ChannelFactory.createChannel(
                 distributionMethods = DistributionMethod.ALL
             )
 
-            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
-            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+            val contentPartnerDocument = ChannelDocumentConverter.toChannelDocument(contentPartner)
+            val convertedContentPartner = ChannelDocumentConverter.toChannel(contentPartnerDocument)
 
             assertThat(convertedContentPartner.id.value).isEqualTo(contentPartner.id.value)
         }
 
         @Test
         fun `the content partner is only available for download`() {
-            val contentPartner = ContentPartnerFactory.createContentPartner(
+            val contentPartner = ChannelFactory.createChannel(
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
             )
 
-            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
-            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+            val contentPartnerDocument = ChannelDocumentConverter.toChannelDocument(contentPartner)
+            val convertedContentPartner = ChannelDocumentConverter.toChannel(contentPartnerDocument)
 
             assertThat(convertedContentPartner.id.value).isEqualTo(contentPartner.id.value)
         }
 
         @Test
         fun `the content partner is only available for stream`() {
-            val contentPartner = ContentPartnerFactory.createContentPartner(
+            val contentPartner = ChannelFactory.createChannel(
                 distributionMethods = setOf(DistributionMethod.STREAM)
             )
 
-            val contentPartnerDocument = ContentPartnerDocumentConverter.toContentPartnerDocument(contentPartner)
-            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+            val contentPartnerDocument = ChannelDocumentConverter.toChannelDocument(contentPartner)
+            val convertedContentPartner = ChannelDocumentConverter.toChannel(contentPartnerDocument)
 
             assertThat(convertedContentPartner.id.value).isEqualTo(contentPartner.id.value)
         }
@@ -160,9 +160,9 @@ class ChannelDocumentConverterTest {
         @Test
         fun `invalid types are ignored`() {
             val contentPartnerDocument =
-                createContentPartnerDocument(contentTypes = listOf("NEWS", "INSTRUCTIONAL", "STOCK", "WHODIS?"))
+                createChannelDocument(contentTypes = listOf("NEWS", "INSTRUCTIONAL", "STOCK", "WHODIS?"))
 
-            val convertedContentPartner = ContentPartnerDocumentConverter.toContentPartner(contentPartnerDocument)
+            val convertedContentPartner = ChannelDocumentConverter.toChannel(contentPartnerDocument)
 
             assertThat(convertedContentPartner.contentTypes).containsExactly(
                 ContentType.NEWS,

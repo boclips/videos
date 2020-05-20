@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContentPartnerContractRepositoryEventDecorator
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
-import com.boclips.contentpartner.service.infrastructure.contentpartner.MongoContentPartnerRepository
+import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contract.MongoContentPartnerContractRepository
 import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
@@ -202,7 +202,7 @@ class DomainContext(
 
     @Bean
     fun contentPartnerRepository(): ChannelRepository {
-        return MongoContentPartnerRepository(
+        return MongoChannelRepository(
             mongoClient
         )
     }

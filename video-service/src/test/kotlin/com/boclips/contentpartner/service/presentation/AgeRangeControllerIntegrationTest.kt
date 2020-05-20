@@ -2,7 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.CoreMatchers.equalTo
@@ -87,8 +87,8 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns all age ranges`() {
-        val ageRange1 = ContentPartnerFactory.createAgeRange(id = "id1")
-        val ageRange2 = ContentPartnerFactory.createAgeRange(id = "id2")
+        val ageRange1 = ChannelFactory.createAgeRange(id = "id1")
+        val ageRange2 = ChannelFactory.createAgeRange(id = "id2")
 
 
         ageRangeRepository.create(ageRange = ageRange1)
@@ -102,8 +102,8 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `returns 403 if user doesn't have a right permission`() {
-        val ageRange1 = ContentPartnerFactory.createAgeRange(id = "id1")
-        val ageRange2 = ContentPartnerFactory.createAgeRange(id = "id2")
+        val ageRange1 = ChannelFactory.createAgeRange(id = "id1")
+        val ageRange2 = ChannelFactory.createAgeRange(id = "id2")
 
 
         ageRangeRepository.create(ageRange = ageRange1)

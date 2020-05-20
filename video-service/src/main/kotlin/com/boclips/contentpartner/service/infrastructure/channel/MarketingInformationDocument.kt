@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.infrastructure.contentpartner
+package com.boclips.contentpartner.service.infrastructure.channel
 
 data class MarketingInformationDocument(
     val oneLineDescription: String? = null,

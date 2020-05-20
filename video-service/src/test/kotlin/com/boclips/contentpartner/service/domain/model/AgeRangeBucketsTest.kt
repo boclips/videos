@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.domain.model
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,9 +10,9 @@ class AgeRangeBucketsTest {
     fun `min of all ranges`() {
         val ranges = AgeRangeBuckets(
             ageRanges = listOf(
-                ContentPartnerFactory.createAgeRange(min = 1),
-                ContentPartnerFactory.createAgeRange(min = 2),
-                ContentPartnerFactory.createAgeRange(min = 3)
+                ChannelFactory.createAgeRange(min = 1),
+                ChannelFactory.createAgeRange(min = 2),
+                ChannelFactory.createAgeRange(min = 3)
             )
         )
 
@@ -23,10 +23,10 @@ class AgeRangeBucketsTest {
     fun `max of all ranges`() {
         val ranges = AgeRangeBuckets(
             ageRanges = listOf(
-                ContentPartnerFactory.createAgeRange(max = 2),
-                ContentPartnerFactory.createAgeRange(max = 1),
-                ContentPartnerFactory.createAgeRange(max = null),
-                ContentPartnerFactory.createAgeRange(max = 3)
+                ChannelFactory.createAgeRange(max = 2),
+                ChannelFactory.createAgeRange(max = 1),
+                ChannelFactory.createAgeRange(max = null),
+                ChannelFactory.createAgeRange(max = 3)
             )
         )
 

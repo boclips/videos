@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.agerange
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ class MongoAgeRangeRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a new age range`() {
-        val ageRange = ContentPartnerFactory.createAgeRange()
+        val ageRange = ChannelFactory.createAgeRange()
 
         val createdAgeRange = ageRangeRepository.create(ageRange = ageRange)
 
@@ -21,7 +21,7 @@ class MongoAgeRangeRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can find an age range by id`() {
-        val ageRange = ContentPartnerFactory.createAgeRange()
+        val ageRange = ChannelFactory.createAgeRange()
         ageRangeRepository.create(ageRange = ageRange)
         val retrievedAsset = ageRangeRepository.findById(ageRange.id)
 
@@ -30,8 +30,8 @@ class MongoAgeRangeRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can find all age ranges`() {
-        val ageRange1 = ContentPartnerFactory.createAgeRange(id = "id1")
-        val ageRange2 = ContentPartnerFactory.createAgeRange(id = "id2")
+        val ageRange1 = ChannelFactory.createAgeRange(id = "id1")
+        val ageRange2 = ChannelFactory.createAgeRange(id = "id2")
 
         ageRangeRepository.create(ageRange = ageRange1)
         ageRangeRepository.create(ageRange = ageRange2)

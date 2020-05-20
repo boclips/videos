@@ -2,7 +2,7 @@ package com.boclips.videos.service.domain.service
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.videos.service.domain.model.video.contentpartner.Availability
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.nhaarman.mockitokotlin2.any
@@ -86,7 +86,7 @@ class ChannelServiceTest {
     private fun mockRepository(distributionMethods: Set<DistributionMethod>): ChannelRepository {
         return mock() {
             on { findById(any()) } doReturn
-                ContentPartnerFactory.createContentPartner(
+                ChannelFactory.createChannel(
                     distributionMethods = distributionMethods
                 )
         }

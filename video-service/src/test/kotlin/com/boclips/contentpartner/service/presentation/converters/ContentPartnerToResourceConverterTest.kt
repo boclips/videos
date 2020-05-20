@@ -7,8 +7,8 @@ import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnersLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.contentpartner.ContentTypeResource
 import com.boclips.videos.api.response.contentpartner.DistributionMethodResource
@@ -45,9 +45,9 @@ class ContentPartnerToResourceConverterTest {
 
     @Test
     fun `convert content partner to resource`() {
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             credit = Credit.PartnerCredit,
-            legalRestriction = ContentPartnerFactory.createLegalRestrictions(text = "Forbidden in the EU"),
+            legalRestriction = ChannelFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(
                 Currency.getInstance("GBP")
@@ -100,9 +100,9 @@ class ContentPartnerToResourceConverterTest {
 
     @Test
     fun `a contract currency takes precedence over a content partner currency`() {
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             credit = Credit.PartnerCredit,
-            legalRestriction = ContentPartnerFactory.createLegalRestrictions(text = "Forbidden in the EU"),
+            legalRestriction = ChannelFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(
                 Currency.getInstance("GBP")

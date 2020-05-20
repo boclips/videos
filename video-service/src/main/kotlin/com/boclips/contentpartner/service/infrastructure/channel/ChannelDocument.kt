@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.infrastructure.contentpartner
+package com.boclips.contentpartner.service.infrastructure.channel
 
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
@@ -8,7 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
 
-data class ContentPartnerDocument(
+data class ChannelDocument(
     @BsonId val id: ObjectId,
     val youtubeChannelId: String? = null,
     val name: String,

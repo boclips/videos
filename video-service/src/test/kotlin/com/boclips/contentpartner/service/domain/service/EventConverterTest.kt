@@ -11,7 +11,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.testsupport.ContentPartnerFactory.createContentPartner
+import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.SubjectFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -29,7 +29,7 @@ class EventConverterTest {
         val id = "the-id"
         val name = "CP name"
 
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             id = ChannelId(id),
             name = name
         )
@@ -42,7 +42,7 @@ class EventConverterTest {
 
     @Test
     fun `converts top level details`() {
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             contentTypes = listOf(
                 INSTRUCTIONAL, STOCK, NEWS
             ),
@@ -74,7 +74,7 @@ class EventConverterTest {
                 AgeRange(AgeRangeId("age-range-2"), "12-16", 12, 16)
             )
         )
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             pedagogyInformation = PedagogyInformation(
                 subjects = listOf("subject-1", "subject-2"),
                 ageRangeBuckets = ageRangeBuckets,
@@ -106,7 +106,7 @@ class EventConverterTest {
 
     @Test
     fun `converts ingest details`() {
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             ingest = ManualIngest,
             deliveryFrequency = Period.ofMonths(1)
         )
@@ -119,7 +119,7 @@ class EventConverterTest {
 
     @Test
     fun `convert marketing details`() {
-        val contentPartner = createContentPartner(
+        val contentPartner = createChannel(
             marketingInformation = MarketingInformation(
                 status = ChannelStatus.PROMOTED,
                 oneLineDescription = "What a great content partner",

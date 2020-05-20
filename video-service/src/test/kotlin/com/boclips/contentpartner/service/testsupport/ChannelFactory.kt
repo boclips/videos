@@ -16,8 +16,8 @@ import com.boclips.contentpartner.service.domain.model.contentpartnercontract.Co
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
-import com.boclips.contentpartner.service.infrastructure.contentpartner.ContentPartnerDocument
-import com.boclips.contentpartner.service.infrastructure.contentpartner.IngestDetailsDocument
+import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
+import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.contentpartner.IngestDetailsResource
@@ -27,13 +27,13 @@ import org.bson.types.ObjectId
 import java.time.Period
 import java.util.Locale
 
-object ContentPartnerFactory {
+object ChannelFactory {
 
     fun aValidId(): String {
         return ObjectId().toHexString()
     }
 
-    fun createContentPartner(
+    fun createChannel(
         id: ChannelId = ChannelId(
             ObjectId().toHexString()
         ),
@@ -77,7 +77,7 @@ object ContentPartnerFactory {
         )
     }
 
-    fun createContentPartnerDocument(
+    fun createChannelDocument(
         objectId: ObjectId = ObjectId.get(),
         youtubeChannelId: String? = null,
         name: String = "content partner",
@@ -92,7 +92,7 @@ object ContentPartnerFactory {
         isTranscriptProvided: Boolean? = null,
         ageRanges: List<AgeRangeDocument>? = emptyList(),
         contract: ContentPartnerContractDocument? = null
-    ) = ContentPartnerDocument(
+    ) = ChannelDocument(
         id = objectId,
         youtubeChannelId = youtubeChannelId,
         name = name,
