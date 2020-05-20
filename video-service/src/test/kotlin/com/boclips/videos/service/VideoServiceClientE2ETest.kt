@@ -7,7 +7,7 @@ import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.collection.CollectionFilterRequest
+import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -140,31 +140,37 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Collections {
         @Test
-        fun `can fetch one and many collections, including details`() {
-            val savedVideoId = saveVideo()
-            val savedCollectionId = saveCollection(owner = "the@owner.com", discoverable = true)
-            val collectionWithVideos =
-                saveCollection(owner = "another@owner.com", discoverable = true, videos = listOf(savedVideoId.value))
-
+        fun `can create, fetch one and many collections`() {
             val collectionsClient = CollectionsClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
                 objectMapper = objectMapper,
-                tokenFactory = TestTokenFactory("the@owner.com", UserRoles.VIEW_COLLECTIONS)
+                tokenFactory = TestTokenFactory(
+                    "the@owner.com",
+                    UserRoles.VIEW_COLLECTIONS,
+                    UserRoles.INSERT_COLLECTIONS
+                )
             )
 
-            assertThat(collectionsClient.getCollection(collectionId = savedCollectionId.value)).isNotNull
+            val savedVideoId = saveVideo()
 
-            val detailedCollection = collectionsClient.getCollection(collectionWithVideos.value, Projection.details)
+            val collection1 =
+                collectionsClient.create(CreateCollectionRequest(title = "collection title", discoverable = true))
+
+            val collection2 =
+                collectionsClient.create(
+                    CreateCollectionRequest(
+                        title = "collection title",
+                        discoverable = true,
+                        videos = listOf(savedVideoId.value)
+                    )
+                )
+
+            assertThat(collectionsClient.getCollection(collectionId = collection1.id!!)).isNotNull
+
+            val detailedCollection = collectionsClient.getCollection(collection2.id!!, Projection.details)
             assertThat(detailedCollection.videos.first().title).isNotBlank()
 
             assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(2)
-
-            val collections = collectionsClient.getCollections(
-                CollectionFilterRequest(owner = "another@owner.com", discoverable = true, projection = Projection.details)
-            )._embedded.collections
-
-            assertThat(collections).hasSize(1)
-            assertThat(collections[0].title).isNotNull()
         }
     }
 

@@ -4,6 +4,7 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
+import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -81,12 +82,19 @@ class CollectionsController(
     }
 
     @PostMapping
-    fun postCollection(@Valid @RequestBody createCollectionRequest: CreateCollectionRequest): ResponseEntity<Void> {
+    fun postCollection(@Valid @RequestBody createCollectionRequest: CreateCollectionRequest): ResponseEntity<CollectionResource> {
         val collection = createCollection(createCollectionRequest, getCurrentUser())
         val headers = HttpHeaders().apply {
             set(HttpHeaders.LOCATION, collectionsLinkBuilder.collection(collection.id.value)?.href)
         }
-        return ResponseEntity(headers, HttpStatus.CREATED)
+
+        val collectionsResource = collectionResourceConverter.buildCollectionResource(
+            collection,
+            Projection.details,
+            getCurrentUser()
+        )
+
+        return ResponseEntity(collectionsResource, headers, HttpStatus.CREATED)
     }
 
     @PatchMapping("/{id}")
