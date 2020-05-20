@@ -39,6 +39,9 @@ interface CollectionsClient {
         update: UpdateCollectionRequest
     ): Void
 
+    @RequestLine("DELETE /v1/collections/{collectionId}")
+    fun delete(@Param("collectionId") collectionId: String)
+
     companion object {
         @JvmStatic
         fun create(

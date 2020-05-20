@@ -50,6 +50,10 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
         TODO("not implemented")
     }
 
+    override fun delete(collectionId: String) {
+        database.remove(collectionId)
+    }
+
     override fun getCollections(collectionFilterRequest: CollectionFilterRequest): CollectionsResource {
         return CollectionsResource(_embedded = CollectionsWrapperResource(collections = database.values.toList()))
     }

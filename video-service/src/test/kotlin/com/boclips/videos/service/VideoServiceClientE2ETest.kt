@@ -149,13 +149,14 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     "the@owner.com",
                     UserRoles.VIEW_COLLECTIONS,
                     UserRoles.INSERT_COLLECTIONS,
-                    UserRoles.UPDATE_COLLECTIONS
+                    UserRoles.UPDATE_COLLECTIONS,
+                    UserRoles.DELETE_COLLECTIONS
                 )
             )
 
             val savedVideoId = saveVideo()
 
-            val collection1 =
+            val aCollection =
                 collectionsClient.create(
                     CreateCollectionRequest(
                         title = "collection title",
@@ -164,12 +165,12 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     )
                 )
 
-            val retrievedCollection = collectionsClient.getCollection(collectionId = collection1.id!!)
+            val retrievedCollection = collectionsClient.getCollection(collectionId = aCollection.id!!)
             assertThat(retrievedCollection).isNotNull
             assertThat(retrievedCollection.attachments).isEmpty()
 
             collectionsClient.update(
-                collectionId = collection1.id!!,
+                collectionId = aCollection.id!!,
                 update = UpdateCollectionRequest(
                     attachment = AttachmentRequest(
                         linkToResource = "some-link",
@@ -179,11 +180,15 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val updatedCollection = collectionsClient.getCollection(collectionId = collection1.id!!)
+            val updatedCollection = collectionsClient.getCollection(collectionId = aCollection.id!!)
             assertThat(updatedCollection).isNotNull
             assertThat(updatedCollection.attachments).isNotEmpty()
 
             assertThat(collectionsClient.getCollections()._embedded.collections).hasSize(1)
+
+            collectionsClient.delete(aCollection.id!!)
+
+            assertThat(collectionsClient.getCollections()._embedded.collections).isEmpty()
         }
     }
 
