@@ -91,7 +91,7 @@ class VideoServiceApiFactory {
         }
 
         @JvmStatic
-        fun createContentPartnerRequest(
+        fun createChannelRequest(
             name: String? = "TED",
             ageRanges: List<String>? = emptyList(),
             accreditedToYtChannel: String? = null,
@@ -144,7 +144,7 @@ class VideoServiceApiFactory {
         }
 
         @JvmStatic
-        fun contentPartnerFilterRequest(
+        fun channelFilterRequest(
             name: String? = null,
             official: Boolean? = null,
             accreditedToYtChannel: String? = null

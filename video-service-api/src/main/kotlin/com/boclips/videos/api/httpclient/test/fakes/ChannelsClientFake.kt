@@ -1,28 +1,28 @@
 package com.boclips.videos.api.httpclient.test.fakes
 
-import com.boclips.videos.api.httpclient.ContentPartnersClient
+import com.boclips.videos.api.httpclient.ChannelsClient
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.response.channel.ChannelResource
-import com.boclips.videos.api.response.channel.LegacyContentPartnerWrapperResource
-import com.boclips.videos.api.response.channel.LegacyContentPartnersResource
+import com.boclips.videos.api.response.channel.ChannelWrapperResource
+import com.boclips.videos.api.response.channel.ChannelsResource
 
-class ContentPartnersClientFake : ContentPartnersClient, FakeClient<ChannelResource> {
+class ChannelsClientFake : ChannelsClient, FakeClient<ChannelResource> {
     private val database: MutableMap<String, ChannelResource> = LinkedHashMap()
     private var id = 0
 
-    override fun getContentPartners(channelFilterRequest: ChannelFilterRequest): LegacyContentPartnersResource {
-        val contentPartners = if (channelFilterRequest.name != null) {
+    override fun getChannels(channelFilterRequest: ChannelFilterRequest): ChannelsResource {
+        val channels = if (channelFilterRequest.name != null) {
             database.values.toList().filter { it.name == channelFilterRequest.name }
         } else {
             database.values.toList()
         }
 
-        return LegacyContentPartnersResource(_embedded = LegacyContentPartnerWrapperResource(contentPartners))
+        return ChannelsResource(_embedded = ChannelWrapperResource(channels))
     }
 
-    override fun getContentPartner(contentPartnerId: String): ChannelResource {
-        return database[contentPartnerId]!!
+    override fun getChannel(channelId: String): ChannelResource {
+        return database[channelId]!!
     }
 
     override fun create(upsertChannelRequest: ChannelRequest) {

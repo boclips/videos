@@ -18,28 +18,28 @@ class ChannelRequestTest {
 
     @Test
     fun `validates a valid request`() {
-        val validRequest = VideoServiceApiFactory.createContentPartnerRequest()
+        val validRequest = VideoServiceApiFactory.createChannelRequest()
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(0)
     }
 
     @Test
     fun `invalid name`() {
-        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(name = null)
+        val validRequest = VideoServiceApiFactory.createChannelRequest(name = null)
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
 
     @Test
     fun `invalid currency`() {
-        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(currency = "not a valid currency")
+        val validRequest = VideoServiceApiFactory.createChannelRequest(currency = "not a valid currency")
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }
 
     @Test
     fun `blank name`() {
-        val validRequest = VideoServiceApiFactory.createContentPartnerRequest(name = "")
+        val validRequest = VideoServiceApiFactory.createChannelRequest(name = "")
         val violations = validator.validate(validRequest)
         assertThat(violations).hasSize(1)
     }

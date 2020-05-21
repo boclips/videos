@@ -41,7 +41,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         originalChannel = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "My content partner",
                 distributionMethods = emptySet(),
                 legalRestrictions = null,

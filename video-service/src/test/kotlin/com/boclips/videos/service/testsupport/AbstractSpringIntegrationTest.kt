@@ -434,7 +434,7 @@ abstract class AbstractSpringIntegrationTest {
     ): Channel {
         val createdContentPartner = try {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(
+                VideoServiceApiFactory.createChannelRequest(
                     name = name,
                     ageRanges = ageRanges,
                     accreditedToYtChannel = accreditedToYtChannel,

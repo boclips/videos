@@ -19,22 +19,22 @@ import java.util.Locale
 
 class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
-    fun `content partners are searchable everywhere by default`() {
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
-                name = "My content partner",
+    fun `channels are searchable everywhere by default`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                name = "My channel",
                 distributionMethods = null
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        assertThat(channel.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
-    fun `mark content partners available for stream and download`() {
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
-                name = "My content partner",
+    fun `mark channels available for stream and download`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                name = "My channel",
                 distributionMethods = setOf(
                     DistributionMethodResource.DOWNLOAD,
                     DistributionMethodResource.STREAM
@@ -42,32 +42,32 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        assertThat(channel.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
     fun `videos are searchable when distribution methods are not specified`() {
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
-                name = "My content partner",
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                name = "My channel",
                 distributionMethods = null
             )
         )
 
-        assertThat(contentPartner.distributionMethods).isEqualTo(DistributionMethod.ALL)
+        assertThat(channel.distributionMethods).isEqualTo(DistributionMethod.ALL)
     }
 
     @Test
-    fun `can create an official content partner with the same name as a youtube content partner`() {
+    fun `can create an official channel with the same name as a youtube channel`() {
         val youtubeContentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "Tsitsipas",
                 accreditedToYtChannel = "23456789"
             )
         )
 
         val officialContentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "Tsitsipas",
                 accreditedToYtChannel = null
             )
@@ -77,10 +77,10 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `cannot create an official content partner without a contract`() {
+    fun `cannot create an official channel without a contract`() {
         assertThrows<MissingContentPartnerContractException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(
+                VideoServiceApiFactory.createChannelRequest(
                     name = "Tsitsipas",
                     ingest = IngestDetailsResource.manual(),
                     contractId = null
@@ -90,11 +90,11 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a youtube scrape content partner without a contract`() {
+    fun `can create a youtube scrape channel without a contract`() {
         val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
 
         val youtubeContentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "Tsitsipas",
                 accreditedToYtChannel = "23456789",
                 contractId = contractId.value
@@ -105,10 +105,10 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `cannot create a content partner with an invalid content category`() {
+    fun `cannot create a channel with an invalid content category`() {
         assertThrows<InvalidContentCategoryException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(
+                VideoServiceApiFactory.createChannelRequest(
                     contentCategories = listOf("non existent")
                 )
             )
@@ -116,65 +116,65 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a content partner with a content category`() {
-        val contentPartnerWithCategory = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+    fun `can create a channel with a content category`() {
+        val channelWithCategory = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 contentCategories = listOf("VIRTUAL_REALITY_360")
             )
         )
 
-        assertThat(contentPartnerWithCategory.contentCategories).hasSize(1)
+        assertThat(channelWithCategory.contentCategories).hasSize(1)
     }
 
     @Test
-    fun `can create a content partner with a selected language`() {
-        val contentPartnerWithCategory = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+    fun `can create a channel with a selected language`() {
+        val channelWithCategory = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 language = "spa"
             )
         )
 
         val languageTag = Locale.forLanguageTag("spa")
-        assertThat(contentPartnerWithCategory.language).isEqualTo(languageTag)
+        assertThat(channelWithCategory.language).isEqualTo(languageTag)
     }
 
     @Test
-    fun `can create a content partner without a selected language`() {
-        val contentPartnerWithCategory = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+    fun `can create a channel without a selected language`() {
+        val channelWithCategory = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "without language cp",
                 language = null
             )
         )
 
-        assertThat(contentPartnerWithCategory.name).isEqualTo("without language cp")
+        assertThat(channelWithCategory.name).isEqualTo("without language cp")
     }
 
     @Test
-    fun `cannot create the same content partner with the same name`() {
-        createChannel(VideoServiceApiFactory.createContentPartnerRequest())
+    fun `cannot create the same channel with the same name`() {
+        createChannel(VideoServiceApiFactory.createChannelRequest())
         assertThrows<ContentPartnerConflictException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest()
+                VideoServiceApiFactory.createChannelRequest()
             )
         }
     }
 
     @Test
-    fun `cannot create the same content partner with the same hubspotId`() {
-        createChannel(VideoServiceApiFactory.createContentPartnerRequest(hubspotId = "123"))
+    fun `cannot create the same channel with the same hubspotId`() {
+        createChannel(VideoServiceApiFactory.createChannelRequest(hubspotId = "123"))
         assertThrows<ContentPartnerConflictException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(hubspotId = "123")
+                VideoServiceApiFactory.createChannelRequest(hubspotId = "123")
             )
         }
     }
 
     @Test
-    fun `cannot create a content partner with an unrecognised age range bucket`() {
+    fun `cannot create a channel with an unrecognised age range bucket`() {
         assertThrows<InvalidAgeRangeException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(
+                VideoServiceApiFactory.createChannelRequest(
                     ageRanges = listOf("A missing age range")
                 )
             )
@@ -182,96 +182,96 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a content partner with provided transcript `() {
+    fun `can create a channel with provided transcript `() {
         val isTranscriptProvided = true
 
-        val contentPartnerWithTranscript = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channelWithTranscript = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 isTranscriptProvided = isTranscriptProvided
             )
         )
 
-        assertThat(contentPartnerWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(
+        assertThat(channelWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(
             isTranscriptProvided
         )
     }
 
     @Test
-    fun `can create a content partner with educational resources`() {
+    fun `can create a channel with educational resources`() {
         val educationalResources = "This is an educational resource"
 
-        val contentPartnerWithEducationalResources = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channelWithEducationalResources = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 educationalResources = educationalResources
             )
         )
 
-        assertThat(contentPartnerWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(
+        assertThat(channelWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(
             educationalResources
         )
     }
 
     @Test
-    fun `can create a content partner with curriculum aligned`() {
+    fun `can create a channel with curriculum aligned`() {
         val curriculumAligned = "This is a curriculum"
 
-        val contentPartnerWithCurriculumAligned = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channelWithCurriculumAligned = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 curriculumAligned = curriculumAligned
             )
         )
 
-        assertThat(contentPartnerWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(
+        assertThat(channelWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(
             curriculumAligned
         )
     }
 
     @Test
-    fun `can create a content partner with best for tags`() {
+    fun `can create a channel with best for tags`() {
         val bestForTags = listOf("123", "345")
 
-        val contentPartnerWithBestForTags = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channelWithBestForTags = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 bestForTags = bestForTags
             )
         )
 
-        assertThat(contentPartnerWithBestForTags.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
+        assertThat(channelWithBestForTags.pedagogyInformation?.bestForTags).isEqualTo(bestForTags)
     }
 
     @Test
-    fun `can create a content partner with subjects`() {
+    fun `can create a channel with subjects`() {
         val subjects = listOf("subject 1", "subject 2")
 
-        val contentPartnerWithBestForTags = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channelWithBestForTags = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 subjects = subjects
             )
         )
 
-        assertThat(contentPartnerWithBestForTags.pedagogyInformation?.subjects).isEqualTo(subjects)
+        assertThat(channelWithBestForTags.pedagogyInformation?.subjects).isEqualTo(subjects)
     }
 
     @Test
-    fun `can create a content partner with delivery frequency`() {
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+    fun `can create a channel with delivery frequency`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 deliveryFrequency = Period.ofYears(1)
             )
         )
 
-        assertThat(contentPartner.deliveryFrequency).isEqualTo(Period.ofYears(1))
+        assertThat(channel.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test
-    fun `can create a content partner with ingest information`() {
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+    fun `can create a channel with ingest information`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 ingest = IngestDetailsResource.youtube("https://yt.com/channel")
             )
         )
 
-        assertThat(contentPartner.ingest).isEqualTo(
+        assertThat(channel.ingest).isEqualTo(
             YoutubeScrapeIngest(
                 listOf("https://yt.com/channel")
             )
@@ -279,24 +279,24 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a content partner with contract information`() {
+    fun `can create a channel with contract information`() {
         val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
-        val contentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
                 contractId = contractId.value
             )
         )
 
-        assertThat(contentPartner.contract?.id).isEqualTo(contractId)
-        assertThat(contentPartner.contract?.contentPartnerName).isEqualTo("hello")
-        assertThat(contentPartner.contract?.remittanceCurrency?.currencyCode).isEqualTo("GBP")
+        assertThat(channel.contract?.id).isEqualTo(contractId)
+        assertThat(channel.contract?.contentPartnerName).isEqualTo("hello")
+        assertThat(channel.contract?.remittanceCurrency?.currencyCode).isEqualTo("GBP")
     }
 
     @Test
     fun `throws when contract does not exists`() {
         assertThrows<InvalidContractException> {
             createChannel(
-                VideoServiceApiFactory.createContentPartnerRequest(
+                VideoServiceApiFactory.createChannelRequest(
                     contractId = "a contract"
                 )
             )

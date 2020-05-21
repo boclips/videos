@@ -283,7 +283,7 @@ abstract class AbstractSpringIntegrationTest {
     ): Channel {
         val contract = contractId ?: saveContentPartnerContract(name = UUID.randomUUID().toString()).id.value
         val createdContentPartner = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = name,
                 ageRanges = ageRanges,
                 accreditedToYtChannel = accreditedToYtChannel,

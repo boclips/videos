@@ -32,7 +32,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @BeforeEach
     fun setUp() {
         originalChannel = createChannel(
-            VideoServiceApiFactory.createContentPartnerRequest(
+            VideoServiceApiFactory.createChannelRequest(
                 name = "My content partner"
             )
         )
