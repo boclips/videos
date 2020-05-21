@@ -12,6 +12,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ContentPartnerUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
+import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.collection.CollectionSearchQueryAssembler
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
@@ -393,6 +394,11 @@ class ApplicationContext(
     @Bean
     fun broadcastVideos(): BroadcastVideos {
         return BroadcastVideos(videoRepository, eventBus)
+    }
+
+    @Bean
+    fun broadcastCollections(): BroadcastCollections {
+        return BroadcastCollections(collectionRepository, eventBus)
     }
 
     @Bean

@@ -95,6 +95,7 @@ fun MockHttpServletRequestBuilder.asOperator() =
             .roles(
                 UserRoles.UPDATE_VIDEOS,
                 UserRoles.REMOVE_VIDEOS,
+                UserRoles.BROADCAST_EVENTS,
                 UserRoles.REBUILD_SEARCH_INDEX,
                 UserRoles.UPDATE_CONTENT_PARTNERS
             )

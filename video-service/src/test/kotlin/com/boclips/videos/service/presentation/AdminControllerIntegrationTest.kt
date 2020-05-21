@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -32,6 +33,22 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `broadcast video events returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_videos").asTeacher())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `broadcast collection events`() {
+        saveCollection()
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_collections").asOperator())
+            .andExpect(status().isOk)
+
+        assertThat(fakeEventBus.getEventsOfType(CollectionBroadcastRequested::class.java)).isNotEmpty
+    }
+
+    @Test
+    fun `broadcast collection events returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_collections").asTeacher())
             .andExpect(status().isForbidden)
     }
 

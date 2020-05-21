@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.application.channel.BroadcastChannels
+import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.BroadcastVideos
@@ -21,6 +22,7 @@ import java.util.Locale
 @RequestMapping("/v1/admin/actions")
 class AdminController(
     private val broadcastVideos: BroadcastVideos,
+    private val broadcastCollections: BroadcastCollections,
     private val broadcastChannels: BroadcastChannels,
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService,
@@ -59,6 +61,11 @@ class AdminController(
     @PostMapping("/broadcast_videos")
     fun issueBroadcastVideos() {
         broadcastVideos()
+    }
+
+    @PostMapping("/broadcast_collections")
+    fun issueBroadcastCollections() {
+        broadcastCollections()
     }
 
     @PostMapping("/broadcast_channels")
