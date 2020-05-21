@@ -26,6 +26,7 @@ data class CollectionResource(
     val ageRange: AgeRangeResource?,
     val description: String? = null,
     val attachments: Set<AttachmentResource>?,
+    val units: List<CollectionResource>?,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

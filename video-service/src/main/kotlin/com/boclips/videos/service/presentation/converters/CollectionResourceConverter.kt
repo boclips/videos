@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel
 
+// TODO: Converters should only operate on fetched objects - unit testing is otherwise not possible. The main reason why there exists no test for this converter.
 class CollectionResourceConverter(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val attachmentsToResourceConverter: AttachmentToResourceConverter,
@@ -45,6 +46,7 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
+            units = collection.units.map { buildCollectionDetailsResource(collection = it, user = user) },
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),
@@ -78,6 +80,7 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
+            units = collection.units.map { buildCollectionListResource(collection = it, user = user) },
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),

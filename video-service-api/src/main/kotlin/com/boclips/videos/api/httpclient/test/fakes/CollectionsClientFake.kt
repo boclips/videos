@@ -39,6 +39,7 @@ class CollectionsClientFake : CollectionsClient, FakeClient<CollectionResource> 
                 .toSet(),
             ageRange = null,
             attachments = setOf(),
+            units = listOf(),
             _links = null
         )
 
