@@ -42,6 +42,9 @@ legacy:
 
 server:
   use-forward-headers: true
+  compression:
+    enabled: true
+    mime-types: application/hal+json
 
 pubsub:
   video-searchability-update:
