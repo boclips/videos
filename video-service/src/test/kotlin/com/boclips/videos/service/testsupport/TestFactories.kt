@@ -206,7 +206,8 @@ object TestFactories {
         ageRangeMin: Int = 0,
         ageRangeMax: Int = 10,
         description: String = "collection description",
-        attachments: Set<Attachment> = emptySet()
+        attachments: Set<Attachment> = emptySet(),
+        units: List<Collection> = emptyList()
     ) = Collection(
         id = id,
         owner = UserId(value = owner),
@@ -221,7 +222,8 @@ object TestFactories {
         subjects = subjects,
         ageRange = AgeRange.of(min = ageRangeMin, max = ageRangeMax, curatedManually = true),
         description = description,
-        attachments = attachments
+        attachments = attachments,
+        units = units
     )
 
     fun createCollectionUpdateResult(

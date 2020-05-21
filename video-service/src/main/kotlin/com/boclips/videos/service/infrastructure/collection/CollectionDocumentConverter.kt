@@ -15,6 +15,7 @@ import java.time.ZonedDateTime
 object CollectionDocumentConverter {
     fun toCollection(collectionDocument: CollectionDocument?): Collection? {
         if (collectionDocument == null) return null
+
         val videoIds = collectionDocument.videos.map { VideoId(value = it) }
         val subjects = collectionDocument.subjects.map {
             Subject(
@@ -50,7 +51,8 @@ object CollectionDocumentConverter {
             description = collectionDocument.description,
             attachments = collectionDocument.attachments?.map {
                 AttachmentDocumentConverter.convert(it)
-            }?.toSet().orEmpty()
+            }?.toSet().orEmpty(),
+            units = emptyList()
         )
     }
 }

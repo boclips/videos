@@ -8,18 +8,19 @@ import java.time.Instant
 
 data class CollectionDocument(
     @BsonId val id: ObjectId,
-    val owner: String,
-    val title: String,
-    val videos: List<String>,
-    val createdAt: Instant?,
-    val updatedAt: Instant,
-    val discoverable: Boolean = false,
-    val createdByBoclips: Boolean?,
-    val promoted: Boolean? = false,
-    val bookmarks: Set<String> = emptySet(),
-    val subjects: Set<SubjectDocument> = emptySet(),
-    val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
+    val ageRangeMin: Int? = null,
+    val attachments: Set<AttachmentDocument>? = emptySet(),
+    val bookmarks: Set<String> = emptySet(),
+    val createdAt: Instant?,
+    val createdByBoclips: Boolean?,
     val description: String? = null,
-    val attachments: Set<AttachmentDocument>? = emptySet()
+    val discoverable: Boolean = false,
+    val owner: String,
+    val promoted: Boolean? = false,
+    val subCollectionIds: Set<String>? = emptySet(),
+    val subjects: Set<SubjectDocument> = emptySet(),
+    val title: String,
+    val updatedAt: Instant,
+    val videos: List<String>
 )

@@ -174,7 +174,11 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collection.discoverable).isEqualTo(false)
 
             collectionRepository.update(
-                CollectionUpdateCommand.ChangeDiscoverability(collection.id, discoverable = true, user = UserFactory.sample())
+                CollectionUpdateCommand.ChangeDiscoverability(
+                    collection.id,
+                    discoverable = true,
+                    user = UserFactory.sample()
+                )
             )
 
             val updatedCollection = collectionRepository.find(collection.id)!!
@@ -524,6 +528,55 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val deletedCollection = collectionRepository.find(collection.id)
 
             assertThat(deletedCollection).isNull()
+        }
+    }
+
+    @Nested
+    inner class CollectionWithUnits {
+        @Test
+        fun `can add, serialise and remove collections of a collection`() {
+            val userId = UserId(value = "user1")
+
+            val unit = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = userId,
+                    title = "Unit Title",
+                    createdByBoclips = false,
+                    discoverable = false
+                )
+            )
+
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = userId,
+                    title = "Collection Title",
+                    createdByBoclips = false,
+                    discoverable = false
+                )
+            )
+
+            collectionRepository.update(
+                CollectionUpdateCommand.AddUnitToCollection(
+                    collectionId = collection.id,
+                    unitId = unit.id,
+                    user = UserFactory.sample()
+                )
+            )
+
+            val retrievedCollection = collectionRepository.find(collection.id)
+
+            assertThat(retrievedCollection?.units).isNotEmpty
+            assertThat(retrievedCollection?.units!![0].title).isEqualTo("Unit Title")
+
+            collectionRepository.update(
+                CollectionUpdateCommand.RemoveUnitToCollection(
+                    collectionId = collection.id,
+                    unitId = unit.id,
+                    user = UserFactory.sample()
+                )
+            )
+
+            assertThat(collectionRepository.find(collection.id)!!.units).isEmpty()
         }
     }
 

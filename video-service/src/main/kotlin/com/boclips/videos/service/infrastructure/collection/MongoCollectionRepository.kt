@@ -66,7 +66,14 @@ class MongoCollectionRepository(
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "Found collection ${id.value}" }
 
-        return CollectionDocumentConverter.toCollection(collectionDocument)
+        return if (collectionDocument?.subCollectionIds.isNullOrEmpty()) {
+            CollectionDocumentConverter.toCollection(collectionDocument)
+        } else {
+            val mainCollection = CollectionDocumentConverter.toCollection(collectionDocument)
+            val units = findAll(collectionDocument?.subCollectionIds?.map { CollectionId(it) } ?: emptyList())
+
+            return mainCollection?.copy(units = units)
+        }
     }
 
     override fun findAll(ids: List<CollectionId>): List<Collection> {
