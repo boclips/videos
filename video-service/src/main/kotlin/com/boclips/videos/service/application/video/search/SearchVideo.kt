@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
@@ -8,9 +9,11 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
@@ -18,14 +21,19 @@ import com.boclips.web.exceptions.ResourceNotFoundApiException
 class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getVideosByQuery: GetVideosByQuery,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val playbackUpdateService: PlaybackUpdateService
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?, user: User): Video {
-        return getVideoById(resolveToAssetId(id)!!, user)
+    fun byId(id: String?, user: User, projection: Projection? = null): Video {
+        val videoId = resolveToAssetId(id)!!
+        if (projection == Projection.full) {
+            playbackUpdateService.updatePlaybacksFor(VideoFilter.HasVideoId(videoId))
+        }
+        return getVideoById(videoId, user)
     }
 
     fun byQuery(

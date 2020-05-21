@@ -116,6 +116,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
             is VideoFilter.HasSubjectId -> VideoDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(filter.subjectId.value))
+            is VideoFilter.HasVideoId -> VideoDocument::id `in` filter.videoId.map { ObjectId(it.value) }
         }
 
         val sequence = Sequence {

@@ -120,6 +120,23 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
+    fun `stream all by video ids`() {
+        val video1 = TestFactories.createVideo()
+        val video2 = TestFactories.createVideo()
+        mongoVideoRepository.create(TestFactories.createVideo())
+        mongoVideoRepository.create(video1)
+        mongoVideoRepository.create(video2)
+        mongoVideoRepository.create(TestFactories.createVideo())
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.HasVideoId(video1.videoId, video2.videoId)) { videos = it.toList() }
+
+        assertThat(videos).hasSize(2)
+        assertThat(videos.first().videoId).isEqualTo(video1.videoId)
+        assertThat(videos.last().videoId).isEqualTo(video2.videoId)
+    }
+
+    @Test
     fun `stream all by youtube`() {
         mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createYoutubePlayback()))
         mongoVideoRepository.create(TestFactories.createVideo(playback = TestFactories.createKalturaPlayback()))

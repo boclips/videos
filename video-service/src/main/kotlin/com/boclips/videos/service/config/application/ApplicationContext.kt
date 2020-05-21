@@ -128,11 +128,13 @@ class ApplicationContext(
     fun searchVideo(
         getVideoById: GetVideoById,
         getVideosByQuery: GetVideosByQuery,
-        searchQueryConverter: SearchQueryConverter
+        searchQueryConverter: SearchQueryConverter,
+        playbackUpdateService: PlaybackUpdateService
     ) = SearchVideo(
         getVideoById,
         getVideosByQuery,
-        videoRepository
+        videoRepository,
+        playbackUpdateService
     )
 
     @Bean

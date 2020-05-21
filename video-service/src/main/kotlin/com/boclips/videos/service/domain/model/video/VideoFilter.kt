@@ -8,6 +8,7 @@ sealed class VideoFilter {
     data class ContentPartnerIdIs(val contentPartnerId: ContentPartnerId) : VideoFilter()
     data class ContentTypeIs(val type: ContentType) : VideoFilter()
     data class HasSubjectId(val subjectId: SubjectId) : VideoFilter()
+    class HasVideoId(vararg val videoId: VideoId): VideoFilter()
     object IsYoutube : VideoFilter()
     object IsKaltura : VideoFilter()
 }
