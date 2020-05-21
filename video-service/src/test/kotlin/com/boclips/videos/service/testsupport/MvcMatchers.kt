@@ -20,7 +20,5 @@ class CacheableFor(private val seconds: Long) : ResultMatcher {
     override fun match(result: MvcResult) {
         assertThat(result.response.getHeaderValue("Cache-Control"))
             .isEqualTo("max-age=${seconds}, public")
-        assertThat(result.response.getHeaderValue("Content-Length"))
-            .isEqualTo(result.response.contentAsString.length)
     }
 }

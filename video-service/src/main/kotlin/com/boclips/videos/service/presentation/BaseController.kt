@@ -65,7 +65,6 @@ open class BaseController(
                             .maxAge(maxAge, unit)
                             .cachePublic()
                     )
-                    .contentLength(body.size.toLong())
                     .body(body)
             }
 }
