@@ -223,7 +223,8 @@ object TestFactories {
         ageRange = AgeRange.of(min = ageRangeMin, max = ageRangeMax, curatedManually = true),
         description = description,
         attachments = attachments,
-        units = units
+        units = units,
+        default = false
     )
 
     fun createCollectionUpdateResult(

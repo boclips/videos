@@ -34,7 +34,8 @@ class CollectionDocumentConverterTest {
                 type = "LESSON_PLAN",
                 linkToResource = "https://example.com/download"
             )
-        )
+        ),
+        default = true
     )
 
     @Test
@@ -62,6 +63,7 @@ class CollectionDocumentConverterTest {
         assertThat(collection.attachments.first().description).isEqualTo("description")
         assertThat(collection.attachments.first().type).isEqualTo(AttachmentType.LESSON_PLAN)
         assertThat(collection.attachments.first().linkToResource).isEqualTo("https://example.com/download")
+        assertThat(collection.default).isTrue()
     }
 
     @Test

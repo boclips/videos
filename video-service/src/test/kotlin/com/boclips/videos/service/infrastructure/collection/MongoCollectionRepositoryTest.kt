@@ -80,6 +80,24 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
+    inner class CreateDefaultCollection {
+        @Test
+        fun `persists a default collection`() {
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = UserId("some-owner"),
+                    title = "Watch Later",
+                    createdByBoclips = false,
+                    discoverable = false,
+                    default = true
+                )
+            )
+
+            assertThat(collection.default).isTrue()
+        }
+    }
+
+    @Nested
     inner class CreateAndUpdate {
         @Test
         fun `can create with subjects`() {

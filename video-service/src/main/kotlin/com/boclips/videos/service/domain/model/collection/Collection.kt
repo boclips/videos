@@ -23,7 +23,8 @@ data class Collection(
     val ageRange: AgeRange,
     val description: String?,
     val attachments: Set<Attachment>,
-    val units: List<Collection>
+    val units: List<Collection>,
+    val default: Boolean
 ) {
     fun createdBy(): String {
         return if (createdByBoclips) {

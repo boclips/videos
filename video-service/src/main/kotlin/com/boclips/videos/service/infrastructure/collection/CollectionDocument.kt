@@ -22,5 +22,6 @@ data class CollectionDocument(
     val subjects: Set<SubjectDocument> = emptySet(),
     val title: String,
     val updatedAt: Instant,
-    val videos: List<String>
+    val videos: List<String>,
+    val default: Boolean = false
 )

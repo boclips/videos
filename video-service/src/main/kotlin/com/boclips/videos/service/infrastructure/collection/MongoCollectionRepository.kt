@@ -51,7 +51,8 @@ class MongoCollectionRepository(
             discoverable = command.discoverable,
             createdByBoclips = command.createdByBoclips,
             promoted = false,
-            subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray())
+            subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray()),
+            default = command.default
         )
 
         dbCollection().insertOne(document)
