@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.videos.api.request.collection.CollectionFilterRequest
+import com.boclips.videos.api.request.collection.CollectionSortKey
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
@@ -23,7 +24,7 @@ class GetCollectionsOfUser(
             owner = owner.value,
             page = request.page,
             size = request.size,
-            sort = request.sort_by,
+            sort = request.sort_by ?: CollectionSortKey.UPDATED_AT,
             hasLessonPlans = request.has_lesson_plans,
             promoted = request.promoted,
             discoverable = request.discoverable,

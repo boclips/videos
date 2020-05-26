@@ -1,10 +1,10 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchQuery
@@ -71,12 +71,14 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {
-        query.sort ?: return ids
+        if (query.sort.isEmpty()) return ids
 
-        return when (query.sort) {
+        if (query.sort.size > 1) TODO("Implement sort for more than two sort criteria")
+
+        return when (val sortCritieria = query.sort.first()) {
             is Sort.ByField -> {
                 val sortedIds = ids.sortedBy {
-                    val value: Comparable<*>? = query.sort.fieldName.get(index[it]!!)
+                    val value: Comparable<*>? = sortCritieria.fieldName.get(index[it]!!)
                     /**
                      * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
                      * littering the entire code base with the Sort generic type.
@@ -87,7 +89,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
                     value as? Comparable<Any>
                 }
 
-                when (query.sort.order) {
+                when (sortCritieria.order) {
                     SortOrder.ASC -> sortedIds
                     SortOrder.DESC -> sortedIds.reversed()
                 }

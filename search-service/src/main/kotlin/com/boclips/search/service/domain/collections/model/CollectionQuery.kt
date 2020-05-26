@@ -20,4 +20,4 @@ class CollectionQuery(
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
     val resourceTypes: Set<String> = emptySet()
-) : SearchQuery<CollectionMetadata>(phrase, sort, facetDefinition)
+) : SearchQuery<CollectionMetadata>(phrase, sort?.let { listOf(it) } ?: emptyList(), facetDefinition)

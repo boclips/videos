@@ -37,7 +37,11 @@ class CollectionIndexReader(val client: RestHighLevelClient) : IndexReader<Colle
         val query = SearchSourceBuilder().apply {
             query(CollectionEsQuery().mainQuery(collectionQuery))
             postFilter(allCriteria(collectionQuery))
-            collectionQuery.sort?.let { applySort(it) }
+            if (collectionQuery.sort.isNotEmpty()) {
+                collectionQuery.sort.forEach {
+                    applySort(it)
+                }
+            }
         }
 
         val request = SearchRequest(

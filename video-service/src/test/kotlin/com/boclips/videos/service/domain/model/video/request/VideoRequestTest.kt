@@ -62,7 +62,7 @@ class VideoRequestTest {
         )
             .toQuery(VideoAccess.Everything)
 
-        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.DESC)
         assertThat(sort.fieldName).isEqualTo(VideoMetadata::releaseDate)
@@ -78,7 +78,7 @@ class VideoRequestTest {
         )
             .toQuery(VideoAccess.Everything)
 
-        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.DESC)
         assertThat(sort.fieldName).isEqualTo(VideoMetadata::rawTitle)
@@ -94,7 +94,7 @@ class VideoRequestTest {
         )
             .toQuery(VideoAccess.Everything)
 
-        val sort = searchQuery.sort as Sort.ByField<VideoMetadata>
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.ASC)
         assertThat(sort.fieldName).isEqualTo(VideoMetadata::rawTitle)
@@ -110,7 +110,7 @@ class VideoRequestTest {
         )
             .toQuery(VideoAccess.Everything)
 
-        assertThat(searchQuery.sort is Sort.ByRandom<VideoMetadata>)
+        assertThat(searchQuery.sort.first() is Sort.ByRandom<VideoMetadata>)
     }
 
     @Test
@@ -123,7 +123,7 @@ class VideoRequestTest {
         )
             .toQuery(VideoAccess.Everything)
 
-        assertThat(searchQuery.sort).isNull()
+        assertThat(searchQuery.sort).isEmpty()
     }
 
     @Test

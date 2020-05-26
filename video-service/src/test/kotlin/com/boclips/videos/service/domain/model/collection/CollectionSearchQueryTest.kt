@@ -22,7 +22,7 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isNull()
+        assertThat(query.toSearchQuery().sort).isEmpty()
     }
 
     @Test
@@ -38,9 +38,11 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::hasAttachments,
-                SortOrder.DESC
+            listOf(
+                Sort.ByField(
+                    CollectionMetadata::hasAttachments,
+                    SortOrder.DESC
+                )
             )
         )
     }
@@ -58,9 +60,11 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::hasAttachments,
-                SortOrder.DESC
+            listOf(
+                Sort.ByField(
+                    CollectionMetadata::hasAttachments,
+                    SortOrder.DESC
+                )
             )
         )
     }
@@ -79,9 +83,11 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::title,
-                SortOrder.ASC
+            listOf(
+                Sort.ByField(
+                    CollectionMetadata::title,
+                    SortOrder.ASC
+                )
             )
         )
     }
@@ -100,9 +106,11 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::title,
-                SortOrder.ASC
+            listOf(
+                Sort.ByField(
+                    CollectionMetadata::title,
+                    SortOrder.ASC
+                )
             )
         )
     }
@@ -121,9 +129,11 @@ class CollectionSearchQueryTest {
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
-            Sort.ByField(
-                CollectionMetadata::updatedAt,
-                SortOrder.DESC
+            listOf(
+                Sort.ByField(
+                    CollectionMetadata::updatedAt,
+                    SortOrder.DESC
+                )
             )
         )
     }

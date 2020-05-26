@@ -30,4 +30,4 @@ open class VideoQuery(
     val deniedVideoIds: Set<String>? = null,
     val isEligibleForStream: Boolean? = null,
     val attachmentTypes: Set<String> = emptySet()
-) : SearchQuery<VideoMetadata>(phrase, sort, facetDefinition)
+) : SearchQuery<VideoMetadata>(phrase, sort?.let { listOf(it) } ?: emptyList(), facetDefinition)
