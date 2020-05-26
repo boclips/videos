@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -84,16 +85,29 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
         @Test
         fun `persists a default collection`() {
             val collection = collectionRepository.create(
-                CreateCollectionCommand(
-                    owner = UserId("some-owner"),
-                    title = "Watch Later",
-                    createdByBoclips = false,
-                    discoverable = false,
-                    default = true
+                CreateDefaultCollectionCommand(
+                    owner = UserId("some-owner")
                 )
             )
 
             assertThat(collection.default).isTrue()
+        }
+
+        @Test
+        fun `persists a default collection idempotently`() {
+            val existingDefaultCollection = collectionRepository.create(
+                CreateDefaultCollectionCommand(
+                    owner = UserId("some-owner")
+                )
+            )
+
+            val sameCollection = collectionRepository.create(
+                CreateDefaultCollectionCommand(
+                    owner = UserId("some-owner")
+                )
+            )
+
+            assertThat(existingDefaultCollection).isEqualTo(sameCollection)
         }
     }
 
@@ -370,7 +384,13 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             val updatedCollection = collectionRepository.find(collection.id)!!
 
-            assertThat(updatedCollection.ageRange).isEqualTo(AgeRange.of(min = 3, max = null, curatedManually = true))
+            assertThat(updatedCollection.ageRange).isEqualTo(
+                AgeRange.of(
+                    min = 3,
+                    max = null,
+                    curatedManually = true
+                )
+            )
         }
 
         @Test
@@ -416,7 +436,11 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             Thread.sleep(1)
 
             collectionRepository.update(
-                CollectionUpdateCommand.AddVideoToCollection(collectionV1.id, video1, UserFactory.sample(id = "user2"))
+                CollectionUpdateCommand.AddVideoToCollection(
+                    collectionV1.id,
+                    video1,
+                    UserFactory.sample(id = "user2")
+                )
             )
 
             val collectionV2 = collectionRepository.find(collectionV1.id)!!
@@ -454,7 +478,11 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                     "New title 2",
                     UserFactory.sample(id = "user2")
                 ),
-                CollectionUpdateCommand.ChangeDiscoverability(collection2.id, true, UserFactory.sample(id = "user2"))
+                CollectionUpdateCommand.ChangeDiscoverability(
+                    collection2.id,
+                    true,
+                    UserFactory.sample(id = "user2")
+                )
             )
 
             assertThat(result).hasSize(2)
@@ -646,8 +674,20 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 discoverable = false
             )
         )
-        collectionRepository.update(CollectionUpdateCommand.ChangeDiscoverability(c1.id, true, UserFactory.sample()))
-        collectionRepository.update(CollectionUpdateCommand.ChangeDiscoverability(c3.id, true, UserFactory.sample()))
+        collectionRepository.update(
+            CollectionUpdateCommand.ChangeDiscoverability(
+                c1.id,
+                true,
+                UserFactory.sample()
+            )
+        )
+        collectionRepository.update(
+            CollectionUpdateCommand.ChangeDiscoverability(
+                c3.id,
+                true,
+                UserFactory.sample()
+            )
+        )
 
         var collections: List<Collection> = emptyList()
         collectionRepository.streamAll { collections = it.toList() }

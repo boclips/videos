@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
@@ -35,6 +36,31 @@ class MongoCollectionRepository(
 ) : CollectionRepository {
     companion object : KLogging() {
         const val collectionName = "collections"
+    }
+
+    override fun create(command: CreateDefaultCollectionCommand): Collection {
+        findDefaultCollection(user = command.owner.value)?.let {
+            return it
+        }
+
+        val objectId = ObjectId()
+        val collectionId = CollectionId(value = objectId.toHexString())
+
+        dbCollection().insertOne(
+            CollectionDocument(
+                id = objectId,
+                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
+                title = "Watch later",
+                createdByBoclips = false,
+                owner = command.owner.value,
+                videos = emptyList(),
+                default = true
+            )
+        )
+
+        return find(collectionId)
+            ?: throw CollectionNotCreatedException("Failed to create default collection $collectionId")
     }
 
     override fun create(command: CreateCollectionCommand): Collection {
@@ -144,6 +170,12 @@ class MongoCollectionRepository(
                     commandsByCollectionId[it.id].orEmpty()
                 )
             }
+    }
+
+    private fun findDefaultCollection(user: String): Collection? {
+        val collectionDocument =
+            dbCollection().findOne(combine(CollectionDocument::owner eq user, CollectionDocument::default eq true))
+        return CollectionDocumentConverter.toCollection(collectionDocument)
     }
 
     private fun bsonMetadataUpdate(commands: List<CollectionUpdateCommand>): List<Bson> {
