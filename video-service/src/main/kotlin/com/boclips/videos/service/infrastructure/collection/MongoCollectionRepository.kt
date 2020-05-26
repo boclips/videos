@@ -55,7 +55,8 @@ class MongoCollectionRepository(
                 createdByBoclips = false,
                 owner = command.owner.value,
                 videos = emptyList(),
-                default = true
+                default = true,
+                discoverable = false
             )
         )
 

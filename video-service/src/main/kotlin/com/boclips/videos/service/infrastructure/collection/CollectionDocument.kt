@@ -14,6 +14,7 @@ data class CollectionDocument(
     val bookmarks: Set<String> = emptySet(),
     val createdAt: Instant?,
     val createdByBoclips: Boolean?,
+    val default: Boolean = false,
     val description: String? = null,
     val discoverable: Boolean = false,
     val owner: String,
@@ -22,6 +23,5 @@ data class CollectionDocument(
     val subjects: Set<SubjectDocument> = emptySet(),
     val title: String,
     val updatedAt: Instant,
-    val videos: List<String>,
-    val default: Boolean = false
+    val videos: List<String>
 )
