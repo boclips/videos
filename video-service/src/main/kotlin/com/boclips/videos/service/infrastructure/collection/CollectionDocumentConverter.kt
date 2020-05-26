@@ -52,7 +52,7 @@ object CollectionDocumentConverter {
             attachments = collectionDocument.attachments?.map {
                 AttachmentDocumentConverter.convert(it)
             }?.toSet().orEmpty(),
-            units = emptyList(),
+            subCollections = emptyList(),
             default = collectionDocument.default
         )
     }

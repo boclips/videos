@@ -192,8 +192,8 @@ class EventService(val eventBus: EventBus) {
                     user = updateCommand.user
                 )
             )
-            is CollectionUpdateCommand.AddUnitToCollection -> null
-            is CollectionUpdateCommand.RemoveUnitToCollection -> null
+            is CollectionUpdateCommand.AddCollectionToCollection -> null
+            is CollectionUpdateCommand.RemoveCollectionFromCollection -> null
         }
     }
 

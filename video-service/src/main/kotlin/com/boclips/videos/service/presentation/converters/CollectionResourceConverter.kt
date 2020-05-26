@@ -46,7 +46,7 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
-            units = collection.units.map { buildCollectionDetailsResource(collection = it, user = user) },
+            subCollections = collection.subCollections.map { buildCollectionDetailsResource(collection = it, user = user) },
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),
@@ -80,7 +80,7 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
-            units = collection.units.map { buildCollectionListResource(collection = it, user = user) },
+            subCollections = collection.subCollections.map { buildCollectionListResource(collection = it, user = user) },
             _links = listOfNotNull(
                 collectionsLinkBuilder.self(collection.id.value),
                 collectionsLinkBuilder.editCollection(collection, user),

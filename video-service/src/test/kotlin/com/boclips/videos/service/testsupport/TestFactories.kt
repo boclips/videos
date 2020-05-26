@@ -223,7 +223,7 @@ object TestFactories {
         ageRange = AgeRange.of(min = ageRangeMin, max = ageRangeMax, curatedManually = true),
         description = description,
         attachments = attachments,
-        units = units,
+        subCollections = units,
         default = false
     )
 

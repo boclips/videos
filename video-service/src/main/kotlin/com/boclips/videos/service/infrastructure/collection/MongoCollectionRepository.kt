@@ -99,7 +99,7 @@ class MongoCollectionRepository(
             val mainCollection = CollectionDocumentConverter.toCollection(collectionDocument)
             val units = findAll(collectionDocument?.subCollectionIds?.map { CollectionId(it) } ?: emptyList())
 
-            return mainCollection?.copy(units = units)
+            return mainCollection?.copy(subCollections = units)
         }
     }
 

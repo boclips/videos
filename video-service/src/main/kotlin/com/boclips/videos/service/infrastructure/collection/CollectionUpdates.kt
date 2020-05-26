@@ -71,13 +71,13 @@ class CollectionUpdates {
             )
             is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.user.id.value)
             is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.user.id.value)
-            is CollectionUpdateCommand.AddUnitToCollection -> addToSet(
+            is CollectionUpdateCommand.AddCollectionToCollection -> addToSet(
                 CollectionDocument::subCollectionIds,
-                command.unitId.value
+                command.subCollectionId.value
             )
-            is CollectionUpdateCommand.RemoveUnitToCollection -> pull(
+            is CollectionUpdateCommand.RemoveCollectionFromCollection -> pull(
                 CollectionDocument::subCollectionIds,
-                command.unitId.value
+                command.subCollectionId.value
             )
         }
     }

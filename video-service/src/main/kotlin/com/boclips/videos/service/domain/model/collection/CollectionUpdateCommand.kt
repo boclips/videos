@@ -10,10 +10,10 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId, val user: U
     class AddVideoToCollection(collectionId: CollectionId, val videoId: VideoId, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
-    class AddUnitToCollection(collectionId: CollectionId, val unitId: CollectionId, user: User) :
+    class AddCollectionToCollection(collectionId: CollectionId, val subCollectionId: CollectionId, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
-    class RemoveUnitToCollection(collectionId: CollectionId, val unitId: CollectionId, user: User) :
+    class RemoveCollectionFromCollection(collectionId: CollectionId, val subCollectionId: CollectionId, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
     class RemoveVideoFromCollection(collectionId: CollectionId, val videoId: VideoId, user: User) :

@@ -40,9 +40,9 @@ class CollectionsControllerUnitsIntegrationTest : AbstractCollectionsControllerI
         )
 
         collectionRepository.update(
-            CollectionUpdateCommand.AddUnitToCollection(
+            CollectionUpdateCommand.AddCollectionToCollection(
                 collectionId = collection.id,
-                unitId = unit.id,
+                subCollectionId = unit.id,
                 user = UserFactory.sample()
             )
         )
@@ -52,7 +52,7 @@ class CollectionsControllerUnitsIntegrationTest : AbstractCollectionsControllerI
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$.id", Matchers.not(Matchers.emptyString())))
             .andExpect(jsonPath("$.title", Matchers.equalTo("some collection")))
-            .andExpect(jsonPath("$.units[*]", hasSize<Any>(1)))
-            .andExpect(jsonPath("$.units[0].title", Matchers.equalTo("some unit")))
+            .andExpect(jsonPath("$.subCollections[*]", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.subCollections[0].title", Matchers.equalTo("some unit")))
     }
 }

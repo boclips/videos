@@ -602,27 +602,27 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
             collectionRepository.update(
-                CollectionUpdateCommand.AddUnitToCollection(
+                CollectionUpdateCommand.AddCollectionToCollection(
                     collectionId = collection.id,
-                    unitId = unit.id,
+                    subCollectionId = unit.id,
                     user = UserFactory.sample()
                 )
             )
 
             val retrievedCollection = collectionRepository.find(collection.id)
 
-            assertThat(retrievedCollection?.units).isNotEmpty
-            assertThat(retrievedCollection?.units!![0].title).isEqualTo("Unit Title")
+            assertThat(retrievedCollection?.subCollections).isNotEmpty
+            assertThat(retrievedCollection?.subCollections!![0].title).isEqualTo("Unit Title")
 
             collectionRepository.update(
-                CollectionUpdateCommand.RemoveUnitToCollection(
+                CollectionUpdateCommand.RemoveCollectionFromCollection(
                     collectionId = collection.id,
-                    unitId = unit.id,
+                    subCollectionId = unit.id,
                     user = UserFactory.sample()
                 )
             )
 
-            assertThat(collectionRepository.find(collection.id)!!.units).isEmpty()
+            assertThat(collectionRepository.find(collection.id)!!.subCollections).isEmpty()
         }
     }
 
