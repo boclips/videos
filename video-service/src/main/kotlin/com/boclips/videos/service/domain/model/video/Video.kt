@@ -32,7 +32,9 @@ data class Video(
     val tags: List<UserTag>,
     val promoted: Boolean?,
     val attachments: List<Attachment>,
-    val contentWarnings: List<ContentWarning>?
+    val contentWarnings: List<ContentWarning>?,
+    val deactivated: Boolean,
+    val activeVideoId: VideoId?
 ) {
     fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

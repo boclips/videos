@@ -36,7 +36,8 @@ object VideoDocumentConverter {
             meanRating = video.meanRating,
             eligibleForDownload = video.eligibleForDownload,
             eligibleForStream = video.eligibleForStream,
-            attachmentTypes = video.attachmentTypes
+            attachmentTypes = video.attachmentTypes,
+            deactivated = video.deactivated
         )
     }
 }

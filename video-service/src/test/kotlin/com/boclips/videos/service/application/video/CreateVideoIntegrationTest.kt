@@ -47,6 +47,45 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `creating a video which already exists as a YT scrape deactivates the old video`() {
+        fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
+        fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
+
+        createMediaEntry(id = "entry-$123", duration = Duration.ofMinutes(1))
+
+        val contentPartnerYt = saveContentPartner(name = "TED")
+        val contentPartnerNew = saveContentPartner(name = "TED")
+
+        val scrapedVideo =
+            createVideo(
+                VideoServiceApiFactory.createCreateVideoRequest(
+                    providerId = contentPartnerYt.id.value,
+                    providerVideoId = "8889",
+                    playbackId = "8889",
+                    title = "The same video",
+                    playbackProvider = "YOUTUBE"
+                )
+            )
+
+
+        val activeVideo = createVideo(
+            VideoServiceApiFactory.createCreateVideoRequest(
+                providerId = contentPartnerNew.id.value,
+                providerVideoId = "1234",
+                title = "The same video",
+                playbackId = "entry-\$123"
+            )
+        )
+
+        val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(scrapedVideo.videoId, VideoAccess.Everything)
+        assertThat(updatedScrapedVideo.deactivated).isTrue()
+        assertThat(updatedScrapedVideo.activeVideoId).isEqualTo(activeVideo.videoId)
+
+        val newVideo = videoRetrievalService.getPlayableVideo(activeVideo.videoId, VideoAccess.Everything)
+        assertThat(newVideo).isNotNull
+    }
+
+    @Test
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")

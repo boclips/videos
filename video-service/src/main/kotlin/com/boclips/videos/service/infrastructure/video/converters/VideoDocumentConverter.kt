@@ -51,7 +51,9 @@ object VideoDocumentConverter {
             promoted = video.promoted,
             subjectsWereSetManually = video.subjects.setManually,
             attachments = video.attachments.map { AttachmentDocumentConverter.convert(it) },
-            contentWarnings = video.contentWarnings?.map { ContentWarningDocumentConverter.toDocument(it) }
+            contentWarnings = video.contentWarnings?.map { ContentWarningDocumentConverter.toDocument(it) },
+            deactivated = video.deactivated,
+            activeVideoId = video.activeVideoId?.let { it.value }
         )
     }
 
@@ -90,7 +92,9 @@ object VideoDocumentConverter {
             },
             promoted = document.promoted,
             attachments = document.attachments.map { AttachmentDocumentConverter.convert(it) },
-            contentWarnings = document.contentWarnings?.map { ContentWarningDocumentConverter.toContentWarning(it) }
+            contentWarnings = document.contentWarnings?.map { ContentWarningDocumentConverter.toContentWarning(it) },
+            deactivated = document.deactivated ?: false,
+            activeVideoId = document.activeVideoId?.let { VideoId(it) }
         )
     }
 

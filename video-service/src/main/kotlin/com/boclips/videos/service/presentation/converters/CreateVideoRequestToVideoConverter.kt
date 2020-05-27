@@ -49,7 +49,9 @@ class CreateVideoRequestToVideoConverter {
             tags = emptyList(),
             promoted = null,
             attachments = emptyList(),
-            contentWarnings = emptyList()
+            contentWarnings = emptyList(),
+            deactivated = false,
+            activeVideoId = null
         )
     }
 }

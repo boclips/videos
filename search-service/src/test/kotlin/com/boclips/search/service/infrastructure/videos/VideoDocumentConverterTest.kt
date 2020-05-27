@@ -40,7 +40,8 @@ class VideoDocumentConverterTest {
                 "subjectNames": ["boring-subject-name"],
                 "eligibleForStream": true,
                 "eligibleForDownload": true,
-                "attachmentTypes": ["ACTIVITY"]
+                "attachmentTypes": ["ACTIVITY"],
+                "deactivated": false
             }
         """.trimIndent()
             )
@@ -73,7 +74,8 @@ class VideoDocumentConverterTest {
                 subjectsSetManually = null,
                 eligibleForStream = true,
                 eligibleForDownload = true,
-                attachmentTypes = setOf("ACTIVITY")
+                attachmentTypes = setOf("ACTIVITY"),
+                deactivated = false
             )
         )
     }
@@ -132,7 +134,8 @@ class VideoDocumentConverterTest {
             meanRating = 3.8,
             eligibleForStream = false,
             eligibleForDownload = true,
-            attachmentTypes = emptySet()
+            attachmentTypes = emptySet(),
+            deactivated = false
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -162,7 +165,8 @@ class VideoDocumentConverterTest {
                 subjectsSetManually = false,
                 eligibleForStream = false,
                 eligibleForDownload = true,
-                attachmentTypes = emptySet()
+                attachmentTypes = emptySet(),
+                deactivated = false
             )
         )
     }
@@ -193,7 +197,8 @@ class VideoDocumentConverterTest {
             meanRating = 3.8,
             eligibleForStream = true,
             eligibleForDownload = true,
-            attachmentTypes = emptySet()
+            attachmentTypes = emptySet(),
+            deactivated = false
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

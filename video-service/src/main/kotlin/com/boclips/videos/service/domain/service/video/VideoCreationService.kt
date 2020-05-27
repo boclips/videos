@@ -8,7 +8,8 @@ import com.boclips.videos.service.domain.model.video.Video
 
 class VideoCreationService(
     private val channelRepository: ChannelRepository,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val videoDuplicationService: VideoDuplicationService
 ) {
     fun create(videoToBeCreated: Video): Video {
         if (videoRepository.existsVideoFromContentPartnerId(
@@ -36,6 +37,13 @@ class VideoCreationService(
                 }
         }
 
-        return videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
+        val duplicatedVideo = videoRepository.findVideoByTitleFromContentPartnerName(
+                videoToBeCreated.contentPartner.name, videoToBeCreated.title)
+
+
+        val newActiveVideo = videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
+        duplicatedVideo?.let { videoDuplicationService.markDuplicate(it, newActiveVideo) }
+
+        return newActiveVideo
     }
 }

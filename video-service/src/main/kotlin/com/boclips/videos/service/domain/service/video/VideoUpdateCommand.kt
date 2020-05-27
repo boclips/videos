@@ -39,5 +39,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
 
     class ReplaceContentWarnings(videoId: VideoId, val contentWarnings: List<ContentWarning>) :
         VideoUpdateCommand(videoId)
+    class MarkAsDuplicate(videoId: VideoId, val activeVideoId: VideoId): VideoUpdateCommand(videoId)
 }
 

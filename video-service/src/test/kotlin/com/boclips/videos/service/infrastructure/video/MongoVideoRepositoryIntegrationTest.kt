@@ -564,6 +564,22 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `check if video exists by title and content partner name`() {
+        val video = mongoVideoRepository.create(
+                createVideo(
+                    title = "Video 1",
+                    contentPartnerName = "TestCP"
+                )
+            )
+
+        val matchedVideo = mongoVideoRepository.findVideoByTitleFromContentPartnerName(
+            contentPartnerName = "TestCP",
+            videoTitle = "Video 1"
+        )
+        assertThat(matchedVideo).isEqualTo(video)
+    }
+
+    @Test
     fun `add attachment to video`() {
         val video = mongoVideoRepository.create(createVideo(attachments = emptyList()))
 

@@ -19,6 +19,7 @@ interface VideoRepository {
     fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>)
     fun delete(videoId: VideoId)
     fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean
+    fun findVideoByTitleFromContentPartnerName(contentPartnerName: String, videoTitle: String): Video?
     fun existsVideoFromContentPartnerId(contentPartnerId: ContentPartnerId, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): VideoId?
 }

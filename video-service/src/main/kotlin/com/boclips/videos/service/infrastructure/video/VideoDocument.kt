@@ -29,6 +29,8 @@ data class VideoDocument(
     val tags: List<UserTagDocument> = emptyList(),
     val promoted: Boolean? = null,
     val subjectsWereSetManually: Boolean? = false,
-    val contentWarnings: List<ContentWarningDocument>? = emptyList()
+    val contentWarnings: List<ContentWarningDocument>? = emptyList(),
+    val deactivated: Boolean? = false,
+    val activeVideoId: String? = null
 )
 

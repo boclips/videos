@@ -105,7 +105,9 @@ object TestFactories {
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
         attachments: List<Attachment> = emptyList(),
-        contentWarnings: List<ContentWarning> = emptyList()
+        contentWarnings: List<ContentWarning> = emptyList(),
+        deactivated: Boolean = false,
+        activeVideoId: VideoId? = null
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -131,7 +133,9 @@ object TestFactories {
             tags = tags,
             promoted = promoted,
             attachments = attachments,
-            contentWarnings = contentWarnings
+            contentWarnings = contentWarnings,
+            deactivated = deactivated,
+            activeVideoId = activeVideoId
         )
     }
 

@@ -33,7 +33,8 @@ object SearchableVideoMetadataFactory {
         meanRating: Double? = 5.0,
         eligibleForStream: Boolean = true,
         eligibleForDownload: Boolean = true,
-        attachmentTypes: Set<String> = emptySet()
+        attachmentTypes: Set<String> = emptySet(),
+        deactivated: Boolean = false
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -55,7 +56,8 @@ object SearchableVideoMetadataFactory {
         meanRating = meanRating,
         eligibleForStream = eligibleForStream,
         eligibleForDownload = eligibleForDownload,
-        attachmentTypes = attachmentTypes
+        attachmentTypes = attachmentTypes,
+        deactivated = deactivated
     )
 }
 
@@ -93,7 +95,8 @@ object TestFactories {
             subjectsSetManually = null,
             eligibleForDownload = true,
             eligibleForStream = true,
-            attachmentTypes = emptySet()
+            attachmentTypes = emptySet(),
+            deactivated = false
         )
     }
 }

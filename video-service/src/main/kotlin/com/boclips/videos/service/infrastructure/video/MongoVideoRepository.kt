@@ -43,6 +43,7 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.SetTo
 import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
 import org.litote.kmongo.div
@@ -163,7 +164,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 updatedOperation(command)
             )
         }
-
         return find(videoId) ?: throw VideoNotFoundException(videoId)
     }
 
@@ -221,6 +221,19 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             .first()
 
         return Optional.ofNullable(videoMatchingFilters).isPresent
+    }
+
+    override fun findVideoByTitleFromContentPartnerName(contentPartnerName: String, videoTitle: String): Video? {
+        val matchingVideo = getVideoCollection()
+            .find(
+                and(
+                    eq("source.contentPartner.name", contentPartnerName),
+                    eq("title", videoTitle)
+                )
+            )
+            .first()
+
+        return matchingVideo?.let(VideoDocumentConverter::toVideo)
     }
 
     override fun existsVideoFromContentPartnerId(contentPartnerId: ContentPartnerId, partnerVideoId: String): Boolean {
@@ -322,6 +335,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoUpdateCommand.ReplaceContentWarnings -> set(
                 VideoDocument::contentWarnings,
                 updateCommand.contentWarnings.map { ContentWarningDocumentConverter.toDocument(it) }
+            )
+            is VideoUpdateCommand.MarkAsDuplicate -> set(
+                SetTo(VideoDocument::activeVideoId, ObjectId(updateCommand.activeVideoId.value)),
+                SetTo(VideoDocument::deactivated, true)
             )
         }
     }
