@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -101,5 +102,18 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
         )!!
 
         assertThat(createdCollection.videos).isEmpty()
+    }
+
+    @Test
+    fun `can create a default collection`() {
+        val rawUserId = "some_Id"
+        val owner = UserId(rawUserId)
+        val createDefaultCollectionCommand = CreateDefaultCollectionCommand(owner)
+
+        val result = collectionCreationService.create(createDefaultCollectionCommand)
+
+        assertThat(result).isNotNull
+        assertThat(result!!.owner).isEqualTo(owner)
+        assertThat(result.title).isEqualTo(CreateDefaultCollectionCommand.TITLE)
     }
 }

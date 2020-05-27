@@ -16,6 +16,7 @@ import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.collection.CollectionSearchQueryAssembler
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.collection.CreateCollection
+import com.boclips.videos.service.application.collection.CreateDefaultCollection
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.GetCollections
@@ -225,6 +226,11 @@ class ApplicationContext(
     @Bean
     fun createCollection(): CreateCollection {
         return CreateCollection(collectionCreationService)
+    }
+
+    @Bean
+    fun createDefaultCollection(): CreateDefaultCollection {
+        return CreateDefaultCollection(collectionCreationService)
     }
 
     @Bean

@@ -46,19 +46,19 @@ class MongoCollectionRepository(
         val objectId = ObjectId()
         val collectionId = CollectionId(value = objectId.toHexString())
 
-        dbCollection().insertOne(
-            CollectionDocument(
-                id = objectId,
-                createdAt = Instant.now(),
-                updatedAt = Instant.now(),
-                title = "Watch later",
-                createdByBoclips = false,
-                owner = command.owner.value,
-                videos = emptyList(),
-                default = true,
-                discoverable = false
-            )
+        val defaultCollection = CollectionDocument(
+            id = objectId,
+            createdAt = Instant.now(),
+            updatedAt = Instant.now(),
+            title = CreateDefaultCollectionCommand.TITLE,
+            createdByBoclips = false,
+            owner = command.owner.value,
+            videos = emptyList(),
+            default = true,
+            discoverable = false
         )
+
+        dbCollection().insertOne(defaultCollection)
 
         return find(collectionId)
             ?: throw CollectionNotCreatedException("Failed to create default collection $collectionId")

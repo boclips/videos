@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.service.collection
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -20,6 +21,10 @@ class CollectionCreationService(
         collectionIndex.upsert(sequenceOf(createdCollection))
 
         return collectionRetrievalService.findAnyCollection(createdCollection.id, user)
+    }
+
+    fun create(createCollectionCommand: CreateDefaultCollectionCommand): Collection? {
+        return collectionRepository.create(createCollectionCommand)
     }
 
     private fun addVideosToCollection(
