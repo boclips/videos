@@ -118,8 +118,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            saveVideo() // normal video, subjects not set manually
-            val editedVideo = saveVideo()
+            saveVideo(title = "normal video") // normal video, subjects not set manually
+            val editedVideo = saveVideo(title = "other video")
             val subject = saveSubject("A Subject")
 
             videosClient.updateVideo(

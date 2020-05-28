@@ -7,22 +7,32 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
 
@@ -98,8 +108,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by content type`() {
-        val stockVideoId = saveVideo(title = "content type filtering", type = ContentType.STOCK)
-        saveVideo(title = "content type filtering", type = ContentType.NEWS)
+        val stockVideoId = saveVideo(title = "a stock video content", type = ContentType.STOCK)
+        saveVideo(title = "this is a news video content", type = ContentType.NEWS)
 
         mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
             .andExpect(status().isOk)
@@ -114,13 +124,13 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val otherTagUrl = createTag("other")
         val testUser = UserFactory.sample()
 
-        val firstExplainerVideoId = saveVideo(title = "Video with tags")
+        val firstExplainerVideoId = saveVideo(title = "Video with tags 1")
         tagVideo(TagVideoRequest(videoId = firstExplainerVideoId.value, tagUrl = explainerTagUrl), testUser)
 
-        val secondExplainerVideoId = saveVideo(title = "Video with tags")
+        val secondExplainerVideoId = saveVideo(title = "Video with tags 2")
         tagVideo(TagVideoRequest(videoId = secondExplainerVideoId.value, tagUrl = explainerTagUrl), testUser)
 
-        val otherVideo = saveVideo(title = "Video with tags")
+        val otherVideo = saveVideo(title = "Video with tags 3")
         tagVideo(TagVideoRequest(videoId = otherVideo.value, tagUrl = otherTagUrl), testUser)
 
         mockMvc.perform(get("/v1/videos?query=tags&best_for=explainer").asTeacher())

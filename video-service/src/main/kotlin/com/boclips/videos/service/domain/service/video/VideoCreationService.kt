@@ -42,7 +42,7 @@ class VideoCreationService(
 
 
         val newActiveVideo = videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
-        duplicatedVideo?.let { videoDuplicationService.markDuplicate(it, newActiveVideo) }
+        duplicatedVideo?.let { videoDuplicationService.markDuplicate(it.videoId, newActiveVideo.videoId) }
 
         return newActiveVideo
     }

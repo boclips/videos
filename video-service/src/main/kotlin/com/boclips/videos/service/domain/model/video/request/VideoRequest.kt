@@ -83,6 +83,7 @@ class VideoRequest(
             subjectIds = subjectsRequest.ids,
             subjectsSetManually = subjectsRequest.setManually,
             promoted = promoted,
+            active = true,
             contentPartnerNames = contentPartnerNames,
             includedType = type,
             excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),

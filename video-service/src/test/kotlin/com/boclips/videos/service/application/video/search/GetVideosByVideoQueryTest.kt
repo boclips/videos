@@ -76,19 +76,19 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
     fun `returns paginated results`() {
         saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-1"),
-            title = "a youtube video"
+            title = "a youtube video 1"
         )
         saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-2"),
-            title = "a youtube video"
+            title = "a youtube video 2"
         )
         saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "you-3"),
-            title = "a another video"
+            title = "a another video 3"
         )
         saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "you-4"),
-            title = "a youtube video"
+            title = "a youtube video 4"
         )
 
         val result = searchVideo.byQuery(
@@ -104,8 +104,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `shows only news when category is news`() {
-        val newsVideoId = saveVideo(title = "banana", type = ContentType.NEWS)
-        saveVideo(title = "banana", type = ContentType.INSTRUCTIONAL_CLIPS)
+        val newsVideoId = saveVideo(title = "banana 1", type = ContentType.NEWS)
+        saveVideo(title = "banana 2", type = ContentType.INSTRUCTIONAL_CLIPS)
 
         val videos = searchVideo.byQuery(
             query = "banana",

@@ -18,7 +18,7 @@ internal class VideoDuplicationServiceIntegrationTest : AbstractSpringIntegratio
         val oldVideo = mongoVideoRepository.create(TestFactories.createVideo(title = "The same video", deactivated = false, activeVideoId = null))
         val newVideo = mongoVideoRepository.create(TestFactories.createVideo(title = "The same video", deactivated = false, activeVideoId = null))
 
-        videoDuplicationService.markDuplicate(oldVideo, newVideo)
+        videoDuplicationService.markDuplicate(oldVideo.videoId, newVideo.videoId)
 
         val oldVideoAfter = mongoVideoRepository.find(oldVideo.videoId)
         val newVideoAfter = mongoVideoRepository.find(newVideo.videoId)

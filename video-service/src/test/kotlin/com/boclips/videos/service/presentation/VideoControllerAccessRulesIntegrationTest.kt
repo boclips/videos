@@ -69,7 +69,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `excludes certain video ContentTypes from results`() {
             val stockVideo = saveVideo(title = "Some Video", type = ContentType.STOCK)
-            saveVideo(title = "Some Video", type = ContentType.NEWS)
+            saveVideo(title = "Some Video 2", type = ContentType.NEWS)
 
             addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
 
