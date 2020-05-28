@@ -79,6 +79,10 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchPromoted(videoQuery.promoted))
             }
 
+            if (videoQuery.active != null) {
+                boolQueryBuilder.must(matchActive(videoQuery.active))
+            }
+
             if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
             }
@@ -183,6 +187,13 @@ class VideoFilterCriteria {
             return QueryBuilders.termQuery(
                 VideoDocument.PROMOTED,
                 promoted
+            )
+        }
+
+        private fun matchActive(active: Boolean): TermQueryBuilder {
+            return QueryBuilders.termQuery(
+                VideoDocument.DEACTIVATED,
+                !active
             )
         }
 
