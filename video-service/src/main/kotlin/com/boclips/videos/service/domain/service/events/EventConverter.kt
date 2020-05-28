@@ -2,7 +2,7 @@ package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.collection.CollectionId
-import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
+import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
@@ -36,7 +36,7 @@ class EventConverter {
             .id(VideoId(video.videoId.value))
             .title(video.title)
             .contentPartner(toContentPartnerPayload(video.contentPartner))
-            .channelId(ContentPartnerId.builder().value(video.contentPartner.contentPartnerId.value).build())
+            .channelId(ChannelId(video.contentPartner.contentPartnerId.value))
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))

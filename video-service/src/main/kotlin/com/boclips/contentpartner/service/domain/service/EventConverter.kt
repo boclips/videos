@@ -12,7 +12,7 @@ import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.ChannelMarketingDetails
 import com.boclips.eventbus.domain.contentpartner.ChannelPedagogyDetails
 import com.boclips.eventbus.domain.contentpartner.ChannelTopLevelDetails
-import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
+import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contract.ContractId
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.domain.model.subject.Subject
@@ -20,7 +20,7 @@ import mu.KLogging
 import com.boclips.eventbus.domain.Subject as EventBusSubject
 import com.boclips.eventbus.domain.SubjectId as EventBusSubjectId
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
-import com.boclips.eventbus.domain.contentpartner.ContentPartner as EventBusContentPartner
+import com.boclips.eventbus.domain.contentpartner.Channel as EventBusChannel
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 
 class EventConverter {
@@ -28,12 +28,12 @@ class EventConverter {
 
     fun toContentPartnerPayload(
         channel: Channel, allSubjects: List<Subject> = listOf()
-    ): EventBusContentPartner {
+    ): EventBusChannel {
         val subjects = channel.pedagogyInformation?.subjects?.mapNotNull {
             allSubjects.find { subject -> subject.id.value == it }
         }
-        return EventBusContentPartner.builder()
-            .id(ContentPartnerId(channel.id.value))
+        return EventBusChannel.builder()
+            .id(ChannelId(channel.id.value))
             .name(channel.name)
             .details(channelTopLevelDetails(channel))
             .pedagogy(convertPedagogyDetails(channel.pedagogyInformation, subjects))

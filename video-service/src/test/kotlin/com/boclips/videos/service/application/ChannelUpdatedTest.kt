@@ -1,8 +1,8 @@
 package com.boclips.videos.service.application
 
 import com.boclips.eventbus.domain.AgeRange
-import com.boclips.eventbus.domain.contentpartner.ContentPartner
-import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
+import com.boclips.eventbus.domain.contentpartner.Channel
+import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
@@ -31,8 +31,8 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         fakeEventBus.publish(
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
-                    ContentPartner.builder()
-                        .id(ContentPartnerId(contentPartner.contentPartnerId.value))
+                    Channel.builder()
+                        .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
@@ -63,8 +63,8 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         fakeEventBus.publish(
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
-                    ContentPartner.builder()
-                        .id(ContentPartnerId(contentPartner.contentPartnerId.value))
+                    Channel.builder()
+                        .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
@@ -90,8 +90,8 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         fakeEventBus.publish(
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
-                    ContentPartner.builder()
-                        .id(ContentPartnerId(contentPartner.contentPartnerId.value))
+                    Channel.builder()
+                        .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ageRange(AgeRange.builder().min(10).max(15).build())
