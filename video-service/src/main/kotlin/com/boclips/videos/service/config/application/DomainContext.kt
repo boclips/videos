@@ -49,6 +49,7 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.user.ApiUserService
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -199,8 +200,11 @@ class DomainContext(
     }
 
     @Bean
-    fun kalturaPlaybackProvider(kalturaClient: KalturaClient): PlaybackProvider {
-        return KalturaPlaybackProvider(kalturaClient)
+    fun kalturaPlaybackProvider(
+        kalturaClient: KalturaClient,
+        restTemplateBuilder: RestTemplateBuilder
+    ): PlaybackProvider {
+        return KalturaPlaybackProvider(kalturaClient, restTemplateBuilder)
     }
 
     @Bean

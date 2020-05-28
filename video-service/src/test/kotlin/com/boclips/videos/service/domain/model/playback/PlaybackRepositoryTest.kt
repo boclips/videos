@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.boot.web.client.RestTemplateBuilder
 import java.time.Duration
 
 class PlaybackRepositoryTest {
@@ -25,7 +26,7 @@ class PlaybackRepositoryTest {
         fakeKalturaClient.createMediaEntry("1", "ref-id-1", Duration.ofMinutes(1), MediaEntryStatus.READY)
         fakeKalturaClient.createMediaEntry("2", "ref-id-2", Duration.ofMinutes(2), MediaEntryStatus.READY)
 
-        val kalturaPlaybackProvider = KalturaPlaybackProvider(fakeKalturaClient)
+        val kalturaPlaybackProvider = KalturaPlaybackProvider(fakeKalturaClient, RestTemplateBuilder())
         val youtubePlaybackProvider = TestYoutubePlaybackProvider()
         youtubePlaybackProvider.addVideo("yt-123", "thumbnailUrl", Duration.ZERO)
         youtubePlaybackProvider.addMetadata("yt-123", "aChannelName", "aChannelId")

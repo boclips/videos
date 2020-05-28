@@ -4,18 +4,26 @@ import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntryStatus
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat.WEBVTT
+import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories.createCaptions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.test.web.client.MockRestServiceServer
+import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.util.Locale
 
@@ -270,5 +278,71 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(videosWithPlayback).hasSize(1)
         assertThat(videosWithPlayback[playbackIdOfReady]).isNotNull
         assertThat(videosWithPlayback[playbackIdOfNonReady]).isNull()
+    }
+
+    @Test
+    fun `download asset throws if no FHD or original flavor`() {
+        createMediaEntry(
+            id = "2", height = 1080, assets = setOf(
+                KalturaFactories.createKalturaAsset(id = "x", height = 100),
+                KalturaFactories.createKalturaAsset(id = "y", height = 200)
+            )
+        )
+
+        assertThrows<InsufficientVideoResolutionException> {
+            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
+        }
+    }
+
+    @Test
+    fun `download asset throws if entry not found`() {
+        assertThrows<VideoPlaybackNotFound> {
+            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("something-dude", "KALTURA"), ByteArrayOutputStream())
+        }
+    }
+
+    @Test
+    fun `download asset throws if no asset found`() {
+        createMediaEntry(
+            id = "2", height = 1080, assets = setOf()
+        )
+
+        assertThrows<VideoPlaybackNotFound> {
+            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
+        }
+    }
+
+    @Test
+    fun `download asset writes asset if available`() {
+        val server = MockRestServiceServer.createServer(kalturaPlaybackProvider.restTemplate)
+        createMediaEntry(
+            id = "2", height = 1080, assets = setOf(
+                KalturaFactories.createKalturaAsset(id = "x", height = 100),
+                KalturaFactories.createKalturaAsset(id = "asset-id", height = 1080),
+                KalturaFactories.createKalturaAsset(id = "y", height = 200)
+            )
+        )
+        server.expect(requestTo("/asset-download/asset-id.mp4"))
+            .andRespond(withSuccess("a video".toByteArray(), null))
+
+        val os = ByteArrayOutputStream()
+        kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), os)
+
+        assertThat(os.toByteArray()).isEqualTo("a video".toByteArray())
+    }
+
+    @Test
+    fun `asset extension`() {
+        createMediaEntry(
+            id = "2", height = 1080, assets = setOf(
+                KalturaFactories.createKalturaAsset(id = "x", height = 100),
+                KalturaFactories.createKalturaAsset(id = "asset-id", height = 1080),
+                KalturaFactories.createKalturaAsset(id = "y", height = 200)
+            )
+        )
+
+        val extensionForAsset = kalturaPlaybackProvider.getExtensionForAsset(PlaybackId.from("2", "KALTURA"))
+
+        assertThat(extensionForAsset).isEqualTo("mp4")
     }
 }

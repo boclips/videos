@@ -89,9 +89,11 @@ import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -453,8 +455,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo) =
-        GetVideoAssets(captionService, searchVideo)
+    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo, playbackProvider: KalturaPlaybackProvider) =
+        GetVideoAssets(captionService, searchVideo, playbackProvider)
 
     @Bean
     fun getContentWarning() = GetContentWarning(contentWarningRepository)
