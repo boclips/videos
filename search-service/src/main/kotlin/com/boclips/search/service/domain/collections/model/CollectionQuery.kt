@@ -7,7 +7,7 @@ import com.boclips.search.service.domain.videos.model.AgeRange
 
 class CollectionQuery(
     phrase: String = "",
-    sort: Sort<CollectionMetadata>? = null,
+    sort: List<Sort<CollectionMetadata>> = emptyList(),
     facetDefinition: FacetDefinition.Collection? = null,
     val searchable: Boolean? = null,
     val owner: String? = null,
@@ -20,4 +20,4 @@ class CollectionQuery(
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
     val resourceTypes: Set<String> = emptySet()
-) : SearchQuery<CollectionMetadata>(phrase, sort?.let { listOf(it) } ?: emptyList(), facetDefinition)
+) : SearchQuery<CollectionMetadata>(phrase, sort, facetDefinition)

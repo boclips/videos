@@ -261,7 +261,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     owner = "teacher",
                     bookmarkedBy = "teacher",
                     searchable = null,
-                    sort = Sort.ByField(CollectionMetadata::updatedAt, SortOrder.DESC)
+                    sort = listOf(Sort.ByField(CollectionMetadata::updatedAt, SortOrder.DESC))
                 )
             )
         )

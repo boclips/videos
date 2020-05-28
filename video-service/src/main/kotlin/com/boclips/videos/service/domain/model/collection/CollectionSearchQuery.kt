@@ -34,20 +34,26 @@ class CollectionSearchQuery(
         bookmarkedBy = this.bookmarkedBy,
         permittedIds = this.permittedCollections?.map { it.value },
         sort = when (this.sort) {
-            CollectionSortKey.TITLE -> Sort.ByField(
-                CollectionMetadata::title,
-                SortOrder.ASC
+            CollectionSortKey.TITLE -> listOf(
+                Sort.ByField(
+                    CollectionMetadata::title,
+                    SortOrder.ASC
+                )
             )
-            CollectionSortKey.UPDATED_AT -> Sort.ByField(
-                CollectionMetadata::updatedAt, SortOrder.DESC
+            CollectionSortKey.UPDATED_AT -> listOf(
+                Sort.ByField(
+                    CollectionMetadata::updatedAt, SortOrder.DESC
+                )
             )
             else -> if (this.text.isNullOrBlank()) {
-                Sort.ByField(
-                    CollectionMetadata::hasAttachments,
-                    SortOrder.DESC
+                listOf(
+                    Sort.ByField(
+                        CollectionMetadata::hasAttachments,
+                        SortOrder.DESC
+                    )
                 )
             } else {
-                null
+                emptyList()
             }
         },
         hasLessonPlans = this.hasLessonPlans,
