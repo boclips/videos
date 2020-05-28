@@ -168,7 +168,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.collectionId).isEqualTo(collectionId)
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.isPublic).isTrue()
         assertThat(event.isDiscoverable).isTrue()
     }
 
@@ -188,7 +187,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(CollectionVisibilityChanged::class.java)
 
-        assertThat(event.isPublic).isFalse()
         assertThat(event.isDiscoverable).isFalse()
     }
 

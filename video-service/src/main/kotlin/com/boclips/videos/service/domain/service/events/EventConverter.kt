@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.collection.CollectionId
+import com.boclips.eventbus.domain.contentpartner.ContentPartnerId
 import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
@@ -35,6 +36,7 @@ class EventConverter {
             .id(VideoId(video.videoId.value))
             .title(video.title)
             .contentPartner(toContentPartnerPayload(video.contentPartner))
+            .channelId(ContentPartnerId.builder().value(video.contentPartner.contentPartnerId.value).build())
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
@@ -43,6 +45,7 @@ class EventConverter {
             .ingestedAt(video.ingestedAt)
             .originalDimensions(originalDimensions)
             .assets(assets)
+            .releasedOn(video.releasedOn)
             .build()
     }
 
@@ -66,7 +69,6 @@ class EventConverter {
             .subjects(toSubjectPayload(collection.subjects))
             .videosIds(collection.videos.map { VideoId(it.value) })
             .ownerId(UserId(collection.owner.value))
-            .isPublic(collection.discoverable)
             .isDiscoverable(collection.discoverable)
             .ageRange(toAgeRangePayload(collection.ageRange))
             .bookmarks(collection.bookmarks.map { UserId(it.value) })

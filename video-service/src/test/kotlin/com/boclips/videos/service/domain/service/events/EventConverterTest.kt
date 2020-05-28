@@ -10,12 +10,14 @@ import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -29,6 +31,7 @@ class EventConverterTest {
             videoId = id,
             title = "the title",
             contentPartnerName = "the content partner",
+            contentPartnerId = ContentPartnerId("id-666"),
             playback = TestFactories.createKalturaPlayback(
                 duration = Duration.ofMinutes(2),
                 originalDimensions = Dimensions(
@@ -39,6 +42,7 @@ class EventConverterTest {
             ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
             type = ContentType.INSTRUCTIONAL_CLIPS,
+            releasedOn = LocalDate.of(1939, 9, 1),
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true)
         )
@@ -56,9 +60,11 @@ class EventConverterTest {
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
         assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
         assertThat(videoEvent.ingestedAt).isEqualTo("2020-11-12T13:14:15.16Z")
+        assertThat(videoEvent.releasedOn).isEqualTo("1939-09-01")
         assertThat(videoEvent.assets).hasSize(1)
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
+        assertThat(videoEvent.channelId.value).isEqualTo("id-666")
     }
 
     @Test
@@ -135,13 +141,11 @@ class EventConverterTest {
         val publicCollectionEvent = converter.toCollectionPayload(publicCollection)
         val nonDiscoverableCollectionEvent = converter.toCollectionPayload(nonDiscoverableCollection)
 
-        assertThat(nonDiscoverableCollectionEvent.isPublic).isFalse()
         assertThat(nonDiscoverableCollectionEvent.isDiscoverable).isFalse()
 
         assertThat(publicCollectionEvent.id.value).isEqualTo(id)
         assertThat(publicCollectionEvent.title).isEqualTo("collection title")
         assertThat(publicCollectionEvent.description).isEqualTo("collection description")
-        assertThat(publicCollectionEvent.isPublic).isTrue()
         assertThat(publicCollectionEvent.isDiscoverable).isTrue()
         assertThat(publicCollectionEvent.videosIds).containsExactly(com.boclips.eventbus.domain.video.VideoId(videoId))
         assertThat(publicCollectionEvent.subjects).containsExactly(Subject(SubjectId("subject-id"), "subject name"))
