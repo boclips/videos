@@ -15,7 +15,6 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
 import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
 
@@ -35,7 +34,6 @@ class EventConverter {
         return com.boclips.eventbus.domain.video.Video.builder()
             .id(VideoId(video.videoId.value))
             .title(video.title)
-            .contentPartner(toContentPartnerPayload(video.contentPartner))
             .channelId(ChannelId(video.contentPartner.contentPartnerId.value))
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .subjects(subjects)
@@ -101,10 +99,5 @@ class EventConverter {
                 .name(it.name)
                 .build()
         }
-    }
-
-    private fun toContentPartnerPayload(contentPartner: ContentPartner):
-        com.boclips.eventbus.domain.video.ContentPartner {
-        return com.boclips.eventbus.domain.video.ContentPartner.of(contentPartner.name)
     }
 }

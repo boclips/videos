@@ -30,7 +30,6 @@ class EventConverterTest {
         val video = createVideo(
             videoId = id,
             title = "the title",
-            contentPartnerName = "the content partner",
             contentPartnerId = ContentPartnerId("id-666"),
             playback = TestFactories.createKalturaPlayback(
                 duration = Duration.ofMinutes(2),
@@ -51,7 +50,7 @@ class EventConverterTest {
 
         assertThat(videoEvent.id.value).isEqualTo(id)
         assertThat(videoEvent.title).isEqualTo("the title")
-        assertThat(videoEvent.contentPartner.name).isEqualTo("the content partner")
+        assertThat(videoEvent.channelId.value).isEqualTo("id-666")
         assertThat(videoEvent.playbackProviderType).isEqualTo(PlaybackProviderType.KALTURA)
         assertThat(videoEvent.subjects).hasSize(1)
         assertThat(videoEvent.subjects.first().name).isEqualTo("physics")
@@ -64,7 +63,6 @@ class EventConverterTest {
         assertThat(videoEvent.assets).hasSize(1)
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
-        assertThat(videoEvent.channelId.value).isEqualTo("id-666")
     }
 
     @Test

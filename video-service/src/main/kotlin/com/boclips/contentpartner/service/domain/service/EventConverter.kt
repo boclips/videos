@@ -38,22 +38,7 @@ class EventConverter {
             .details(channelTopLevelDetails(channel))
             .pedagogy(convertPedagogyDetails(channel.pedagogyInformation, subjects))
             .marketing(convertMarketingDetails(channel.marketingInformation))
-            .ageRange(
-                AgeRange.builder()
-                    .min(channel.pedagogyInformation?.ageRangeBuckets?.min)
-                    .max(channel.pedagogyInformation?.ageRangeBuckets?.max)
-                    .build()
-            )
-            .awards(channel.awards)
-            .description(channel.description)
-            .contentTypes(channel.contentTypes?.map { it.name })
-            .contentCategories(channel.contentCategories)
-            .language(channel.language)
-            .hubspotId(channel.hubspotId)
-            .notes(channel.notes)
-            .legalRestrictions(channel.legalRestriction?.text)
             .ingest(toIngestDetailsPayload(channel))
-            .deliveryFrequency(channel.deliveryFrequency)
             .build()
     }
 

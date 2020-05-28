@@ -4,6 +4,7 @@ import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.Channel
 import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails
+import com.boclips.eventbus.domain.contentpartner.ChannelPedagogyDetails
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -35,7 +36,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
-                        .ageRange(AgeRange.builder().min(10).max(15).build())
+                        .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )
@@ -67,7 +68,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
-                        .ageRange(AgeRange.builder().min(10).max(15).build())
+                        .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )
@@ -94,7 +95,6 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .id(ChannelId(contentPartner.contentPartnerId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
-                        .ageRange(AgeRange.builder().min(10).max(15).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
                         .build()
                 )

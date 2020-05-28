@@ -18,8 +18,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
         val contentPartner = contentPartnerUpdatedEvent.contentPartner
         logger.info { "Starting updating videos for content partner: $contentPartner" }
 
-        val contentPartnerId =
-            ContentPartnerId(value = contentPartner.id.value)
+        val contentPartnerId = ContentPartnerId(value = contentPartner.id.value)
 
         videoRepository.streamUpdate(VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartnerId)) { videos ->
             videos.flatMap { video ->
@@ -31,8 +30,8 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
                     VideoUpdateCommand.ReplaceAgeRange(
                         videoId = video.videoId,
                         ageRange = AgeRange.of(
-                            min = contentPartner.ageRange.min,
-                            max = contentPartner.ageRange.max,
+                            min = contentPartner.pedagogy?.ageRange?.min,
+                            max = contentPartner.pedagogy?.ageRange?.max,
                             curatedManually = false
                         )
                     )
@@ -47,7 +46,7 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
                         )
                     ),
                     updateAgeRanges,
-                    contentPartner.legalRestrictions?.let {
+                    contentPartner. legalRestrictions?.let {
                         VideoUpdateCommand.ReplaceLegalRestrictions(
                             videoId = video.videoId,
                             text = contentPartner.legalRestrictions
