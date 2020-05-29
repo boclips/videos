@@ -73,8 +73,6 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     private fun sort(ids: List<String>, query: QUERY): List<String> {
         if (query.sort.isEmpty()) return ids
 
-        if (query.sort.size > 1) TODO("Implement sort for more than two sort criteria")
-
         return when (val sortCritieria = query.sort.first()) {
             is Sort.ByField -> {
                 val sortedIds = ids.sortedBy {

@@ -79,7 +79,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.mySavedCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?sort_by=UPDATED_AT{&projection,page,size}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?sort_by=IS_DEFAULT&sort_by=UPDATED_AT{&projection,page,size}")
         assertThat(link.rel).isEqualTo("mySavedCollections")
     }
 

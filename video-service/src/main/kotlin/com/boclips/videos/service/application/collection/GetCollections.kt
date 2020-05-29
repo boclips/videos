@@ -21,7 +21,7 @@ class GetCollections(
             owner = collectionFilterRequest.owner,
             page = collectionFilterRequest.page,
             size = collectionFilterRequest.size,
-            sort = collectionFilterRequest.sort_by,
+            sort = collectionFilterRequest.getSortKeys(),
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             promoted = collectionFilterRequest.promoted,
             discoverable = collectionFilterRequest.discoverable ?: true,

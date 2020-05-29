@@ -27,7 +27,7 @@ class CollectionSearchQueryAssemblerTest {
             owner = "other-id",
             page = 1,
             size = 30,
-            sort = CollectionSortKey.TITLE,
+            sort = listOf(CollectionSortKey.TITLE),
             hasLessonPlans = true,
             user = UserFactory.sample(accessRulesSupplier = { AccessRulesFactory.asOwner("my-id") }),
             ageRangeMin = 3,
@@ -42,7 +42,7 @@ class CollectionSearchQueryAssemblerTest {
         assertThat(query.bookmarkedBy).isEqualTo("my-id")
         assertThat(query.pageIndex).isEqualTo(1)
         assertThat(query.pageSize).isEqualTo(30)
-        assertThat(query.sort).isEqualTo(CollectionSortKey.TITLE)
+        assertThat(query.sort).containsExactly(CollectionSortKey.TITLE)
         assertThat(query.hasLessonPlans).isTrue()
         assertThat(query.ageRangeMin).isEqualTo(3)
         assertThat(query.ageRangeMax).isEqualTo(7)
@@ -183,7 +183,7 @@ class CollectionSearchQueryAssemblerTest {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        sort: CollectionSortKey? = null,
+        sort: List<CollectionSortKey> = emptyList(),
         hasLessonPlans: Boolean? = null,
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(

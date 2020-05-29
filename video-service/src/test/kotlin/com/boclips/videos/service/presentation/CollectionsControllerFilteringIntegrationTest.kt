@@ -218,7 +218,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         updateCollectionToBeDiscoverable(upperCollectionId)
 
         mockMvc.perform(
-            get("/v1/collections?projection=list&page=0&size=5&age_range=5-7,50-55").asTeacher(
+            get("/v1/collections?projection=list&page=0&size=5&age_range=5-7&age_range=50-55").asTeacher(
                 email = "notTheOwner@gmail.com"
             )
         )

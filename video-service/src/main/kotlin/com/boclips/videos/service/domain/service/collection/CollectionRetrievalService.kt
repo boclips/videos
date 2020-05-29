@@ -27,8 +27,10 @@ class CollectionRetrievalService(
 
     fun search(query: CollectionSearchQuery, user: User): ResultsPage<Collection, Nothing> {
         val accessRules = user.accessRules
+        val searchQuery = query.toSearchQuery()
+
         val searchRequest = PaginatedSearchRequest(
-            query = query.toSearchQuery(),
+            query = searchQuery,
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize
         )
@@ -41,7 +43,7 @@ class CollectionRetrievalService(
 
         eventService.saveResourcesSearched(
             resourceType = ResourceType.COLLECTION,
-            query = query.toSearchQuery().phrase,
+            query = searchQuery.phrase,
             pageIndex = query.pageIndex,
             pageSize = query.pageSize,
             totalResults = collectionIds.size.toLong(),

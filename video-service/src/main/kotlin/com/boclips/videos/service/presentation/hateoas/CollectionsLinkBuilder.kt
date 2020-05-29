@@ -14,7 +14,6 @@ import com.boclips.videos.service.presentation.EventController
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.stereotype.Component
-import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
@@ -129,6 +128,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
                 href = getUserCollectionsRoot(userId = currentUser)
+                    .queryParam("sort_by", CollectionSortKey.IS_DEFAULT)
                     .queryParam("sort_by", CollectionSortKey.UPDATED_AT)
                     .toUriString() + "{&projection,page,size}",
                 rel = "mySavedCollections"

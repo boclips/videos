@@ -14,17 +14,22 @@ class CollectionFilterRequest(
     val size: Int? = null,
     val age_range_min: Int? = null,
     val age_range_max: Int? = null,
-    val age_range: String? = null,
-    val sort_by: CollectionSortKey? = null,
+    val age_range: List<String>? = null,
+    val sort_by: List<String>? = null,
     val resource_types: Set<String>? = null,
     val projection: Projection? = Projection.list
 ) {
     fun getAgeRanges(): List<String> {
-        return age_range?.split(",") ?: emptyList()
+        return age_range ?: emptyList()
+    }
+
+    fun getSortKeys(): List<CollectionSortKey> {
+        return sort_by?.map { CollectionSortKey.valueOf(it) } ?: emptyList()
     }
 }
 
 enum class CollectionSortKey {
     TITLE,
-    UPDATED_AT
+    UPDATED_AT,
+    IS_DEFAULT
 }

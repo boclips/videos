@@ -19,7 +19,7 @@ class CollectionSearchQueryAssembler {
         owner: String? = null,
         page: Int? = null,
         size: Int? = null,
-        sort: CollectionSortKey? = null,
+        sort: List<CollectionSortKey> = emptyList(),
         hasLessonPlans: Boolean? = null,
         user: User,
         ageRangeMin: Int? = null,
@@ -46,7 +46,7 @@ class CollectionSearchQueryAssembler {
             text = query ?: "",
             subjectIds = subjects ?: emptyList(),
             bookmarkedBy = bookmarker?.value,
-            discoverable = when(collectionAccess) {
+            discoverable = when (collectionAccess) {
                 CollectionAccessRule.Everything -> discoverable
                 else -> null
             },

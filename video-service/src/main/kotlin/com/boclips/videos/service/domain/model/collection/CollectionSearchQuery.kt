@@ -23,29 +23,49 @@ class CollectionSearchQuery(
     val ageRanges: List<AgeRange>? = null,
     val promoted: Boolean? = null,
     val discoverable: Boolean? = null,
-    val sort: CollectionSortKey? = null,
+    val sort: List<CollectionSortKey> = emptyList(),
     val resourceTypes: Set<String>? = null
 ) {
-    fun toSearchQuery() = CollectionQuery(
-        phrase = this.text ?: "",
-        subjectIds = this.subjectIds,
-        searchable = this.discoverable,
-        owner = this.owner,
-        bookmarkedBy = this.bookmarkedBy,
-        permittedIds = this.permittedCollections?.map { it.value },
-        sort = when (this.sort) {
-            CollectionSortKey.TITLE -> listOf(
-                Sort.ByField(
+    fun toSearchQuery(): CollectionQuery {
+        return CollectionQuery(
+            phrase = this.text ?: "",
+            subjectIds = this.subjectIds,
+            searchable = this.discoverable,
+            owner = this.owner,
+            bookmarkedBy = this.bookmarkedBy,
+            permittedIds = this.permittedCollections?.map { it.value },
+            sort = sortCriteria(),
+            hasLessonPlans = this.hasLessonPlans,
+            ageRangeMin = this.ageRangeMin,
+            ageRangeMax = this.ageRangeMax,
+            ageRanges = this.ageRanges?.map { convertAgeRange(it) },
+            promoted = this.promoted,
+            resourceTypes = this.resourceTypes?.mapTo(HashSet()) { AttachmentType.valueOf(it).label } ?: emptySet()
+        )
+    }
+
+    // TODO: the mapping rules here are convoluted and hidden away.
+    private fun sortCriteria(): List<Sort.ByField<CollectionMetadata>> {
+        return sort.mapNotNull { sort ->
+            return@mapNotNull when (sort) {
+                CollectionSortKey.TITLE -> Sort.ByField(
                     CollectionMetadata::title,
                     SortOrder.ASC
                 )
-            )
-            CollectionSortKey.UPDATED_AT -> listOf(
-                Sort.ByField(
+                CollectionSortKey.UPDATED_AT -> Sort.ByField(
                     CollectionMetadata::updatedAt, SortOrder.DESC
                 )
-            )
-            else -> if (this.text.isNullOrBlank()) {
+                else -> if (text.isNullOrBlank()) {
+                    Sort.ByField(
+                        CollectionMetadata::hasAttachments,
+                        SortOrder.DESC
+                    )
+                } else {
+                    null
+                }
+            }
+        }.ifEmpty {
+            if (text.isNullOrEmpty()) {
                 listOf(
                     Sort.ByField(
                         CollectionMetadata::hasAttachments,
@@ -55,14 +75,8 @@ class CollectionSearchQuery(
             } else {
                 emptyList()
             }
-        },
-        hasLessonPlans = this.hasLessonPlans,
-        ageRangeMin = this.ageRangeMin,
-        ageRangeMax = this.ageRangeMax,
-        ageRanges = this.ageRanges?.map { convertAgeRange(it) },
-        promoted = this.promoted,
-        resourceTypes = this.resourceTypes?.mapTo(HashSet()) { AttachmentType.valueOf(it).label } ?: emptySet()
-    )
+        }
+    }
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize
 

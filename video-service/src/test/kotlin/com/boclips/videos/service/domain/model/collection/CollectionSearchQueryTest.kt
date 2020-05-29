@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 class CollectionSearchQueryTest {
 
     @Test
-    fun `no sort by default`() {
+    fun `no sort by default for query searches`() {
         val query = CollectionSearchQuery(
             text = "sometin",
             subjectIds = listOf("subject"),
@@ -22,11 +22,13 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEmpty()
+        val searchQuery = query.toSearchQuery()
+
+        assertThat(searchQuery.sort).isEmpty()
     }
 
     @Test
-    fun `when not searching by text sorts by attachments`() {
+    fun `when not searching by text defaults to sorting by attachments`() {
         val query = CollectionSearchQuery(
             text = null,
             subjectIds = listOf("subject"),
@@ -37,7 +39,9 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(
+        val searchQuery = query.toSearchQuery()
+
+        assertThat(searchQuery.sort).isEqualTo(
             listOf(
                 Sort.ByField(
                     CollectionMetadata::hasAttachments,
@@ -59,7 +63,9 @@ class CollectionSearchQueryTest {
             hasLessonPlans = null
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(
+        val searchQuery = query.toSearchQuery()
+
+        assertThat(searchQuery.sort).isEqualTo(
             listOf(
                 Sort.ByField(
                     CollectionMetadata::hasAttachments,
@@ -79,7 +85,7 @@ class CollectionSearchQueryTest {
             pageSize = 0,
             permittedCollections = null,
             hasLessonPlans = null,
-            sort = CollectionSortKey.TITLE
+            sort = listOf(CollectionSortKey.TITLE)
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
@@ -102,7 +108,7 @@ class CollectionSearchQueryTest {
             pageSize = 0,
             permittedCollections = null,
             hasLessonPlans = null,
-            sort = CollectionSortKey.TITLE
+            sort = listOf(CollectionSortKey.TITLE)
         )
 
         assertThat(query.toSearchQuery().sort).isEqualTo(
@@ -125,10 +131,12 @@ class CollectionSearchQueryTest {
             pageSize = 0,
             permittedCollections = null,
             hasLessonPlans = null,
-            sort = CollectionSortKey.UPDATED_AT
+            sort = listOf(CollectionSortKey.UPDATED_AT)
         )
 
-        assertThat(query.toSearchQuery().sort).isEqualTo(
+        val searchQuery = query.toSearchQuery()
+
+        assertThat(searchQuery.sort).isEqualTo(
             listOf(
                 Sort.ByField(
                     CollectionMetadata::updatedAt,
