@@ -6,6 +6,7 @@ import com.boclips.eventbus.events.collection.CollectionUpdated
 import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -19,6 +20,18 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
 
     @Autowired
     lateinit var repository: CollectionRepositoryEventsDecorator
+
+    @Test
+    fun `publishes collection created event when a default collection is created`() {
+        repository.create(
+            CreateDefaultCollectionCommand(
+                owner = UserId(TestFactories.aValidId())
+            )
+        )
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionCreated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionCreated::class.java).collection.title).isEqualTo("Watch later")
+    }
 
     @Test
     fun `publishes collection created event when collection is created`() {

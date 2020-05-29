@@ -30,16 +30,18 @@ class CollectionSearchQueryAssembler {
         val collectionAccess = user.accessRules.collectionAccess
 
         val bookmarker =
-            if (bookmarked == true)
+            if (bookmarked == true) {
                 when (collectionAccess) {
                     is CollectionAccessRule.SpecificOwner -> collectionAccess.owner
                     is CollectionAccessRule.Everything -> user.id
                     else -> throw OperationForbiddenException(
                         "This user cannot have bookmarked collections"
                     )
-                } else null
+                }
+            } else {
+                null
+            }
 
-        bookmarker?.let { logger.info("Looking for collections bookmarked by $it") }
         logger.info { "User has collection access: $collectionAccess" }
 
         return CollectionSearchQuery(
