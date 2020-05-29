@@ -227,15 +227,15 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "100",
-                    owner = "teacher",
                     title = "Kappa",
+                    owner = "teacher",
                     bookmarkedBy = emptySet(),
                     updatedAt = LocalDate.now().minusDays(10)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
-                    owner = "stranger",
                     title = "Beta",
+                    owner = "stranger",
                     bookmarkedBy = setOf("teacher"),
                     updatedAt = LocalDate.now().minusDays(8)
                 ),
@@ -247,8 +247,8 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "103",
-                    owner = "teacher",
                     title = "Alpha",
+                    owner = "teacher",
                     bookmarkedBy = emptySet(),
                     updatedAt = LocalDate.now().minusDays(1)
                 )

@@ -30,6 +30,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.bookmarkedByUsers).containsExactly("userId1")
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(false)
         assertThat(collectionMetadata.updatedAt).isEqualTo(updateDate.toLocalDate())
+        assertThat(collectionMetadata.default).isEqualTo(false)
     }
 
     @Test

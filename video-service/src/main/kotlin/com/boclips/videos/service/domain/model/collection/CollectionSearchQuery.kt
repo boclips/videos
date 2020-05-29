@@ -44,7 +44,7 @@ class CollectionSearchQuery(
         )
     }
 
-    // TODO: the mapping rules here are convoluted and hidden away.
+    // TODO: the mapping rules here are convoluted and hidden away - sort criteria should be all set in the application layer.
     private fun sortCriteria(): List<Sort.ByField<CollectionMetadata>> {
         return sort.mapNotNull { sort ->
             return@mapNotNull when (sort) {

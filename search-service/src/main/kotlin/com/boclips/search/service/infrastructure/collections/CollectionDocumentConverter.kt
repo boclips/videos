@@ -8,15 +8,7 @@ import org.elasticsearch.search.SearchHit
 
 class CollectionDocumentConverter {
     fun convert(searchHit: SearchHit): CollectionDocument = ESObjectMapper.get()
-        .readValue<CollectionDocument>(searchHit.sourceAsString)
-        .also {
-            if (it.hasAttachments == null) {
-                return it.copy(hasAttachments = false)
-            }
-            if (it.hasLessonPlans == null) {
-                return it.copy(hasLessonPlans = false)
-            }
-        }
+        .readValue(searchHit.sourceAsString)
 
     fun convertToDocument(metadata: CollectionMetadata): CollectionDocument {
         return CollectionDocument(
@@ -34,7 +26,8 @@ class CollectionDocumentConverter {
             ageRangeMax = metadata.ageRangeMax,
             ageRange = AgeRange(metadata.ageRangeMin, metadata.ageRangeMax).toRange(),
             updatedAt = metadata.updatedAt,
-            attachmentTypes = metadata.attachmentTypes
+            attachmentTypes = metadata.attachmentTypes,
+            default = metadata.default
         )
     }
 }

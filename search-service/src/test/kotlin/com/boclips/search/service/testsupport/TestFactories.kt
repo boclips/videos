@@ -116,7 +116,8 @@ object SearchableCollectionMetadataFactory {
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         updatedAt: LocalDate = LocalDate.now(),
-        attachmentTypes: Set<String> = emptySet()
+        attachmentTypes: Set<String> = emptySet(),
+        default: Boolean = false
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -131,7 +132,8 @@ object SearchableCollectionMetadataFactory {
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
         updatedAt = updatedAt,
-        attachmentTypes = attachmentTypes
+        attachmentTypes = attachmentTypes,
+        default = default
     )
 }
 

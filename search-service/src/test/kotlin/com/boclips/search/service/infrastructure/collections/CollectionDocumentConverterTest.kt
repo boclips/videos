@@ -26,7 +26,8 @@ class CollectionDocumentConverterTest {
                 "hasLessonPlans": "false",
                 "ageRange": [],
                 "updatedAt": "2019-01-16T12:00:00.870Z",
-                "attachmentTypes": ["Lesson Guide"]
+                "attachmentTypes": ["Lesson Guide"],
+                "default": true
             }
         """.trimIndent()
             )
@@ -44,12 +45,13 @@ class CollectionDocumentConverterTest {
                 owner = "juan",
                 description = "Collection under test",
                 hasLessonPlans = false,
-                promoted = null,
+                promoted = false,
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
                 updatedAt = LocalDate.of(2019, Month.JANUARY, 16),
-                attachmentTypes = setOf("Lesson Guide")
+                attachmentTypes = setOf("Lesson Guide"),
+                default = true
             )
         )
     }
@@ -83,13 +85,14 @@ class CollectionDocumentConverterTest {
                 hasAttachments = false,
                 owner = "juan",
                 description = "Collection under test",
-                hasLessonPlans = null,
-                promoted = null,
+                hasLessonPlans = false,
+                promoted = false,
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
                 updatedAt = LocalDate.of(2018, Month.DECEMBER, 19),
-                attachmentTypes = null
+                attachmentTypes = null,
+                default = false
             )
         )
     }
@@ -99,18 +102,19 @@ class CollectionDocumentConverterTest {
         val metadata = SearchableCollectionMetadataFactory.create(
             id = "14",
             title = "The title",
-            searchable = true,
             subjects = listOf("crispity", "crunchy"),
             hasAttachments = false,
             owner = "juan",
+            bookmarkedBy = setOf("juan"),
             description = "Collection under test",
             hasLessonPlans = null,
+            searchable = true,
             promoted = true,
             ageRangeMin = null,
             ageRangeMax = null,
-            bookmarkedBy = setOf("juan"),
             updatedAt = LocalDate.of(2000, Month.APRIL, 12),
-            attachmentTypes = setOf("Activity")
+            attachmentTypes = setOf("Activity"),
+            default = true
         )
 
         val document = CollectionDocumentConverter().convertToDocument(metadata)
@@ -131,7 +135,8 @@ class CollectionDocumentConverterTest {
                 ageRangeMax = null,
                 ageRange = emptyList(),
                 updatedAt = LocalDate.of(2000, Month.APRIL, 12),
-                attachmentTypes = setOf("Activity")
+                attachmentTypes = setOf("Activity"),
+                default = true
             )
         )
     }
