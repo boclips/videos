@@ -355,7 +355,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `get bookmarked collections correctly paginated, prioritising collections with attachments`() {
+    fun `get bookmarked collections correctly paginated`() {
         createCollection(title = "collection 1", discoverable = true).apply {
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
@@ -363,14 +363,17 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             bookmarkCollection(this, "notTheOwner@gmail.com")
         }
 
-        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(
+            get("/v1/collections?projection=list&page=0&size=1&bookmarked=true")
+                .asTeacher(email = "notTheOwner@gmail.com")
+        )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next.href").exists())
@@ -381,7 +384,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.next").doesNotExist())

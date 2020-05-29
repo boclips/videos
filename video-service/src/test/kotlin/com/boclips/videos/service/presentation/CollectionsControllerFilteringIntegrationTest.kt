@@ -319,7 +319,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
         }
 
         mockMvc.perform(
-            get("/v1/collections?subject=${subject.id.value}")
+            get("/v1/collections?subject=${subject.id.value}&sort_by=HAS_ATTACHMENT")
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)

@@ -26,55 +26,7 @@ class CollectionSearchQueryTest {
 
         assertThat(searchQuery.sort).isEmpty()
     }
-
-    @Test
-    fun `when not searching by text defaults to sorting by attachments`() {
-        val query = CollectionSearchQuery(
-            text = null,
-            subjectIds = listOf("subject"),
-            discoverable = null,
-            pageIndex = 0,
-            pageSize = 0,
-            permittedCollections = null,
-            hasLessonPlans = null
-        )
-
-        val searchQuery = query.toSearchQuery()
-
-        assertThat(searchQuery.sort).isEqualTo(
-            listOf(
-                Sort.ByField(
-                    CollectionMetadata::hasAttachments,
-                    SortOrder.DESC
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `when not filtering sorts by attachments`() {
-        val query = CollectionSearchQuery(
-            text = null,
-            subjectIds = emptyList(),
-            discoverable = null,
-            pageIndex = 0,
-            pageSize = 0,
-            permittedCollections = null,
-            hasLessonPlans = null
-        )
-
-        val searchQuery = query.toSearchQuery()
-
-        assertThat(searchQuery.sort).isEqualTo(
-            listOf(
-                Sort.ByField(
-                    CollectionMetadata::hasAttachments,
-                    SortOrder.DESC
-                )
-            )
-        )
-    }
-
+    
     @Test
     fun `can sort by title when searching with text`() {
         val query = CollectionSearchQuery(

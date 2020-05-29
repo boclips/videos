@@ -34,7 +34,21 @@ class CollectionSearchQuery(
             owner = this.owner,
             bookmarkedBy = this.bookmarkedBy,
             permittedIds = this.permittedCollections?.map { it.value },
-            sort = sortCriteria(),
+            sort = sort.mapNotNull { sort ->
+                return@mapNotNull when (sort) {
+                    CollectionSortKey.HAS_ATTACHMENT -> Sort.ByField(
+                        CollectionMetadata::hasAttachments, SortOrder.DESC
+                    )
+                    CollectionSortKey.TITLE -> Sort.ByField(
+                        CollectionMetadata::title,
+                        SortOrder.ASC
+                    )
+                    CollectionSortKey.UPDATED_AT -> Sort.ByField(
+                        CollectionMetadata::updatedAt, SortOrder.DESC
+                    )
+                    else -> null
+                }
+            },
             hasLessonPlans = this.hasLessonPlans,
             ageRangeMin = this.ageRangeMin,
             ageRangeMax = this.ageRangeMax,
@@ -42,40 +56,6 @@ class CollectionSearchQuery(
             promoted = this.promoted,
             resourceTypes = this.resourceTypes?.mapTo(HashSet()) { AttachmentType.valueOf(it).label } ?: emptySet()
         )
-    }
-
-    // TODO: the mapping rules here are convoluted and hidden away - sort criteria should be all set in the application layer.
-    private fun sortCriteria(): List<Sort.ByField<CollectionMetadata>> {
-        return sort.mapNotNull { sort ->
-            return@mapNotNull when (sort) {
-                CollectionSortKey.TITLE -> Sort.ByField(
-                    CollectionMetadata::title,
-                    SortOrder.ASC
-                )
-                CollectionSortKey.UPDATED_AT -> Sort.ByField(
-                    CollectionMetadata::updatedAt, SortOrder.DESC
-                )
-                else -> if (text.isNullOrBlank()) {
-                    Sort.ByField(
-                        CollectionMetadata::hasAttachments,
-                        SortOrder.DESC
-                    )
-                } else {
-                    null
-                }
-            }
-        }.ifEmpty {
-            if (text.isNullOrEmpty()) {
-                listOf(
-                    Sort.ByField(
-                        CollectionMetadata::hasAttachments,
-                        SortOrder.DESC
-                    )
-                )
-            } else {
-                emptyList()
-            }
-        }
     }
 
     fun pageIndexUpperBound() = (this.pageIndex + 1) * this.pageSize

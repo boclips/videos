@@ -31,5 +31,6 @@ class CollectionFilterRequest(
 enum class CollectionSortKey {
     TITLE,
     UPDATED_AT,
-    IS_DEFAULT
+    IS_DEFAULT,
+    HAS_ATTACHMENT
 }
