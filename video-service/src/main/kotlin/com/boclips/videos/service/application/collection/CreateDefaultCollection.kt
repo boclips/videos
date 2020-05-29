@@ -14,7 +14,7 @@ class CreateDefaultCollection(private val service: CollectionCreationService) {
     fun onUserCreated(event: UserCreated) {
         val owner = UserId(event.user.id)
         val command = CreateDefaultCollectionCommand(owner)
-        service.create(command)
-        logger.info { "Created default collection for user $owner" }
+        val collection = service.create(command)
+        logger.info { "Created default collection ${collection.id.value}for user $owner" }
     }
 }

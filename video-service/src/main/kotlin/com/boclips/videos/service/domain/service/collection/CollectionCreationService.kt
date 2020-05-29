@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.videos.service.domain.model.collection.Collection
+import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
@@ -13,7 +14,7 @@ class CollectionCreationService(
     private val collectionIndex: CollectionIndex,
     private val collectionRetrievalService: CollectionRetrievalService
 ) {
-    fun create(createCollectionCommand: CreateCollectionCommand, videos: List<VideoId>, user: User): Collection? {
+    fun create(createCollectionCommand: CreateCollectionCommand, videos: List<VideoId>, user: User): Collection {
         val createdCollection = collectionRepository.create(createCollectionCommand)
 
         addVideosToCollection(videos, createdCollection, user)
@@ -21,9 +22,10 @@ class CollectionCreationService(
         collectionIndex.upsert(sequenceOf(createdCollection))
 
         return collectionRetrievalService.findAnyCollection(createdCollection.id, user)
+            ?: throw CollectionNotCreatedException("Could not create collection")
     }
 
-    fun create(createCollectionCommand: CreateDefaultCollectionCommand): Collection? {
+    fun create(createCollectionCommand: CreateDefaultCollectionCommand): Collection {
         return collectionRepository.create(createCollectionCommand)
     }
 
