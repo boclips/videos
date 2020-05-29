@@ -79,7 +79,7 @@ class MongoCollectionRepository(
             createdByBoclips = command.createdByBoclips,
             promoted = false,
             subjects = collectionSubjects.getByIds(*command.subjects.toTypedArray()),
-            default = command.default
+            default = false
         )
 
         dbCollection().insertOne(document)

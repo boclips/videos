@@ -9,6 +9,5 @@ data class CreateCollectionCommand(
     val createdByBoclips: Boolean,
     val discoverable: Boolean,
     val description: String? = null,
-    val subjects: Set<SubjectId> = emptySet(),
-    val default: Boolean = false
+    val subjects: Set<SubjectId> = emptySet()
 )
