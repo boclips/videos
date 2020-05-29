@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.request.Projection
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
@@ -46,17 +47,13 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
-            subCollections = collection.subCollections.map { buildCollectionDetailsResource(collection = it, user = user) },
-            _links = listOfNotNull(
-                collectionsLinkBuilder.self(collection.id.value),
-                collectionsLinkBuilder.editCollection(collection, user),
-                collectionsLinkBuilder.removeCollection(collection, user),
-                collectionsLinkBuilder.addVideoToCollection(collection, user),
-                collectionsLinkBuilder.removeVideoFromCollection(collection, user),
-                collectionsLinkBuilder.bookmark(collection, user),
-                collectionsLinkBuilder.unbookmark(collection, user),
-                collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            subCollections = collection.subCollections.map {
+                buildCollectionDetailsResource(
+                    collection = it,
+                    user = user
+                )
+            },
+            _links = generateLinks(collection, user).map { it.rel to it }.toMap()
         )
     }
 
@@ -80,17 +77,13 @@ class CollectionResourceConverter(
             ageRange = AgeRangeToResourceConverter.convert(collection.ageRange),
             description = collection.description,
             attachments = collection.attachments.map { attachmentsToResourceConverter.convert(it) }.toSet(),
-            subCollections = collection.subCollections.map { buildCollectionListResource(collection = it, user = user) },
-            _links = listOfNotNull(
-                collectionsLinkBuilder.self(collection.id.value),
-                collectionsLinkBuilder.editCollection(collection, user),
-                collectionsLinkBuilder.removeCollection(collection, user),
-                collectionsLinkBuilder.addVideoToCollection(collection, user),
-                collectionsLinkBuilder.removeVideoFromCollection(collection, user),
-                collectionsLinkBuilder.bookmark(collection, user),
-                collectionsLinkBuilder.unbookmark(collection, user),
-                collectionsLinkBuilder.interactedWith(collection)
-            ).map { it.rel to it }.toMap()
+            subCollections = collection.subCollections.map {
+                buildCollectionListResource(
+                    collection = it,
+                    user = user
+                )
+            },
+            _links = generateLinks(collection = collection, user = user).map { it.rel to it }.toMap()
         )
     }
 
@@ -119,6 +112,30 @@ class CollectionResourceConverter(
                 collectionsLinkBuilder.self(null),
                 collectionsLinkBuilder.next(collections.pageInfo)
             ).map { it.rel to it }.toMap()
+        )
+    }
+
+    private fun generateLinks(
+        collection: Collection,
+        user: User
+    ): List<HateoasLink> {
+        return listOfNotNull(
+            collectionsLinkBuilder.self(collection.id.value),
+            if (!collection.default) {
+                collectionsLinkBuilder.editCollection(collection, user)
+            } else null,
+            if (!collection.default) {
+                collectionsLinkBuilder.removeCollection(collection, user)
+            } else null,
+            if (!collection.isOwner(owner = user)) {
+                collectionsLinkBuilder.bookmark(collection, user)
+            } else null,
+            if (!collection.isOwner(owner = user)) {
+                collectionsLinkBuilder.unbookmark(collection, user)
+            } else null,
+            collectionsLinkBuilder.addVideoToCollection(collection, user),
+            collectionsLinkBuilder.removeVideoFromCollection(collection, user),
+            collectionsLinkBuilder.interactedWith(collection)
         )
     }
 }
