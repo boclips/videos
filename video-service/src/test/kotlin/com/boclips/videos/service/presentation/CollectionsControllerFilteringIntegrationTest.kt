@@ -373,4 +373,19 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
+
+    @Test
+    fun `can filter by multiple sort criteria`() {
+        mockMvc.perform(
+            get("/v1/collections?sort_by=HAS_ATTACHMENT,IS_DEFAULT")
+                .asTeacher("teacher@gmail.com")
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            get("/v1/collections?sort_by=HAS_ATTACHMENT&sort_by=IS_DEFAULT")
+                .asTeacher("teacher@gmail.com")
+        )
+            .andExpect(status().isOk)
+    }
 }

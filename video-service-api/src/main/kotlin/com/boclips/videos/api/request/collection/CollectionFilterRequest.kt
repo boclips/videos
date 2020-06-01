@@ -15,7 +15,7 @@ class CollectionFilterRequest(
     val age_range_min: Int? = null,
     val age_range_max: Int? = null,
     val age_range: List<String>? = null,
-    val sort_by: List<String>? = null,
+    val sort_by: String? = null,
     val resource_types: Set<String>? = null,
     val projection: Projection? = Projection.list
 ) {
@@ -24,7 +24,7 @@ class CollectionFilterRequest(
     }
 
     fun getSortKeys(): List<CollectionSortKey> {
-        return sort_by?.map { CollectionSortKey.valueOf(it) } ?: emptyList()
+        return sort_by?.split(",")?.map { CollectionSortKey.valueOf(it) } ?: emptyList()
     }
 }
 
