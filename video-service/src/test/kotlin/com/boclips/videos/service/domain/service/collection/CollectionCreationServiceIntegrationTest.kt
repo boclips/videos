@@ -1,5 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
+import com.boclips.search.service.domain.collections.model.CollectionQuery
+import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
@@ -73,6 +75,24 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
+    fun `can create a default collection`() {
+        val rawUserId = "some_Id"
+        val owner = UserId(rawUserId)
+        val createDefaultCollectionCommand = CreateDefaultCollectionCommand(owner)
+
+        val result = collectionCreationService.create(createDefaultCollectionCommand)
+
+        assertThat(result).isNotNull
+        assertThat(result.owner).isEqualTo(owner)
+        assertThat(result.title).isEqualTo(CreateDefaultCollectionCommand.TITLE)
+
+        val indexedCollection = collectionIndex.search(
+            searchRequest = PaginatedSearchRequest(query = CollectionQuery(phrase = "Watch later"))
+        )
+        assertThat(indexedCollection.elements.size).isEqualTo(1)
+    }
+
+    @Test
     fun `returned collection does not contain videos that access rules do not permit`() {
         val videoId = TestFactories.createVideoId()
         val createdCollection = collectionCreationService.create(
@@ -102,18 +122,5 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
         )!!
 
         assertThat(createdCollection.videos).isEmpty()
-    }
-
-    @Test
-    fun `can create a default collection`() {
-        val rawUserId = "some_Id"
-        val owner = UserId(rawUserId)
-        val createDefaultCollectionCommand = CreateDefaultCollectionCommand(owner)
-
-        val result = collectionCreationService.create(createDefaultCollectionCommand)
-
-        assertThat(result).isNotNull
-        assertThat(result!!.owner).isEqualTo(owner)
-        assertThat(result.title).isEqualTo(CreateDefaultCollectionCommand.TITLE)
     }
 }

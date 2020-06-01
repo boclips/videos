@@ -14,6 +14,7 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
 import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
@@ -67,9 +68,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer
-import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -155,7 +153,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createAgeRange: CreateAgeRange
 
     @Autowired
-    lateinit var indexUpdater: VideoIndexUpdater
+    lateinit var videoIndexUpdater: VideoIndexUpdater
 
     @Autowired
     lateinit var subjectClassificationService: SubjectClassificationService

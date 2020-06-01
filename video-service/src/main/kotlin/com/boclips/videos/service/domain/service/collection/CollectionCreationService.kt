@@ -26,7 +26,9 @@ class CollectionCreationService(
     }
 
     fun create(createCollectionCommand: CreateDefaultCollectionCommand): Collection {
-        return collectionRepository.create(createCollectionCommand)
+        val createdCollection = collectionRepository.create(createCollectionCommand)
+        collectionIndex.upsert(sequenceOf(createdCollection))
+        return createdCollection
     }
 
     private fun addVideosToCollection(
