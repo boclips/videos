@@ -81,7 +81,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 .queryParam("discoverable", true)
                 .queryParam("page", page)
                 .queryParam("size", size)
-                .toUriString() + "{&query,subject}",
+                .toUriString() + "{&query,subject,sort_by}",
             rel = "discoverCollections"
         )
     }
@@ -107,7 +107,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) {
             HateoasLink(
                 href = getCollectionsRoot()
-                    .toUriString() + "{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}",
+                    .toUriString() + "{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types,sort_by}",
                 rel = "searchCollections"
             )
         }
@@ -128,9 +128,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
                 href = getUserCollectionsRoot(userId = currentUser)
-                    .queryParam("sort_by", CollectionSortKey.IS_DEFAULT)
-                    .queryParam("sort_by", CollectionSortKey.UPDATED_AT)
-                    .toUriString() + "{&projection,page,size}",
+                    .toUriString() + "{?projection,page,size,sort_by}",
                 rel = "mySavedCollections"
             )
         }

@@ -89,13 +89,13 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.searchCollections.href",
-                    endsWith("collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+                    endsWith("collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types,sort_by}")
                 )
             )
             .andExpect(
                 jsonPath(
                     "$._links.discoverCollections.href",
-                    endsWith("collections?projection=list&discoverable=true&page=0&size=30{&query,subject}")
+                    endsWith("collections?projection=list&discoverable=true&page=0&size=30{&query,subject,sort_by}")
                 )
             )
             .andExpect(
@@ -113,7 +113,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.mySavedCollections.href",
-                    endsWith("/v1/users/teacher@teacher.com/collections?sort_by=IS_DEFAULT&sort_by=UPDATED_AT{&projection,page,size}")
+                    endsWith("/v1/users/teacher@teacher.com/collections{?projection,page,size,sort_by}")
                 )
             )
             .andExpect(

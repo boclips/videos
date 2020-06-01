@@ -36,7 +36,7 @@ class CollectionsLinkBuilderTest {
             size = 2
         )
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2{&query,subject}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections?projection=details&discoverable=true&page=0&size=2{&query,subject,sort_by}")
         assertThat(link.rel).isEqualTo("discoverCollections")
     }
 
@@ -50,7 +50,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.searchCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types,sort_by}")
         assertThat(link.rel).isEqualTo("searchCollections")
         assertThat(link.templated).isEqualTo(true)
     }
@@ -79,7 +79,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.mySavedCollections()!!
 
-        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections?sort_by=IS_DEFAULT&sort_by=UPDATED_AT{&projection,page,size}")
+        assertThat(link.href).isEqualTo("https://localhost/v1/users/user1/collections{?projection,page,size,sort_by}")
         assertThat(link.rel).isEqualTo("mySavedCollections")
     }
 
