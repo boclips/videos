@@ -2,7 +2,7 @@ package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -25,7 +25,7 @@ class RebuildCollectionIndexTest {
 
     @BeforeEach
     fun setUp() {
-        val inMemorySearchService = CollectionSearchServiceFake()
+        val inMemorySearchService = CollectionIndexFake()
         index = DefaultCollectionSearch(inMemorySearchService, inMemorySearchService)
     }
 

@@ -49,7 +49,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             verify(legacyVideoSearchService).removeFromSearch(video.videoId.value)
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
                 ).counts.totalHits
             ).isEqualTo(1)
@@ -70,7 +70,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
                 ).counts.totalHits
             ).isEqualTo(1)
@@ -97,7 +97,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
                 ).counts.totalHits
             ).isEqualTo(2)
@@ -117,7 +117,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
                 ).counts.totalHits
             ).isEqualTo(1)
@@ -147,7 +147,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
                 ).counts.totalHits
             ).isEqualTo(3)
@@ -191,7 +191,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             val video = createVideo(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
                 ).counts.totalHits
             ).isEqualTo(1)
@@ -204,7 +204,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             whenever(legacyVideoSearchService.upsert(any(), any())).thenThrow(RuntimeException())
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
                 ).counts.totalHits
             ).isEqualTo(1)

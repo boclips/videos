@@ -35,7 +35,7 @@ class CollectionDeletionServiceTest : AbstractSpringIntegrationTest() {
         deleteCollection.invoke(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         val results =
-            collectionIndex.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
+            collectionIndexFake.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
 
         assertThat(results.counts.totalHits).isEqualTo(0)
     }

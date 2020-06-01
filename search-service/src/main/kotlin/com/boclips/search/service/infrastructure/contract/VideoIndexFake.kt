@@ -7,7 +7,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import java.time.LocalDate
 
-class VideoSearchServiceFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
+class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
     IndexReader<VideoMetadata, VideoQuery>,
     IndexWriter<VideoMetadata> {
     override fun upsertMetadata(index: MutableMap<String, VideoMetadata>, item: VideoMetadata) {

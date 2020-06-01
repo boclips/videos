@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.ContentPartnerService
@@ -34,7 +34,7 @@ class RebuildVideoIndexTest {
 
     @BeforeEach
     fun setUp() {
-        val inMemorySearchService = VideoSearchServiceFake()
+        val inMemorySearchService = VideoIndexFake()
 
         val channelRepository: ChannelRepository = getMockContentPartnerRepo(
             com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel(

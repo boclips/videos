@@ -1,8 +1,8 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
-import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
+import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.domain.service.ContentPartnerService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
@@ -17,26 +17,30 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class SearchContextFake {
     @Bean
-    fun videoSearchFake(): VideoSearchServiceFake {
-        return VideoSearchServiceFake()
+    fun videoSearchFake(): VideoIndexFake {
+        return VideoIndexFake()
     }
 
     @Bean
     fun videoMetadataSearchService(
         contentPartnerService: ContentPartnerService,
-        videoSearchServiceFake: VideoSearchServiceFake
+        videoIndexFake: VideoIndexFake
     ): VideoIndex {
         return DefaultVideoSearch(
-            videoSearchServiceFake,
-            videoSearchServiceFake,
+            videoIndexFake,
+            videoIndexFake,
             contentPartnerService
         )
     }
 
     @Bean
-    fun collectionMetadataSearchService(): CollectionIndex {
-        val inMemoryCollectionSearch = CollectionSearchServiceFake()
-        return DefaultCollectionSearch(inMemoryCollectionSearch, inMemoryCollectionSearch)
+    fun collectionIndexFake(): CollectionIndexFake {
+        return CollectionIndexFake()
+    }
+
+    @Bean
+    fun collectionMetadataSearchService(collectionIndexFake: CollectionIndexFake): CollectionIndex {
+        return DefaultCollectionSearch(collectionIndexFake, collectionIndexFake)
     }
 
     @Bean

@@ -25,7 +25,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `contains counts for subjects`() {
-        videoSearchService.setFacets(
+        videoIndexFake.setFacets(
             listOf(
                 FacetCount(
                     type = FacetType.Subjects,
@@ -43,7 +43,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `contains count for age ranges`() {
-        videoSearchService.setFacets(
+        videoIndexFake.setFacets(
             listOf(
                 FacetCount(
                     type = FacetType.AgeRanges,
@@ -61,7 +61,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not render if they don't exist`() {
-        videoSearchService.setFacets(emptyList())
+        videoIndexFake.setFacets(emptyList())
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
@@ -75,7 +75,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=content&age_range_facets=3-7,11-13").asTeacher())
             .andExpect(status().isOk)
 
-        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+        val lastSearchRequest = videoIndexFake.getLastSearchRequest()
 
         assertThat(lastSearchRequest.query.facetDefinition?.ageRangeBuckets).containsExactly(
             AgeRange(3, 7),
@@ -85,7 +85,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `contains counts for durations`() {
-        videoSearchService.setFacets(
+        videoIndexFake.setFacets(
             listOf(
                 FacetCount(
                     type = FacetType.Duration,
@@ -106,7 +106,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=content&duration_facets=PT0S-PT5M,PT5M-PT10M").asTeacher())
             .andExpect(status().isOk)
 
-        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+        val lastSearchRequest = videoIndexFake.getLastSearchRequest()
 
         assertThat(lastSearchRequest.query.facetDefinition?.duration).containsExactly(
             DurationRange(Duration.ZERO, Duration.ofMinutes(5)),
@@ -116,7 +116,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `contains counts for resource types`() {
-        videoSearchService.setFacets(
+        videoIndexFake.setFacets(
             listOf(
                 FacetCount(
                     type = FacetType.AttachmentTypes,
@@ -137,7 +137,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=content&resource_type_facets=Activity").asTeacher())
             .andExpect(status().isOk)
 
-        val lastSearchRequest = videoSearchService.getLastSearchRequest()
+        val lastSearchRequest = videoIndexFake.getLastSearchRequest()
 
         assertThat(lastSearchRequest.query.facetDefinition?.resourceTypes).containsExactly(
             "Activity"

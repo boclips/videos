@@ -14,8 +14,8 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.search.service.infrastructure.contract.CollectionSearchServiceFake
-import com.boclips.search.service.infrastructure.contract.VideoSearchServiceFake
+import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
+import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
@@ -24,8 +24,8 @@ import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.attachments.AttachmentRequest
-import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.channel.AgeRangeRequest
+import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.contentwarning.CreateContentWarningRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
@@ -51,7 +51,6 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
@@ -102,10 +101,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
 
     @Autowired
-    lateinit var videoSearchService: VideoSearchServiceFake
+    lateinit var videoIndexFake: VideoIndexFake
 
     @Autowired
-    lateinit var collectionIndex: CollectionIndex
+    lateinit var collectionIndexFake: CollectionIndexFake
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -205,8 +204,8 @@ abstract class AbstractSpringIntegrationTest {
                 }
         }
 
-        collectionIndex.safeRebuildIndex(emptySequence())
-        videoSearchService.safeRebuildIndex(emptySequence())
+        collectionIndexFake.safeRebuildIndex(emptySequence())
+        videoIndexFake.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()

@@ -86,7 +86,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(result.owner).isEqualTo(owner)
         assertThat(result.title).isEqualTo(CreateDefaultCollectionCommand.TITLE)
 
-        val indexedCollection = collectionIndex.search(
+        val indexedCollection = collectionIndexFake.search(
             searchRequest = PaginatedSearchRequest(query = CollectionQuery(phrase = "Watch later"))
         )
         assertThat(indexedCollection.elements.size).isEqualTo(1)

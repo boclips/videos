@@ -221,7 +221,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             fakeEventBus.publish(videoAnalysed)
 
             assertThat(
-                videoSearchService.search(
+                videoIndexFake.search(
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             "transcript"

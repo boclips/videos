@@ -47,7 +47,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
             collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
-            val results = collectionIndex.search(
+            val results = collectionIndexFake.search(
                 searchRequest = PaginatedSearchRequest(
                     query = CollectionQuery(
                         owner = null,
@@ -122,7 +122,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
             collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
-            val results = collectionIndex.search(
+            val results = collectionIndexFake.search(
                 searchRequest = PaginatedSearchRequest(
                     query = CollectionQuery(bookmarkedBy = "me@me.com")
                 )
