@@ -54,8 +54,8 @@ class AgeRangeAggregation {
                     ageRangeBuckets
                         .ifEmpty { DEFAULT_AGE_RANGES }
                         .forEach { ageRange ->
-                            val inclusiveMax = ageRange.max().toDouble() + 1
-                            addRange(ageRange.toString(), ageRange.min().toDouble(), inclusiveMax)
+                            val inclusiveMin = ageRange.min().toDouble() + 1
+                            addRange(ageRange.toString(), inclusiveMin, ageRange.max().toDouble())
                         }
                 }
 

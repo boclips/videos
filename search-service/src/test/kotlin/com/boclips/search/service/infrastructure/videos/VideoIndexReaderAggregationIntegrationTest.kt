@@ -175,11 +175,11 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
                 val facetCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
                 assertThat(facetCounts).contains(Count(id = "3-5", hits = 2))
-                assertThat(facetCounts).contains(Count(id = "5-9", hits = 2))
-                assertThat(facetCounts).contains(Count(id = "9-11", hits = 2))
+                assertThat(facetCounts).contains(Count(id = "5-9", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "9-11", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "11-14", hits = 2))
-                assertThat(facetCounts).contains(Count(id = "14-16", hits = 2))
-                assertThat(facetCounts).contains(Count(id = "16-99", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "14-16", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "16-99", hits = 0))
             }
 
             @Test
@@ -203,7 +203,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 val facetCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
                 assertThat(facetCounts).contains(Count(id = "3-5", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "5-9", hits = 1))
-                assertThat(facetCounts).contains(Count(id = "9-11", hits = 2))
+                assertThat(facetCounts).contains(Count(id = "9-11", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "11-14", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "14-16", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "16-99", hits = 1))
@@ -308,11 +308,58 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
                 val facetCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
                 assertThat(facetCounts).contains(Count(id = "3-5", hits = 1))
-                assertThat(facetCounts).contains(Count(id = "5-9", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "5-9", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "9-11", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "11-14", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "14-16", hits = 0))
                 assertThat(facetCounts).contains(Count(id = "16-99", hits = 0))
+            }
+
+            @Test
+            fun `returns an accurate facet count when we have overlapping min max ranges`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            ageRangeMin = 3,
+                            ageRangeMax = 9,
+                            type = VideoType.INSTRUCTIONAL
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4",
+                            title = "Banana apple",
+                            ageRangeMin = 9,
+                            ageRangeMax = 11,
+                            type = VideoType.INSTRUCTIONAL
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "Apple candy",
+                            ageRangeMin = 11,
+                            ageRangeMax = 14,
+                            type = VideoType.INSTRUCTIONAL
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            phrase = "apple",
+                            includedType = setOf(VideoType.INSTRUCTIONAL),
+                            ageRanges = listOf(AgeRange(min = 9, max = 11))
+                        )
+                    )
+                )
+
+                val facetCounts = results.counts.getFacetCounts(FacetType.AgeRanges)
+
+                assertThat(results.elements).hasSize(1)
+
+                assertThat(facetCounts).contains(Count(id = "5-9", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "9-11", hits = 1))
+                assertThat(facetCounts).contains(Count(id = "11-14", hits = 1))
             }
         }
 
@@ -447,7 +494,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(facetCounts).contains(Count(id = "Lesson Guide", hits = 1))
                 assertThat(facetCounts).contains(Count(id = "Activity", hits = 1))
             }
-
         }
     }
 }
