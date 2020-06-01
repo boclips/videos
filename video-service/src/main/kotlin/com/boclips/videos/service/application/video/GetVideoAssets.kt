@@ -32,8 +32,9 @@ class GetVideoAssets(
         val video = searchVideo.byId(videoId, user)
 
         val caption = try {
-            captionService.getAvailableCaptions(video.videoId)
-                .firstOrNull()
+            val availableCaptions = captionService.getAvailableCaptions(video.videoId)
+            availableCaptions.firstOrNull { it.default }
+                ?: availableCaptions.firstOrNull()
                 ?: throw VideoCaptionNotFound(videoId = video.videoId)
         } catch (e: UnsupportedCaptionsException) {
             throw VideoCaptionNotFound(videoId = video.videoId)

@@ -207,7 +207,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
         val captions = kalturaPlaybackProvider.getCaptions(playbackId)
 
-        assertThat(captions).containsExactly(Caption(content = "Captions content to retrieve", format = WEBVTT))
+        assertThat(captions).containsExactly(Caption(content = "Captions content to retrieve", format = WEBVTT, default = false))
     }
 
     @Test

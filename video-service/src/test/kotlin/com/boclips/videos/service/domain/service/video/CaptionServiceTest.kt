@@ -57,7 +57,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         assertThat(captionService.getAvailableCaptions(videoId)).containsExactly(
             Caption(
                 content = "captions content to retrieve",
-                format = SRT
+                format = SRT,
+                default = false
             )
         )
     }

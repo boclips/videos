@@ -43,7 +43,7 @@ class GetVideoAssetsTest {
         getVideoAssets.writeCompressedContent(
             outputStream = baos,
             video = TestFactories.createVideo(title = "a great title 9*", playback = TestFactories.createKalturaPlayback(entryId = "entry-id")),
-            caption = Caption(content = "caption time!", format = CaptionFormat.SRT)
+            caption = Caption(content = "caption time!", format = CaptionFormat.SRT, default = true)
         )
 
         val zipInputStream = unzipFirstEntry(baos)

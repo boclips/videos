@@ -109,6 +109,7 @@ class KalturaPlaybackProvider(
         return retrieveCaptionFiles(playbackId = playbackId).map { captions ->
             Caption(
                 content = kalturaClient.getCaptionContent(captions.id),
+                default = captions.isDefaultCaption,
                 format = when (captions.fileType) {
                     KalturaCaptionFormat.SRT -> CaptionFormat.SRT
                     KalturaCaptionFormat.DFXP -> CaptionFormat.DFXP

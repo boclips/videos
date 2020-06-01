@@ -2,7 +2,8 @@ package com.boclips.videos.service.domain.model.video
 
 data class Caption (
     val content: String,
-    val format: CaptionFormat
+    val format: CaptionFormat,
+    val default: Boolean
 )
 
 enum class CaptionFormat {

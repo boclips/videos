@@ -106,7 +106,7 @@ class PlaybackRepositoryTest {
 
         val captionContent = playbackRepository.getCaptions(playbackId)
 
-        assertThat(captionContent).containsExactly(Caption(content = "My caption content", format = CaptionFormat.DFXP))
+        assertThat(captionContent).containsExactly(Caption(content = "My caption content", format = CaptionFormat.DFXP, default = false))
     }
 
     @Test
