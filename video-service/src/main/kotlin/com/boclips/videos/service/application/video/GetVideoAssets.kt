@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsExceptio
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
+import mu.KLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
@@ -20,8 +21,7 @@ class GetVideoAssets(
     private val searchVideo: SearchVideo,
     private val playbackProvider: PlaybackProvider
 ) {
-
-    companion object {
+    companion object : KLogging() {
         fun buildFilename(title: String) =
             title
                 .replace(Regex("[^A-Za-z\\s\\d]+"), "")
@@ -60,7 +60,9 @@ class GetVideoAssets(
 
     private fun ZipOutputStream.writeEntry(zipEntry: ZipEntry, contentWriter: (os: OutputStream) -> Unit) {
         this.putNextEntry(zipEntry)
+        logger.info { "writing zip entry ${zipEntry.name}" }
         contentWriter(this)
         this.closeEntry()
+        logger.info { "closed zip entry ${zipEntry.name}" }
     }
 }
