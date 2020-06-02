@@ -36,6 +36,9 @@ class CollectionSearchQuery(
             permittedIds = this.permittedCollections?.map { it.value },
             sort = sort.mapNotNull { sort ->
                 return@mapNotNull when (sort) {
+                    CollectionSortKey.IS_DEFAULT -> Sort.ByField(
+                        CollectionMetadata::default, SortOrder.DESC
+                    )
                     CollectionSortKey.HAS_ATTACHMENT -> Sort.ByField(
                         CollectionMetadata::hasAttachments, SortOrder.DESC
                     )
@@ -45,9 +48,6 @@ class CollectionSearchQuery(
                     )
                     CollectionSortKey.UPDATED_AT -> Sort.ByField(
                         CollectionMetadata::updatedAt, SortOrder.DESC
-                    )
-                    CollectionSortKey.IS_DEFAULT -> Sort.ByField(
-                        CollectionMetadata::default, SortOrder.ASC
                     )
                     else -> null
                 }

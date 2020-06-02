@@ -100,13 +100,11 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
                 SearchableCollectionMetadataFactory.create(
                     id = "100",
                     title = "B",
-                    hasAttachments = true,
                     default = true
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
                     title = "A",
-                    hasAttachments = false,
                     default = false
                 )
             )
@@ -119,7 +117,7 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
                         sort = listOf(
                             Sort.ByField(
                                 CollectionMetadata::default,
-                                SortOrder.ASC
+                                SortOrder.DESC
                             ),
                             Sort.ByField(
                                 CollectionMetadata::title,
@@ -130,6 +128,6 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
                 )
             )
 
-        Assertions.assertThat(results.elements).containsExactly("101", "100")
+        Assertions.assertThat(results.elements).containsExactly("100", "101")
     }
 }
