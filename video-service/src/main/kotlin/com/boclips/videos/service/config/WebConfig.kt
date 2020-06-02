@@ -57,7 +57,7 @@ class WebConfig : WebMvcConfigurer {
     override fun configureAsyncSupport(configurer: AsyncSupportConfigurer) {
         configurer
             .setTaskExecutor(asyncTaskExecutor())
-            .setDefaultTimeout(18000)
+            .setDefaultTimeout(21600000)
             .registerCallableInterceptors(object : TimeoutCallableProcessingInterceptor() {
                 override fun <T> handleTimeout(request: NativeWebRequest?, task: Callable<T>?): Any? {
                     logger.error("Timeout during async processing: Boost timeout or reconsider strategy")
