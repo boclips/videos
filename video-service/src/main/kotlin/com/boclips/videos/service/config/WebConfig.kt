@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
 import mu.KLogging
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.hateoas.MediaTypes.HAL_JSON
 import org.springframework.http.MediaType
@@ -55,11 +56,7 @@ class WebConfig : WebMvcConfigurer {
      */
     override fun configureAsyncSupport(configurer: AsyncSupportConfigurer) {
         configurer
-            .setTaskExecutor(ThreadPoolTaskExecutor().apply {
-                corePoolSize = 5
-                maxPoolSize = 10
-                setQueueCapacity(25)
-            })
+            .setTaskExecutor(asyncTaskExecutor())
             .setDefaultTimeout(18000)
             .registerCallableInterceptors(object : TimeoutCallableProcessingInterceptor() {
                 override fun <T> handleTimeout(request: NativeWebRequest?, task: Callable<T>?): Any? {
@@ -68,6 +65,14 @@ class WebConfig : WebMvcConfigurer {
                 }
             })
     }
+
+    @Bean
+    fun asyncTaskExecutor() = ThreadPoolTaskExecutor().apply {
+            corePoolSize = 5
+            maxPoolSize = 10
+            setQueueCapacity(25)
+        }
+
 }
 
 object DurationSerializer : JsonSerializer<Duration>() {
