@@ -23,8 +23,8 @@ import org.mockito.Mockito.`when`
 import org.springframework.web.util.UriComponentsBuilder
 
 class CollectionResourceConverterTest {
-    lateinit var resourceConverter: CollectionResourceConverter
-    lateinit var videoRetrievalService: VideoRetrievalService
+    private lateinit var resourceConverter: CollectionResourceConverter
+    private lateinit var videoRetrievalService: VideoRetrievalService
 
     private val videoId = TestFactories.createVideoId().value
     private val videoTitle = "Some Video Title"
@@ -96,13 +96,15 @@ class CollectionResourceConverterTest {
             videoId = videoId
         )
 
+        val collection = TestFactories.createCollection(
+            title = "Collection Title",
+            videos = listOf(video.videoId)
+        )
+
         `when`(videoRetrievalService.getPlayableVideos(any(), any())).doReturn(listOf(video))
 
         return resourceConverter.buildCollectionResource(
-            collection = TestFactories.createCollection(
-                title = "Collection Title",
-                videos = listOf(video.videoId)
-            ),
+            collection = collection,
             projection = projection,
             user = UserFactory.sample()
         )

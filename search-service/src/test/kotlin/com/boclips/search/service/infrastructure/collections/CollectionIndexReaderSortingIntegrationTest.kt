@@ -92,4 +92,44 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
 
         Assertions.assertThat(results.elements).containsExactly("100", "101")
     }
+
+    @Test
+    fun `can sort default collection first`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    title = "B",
+                    hasAttachments = true,
+                    default = true
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    title = "A",
+                    hasAttachments = false,
+                    default = false
+                )
+            )
+        )
+
+        val results =
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        sort = listOf(
+                            Sort.ByField(
+                                CollectionMetadata::default,
+                                SortOrder.ASC
+                            ),
+                            Sort.ByField(
+                                CollectionMetadata::title,
+                                SortOrder.DESC
+                            )
+                        )
+                    )
+                )
+            )
+
+        Assertions.assertThat(results.elements).containsExactly("101", "100")
+    }
 }

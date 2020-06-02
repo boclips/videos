@@ -46,6 +46,9 @@ class CollectionSearchQuery(
                     CollectionSortKey.UPDATED_AT -> Sort.ByField(
                         CollectionMetadata::updatedAt, SortOrder.DESC
                     )
+                    CollectionSortKey.IS_DEFAULT -> Sort.ByField(
+                        CollectionMetadata::default, SortOrder.ASC
+                    )
                     else -> null
                 }
             },
