@@ -13,19 +13,47 @@ import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel
 
-// TODO: Converters should only operate on fetched objects - unit testing is otherwise not possible. The main reason why there exists no test for this converter.
 class CollectionResourceConverter(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val attachmentsToResourceConverter: AttachmentToResourceConverter,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val videoRetrievalService: VideoRetrievalService
 ) {
-    fun buildCollectionResource(collection: Collection, projection: Projection, user: User) =
-        when (projection) {
+    fun buildCollectionResource(collection: Collection, projection: Projection, user: User): CollectionResource {
+        return when (projection) {
             Projection.list -> buildCollectionListResource(collection, user)
             Projection.details -> buildCollectionDetailsResource(collection, user)
             Projection.full -> buildCollectionDetailsResource(collection, user)
         }
+    }
+
+    fun buildCollectionsResource(
+        collections: ResultsPage<Collection, Nothing>,
+        currentUser: User,
+        projection: Projection?
+    ): Any {
+        return CollectionsResource(
+            _embedded = CollectionsWrapperResource(collections.elements.map {
+                buildCollectionResource(
+                    it,
+                    projection ?: Projection.list,
+                    currentUser
+                )
+            }),
+            page = PagedModel.PageMetadata(
+                collections.pageInfo.pageRequest.size.toLong(),
+                collections.pageInfo.pageRequest.page.toLong(),
+                collections.pageInfo.totalElements,
+                collections.pageInfo.totalElements / collections.pageInfo.pageRequest.size.toLong()
+            ),
+            _links = listOfNotNull(
+                collectionsLinkBuilder.projections().list(),
+                collectionsLinkBuilder.projections().details(),
+                collectionsLinkBuilder.self(null),
+                collectionsLinkBuilder.next(collections.pageInfo)
+            ).map { it.rel to it }.toMap()
+        )
+    }
 
     fun buildCollectionDetailsResource(collection: Collection, user: User): CollectionResource {
         return CollectionResource(
@@ -84,34 +112,6 @@ class CollectionResourceConverter(
                 )
             },
             _links = generateLinks(collection = collection, user = user).map { it.rel to it }.toMap()
-        )
-    }
-
-    fun buildCollectionsResource(
-        collections: ResultsPage<Collection, Nothing>,
-        currentUser: User,
-        projection: Projection?
-    ): Any {
-        return CollectionsResource(
-            _embedded = CollectionsWrapperResource(collections.elements.map {
-                buildCollectionResource(
-                    it,
-                    projection ?: Projection.list,
-                    currentUser
-                )
-            }),
-            page = PagedModel.PageMetadata(
-                collections.pageInfo.pageRequest.size.toLong(),
-                collections.pageInfo.pageRequest.page.toLong(),
-                collections.pageInfo.totalElements,
-                collections.pageInfo.totalElements / collections.pageInfo.pageRequest.size.toLong()
-            ),
-            _links = listOfNotNull(
-                collectionsLinkBuilder.projections().list(),
-                collectionsLinkBuilder.projections().details(),
-                collectionsLinkBuilder.self(null),
-                collectionsLinkBuilder.next(collections.pageInfo)
-            ).map { it.rel to it }.toMap()
         )
     }
 
