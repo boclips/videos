@@ -9,6 +9,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel
@@ -22,7 +23,10 @@ class CollectionResourceConverter(
     fun buildCollectionResource(collection: Collection, projection: Projection, user: User): CollectionResource {
         return when (projection) {
             Projection.list -> buildCollectionListResource(collection, user)
-            Projection.details, Projection.full -> buildCollectionDetailsResource(collection, user)
+            Projection.details, Projection.full -> {
+                val videos = videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess)
+                buildCollectionDetailsResource(collection = collection, user = user, videos = videos)
+            }
         }
     }
 
@@ -54,15 +58,16 @@ class CollectionResourceConverter(
         )
     }
 
-    fun buildCollectionDetailsResource(collection: Collection, user: User): CollectionResource {
+    fun buildCollectionDetailsResource(
+        collection: Collection,
+        user: User,
+        videos: List<Video>
+    ): CollectionResource {
         return CollectionResource(
             id = collection.id.value,
             owner = collection.owner.value,
             title = collection.title,
-            videos = videoToResourceConverter.convert(
-                videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess),
-                user
-            ),
+            videos = videoToResourceConverter.convert(videos, user),
             updatedAt = collection.updatedAt,
             discoverable = collection.discoverable,
             public = collection.discoverable,
@@ -77,7 +82,8 @@ class CollectionResourceConverter(
             subCollections = collection.subCollections.map {
                 buildCollectionDetailsResource(
                     collection = it,
-                    user = user
+                    user = user,
+                    videos = videos
                 )
             },
             _links = generateLinks(collection, user).map { it.rel to it }.toMap()

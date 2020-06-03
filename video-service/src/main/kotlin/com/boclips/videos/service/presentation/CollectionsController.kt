@@ -137,7 +137,8 @@ class CollectionsController(
         val collectionResource = when (projection) {
             Projection.details -> collectionResourceConverter.buildCollectionDetailsResource(
                 collection,
-                getCurrentUser()
+                getCurrentUser(),
+                videos
             )
             else -> collectionResourceConverter.buildCollectionListResource(collection, getCurrentUser())
         }
