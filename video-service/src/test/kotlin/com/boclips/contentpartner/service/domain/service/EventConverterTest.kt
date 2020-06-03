@@ -4,20 +4,28 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.INSTRUCTIONAL
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.SubjectFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.net.URL
+import java.time.LocalDate
 import java.time.Period
+import java.util.Currency
 import java.util.Locale
 
 class EventConverterTest {
@@ -139,11 +147,119 @@ class EventConverterTest {
     }
 
     @Test
-    fun `convert contract`() {
-        val originalContract = ContentPartnerContractFactory.sample(id = "blah", contentPartnerName = "BANANA")
+    fun `convert mostly-null contract`() {
+        val originalContract = ContentPartnerContractFactory.sample(
+            id = "blah",
+            contentPartnerName = "BANANA",
+            contractDocument = null,
+            contractDates = null,
+            contractIsRolling = null,
+            daysBeforeTerminationWarning = null,
+            yearsForMaximumLicense = null,
+            daysForSellOffPeriod = null,
+            royaltySplit = null,
+            minimumPriceDescription = null,
+            remittanceCurrency = null,
+            restrictions = null,
+            costs = ContractCosts(
+                minimumGuarantee = emptyList(),
+                upfrontLicense = null,
+                technicalFee = null,
+                recoupable = null
+            )
+        )
         val convertedContract = converter.toContractPayload(originalContract)
 
         assertThat(convertedContract.contractId.value).isEqualTo("blah")
         assertThat(convertedContract.name).isEqualTo("BANANA")
+        assertNull(convertedContract.contractDocument)
+        assertNull(convertedContract.contractDates)
+        assertNull(convertedContract.contractIsRolling)
+        assertNull(convertedContract.daysBeforeTerminationWarning)
+        assertNull(convertedContract.yearsForMaximumLicense)
+        assertNull(convertedContract.daysForSellOffPeriod)
+        assertNull(convertedContract.royaltySplit)
+        assertNull(convertedContract.minimumPriceDescription)
+        assertNull(convertedContract.remittanceCurrency)
+        assertNull(convertedContract.restrictions)
+
+        val costs = convertedContract.costs
+
+        assertThat(costs.minimumGuarantee).isEmpty()
+        assertNull(costs.upfrontLicense)
+        assertNull(costs.technicalFee)
+        assertNull(costs.recoupable)
+    }
+
+    @Test
+    fun `convert completely-filled-out contract`() {
+        val originalContract = ContentPartnerContractFactory.sample(
+            id = "contract-id",
+            contentPartnerName = "contract name",
+            contractDocument = "http://google.com",
+            contractDates = ContractDates(
+                start = LocalDate.ofYearDay(2013, 12),
+                end = LocalDate.ofYearDay(2016, 300)
+            ),
+            contractIsRolling = true,
+            daysBeforeTerminationWarning = 30,
+            yearsForMaximumLicense = 3,
+            daysForSellOffPeriod = 55,
+            royaltySplit = ContractRoyaltySplit(
+                download = 25F,
+                streaming = 92.1F
+            ),
+            minimumPriceDescription = "min price",
+            remittanceCurrency = "CAD",
+            restrictions = ContractRestrictions(
+                clientFacing = listOf("client-facing"),
+                territory = "territory",
+                editing = "editing",
+                licensing = "licensing",
+                marketing = "marketing",
+                companies = "companies",
+                payout = "payout",
+                other = "other"
+            ),
+            costs = ContractCosts(
+                minimumGuarantee = listOf(BigDecimal.TEN),
+                upfrontLicense = BigDecimal.ONE,
+                technicalFee = BigDecimal.ONE,
+                recoupable = true
+            )
+        )
+        val convertedContract = converter.toContractPayload(originalContract)
+
+        assertThat(convertedContract.contractId.value).isEqualTo("contract-id")
+        assertThat(convertedContract.name).isEqualTo("contract name")
+        assertThat(convertedContract.contractDocument).isEqualTo("http://google.com")
+        assertThat(convertedContract.contractDates.start).isEqualTo(LocalDate.ofYearDay(2013, 12))
+        assertThat(convertedContract.contractDates.end).isEqualTo(LocalDate.ofYearDay(2016, 300))
+        assertThat(convertedContract.contractIsRolling).isTrue()
+        assertThat(convertedContract.daysBeforeTerminationWarning).isEqualTo(30)
+        assertThat(convertedContract.yearsForMaximumLicense).isEqualTo(3)
+        assertThat(convertedContract.daysForSellOffPeriod).isEqualTo(55)
+        assertThat(convertedContract.royaltySplit.download).isEqualTo(25F)
+        assertThat(convertedContract.royaltySplit.streaming).isEqualTo(92.1F)
+        assertThat(convertedContract.minimumPriceDescription).isEqualTo("min price")
+        assertThat(convertedContract.remittanceCurrency).isEqualTo(Currency.getInstance("CAD"))
+
+        val restrictions = convertedContract.restrictions
+
+        assertThat(restrictions.clientFacing).containsExactly("client-facing")
+        assertThat(restrictions.territory).isEqualTo("territory")
+        assertThat(restrictions.editing).isEqualTo("editing")
+        assertThat(restrictions.licensing).isEqualTo("licensing")
+        assertThat(restrictions.marketing).isEqualTo("marketing")
+        assertThat(restrictions.companies).isEqualTo("companies")
+        assertThat(restrictions.payout).isEqualTo("payout")
+        assertThat(restrictions.other).isEqualTo("other")
+
+        val costs = convertedContract.costs
+
+        assertThat(costs.minimumGuarantee).containsExactly(BigDecimal.TEN)
+        assertThat(costs.upfrontLicense).isEqualTo(BigDecimal.ONE)
+        assertThat(costs.technicalFee).isEqualTo(BigDecimal.ONE)
+        assertThat(costs.recoupable).isTrue()
     }
 }

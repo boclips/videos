@@ -573,7 +573,7 @@ object ContentPartnerContractFactory {
             ),
         minimumPriceDescription: String? = "This is the minimum price",
         remittanceCurrency: String? = "GBP",
-        restrictions: ContractRestrictions = ContractRestrictions(
+        restrictions: ContractRestrictions? = ContractRestrictions(
             clientFacing = listOf("restriction 1", "restriction 2"),
             territory = "Australia",
             licensing = "License 1",
@@ -595,7 +595,7 @@ object ContentPartnerContractFactory {
                 id ?: ObjectId().toHexString()
             ),
             contentPartnerName = contentPartnerName ?: "content-partner-name",
-            contractDocument = URL(contractDocument),
+            contractDocument = contractDocument?.let { URL(it) },
             contractDates = contractDates,
             contractIsRolling = contractIsRolling,
             daysBeforeTerminationWarning = daysBeforeTerminationWarning,

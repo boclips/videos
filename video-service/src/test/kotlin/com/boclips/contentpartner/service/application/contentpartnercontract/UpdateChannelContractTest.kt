@@ -15,6 +15,9 @@ class UpdateChannelContractTest : AbstractSpringIntegrationTest() {
     @Test
     fun `publishes a contract updated event`() {
         val contract = saveContentPartnerContract(name = "old contract name")
+
+        fakeEventBus.clearState()
+
         updateContentPartnerContract(
             contractId = contract.id.value,
             updateRequest = UpdateContractRequest(contentPartnerName = "new contract name")

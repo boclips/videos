@@ -16,7 +16,11 @@ class ContentPartnerContractRepositoryEventDecorator(
     private val eventBus: EventBus
 ) : ContentPartnerContractRepository by contentPartnerContractRepository {
     override fun create(contract: ContentPartnerContract): ContentPartnerContract {
-        return contentPartnerContractRepository.create(contract)
+        val created = contentPartnerContractRepository.create(contract)
+
+        publishContractUpdate(created)
+
+        return created
     }
 
     override fun findById(id: ContentPartnerContractId): ContentPartnerContract? {

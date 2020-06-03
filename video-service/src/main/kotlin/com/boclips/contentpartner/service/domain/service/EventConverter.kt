@@ -1,27 +1,35 @@
 package com.boclips.contentpartner.service.domain.service
 
 import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.AgeRange
+import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contentpartner.ChannelMarketingDetails
 import com.boclips.eventbus.domain.contentpartner.ChannelPedagogyDetails
 import com.boclips.eventbus.domain.contentpartner.ChannelTopLevelDetails
-import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contract.ContractId
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.domain.model.subject.Subject
 import mu.KLogging
 import com.boclips.eventbus.domain.Subject as EventBusSubject
 import com.boclips.eventbus.domain.SubjectId as EventBusSubjectId
-import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
 import com.boclips.eventbus.domain.contentpartner.Channel as EventBusChannel
+import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
+import com.boclips.eventbus.domain.contract.ContractCosts as EventBusContractCosts
+import com.boclips.eventbus.domain.contract.ContractDates as EventBusContractDates
+import com.boclips.eventbus.domain.contract.ContractRestrictions as EventBusContractRestrictions
+import com.boclips.eventbus.domain.contract.ContractRoyaltySplit as EventBusContractRoyaltySplit
 
 class EventConverter {
     companion object : KLogging()
@@ -104,6 +112,69 @@ class EventConverter {
         EventBusContract.builder()
             .contractId(ContractId.builder().value(contract.id.value).build())
             .name(contract.contentPartnerName)
+            .apply {
+                if (contract.contractDates != null) {
+                    contractDates(toContractDatesPayload(contract.contractDates))
+                }
+            }
+            .contractDocument(contract.contractDocument?.toString())
+            .contractIsRolling(contract.contractIsRolling)
+            .daysBeforeTerminationWarning(contract.daysBeforeTerminationWarning)
+            .yearsForMaximumLicense(contract.yearsForMaximumLicense)
+            .daysForSellOffPeriod(contract.daysForSellOffPeriod)
+            .apply {
+                if (contract.royaltySplit != null) {
+                    royaltySplit(toContractRoyaltySplitPayload(contract.royaltySplit))
+                }
+            }
+            .minimumPriceDescription(contract.minimumPriceDescription)
+            .remittanceCurrency(contract.remittanceCurrency)
+            .apply {
+                if (contract.restrictions != null) {
+                    restrictions(toContractRestrictionsPayload(contract.restrictions))
+                }
+            }
+            .costs(toContractCostsPayload(contract.costs))
+            .build()
+
+    private fun toContractDatesPayload(
+        contractDates: ContractDates
+    ): EventBusContractDates =
+        EventBusContractDates.builder()
+            .start(contractDates.start)
+            .end(contractDates.end)
+            .build()
+
+    private fun toContractRoyaltySplitPayload(
+        royaltySplit: ContractRoyaltySplit
+    ): EventBusContractRoyaltySplit =
+        EventBusContractRoyaltySplit.builder()
+            .streaming(royaltySplit.streaming)
+            .download(royaltySplit.download)
+            .build()
+
+    private fun toContractRestrictionsPayload(
+        restrictions: ContractRestrictions
+    ): EventBusContractRestrictions =
+        EventBusContractRestrictions.builder()
+            .clientFacing(restrictions.clientFacing)
+            .territory(restrictions.territory)
+            .editing(restrictions.editing)
+            .licensing(restrictions.licensing)
+            .marketing(restrictions.marketing)
+            .companies(restrictions.companies)
+            .payout(restrictions.payout)
+            .other(restrictions.other)
+            .build()
+
+    private fun toContractCostsPayload(
+        costs: ContractCosts
+    ): EventBusContractCosts =
+        EventBusContractCosts.builder()
+            .minimumGuarantee(costs.minimumGuarantee)
+            .upfrontLicense(costs.upfrontLicense)
+            .technicalFee(costs.technicalFee)
+            .recoupable(costs.recoupable)
             .build()
 
     fun toSubjectPayload(subject: Subject): EventBusSubject =
