@@ -14,11 +14,11 @@ class CollectionMetadataConverterTest {
         val updateDate = ZonedDateTime.parse("2020-03-01T18:30:00+10:00")
         val collection = TestFactories.createCollection(
             id = CollectionId(value = "test-id"),
-            title = "Some Collection Title",
             owner = "12903012381",
+            title = "Some Collection Title",
+            updatedAt = updateDate,
             discoverable = false,
-            bookmarks = setOf(UserId(value = "userId1")),
-            updatedAt = updateDate
+            bookmarks = setOf(UserId(value = "userId1"))
         )
 
         val collectionMetadata = CollectionMetadataConverter.convert(collection)
@@ -37,8 +37,8 @@ class CollectionMetadataConverterTest {
     fun `convert with lesson plans`() {
         val collectionWithLessonPlan = TestFactories.createCollection(
             id = CollectionId(value = "test-id"),
-            title = "Collection with lesson plan",
             owner = "12903012381",
+            title = "Collection with lesson plan",
             discoverable = false,
             bookmarks = setOf(UserId(value = "userId1")),
             attachments = setOf(AttachmentFactory.sampleWithLessonPlan())
@@ -57,13 +57,13 @@ class CollectionMetadataConverterTest {
     fun `convert with age range`() {
         val collectionWithLessonPlan = TestFactories.createCollection(
             id = CollectionId(value = "test-id"),
-            title = "Collection with lesson plan",
             owner = "12903012381",
+            title = "Collection with lesson plan",
             discoverable = false,
             bookmarks = setOf(UserId(value = "userId1")),
-            attachments = setOf(AttachmentFactory.sampleWithLessonPlan()),
             ageRangeMin = 3,
-            ageRangeMax = 10
+            ageRangeMax = 10,
+            attachments = setOf(AttachmentFactory.sampleWithLessonPlan())
         )
 
         val collectionMetadata = CollectionMetadataConverter.convert(collectionWithLessonPlan)

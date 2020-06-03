@@ -123,16 +123,16 @@ class EventConverterTest {
         val videoId = TestFactories.aValidId()
         val publicCollection = TestFactories.createCollection(
             id = CollectionId(id),
-            title = "collection title",
-            discoverable = true,
-            videos = listOf(VideoId(videoId)),
-            subjects = setOf(TestFactories.createSubject(id = "subject-id", name = "subject name")),
             owner = "user-id",
-            ageRangeMin = 0,
-            ageRangeMax = 23,
-            bookmarks = setOf(UserId("bookmarked-user-id")),
+            title = "collection title",
+            videos = listOf(VideoId(videoId)),
             createdAt = ZonedDateTime.of(2017, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC),
-            updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC)
+            updatedAt = ZonedDateTime.of(2018, 11, 10, 1, 2, 3, 0, ZoneOffset.UTC),
+            discoverable = true,
+            bookmarks = setOf(UserId("bookmarked-user-id")),
+            subjects = setOf(TestFactories.createSubject(id = "subject-id", name = "subject name")),
+            ageRangeMin = 0,
+            ageRangeMax = 23
         )
         val nonDiscoverableCollection = TestFactories.createCollection(discoverable = false)
 

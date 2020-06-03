@@ -19,6 +19,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -54,6 +55,7 @@ class CollectionsController(
     private val unbookmarkCollection: UnbookmarkCollection,
     private val collectionsLinkBuilder: CollectionsLinkBuilder,
     private val collectionResourceConverter: CollectionResourceConverter,
+    private val videoRetrievalService: VideoRetrievalService,
     private val withProjection: WithProjection,
     accessRuleService: AccessRuleService,
     getUserIdOverride: GetUserIdOverride
@@ -131,16 +133,18 @@ class CollectionsController(
         @RequestParam(name = "referer", required = false) referer: String? = null,
         @RequestParam(name = "shareCode", required = false) shareCode: String? = null
     ): MappingJacksonValue {
+        val user = getCurrentUser()
         val collection =
-            getCollection(collectionId = id, user = getCurrentUser(), referer = referer, shareCode = shareCode)
+            getCollection(collectionId = id, user = user, referer = referer, shareCode = shareCode)
+        val videos = videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess)
 
         val collectionResource = when (projection) {
             Projection.details -> collectionResourceConverter.buildCollectionDetailsResource(
                 collection,
-                getCurrentUser(),
+                user,
                 videos
             )
-            else -> collectionResourceConverter.buildCollectionListResource(collection, getCurrentUser())
+            else -> collectionResourceConverter.buildCollectionListResource(collection, user)
         }
 
         return withProjection(collectionResource)

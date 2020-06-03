@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation.hateoas
 
-import com.boclips.security.utils.UserExtractor.getCurrentUserIfNotAnonymous
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.HateoasLink
@@ -25,15 +24,21 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun editCollection(collection: Collection, user: User): HateoasLink? {
-        return if (collection.isOwner(user)) collectionResourceLink(collection.id.value, "edit") else null
+        return if (collection.isOwner(user) || user.isPermittedToModifyAnyCollection) collectionResourceLink(
+            collection.id.value,
+            "edit"
+        ) else null
     }
 
     fun removeCollection(collection: Collection, user: User): HateoasLink? {
-        return if (collection.isOwner(user)) collectionResourceLink(collection.id.value, "remove") else null
+        return if (collection.isOwner(user) || user.isPermittedToModifyAnyCollection) collectionResourceLink(
+            collection.id.value,
+            "remove"
+        ) else null
     }
 
     fun addVideoToCollection(collection: Collection, user: User): HateoasLink? {
-        return if (collection.isOwner(user)) {
+        return if (collection.isOwner(user) || user.isPermittedToModifyAnyCollection) {
             HateoasLink.of(
                 Link(
                     getCollectionsRoot()
@@ -158,7 +163,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     }
 
     fun bookmark(collection: Collection, user: User): HateoasLink? =
-        if (getCurrentUserIfNotAnonymous() == null || collection.isBookmarkedBy(user) || collection.isOwner(user)) {
+        if (!user.isAuthenticated || collection.isBookmarkedBy(user) || collection.isOwner(user)) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collection.id.value)
@@ -168,7 +173,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
 
     fun unbookmark(collection: Collection, user: User): HateoasLink? {
-        return if (!collection.isBookmarkedBy(user) || collection.isOwner(user)) {
+        return if (!user.isAuthenticated || !collection.isBookmarkedBy(user) || collection.isOwner(user)) {
             null
         } else {
             val href = getCollectionsRoot().pathSegment(collection.id.value)

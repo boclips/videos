@@ -36,6 +36,7 @@ class CollectionResourceConverterTest {
         val uriComponentsBuilderFactory = mock<UriComponentsBuilderFactory> {
             on { getInstance() } doReturn UriComponentsBuilder.newInstance().path("videos")
         }
+        videoRetrievalService = mock()
 
         val videoToResourceConverter = VideoToResourceConverter(
             videosLinkBuilder = VideosLinkBuilder(uriComponentsBuilderFactory),
@@ -46,8 +47,8 @@ class CollectionResourceConverterTest {
             attachmentToResourceConverter = attachmentToResourceConverter,
             contentWarningToResourceConverter = ContentWarningToResourceConverter(ContentWarningLinkBuilder())
         )
-        val collectionsLinkBuilder = mock<CollectionsLinkBuilder>()
-        videoRetrievalService = mock()
+
+        val collectionsLinkBuilder = CollectionsLinkBuilder(uriComponentsBuilderFactory)
 
         resourceConverter = CollectionResourceConverter(
             videoToResourceConverter,
@@ -90,15 +91,59 @@ class CollectionResourceConverterTest {
         assertThat(resource.videos[0].title).isEqualTo(videoTitle)
     }
 
-    private fun createTestResource(projection: Projection): CollectionResource {
+    @Test
+    fun `contains the correct links`() {
+        val resource = createTestResource(projection = Projection.list, collectionBelongsToUser = false)
+
+        assertThat(resource._links!!["self"]).isNotNull
+        assertThat(resource._links!!["bookmark"]).isNotNull
+        assertThat(resource._links!!["interactedWith"]).isNotNull
+    }
+
+    @Test
+    fun `contains the correct links for collection owners`() {
+        val resource = createTestResource(projection = Projection.list, collectionBelongsToUser = true)
+
+        assertThat(resource._links!!["self"]).isNotNull
+        assertThat(resource._links!!["edit"]).isNotNull
+        assertThat(resource._links!!["remove"]).isNotNull
+        assertThat(resource._links!!["addVideo"]).isNotNull
+        assertThat(resource._links!!["removeVideo"]).isNotNull
+        assertThat(resource._links!!["interactedWith"]).isNotNull
+    }
+
+    @Test
+    fun `contains the correct links for watch later collections`() {
+        val resource =
+            createTestResource(projection = Projection.list, collectionBelongsToUser = true, isDefault = true)
+
+        assertThat(resource._links!!["self"]).isNotNull
+        assertThat(resource._links!!["addVideo"]).isNotNull
+        assertThat(resource._links!!["removeVideo"]).isNotNull
+        assertThat(resource._links!!["interactedWith"]).isNotNull
+
+        assertThat(resource._links!!["edit"]).isNull()
+        assertThat(resource._links!!["remove"]).isNull()
+    }
+
+    private fun createTestResource(
+        projection: Projection,
+        collectionBelongsToUser: Boolean = false,
+        isDefault: Boolean = false
+    ): CollectionResource {
+        val user = UserFactory.sample()
+
         val video = TestFactories.createVideo(
             title = videoTitle,
             videoId = videoId
         )
 
         val collection = TestFactories.createCollection(
+            owner = if (collectionBelongsToUser) user.id.value else "random-user",
             title = "Collection Title",
-            videos = listOf(video.videoId)
+            videos = listOf(video.videoId),
+            default = isDefault,
+            bookmarks = emptySet()
         )
 
         `when`(videoRetrievalService.getPlayableVideos(any(), any())).doReturn(listOf(video))
@@ -106,7 +151,7 @@ class CollectionResourceConverterTest {
         return resourceConverter.buildCollectionResource(
             collection = collection,
             projection = projection,
-            user = UserFactory.sample()
+            user = user
         )
     }
 }
