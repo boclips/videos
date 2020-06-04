@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.application.channel.ContractUpdated
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
+import com.boclips.contentpartner.service.application.contentpartnercontract.BroadcastContracts
 import com.boclips.contentpartner.service.application.contentpartnercontract.ContractContentPartnerConverter
 import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
 import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
@@ -158,6 +159,10 @@ class ApplicationContext(
             subjectRepository
         )
     }
+
+    @Bean
+    fun broadcastContracts(): BroadcastContracts =
+        BroadcastContracts(eventBus, eventConverter, contentPartnerContractRepository)
 
     @Bean
     fun contentPartnerContractsLinkBuilder(

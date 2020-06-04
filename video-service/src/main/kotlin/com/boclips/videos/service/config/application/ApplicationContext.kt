@@ -90,7 +90,6 @@ import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
-import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -461,7 +460,11 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(captionService: CaptionService, searchVideo: SearchVideo, playbackProvider: KalturaPlaybackProvider) =
+    fun getVideoAssets(
+        captionService: CaptionService,
+        searchVideo: SearchVideo,
+        playbackProvider: KalturaPlaybackProvider
+    ) =
         GetVideoAssets(captionService, searchVideo, playbackProvider)
 
     @Bean

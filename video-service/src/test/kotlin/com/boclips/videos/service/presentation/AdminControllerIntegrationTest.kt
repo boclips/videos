@@ -65,6 +65,18 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `broadcast contract events`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contracts").asOperator())
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `broadcast contract events returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contracts").asTeacher())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `analyse video publishes events`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-123"))
         mockMvc.perform(

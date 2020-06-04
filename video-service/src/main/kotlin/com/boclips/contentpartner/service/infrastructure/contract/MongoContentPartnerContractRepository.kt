@@ -111,6 +111,13 @@ class MongoContentPartnerContractRepository(
         return getCollection().find(bson).map(converter::toContract)
     }
 
+    override fun streamAll(consumer: (Sequence<ContentPartnerContract>) -> Unit) {
+        val sequence = Sequence { getCollection().find().iterator() }
+            .map(converter::toContract)
+
+        consumer(sequence)
+    }
+
     override fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContentPartnerContract> {
         if (contentPartnerContractUpdateCommands.isEmpty()) {
             return emptyList()

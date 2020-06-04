@@ -9,5 +9,6 @@ interface ContentPartnerContractRepository {
     fun findAllByIds(contractIds: List<ContentPartnerContractId>): List<ContentPartnerContract>
     fun findAll(pageRequest: PageRequest): ResultsPage<ContentPartnerContract>
     fun findAll(filters: List<ContractFilter>): Iterable<ContentPartnerContract>
+    fun streamAll(consumer: (Sequence<ContentPartnerContract>) -> Unit)
     fun update(contentPartnerContractUpdateCommands: List<ContentPartnerContractUpdateCommand>): List<ContentPartnerContract>
 }

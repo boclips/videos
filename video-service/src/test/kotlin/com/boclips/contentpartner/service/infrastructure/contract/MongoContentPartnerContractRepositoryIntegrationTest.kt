@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contract
 
 import com.boclips.contentpartner.service.common.PageRequest
+import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
@@ -20,29 +21,29 @@ import java.util.Currency
 
 class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var contentPartnerContractRepository: ContentPartnerContractRepository
+    lateinit var repository: ContentPartnerContractRepository
 
     @Test
     fun `can create a content partner contract`() {
         val original = ContentPartnerContractFactory.sample()
-        val created = contentPartnerContractRepository.create(original)
+        val created = repository.create(original)
         assertThat(original.id.value).isEqualTo(created.id.value)
     }
 
     @Test
     fun `can find a content partner contract`() {
         val original = ContentPartnerContractFactory.sample()
-        contentPartnerContractRepository.create(original)
-        val found = contentPartnerContractRepository.findById(original.id)
+        repository.create(original)
+        val found = repository.findById(original.id)
         assertThat(found).isEqualTo(original)
     }
 
     @Test
     fun `can replace contract content partner name `() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
                     contractContentPartnerId = contract.id,
@@ -51,16 +52,16 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.contentPartnerName).isEqualTo("Changed name")
     }
 
     @Test
     fun `can replace contract is rolling`() {
         val original = ContentPartnerContractFactory.sample(contractIsRolling = false)
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceContractIsRolling(
                     contractContentPartnerId = contract.id,
@@ -69,18 +70,18 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.contractIsRolling).isEqualTo(true)
     }
 
     @Test
     fun `can replace contract dates`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
         val start = LocalDate.of(2016, 10, 10)
         val end = LocalDate.of(2019, 10, 31)
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceContractDates(
                     contractContentPartnerId = contract.id,
@@ -89,7 +90,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.contractDates?.start).isEqualTo(start)
         assertThat(updatedContract?.contractDates?.end).isEqualTo(end)
     }
@@ -97,10 +98,10 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
     @Test
     fun `can replace days before termination warning`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceDaysBeforeTerminationWarning(
                     contractContentPartnerId = contract.id,
@@ -109,16 +110,16 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.daysBeforeTerminationWarning).isEqualTo(99)
     }
 
     @Test
     fun `can replace document`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceContractDocument(
                     contractContentPartnerId = contract.id,
@@ -127,17 +128,17 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.contractDocument.toString()).isEqualTo("http://www.google.com")
     }
 
     @Test
     fun `can replace years for maximum license`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceYearsForMaximumLicense(
                     contractContentPartnerId = contract.id,
@@ -146,17 +147,17 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.yearsForMaximumLicense).isEqualTo(55)
     }
 
     @Test
     fun `can replace days for sell off period`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceDaysForSellOffPeriod(
                     contractContentPartnerId = contract.id,
@@ -165,17 +166,17 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.daysForSellOffPeriod).isEqualTo(7)
     }
 
     @Test
     fun `can replace royalty split`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceRoyaltySplit(
                     contractContentPartnerId = contract.id,
@@ -184,7 +185,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.royaltySplit?.streaming).isEqualTo(0.5.toFloat())
         assertThat(updatedContract?.royaltySplit?.download).isEqualTo(0.7.toFloat())
     }
@@ -192,10 +193,10 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
     @Test
     fun `can replace minimum price description`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceMinimumPriceDescription(
                     contractContentPartnerId = contract.id,
@@ -204,18 +205,18 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.minimumPriceDescription).isEqualTo("this is a minimum price - $99")
     }
 
     @Test
     fun `can replace currency`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
         val currency = Currency.getInstance("AUD")
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceRemittanceCurrency(
                     contractContentPartnerId = contract.id,
@@ -224,18 +225,18 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.remittanceCurrency).isEqualTo(currency)
     }
 
     @Test
     fun `can replace restrictions`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
         val restrictions = ContractRestrictionsFactory.sample(clientFacing = listOf("updated restriction"))
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceRestrictions(
                     contractContentPartnerId = contract.id,
@@ -244,18 +245,18 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.restrictions?.clientFacing).contains("updated restriction")
     }
 
     @Test
     fun `can replace costs`() {
         val original = ContentPartnerContractFactory.sample()
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
         val costs = ContractCostsFactory.sample(recoupable = false)
 
 
-        contentPartnerContractRepository.update(
+        repository.update(
             listOf(
                 ContentPartnerContractUpdateCommand.ReplaceCost(
                     contractContentPartnerId = contract.id,
@@ -264,20 +265,20 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             )
         )
 
-        val updatedContract = contentPartnerContractRepository.findById(contract.id)
+        val updatedContract = repository.findById(contract.id)
         assertThat(updatedContract?.costs?.recoupable).isEqualTo(false)
     }
 
     @Test
     fun `returns result of update`() {
         val original = ContentPartnerContractFactory.sample(contentPartnerName = "old")
-        val contract = contentPartnerContractRepository.create(original)
+        val contract = repository.create(original)
 
         val updateNameCommand = ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
             contractContentPartnerId = contract.id,
             contentPartnerName = "new"
         )
-        val result = contentPartnerContractRepository.update(
+        val result = repository.update(
             listOf(
                 updateNameCommand
             )
@@ -289,11 +290,13 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
 
     @Test
     fun `group update result by contract`() {
-        val firstContract = ContentPartnerContractFactory.sample(contentPartnerName = "first", id = ObjectId().toHexString())
-        val secondContract = ContentPartnerContractFactory.sample(contentPartnerName = "second", id = ObjectId().toHexString())
+        val firstContract =
+            ContentPartnerContractFactory.sample(contentPartnerName = "first", id = ObjectId().toHexString())
+        val secondContract =
+            ContentPartnerContractFactory.sample(contentPartnerName = "second", id = ObjectId().toHexString())
 
-        contentPartnerContractRepository.create(firstContract)
-        contentPartnerContractRepository.create(secondContract)
+        repository.create(firstContract)
+        repository.create(secondContract)
 
         val updateFirstContract = ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
             contractContentPartnerId = firstContract.id,
@@ -310,7 +313,7 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
             contentPartnerName = "second new"
         )
 
-        val updateResults = contentPartnerContractRepository.update(
+        val updateResults = repository.update(
             listOf(
                 updateFirstContract,
                 updateFirstContractAgain,
@@ -333,9 +336,9 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
                 ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
             )
 
-            contracts.map { contentPartnerContractRepository.create(it) }
+            contracts.map { repository.create(it) }
 
-            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 10, page = 0))
+            val retrievedContracts = repository.findAll(PageRequest(size = 10, page = 0))
             assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }
                 .toTypedArray())
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
@@ -348,9 +351,9 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
                 ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
             )
 
-            contracts.map { contentPartnerContractRepository.create(it) }
+            contracts.map { repository.create(it) }
 
-            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 1, page = 0))
+            val retrievedContracts = repository.findAll(PageRequest(size = 1, page = 0))
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isTrue()
             assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(2)
             assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(0)
@@ -365,9 +368,9 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
                 ContentPartnerContractFactory.sample(id = ObjectId().toHexString())
             )
 
-            contracts.map { contentPartnerContractRepository.create(it) }
+            contracts.map { repository.create(it) }
 
-            val retrievedContracts = contentPartnerContractRepository.findAll(PageRequest(size = 2, page = 1))
+            val retrievedContracts = repository.findAll(PageRequest(size = 2, page = 1))
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
             assertThat(retrievedContracts.pageInfo.totalElements).isEqualTo(3)
             assertThat(retrievedContracts.pageInfo.pageRequest.page).isEqualTo(1)
@@ -377,12 +380,12 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
         @Test
         fun `find all by name filter`() {
             val contracts = listOf(
-                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a")),
-                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a"))
+                repository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a")),
+                repository.create(ContentPartnerContractFactory.sample(contentPartnerName = "a"))
             )
-                contentPartnerContractRepository.create(ContentPartnerContractFactory.sample(contentPartnerName = "b"))
+            repository.create(ContentPartnerContractFactory.sample(contentPartnerName = "b"))
 
-            val retrievedContracts = contentPartnerContractRepository.findAll(listOf(ContractFilter.NameFilter("a")))
+            val retrievedContracts = repository.findAll(listOf(ContractFilter.NameFilter("a")))
 
             assertThat(retrievedContracts).containsExactly(*contracts.toTypedArray())
         }
@@ -397,9 +400,9 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
                 ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 2")
             )
 
-            contracts.map { contentPartnerContractRepository.create(it) }
+            contracts.map { repository.create(it) }
 
-            val retrievedContracts = contentPartnerContractRepository.findAllByIds(contracts.map { it.id })
+            val retrievedContracts = repository.findAllByIds(contracts.map { it.id })
             assertThat(retrievedContracts).hasSize(2)
             assertThat(retrievedContracts.map { it.contentPartnerName }).containsExactlyInAnyOrder(
                 "contract 1",
@@ -414,10 +417,30 @@ class MongoContentPartnerContractRepositoryIntegrationTest : AbstractSpringInteg
                 ContentPartnerContractFactory.sample(id = ObjectId().toHexString(), contentPartnerName = "contract 2")
             )
 
-            contentPartnerContractRepository.create(contracts.first())
+            repository.create(contracts.first())
 
-            val retrievedContracts = contentPartnerContractRepository.findAllByIds(contracts.map { it.id })
+            val retrievedContracts = repository.findAllByIds(contracts.map { it.id })
             assertThat(retrievedContracts).containsExactly(contracts.first())
+        }
+    }
+
+    @Nested
+    inner class StreamAll {
+        @Test
+        fun `can stream all contracts`() {
+            listOf("first", "second", "third").forEach {
+                repository.create(
+                    ContentPartnerContractFactory.sample(
+                        id = ObjectId().toHexString(),
+                        contentPartnerName = it
+                    )
+                )
+            }
+
+            var contracts: List<ContentPartnerContract> = emptyList()
+            repository.streamAll { contracts = it.toList() }
+
+            assertThat(contracts).hasSize(3)
         }
     }
 }
