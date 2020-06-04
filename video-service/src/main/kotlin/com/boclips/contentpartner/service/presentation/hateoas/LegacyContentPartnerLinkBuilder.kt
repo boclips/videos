@@ -15,7 +15,7 @@ class LegacyContentPartnerLinkBuilder(private val uriComponentsBuilderFactory: U
 
     fun self(id: String): HateoasLink {
         val withSelfRel = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(LegacyContentPartnerController::class.java).getChannel(
+            WebMvcLinkBuilder.methodOn(LegacyContentPartnerController::class.java).getLegacyContentPartner(
                 id
             )
         ).withSelfRel()
@@ -26,7 +26,7 @@ class LegacyContentPartnerLinkBuilder(private val uriComponentsBuilderFactory: U
     fun contentPartnerLink(id: String?): Link? {
         return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNERS) {
             WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(LegacyContentPartnerController::class.java).getChannel(
+                WebMvcLinkBuilder.methodOn(LegacyContentPartnerController::class.java).getLegacyContentPartner(
                     id
                 )
             ).withRel("contentPartner")
@@ -44,17 +44,6 @@ class LegacyContentPartnerLinkBuilder(private val uriComponentsBuilderFactory: U
             )
         }
     }
-
-    fun contentPartnersSignedUploadLink(): Link? =
-        getIfHasAnyRole(UserRoles.INSERT_CONTENT_PARTNERS, UserRoles.UPDATE_CONTENT_PARTNERS) {
-            Link(
-                getContentPartnersRoot()
-                    .build()
-                    .toUriString()
-                    .plus("/signed-upload-link"),
-                "contentPartnersSignedUploadLink"
-            )
-        }
 
     private fun getContentPartnersRoot() = uriComponentsBuilderFactory.getInstance()
         .replacePath("/v1/content-partners")

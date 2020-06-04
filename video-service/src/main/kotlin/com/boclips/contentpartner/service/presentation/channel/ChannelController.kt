@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.converters.ChannelToResourceConverter
+import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
@@ -36,7 +37,7 @@ class ChannelController(
     private val updateChannel: UpdateChannel,
     private val fetchChannel: GetChannel,
     private val fetchChannels: GetChannels,
-    private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
+    private val channelLinkBuilder: ChannelLinkBuilder,
     private val channelToResourceConverter: ChannelToResourceConverter,
     private val marketingSignedLinkProvider: SignedLinkProvider
 ) {
@@ -74,7 +75,7 @@ class ChannelController(
     fun getChannel(@PathVariable("id") @NotBlank channelId: String?): ResponseEntity<ChannelResource> {
         val channelResource = fetchChannel(channelId!!)
             .let { channelToResourceConverter.convert(it) }
-            .copy(_links = listOf(legacyContentPartnerLinkBuilder.self(channelId)).map { it.rel to it }.toMap())
+            .copy(_links = listOf(channelLinkBuilder.self(channelId)).map { it.rel to it }.toMap())
 
         return ResponseEntity(channelResource, HttpStatus.OK)
     }
@@ -86,7 +87,7 @@ class ChannelController(
         return ResponseEntity(HttpHeaders().apply {
             set(
                 "Location",
-                legacyContentPartnerLinkBuilder.self(channel.id.value).href
+                channelLinkBuilder.self(channel.id.value).href
             )
         }, HttpStatus.CREATED)
     }

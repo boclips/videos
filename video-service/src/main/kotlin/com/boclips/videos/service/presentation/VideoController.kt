@@ -24,13 +24,11 @@ import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
@@ -266,7 +264,10 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/playback"], params = ["thumbnailSecond"])
-    fun setThumbnail(@RequestParam(required = true) thumbnailSecond: Int?, @PathVariable id: String): ResponseEntity<VideoResource> {
+    fun setThumbnail(
+        @RequestParam(required = true) thumbnailSecond: Int?,
+        @PathVariable id: String
+    ): ResponseEntity<VideoResource> {
         return setVideoThumbnail(SetThumbnailRequest(thumbnailSecond, videoId = id)).let { this.getVideo(id) }
     }
 

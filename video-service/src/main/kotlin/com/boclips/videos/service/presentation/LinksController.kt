@@ -85,7 +85,6 @@ class LinksController(
                 distributionMethodsLinkBuilder.distributionMethods(),
                 legacyContentPartnerLinkBuilder.contentPartnerLink(null),
                 legacyContentPartnerLinkBuilder.contentPartnersLink(),
-                legacyContentPartnerLinkBuilder.contentPartnersSignedUploadLink(),
                 channelLinkBuilder.channelLink(null),
                 channelLinkBuilder.channelsLink(),
                 channelLinkBuilder.channelsSignedUploadLink(),
