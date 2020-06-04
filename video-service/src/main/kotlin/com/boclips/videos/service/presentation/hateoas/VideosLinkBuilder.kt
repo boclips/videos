@@ -92,6 +92,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                             "subject,subjects_set_manually," +
                             "promoted," +
                             "content_partner," +
+                            "channel," +
                             "type," +
                             "resource_types,resource_type_facets" +
                             "}",
@@ -120,7 +121,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                             "age_range_min,age_range_max,age_range,age_range_facets," +
                             "size,page," +
                             "subject,subjects_set_manually," +
-                            "promoted,content_partner,type," +
+                            "promoted,content_partner,type,channel," +
                             "resource_types,resource_type_facets" +
                             "}",
                         SEARCH_VIDEOS
