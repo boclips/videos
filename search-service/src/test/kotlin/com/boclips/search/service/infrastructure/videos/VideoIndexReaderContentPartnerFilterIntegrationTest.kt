@@ -35,7 +35,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                contentPartnerNames = setOf("provider two")
+                channelNames = setOf("provider two")
             ),
             expectIds = listOf("2")
         )
@@ -67,7 +67,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                contentPartnerNames = setOf("p2", "p3")
+                channelNames = setOf("p2", "p3")
             ),
             expectIds = listOf("3", "4", "5")
         )
@@ -104,7 +104,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                contentPartnerNames = setOf("p1"),
+                channelNames = setOf("p1"),
                 phrase = "science"
             ),
             expectIds = listOf("2")
@@ -149,7 +149,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                     )
                 ),
                 searchFor = VideoQuery(
-                    contentPartnerNames = setOf("p1", "p2"),
+                    channelNames = setOf("p1", "p2"),
                     excludedContentPartnerIds = setOf("cp-id-1")
                 ),
                 expectIds = listOf("3")

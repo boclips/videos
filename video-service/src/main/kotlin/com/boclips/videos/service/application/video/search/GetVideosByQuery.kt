@@ -44,7 +44,7 @@ class GetVideosByQuery(
         ageRangesFacets: List<FixedAgeRangeFacet>?,
         subjects: Set<String>,
         promoted: Boolean?,
-        contentPartnerNames: Set<String>,
+        channelNames: Set<String>,
         type: Set<String>,
         user: User,
         subjectsSetManually: Boolean?,
@@ -78,7 +78,7 @@ class GetVideosByQuery(
                 setManually = subjectsSetManually
             ),
             promoted = promoted,
-            contentPartnerNames = contentPartnerNames,
+            channelNames = channelNames,
             type = type.map { searchQueryConverter.convertType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets),
             attachmentTypes = resourceTypes

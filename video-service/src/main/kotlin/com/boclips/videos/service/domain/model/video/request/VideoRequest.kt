@@ -39,7 +39,7 @@ class VideoRequest(
     val userSubjectIds: Set<String> = emptySet(),
     val subjectsRequest: SubjectsRequest = SubjectsRequest(),
     val promoted: Boolean? = null,
-    val contentPartnerNames: Set<String> = emptySet(),
+    val channelNames: Set<String> = emptySet(),
     val type: Set<VideoType> = emptySet(),
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet()
@@ -84,7 +84,7 @@ class VideoRequest(
             subjectsSetManually = subjectsRequest.setManually,
             promoted = promoted,
             active = true,
-            contentPartnerNames = contentPartnerNames,
+            channelNames = channelNames,
             includedType = type,
             excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
             facetDefinition = FacetDefinition.Video(

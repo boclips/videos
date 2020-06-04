@@ -101,8 +101,8 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 query.active?.let { entry.value.deactivated != it } ?: true
             }
             .filter { entry ->
-                if (query.contentPartnerNames.isNotEmpty())
-                    query.contentPartnerNames.contains(entry.value.contentProvider)
+                if (query.channelNames.isNotEmpty())
+                    query.channelNames.contains(entry.value.contentProvider)
                 else true
             }
             .filter { entry ->

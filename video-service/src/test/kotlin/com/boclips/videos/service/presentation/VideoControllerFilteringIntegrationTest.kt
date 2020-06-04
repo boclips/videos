@@ -262,6 +262,14 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `can filter by channel`() {
+        mockMvc.perform(get("/v1/videos?channel=enabled-cp2").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+    }
+
+    @Test
     fun `can filter by content partners`() {
         val newVideoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
@@ -274,6 +282,48 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         ).value
 
         mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&content_partner=cp3").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
+    }
+
+    @Test
+    fun `can filter by channels`() {
+        val newVideoId = saveVideo(
+            playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            contentProvider = "cp3",
+            legalRestrictions = "None"
+        ).value
+
+        mockMvc.perform(get("/v1/videos?channel=enabled-cp2&channel=cp3").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
+    }
+
+    /*
+     * This in a made up scenario that could potentially happen with the current api
+     * Once content_partner filter has ben removed we can remove this test case
+     */
+    @Test
+    fun `can filter by channels and content partners`() {
+        val newVideoId = saveVideo(
+            playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            contentProvider = "cp3",
+            legalRestrictions = "None"
+        ).value
+
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&channel=cp3").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))

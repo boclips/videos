@@ -27,12 +27,12 @@ class VideoFilterCriteria {
         fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
             val boolQueryBuilder = boolQuery()
 
-            if (videoQuery.contentPartnerNames.isNotEmpty()) {
+            if (videoQuery.channelNames.isNotEmpty()) {
                 boolQueryBuilder.filter(
                     boolQuery().must(
                         termsQuery(
                             VideoDocument.CONTENT_PROVIDER,
-                            videoQuery.contentPartnerNames
+                            videoQuery.channelNames
                         )
                     )
                 )
