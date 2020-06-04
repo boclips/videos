@@ -187,6 +187,15 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `find by name when string contains regex special chars`() {
+        mongoChannelRepository.create(createChannel(name = "Creative Conspiracy (CC)"))
+
+        val results = mongoChannelRepository.findByName("Creative Conspiracy (CC)")
+
+        assertThat(results).hasSize(1)
+    }
+
+    @Test
     fun `does not update given an empty list of update commands`() {
         Assertions.assertDoesNotThrow { mongoChannelRepository.update(listOf()) }
     }

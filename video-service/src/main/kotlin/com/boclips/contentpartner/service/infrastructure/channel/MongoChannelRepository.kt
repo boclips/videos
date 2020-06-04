@@ -33,6 +33,7 @@ import org.litote.kmongo.ne
 import org.litote.kmongo.regex
 import org.litote.kmongo.set
 import java.time.Instant
+import java.util.regex.Pattern
 
 class MongoChannelRepository(val mongoClient: MongoClient) :
     ChannelRepository {
@@ -93,7 +94,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
 
     override fun findByName(query: String): List<Channel> {
         return getChannelCollection().find(
-            ChannelDocument::name regex Regex(query, RegexOption.IGNORE_CASE)
+            ChannelDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
         )
             .distinctBy(selector = { input -> input.name })
             .map { ChannelDocumentConverter.toChannel(it) }
@@ -248,7 +249,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                         document
                     )
                 }
-        
+
         return channel
     }
 
