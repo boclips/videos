@@ -87,6 +87,35 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
+    fun `creating a collection respects projection`() {
+        val firstVideoId = saveVideo(title = "first").value
+
+        val createContent = """
+                    {
+                        "title": "a new collection",
+                        "description": "a description",
+                        "videos": ["$firstVideoId"],
+                        "discoverable": true
+                    }
+                    """.trimIndent()
+        mockMvc.perform(
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content(createContent)
+                .asApiUser()
+        )
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.videos[0].contentPartnerId").doesNotExist())
+
+        mockMvc.perform(
+            post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
+                .content(createContent)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.videos[0].contentPartnerId").exists())
+    }
+
+    @Test
     fun `reject creating a collection with null elements in collection fields`() {
         val listFieldNames = listOf(
             "videos",
