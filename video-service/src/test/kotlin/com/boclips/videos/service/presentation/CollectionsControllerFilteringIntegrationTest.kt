@@ -1,15 +1,15 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.UserFactory
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
-import com.boclips.videos.service.testsupport.asUserWithRoles
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -26,39 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
-    fun `gets all user collections with full details, prioritising collections with attachments`() {
-        val collectionId = createCollection(title = "collection 1", discoverable = true)
-        createCollection(title = "collection 2", discoverable = true)
-        addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
-        updateCollectionAttachment(
-            collectionId = collectionId,
-            attachmentType = "LESSON_PLAN",
-            attachmentDescription = "My description",
-            attachmentURL = "http://www.google.com"
-        )
-        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Int>(2)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
-            .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].title", equalTo("a video title")))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].createdBy", equalTo("A content provider")))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].contentPartner").doesNotExist())
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._links.self.href").exists())
-            .andExpect(jsonPath("$._links.details.href").exists())
-            .andExpect(jsonPath("$._links.list.href").exists())
-            .andReturn()
-    }
-
-    @Test
-    fun `gets all user collections with basic video details, prioritising collections with attachments`() {
+    fun `get undiscoverable collections of owner with basic video details`() {
         val collectionId = createCollection(title = "collection 1", discoverable = true)
         createCollection(title = "collection 2", discoverable = false)
 
@@ -92,7 +60,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `get another users private collections`() {
+    fun `get discoverable collections of another owner`() {
         val savedVideoId = saveVideo()
         val collectionId = createCollection(discoverable = true)
         addVideo(collectionId, savedVideoId.value)
@@ -108,28 +76,20 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `getting user collections when empty`() {
+    fun `no collections found`() {
         mockMvc.perform(get("/v1/collections?projection=list&owner=teacher@gmail.com").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(0)))
     }
 
     @Test
-    fun `can fetch collections from another owner`() {
-        createCollection(title = "collection 1")
-
-        mockMvc.perform(get("/v1/collections?projection=details&owner=teacher@gmail.com").asTeacher("notTheOwner@gmail.com"))
-            .andExpect(status().isOk)
-    }
-
-    @Test
-    fun `filtering by discoverable collections returns discoverable collections only`() {
+    fun `filtering by collections returns discoverable collections by default`() {
         updateCollectionToBeDiscoverable(createCollection("five ponies were eating grass"))
         updateCollectionToBeDiscoverable(createCollection("while a car and a truck crashed"))
         createCollection(title = "the car was owned by a private individual", discoverable = false)
         createCollection(title = "while the truck was company property", discoverable = false)
 
-        mockMvc.perform(get("/v1/collections?discoverable=true&query=truck").asTeacher(email = "notTheOwner@gmail.com"))
+        mockMvc.perform(get("/v1/collections?query=truck").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
@@ -137,7 +97,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `filtering by undiscoverable collections returns discoverable collections only`() {
+    fun `can filter by undiscoverable collections when specified explicitly`() {
         updateCollectionToBeDiscoverable(createCollection("five ponies were eating grass"))
         createCollection(title = "while the truck", discoverable = false)
 
@@ -149,7 +109,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `filter all discoverable collections and use pagination`() {
+    fun `filter collections and use pagination`() {
         val collectionId = createCollection("collection 1")
         updateCollectionToBeDiscoverable(collectionId)
         updateCollectionToBeDiscoverable(createCollection("collection 2"))
@@ -229,7 +189,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `query search discoverable collections`() {
+    fun `query search collections`() {
         updateCollectionToBeDiscoverable(createCollection("five ponies were eating grass"))
         updateCollectionToBeDiscoverable(createCollection("while a car and a truck crashed"))
         createCollection(title = "the truck was blue and yellow", discoverable = true)
@@ -238,24 +198,6 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
-            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
-    }
-
-    @Test
-    fun `query search all collections`() {
-        createCollection(title = "five ponies were eating grass", discoverable = true)
-        createCollection(title = "the truck was blue and yellow", discoverable = false)
-        createCollection(title = "while a car and a truck crashed", discoverable = true)
-
-        mockMvc.perform(
-            get("/v1/collections?query=truck").asUserWithRoles(
-                UserRoles.VIEW_COLLECTIONS,
-                UserRoles.VIEW_ANY_COLLECTION
-            )
-        )
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("while a car and a truck crashed")))
     }
 
@@ -290,7 +232,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `discoverable collections filtered by subject only gets collections with lesson plan first`() {
+    fun `collections filtered by subject and sorted by attachment`() {
         val collectionWithLessonPlan1 = createCollectionWithTitle("With lesson plan 1")
         val collectionWithoutLessonPlan = createCollectionWithTitle("No lesson plan")
         val collectionWithLessonPlan2 = createCollectionWithTitle("With lesson plan 2")
@@ -330,7 +272,7 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
     }
 
     @Test
-    fun `can filter discoverable collections by subjects`() {
+    fun `can filter collections by subjects`() {
         val frenchCollection = createCollectionWithTitle("My Collection for with Subjects")
         val unclassifiedCollection = createCollectionWithTitle("My Collection for without Subjects")
 
@@ -387,5 +329,128 @@ class CollectionsControllerFilteringIntegrationTest : AbstractCollectionsControl
                 .asTeacher("teacher@gmail.com")
         )
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `get all promoted collections`() {
+        val promotedCollectionIds: Array<String> = (1..10).asIterable().map {
+            createCollection(title = "collection$it", discoverable = true).apply {
+                updateCollectionToBePromoted(this)
+            }
+        }.toTypedArray()
+
+        (1..10).asIterable().map {
+            createCollection("collection$it")
+        }
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=0&size=30&promoted=true").asTeacher(email = "random@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(10)))
+            .andExpect(jsonPath("$._embedded.collections[*].id", Matchers.hasItems(*promotedCollectionIds)))
+    }
+
+    @Test
+    fun `get bookmarked collections correctly paginated`() {
+        createCollection(title = "collection 1", discoverable = true).apply {
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }
+        createCollection(title = "collection 2", discoverable = true).apply {
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }
+
+        mockMvc.perform(
+            get("/v1/collections?projection=list&page=0&size=1&bookmarked=true")
+                .asTeacher(email = "notTheOwner@gmail.com")
+        )
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(Matchers.emptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.next.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.unbookmark.href").exists())
+            .andExpect(jsonPath("$._embedded.collections[0]._links.bookmark").doesNotExist())
+
+        mockMvc.perform(get("/v1/collections?projection=list&page=1&size=1&bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 2")))
+
+            .andExpect(jsonPath("$._links.self.href").exists())
+            .andExpect(jsonPath("$._links.next").doesNotExist())
+    }
+
+    @Test
+    fun `get collections filtered by lesson plan as attachment`() {
+        val collectionWithLessonPlan =
+            createCollection(
+                title = "collection with lesson plans",
+                description = "collection with a LESSON_PLAN attachment",
+                discoverable = true
+            )
+
+        createCollection("collection without lesson plans", discoverable = true)
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "collection with lesson plan",
+            attachmentURL = "http://www.google.com"
+        )
+
+        mockMvc.perform(
+            get("/v1/collections?query=collection&has_lesson_plans=true").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.collections[0].description",
+                    equalTo("collection with a LESSON_PLAN attachment")
+                )
+            )
+    }
+
+    @Test
+    fun `get collections without lesson plans`() {
+        val collectionWithLessonPlan =
+            createCollection(
+                title = "collection with lesson plans",
+                description = "collection with a LESSON_PLAN attachment",
+                discoverable = true
+            )
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "collection with lesson plan",
+            attachmentURL = "http://www.google.com"
+        )
+
+        createCollection("collection without lesson plans 1", discoverable = true)
+        createCollection("collection without lesson plans 2", discoverable = true)
+
+        mockMvc.perform(
+            get("/v1/collections?query=collection&has_lesson_plans=false").asApiUser()
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.collections[0].title",
+                    equalTo("collection without lesson plans 1")
+                )
+            ).andExpect(
+                jsonPath(
+                    "$._embedded.collections[1].title",
+                    equalTo("collection without lesson plans 2")
+                )
+            )
     }
 }

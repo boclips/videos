@@ -468,20 +468,22 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val collection2 = sampleCollection(title = "Old title 2")
 
             val result = collectionRepository.update(
-                CollectionUpdateCommand.RenameCollection(
-                    collection1.id,
-                    "New title 1",
-                    UserFactory.sample(id = "user2")
-                ),
-                CollectionUpdateCommand.RenameCollection(
-                    collection2.id,
-                    "New title 2",
-                    UserFactory.sample(id = "user2")
-                ),
-                CollectionUpdateCommand.ChangeDiscoverability(
-                    collection2.id,
-                    true,
-                    UserFactory.sample(id = "user2")
+                listOf(
+                    CollectionUpdateCommand.RenameCollection(
+                        collection1.id,
+                        "New title 1",
+                        UserFactory.sample(id = "user2")
+                    ),
+                    CollectionUpdateCommand.RenameCollection(
+                        collection2.id,
+                        "New title 2",
+                        UserFactory.sample(id = "user2")
+                    ),
+                    CollectionUpdateCommand.ChangeDiscoverability(
+                        collection2.id,
+                        true,
+                        UserFactory.sample(id = "user2")
+                    )
                 )
             )
 
@@ -498,28 +500,30 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             val videoId = TestFactories.createVideoId()
 
             collectionRepository.update(
-                CollectionUpdateCommand.ChangeDiscoverability(
-                    collectionId = collection.id,
-                    discoverable = true,
-                    user = UserFactory.sample()
-                ),
-                CollectionUpdateCommand.RenameCollection(
-                    collectionId = collection2.id,
-                    title = "New Collection title",
-                    user = UserFactory.sample()
-                ),
-                CollectionUpdateCommand.AddVideoToCollection(
-                    collectionId = collection3.id,
-                    videoId = videoId,
-                    user = UserFactory.sample(id = "user2")
-                )
+                listOf(
+                    CollectionUpdateCommand.ChangeDiscoverability(
+                        collectionId = collection.id,
+                        discoverable = true,
+                        user = UserFactory.sample()
+                    ),
+                    CollectionUpdateCommand.RenameCollection(
+                        collectionId = collection2.id,
+                        title = "New Collection title",
+                        user = UserFactory.sample()
+                    ),
+                    CollectionUpdateCommand.AddVideoToCollection(
+                        collectionId = collection3.id,
+                        videoId = videoId,
+                        user = UserFactory.sample(id = "user2")
+                    )
 
-                // TODO: Bulk adding videos to the same collection does not work :(
-                // ,CollectionUpdateCommand.AddVideoToCollection(
-                //     collectionId = collection3.id,
-                //     videoId = secondVideoId,
-                //     user = UserFactory.sample(id = "user2")
-                // )
+                    // TODO: Bulk adding videos to the same collection does not work :(
+                    // ,CollectionUpdateCommand.AddVideoToCollection(
+                    //     collectionId = collection3.id,
+                    //     videoId = secondVideoId,
+                    //     user = UserFactory.sample(id = "user2")
+                    // )
+                )
             )
 
             assertThat(collectionRepository.find(collection.id)!!.discoverable).isTrue()
@@ -528,6 +532,21 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
             assertThat(collectionRepository.find(collection2.id)!!.updatedAt).isAfterOrEqualTo(collection2.updatedAt)
             assertThat(collectionRepository.find(collection3.id)!!.videos[0]).isEqualTo(videoId)
             assertThat(collectionRepository.find(collection3.id)!!.updatedAt).isAfterOrEqualTo(collection3.updatedAt)
+        }
+
+        @Test
+        fun `update one`() {
+            val collection = sampleCollection()
+
+            val updatedCollection = collectionRepository.update(
+                CollectionUpdateCommand.ChangeDiscoverability(
+                    collectionId = collection.id,
+                    discoverable = true,
+                    user = UserFactory.sample()
+                )
+            )
+
+            assertThat(updatedCollection.discoverable).isTrue()
         }
     }
 

@@ -22,9 +22,9 @@ class CollectionBookmarkService(
             "bookmark your own collection"
         )
 
-        val result = collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, user))
+        val updatedCollection = collectionRepository.update(CollectionUpdateCommand.Bookmark(collection.id, user))
 
-        collectionIndex.upsert(result.map { it.collection }.asSequence())
+        collectionIndex.upsert(sequenceOf(updatedCollection))
     }
 
     fun unbookmark(collectionId: CollectionId, user: User) {
@@ -37,8 +37,8 @@ class CollectionBookmarkService(
             "unbookmark your own collection"
         )
 
-        val result = collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, user))
+        val updatedCollection = collectionRepository.update(CollectionUpdateCommand.Unbookmark(collection.id, user))
 
-        collectionIndex.upsert(result.map { it.collection }.asSequence())
+        collectionIndex.upsert(sequenceOf(updatedCollection))
     }
 }

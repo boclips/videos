@@ -25,28 +25,32 @@ class CollectionUpdateService(
                 operation = "Add video to collection"
             )
 
-        collectionRepository.update(
+        val updatedCollection = collectionRepository.update(
             CollectionUpdateCommand.AddVideoToCollection(
                 collectionId = collectionId,
                 videoId = videoId,
                 user = user
             )
         )
+
+        collectionIndex.upsert(sequenceOf(updatedCollection))
     }
 
     fun removeVideoToCollectionOfUser(collectionId: CollectionId, videoId: VideoId, user: User) {
         throwIfNotOwner(collectionId, user)
 
-        collectionRepository.update(
+        val updatedCollection = collectionRepository.update(
             CollectionUpdateCommand.RemoveVideoFromCollection(
                 collectionId = collectionId,
                 videoId = videoId,
                 user = user
             )
         )
+
+        collectionIndex.upsert(sequenceOf(updatedCollection))
     }
 
-    fun updateCollectionAsOwner(updates: Array<CollectionUpdateCommand>) {
+    fun updateCollectionAsOwner(updates: List<CollectionUpdateCommand>) {
         if (updates.isEmpty()) {
             return
         }
@@ -55,7 +59,7 @@ class CollectionUpdateService(
             throwIfNotOwner(update.collectionId, update.user)
         }
 
-        val update = collectionRepository.update(*updates)
+        val update = collectionRepository.update(updates)
 
         update.map { result -> result.collection }.apply {
             collectionIndex.upsert(this.asSequence())

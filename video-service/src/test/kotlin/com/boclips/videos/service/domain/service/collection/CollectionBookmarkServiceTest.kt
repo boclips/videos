@@ -154,7 +154,8 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `logs an event`() {
-            val collectionId = saveCollection(owner = "owner@example.com", discoverable = true, bookmarkedBy = "me@me.com")
+            val collectionId =
+                saveCollection(owner = "owner@example.com", discoverable = true, bookmarkedBy = "me@me.com")
 
             collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 

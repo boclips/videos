@@ -53,6 +53,25 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
         val video = saveVideo()
         val collection = saveCollection()
 
+        repository.update(
+            listOf(
+                CollectionUpdateCommand.AddVideoToCollection(collection, video, UserFactory.sample()),
+                CollectionUpdateCommand.AddVideoToCollection(collection, video, UserFactory.sample())
+            )
+        )
+
+        assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds).hasSize(1)
+        assertThat(fakeEventBus.getEventOfType(CollectionUpdated::class.java).collection.videosIds.first().value).isEqualTo(
+            video.value
+        )
+    }
+
+    @Test
+    fun `publishes collection updated event when single collection is updated`() {
+        val video = saveVideo()
+        val collection = saveCollection()
+
         repository.update(CollectionUpdateCommand.AddVideoToCollection(collection, video, UserFactory.sample()))
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(1)

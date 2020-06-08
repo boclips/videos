@@ -26,9 +26,9 @@ import com.boclips.videos.service.common.Do
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
-import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import java.time.ZonedDateTime
 
 class EventService(val eventBus: EventBus) {
@@ -78,8 +78,11 @@ class EventService(val eventBus: EventBus) {
     }
 
     fun saveCollectionCreatedEvent(collection: Collection) {
-        eventBus.publish(CollectionCreated(
-            EventConverter().toCollectionPayload(collection)))
+        eventBus.publish(
+            CollectionCreated(
+                EventConverter().toCollectionPayload(collection)
+            )
+        )
     }
 
     fun saveCollectionDeletedEvent(collectionId: CollectionId, user: User) {
@@ -92,16 +95,29 @@ class EventService(val eventBus: EventBus) {
         )
     }
 
-    fun saveUpdateCollectionEvent(updateResult: CollectionUpdateResult) {
-        val collection = updateResult.collection
+    fun saveOneUpdateCollectionEvent(collection: Collection, command: CollectionUpdateCommand) {
+        eventBus.publish(
+            CollectionUpdated(
+                EventConverter().toCollectionPayload(collection)
+            )
+        )
 
-        eventBus.publish(CollectionUpdated(
-            EventConverter().toCollectionPayload(collection)))
-
-        updateResult.commands.forEach { saveUpdateCollectionEvent(it, collection) }
+        saveOneUpdateCollectionEvent(command, collection)
     }
 
-    private fun saveUpdateCollectionEvent(updateCommand: CollectionUpdateCommand, collection: Collection) {
+    fun saveManyUpdateCollectionEvent(updateResult: CollectionUpdateResult) {
+        val collection = updateResult.collection
+
+        eventBus.publish(
+            CollectionUpdated(
+                EventConverter().toCollectionPayload(collection)
+            )
+        )
+
+        updateResult.commands.forEach { saveOneUpdateCollectionEvent(it, collection) }
+    }
+
+    private fun saveOneUpdateCollectionEvent(updateCommand: CollectionUpdateCommand, collection: Collection) {
         Do exhaustive when (updateCommand) {
             is CollectionUpdateCommand.AddVideoToCollection ->
                 eventBus.publish(

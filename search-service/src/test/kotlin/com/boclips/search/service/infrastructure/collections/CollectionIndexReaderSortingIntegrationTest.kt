@@ -10,6 +10,7 @@ import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactor
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     lateinit var collectionIndexReader: CollectionIndexReader
@@ -19,6 +20,38 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
     fun setUp() {
         collectionIndexReader = CollectionIndexReader(esClient)
         collectionIndexWriter = CollectionIndexWriter.createTestInstance(esClient, 20)
+    }
+
+    @Test
+    fun `can sort by last updated date`() {
+        collectionIndexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableCollectionMetadataFactory.create(
+                    id = "100",
+                    updatedAt = LocalDate.of(2005, 6, 6)
+                ),
+                SearchableCollectionMetadataFactory.create(
+                    id = "101",
+                    updatedAt = LocalDate.of(2004, 6, 6)
+                )
+            )
+        )
+
+        val results =
+            collectionIndexReader.search(
+                PaginatedSearchRequest(
+                    query = CollectionQuery(
+                        sort = listOf(
+                            Sort.ByField(
+                                CollectionMetadata::updatedAt,
+                                SortOrder.DESC
+                            )
+                        )
+                    )
+                )
+            )
+
+        Assertions.assertThat(results.elements).containsExactly("100", "101")
     }
 
     @Test

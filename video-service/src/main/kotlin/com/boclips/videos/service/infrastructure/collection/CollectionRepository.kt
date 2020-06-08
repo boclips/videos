@@ -14,7 +14,8 @@ interface CollectionRepository {
     fun streamAll(consumer: (Sequence<Collection>) -> Unit)
     fun create(command: CreateCollectionCommand): Collection
     fun create(command: CreateDefaultCollectionCommand): Collection
-    fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult>
+    fun update(command: CollectionUpdateCommand): Collection
+    fun update(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult>
     fun streamUpdate(
         filter: CollectionFilter,
         updateCommandFactory: (Collection) -> CollectionUpdateCommand,

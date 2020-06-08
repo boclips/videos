@@ -16,8 +16,8 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
         collectionId: CollectionId,
         updateCollectionRequest: UpdateCollectionRequest?,
         user: User
-    ): Array<CollectionUpdateCommand> {
-        updateCollectionRequest ?: return emptyArray()
+    ): List<CollectionUpdateCommand> {
+        updateCollectionRequest ?: return emptyList()
 
         return listOfNotNull(
             updateCollectionRequest.title?.let {
@@ -87,6 +87,6 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                     user = user
                 )
             }
-        ).toTypedArray()
+        )
     }
 }

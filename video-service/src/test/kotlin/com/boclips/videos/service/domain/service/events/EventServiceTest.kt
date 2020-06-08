@@ -90,7 +90,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
         val videoId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.AddVideoToCollection(
                     collectionId = CollectionId(collectionId),
@@ -112,7 +112,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
         val videoId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.RemoveVideoFromCollection(
                     collectionId = CollectionId(collectionId),
@@ -133,7 +133,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun renameCollection() {
         val collectionId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.RenameCollection(
                     collectionId = CollectionId(collectionId),
@@ -154,7 +154,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun collectionMadeDiscoverable() {
         val collectionId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = CollectionId(collectionId),
@@ -175,7 +175,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun collectionMadeNonDiscoverable() {
         val collectionId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeDiscoverability(
                     collectionId = CollectionId(collectionId),
@@ -195,7 +195,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val collectionId = aValidId()
         val subject = TestFactories.createSubject()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 collection = TestFactories.createCollection(
                     subjects = setOf(subject)
@@ -221,7 +221,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val removedSubject = TestFactories.createSubject(name = "physics")
         val anotherSubject = TestFactories.createSubject(name = "maths")
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 collection = TestFactories.createCollection(subjects = setOf(anotherSubject)),
                 command = CollectionUpdateCommand.RemoveSubjectFromCollection(
@@ -243,7 +243,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun collectionAgeRangeChanged() {
         val collectionId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeAgeRange(
                     collectionId = CollectionId(collectionId),
@@ -266,7 +266,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun `collectionAgeRangeChanged when no max bound`() {
         val collectionId = aValidId()
 
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.ChangeAgeRange(
                     collectionId = CollectionId(collectionId),
@@ -285,7 +285,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveBookmarkCollectionEvent() {
         val collectionId = aValidId()
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.Bookmark(
                     CollectionId(collectionId),
@@ -304,7 +304,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun saveUnbookmarkCollectionEvent() {
         val collectionId = aValidId()
-        eventService.saveUpdateCollectionEvent(
+        eventService.saveManyUpdateCollectionEvent(
             createCollectionUpdateResult(
                 command = CollectionUpdateCommand.Unbookmark(
                     CollectionId(collectionId),

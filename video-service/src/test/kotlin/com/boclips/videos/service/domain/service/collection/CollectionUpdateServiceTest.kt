@@ -132,7 +132,7 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
             val collectionId = saveCollection(owner = user.id.value, discoverable = false)
 
             collectionUpdateService.updateCollectionAsOwner(
-                arrayOf(
+                listOf(
                     CollectionUpdateCommand.ChangeDiscoverability(
                         collectionId = collectionId,
                         discoverable = true,
@@ -152,7 +152,7 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
 
             assertThrows<CollectionIllegalOperationException> {
                 collectionUpdateService.updateCollectionAsOwner(
-                    arrayOf(
+                    listOf(
                         CollectionUpdateCommand.ChangeDiscoverability(
                             collectionId = collectionId,
                             discoverable = true,

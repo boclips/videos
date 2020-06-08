@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionFilter
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotCreatedException
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.collection.CollectionUpdateFailedException
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.User
@@ -146,14 +147,22 @@ class MongoCollectionRepository(
             partialWindows = true
         ).forEachIndexed { index, windowedCollections ->
             logger.info { "Starting update batch: $index" }
-            val updateCommands = windowedCollections.map(updateCommandFactory).toTypedArray()
-            val updateResults = update(*updateCommands)
+            val updateCommands = windowedCollections.map(updateCommandFactory)
+            val updateResults = update(updateCommands)
             logger.info { "Updated ${updateResults.size} collections" }
             updateResults.forEach(updateResultConsumer)
         }
     }
 
-    override fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult> {
+    override fun update(command: CollectionUpdateCommand): Collection {
+        val result = update(listOf(command))
+
+        if (result.isEmpty()) throw CollectionUpdateFailedException("Failed to update collection")
+
+        return result.first().collection
+    }
+
+    override fun update(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
         if (commands.isEmpty()) return emptyList()
 
         val commandsByCollectionId = commands.groupBy { it.collectionId }

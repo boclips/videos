@@ -24,11 +24,7 @@ class GetCollectionsOfUser(
             owner = owner.value,
             page = request.page,
             size = request.size,
-            sort = if (request.getSortKeys().isNullOrEmpty()) {
-                listOf(CollectionSortKey.IS_DEFAULT, CollectionSortKey.UPDATED_AT)
-            } else {
-                request.getSortKeys()
-            },
+            sort = request.getSortKeys().ifEmpty { listOf(CollectionSortKey.UPDATED_AT) },
             hasLessonPlans = request.has_lesson_plans,
             promoted = request.promoted,
             discoverable = request.discoverable,

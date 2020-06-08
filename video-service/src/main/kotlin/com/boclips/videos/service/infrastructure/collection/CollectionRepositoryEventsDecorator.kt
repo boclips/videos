@@ -24,9 +24,14 @@ class CollectionRepositoryEventsDecorator(
             .also { collection -> eventService.saveCollectionCreatedEvent(collection) }
     }
 
-    override fun update(vararg commands: CollectionUpdateCommand): List<CollectionUpdateResult> {
-        return collectionRepository.update(*commands)
+    override fun update(commands: List<CollectionUpdateCommand>): List<CollectionUpdateResult> {
+        return collectionRepository.update(commands)
             .also { results -> this.publishCollectionsUpdated(results) }
+    }
+
+    override fun update(command: CollectionUpdateCommand): Collection {
+        return collectionRepository.update(command)
+            .also { collection -> this.publishOneCollectionUpdated(collection, command) }
     }
 
     override fun streamUpdate(
@@ -50,6 +55,13 @@ class CollectionRepositoryEventsDecorator(
     }
 
     private fun publishCollectionUpdated(update: CollectionUpdateResult) {
-        eventService.saveUpdateCollectionEvent(update)
+        eventService.saveManyUpdateCollectionEvent(update)
+    }
+
+    private fun publishOneCollectionUpdated(
+        collection: Collection,
+        command: CollectionUpdateCommand
+    ) {
+        eventService.saveOneUpdateCollectionEvent(collection = collection, command = command)
     }
 }

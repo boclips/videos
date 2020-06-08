@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class CollectionsControllerUnitsIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
+class CollectionsControllerSubCollectionsIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
     fun `collections can contain units`() {
         val collection = collectionRepository.create(
