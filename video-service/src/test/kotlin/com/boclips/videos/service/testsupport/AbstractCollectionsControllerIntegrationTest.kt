@@ -38,7 +38,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
         description: String = "a description",
         discoverable: Boolean = false,
         owner: String = "teacher@gmail.com"
-    ) =
+    ): String =
         mockMvc.perform(
             post("/v1/collections").contentType(MediaType.APPLICATION_JSON).content(
                 """{"title": "$title", "description": "$description", "discoverable": $discoverable}"""

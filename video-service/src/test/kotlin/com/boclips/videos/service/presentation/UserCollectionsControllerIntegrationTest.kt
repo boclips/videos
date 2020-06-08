@@ -6,15 +6,18 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
+import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 class UserCollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegrationTest() {
     @Test
-    fun `users collections containing collections and bookmarks, sorted by last modified`() {
+    fun `collections containing collections and bookmarks, sorted by last modified`() {
         val teacher = "teacher"
         val stranger = "stranger"
 
