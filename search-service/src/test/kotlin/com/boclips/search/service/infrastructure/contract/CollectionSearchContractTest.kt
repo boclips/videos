@@ -14,7 +14,7 @@ import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
 class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     @ParameterizedTest
@@ -230,27 +230,27 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     title = "Kappa",
                     owner = "teacher",
                     bookmarkedBy = emptySet(),
-                    updatedAt = LocalDate.now().minusDays(10)
+                    updatedAt = ZonedDateTime.now().minusDays(10)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
                     title = "Beta",
                     owner = "stranger",
                     bookmarkedBy = setOf("teacher"),
-                    updatedAt = LocalDate.now().minusDays(8)
+                    updatedAt = ZonedDateTime.now().minusDays(8)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "102",
                     owner = "stranger",
                     bookmarkedBy = emptySet(),
-                    updatedAt = LocalDate.now().minusDays(5)
+                    updatedAt = ZonedDateTime.now().minusDays(5)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "103",
                     title = "Alpha",
                     owner = "teacher",
                     bookmarkedBy = emptySet(),
-                    updatedAt = LocalDate.now().minusDays(1)
+                    updatedAt = ZonedDateTime.now().minusDays(1)
                 )
             )
         )

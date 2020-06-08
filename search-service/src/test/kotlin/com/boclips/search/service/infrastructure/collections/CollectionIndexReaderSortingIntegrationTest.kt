@@ -10,7 +10,8 @@ import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactor
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     lateinit var collectionIndexReader: CollectionIndexReader
@@ -28,11 +29,11 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
             sequenceOf(
                 SearchableCollectionMetadataFactory.create(
                     id = "100",
-                    updatedAt = LocalDate.of(2005, 6, 6)
+                    updatedAt = ZonedDateTime.now()
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
-                    updatedAt = LocalDate.of(2004, 6, 6)
+                    updatedAt = ZonedDateTime.now().minusDays(5)
                 )
             )
         )

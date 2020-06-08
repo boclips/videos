@@ -6,12 +6,14 @@ import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class CollectionMetadataConverterTest {
     @Test
     fun `convert`() {
-        val updateDate = ZonedDateTime.parse("2020-03-01T18:30:00+10:00")
+        val updateDate = ZonedDateTime.parse("2020-03-01T18:30Z")
         val collection = TestFactories.createCollection(
             id = CollectionId(value = "test-id"),
             owner = "12903012381",
@@ -29,7 +31,7 @@ class CollectionMetadataConverterTest {
         assertThat(collectionMetadata.discoverable).isEqualTo(false)
         assertThat(collectionMetadata.bookmarkedByUsers).containsExactly("userId1")
         assertThat(collectionMetadata.hasLessonPlans).isEqualTo(false)
-        assertThat(collectionMetadata.updatedAt).isEqualTo(updateDate.toLocalDate())
+        assertThat(collectionMetadata.updatedAt).isEqualTo(updateDate)
         assertThat(collectionMetadata.default).isEqualTo(false)
     }
 

@@ -18,7 +18,7 @@ object CollectionMetadataConverter {
             description = collection.description,
             ageRangeMin = collection.ageRange.min(),
             ageRangeMax = collection.ageRange.max(),
-            updatedAt = collection.updatedAt.toLocalDate(),
+            updatedAt = collection.updatedAt,
             attachmentTypes = collection.attachments.mapTo(HashSet()) { it.type.label },
             default = collection.default
         )

@@ -10,6 +10,7 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 object SearchableVideoMetadataFactory {
     fun create(
@@ -115,7 +116,7 @@ object SearchableCollectionMetadataFactory {
         promoted: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
-        updatedAt: LocalDate = LocalDate.now(),
+        updatedAt: ZonedDateTime = ZonedDateTime.now(),
         attachmentTypes: Set<String> = emptySet(),
         default: Boolean = false
     ) = CollectionMetadata(

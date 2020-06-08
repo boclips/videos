@@ -1,6 +1,6 @@
 package com.boclips.search.service.domain.collections.model
 
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
 data class CollectionMetadata(
     val id: String,
@@ -14,7 +14,7 @@ data class CollectionMetadata(
     val default: Boolean,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
-    val updatedAt: LocalDate,
+    val updatedAt: ZonedDateTime,
     val subjectIds: List<String>,
     val bookmarkedByUsers: Set<String>,
     val attachmentTypes: Set<String>?

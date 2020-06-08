@@ -5,12 +5,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.Month
+import java.time.ZonedDateTime
 
 class CollectionDocumentConverterTest {
-
     private val elasticSearchResultConverter = CollectionDocumentConverter()
+    private val aVerySpecialDateTimeSerialised = "2017-04-24T09:30Z[UTC]"
+    private val aVerySpecialDateTime = ZonedDateTime.parse(aVerySpecialDateTimeSerialised)
 
     @Test
     fun `convert search hit`() {
@@ -25,7 +25,7 @@ class CollectionDocumentConverterTest {
                 "description": "Collection under test",
                 "hasLessonPlans": "false",
                 "ageRange": [],
-                "updatedAt": "2019-01-16T12:00:00.870Z",
+                "updatedAt": "$aVerySpecialDateTimeSerialised",
                 "attachmentTypes": ["Lesson Guide"],
                 "default": true
             }
@@ -33,27 +33,27 @@ class CollectionDocumentConverterTest {
             )
         )
 
-        val collection = elasticSearchResultConverter.convert(searchHit)
+        val actualDocument = elasticSearchResultConverter.convert(searchHit)
 
-        assertThat(collection).isEqualTo(
-            CollectionDocument(
-                id = "14",
-                title = "The title",
-                searchable = false,
-                subjects = listOf("crispity", "crunchy"),
-                hasAttachments = false,
-                owner = "juan",
-                description = "Collection under test",
-                hasLessonPlans = false,
-                promoted = false,
-                ageRangeMin = null,
-                ageRangeMax = null,
-                ageRange = emptyList(),
-                updatedAt = LocalDate.of(2019, Month.JANUARY, 16),
-                attachmentTypes = setOf("Lesson Guide"),
-                default = true
-            )
+        val expectedDocument = CollectionDocument(
+            id = "14",
+            title = "The title",
+            searchable = false,
+            subjects = listOf("crispity", "crunchy"),
+            hasAttachments = false,
+            owner = "juan",
+            description = "Collection under test",
+            hasLessonPlans = false,
+            promoted = false,
+            ageRangeMin = null,
+            ageRangeMax = null,
+            ageRange = emptyList(),
+            updatedAt = aVerySpecialDateTime,
+            attachmentTypes = setOf("Lesson Guide"),
+            default = true
         )
+
+        assertThat(actualDocument).isEqualTo(expectedDocument)
     }
 
     @Test
@@ -68,7 +68,7 @@ class CollectionDocumentConverterTest {
                 "owner": "juan",
                 "description": "Collection under test",
                 "ageRange": [],
-                "updatedAt": "2018-12-19T00:00:00Z"
+                "updatedAt": "$aVerySpecialDateTimeSerialised"
             }
         """.trimIndent()
             )
@@ -90,7 +90,7 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2018, Month.DECEMBER, 19),
+                updatedAt = aVerySpecialDateTime,
                 attachmentTypes = null,
                 default = false
             )
@@ -112,7 +112,7 @@ class CollectionDocumentConverterTest {
             promoted = true,
             ageRangeMin = null,
             ageRangeMax = null,
-            updatedAt = LocalDate.of(2000, Month.APRIL, 12),
+            updatedAt = aVerySpecialDateTime,
             attachmentTypes = setOf("Activity"),
             default = true
         )
@@ -134,7 +134,7 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2000, Month.APRIL, 12),
+                updatedAt = aVerySpecialDateTime,
                 attachmentTypes = setOf("Activity"),
                 default = true
             )
