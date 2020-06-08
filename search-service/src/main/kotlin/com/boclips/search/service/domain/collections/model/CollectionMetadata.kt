@@ -14,7 +14,7 @@ data class CollectionMetadata(
     val default: Boolean,
     val ageRangeMin: Int?,
     val ageRangeMax: Int?,
-    val updatedAt: ZonedDateTime,
+    val lastModified: ZonedDateTime,
     val subjectIds: List<String>,
     val bookmarkedByUsers: Set<String>,
     val attachmentTypes: Set<String>?

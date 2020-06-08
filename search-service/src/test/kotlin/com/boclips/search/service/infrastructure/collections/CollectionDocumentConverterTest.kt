@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 class CollectionDocumentConverterTest {
@@ -26,7 +25,6 @@ class CollectionDocumentConverterTest {
                 "description": "Collection under test",
                 "hasLessonPlans": "false",
                 "ageRange": [],
-                "updatedAt": "2008-08-08",
                 "lastModified": "$aVerySpecialDateTimeSerialised",
                 "attachmentTypes": ["Lesson Guide"],
                 "default": true
@@ -50,7 +48,6 @@ class CollectionDocumentConverterTest {
             ageRangeMin = null,
             ageRangeMax = null,
             ageRange = emptyList(),
-            updatedAt = LocalDate.of(2008, 8, 8),
             lastModified = aVerySpecialDateTime,
             attachmentTypes = setOf("Lesson Guide"),
             default = true
@@ -71,7 +68,6 @@ class CollectionDocumentConverterTest {
                 "owner": "juan",
                 "description": "Collection under test",
                 "ageRange": [],
-                "updatedAt": "2008-08-08",
                 "lastModified": "$aVerySpecialDateTimeSerialised"
             }
         """.trimIndent()
@@ -94,7 +90,6 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = LocalDate.of(2008, 8, 8),
                 lastModified = aVerySpecialDateTime,
                 attachmentTypes = null,
                 default = false
@@ -117,7 +112,7 @@ class CollectionDocumentConverterTest {
             promoted = true,
             ageRangeMin = null,
             ageRangeMax = null,
-            updatedAt = aVerySpecialDateTime,
+            lastModified = aVerySpecialDateTime,
             attachmentTypes = setOf("Activity"),
             default = true
         )
@@ -139,7 +134,6 @@ class CollectionDocumentConverterTest {
                 ageRangeMin = null,
                 ageRangeMax = null,
                 ageRange = emptyList(),
-                updatedAt = aVerySpecialDateTime.toLocalDate(),
                 lastModified = aVerySpecialDateTime,
                 attachmentTypes = setOf("Activity"),
                 default = true

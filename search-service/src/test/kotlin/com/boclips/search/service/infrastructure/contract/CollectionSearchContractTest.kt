@@ -230,27 +230,27 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     title = "Kappa",
                     owner = "teacher",
                     bookmarkedBy = emptySet(),
-                    updatedAt = ZonedDateTime.now().minusDays(10)
+                    lastModified = ZonedDateTime.now().minusDays(10)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "101",
                     title = "Beta",
                     owner = "stranger",
                     bookmarkedBy = setOf("teacher"),
-                    updatedAt = ZonedDateTime.now().minusDays(8)
+                    lastModified = ZonedDateTime.now().minusDays(8)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "102",
                     owner = "stranger",
                     bookmarkedBy = emptySet(),
-                    updatedAt = ZonedDateTime.now().minusDays(5)
+                    lastModified = ZonedDateTime.now().minusDays(5)
                 ),
                 SearchableCollectionMetadataFactory.create(
                     id = "103",
                     title = "Alpha",
                     owner = "teacher",
                     bookmarkedBy = emptySet(),
-                    updatedAt = ZonedDateTime.now().minusDays(1)
+                    lastModified = ZonedDateTime.now().minusDays(1)
                 )
             )
         )
@@ -261,7 +261,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
                     owner = "teacher",
                     bookmarkedBy = "teacher",
                     searchable = null,
-                    sort = listOf(Sort.ByField(CollectionMetadata::updatedAt, SortOrder.DESC))
+                    sort = listOf(Sort.ByField(CollectionMetadata::lastModified, SortOrder.DESC))
                 )
             )
         )

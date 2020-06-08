@@ -91,7 +91,7 @@ class CollectionSearchQueryTest {
         assertThat(searchQuery.sort).isEqualTo(
             listOf(
                 Sort.ByField(
-                    CollectionMetadata::updatedAt,
+                    CollectionMetadata::lastModified,
                     SortOrder.DESC
                 )
             )

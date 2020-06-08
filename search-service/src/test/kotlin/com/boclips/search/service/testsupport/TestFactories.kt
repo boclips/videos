@@ -116,7 +116,7 @@ object SearchableCollectionMetadataFactory {
         promoted: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
-        updatedAt: ZonedDateTime = ZonedDateTime.now(),
+        lastModified: ZonedDateTime = ZonedDateTime.now(),
         attachmentTypes: Set<String> = emptySet(),
         default: Boolean = false
     ) = CollectionMetadata(
@@ -132,7 +132,7 @@ object SearchableCollectionMetadataFactory {
         hasLessonPlans = hasLessonPlans,
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
-        updatedAt = updatedAt,
+        lastModified = lastModified,
         attachmentTypes = attachmentTypes,
         default = default
     )

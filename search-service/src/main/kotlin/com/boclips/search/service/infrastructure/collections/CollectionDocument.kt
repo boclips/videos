@@ -18,7 +18,6 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean? = false,
     @param:JsonProperty(PROMOTED) val promoted: Boolean? = false,
     @param:JsonProperty(DEFAULT) val default: Boolean? = false,
-    @param:JsonProperty(UPDATED_AT) val updatedAt: LocalDate?,
     @param:JsonProperty(LAST_MODIFIED) val lastModified: ZonedDateTime?,
     @param:JsonProperty(ATTACHMENT_TYPES) val attachmentTypes: Set<String>?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
@@ -38,7 +37,6 @@ data class CollectionDocument @JsonCreator constructor(
         const val HAS_LESSON_PLANS = "hasLessonPlans"
         const val PROMOTED = "promoted"
         const val DEFAULT = "default"
-        const val UPDATED_AT = "updatedAt"
         const val LAST_MODIFIED = "lastModified"
         const val ATTACHMENT_TYPES = "attachmentTypes"
     }

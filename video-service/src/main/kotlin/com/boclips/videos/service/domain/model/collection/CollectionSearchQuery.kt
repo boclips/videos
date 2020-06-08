@@ -47,7 +47,7 @@ class CollectionSearchQuery(
                         SortOrder.ASC
                     )
                     CollectionSortKey.UPDATED_AT -> Sort.ByField(
-                        CollectionMetadata::updatedAt, SortOrder.DESC
+                        CollectionMetadata::lastModified, SortOrder.DESC
                     )
                     else -> null
                 }
