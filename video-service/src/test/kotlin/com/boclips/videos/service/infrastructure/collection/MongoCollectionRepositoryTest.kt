@@ -624,6 +624,42 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
 
             assertThat(collectionRepository.find(collection.id)!!.subCollections).isEmpty()
         }
+
+        @Test
+        fun `retrieving multiple collections returns the full collections with units`() {
+            val userId = UserId(value = "user1")
+
+            val unit = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = userId,
+                    title = "Unit Title",
+                    createdByBoclips = false,
+                    discoverable = false
+                )
+            )
+
+            val collection = collectionRepository.create(
+                CreateCollectionCommand(
+                    owner = userId,
+                    title = "Collection Title",
+                    createdByBoclips = false,
+                    discoverable = false
+                )
+            )
+
+            collectionRepository.update(
+                CollectionUpdateCommand.AddCollectionToCollection(
+                    collectionId = collection.id,
+                    subCollectionId = unit.id,
+                    user = UserFactory.sample()
+                )
+            )
+
+            val retrievedCollections = collectionRepository.findAll(listOf(unit.id, collection.id))
+
+            assertThat(retrievedCollections[0].subCollections).isEmpty()
+            assertThat(retrievedCollections[1].subCollections).isNotEmpty
+        }
     }
 
     @Nested

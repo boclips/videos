@@ -94,6 +94,20 @@ class MongoCollectionRepository(
         val collectionDocument = dbCollection().findOne(CollectionDocument::id eq ObjectId(id.value))
         logger.info { "Found collection ${id.value}" }
 
+        return loadWithSubCollections(collectionDocument)
+    }
+
+    override fun findAll(ids: List<CollectionId>): List<Collection> {
+        val objectIds = ids.filter { isValid(it.value) }.map { ObjectId(it.value) }
+
+        val collections: Map<CollectionId, Collection> = dbCollection().find(CollectionDocument::id `in` objectIds)
+            .mapNotNull(this::loadWithSubCollections)
+            .map { it.id to it }.toMap()
+
+        return ids.mapNotNull { id -> collections[id] }
+    }
+
+    private fun loadWithSubCollections(collectionDocument: CollectionDocument?): Collection? {
         return if (collectionDocument?.subCollectionIds.isNullOrEmpty()) {
             CollectionDocumentConverter.toCollection(collectionDocument)
         } else {
@@ -102,16 +116,6 @@ class MongoCollectionRepository(
 
             return mainCollection?.copy(subCollections = units)
         }
-    }
-
-    override fun findAll(ids: List<CollectionId>): List<Collection> {
-        val objectIds = ids.filter { isValid(it.value) }.map { ObjectId(it.value) }
-
-        val collections: Map<CollectionId, Collection> = dbCollection().find(CollectionDocument::id `in` objectIds)
-            .mapNotNull(CollectionDocumentConverter::toCollection)
-            .map { it.id to it }.toMap()
-
-        return ids.mapNotNull { id -> collections[id] }
     }
 
     override fun streamAll(consumer: (Sequence<Collection>) -> Unit) {
