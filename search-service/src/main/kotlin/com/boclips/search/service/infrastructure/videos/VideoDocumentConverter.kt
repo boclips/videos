@@ -29,6 +29,7 @@ object VideoDocumentConverter {
             ageRangeMin = video.ageRangeMin,
             ageRange = AgeRange(video.ageRangeMin, video.ageRangeMax).toRange(),
             type = video.type.name,
+            types = video.types.map { type -> type.name },
             subjectIds = video.subjects.items.map { subject -> subject.id }.toSet(),
             subjectNames = video.subjects.items.map { subject -> subject.name }.toSet(),
             subjectsSetManually = video.subjects.setManually,

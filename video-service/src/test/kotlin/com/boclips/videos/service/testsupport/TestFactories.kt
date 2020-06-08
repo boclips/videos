@@ -86,6 +86,7 @@ object TestFactories {
         contentPartnerVideoId: String = "cp-id-$videoId",
         playback: VideoPlayback = createKalturaPlayback(),
         type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
+        types: List<ContentType> = listOf(ContentType.INSTRUCTIONAL_CLIPS),
         keywords: List<String> = listOf("keyword"),
         subjects: Set<Subject> = emptySet(),
         subjectsSetManually: Boolean? = null,
@@ -118,6 +119,7 @@ object TestFactories {
             releasedOn = releasedOn,
             ingestedAt = ingestedAt,
             type = type,
+            types = types,
             legalRestrictions = legalRestrictions,
             subjects = VideoSubjects(
                 items = subjects,

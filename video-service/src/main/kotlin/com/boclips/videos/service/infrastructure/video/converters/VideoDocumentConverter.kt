@@ -12,8 +12,7 @@ import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 object VideoDocumentConverter {
     fun toVideoDocument(video: Video): VideoDocument {
@@ -27,6 +26,7 @@ object VideoDocumentConverter {
             ),
             playback = PlaybackConverter.toDocument(video.playback),
             contentType = video.type.name,
+            contentTypes = video.types.map { it.name },
             keywords = video.keywords,
             subjects = video.subjects.items.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
@@ -66,6 +66,7 @@ object VideoDocumentConverter {
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
             type = ContentType.valueOf(document.contentType!!),
+            types = document.contentTypes.map { ContentType.valueOf(it) },
             keywords = document.keywords,
             subjects = subjectsFromVideoDocument(document),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),

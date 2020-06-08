@@ -36,6 +36,7 @@ class VideoDocumentConverterTest {
                 "ageRangeMax": "11",
                 "ageRange": [3,4,5,6,7,8,9,10,11],
                 "type": "NEWS",
+                "types": ["NEWS"],
                 "subjectIds": ["boring-subject-id"],
                 "subjectNames": ["boring-subject-name"],
                 "eligibleForStream": true,
@@ -75,7 +76,8 @@ class VideoDocumentConverterTest {
                 eligibleForStream = true,
                 eligibleForDownload = true,
                 attachmentTypes = setOf("ACTIVITY"),
-                deactivated = false
+                deactivated = false,
+                types = listOf("NEWS")
             )
         )
     }
@@ -135,7 +137,9 @@ class VideoDocumentConverterTest {
             eligibleForStream = false,
             eligibleForDownload = true,
             attachmentTypes = emptySet(),
-            deactivated = false
+            deactivated = false,
+            types = listOf(VideoType.INSTRUCTIONAL)
+
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -158,6 +162,7 @@ class VideoDocumentConverterTest {
                 ageRangeMax = 16,
                 ageRange = (10..16).toList(),
                 type = "INSTRUCTIONAL",
+                types = listOf("INSTRUCTIONAL"),
                 subjectIds = setOf("subjectId"),
                 subjectNames = setOf("subjectName"),
                 promoted = null,
@@ -198,7 +203,8 @@ class VideoDocumentConverterTest {
             eligibleForStream = true,
             eligibleForDownload = true,
             attachmentTypes = emptySet(),
-            deactivated = false
+            deactivated = false,
+            types = listOf(VideoType.INSTRUCTIONAL)
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

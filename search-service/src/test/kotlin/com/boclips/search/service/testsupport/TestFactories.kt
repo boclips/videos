@@ -35,7 +35,8 @@ object SearchableVideoMetadataFactory {
         eligibleForStream: Boolean = true,
         eligibleForDownload: Boolean = true,
         attachmentTypes: Set<String> = emptySet(),
-        deactivated: Boolean = false
+        deactivated: Boolean = false,
+        types: List<VideoType> = emptyList()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -58,7 +59,8 @@ object SearchableVideoMetadataFactory {
         eligibleForStream = eligibleForStream,
         eligibleForDownload = eligibleForDownload,
         attachmentTypes = attachmentTypes,
-        deactivated = deactivated
+        deactivated = deactivated,
+        types = types
     )
 }
 
@@ -97,7 +99,8 @@ object TestFactories {
             eligibleForDownload = true,
             eligibleForStream = true,
             attachmentTypes = emptySet(),
-            deactivated = false
+            deactivated = false,
+            types = listOf("NEWS")
         )
     }
 }

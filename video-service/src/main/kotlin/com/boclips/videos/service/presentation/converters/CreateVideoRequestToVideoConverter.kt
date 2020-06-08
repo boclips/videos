@@ -32,6 +32,7 @@ class CreateVideoRequestToVideoConverter {
             contentPartner = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,
             type = ContentType.valueOf(createVideoRequest.videoType!!),
+            types = listOf(ContentType.valueOf(createVideoRequest.videoType!!)),
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = AgeRange.of(
                 min = createVideoRequest.ageRangeMin,

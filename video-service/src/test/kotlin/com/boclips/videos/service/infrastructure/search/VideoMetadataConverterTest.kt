@@ -85,7 +85,8 @@ class VideoMetadataConverterTest {
                 eligibleForStream = false,
                 eligibleForDownload = false,
                 attachmentTypes = setOf("Activity"),
-                deactivated = false
+                deactivated = false,
+                types = listOf(VideoType.INSTRUCTIONAL)
             )
         )
     }
