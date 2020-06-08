@@ -9,9 +9,9 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
-        const val CONTENT_PARTNER_CONTRACT = "contentPartnerContract"
-        const val CREATE_CONTENT_PARTNER_CONTRACTS = "createContentPartnerContracts"
-        const val CONTENT_PARTNER_CONTRACTS = "contentPartnerContracts"
+        const val CONTRACT = "contract"
+        const val CREATE_CONTRACTS = "createContracts"
+        const val CONTRACTS = "contracts"
     }
 
     fun self(id: String): HateoasLink {
@@ -24,51 +24,51 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
         return HateoasLink(href = withSelfRel.href, rel = withSelfRel.rel.value())
     }
 
-    fun contentPartnerContractLink(id: String?): Link? {
-        return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS) {
+    fun contractLink(id: String?): Link? {
+        return getIfHasRole(UserRoles.VIEW_CONTRACTS) {
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ContractController::class.java).getContract(
                     id
                 )
-            ).withRel(Rels.CONTENT_PARTNER_CONTRACT)
+            ).withRel(Rels.CONTRACT)
         }
     }
 
-    fun contentPartnerContractsLink(): Link? {
-        return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS) {
+    fun contractsLink(): Link? {
+        return getIfHasRole(UserRoles.VIEW_CONTRACTS) {
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ContractController::class.java).getAll(
                     null, null
                 )
-            ).withRel(Rels.CONTENT_PARTNER_CONTRACTS)
+            ).withRel(Rels.CONTRACTS)
         }
     }
 
     fun createContractLink(): Link? {
         return getIfHasRole(
-            UserRoles.INSERT_CONTENT_PARTNER_CONTRACTS
+            UserRoles.INSERT_CONTRACTS
         ) {
             Link(
-                getContentPartnerContractsRoot()
+                getContractsRoot()
                     .build()
                     .toUriString(),
-                Rels.CREATE_CONTENT_PARTNER_CONTRACTS
+                Rels.CREATE_CONTRACTS
             )
         }
     }
 
     fun createSignedUploadLink(): Link? =
-        getIfHasRole(UserRoles.INSERT_CONTENT_PARTNER_CONTRACTS) {
+        getIfHasRole(UserRoles.INSERT_CONTRACTS) {
             Link(
-                getContentPartnerContractsRoot()
+                getContractsRoot()
                     .build()
                     .toUriString()
                     .plus("/signed-upload-link"),
-                "createContentPartnerContractsSignedUploadLink"
+                "createContractsSignedUploadLink"
             )
         }
 
-    private fun getContentPartnerContractsRoot() = uriComponentsBuilderFactory.getInstance()
-        .replacePath("/v1/content-partner-contracts")
+    private fun getContractsRoot() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/contracts")
         .replaceQueryParams(null)
 }

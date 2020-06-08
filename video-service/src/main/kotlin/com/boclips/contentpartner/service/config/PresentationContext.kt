@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.presentation.converters.IngestDetailsR
 import com.boclips.contentpartner.service.presentation.converters.LegacyContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
@@ -60,5 +61,12 @@ class PresentationContext(
     @Bean
     fun getSuggestionConverter(videosLinkBuilder: VideosLinkBuilder): SuggestionToResourceConverter {
         return SuggestionToResourceConverter(videosLinkBuilder)
+    }
+
+    @Bean
+    fun contractsLinkBuilder(
+        uriComponentsBuilderFactory: UriComponentsBuilderFactory
+    ): ContractsLinkBuilder {
+        return ContractsLinkBuilder(uriComponentsBuilderFactory)
     }
 }

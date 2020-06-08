@@ -22,12 +22,12 @@ class ContractsLinkBuilderTest {
 
     @Test
     fun `fetch all link`() {
-        setSecurityContext("back@office.boclips", UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS)
+        setSecurityContext("back@office.boclips", UserRoles.VIEW_CONTRACTS)
 
-        val link = contractsLinkBuilder.contentPartnerContractsLink()!!
+        val link = contractsLinkBuilder.contractsLink()!!
 
-        assertThat(link.href).endsWith("/v1/content-partner-contracts{?size,page}")
-        assertThat(link.rel.value()).isEqualTo(ContractsLinkBuilder.Rels.CONTENT_PARTNER_CONTRACTS)
+        assertThat(link.href).endsWith("/v1/contracts{?size,page}")
+        assertThat(link.rel.value()).isEqualTo(ContractsLinkBuilder.Rels.CONTRACTS)
         assertThat(link.isTemplated).isEqualTo(true)
     }
 
@@ -35,7 +35,7 @@ class ContractsLinkBuilderTest {
     fun `fetch all link when unauthenticated`() {
         setSecurityContext("back@office.boclips")
 
-        val link = contractsLinkBuilder.contentPartnerContractsLink()
+        val link = contractsLinkBuilder.contractsLink()
 
         assertThat(link).isNull()
     }

@@ -25,7 +25,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates contract with correct values and fetches it`() {
         val contractUrl = mockMvc.perform(
-            post("/v1/content-partner-contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+            post("/v1/contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                         {
@@ -93,14 +93,14 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `a 404 when fetching non-existent content partner`() {
-        mockMvc.perform(get("/v1/content-partner-contracts/missing").asBoclipsEmployee())
+        mockMvc.perform(get("/v1/contracts/missing").asBoclipsEmployee())
             .andExpect(status().isNotFound)
             .andExpectApiErrorPayload()
     }
 
     @Test
     fun `a 403 when trying to create a contract with incorrect role`() {
-        mockMvc.perform(post("/v1/content-partner-contracts"))
+        mockMvc.perform(post("/v1/contracts"))
             .andExpect(status().isForbidden)
     }
 
@@ -109,7 +109,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveContentPartnerContract(name = "already here")
 
         mockMvc.perform(
-            post("/v1/content-partner-contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+            post("/v1/contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                         {
@@ -125,7 +125,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates contract with only required values and fetches it`() {
         val contractUrl = mockMvc.perform(
-            post("/v1/content-partner-contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+            post("/v1/contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
                         {
@@ -149,7 +149,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val firstContractId = saveContentPartnerContract(name = "the best videos")
         val secondContractId = saveContentPartnerContract(name = "okay videos")
 
-        mockMvc.perform(get("/v1/content-partner-contracts").asBoclipsEmployee())
+        mockMvc.perform(get("/v1/contracts").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(2)))
             .andExpect(
@@ -162,7 +162,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `a 403 when viewing all contracts with incorrect role`() {
-        mockMvc.perform(get("/v1/content-partner-contracts"))
+        mockMvc.perform(get("/v1/contracts"))
             .andExpect(status().isForbidden)
     }
 
@@ -171,7 +171,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveContentPartnerContract(name = "the best videos")
         saveContentPartnerContract(name = "okay videos")
 
-        mockMvc.perform(get("/v1/content-partner-contracts?page=0&size=1").asBoclipsEmployee())
+        mockMvc.perform(get("/v1/contracts?page=0&size=1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(1)))
             .andExpect(jsonPath("$.page.size", equalTo(1)))
@@ -187,7 +187,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fakeSignedLinkProvider.setLink(sampleLink)
 
         val location = mockMvc.perform(
-            post("/v1/content-partner-contracts/signed-upload-link").asBoclipsEmployee()
+            post("/v1/contracts/signed-upload-link").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(
                     """{
                     |   "filename": "myImage.png"
@@ -245,13 +245,13 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
 
         mockMvc.perform(
-            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            patch("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(fullUpdate)
         )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(
-            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            get("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(jsonPath("$.contentPartnerName", equalTo("Related Content Partner")))
@@ -279,13 +279,13 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
 
         mockMvc.perform(
-            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            patch("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(noDeletionOfContract)
         )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(
-            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            get("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(jsonPath("$.contractDocument", equalTo("http://server.com/oranges.png#signed")))
@@ -298,13 +298,13 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
 
         mockMvc.perform(
-            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            patch("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(withDeletionOfContract)
         )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(
-            get("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            get("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(jsonPath("$.contractDocument", equalTo(null)))
     }
@@ -321,7 +321,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
 
         mockMvc.perform(
-            patch("/v1/content-partner-contracts/${contract.id.value}").asBoclipsEmployee()
+            patch("/v1/contracts/${contract.id.value}").asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(nameChange)
         )
             .andExpect(status().isConflict)

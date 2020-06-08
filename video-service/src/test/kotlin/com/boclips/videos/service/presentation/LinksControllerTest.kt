@@ -59,7 +59,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentCategories").doesNotExist())
             .andExpect(jsonPath("$._links.ageRanges").doesNotExist())
             .andExpect(jsonPath("$._links.marketingStatuses").doesNotExist())
-            .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
+            .andExpect(jsonPath("$._links.contracts").doesNotExist())
             .andExpect(jsonPath("$._links.getCaptions").doesNotExist())
             .andExpect(jsonPath("$._links.channels").doesNotExist())
             .andExpect(jsonPath("$._links.channel").doesNotExist())
@@ -141,10 +141,10 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentPartners").doesNotExist())
             .andExpect(jsonPath("$._links.channels").doesNotExist())
             .andExpect(jsonPath("$._links.channel").doesNotExist())
-            .andExpect(jsonPath("$._links.contentPartnerContract").doesNotExist())
-            .andExpect(jsonPath("$._links.contentPartnerContracts").doesNotExist())
+            .andExpect(jsonPath("$._links.contract").doesNotExist())
+            .andExpect(jsonPath("$._links.contracts").doesNotExist())
             .andExpect(jsonPath("$._links.contentPartnersSignedUploadLink").doesNotExist())
-            .andExpect(jsonPath("$._links.createContentPartnerContractsSignedUploadLink").doesNotExist())
+            .andExpect(jsonPath("$._links.createContractsSignedUploadLink").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
     }
 
@@ -173,26 +173,26 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.channel.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
-                    "$._links.contentPartnerContract.href",
-                    containsString("/content-partner-contracts/{id}")
+                    "$._links.contract.href",
+                    containsString("/contracts/{id}")
                 )
             )
-            .andExpect(jsonPath("$._links.contentPartnerContract.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.contract.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
-                    "$._links.createContentPartnerContractsSignedUploadLink.href", containsString(
-                        "/content-partner-contracts/signed-upload-link"
+                    "$._links.createContractsSignedUploadLink.href", containsString(
+                        "/contracts/signed-upload-link"
                     )
                 )
             )
             .andExpect(jsonPath("$._links.marketingStatuses.href", endsWith("/marketing-statuses")))
             .andExpect(
                 jsonPath(
-                    "$._links.contentPartnerContracts.href",
-                    endsWith("/content-partner-contracts{?size,page}")
+                    "$._links.contracts.href",
+                    endsWith("/contracts{?size,page}")
                 )
             )
-            .andExpect(jsonPath("$._links.contentPartnerContracts.templated", equalTo(true)))
+            .andExpect(jsonPath("$._links.contracts.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.contractLegalRestrictions.href", endsWith("/contract-legal-restrictions")))
             .andExpect(jsonPath("$._links.contractLegalRestrictions.templated", equalTo(false)))
             .andExpect(jsonPath("$._links.getCaptions.href", endsWith("/captions")))

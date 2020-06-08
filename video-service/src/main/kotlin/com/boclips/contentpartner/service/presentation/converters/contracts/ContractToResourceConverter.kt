@@ -14,7 +14,7 @@ import org.springframework.hateoas.PagedModel
 import java.time.format.DateTimeFormatter
 
 class ContractToResourceConverter(
-    private val linksBuilder: ContractsLinkBuilder
+    private val linksBuilderLegacy: ContractsLinkBuilder
 ) {
     fun convert(contract: Contract): ContractResource {
         val formatter = DateTimeFormatter.ISO_DATE
@@ -53,7 +53,7 @@ class ContractToResourceConverter(
                 recoupable = contract.costs.recoupable
             ),
 
-            _links = listOfNotNull(linksBuilder.self(contract.id.value)).map { it.rel to it }.toMap()
+            _links = listOfNotNull(linksBuilderLegacy.self(contract.id.value)).map { it.rel to it }.toMap()
         )
     }
 

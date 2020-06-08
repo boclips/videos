@@ -3,9 +3,9 @@ package com.boclips.videos.service.presentation
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
@@ -88,8 +88,8 @@ class LinksController(
                 channelLinkBuilder.channelLink(null),
                 channelLinkBuilder.channelsLink(),
                 channelLinkBuilder.channelsSignedUploadLink(),
-                contractsLinkBuilder.contentPartnerContractLink(null),
-                contractsLinkBuilder.contentPartnerContractsLink(),
+                contractsLinkBuilder.contractLink(null),
+                contractsLinkBuilder.contractsLink(),
                 contractsLinkBuilder.createContractLink(),
                 contractsLinkBuilder.createSignedUploadLink(),
                 contractLegalRestrictionsLinkBuilder.contractLegalRestrictions(),

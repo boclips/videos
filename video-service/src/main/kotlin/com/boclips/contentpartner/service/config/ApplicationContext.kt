@@ -36,8 +36,8 @@ import com.boclips.contentpartner.service.presentation.converters.contracts.Cont
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRestrictionsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
-import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.eventbus.EventBus
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
@@ -163,13 +163,6 @@ class ApplicationContext(
     @Bean
     fun broadcastContracts(): BroadcastContracts =
         BroadcastContracts(eventBus, eventConverter, contractRepository)
-
-    @Bean
-    fun contractsLinkBuilder(
-        uriComponentsBuilderFactory: UriComponentsBuilderFactory
-    ): ContractsLinkBuilder {
-        return ContractsLinkBuilder(uriComponentsBuilderFactory)
-    }
 
     @Bean
     fun createAgeRange(): CreateAgeRange {

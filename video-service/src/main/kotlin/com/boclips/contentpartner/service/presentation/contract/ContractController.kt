@@ -30,7 +30,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
 @RestController
-@RequestMapping("/v1/content-partner-contracts")
+@RequestMapping("/v1/contracts")
 class ContractController(
     private val fetchOne: GetContract,
     private val fetch: GetContracts,
@@ -38,8 +38,8 @@ class ContractController(
     private val update: UpdateContract,
     private val signContractDocument: SignContractDocument,
     private val toResourceConverter: ContractToResourceConverter,
-    private val linksBuilder: ContractsLinkBuilder,
-    private val contractSignedLinkProvider: SignedLinkProvider
+    private val contractSignedLinkProvider: SignedLinkProvider,
+    private val contractsLinkBuilder: ContractsLinkBuilder
 ) {
     @GetMapping
     fun getAll(
@@ -74,7 +74,7 @@ class ContractController(
                 HttpHeaders().apply {
                     set(
                         "Location",
-                        linksBuilder.self(contractId.id.value).href
+                        contractsLinkBuilder.self(contractId.id.value).href
                     )
                 }, HttpStatus.CREATED
             )
