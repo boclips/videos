@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 data class CollectionDocument @JsonCreator constructor(
@@ -17,7 +18,8 @@ data class CollectionDocument @JsonCreator constructor(
     @param:JsonProperty(HAS_LESSON_PLANS) val hasLessonPlans: Boolean? = false,
     @param:JsonProperty(PROMOTED) val promoted: Boolean? = false,
     @param:JsonProperty(DEFAULT) val default: Boolean? = false,
-    @param:JsonProperty(UPDATED_AT) val updatedAt: ZonedDateTime?,
+    @param:JsonProperty(UPDATED_AT) val updatedAt: LocalDate?,
+    @param:JsonProperty(LAST_MODIFIED) val lastModified: ZonedDateTime?,
     @param:JsonProperty(ATTACHMENT_TYPES) val attachmentTypes: Set<String>?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
@@ -37,6 +39,7 @@ data class CollectionDocument @JsonCreator constructor(
         const val PROMOTED = "promoted"
         const val DEFAULT = "default"
         const val UPDATED_AT = "updatedAt"
+        const val LAST_MODIFIED = "lastModified"
         const val ATTACHMENT_TYPES = "attachmentTypes"
     }
 }

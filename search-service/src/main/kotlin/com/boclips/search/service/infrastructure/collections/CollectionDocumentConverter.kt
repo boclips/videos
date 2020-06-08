@@ -25,7 +25,8 @@ class CollectionDocumentConverter {
             ageRangeMin = metadata.ageRangeMin,
             ageRangeMax = metadata.ageRangeMax,
             ageRange = AgeRange(metadata.ageRangeMin, metadata.ageRangeMax).toRange(),
-            updatedAt = metadata.updatedAt,
+            lastModified = metadata.updatedAt,
+            updatedAt = metadata.updatedAt.toLocalDate(),
             attachmentTypes = metadata.attachmentTypes,
             default = metadata.default
         )
