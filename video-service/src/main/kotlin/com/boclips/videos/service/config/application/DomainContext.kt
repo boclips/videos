@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.contract.ContractRepositoryEventDecorator
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
-import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.contract.MongoContractRepository
 import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
@@ -222,7 +222,7 @@ class DomainContext(
 
     @Bean
     fun contentPartnerContractRepository(
-        converter: ContentPartnerContractDocumentConverter
+        converter: ContractDocumentConverter
     ): ContractRepository {
         return ContractRepositoryEventDecorator(
             MongoContractRepository(
@@ -235,8 +235,8 @@ class DomainContext(
     }
 
     @Bean
-    fun contentPartnerContractDocumentConverter(): ContentPartnerContractDocumentConverter {
-        return ContentPartnerContractDocumentConverter()
+    fun contentPartnerContractDocumentConverter(): ContractDocumentConverter {
+        return ContractDocumentConverter()
     }
 
     @Bean

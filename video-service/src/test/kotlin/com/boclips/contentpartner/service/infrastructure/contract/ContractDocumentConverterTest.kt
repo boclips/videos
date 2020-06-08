@@ -8,7 +8,7 @@ class ContractDocumentConverterTest {
     @Test
     fun `converting to a document and back again matches the original contract`() {
         val converter =
-            ContentPartnerContractDocumentConverter()
+            ContractDocumentConverter()
         val original = ContentPartnerContractFactory.sample()
         val converted = converter.toContract(converter.toDocument(original))
         assertThat(original).isEqualTo(converted)

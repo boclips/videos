@@ -26,24 +26,24 @@ import java.time.Instant
 
 class MongoContractRepository(
     private val mongoClient: MongoClient,
-    private val converter: ContentPartnerContractDocumentConverter
+    private val converter: ContractDocumentConverter
 ) : ContractRepository {
     companion object : KLogging() {
-        const val collectionName = "contentPartnerContracts"
+        const val collectionName = "contracts"
     }
 
     override fun create(contract: Contract): Contract {
         val document = converter.toDocument(contract)
         getCollection().insertOne(document.copy(createdAt = Instant.now(), lastModified = Instant.now()))
-        val createdContract = findById(contract.id) ?: throw ResourceNotFoundApiException(
-            error = "Content partner contract not found",
+        val createdContract = findById(contract.id) ?: throw ResourceNotFoundApiException( // TODO don't throw an api exception here
+            error = "Contract not found",
             message = arrayOf(
-                "There has been an error in creating the content partner contract.",
-                "Content partner contract id: ${contract.id.value} could not be found."
+                "There has been an error in creating the contract.",
+                "Contract id: ${contract.id.value} could not be found."
             ).joinToString(separator = " ")
         )
 
-        logger.info { "Created contentPartnerContract ${createdContract.id.value}" }
+        logger.info { "Created contract ${createdContract.id.value}" }
 
         return createdContract
     }
@@ -54,8 +54,8 @@ class MongoContractRepository(
         }
 
         val document =
-            getCollection().findOne(ContentPartnerContractDocument::id eq ObjectId(id.value))
-                ?.let { document: ContentPartnerContractDocument ->
+            getCollection().findOne(ContractDocument::id eq ObjectId(id.value))
+                ?.let { document: ContractDocument ->
                     converter.toContract(document)
                 }
 
@@ -71,8 +71,8 @@ class MongoContractRepository(
         val uniqueObjectIds = uniqueContractIds.map { ObjectId(it.value) }
 
         val contracts = getCollection()
-            .find(ContentPartnerContractDocument::id `in` uniqueObjectIds)
-            .map { document: ContentPartnerContractDocument ->
+            .find(ContractDocument::id `in` uniqueObjectIds)
+            .map { document: ContractDocument ->
                 converter.toContract(document)
             }
             .map { it.id to it }
@@ -103,7 +103,7 @@ class MongoContractRepository(
         val bson = filters.fold(and()) { bson: Bson, filter: ContractFilter ->
             and(
                 bson, when (filter) {
-                    is ContractFilter.NameFilter -> ContentPartnerContractDocument::contentPartnerName eq filter.name
+                    is ContractFilter.NameFilter -> ContractDocument::contentPartnerName eq filter.name
                 }
             )
         }
@@ -124,7 +124,7 @@ class MongoContractRepository(
         }
 
         val updateDocs = contractUpdateCommands.map { updateCommand ->
-            UpdateOneModel<ContentPartnerContractDocument>(
+            UpdateOneModel<ContractDocument>(
                 toBsonIdFilter(updateCommand.contractId),
                 updateCommandsToBson(updateCommand)
             )
@@ -141,50 +141,50 @@ class MongoContractRepository(
     private fun updateCommandsToBson(updateCommand: ContractUpdateCommand): Bson {
         val update = when (updateCommand) {
             is ContractUpdateCommand.ReplaceContentPartnerName ->
-                set(ContentPartnerContractDocument::contentPartnerName, updateCommand.contentPartnerName)
+                set(ContractDocument::contentPartnerName, updateCommand.contentPartnerName)
 
             is ContractUpdateCommand.ReplaceContractDocument ->
                 set(
-                    ContentPartnerContractDocument::contractDocument,
+                    ContractDocument::contractDocument,
                     updateCommand.contractDocument
                 )
 
             is ContractUpdateCommand.ReplaceContractIsRolling ->
-                set(ContentPartnerContractDocument::contractIsRolling, updateCommand.contractIsRolling)
+                set(ContractDocument::contractIsRolling, updateCommand.contractIsRolling)
 
             is ContractUpdateCommand.ReplaceContractDates ->
                 set(
-                    ContentPartnerContractDocument::contractDates,
+                    ContractDocument::contractDates,
                     updateCommand.contractDates.let { ContractDatesDocument(it.start.toString(), it.end.toString()) }
                 )
 
             is ContractUpdateCommand.ReplaceDaysBeforeTerminationWarning ->
                 set(
-                    ContentPartnerContractDocument::daysBeforeTerminationWarning,
+                    ContractDocument::daysBeforeTerminationWarning,
                     updateCommand.daysBeforeTerminationWarning
                 )
 
             is ContractUpdateCommand.ReplaceYearsForMaximumLicense ->
-                set(ContentPartnerContractDocument::yearsForMaximumLicense, updateCommand.yearsForMaximumLicense)
+                set(ContractDocument::yearsForMaximumLicense, updateCommand.yearsForMaximumLicense)
 
             is ContractUpdateCommand.ReplaceDaysForSellOffPeriod ->
-                set(ContentPartnerContractDocument::daysForSellOffPeriod, updateCommand.daysForSellOffPeriod)
+                set(ContractDocument::daysForSellOffPeriod, updateCommand.daysForSellOffPeriod)
 
             is ContractUpdateCommand.ReplaceRoyaltySplit ->
-                set(ContentPartnerContractDocument::royaltySplit, updateCommand.royaltySplit.let {
+                set(ContractDocument::royaltySplit, updateCommand.royaltySplit.let {
                     ContractRoyaltySplitDocument(
                         it.download, it.streaming
                     )
                 })
 
             is ContractUpdateCommand.ReplaceMinimumPriceDescription ->
-                set(ContentPartnerContractDocument::minimumPriceDescription, updateCommand.minimumPriceDescription)
+                set(ContractDocument::minimumPriceDescription, updateCommand.minimumPriceDescription)
 
             is ContractUpdateCommand.ReplaceRemittanceCurrency ->
-                set(ContentPartnerContractDocument::remittanceCurrency, updateCommand.remittanceCurrency)
+                set(ContractDocument::remittanceCurrency, updateCommand.remittanceCurrency)
 
             is ContractUpdateCommand.ReplaceRestrictions ->
-                set(ContentPartnerContractDocument::restrictions, updateCommand.restrictions.let {
+                set(ContractDocument::restrictions, updateCommand.restrictions.let {
                     ContractRestrictionsDocument(
                         clientFacing = it.clientFacing,
                         territory = it.territory,
@@ -198,7 +198,7 @@ class MongoContractRepository(
                 })
 
             is ContractUpdateCommand.ReplaceCost ->
-                set(ContentPartnerContractDocument::costs, updateCommand.costs.let {
+                set(ContractDocument::costs, updateCommand.costs.let {
                     ContractCostsDocument(
                         minimumGuarantee = it.minimumGuarantee,
                         upfrontLicense = it.upfrontLicense,
@@ -209,15 +209,15 @@ class MongoContractRepository(
 
         }
 
-        return combine(update, set(ContentPartnerContractDocument::lastModified, Instant.now()))
+        return combine(update, set(ContractDocument::lastModified, Instant.now()))
     }
 
     private fun toBsonIdFilter(contractId: ContractId): Bson {
-        return ContentPartnerContractDocument::id eq ObjectId(contractId.value)
+        return ContractDocument::id eq ObjectId(contractId.value)
     }
 
     private fun getCollection() =
-        mongoClient.getDatabase(DATABASE_NAME).getCollection<ContentPartnerContractDocument>(
+        mongoClient.getDatabase(DATABASE_NAME).getCollection<ContractDocument>(
             collectionName
         )
 }

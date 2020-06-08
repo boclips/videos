@@ -4,7 +4,7 @@ import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
 
-data class ContentPartnerContractDocument(
+data class ContractDocument(
     @BsonId val id: ObjectId,
     val contentPartnerName: String,
     val contractDocument: String?,

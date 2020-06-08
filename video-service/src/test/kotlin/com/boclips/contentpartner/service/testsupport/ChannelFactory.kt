@@ -18,7 +18,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
-import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -91,7 +91,7 @@ object ChannelFactory {
         ingest: IngestDetailsDocument? = null,
         isTranscriptProvided: Boolean? = null,
         ageRanges: List<AgeRangeDocument>? = emptyList(),
-        contract: ContentPartnerContractDocument? = null
+        contract: ContractDocument? = null
     ) = ChannelDocument(
         id = objectId,
         youtubeChannelId = youtubeChannelId,

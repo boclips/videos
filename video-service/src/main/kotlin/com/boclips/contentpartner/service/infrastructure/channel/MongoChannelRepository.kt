@@ -11,8 +11,8 @@ import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocume
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.DistributionMethodDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.IngestDetailsDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocument
-import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
+import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
@@ -85,7 +85,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     override fun findByContractId(contractId: ContractId): List<Channel> {
         return getChannelCollection()
             .find(
-                (ChannelDocument::contract / ContentPartnerContractDocument::id) eq
+                (ChannelDocument::contract / ContractDocument::id) eq
                     ObjectId(contractId.value)
             )
             .map { ChannelDocumentConverter.toChannel(it) }
@@ -217,7 +217,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             )
             is ChannelUpdateCommand.ReplaceContract -> set(
                 ChannelDocument::contract,
-                ContentPartnerContractDocumentConverter().toDocument(updateCommand.contract)
+                ContractDocumentConverter().toDocument(updateCommand.contract)
             )
         }
 

@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.infrastructure.contract
 
 import com.boclips.contentpartner.service.domain.model.contract.Contract
-import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import mu.KLogging
@@ -14,9 +14,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import java.util.Currency
 
-class ContentPartnerContractDocumentConverter() {
+class ContractDocumentConverter {
     fun toDocument(contract: Contract) =
-        ContentPartnerContractDocument(
+        ContractDocument(
             id = ObjectId(contract.id.value),
             contentPartnerName = contract.contentPartnerName,
             contractDocument = contract.contractDocument.toString(),
@@ -52,7 +52,7 @@ class ContentPartnerContractDocumentConverter() {
             )
         )
 
-    fun toContract(document: ContentPartnerContractDocument) =
+    fun toContract(document: ContractDocument) =
         Contract(
             id = ContractId(
                 document.id.toHexString()
