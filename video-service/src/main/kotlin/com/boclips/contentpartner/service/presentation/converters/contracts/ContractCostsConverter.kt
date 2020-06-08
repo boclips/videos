@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters.contracts
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
 import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
 
 class ContractCostsConverter {

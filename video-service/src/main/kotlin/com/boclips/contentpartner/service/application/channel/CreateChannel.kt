@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerH
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
-import com.boclips.contentpartner.service.application.exceptions.MissingContentPartnerContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
@@ -18,8 +18,8 @@ import com.boclips.contentpartner.service.domain.model.channel.DistributionMetho
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
@@ -38,7 +38,7 @@ class CreateChannel(
     private val channelRepository: ChannelRepository,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
-    private val contentPartnerContractRepository: ContentPartnerContractRepository,
+    private val contractRepository: ContractRepository,
     private val subjectRepository: SubjectRepository,
     private val eventConverter: EventConverter,
     private val eventBus: EventBus
@@ -89,15 +89,15 @@ class CreateChannel(
         }
 
         val contract = upsertRequest.contractId?.let {
-            val contractId = ContentPartnerContractId(it)
+            val contractId = ContractId(it)
 
-            contentPartnerContractRepository.findById(contractId)
+            contractRepository.findById(contractId)
                 ?: throw InvalidContractException(contractId)
         }
 
         if(upsertRequest.ingest?.type != IngestType.YOUTUBE) {
             if(upsertRequest.contractId.isNullOrBlank()) {
-                throw MissingContentPartnerContractException()
+                throw MissingContractException()
             }
         }
 

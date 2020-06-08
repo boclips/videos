@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.presentation.contract.legalrestriction
 
-import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.CreateContractLegalRestriction
-import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.FindAllContractLegalRestrictions
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.CreateContractLegalRestriction
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.FindAllContractLegalRestrictions
 import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.videos.api.request.contract.legalrestrictions.CreateContractLegalRestrictionRequest
 import com.boclips.videos.api.response.contract.legalrestrictions.ContractLegalRestrictionsResource

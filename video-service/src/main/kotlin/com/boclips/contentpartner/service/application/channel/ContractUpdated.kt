@@ -2,14 +2,14 @@ package com.boclips.contentpartner.service.application.channel
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contract.ContractUpdated
 import mu.KLogging
 
 class ContractUpdated(
-    private val contractRepository: ContentPartnerContractRepository,
+    private val contractRepository: ContractRepository,
     private val channelRepository: ChannelRepository
 ) {
     companion object : KLogging()
@@ -18,7 +18,7 @@ class ContractUpdated(
     fun contractUpdated(contractUpdatedEvent: ContractUpdated) {
         logger.info { "Updating channels for contract: <${contractUpdatedEvent.contract.name}:${contractUpdatedEvent.contract.contractId.value}>" }
 
-        val contractId = ContentPartnerContractId(contractUpdatedEvent.contract.contractId.value)
+        val contractId = ContractId(contractUpdatedEvent.contract.contractId.value)
 
         val contract = contractRepository.findById(contractId)
 

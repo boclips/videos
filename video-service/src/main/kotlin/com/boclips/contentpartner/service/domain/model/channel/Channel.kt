@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.domain.model.channel
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import java.time.Period
 import java.util.Locale
@@ -23,7 +23,7 @@ data class Channel(
     val deliveryFrequency: Period?,
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
-    val contract: ContentPartnerContract?
+    val contract: Contract?
 ) {
     val currency = contract?.remittanceCurrency ?: remittance?.currency
 

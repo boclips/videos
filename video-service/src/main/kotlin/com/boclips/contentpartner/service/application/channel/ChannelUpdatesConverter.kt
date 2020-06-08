@@ -7,8 +7,8 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeReposito
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand.ReplaceDistributionMethods
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingStatusConverter
@@ -24,7 +24,7 @@ class ChannelUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsResourceConverter: IngestDetailsResourceConverter,
-    private val contentPartnerContractRepository: ContentPartnerContractRepository
+    private val contractRepository: ContractRepository
 ) {
     fun convert(
         id: ChannelId,
@@ -60,7 +60,7 @@ class ChannelUpdatesConverter(
                 commandCreator.updateSubjects(),
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
-                commandCreator.updateContract(contentPartnerContractRepository)
+                commandCreator.updateContract(contractRepository)
             )
         }
 }
@@ -218,11 +218,11 @@ class ChannelUpdateCommandCreator(
             ChannelUpdateCommand.ReplaceDeliveryFrequency(id, it)
         }
 
-    fun updateContract(contentPartnerContractRepository: ContentPartnerContractRepository): ChannelUpdateCommand.ReplaceContract? =
+    fun updateContract(contractRepository: ContractRepository): ChannelUpdateCommand.ReplaceContract? =
         channelRequest.contractId?.let {
-            val contractId = ContentPartnerContractId(it)
+            val contractId = ContractId(it)
 
-            val contract = contentPartnerContractRepository.findById(contractId)
+            val contract = contractRepository.findById(contractId)
                 ?: throw InvalidContractException(contractId)
 
             ChannelUpdateCommand.ReplaceContract(id, contract)

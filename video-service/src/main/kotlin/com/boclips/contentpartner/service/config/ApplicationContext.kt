@@ -8,35 +8,35 @@ import com.boclips.contentpartner.service.application.channel.ContractUpdated
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
-import com.boclips.contentpartner.service.application.contentpartnercontract.BroadcastContracts
-import com.boclips.contentpartner.service.application.contentpartnercontract.ContractContentPartnerConverter
-import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
-import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.CreateContractLegalRestriction
-import com.boclips.contentpartner.service.application.contentpartnercontract.legalrestrictions.FindAllContractLegalRestrictions
+import com.boclips.contentpartner.service.application.contract.BroadcastContracts
+import com.boclips.contentpartner.service.application.contract.ContractConverter
+import com.boclips.contentpartner.service.application.contract.CreateContract
+import com.boclips.contentpartner.service.application.contract.GetContract
+import com.boclips.contentpartner.service.application.contract.GetContracts
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.CreateContractLegalRestriction
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.FindAllContractLegalRestrictions
 import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
-import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
-import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractSignedLinkProvider
+import com.boclips.contentpartner.service.domain.service.contract.ContractService
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContractSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractCostsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractDatesToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRestrictionsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
-import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.eventbus.EventBus
@@ -49,33 +49,33 @@ class ApplicationContext(
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val channelRepository: ChannelRepository,
     val ageRangeRepository: AgeRangeRepository,
-    val contentPartnerContractRepository: ContentPartnerContractRepository,
+    val contractRepository: ContractRepository,
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
     val subjectRepository: SubjectRepository,
     val eventConverter: EventConverter,
     val eventBus: EventBus
 ) {
     @Bean
-    fun getContentPartner(): GetChannel {
+    fun getChannel(): GetChannel {
         return GetChannel(
             channelRepository
         )
     }
 
     @Bean
-    fun getContentPartners(): GetChannels {
+    fun getChannels(): GetChannels {
         return GetChannels(
             channelRepository
         )
     }
 
     @Bean
-    fun createContentPartner(): CreateChannel {
+    fun createChannel(): CreateChannel {
         return CreateChannel(
             channelRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contentPartnerContractRepository,
+            contractRepository,
             subjectRepository,
             eventConverter,
             eventBus
@@ -85,7 +85,7 @@ class ApplicationContext(
     @Bean
     fun contractUpdate(): ContractUpdated =
         ContractUpdated(
-            contractRepository = contentPartnerContractRepository,
+            contractRepository = contractRepository,
             channelRepository = channelRepository
         )
 
@@ -114,29 +114,29 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getContentPartnerContract(): GetContentPartnerContract {
-        return GetContentPartnerContract(
-            contentPartnerContractRepository
+    fun getContract(): GetContract {
+        return GetContract(
+            contractRepository
         )
     }
 
     @Bean
-    fun createContentPartnerContract(contractService: ContractService): CreateContentPartnerContract {
-        return CreateContentPartnerContract(contractService)
+    fun createContract(contractService: ContractService): CreateContract {
+        return CreateContract(contractService)
     }
 
     @Bean
-    fun contentPartnerContractToResourceConverter(
-        contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder
-    ): ContentPartnerContractToResourceConverter {
-        return ContentPartnerContractToResourceConverter(
-            contentPartnerContractsLinkBuilder
+    fun contractToResourceConverter(
+        contractsLinkBuilder: ContractsLinkBuilder
+    ): ContractToResourceConverter {
+        return ContractToResourceConverter(
+            contractsLinkBuilder
         )
     }
 
     @Bean
-    fun contractContentPartnerConverter(): ContractContentPartnerConverter {
-        return ContractContentPartnerConverter(
+    fun contractConverter(): ContractConverter {
+        return ContractConverter(
             contractDatesConverter(),
             royaltySplitConverter(),
             remittanceCurrencyConverter(),
@@ -162,13 +162,13 @@ class ApplicationContext(
 
     @Bean
     fun broadcastContracts(): BroadcastContracts =
-        BroadcastContracts(eventBus, eventConverter, contentPartnerContractRepository)
+        BroadcastContracts(eventBus, eventConverter, contractRepository)
 
     @Bean
-    fun contentPartnerContractsLinkBuilder(
+    fun contractsLinkBuilder(
         uriComponentsBuilderFactory: UriComponentsBuilderFactory
-    ): ContentPartnerContractsLinkBuilder {
-        return ContentPartnerContractsLinkBuilder(uriComponentsBuilderFactory)
+    ): ContractsLinkBuilder {
+        return ContractsLinkBuilder(uriComponentsBuilderFactory)
     }
 
     @Bean
@@ -198,12 +198,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun contentPartnerUpdatesConverter(): ChannelUpdatesConverter {
+    fun channelUpdatesConverter(): ChannelUpdatesConverter {
         return ChannelUpdatesConverter(
             legalRestrictionsRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contentPartnerContractRepository
+            contractRepository
         )
     }
 
@@ -216,7 +216,7 @@ class ApplicationContext(
 
     @Bean
     fun contractSignedLinkProvider(config: GcsProperties): SignedLinkProvider {
-        return ContentPartnerContractSignedLinkProvider(
+        return ContractSignedLinkProvider(
             config
         )
     }
@@ -241,10 +241,10 @@ class ApplicationContext(
     fun costsConverter(): ContractCostsConverter = ContractCostsConverter()
 
     @Bean
-    fun getAllContentPartnerContracts(
-        contentPartnerContractRepository: ContentPartnerContractRepository
-    ): GetContentPartnerContracts =
-        GetContentPartnerContracts(
-            contentPartnerContractRepository
+    fun getAllContracts(
+        contractRepository: ContractRepository
+    ): GetContracts =
+        GetContracts(
+            contractRepository
         )
 }

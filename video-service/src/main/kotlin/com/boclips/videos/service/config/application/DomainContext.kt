@@ -2,15 +2,15 @@ package com.boclips.videos.service.config.application
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
-import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContentPartnerContractRepositoryEventDecorator
+import com.boclips.contentpartner.service.domain.service.contract.ContractRepositoryEventDecorator
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
 import com.boclips.contentpartner.service.infrastructure.contract.ContentPartnerContractDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.contract.MongoContentPartnerContractRepository
+import com.boclips.contentpartner.service.infrastructure.contract.MongoContractRepository
 import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
@@ -223,9 +223,9 @@ class DomainContext(
     @Bean
     fun contentPartnerContractRepository(
         converter: ContentPartnerContractDocumentConverter
-    ): ContentPartnerContractRepository {
-        return ContentPartnerContractRepositoryEventDecorator(
-            MongoContentPartnerContractRepository(
+    ): ContractRepository {
+        return ContractRepositoryEventDecorator(
+            MongoContractRepository(
                 mongoClient,
                 converter
             ),

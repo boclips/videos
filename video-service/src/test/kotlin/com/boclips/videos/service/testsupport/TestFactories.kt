@@ -1,11 +1,11 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.Contract
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -590,8 +590,8 @@ object ContentPartnerContractFactory {
             recoupable = true
         )
     ) =
-        ContentPartnerContract(
-            id = ContentPartnerContractId(
+        Contract(
+            id = ContractId(
                 id ?: ObjectId().toHexString()
             ),
             contentPartnerName = contentPartnerName ?: "content-partner-name",

@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.ContentPartnerC
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
-import com.boclips.contentpartner.service.application.exceptions.MissingContentPartnerContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -78,7 +78,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `cannot create an official channel without a contract`() {
-        assertThrows<MissingContentPartnerContractException> {
+        assertThrows<MissingContractException> {
             createChannel(
                 VideoServiceApiFactory.createChannelRequest(
                     name = "Tsitsipas",

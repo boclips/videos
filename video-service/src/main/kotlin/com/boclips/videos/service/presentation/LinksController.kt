@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
@@ -43,7 +43,7 @@ class LinksController(
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
     private val channelLinkBuilder: ChannelLinkBuilder,
-    private val contentPartnerContractsLinkBuilder: ContentPartnerContractsLinkBuilder,
+    private val contractsLinkBuilder: ContractsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
     private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
     private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
@@ -88,10 +88,10 @@ class LinksController(
                 channelLinkBuilder.channelLink(null),
                 channelLinkBuilder.channelsLink(),
                 channelLinkBuilder.channelsSignedUploadLink(),
-                contentPartnerContractsLinkBuilder.contentPartnerContractLink(null),
-                contentPartnerContractsLinkBuilder.contentPartnerContractsLink(),
-                contentPartnerContractsLinkBuilder.createContractLink(),
-                contentPartnerContractsLinkBuilder.createSignedUploadLink(),
+                contractsLinkBuilder.contentPartnerContractLink(null),
+                contractsLinkBuilder.contentPartnerContractsLink(),
+                contractsLinkBuilder.createContractLink(),
+                contractsLinkBuilder.createSignedUploadLink(),
                 contractLegalRestrictionsLinkBuilder.contractLegalRestrictions(),
                 marketingStatusLinkBuilder.marketingStatuses(),
                 contentCategoriesLinkBuilder.contentCategories()

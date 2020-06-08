@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestriction
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestriction
 import com.boclips.videos.api.response.contract.legalrestrictions.ContractLegalRestrictionResource
 import com.boclips.videos.api.response.contract.legalrestrictions.ContractLegalRestrictionsResource
 import com.boclips.videos.api.response.contract.legalrestrictions.LegalRestrictionsWrapperResource

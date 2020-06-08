@@ -1,15 +1,15 @@
 package com.boclips.contentpartner.service.presentation.contract
 
-import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContract
-import com.boclips.contentpartner.service.application.contentpartnercontract.GetContentPartnerContracts
-import com.boclips.contentpartner.service.application.contentpartnercontract.SignContentPartnerContractContractDocument
-import com.boclips.contentpartner.service.application.contentpartnercontract.UpdateContentPartnerContract
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerContractNotFoundException
+import com.boclips.contentpartner.service.application.contract.CreateContract
+import com.boclips.contentpartner.service.application.contract.GetContract
+import com.boclips.contentpartner.service.application.contract.GetContracts
+import com.boclips.contentpartner.service.application.contract.SignContractDocument
+import com.boclips.contentpartner.service.application.contract.UpdateContract
+import com.boclips.contentpartner.service.application.exceptions.ContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.presentation.converters.contracts.ContentPartnerContractToResourceConverter
-import com.boclips.contentpartner.service.presentation.hateoas.ContentPartnerContractsLinkBuilder
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractToResourceConverter
+import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.UpdateContractRequest
@@ -32,13 +32,13 @@ import javax.validation.constraints.NotBlank
 @RestController
 @RequestMapping("/v1/content-partner-contracts")
 class ContentPartnerContractController(
-    private val fetchOne: GetContentPartnerContract,
-    private val fetch: GetContentPartnerContracts,
-    private val create: CreateContentPartnerContract,
-    private val update: UpdateContentPartnerContract,
-    private val signContractDocument: SignContentPartnerContractContractDocument,
-    private val toResourceConverter: ContentPartnerContractToResourceConverter,
-    private val linksBuilder: ContentPartnerContractsLinkBuilder,
+    private val fetchOne: GetContract,
+    private val fetch: GetContracts,
+    private val create: CreateContract,
+    private val update: UpdateContract,
+    private val signContractDocument: SignContractDocument,
+    private val toResourceConverter: ContractToResourceConverter,
+    private val linksBuilder: ContractsLinkBuilder,
     private val contractSignedLinkProvider: SignedLinkProvider
 ) {
     @GetMapping
@@ -54,13 +54,13 @@ class ContentPartnerContractController(
     @GetMapping("/{id}")
     fun getContentPartnerContract(@PathVariable("id") @NotBlank id: String?): ResponseEntity<ContentPartnerContractResource> {
         val resource = fetchOne(
-            ContentPartnerContractId(
+            ContractId(
                 id!!
             )
         )
             ?.let { signContractDocument(it) }
             ?.let { toResourceConverter.convert(it) }
-            ?: throw ContentPartnerContractNotFoundException("No content partner contract found with id=$id")
+            ?: throw ContractNotFoundException("No content partner contract found with id=$id")
 
         return ResponseEntity(resource, HttpStatus.OK)
     }

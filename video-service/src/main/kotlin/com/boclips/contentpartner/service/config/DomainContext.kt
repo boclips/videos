@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.config
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.service.EventConverter
-import com.boclips.contentpartner.service.domain.service.contentpartnercontract.ContractService
+import com.boclips.contentpartner.service.domain.service.contract.ContractService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -16,8 +16,10 @@ class DomainContext {
 
     @Bean
     fun contractService(
-        contractRepository: ContentPartnerContractRepository
+        contractRepository: ContractRepository
     ): ContractService {
-        return ContractService(contractRepository)
+        return ContractService(
+            contractRepository
+        )
     }
 }

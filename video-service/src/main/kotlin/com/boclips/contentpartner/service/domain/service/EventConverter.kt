@@ -7,11 +7,11 @@ import com.boclips.contentpartner.service.domain.model.channel.MarketingInformat
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.Contract
+import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contentpartner.ChannelMarketingDetails
@@ -108,7 +108,7 @@ class EventConverter {
             .build()
     }
 
-    fun toContractPayload(contract: ContentPartnerContract): EventBusContract =
+    fun toContractPayload(contract: Contract): EventBusContract =
         EventBusContract.builder()
             .contractId(ContractId.builder().value(contract.id.value).build())
             .name(contract.contentPartnerName)

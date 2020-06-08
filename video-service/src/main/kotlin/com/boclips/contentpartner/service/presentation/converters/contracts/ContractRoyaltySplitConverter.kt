@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters.contracts
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
 
 class ContractRoyaltySplitConverter {

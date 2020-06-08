@@ -11,10 +11,10 @@ import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.SubjectFactory

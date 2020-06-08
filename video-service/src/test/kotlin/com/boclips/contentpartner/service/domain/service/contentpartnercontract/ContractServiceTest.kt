@@ -1,10 +1,11 @@
 package com.boclips.contentpartner.service.domain.service.contentpartnercontract
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.CreateContractResult
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.SingleContractUpdate
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.UpdateContractResult
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contract.CreateContractResult
+import com.boclips.contentpartner.service.domain.model.contract.SingleContractUpdate
+import com.boclips.contentpartner.service.domain.model.contract.UpdateContractResult
+import com.boclips.contentpartner.service.domain.service.contract.ContractService
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -46,8 +47,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
             val result = contractService.update(
                 SingleContractUpdate(
                     contractId = contract.id, commands = listOf(
-                        ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
-                            contractContentPartnerId = contract.id,
+                        ContractUpdateCommand.ReplaceContentPartnerName(
+                            contractId = contract.id,
                             contentPartnerName = "new"
                         )
                     )
@@ -64,8 +65,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
             val result = contractService.update(
                 SingleContractUpdate(
                     contractId = contract.id, commands = listOf(
-                        ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
-                            contractContentPartnerId = contract.id,
+                        ContractUpdateCommand.ReplaceContentPartnerName(
+                            contractId = contract.id,
                             contentPartnerName = "new"
                         )
                     )
@@ -83,8 +84,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
             val result = contractService.update(
                 SingleContractUpdate(
                     contractId = contract.id, commands = listOf(
-                        ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
-                            contractContentPartnerId = contract.id,
+                        ContractUpdateCommand.ReplaceContentPartnerName(
+                            contractId = contract.id,
                             contentPartnerName = "i exist"
                         )
                     )
@@ -96,13 +97,13 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns error when updating a non-existent contract`() {
-            val missingId = ContentPartnerContractId("missing")
+            val missingId = ContractId("missing")
 
             val result = contractService.update(
                 SingleContractUpdate(
                     contractId = missingId, commands = listOf(
-                        ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
-                            contractContentPartnerId = missingId,
+                        ContractUpdateCommand.ReplaceContentPartnerName(
+                            contractId = missingId,
                             contentPartnerName = "i exist"
                         )
                     )

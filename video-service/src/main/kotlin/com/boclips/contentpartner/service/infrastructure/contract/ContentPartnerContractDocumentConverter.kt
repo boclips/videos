@@ -1,11 +1,11 @@
 package com.boclips.contentpartner.service.infrastructure.contract
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRestrictions
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.Contract
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
+import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
+import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import mu.KLogging
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException
 import java.util.Currency
 
 class ContentPartnerContractDocumentConverter() {
-    fun toDocument(contract: ContentPartnerContract) =
+    fun toDocument(contract: Contract) =
         ContentPartnerContractDocument(
             id = ObjectId(contract.id.value),
             contentPartnerName = contract.contentPartnerName,
@@ -53,8 +53,8 @@ class ContentPartnerContractDocumentConverter() {
         )
 
     fun toContract(document: ContentPartnerContractDocument) =
-        ContentPartnerContract(
-            id = ContentPartnerContractId(
+        Contract(
+            id = ContractId(
                 document.id.toHexString()
             ),
             contentPartnerName = document.contentPartnerName,

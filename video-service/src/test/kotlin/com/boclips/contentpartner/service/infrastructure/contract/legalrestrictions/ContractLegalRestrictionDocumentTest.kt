@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestriction
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestriction
 import org.assertj.core.api.Assertions
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test

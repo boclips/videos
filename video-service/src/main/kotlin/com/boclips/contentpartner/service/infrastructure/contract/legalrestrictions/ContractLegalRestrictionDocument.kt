@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestriction
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestriction
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 

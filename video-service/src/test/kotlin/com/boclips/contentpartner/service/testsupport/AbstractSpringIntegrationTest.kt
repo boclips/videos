@@ -3,11 +3,11 @@ package com.boclips.contentpartner.service.testsupport
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
-import com.boclips.contentpartner.service.application.contentpartnercontract.CreateContentPartnerContract
+import com.boclips.contentpartner.service.application.contract.CreateContract
 import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -133,7 +133,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createLegalRestrictions: CreateLegalRestrictions
 
     @Autowired
-    lateinit var createContentPartnerContract: CreateContentPartnerContract
+    lateinit var createContract: CreateContract
 
     @Autowired
     lateinit var cacheManager: CacheManager
@@ -335,7 +335,7 @@ abstract class AbstractSpringIntegrationTest {
         remittanceCurrency: String? = "GBP",
         restrictions: ContentPartnerContractRestrictionsRequest? = null,
         costs: ContentPartnerContractCostsRequest? = null
-    ): ContentPartnerContract = createContentPartnerContract(
+    ): Contract = createContract(
         CreateContractRequest(
             contentPartnerName = name,
             contractDocument = contractDocument?.let { Specified(value = it) },

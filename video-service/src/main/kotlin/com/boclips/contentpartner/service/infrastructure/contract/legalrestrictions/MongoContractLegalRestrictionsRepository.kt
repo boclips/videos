@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions
 
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestriction
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.legalrestrictions.ContractLegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestriction
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection

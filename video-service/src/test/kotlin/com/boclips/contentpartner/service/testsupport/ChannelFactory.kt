@@ -12,7 +12,7 @@ import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContract
+import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
@@ -53,7 +53,7 @@ object ChannelFactory {
         deliveryFrequency: Period? = null,
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
-        contract: ContentPartnerContract? = null
+        contract: Contract? = null
     ): Channel {
         return Channel(
             id = id,

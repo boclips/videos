@@ -1,8 +1,8 @@
 package com.boclips.contentpartner.service.application.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractRepository
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractUpdateCommand
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
+import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class ContractUpdatedTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var contractRepository: ContentPartnerContractRepository
+    lateinit var contractRepository: ContractRepository
 
     @Autowired
     lateinit var channelRepository: ChannelRepository
@@ -23,8 +23,8 @@ class ContractUpdatedTest : AbstractSpringIntegrationTest() {
 
         contractRepository.update(
             listOf(
-                ContentPartnerContractUpdateCommand.ReplaceContentPartnerName(
-                    contractContentPartnerId = newContract.id,
+                ContractUpdateCommand.ReplaceContentPartnerName(
+                    contractId = newContract.id,
                     contentPartnerName = newContract.contentPartnerName
                 )
             )

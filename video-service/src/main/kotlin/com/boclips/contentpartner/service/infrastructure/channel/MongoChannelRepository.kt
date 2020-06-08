@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.Credit
-import com.boclips.contentpartner.service.domain.model.contentpartnercontract.ContentPartnerContractId
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.DistributionMethodDocumentConverter
@@ -82,7 +82,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
         return findByQuery(toBsonIdFilter(channelId))
     }
 
-    override fun findByContractId(contractId: ContentPartnerContractId): List<Channel> {
+    override fun findByContractId(contractId: ContractId): List<Channel> {
         return getChannelCollection()
             .find(
                 (ChannelDocument::contract / ContentPartnerContractDocument::id) eq
