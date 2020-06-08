@@ -12,13 +12,13 @@ import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videos.api.common.Specified
-import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.ContractCostsRequest
+import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
+import com.boclips.videos.api.response.contract.ContractDatesResource
+import com.boclips.videos.api.response.contract.ContractRoyaltySplitResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.service.domain.model.AccessRules
@@ -646,7 +646,7 @@ object ContentPartnerContractFactory {
         contentPartnerName = contentPartnerName ?: "content-partner-name",
         contractDocument = contractDocument?.let { Specified(value = it) },
         contractDates = contractDates.let {
-            ContentPartnerContractDatesResource(
+            ContractDatesResource(
                 start = it?.start.toString(),
                 end = it?.end.toString()
             )
@@ -656,7 +656,7 @@ object ContentPartnerContractFactory {
         yearsForMaximumLicense = yearsForMaximumLicense,
         daysForSellOffPeriod = daysForSellOffPeriod,
         royaltySplit = royaltySplit.let {
-            ContentPartnerContractRoyaltySplitResource(
+            ContractRoyaltySplitResource(
                 download = it?.download,
                 streaming = it?.streaming
             )
@@ -664,7 +664,7 @@ object ContentPartnerContractFactory {
         minimumPriceDescription = minimumPriceDescription,
         remittanceCurrency = remittanceCurrency.toString(),
         restrictions = restrictions.let {
-            ContentPartnerContractRestrictionsRequest(
+            ContractRestrictionsRequest(
                 clientFacing = it.clientFacing,
                 territory = it.territory,
                 licensing = it.licensing,
@@ -676,7 +676,7 @@ object ContentPartnerContractFactory {
             )
         },
         costs = costs.let {
-            ContentPartnerContractCostsRequest(
+            ContractCostsRequest(
                 minimumGuarantee = it.minimumGuarantee,
                 upfrontLicense = it.upfrontLicense,
                 technicalFee = it.technicalFee,

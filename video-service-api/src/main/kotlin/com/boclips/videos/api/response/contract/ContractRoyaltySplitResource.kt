@@ -1,6 +1,6 @@
 package com.boclips.videos.api.response.contract
 
-data class ContentPartnerContractRoyaltySplitResource(
+data class ContractRoyaltySplitResource(
     val download: Float?,
     val streaming: Float?
 )

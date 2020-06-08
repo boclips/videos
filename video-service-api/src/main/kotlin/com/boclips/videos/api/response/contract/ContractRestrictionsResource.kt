@@ -1,6 +1,6 @@
 package com.boclips.videos.api.response.contract
 
-data class ContentPartnerContractRestrictionsResource(
+data class ContractRestrictionsResource(
     val clientFacing: List<String>?,
     val territory: String?,
     val licensing: String?,

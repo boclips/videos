@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
 import java.math.BigDecimal
 
-data class ContentPartnerContractCostsRequest(
+data class ContractCostsRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val minimumGuarantee: List<BigDecimal> = emptyList(),
     val upfrontLicense: BigDecimal?,

@@ -12,11 +12,11 @@ import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCo
 import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand.ReplaceRoyaltySplit
 import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand.ReplaceYearsForMaximumLicense
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
+import com.boclips.videos.api.request.contract.ContractCostsRequest
 import com.boclips.videos.api.request.contract.UpdateContractRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
-import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
+import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
+import com.boclips.videos.api.response.contract.ContractDatesResource
+import com.boclips.videos.api.response.contract.ContractRoyaltySplitResource
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -57,7 +57,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
         val start = LocalDate.of(1990, 11, 18)
         val end = LocalDate.of(1990, 12, 18)
 
-        val contractDates = ContentPartnerContractDatesResource(
+        val contractDates = ContractDatesResource(
             start = start.toString(),
             end = end.toString()
         )
@@ -134,7 +134,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
             id = contract.id,
             updateContract = UpdateContractRequest(
                 contentPartnerName = "updated name",
-                royaltySplit = ContentPartnerContractRoyaltySplitResource(
+                royaltySplit = ContractRoyaltySplitResource(
                     download = download,
                     streaming = streaming
                 )
@@ -184,7 +184,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `creates command for ReplaceRestrictions`() {
-        val restrictions = ContentPartnerContractRestrictionsRequest(
+        val restrictions = ContractRestrictionsRequest(
             clientFacing = listOf("client facing restriction"),
             territory = "territory",
             licensing = "licensing",
@@ -218,7 +218,7 @@ class ContractContentPartnerUpdateCreatorTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `creates command for ReplaceCost`() {
-        val costs = ContentPartnerContractCostsRequest(
+        val costs = ContractCostsRequest(
             minimumGuarantee = listOf(BigDecimal.ONE),
             upfrontLicense = BigDecimal.TEN,
             technicalFee = BigDecimal.TEN,

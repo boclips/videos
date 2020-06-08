@@ -2,7 +2,7 @@ package com.boclips.videos.api.response.contract
 
 import java.math.BigDecimal
 
-data class ContentPartnerContractCostsResource(
+data class ContractCostsResource(
     val minimumGuarantee: List<BigDecimal> = emptyList(),
     val upfrontLicense: BigDecimal?,
     val technicalFee: BigDecimal?,

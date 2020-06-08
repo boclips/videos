@@ -1,10 +1,10 @@
 package com.boclips.contentpartner.service.presentation.converters.contracts
 
 import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
-import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
 
 class ContractRestrictionsConverter {
-    fun fromResource(restrictions: ContentPartnerContractRestrictionsRequest): ContractRestrictions {
+    fun fromResource(restrictions: ContractRestrictionsRequest): ContractRestrictions {
         return restrictions.let {
             ContractRestrictions(
                 clientFacing = it.clientFacing,

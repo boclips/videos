@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.presentation.hateoas
 
-import com.boclips.contentpartner.service.presentation.contract.ContentPartnerContractController
+import com.boclips.contentpartner.service.presentation.contract.ContractController
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
@@ -16,7 +16,7 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
 
     fun self(id: String): HateoasLink {
         val withSelfRel = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ContentPartnerContractController::class.java).getContentPartnerContract(
+            WebMvcLinkBuilder.methodOn(ContractController::class.java).getContract(
                 id
             )
         ).withSelfRel()
@@ -27,7 +27,7 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
     fun contentPartnerContractLink(id: String?): Link? {
         return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS) {
             WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ContentPartnerContractController::class.java).getContentPartnerContract(
+                WebMvcLinkBuilder.methodOn(ContractController::class.java).getContract(
                     id
                 )
             ).withRel(Rels.CONTENT_PARTNER_CONTRACT)
@@ -37,7 +37,7 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
     fun contentPartnerContractsLink(): Link? {
         return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNER_CONTRACTS) {
             WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ContentPartnerContractController::class.java).getAll(
+                WebMvcLinkBuilder.methodOn(ContractController::class.java).getAll(
                     null, null
                 )
             ).withRel(Rels.CONTENT_PARTNER_CONTRACTS)

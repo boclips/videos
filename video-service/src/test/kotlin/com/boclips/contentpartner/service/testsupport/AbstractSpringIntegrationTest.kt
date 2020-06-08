@@ -19,14 +19,14 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractCostsRequest
+import com.boclips.videos.api.request.contract.ContractCostsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
-import com.boclips.videos.api.request.contract.ContentPartnerContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractDatesResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractRoyaltySplitResource
+import com.boclips.videos.api.response.contract.ContractDatesResource
+import com.boclips.videos.api.response.contract.ContractRoyaltySplitResource
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.video.CreateVideo
@@ -333,13 +333,13 @@ abstract class AbstractSpringIntegrationTest {
         royaltySplitStream: Float? = 0.9F,
         minimumPriceDescription: String? = "Price",
         remittanceCurrency: String? = "GBP",
-        restrictions: ContentPartnerContractRestrictionsRequest? = null,
-        costs: ContentPartnerContractCostsRequest? = null
+        restrictions: ContractRestrictionsRequest? = null,
+        costs: ContractCostsRequest? = null
     ): Contract = createContract(
         CreateContractRequest(
             contentPartnerName = name,
             contractDocument = contractDocument?.let { Specified(value = it) },
-            contractDates = ContentPartnerContractDatesResource(
+            contractDates = ContractDatesResource(
                 start = contractDateStart,
                 end = contractDateEnd
             ),
@@ -347,7 +347,7 @@ abstract class AbstractSpringIntegrationTest {
             daysBeforeTerminationWarning = daysBeforeTerminationWarning,
             yearsForMaximumLicense = yearsForMaximumLicense,
             daysForSellOffPeriod = daysForSellOffPeriod,
-            royaltySplit = ContentPartnerContractRoyaltySplitResource(
+            royaltySplit = ContractRoyaltySplitResource(
                 download = royaltySplitDownload,
                 streaming = royaltySplitStream
             ),

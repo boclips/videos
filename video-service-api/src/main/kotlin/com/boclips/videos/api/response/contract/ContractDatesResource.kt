@@ -1,6 +1,6 @@
 package com.boclips.videos.api.response.contract
 
-data class ContentPartnerContractDatesResource(
+data class ContractDatesResource(
     val start: String?,
     val end: String?
 )

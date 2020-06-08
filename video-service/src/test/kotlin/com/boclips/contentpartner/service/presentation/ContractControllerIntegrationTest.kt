@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.net.URI
 import java.net.URL
 
-class
-ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates contract with correct values and fetches it`() {

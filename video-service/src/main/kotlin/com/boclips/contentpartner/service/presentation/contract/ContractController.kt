@@ -13,8 +13,8 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuil
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.UpdateContractRequest
-import com.boclips.videos.api.response.contract.ContentPartnerContractResource
-import com.boclips.videos.api.response.contract.ContentPartnerContractsResource
+import com.boclips.videos.api.response.contract.ContractResource
+import com.boclips.videos.api.response.contract.ContractsResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/v1/content-partner-contracts")
-class ContentPartnerContractController(
+class ContractController(
     private val fetchOne: GetContract,
     private val fetch: GetContracts,
     private val create: CreateContract,
@@ -45,14 +45,14 @@ class ContentPartnerContractController(
     fun getAll(
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?
-    ): ResponseEntity<ContentPartnerContractsResource> {
+    ): ResponseEntity<ContractsResource> {
         val resources = fetch(page = page, size = size).let { toResourceConverter.convert(it) }
 
         return ResponseEntity(resources, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
-    fun getContentPartnerContract(@PathVariable("id") @NotBlank id: String?): ResponseEntity<ContentPartnerContractResource> {
+    fun getContract(@PathVariable("id") @NotBlank id: String?): ResponseEntity<ContractResource> {
         val resource = fetchOne(
             ContractId(
                 id!!
@@ -66,7 +66,7 @@ class ContentPartnerContractController(
     }
 
     @PostMapping
-    fun postContentPartnerContract(@Valid @RequestBody request: CreateContractRequest): ResponseEntity<Void> {
+    fun postContract(@Valid @RequestBody request: CreateContractRequest): ResponseEntity<Void> {
         try {
             val contractId = create(request)
 
@@ -87,10 +87,10 @@ class ContentPartnerContractController(
     @PatchMapping("/{id}")
     fun patchContract(
         @PathVariable("id") contractId: String,
-        @Valid @RequestBody updateContentPartnerContract: UpdateContractRequest
+        @Valid @RequestBody updateContract: UpdateContractRequest
     ): ResponseEntity<Void> {
         update(
-            contractId, updateContentPartnerContract
+            contractId, updateContract
         )
 
         return ResponseEntity(HttpStatus.NO_CONTENT)
