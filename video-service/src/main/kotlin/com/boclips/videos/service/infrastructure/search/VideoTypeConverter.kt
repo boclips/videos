@@ -12,4 +12,12 @@ object VideoTypeConverter {
             ContentType.STOCK -> VideoType.STOCK
         }
     }
+
+    fun convert(videoType: VideoType): ContentType {
+        return when (videoType) {
+            VideoType.INSTRUCTIONAL -> ContentType.INSTRUCTIONAL_CLIPS
+            VideoType.NEWS -> ContentType.NEWS
+            VideoType.STOCK -> ContentType.STOCK
+        }
+    }
 }

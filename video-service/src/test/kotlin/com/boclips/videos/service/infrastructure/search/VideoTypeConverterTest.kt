@@ -13,4 +13,11 @@ class VideoTypeConverterTest {
         assertThat(VideoTypeConverter.convert(ContentType.NEWS)).isEqualTo(VideoType.NEWS)
         assertThat(VideoTypeConverter.convert(ContentType.STOCK)).isEqualTo(VideoType.STOCK)
     }
+
+    @Test
+    fun `convert maps search service type to legacy type`() {
+        assertThat(VideoTypeConverter.convert(VideoType.INSTRUCTIONAL)).isEqualTo(ContentType.INSTRUCTIONAL_CLIPS)
+        assertThat(VideoTypeConverter.convert(VideoType.NEWS)).isEqualTo(ContentType.NEWS)
+        assertThat(VideoTypeConverter.convert(VideoType.STOCK)).isEqualTo(ContentType.STOCK)
+    }
 }

@@ -2,6 +2,7 @@ package com.boclips.videos.service.application
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -9,6 +10,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.infrastructure.search.VideoTypeConverter
 import mu.KLogging
 
 class ChannelUpdated(private val videoRepository: VideoRepository) {
@@ -53,7 +55,7 @@ class ChannelUpdated(private val videoRepository: VideoRepository) {
                 val updateContentTypes = contentPartner.details?.contentTypes?.let {
                     VideoUpdateCommand.ReplaceContentTypes(
                         videoId = video.videoId,
-                        types = it.map { contentType -> ContentType.valueOf(contentType) }
+                        types = it.map { contentType -> VideoTypeConverter.convert(VideoType.valueOf(contentType)) }
                     )
                 }
 

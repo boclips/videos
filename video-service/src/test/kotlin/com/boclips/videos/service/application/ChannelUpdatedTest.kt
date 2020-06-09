@@ -37,7 +37,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
-                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL_CLIPS")).build())
+                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL")).build())
                         .build()
                 )
                 .build()
