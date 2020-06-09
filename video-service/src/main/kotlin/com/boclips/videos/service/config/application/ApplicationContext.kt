@@ -9,7 +9,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.videos.service.application.ContentPartnerUpdated
+import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.BroadcastCollections
@@ -419,8 +419,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun contentPartnerUpdated(): ContentPartnerUpdated {
-        return ContentPartnerUpdated(videoRepository)
+    fun contentPartnerUpdated(): ChannelUpdated {
+        return ChannelUpdated(videoRepository)
     }
 
     @Bean

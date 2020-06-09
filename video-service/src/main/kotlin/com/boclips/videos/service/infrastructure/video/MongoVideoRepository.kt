@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -273,6 +274,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceSubjects -> set(
                 VideoDocument::subjects,
                 updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)
+            )
+            is VideoUpdateCommand.ReplaceContentTypes -> set(
+                VideoDocument::contentTypes,
+                updateCommand.types.map{it.name}
             )
             is VideoUpdateCommand.RemoveSubject -> pullByFilter(
                 VideoDocument::subjects,

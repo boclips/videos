@@ -1,12 +1,10 @@
 package com.boclips.videos.service.application
 
 import com.boclips.eventbus.domain.AgeRange
-import com.boclips.eventbus.domain.contentpartner.Channel
-import com.boclips.eventbus.domain.contentpartner.ChannelId
-import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails
-import com.boclips.eventbus.domain.contentpartner.ChannelPedagogyDetails
+import com.boclips.eventbus.domain.contentpartner.*
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -19,13 +17,14 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
     lateinit var videoRepository: VideoRepository
 
     @Test
-    fun `updates name, legal restrictions and age ranges`() {
+    fun `updates name, legal restrictions, content types, and age ranges`() {
         val contentPartner = TestFactories.createContentPartner(name = "test-999")
         val video = videoRepository.create(
             TestFactories.createVideo(
                 contentPartner = contentPartner,
                 legalRestrictions = "some restrictions",
-                ageRange = UnknownAgeRange
+                ageRange = UnknownAgeRange,
+                types = listOf(ContentType.STOCK)
             )
         )
 
@@ -38,6 +37,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
+                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL_CLIPS")).build())
                         .build()
                 )
                 .build()
@@ -48,6 +48,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.contentPartner.name).isEqualTo("test-888")
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
+        assertThat(updatedVideo.types).containsExactly(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
     }
 
     @Test

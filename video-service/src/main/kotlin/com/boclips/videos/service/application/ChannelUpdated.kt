@@ -3,6 +3,7 @@ package com.boclips.videos.service.application
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
@@ -10,7 +11,7 @@ import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartn
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
-class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
+class ChannelUpdated(private val videoRepository: VideoRepository) {
     companion object : KLogging()
 
     @BoclipsEventListener
@@ -22,6 +23,13 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
 
         videoRepository.streamUpdate(VideoFilter.ContentPartnerIdIs(contentPartnerId = contentPartnerId)) { videos ->
             videos.flatMap { video ->
+                val updateContentPartner = VideoUpdateCommand.ReplaceContentPartner(
+                    videoId = video.videoId,
+                    contentPartner = ContentPartner(
+                        contentPartnerId = contentPartnerId,
+                        name = contentPartner.name
+                    )
+                )
                 val updateAgeRanges = video.ageRange.curatedManually.let { isCuratedManually ->
                     if (isCuratedManually) {
                         return@let null
@@ -36,22 +44,24 @@ class ContentPartnerUpdated(private val videoRepository: VideoRepository) {
                         )
                     )
                 }
+                val updateLegalRestrictions = contentPartner.legalRestrictions?.let {
+                    VideoUpdateCommand.ReplaceLegalRestrictions(
+                        videoId = video.videoId,
+                        text = contentPartner.legalRestrictions
+                    )
+                }
+                val updateContentTypes = contentPartner.details?.contentTypes?.let {
+                    VideoUpdateCommand.ReplaceContentTypes(
+                        videoId = video.videoId,
+                        types = it.map { contentType -> ContentType.valueOf(contentType) }
+                    )
+                }
 
                 listOfNotNull(
-                    VideoUpdateCommand.ReplaceContentPartner(
-                        videoId = video.videoId,
-                        contentPartner = ContentPartner(
-                            contentPartnerId = contentPartnerId,
-                            name = contentPartner.name
-                        )
-                    ),
+                    updateContentPartner,
                     updateAgeRanges,
-                    contentPartner. legalRestrictions?.let {
-                        VideoUpdateCommand.ReplaceLegalRestrictions(
-                            videoId = video.videoId,
-                            text = contentPartner.legalRestrictions
-                        )
-                    }
+                    updateLegalRestrictions,
+                    updateContentTypes
                 )
             }
         }

@@ -57,6 +57,8 @@ data class VideoResource(
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
+    val types: List<VideoTypeResource>? = emptyList(),
+    @get:JsonView(BoclipsInternalProjection::class)
     val captionStatus: CaptionStatus? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,

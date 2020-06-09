@@ -62,6 +62,7 @@ class VideoToResourceConverter(
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             badges = convertBadges(video),
             type = VideoTypeResource(id = video.type.id, name = video.type.title),
+            types = video.types.map {  VideoTypeResource(id = video.type.id, name = video.type.title)},
             legalRestrictions = video.legalRestrictions,
             hasTranscripts = video.transcript != null,
             ageRange = convertAgeRange(video),
