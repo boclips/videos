@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -29,6 +30,17 @@ class VideoRepositoryEventDecoratorTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
 
         assertThat(event.video.subjects.first().name).isEqualTo("Maths")
+    }
+
+    @Test
+    fun `publishes a VideoUpdated event when types updated`() {
+        val videoId = saveVideo()
+
+        videoRepository.update(VideoUpdateCommand.ReplaceContentTypes(videoId, listOf(ContentType.INSTRUCTIONAL_CLIPS)))
+
+        val event = fakeEventBus.getEventOfType(VideoUpdated::class.java)
+
+        assertThat(event.video.types.first().name).isEqualTo("INSTRUCTIONAL")
     }
 
     @Test

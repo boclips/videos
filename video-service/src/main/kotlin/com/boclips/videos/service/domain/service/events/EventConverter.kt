@@ -40,6 +40,7 @@ class EventConverter {
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
             .type(toVideoType(video.type))
+            .types(toVideoTypes(video.types))
             .ingestedAt(video.ingestedAt)
             .originalDimensions(originalDimensions)
             .assets(assets)
@@ -84,6 +85,10 @@ class EventConverter {
             ContentType.NEWS -> VideoType.NEWS
             ContentType.STOCK -> VideoType.STOCK
         }
+    }
+
+    private fun toVideoTypes(contentTypes: List<ContentType>): List<VideoType> {
+        return contentTypes.map { toVideoType(it) }
     }
 
     private fun toAgeRangePayload(ageRange: AgeRange): com.boclips.eventbus.domain.AgeRange {
