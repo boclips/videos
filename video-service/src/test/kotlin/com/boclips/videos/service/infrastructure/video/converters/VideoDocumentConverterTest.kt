@@ -39,7 +39,6 @@ class VideoDocumentConverterTest {
             ),
             playback = TestFactories.createKalturaPlayback(),
             videoReference = "video-123",
-            type = ContentType.NEWS,
             types = listOf(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS),
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),

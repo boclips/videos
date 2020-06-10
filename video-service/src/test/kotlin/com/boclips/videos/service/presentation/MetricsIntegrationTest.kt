@@ -42,7 +42,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }

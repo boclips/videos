@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.video.Video
 class ContentEnrichers {
     companion object {
         fun isNews(video: Video): Boolean {
-            return video.type == ContentType.NEWS
+            return video.types.contains(ContentType.NEWS)
         }
     }
 }

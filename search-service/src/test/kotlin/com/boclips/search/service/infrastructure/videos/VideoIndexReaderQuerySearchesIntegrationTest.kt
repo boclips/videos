@@ -432,15 +432,15 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `instructional videos prioritised over news or stock`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "London Underground", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", title = "London Underground", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "1", title = "London Underground", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "London Underground", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "London Underground",
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
                 ),
-                SearchableVideoMetadataFactory.create(id = "4", title = "London Underground", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id = "5", title = "London Underground", type = VideoType.STOCK)
+                SearchableVideoMetadataFactory.create(id = "4", title = "London Underground", types = listOf(VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "5", title = "London Underground", types = listOf(VideoType.STOCK))
             )
         )
 

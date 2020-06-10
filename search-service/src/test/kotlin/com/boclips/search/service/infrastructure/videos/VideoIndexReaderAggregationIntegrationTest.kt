@@ -280,17 +280,17 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             title = "Apple banana candy",
                             ageRangeMin = 3,
                             ageRangeMax = 9,
-                            type = VideoType.INSTRUCTIONAL
+                            types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
-                            id = "4", title = "Banana apple", ageRangeMin = 3, ageRangeMax = 5, type = VideoType.STOCK
+                            id = "4", title = "Banana apple", ageRangeMin = 3, ageRangeMax = 5, types = listOf(VideoType.STOCK)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2",
                             title = "Apple candy",
                             ageRangeMin = 11,
                             ageRangeMax = 14,
-                            type = VideoType.INSTRUCTIONAL
+                            types = listOf(VideoType.INSTRUCTIONAL)
                         )
                     )
                 )
@@ -324,21 +324,21 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             title = "Apple banana candy",
                             ageRangeMin = 3,
                             ageRangeMax = 9,
-                            type = VideoType.INSTRUCTIONAL
+                            types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "4",
                             title = "Banana apple",
                             ageRangeMin = 9,
                             ageRangeMax = 11,
-                            type = VideoType.INSTRUCTIONAL
+                            types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2",
                             title = "Apple candy",
                             ageRangeMin = 11,
                             ageRangeMax = 14,
-                            type = VideoType.INSTRUCTIONAL
+                            types = listOf(VideoType.INSTRUCTIONAL)
                         )
                     )
                 )

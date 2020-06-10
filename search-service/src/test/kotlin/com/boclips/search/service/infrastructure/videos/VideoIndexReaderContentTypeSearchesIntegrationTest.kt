@@ -24,11 +24,11 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
     fun `returns documents with specified content types`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id = "4", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "5", type = VideoType.STOCK)
+                SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL)),
+                SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "5", types = listOf(VideoType.STOCK))
             )
         )
 
@@ -52,8 +52,8 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1"),
                 SearchableVideoMetadataFactory.create(id = "2"),
-                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id = "4", type = VideoType.NEWS),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL)),
+                SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "5")
             )
         )
@@ -73,11 +73,11 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
     fun `excluded types take precedence`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL),
-                SearchableVideoMetadataFactory.create(id = "4", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "5", type = VideoType.STOCK)
+                SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL)),
+                SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "5", types = listOf(VideoType.STOCK))
             )
         )
 
@@ -102,9 +102,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
     fun `excluded types can be combined with phrase queries`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "Wild Rhino", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "3", title = "Cyborg Rhino", type = VideoType.STOCK)
+                SearchableVideoMetadataFactory.create(id = "1", title = "Wild Rhino", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "3", title = "Cyborg Rhino", types = listOf(VideoType.STOCK))
             )
         )
 

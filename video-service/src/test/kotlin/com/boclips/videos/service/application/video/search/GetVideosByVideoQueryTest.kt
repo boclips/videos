@@ -104,8 +104,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `shows only news when category is news`() {
-        val newsVideoId = saveVideo(title = "banana 1", type = ContentType.NEWS)
-        saveVideo(title = "banana 2", type = ContentType.INSTRUCTIONAL_CLIPS)
+        val newsVideoId = saveVideo(title = "banana 1", types = listOf(ContentType.NEWS))
+        saveVideo(title = "banana 2", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
         val videos = searchVideo.byQuery(
             query = "banana",

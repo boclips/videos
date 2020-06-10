@@ -42,8 +42,8 @@ class VideoAnalysisService(
 
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
-        if (video.type != ContentType.INSTRUCTIONAL_CLIPS) {
-            logger.info { "Analysis of video $id NOT requested because its legacy type is ${video.type.name}" }
+        if (!video.types.contains(ContentType.INSTRUCTIONAL_CLIPS)) {
+            logger.info { "Analysis of video $id NOT requested because its legacy type is ${video.types}" }
             return
         }
 

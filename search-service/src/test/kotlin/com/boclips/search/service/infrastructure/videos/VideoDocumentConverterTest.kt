@@ -67,7 +67,6 @@ class VideoDocumentConverterTest {
                 ageRangeMin = 3,
                 ageRangeMax = 11,
                 ageRange = (3..11).toList(),
-                type = "NEWS",
                 subjectIds = setOf("boring-subject-id"),
                 subjectNames = setOf("boring-subject-name"),
                 promoted = null,
@@ -127,7 +126,6 @@ class VideoDocumentConverterTest {
             transcript = "transcript",
             ageRangeMin = 10,
             ageRangeMax = 16,
-            type = VideoType.INSTRUCTIONAL,
             subjects = SubjectsMetadata(
                 items = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
                 setManually = false
@@ -161,7 +159,6 @@ class VideoDocumentConverterTest {
                 ageRangeMin = 10,
                 ageRangeMax = 16,
                 ageRange = (10..16).toList(),
-                type = "INSTRUCTIONAL",
                 types = listOf("INSTRUCTIONAL"),
                 subjectIds = setOf("subjectId"),
                 subjectNames = setOf("subjectName"),
@@ -193,7 +190,6 @@ class VideoDocumentConverterTest {
             transcript = "transcript",
             ageRangeMin = null,
             ageRangeMax = null,
-            type = VideoType.INSTRUCTIONAL,
             subjects = SubjectsMetadata(
                 items = setOf(SubjectMetadata(id = "subjectId", name = "subjectName")),
                 setManually = false

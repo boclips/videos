@@ -23,7 +23,7 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.CONTENT_PROVIDER to keywordField,
                 VideoDocument.RELEASE_DATE to IndexConfiguration.Fields.date,
                 VideoDocument.TRANSCRIPT to IndexConfiguration.Fields.freeText,
-                VideoDocument.TYPE to keywordField,
+                VideoDocument.TYPES to IndexConfiguration.Fields.simpleTextArray,
                 VideoDocument.KEYWORDS to englishTextField,
                 VideoDocument.PROMOTED to mapOf(
                     "type" to "boolean"

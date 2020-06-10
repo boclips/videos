@@ -8,8 +8,8 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 import org.springframework.scheduling.annotation.Async
@@ -30,8 +30,8 @@ class SubjectClassificationService(
             return
         }
 
-        if (video.type == ContentType.STOCK || video.type == ContentType.NEWS) {
-            logger.info { "Ignoring subject classification request of video ${video.videoId.value} because it has type ${video.type}" }
+        if (video.types.any { it == ContentType.STOCK || it == ContentType.NEWS }) {
+            logger.info { "Ignoring subject classification request of video ${video.videoId.value} because it has type ${video.types}" }
             return
         }
 
@@ -49,7 +49,7 @@ class SubjectClassificationService(
     fun classifyVideosByContentPartner(contentPartner: String?): CompletableFuture<Unit> {
         logger.info { "Requesting subject classification for all instructional videos: $contentPartner" }
         val future = CompletableFuture<Unit>()
-        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.ContentTypeIs(
+        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.HasContentType(
             ContentType.INSTRUCTIONAL_CLIPS
         )
         videoRepository.streamAll(filter) { videos ->

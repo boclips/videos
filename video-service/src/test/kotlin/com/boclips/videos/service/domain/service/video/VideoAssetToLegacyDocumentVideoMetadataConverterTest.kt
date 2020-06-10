@@ -19,7 +19,7 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
             contentPartnerName = "Reuters",
             contentPartnerVideoId = "r001",
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10)),
-            type = ContentType.NEWS,
+            types = listOf(ContentType.NEWS),
             keywords = listOf("keyword"),
             releasedOn = LocalDate.parse("2019-01-17")
         )

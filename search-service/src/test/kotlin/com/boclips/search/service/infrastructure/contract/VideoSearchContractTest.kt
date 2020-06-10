@@ -256,12 +256,12 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", types = listOf(VideoType.STOCK)),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "Johnson Dancing",
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
                 )
             )
         )
@@ -286,12 +286,12 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", types = listOf(VideoType.STOCK)),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "Johnson Dancing",
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
                 )
             )
         )
@@ -354,9 +354,9 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", type = VideoType.STOCK),
-                SearchableVideoMetadataFactory.create(id = "3", type = VideoType.INSTRUCTIONAL)
+                SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL))
             )
         )
 
@@ -381,12 +381,12 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
     ) {
         adminService.safeRebuildIndex(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", type = VideoType.NEWS),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", type = VideoType.STOCK),
+                SearchableVideoMetadataFactory.create(id = "1", title = "May Dancing", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Trump Dancing", types = listOf(VideoType.STOCK)),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "Johnson Dancing",
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
                 )
             )
         )

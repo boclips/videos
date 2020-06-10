@@ -192,7 +192,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val video: Video = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
-                videoType = "INSTRUCTIONAL_CLIPS",
+                videoTypes = listOf("INSTRUCTIONAL_CLIPS"),
                 playbackId = "entry-\$123",
                 analyseVideo = true
             )
@@ -273,7 +273,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
                 title = title,
-                videoType = ContentType.INSTRUCTIONAL_CLIPS.toString(),
+                videoTypes = listOf(ContentType.INSTRUCTIONAL_CLIPS.toString()),
                 playbackId = "entry-\$123"
             )
 

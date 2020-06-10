@@ -27,7 +27,6 @@ object SearchableVideoMetadataFactory {
         transcript: String? = null,
         ageRangeMin: Int? = 3,
         ageRangeMax: Int? = 11,
-        type: VideoType = VideoType.INSTRUCTIONAL,
         subjects: Set<SubjectMetadata> = emptySet(),
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
@@ -36,7 +35,7 @@ object SearchableVideoMetadataFactory {
         eligibleForDownload: Boolean = true,
         attachmentTypes: Set<String> = emptySet(),
         deactivated: Boolean = false,
-        types: List<VideoType> = emptyList()
+        types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL)
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -52,7 +51,6 @@ object SearchableVideoMetadataFactory {
         transcript = transcript,
         ageRangeMin = ageRangeMin,
         ageRangeMax = ageRangeMax,
-        type = type,
         subjects = SubjectsMetadata(items = subjects, setManually = subjectsSetManually),
         promoted = promoted,
         meanRating = meanRating,
@@ -92,7 +90,6 @@ object TestFactories {
             ageRange = (3..11).toList(),
             subjectIds = setOf("boring-subject"),
             subjectNames = setOf("boring-names"),
-            type = VideoType.INSTRUCTIONAL.name,
             promoted = null,
             meanRating = null,
             subjectsSetManually = null,

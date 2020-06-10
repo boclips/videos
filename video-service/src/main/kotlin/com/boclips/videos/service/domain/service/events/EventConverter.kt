@@ -39,7 +39,7 @@ class EventConverter {
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
-            .type(toVideoType(video.type))
+            .type(toVideoType(video.types.first()))
             .types(toVideoTypes(video.types))
             .ingestedAt(video.ingestedAt)
             .originalDimensions(originalDimensions)

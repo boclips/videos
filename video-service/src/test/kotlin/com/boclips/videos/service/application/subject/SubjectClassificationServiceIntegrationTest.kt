@@ -26,7 +26,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
     inner class PublishingEvents {
         @Test
         fun `publishes events for instructional videos`() {
-            val video = TestFactories.createVideo(title = "the video title", type = ContentType.INSTRUCTIONAL_CLIPS)
+            val video = TestFactories.createVideo(title = "the video title", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             subjectClassificationService.classifyVideo(video)
 
@@ -37,7 +37,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `ignores stock videos`() {
-            val video = TestFactories.createVideo(type = ContentType.STOCK)
+            val video = TestFactories.createVideo(types = listOf(ContentType.STOCK))
 
             subjectClassificationService.classifyVideo(video)
 
@@ -46,7 +46,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `ignores news videos`() {
-            val video = TestFactories.createVideo(type = ContentType.NEWS)
+            val video = TestFactories.createVideo(types = listOf(ContentType.NEWS))
 
             subjectClassificationService.classifyVideo(video)
 

@@ -108,8 +108,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by content type`() {
-        val stockVideoId = saveVideo(title = "a stock video content", type = ContentType.STOCK)
-        saveVideo(title = "this is a news video content", type = ContentType.NEWS)
+        val stockVideoId = saveVideo(title = "a stock video content", types = listOf(ContentType.STOCK))
+        saveVideo(title = "this is a news video content", types = listOf(ContentType.NEWS))
 
         mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
             .andExpect(status().isOk)
@@ -510,17 +510,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val today = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
         val yesterday = saveVideo(
             title = "Yesterday Video",
             date = LocalDate.now().minusDays(1).toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
         val tomorrow = saveVideo(
             title = "Tomorrow Video",
             date = LocalDate.now().plusDays(1).toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
 
         val resultActions = mockMvc.perform(

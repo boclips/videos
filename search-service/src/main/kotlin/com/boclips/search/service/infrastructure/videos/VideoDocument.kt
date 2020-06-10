@@ -21,7 +21,6 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MIN) override val ageRangeMin: Int?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE_MAX) override val ageRangeMax: Int?,
     @param:JsonProperty(HasAgeRange.AGE_RANGE) override val ageRange: List<Int>?,
-    @param:JsonProperty(TYPE) val type: String?,
     @param:JsonProperty(TYPES) val types: List<String>?,
     @param:JsonProperty(SUBJECT_IDS) val subjectIds: Set<String>?,
     @param:JsonProperty(SUBJECT_NAMES) val subjectNames: Set<String>?,
@@ -48,7 +47,6 @@ data class VideoDocument @JsonCreator constructor(
         const val TRANSCRIPT = "transcript"
         const val SUBJECT_IDS = "subjectIds"
         const val SUBJECT_NAMES = "subjectNames"
-        const val TYPE = "type"
         const val TYPES = "types"
         const val PROMOTED = "promoted"
         const val MEAN_RATING = "meanRating"

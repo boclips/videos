@@ -40,7 +40,7 @@ class EventConverterTest {
                 assets = setOf(VideoFactory.createVideoAsset())
             ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
-            type = ContentType.INSTRUCTIONAL_CLIPS,
+            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
             releasedOn = LocalDate.of(1939, 9, 1),
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true)
@@ -97,9 +97,9 @@ class EventConverterTest {
 
     @Test
     fun `sets correct video type`() {
-        val newsVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.NEWS))
-        val stockVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.STOCK))
-        val instructionalVideoEvent = converter.toVideoPayload(createVideo(type = ContentType.INSTRUCTIONAL_CLIPS))
+        val newsVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.NEWS)))
+        val stockVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.STOCK)))
+        val instructionalVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS)))
 
         assertThat(newsVideoEvent.type).isEqualTo(VideoType.NEWS)
         assertThat(stockVideoEvent.type).isEqualTo(VideoType.STOCK)

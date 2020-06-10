@@ -72,13 +72,13 @@ class CreateVideoRequestTest {
         assertThat(violations.first().message).isEqualTo("Released on date is required")
     }
 
-    @Test
-    fun `validate video type`() {
-        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(videoType = null))
-
-        assertThat(violations).hasSize(1)
-        assertThat(violations.first().message).isEqualTo("Video type is required")
-    }
+//    @Test
+//    fun `validate video types`() {
+//        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(videoTypes = null))
+//
+//        assertThat(violations).hasSize(1)
+//        assertThat(violations.first().message).isEqualTo("Video type is required")
+//    }
 
     @Test
     fun `validate language`() {

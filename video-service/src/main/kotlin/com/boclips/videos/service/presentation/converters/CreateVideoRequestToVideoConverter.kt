@@ -12,7 +12,7 @@ import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartn
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Locale
+import java.util.*
 
 class CreateVideoRequestToVideoConverter {
     fun convert(
@@ -21,6 +21,10 @@ class CreateVideoRequestToVideoConverter {
         contentPartner: ContentPartner,
         subjects: List<Subject>
     ): Video {
+        val types: MutableList<ContentType> = mutableListOf()
+        createVideoRequest.videoTypes?.map { types.add(ContentType.valueOf(it)) }
+        createVideoRequest.videoType?.let { types.add(ContentType.valueOf(it)) }
+
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
@@ -31,8 +35,7 @@ class CreateVideoRequestToVideoConverter {
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             contentPartner = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,
-            type = ContentType.valueOf(createVideoRequest.videoType!!),
-            types = listOf(ContentType.valueOf(createVideoRequest.videoType!!)),
+            types = types,
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = AgeRange.of(
                 min = createVideoRequest.ageRangeMin,

@@ -44,24 +44,24 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = ContentType.STOCK
+                types = listOf(ContentType.STOCK)
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = ContentType.INSTRUCTIONAL_CLIPS
+                types = listOf(ContentType.INSTRUCTIONAL_CLIPS)
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                type = ContentType.NEWS
+                types = listOf(ContentType.NEWS)
             )
         )
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.ContentTypeIs(ContentType.INSTRUCTIONAL_CLIPS)) {
+        mongoVideoRepository.streamAll(VideoFilter.HasContentType(ContentType.INSTRUCTIONAL_CLIPS)) {
             videos = it.toList()
         }
 

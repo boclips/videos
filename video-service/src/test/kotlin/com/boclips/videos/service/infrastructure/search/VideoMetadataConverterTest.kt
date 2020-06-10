@@ -40,7 +40,7 @@ class VideoMetadataConverterTest {
             playback = TestFactories.createYoutubePlayback(
                 duration = Duration.ofSeconds(10)
             ),
-            type = ContentType.INSTRUCTIONAL_CLIPS,
+            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             transcript = "a great transcript",
@@ -75,7 +75,6 @@ class VideoMetadataConverterTest {
                 transcript = "a great transcript",
                 ageRangeMin = 5,
                 ageRangeMax = 11,
-                type = VideoType.INSTRUCTIONAL,
                 subjects = SubjectsMetadata(
                     items = setOf(SubjectMetadata(id = "subject-id", name = "subject name")),
                     setManually = true
@@ -94,7 +93,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `tags news video`() {
         val video = TestFactories.createVideo(
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -107,7 +106,7 @@ class VideoMetadataConverterTest {
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             title = "garbage title",
-            type = ContentType.STOCK
+            types = listOf(ContentType.STOCK)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -160,7 +159,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `keeps tags explicitly set on the video`() {
         val video = TestFactories.createVideo(
-            type = ContentType.NEWS,
+            types = listOf(ContentType.NEWS),
             tags = listOf(TestFactories.createUserTag(label = "explainer"))
         )
 

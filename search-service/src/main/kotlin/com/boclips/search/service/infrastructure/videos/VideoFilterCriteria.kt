@@ -151,7 +151,7 @@ class VideoFilterCriteria {
         private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder =
             boolQuery().mustNot(
                 termsQuery(
-                    VideoDocument.TYPE,
+                    VideoDocument.TYPES,
                     excludedType
                 )
             )
@@ -159,7 +159,7 @@ class VideoFilterCriteria {
         private fun matchIncludedType(includedType: Set<VideoType>): BoolQueryBuilder =
             boolQuery().must(
                 termsQuery(
-                    VideoDocument.TYPE,
+                    VideoDocument.TYPES,
                     includedType
                 )
             )

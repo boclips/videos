@@ -79,8 +79,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Collections
-import java.util.UUID
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -262,8 +261,8 @@ abstract class AbstractSpringIntegrationTest {
         contentProvider: String = "Reuters",
         contentProviderId: String? = null,
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
-        type: ContentType = ContentType.INSTRUCTIONAL_CLIPS,
         keywords: List<String> = emptyList(),
+        types: List<ContentType> = listOf(ContentType.INSTRUCTIONAL_CLIPS),
         legalRestrictions: String = "",
         ageRangeMin: Int? = 7,
         ageRangeMax: Int? = 11,
@@ -308,7 +307,7 @@ abstract class AbstractSpringIntegrationTest {
                 releasedOn = LocalDate.parse(date),
                 legalRestrictions = legalRestrictions,
                 keywords = keywords,
-                videoType = type.name,
+                videoTypes = types.map { it.name },
                 playbackId = playbackId.value,
                 playbackProvider = playbackId.type.name,
                 analyseVideo = false,
@@ -478,51 +477,51 @@ abstract class AbstractSpringIntegrationTest {
     fun addAccessToVideoIds(userId: String, vararg contractedVideoIds: String) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.IncludedVideos(
-                    name = UUID.randomUUID().toString(),
-                    videoIds = contractedVideoIds.toList()
-                )
+            AccessRuleResource.IncludedVideos(
+                name = UUID.randomUUID().toString(),
+                videoIds = contractedVideoIds.toList()
             )
+        )
         )
     }
 
     fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.IncludedDistributionMethod(name = UUID.randomUUID().toString(),
-                    distributionMethods = includedDistributionMethods.map { it.name })
-            )
+            AccessRuleResource.IncludedDistributionMethod(name = UUID.randomUUID().toString(),
+                distributionMethods = includedDistributionMethods.map { it.name })
+        )
         )
     }
 
     fun removeAccessToVideo(userId: String, vararg excludedVideoIds: String) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.ExcludedVideos(
-                    name = UUID.randomUUID().toString(),
-                    videoIds = excludedVideoIds.toList()
-                )
+            AccessRuleResource.ExcludedVideos(
+                name = UUID.randomUUID().toString(),
+                videoIds = excludedVideoIds.toList()
             )
+        )
         )
     }
 
     fun addAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.ExcludedVideoTypes(name = UUID.randomUUID().toString(),
-                    videoTypes = excludedVideoType.map { it.name })
-            )
+            AccessRuleResource.ExcludedVideoTypes(name = UUID.randomUUID().toString(),
+                videoTypes = excludedVideoType.map { it.name })
+        )
         )
     }
 
     fun removeAccessToContentPartner(userId: String, vararg excludeContentPartners: String) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.ExcludedContentPartners(
-                    name = UUID.randomUUID().toString(),
-                    contentPartnerIds = excludeContentPartners.toList()
-                )
+            AccessRuleResource.ExcludedContentPartners(
+                name = UUID.randomUUID().toString(),
+                contentPartnerIds = excludeContentPartners.toList()
             )
+        )
         )
     }
 

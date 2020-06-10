@@ -25,7 +25,6 @@ object VideoDocumentConverter {
                 videoReference = video.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),
-            contentType = video.type.name,
             contentTypes = video.types.map { it.name },
             keywords = video.keywords,
             subjects = video.subjects.items.map(SubjectDocumentConverter::toSubjectDocument),
@@ -65,7 +64,6 @@ object VideoDocumentConverter {
             contentPartner = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
-            type = ContentType.valueOf(document.contentType!!),
             types = document.contentTypes.map { ContentType.valueOf(it) },
             keywords = document.keywords,
             subjects = subjectsFromVideoDocument(document),

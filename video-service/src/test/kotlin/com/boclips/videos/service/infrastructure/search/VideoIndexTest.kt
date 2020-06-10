@@ -20,12 +20,12 @@ class VideoIndexTest : AbstractSpringIntegrationTest() {
         val videoNews = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             title = "isNews",
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         )
         val videoStock = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             title = "stock",
-            type = ContentType.STOCK
+            types = listOf(ContentType.STOCK)
         )
 
         index.upsert(sequenceOf(videoNews, videoStock))

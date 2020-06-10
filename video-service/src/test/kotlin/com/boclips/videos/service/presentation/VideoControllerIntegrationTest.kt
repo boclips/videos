@@ -120,8 +120,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
-                .andExpect(jsonPath("$.type.id", equalTo(3)))
-                .andExpect(jsonPath("$.type.name", equalTo("Instructional Clips")))
+                .andExpect(jsonPath("$.types[0].id", equalTo(3)))
+                .andExpect(jsonPath("$.types[0].name", equalTo("Instructional Clips")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
                 .andExpect(jsonPath("$._links.detailsProjection.href", containsString("/videos/$kalturaVideoId?projection=details")))
                 .andExpect(jsonPath("$._links.fullProjection.href", containsString("/videos/$kalturaVideoId?projection=full")))
@@ -134,8 +134,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").exists())
                 .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").exists())
-                .andExpect(jsonPath("$._embedded.videos[0].type").exists())
-                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href" , endsWith("/videos/$kalturaVideoId")))
+                .andExpect(jsonPath("$._embedded.videos[0].types[0]").isNotEmpty())
+                .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", endsWith("/videos/$kalturaVideoId")))
         }
 
         @Test
@@ -438,7 +438,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
@@ -478,7 +478,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA",
                 "subjects": ["${subjectId.value}"]
@@ -517,7 +517,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA",
                 "language": "ave"
@@ -572,7 +572,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
@@ -603,7 +603,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "duration": 100,
                 "legalRestrictions": "none",
                 "keywords": ["k1", "k2"],
-                "videoType": "INSTRUCTIONAL_CLIPS",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
                 "playbackId": "this-playback-does-not-exist",
                 "playbackProvider": "KALTURA"
             }

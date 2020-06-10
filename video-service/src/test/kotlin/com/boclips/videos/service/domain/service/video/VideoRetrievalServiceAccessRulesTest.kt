@@ -59,9 +59,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `has access to everything but excluded content types`() {
-            val stockVideoId = saveVideo(type = ContentType.STOCK)
-            val newsVideoId = saveVideo(type = ContentType.NEWS)
-            val instructionalVideoId = saveVideo(type = ContentType.INSTRUCTIONAL_CLIPS)
+            val stockVideoId = saveVideo(types = listOf(ContentType.STOCK))
+            val newsVideoId = saveVideo(types = listOf(ContentType.NEWS))
+            val instructionalVideoId = saveVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
@@ -187,9 +187,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `excluded content types are not returned in search results`() {
-            saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
-            saveVideo(title = "Wild Elephant", type = ContentType.NEWS)
-            val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
+            saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
+            saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
+            val instructionalVideoId = saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
@@ -208,9 +208,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `excluded content types are not return in search results even when filtering by an excluded type`() {
-            saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
-            saveVideo(title = "Wild Elephant", type = ContentType.NEWS)
-            val instructionalVideoId = saveVideo(title = "Wild Elephant", type = ContentType.INSTRUCTIONAL_CLIPS)
+            saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
+            saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
+            val instructionalVideoId = saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
@@ -264,7 +264,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
     inner class SingleVideoLookup {
         @Test
         fun `looking up a single video respects access rules`() {
-            val stockVideo = saveVideo(title = "Wild Elephant", type = ContentType.STOCK)
+            val stockVideo = saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.STOCK))
 

@@ -46,7 +46,7 @@ class VideoToResourceConverterTest {
         description = "Best bottle slogan",
         contentPartnerName = "WeWork",
         contentPartnerVideoId = "111",
-        type = ContentType.NEWS,
+        types = listOf(ContentType.NEWS),
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         language = Locale("khm"),
@@ -79,7 +79,7 @@ class VideoToResourceConverterTest {
         contentPartnerName = "JacekWork",
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
-        type = ContentType.INSTRUCTIONAL_CLIPS,
+        types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
         tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
@@ -142,8 +142,8 @@ class VideoToResourceConverterTest {
                 name = "Maths"
             )
         )
-        assertThat(videoResource.type!!.id).isEqualTo(1)
-        assertThat(videoResource.type!!.name).isEqualTo("News")
+        assertThat(videoResource.types!!.first().id).isEqualTo(1)
+        assertThat(videoResource.types!!.first().name).isEqualTo("News")
         assertThat(videoResource.badges).isEqualTo(setOf("ad-free"))
         assertThat(videoResource.legalRestrictions).isEqualTo("None")
 
@@ -187,8 +187,8 @@ class VideoToResourceConverterTest {
                 name = "Biology"
             )
         )
-        assertThat(videoResource.type!!.id).isEqualTo(3)
-        assertThat(videoResource.type!!.name).isEqualTo("Instructional Clips")
+        assertThat(videoResource.types!!.first().id).isEqualTo(3)
+        assertThat(videoResource.types!!.first().name).isEqualTo("Instructional Clips")
 
         assertThat((videoResource.playback!! as YoutubePlaybackResource).type).isEqualTo("YOUTUBE")
         assertThat((videoResource.playback!! as YoutubePlaybackResource).duration).isEqualTo(Duration.ofSeconds(21))
@@ -212,7 +212,7 @@ class VideoToResourceConverterTest {
             contentPartnerName = "JacekWork",
             contentPartnerVideoId = "222",
             playback = TestFactories.createYoutubePlayback(),
-            type = ContentType.INSTRUCTIONAL_CLIPS,
+            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
             subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
             legalRestrictions = "Many",
             tags = emptyList()

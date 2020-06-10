@@ -123,27 +123,27 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED TALK 1 ",
-                    type = VideoType.STOCK
+                    types = listOf(VideoType.STOCK)
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "OTHER VIDEO 1",
-                    type = VideoType.STOCK
+                    types = listOf(VideoType.STOCK)
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "TED TALK 2",
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     title = "TED TALK 3",
-                    type = VideoType.NEWS
+                    types = listOf(VideoType.NEWS)
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "5",
                     title = "OTHER VIDEO 2",
-                    type = VideoType.NEWS
+                    types = listOf(VideoType.NEWS)
                 )
             )
         )

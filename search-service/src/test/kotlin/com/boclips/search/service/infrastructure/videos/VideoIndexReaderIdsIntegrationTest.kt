@@ -43,9 +43,9 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
         fun `other filters still work when limiting search`() {
             videoIndexWriter.upsert(
                 sequenceOf(
-                    SearchableVideoMetadataFactory.create(id = "1", title = "apple", type = VideoType.NEWS),
+                    SearchableVideoMetadataFactory.create(id = "1", title = "apple", types = listOf(VideoType.NEWS)),
                     SearchableVideoMetadataFactory.create(id = "2", title = "apple & bananas"),
-                    SearchableVideoMetadataFactory.create(id = "3", title = "golf is cool", type = VideoType.NEWS)
+                    SearchableVideoMetadataFactory.create(id = "3", title = "golf is cool", types = listOf(VideoType.NEWS))
                 )
             )
 

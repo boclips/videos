@@ -14,7 +14,7 @@ object VideoToLegacyVideoMetadataConverter {
             contentPartnerName = video.contentPartner.name,
             contentPartnerVideoId = video.videoReference,
             releaseDate = video.releasedOn,
-            videoTypeTitle = video.type.title
+            videoTypeTitle = video.types.first().title
         )
     }
 }

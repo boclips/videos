@@ -114,7 +114,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
@@ -137,7 +137,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
@@ -170,7 +170,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video?",
             date = LocalDate.now().toString(),
-            type = ContentType.NEWS
+            types = listOf(ContentType.NEWS)
         ).value
 
         Assertions.assertNotNull(

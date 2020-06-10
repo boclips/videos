@@ -35,13 +35,13 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     contentProvider = contentProvider,
-                    type = VideoType.INSTRUCTIONAL
+                    types = listOf(VideoType.INSTRUCTIONAL)
 
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     contentProvider = contentProvider,
-                    type = VideoType.NEWS
+                    types = listOf(VideoType.NEWS)
                 )
             )
         )
