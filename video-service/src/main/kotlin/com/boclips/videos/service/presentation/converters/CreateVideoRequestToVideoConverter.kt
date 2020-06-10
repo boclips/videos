@@ -21,10 +21,6 @@ class CreateVideoRequestToVideoConverter {
         contentPartner: ContentPartner,
         subjects: List<Subject>
     ): Video {
-        val types: MutableList<ContentType> = mutableListOf()
-        createVideoRequest.videoTypes?.map { types.add(ContentType.valueOf(it)) }
-        createVideoRequest.videoType?.let { types.add(ContentType.valueOf(it)) }
-
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
@@ -35,7 +31,7 @@ class CreateVideoRequestToVideoConverter {
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             contentPartner = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,
-            types = types,
+            types = createVideoRequest.videoTypes!!.map { ContentType.valueOf(it) },
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = AgeRange.of(
                 min = createVideoRequest.ageRangeMin,

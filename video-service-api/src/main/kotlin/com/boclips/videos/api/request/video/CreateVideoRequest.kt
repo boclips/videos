@@ -27,10 +27,8 @@ data class CreateVideoRequest(
     @field:NotNull(message = "Released on date is required")
     val releasedOn: LocalDate? = null,
 
-    val videoType: String? = null,
-
-//    @field:NotNull(message = "Video types are required")
-//    @JsonSetter(contentNulls = Nulls.FAIL)
+    @field:NotNull(message = "Video types are required")
+    @JsonSetter(contentNulls = Nulls.FAIL)
     val videoTypes: List<String>? = null,
 
     val youtubeChannelId: String? = null,
