@@ -511,7 +511,7 @@ object UserFactory {
         id: String = "userio-123",
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
-        overrideIdSupplier: () -> String? = { null },
+        externalUserIdSupplier: () -> String? = { null },
         isAuthenticated: Boolean = true,
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
@@ -529,7 +529,7 @@ object UserFactory {
             isPermittedToModifyAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToViewCollections = true,
-            overrideIdSupplier = { overrideIdSupplier()?.let(::UserId) },
+            externalUserIdSupplier = { externalUserIdSupplier()?.let(::UserId) },
             accessRulesSupplier = accessRulesSupplier
         )
     }

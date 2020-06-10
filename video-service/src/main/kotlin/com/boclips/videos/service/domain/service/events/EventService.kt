@@ -284,7 +284,8 @@ class EventService(val eventBus: EventBus) {
     ): AbstractEventWithUserId {
         return builder
             .userId(user.id.value)
-            .overrideUserId(user.overrideId?.value)
+            .overrideUserId(user.externalUserId?.value)
+            .externalUserId(user.externalUserId?.value)
             .url(user.context.origin)
             .build()
     }

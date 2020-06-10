@@ -39,7 +39,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `it uses user id provided via Boclips-User-Id header in the event when organisation allows that`() {
             val userId = aValidId()
-            val overrideUserId = aValidId()
+            val externalUserId = aValidId()
             val organisationId = aValidId()
 
             usersClient.add(UserResourceFactory.sample(
@@ -61,7 +61,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 post("/v1/events/playback")
                     .asApiUser(email = userId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Boclips-User-Id", overrideUserId)
+                    .header("Boclips-User-Id", externalUserId)
                     .content(
                         """{
                             "videoId":"${aValidId()}",
@@ -75,7 +75,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
             assertThat(event.userId).isEqualTo(userId)
-            assertThat(event.overrideUserId).isEqualTo(overrideUserId)
+            assertThat(event.overrideUserId).isEqualTo(externalUserId)
+            assertThat(event.externalUserId).isEqualTo(externalUserId)
         }
 
         @Test

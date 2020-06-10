@@ -10,12 +10,12 @@ open class User(
     val isPermittedToViewCollections: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
-    val overrideIdSupplier: () -> UserId? = { null },
+    val externalUserIdSupplier: () -> UserId? = { null },
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules
 ) {
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
-    val overrideId: UserId? by lazy { overrideIdSupplier() }
+    val externalUserId: UserId? by lazy { externalUserIdSupplier() }
 
     override fun toString() = "User(id=$id)"
 }

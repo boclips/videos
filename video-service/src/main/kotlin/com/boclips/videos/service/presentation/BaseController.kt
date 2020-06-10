@@ -26,7 +26,7 @@ open class BaseController(
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUserIfNotAnonymous()
         val referer = RefererHeaderExtractor.getReferer()
-        val overrideIdSupplier = {
+        val externalUserIdSupplier = {
             userRequest?.let(getUserIdOverride::invoke)
         }
 
@@ -42,7 +42,7 @@ open class BaseController(
             isPermittedToViewCollections = userRequest?.hasRole(UserRoles.VIEW_COLLECTIONS) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
-            overrideIdSupplier = overrideIdSupplier,
+            externalUserIdSupplier = externalUserIdSupplier,
             context = RequestContext(origin = referer),
             accessRulesSupplier = { user ->
                 if (user.isAuthenticated) {

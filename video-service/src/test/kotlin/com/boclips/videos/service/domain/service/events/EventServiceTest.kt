@@ -423,17 +423,18 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun `events use overriding user id when it's present`() {
         val videoId = aValidId()
         val userId = "user@example.com"
-        val overrideUserId = "overriding-id"
+        val externalUserId = "external-user-id"
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(videoId),
             subtype = "testing-overrides",
-            user = UserFactory.sample(id = userId, overrideIdSupplier = { overrideUserId })
+            user = UserFactory.sample(id = userId, externalUserIdSupplier = { externalUserId })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
 
         assertThat(event.userId).isEqualTo(userId)
-        assertThat(event.overrideUserId).isEqualTo(overrideUserId)
+        assertThat(event.overrideUserId).isEqualTo(externalUserId)
+        assertThat(event.externalUserId).isEqualTo(externalUserId)
     }
 
     @Test
@@ -442,12 +443,13 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(aValidId()),
             subtype = "testing-overrides",
-            user = UserFactory.sample(id = userId, overrideIdSupplier = { null })
+            user = UserFactory.sample(id = userId, externalUserIdSupplier = { null })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
 
         assertThat(event.userId).isEqualTo(userId)
         assertThat(event.overrideUserId).isNull()
+        assertThat(event.externalUserId).isNull()
     }
 }
