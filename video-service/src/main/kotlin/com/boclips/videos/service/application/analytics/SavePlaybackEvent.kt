@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 class SavePlaybackEvent(private val eventService: EventService) {
     companion object : KLogging()
 
-    fun execute(event: CreatePlaybackEventCommand?, playbackDevice: String?, user: User) {
+    fun execute(event: CreatePlaybackEventCommand?, deviceId: String?, user: User) {
         event ?: throw InvalidEventException("Event cannot be null")
         event.isValidOrThrows()
 
@@ -20,7 +20,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,
-            playbackDevice = playbackDevice,
+            deviceId = deviceId,
             timestamp = event.captureTime ?: ZonedDateTime.now(),
             user = user
         )
@@ -39,7 +39,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
                 videoIndex = event.videoIndex,
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
-                playbackDevice = null,
+                deviceId = null,
                 timestamp = event.captureTime?.toInstant()?.atZone(ZoneOffset.UTC) ?: ZonedDateTime.now(),
                 user = user
             )

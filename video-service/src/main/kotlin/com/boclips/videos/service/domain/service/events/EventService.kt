@@ -226,7 +226,7 @@ class EventService(val eventBus: EventBus) {
         videoIndex: Int?,
         segmentStartSeconds: Long,
         segmentEndSeconds: Long,
-        playbackDevice: String?,
+        deviceId: String?,
         user: User,
         timestamp: ZonedDateTime
     ) {
@@ -237,7 +237,8 @@ class EventService(val eventBus: EventBus) {
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
-                    .playbackDevice(playbackDevice)
+                    .playbackDevice(deviceId)
+                    .deviceId(deviceId)
                     .timestamp(timestamp),
                 user = user
             )

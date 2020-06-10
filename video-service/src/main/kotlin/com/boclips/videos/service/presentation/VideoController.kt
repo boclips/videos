@@ -147,14 +147,14 @@ class VideoController(
     @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,
-        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackConsumer: String? = null,
+        @CookieValue(Cookies.DEVICE_ID) playbackConsumer: String? = null,
         @RequestParam(required = false) projection: Projection? = null
     ): ResponseEntity<VideoResource> {
         val headers = HttpHeaders()
         if (playbackConsumer == null) {
             headers.add(
                 "Set-Cookie",
-                "${Cookies.PLAYBACK_DEVICE}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
+                "${Cookies.DEVICE_ID}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
             )
         }
 

@@ -344,7 +344,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             videoIndex = 2,
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
-            playbackDevice = "device-id",
+            deviceId = "device-id",
             user = UserFactory.sample(id = "user@example.com"),
             timestamp = ZonedDateTime.now()
         )
@@ -357,6 +357,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.segmentEndSeconds).isEqualTo(345)
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.playbackDevice).isEqualTo("device-id")
+        assertThat(event.deviceId).isEqualTo("device-id")
     }
 
     @Test

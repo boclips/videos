@@ -140,7 +140,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     .asTeacher(email = "teacher@gmail.com")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Referer", "https://teachers.boclips.com/videos?q=abc")
-                    .cookie(Cookie(Cookies.PLAYBACK_DEVICE, "device-id"))
+                    .cookie(Cookie(Cookies.DEVICE_ID, "device-id"))
                     .content(content)
             )
                 .andExpect(status().isCreated)
@@ -154,6 +154,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(event.segmentEndSeconds).isEqualTo(1470L)
             assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
             assertThat(event.playbackDevice).isEqualTo("device-id")
+            assertThat(event.deviceId).isEqualTo("device-id")
             assertThat(event.timestamp).isNotNull()
         }
 

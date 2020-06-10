@@ -30,7 +30,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
                 segmentEndSeconds = 20,
                 captureTime = ZonedDateTime.now()
             )
-            , playbackDevice = null, user = user
+            , deviceId = null, user = user
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -71,6 +71,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[0].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[0].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[0].playbackDevice).isNull()
+        assertThat(events[0].deviceId).isNull()
         assertThat(events[0].timestamp).isNotNull()
         assertThat(events.first().url).isEqualTo("https://teachers.boclips.com")
 
@@ -80,6 +81,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[1].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[1].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[1].playbackDevice).isNull()
+        assertThat(events[1].deviceId).isNull()
         assertThat(events[1].timestamp).isNotNull()
     }
 
@@ -87,7 +89,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
     fun `for single event we do not validate timestamp`() {
         savePlaybackEvent.execute(
             CreatePlaybackEventCommandFactory.sample(captureTime = null),
-            playbackDevice = null,
+            deviceId = null,
             user = UserFactory.sample()
         )
 

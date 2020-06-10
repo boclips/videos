@@ -32,9 +32,9 @@ class EventController(
     @PostMapping("/v1/events/playback")
     fun logPlaybackEvent(
         @RequestBody playbackEvent: CreatePlaybackEventCommand?,
-        @CookieValue(Cookies.PLAYBACK_DEVICE) playbackDevice: String? = null
+        @CookieValue(Cookies.DEVICE_ID) deviceId: String? = null
     ): ResponseEntity<Void> {
-        savePlaybackEvent.execute(playbackEvent, playbackDevice, getCurrentUser())
+        savePlaybackEvent.execute(playbackEvent, deviceId, getCurrentUser())
         return ResponseEntity(HttpStatus.CREATED)
     }
 
