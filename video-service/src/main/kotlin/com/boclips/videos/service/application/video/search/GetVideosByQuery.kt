@@ -79,7 +79,7 @@ class GetVideosByQuery(
             ),
             promoted = promoted,
             channelNames = channelNames,
-            type = type.map { searchQueryConverter.convertType(it) }.toSet(),
+            types = type.map { searchQueryConverter.convertType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets),
             attachmentTypes = resourceTypes
         )

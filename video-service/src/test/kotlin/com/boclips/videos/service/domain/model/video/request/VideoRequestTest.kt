@@ -146,11 +146,11 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pageIndex = 0,
-            type = setOf(VideoType.NEWS, VideoType.STOCK)
+            types = setOf(VideoType.NEWS, VideoType.STOCK)
         )
             .toQuery(VideoAccess.Everything)
 
-        assertThat(searchQuery.includedType).containsExactly(VideoType.NEWS, VideoType.STOCK)
+        assertThat(searchQuery.includedTypes).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
 
     @Test

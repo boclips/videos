@@ -152,7 +152,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    includedType = setOf(VideoType.STOCK, VideoType.NEWS)
+                    includedTypes = setOf(VideoType.STOCK, VideoType.NEWS)
                 )
             )
         )

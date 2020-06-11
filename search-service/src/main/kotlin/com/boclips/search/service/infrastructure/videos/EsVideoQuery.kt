@@ -111,7 +111,7 @@ class EsVideoQuery {
     private fun boostInstructionalVideos(): (QueryBuilder) -> BoostingQueryBuilder = { innerQuery: QueryBuilder ->
         QueryBuilders.boostingQuery(
             innerQuery,
-            QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery(VideoDocument.TYPES, VideoType.INSTRUCTIONAL.name))
+            QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery(VideoDocument.TYPES, VideoType.INSTRUCTIONAL.name))
         ).negativeBoost(0.4F)
     }
 

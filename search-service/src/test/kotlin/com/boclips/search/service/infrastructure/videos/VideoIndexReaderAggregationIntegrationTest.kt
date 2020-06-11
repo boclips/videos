@@ -299,7 +299,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             phrase = "apple",
-                            includedType = setOf(VideoType.STOCK)
+                            includedTypes = setOf(VideoType.STOCK)
                         )
                     )
                 )
@@ -347,7 +347,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             phrase = "apple",
-                            includedType = setOf(VideoType.INSTRUCTIONAL),
+                            includedTypes = setOf(VideoType.INSTRUCTIONAL),
                             ageRanges = listOf(AgeRange(min = 9, max = 11))
                         )
                     )

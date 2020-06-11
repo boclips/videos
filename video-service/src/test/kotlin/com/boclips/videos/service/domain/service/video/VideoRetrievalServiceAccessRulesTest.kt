@@ -217,7 +217,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
-                    type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(
@@ -248,7 +248,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = videoRetrievalService.searchPlaybableVideos(
                 VideoRequest(
                     text = "Wild",
-                    type = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pageIndex = 0
                 ), VideoAccess.Rules(

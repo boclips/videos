@@ -26,7 +26,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
-                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL, VideoType.STOCK)),
                 SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "5", types = listOf(VideoType.STOCK))
             )
@@ -35,7 +35,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    includedType = setOf(
+                    includedTypes = setOf(
                         VideoType.STOCK,
                         VideoType.INSTRUCTIONAL
                     )
@@ -44,6 +44,55 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         assertThat(results.elements).containsOnly("2", "3", "5")
+    }
+
+    @Test
+    fun `returns documents with specified content type`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL, VideoType.STOCK)),
+                SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "5", types = listOf(VideoType.STOCK))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    includedTypes = setOf(
+                        VideoType.STOCK
+                    )
+                ), 0, 10
+            )
+        )
+
+        assertThat(results.elements).containsOnly("2", "3", "5")
+    }
+
+    @Test
+    fun `included types can be combined with phrase queries`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", title = "Wild Rhino", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "3", title = "Cyborg Rhino", types = listOf(VideoType.STOCK))
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                VideoQuery(
+                    phrase = "Rhino",
+                    includedTypes = setOf(
+                        VideoType.NEWS
+                    )
+                ), 0, 10
+            )
+        )
+
+        assertThat(results.elements).containsOnly("1","2")
     }
 
     @Test
@@ -61,7 +110,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    includedType = emptySet()
+                    includedTypes = emptySet()
                 ), 0, 10
             )
         )
@@ -75,7 +124,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "2", types = listOf(VideoType.STOCK)),
-                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL)),
+                SearchableVideoMetadataFactory.create(id = "3", types = listOf(VideoType.INSTRUCTIONAL, VideoType.STOCK)),
                 SearchableVideoMetadataFactory.create(id = "4", types = listOf(VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "5", types = listOf(VideoType.STOCK))
             )
@@ -84,18 +133,18 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    includedType = setOf(
+                    includedTypes = setOf(
                         VideoType.STOCK,
                         VideoType.INSTRUCTIONAL
                     ),
-                    excludedType = setOf(
+                    excludedTypes = setOf(
                         VideoType.STOCK
                     )
                 ), 0, 10
             )
         )
 
-        assertThat(results.elements).containsOnly("3")
+        assertThat(results.elements).hasSize(0)
     }
 
     @Test
@@ -103,7 +152,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", title = "Wild Rhino", types = listOf(VideoType.NEWS)),
-                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(id = "2", title = "Domesticated Rhino", types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)),
                 SearchableVideoMetadataFactory.create(id = "3", title = "Cyborg Rhino", types = listOf(VideoType.STOCK))
             )
         )
@@ -112,7 +161,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 VideoQuery(
                     phrase = "Rhino",
-                    excludedType = setOf(
+                    excludedTypes = setOf(
                         VideoType.NEWS
                     )
                 ), 0, 10

@@ -40,7 +40,7 @@ class VideoRequest(
     val subjectsRequest: SubjectsRequest = SubjectsRequest(),
     val promoted: Boolean? = null,
     val channelNames: Set<String> = emptySet(),
-    val type: Set<VideoType> = emptySet(),
+    val types: Set<VideoType> = emptySet(),
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet()
 ) {
@@ -85,8 +85,8 @@ class VideoRequest(
             promoted = promoted,
             active = true,
             channelNames = channelNames,
-            includedType = type,
-            excludedType = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
+            includedTypes = types,
+            excludedTypes = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
             facetDefinition = FacetDefinition.Video(
                 ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },

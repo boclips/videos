@@ -445,7 +445,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("London Underground"))
+            PaginatedSearchRequest(query = VideoQuery(phrase = "London Underground"))
         )
 
         assertThat(results.elements).startsWith("3")

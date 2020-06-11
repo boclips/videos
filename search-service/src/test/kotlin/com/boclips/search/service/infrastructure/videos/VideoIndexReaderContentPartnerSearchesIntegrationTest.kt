@@ -51,7 +51,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = contentProvider,
-                        includedType = setOf(VideoType.NEWS)
+                        includedTypes = setOf(VideoType.NEWS)
                     )
                 )
             )

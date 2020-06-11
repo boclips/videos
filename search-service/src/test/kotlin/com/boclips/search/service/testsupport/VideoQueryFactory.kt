@@ -3,6 +3,7 @@ package com.boclips.search.service.testsupport
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import java.time.Duration
 import java.time.LocalDate
 
@@ -22,6 +23,8 @@ class VideoQueryFactory {
                 releaseDateFrom = LocalDate.of(2014, 1, 30),
                 releaseDateTo = LocalDate.of(2015, 1, 30),
                 promoted = true,
+                includedTypes = setOf(VideoType.INSTRUCTIONAL, VideoType.STOCK),
+                excludedTypes = setOf(VideoType.INSTRUCTIONAL),
                 attachmentTypes = setOf("ACTIVITY")
             )
         }

@@ -40,10 +40,10 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 if (query.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.bestFor)
             }
             .filter { entry ->
-                if (query.includedType.isEmpty()) true else query.includedType.any { entry.value.types.contains(it) }
+                if (query.includedTypes.isEmpty()) true else query.includedTypes.any { entry.value.types.contains(it) }
             }
             .filter { entry ->
-                if (query.excludedType.isEmpty()) true else !query.excludedType.any { entry.value.types.contains(it) }
+                if (query.excludedTypes.isEmpty()) true else !query.excludedTypes.any { entry.value.types.contains(it) }
             }.filter { entry ->
                 if (query.excludedContentPartnerIds.isEmpty()) true
                 else !query.excludedContentPartnerIds.contains(entry.value.contentPartnerId)

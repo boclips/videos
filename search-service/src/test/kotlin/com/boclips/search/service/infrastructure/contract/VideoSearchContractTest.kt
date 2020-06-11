@@ -269,7 +269,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    includedType = setOf(VideoType.NEWS, VideoType.STOCK)
+                    includedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
                 )
             )
         )
@@ -299,7 +299,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    excludedType = setOf(VideoType.NEWS, VideoType.STOCK)
+                    excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
                 )
             )
         )
@@ -364,7 +364,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     ids = setOf("1", "2", "3"),
-                    excludedType = setOf(VideoType.NEWS, VideoType.STOCK)
+                    excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
                 )
             )
         )
@@ -394,7 +394,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    includedType = emptySet()
+                    includedTypes = emptySet()
                 )
             )
         )

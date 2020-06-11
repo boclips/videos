@@ -7,14 +7,9 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
 import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
-import org.elasticsearch.index.query.BoolQueryBuilder
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.termsQuery
-import org.elasticsearch.index.query.RangeQueryBuilder
-import org.elasticsearch.index.query.TermQueryBuilder
-import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
 class VideoFilterCriteria {
@@ -87,12 +82,12 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
             }
 
-            if (videoQuery.includedType.isNotEmpty()) {
-                boolQueryBuilder.must(matchIncludedType(videoQuery.includedType))
+            if (videoQuery.includedTypes.isNotEmpty()) {
+                boolQueryBuilder.must(matchIncludedType(videoQuery.includedTypes))
             }
 
-            if (videoQuery.excludedType.isNotEmpty()) {
-                boolQueryBuilder.must(matchExcludeType(videoQuery.excludedType))
+            if (videoQuery.excludedTypes.isNotEmpty()) {
+                boolQueryBuilder.must(matchExcludeType(videoQuery.excludedTypes))
             }
 
             if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
@@ -103,7 +98,7 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchStreamEligibilityFilter(videoQuery.isEligibleForStream))
             }
 
-            if(!videoQuery.attachmentTypes.isNullOrEmpty()) {
+            if (!videoQuery.attachmentTypes.isNullOrEmpty()) {
                 boolQueryBuilder.must(matchAttachmentTypes(videoQuery.attachmentTypes))
             }
 
@@ -148,21 +143,21 @@ class VideoFilterCriteria {
                 QueryBuilders.idsQuery().addIds(*(deniedVideoIds.toTypedArray()))
             )
 
-        private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder =
-            boolQuery().mustNot(
-                termsQuery(
-                    VideoDocument.TYPES,
-                    excludedType
-                )
-            )
+        private fun matchExcludeType(excludedType: Set<VideoType>): BoolQueryBuilder {
+            val queries = boolQuery()
+            for (type: VideoType in excludedType) {
+                queries.mustNot(QueryBuilders.matchPhraseQuery(VideoDocument.TYPES, type))
+            }
+            return queries
+        }
 
-        private fun matchIncludedType(includedType: Set<VideoType>): BoolQueryBuilder =
-            boolQuery().must(
-                termsQuery(
-                    VideoDocument.TYPES,
-                    includedType
-                )
-            )
+        private fun matchIncludedType(includedType: Set<VideoType>): BoolQueryBuilder {
+            val queries = boolQuery()
+            for (type: VideoType in includedType) {
+                queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.TYPES, type))
+            }
+            return queries
+        }
 
         private fun matchExcludedContentPartnerIds(excludedContentPartnerIds: Set<String>): BoolQueryBuilder =
             boolQuery().mustNot(
