@@ -7,7 +7,6 @@ import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.converters.ChannelToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -41,14 +41,31 @@ class ChannelController(
     private val channelToResourceConverter: ChannelToResourceConverter,
     private val marketingSignedLinkProvider: SignedLinkProvider
 ) {
-    @PostMapping("/{contentPartnerId}/videos/search")
+    @PostMapping("/{channelId}/videos/search")
     fun postSearchVideoByProviderId(
-        @PathVariable("contentPartnerId") contentPartnerId: String,
-        @RequestBody contentPartnerVideoId: String
+        @PathVariable("channelId") channelId: String,
+        @RequestBody channelVideoId: String
     ): ResponseEntity<Void> {
         val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = contentPartnerId),
-            contentPartnerVideoId
+            ContentPartnerId(value = channelId),
+            channelVideoId
+        )
+
+        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
+        return ResponseEntity(status)
+    }
+
+    @RequestMapping(
+        path = ["/{channelId}/videos/{channelVideoId}"],
+        method = [RequestMethod.HEAD]
+    )
+    fun getVideoByProviderId(
+        @PathVariable("channelId") channelId: String,
+        @PathVariable("channelVideoId") channelVideoId: String
+    ): ResponseEntity<Void> {
+        val exists = videoRepository.existsVideoFromContentPartnerId(
+            ContentPartnerId(value = channelId),
+            channelVideoId
         )
 
         val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND

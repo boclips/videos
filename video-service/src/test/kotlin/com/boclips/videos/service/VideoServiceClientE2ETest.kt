@@ -53,8 +53,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
 
             assertThrows<Exception> {
                 videosClient.probeVideoReference(
-                    contentPartnerId = contentPartner.id.value,
-                    contentPartnerVideoId = "abc"
+                    channelId = contentPartner.id.value,
+                    channelVideoId = "abc"
                 )
             }
 
@@ -70,8 +70,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(videosClient.getVideo(createdVideo)).isNotNull
             assertDoesNotThrow {
                 videosClient.probeVideoReference(
-                    contentPartnerId = contentPartner.id.value,
-                    contentPartnerVideoId = "abc"
+                    channelId = contentPartner.id.value,
+                    channelVideoId = "abc"
                 )
             }
 

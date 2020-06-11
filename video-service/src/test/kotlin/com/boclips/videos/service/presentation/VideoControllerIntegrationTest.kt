@@ -636,7 +636,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                MockMvcRequestBuilders.head("/v1/content-partners/${contentPartner.id.value}/videos/abc")
+                MockMvcRequestBuilders.head("/v1/channels/${contentPartner.id.value}/videos/abc")
                     .asIngestor()
             )
                 .andExpect(status().isOk)
@@ -644,7 +644,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `video lookup by provider id returns 404 when video does not exist`() {
-            mockMvc.perform(MockMvcRequestBuilders.head("/v1/content-partners/ted/videos/xyz").asIngestor())
+            mockMvc.perform(MockMvcRequestBuilders.head("/v1/channels/ted/videos/xyz").asIngestor())
                 .andExpect(status().isNotFound)
         }
     }

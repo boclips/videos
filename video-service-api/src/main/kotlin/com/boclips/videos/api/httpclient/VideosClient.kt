@@ -23,10 +23,10 @@ interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}")
     fun getVideo(@Param("videoId") videoId: String): VideoResource
 
-    @RequestLine("HEAD /v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}")
+    @RequestLine("HEAD /v1/channels/{channelId}/videos/{channelVideoId}")
     fun probeVideoReference(
-        @Param("contentPartnerId") contentPartnerId: String,
-        @Param("contentPartnerVideoId") contentPartnerVideoId: String
+        @Param("channelId") channelId: String,
+        @Param("channelVideoId") channelVideoId: String
     )
 
     @RequestLine("GET /v1/videos")

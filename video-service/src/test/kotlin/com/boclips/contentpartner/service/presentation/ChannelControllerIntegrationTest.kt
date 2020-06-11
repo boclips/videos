@@ -5,8 +5,8 @@ import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.AgeRangeRequest
-import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
+import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -853,6 +854,27 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.channels[0].curriculumAligned").doesNotExist())
                 .andExpect(jsonPath("$._embedded.channels[0].bestForTags").doesNotExist())
                 .andExpect(jsonPath("$._embedded.channels[0].subjects").doesNotExist())
+        }
+    }
+
+    @Nested
+    inner class VideoExists {
+        @Test
+        fun `video lookup by provider id returns 200 when video exists`() {
+            val contentPartner = saveContentPartner(name = "ted")
+            saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
+
+            mockMvc.perform(
+                MockMvcRequestBuilders.head("/v1/channels/${contentPartner.id.value}/videos/abc")
+                    .asIngestor()
+            )
+                .andExpect(status().isOk)
+        }
+
+        @Test
+        fun `video lookup by provider id returns 404 when video does not exist`() {
+            mockMvc.perform(MockMvcRequestBuilders.head("/v1/channels/ted/videos/xyz").asIngestor())
+                .andExpect(status().isNotFound)
         }
     }
 }
