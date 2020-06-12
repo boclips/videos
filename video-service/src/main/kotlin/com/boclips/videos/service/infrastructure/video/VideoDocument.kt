@@ -12,7 +12,6 @@ data class VideoDocument(
     val description: String,
     val source: SourceDocument,
     val playback: PlaybackDocument?,
-    val contentType: String? = null,
     val contentTypes: List<String> = emptyList(),
     val keywords: List<String>,
     val subjects: List<SubjectDocument>,
