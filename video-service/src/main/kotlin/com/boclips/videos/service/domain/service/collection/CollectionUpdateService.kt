@@ -4,6 +4,7 @@ import com.boclips.videos.service.application.collection.exceptions.CollectionIl
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import mu.KLogging
@@ -20,7 +21,7 @@ class CollectionUpdateService(
 
         collectionRetrievalService.findOwnCollection(id = collectionId, user = user)
             ?: throw CollectionIllegalOperationException(
-                userId = user.id,
+                userId = user.idOrThrow(),
                 collectionId = collectionId.value,
                 operation = "Add video to collection"
             )
@@ -75,7 +76,7 @@ class CollectionUpdateService(
             user = user
         )
             ?: throw CollectionIllegalOperationException(
-                userId = user.id,
+                userId = user.id ?: UserId("anonymous"),
                 collectionId = collectionToBeUpdated.value,
                 operation = "Update collection"
             ))

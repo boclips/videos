@@ -38,7 +38,7 @@ class TagVideo(
         videoRepository.update(
             VideoUpdateCommand.ReplaceTag(
                 VideoId(tagVideoRequest.videoId!!),
-                UserTag(tag = tag, userId = user.id)
+                UserTag(tag = tag, userId = user.idOrThrow())
             )
         )
     }

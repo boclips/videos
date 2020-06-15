@@ -52,7 +52,7 @@ class UpdateVideo(
         val replaceAttachments = AttachmentRequestConverter().convert(videoId, updateRequest.attachments)
         val replaceBestFor = updateRequest.tagId?.let {
             tagRepository.findById(TagId(value = updateRequest.tagId!!))?.let {
-                VideoUpdateCommand.ReplaceTag(videoId = videoId, tag = UserTag(tag = it, userId = user.id))
+                VideoUpdateCommand.ReplaceTag(videoId = videoId, tag = UserTag(tag = it, userId = user.idOrThrow()))
             }
         }
 

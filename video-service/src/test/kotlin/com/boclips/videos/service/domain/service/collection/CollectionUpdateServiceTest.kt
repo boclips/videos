@@ -129,7 +129,7 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
         @Test
         fun `saves update of legitimate collection owner`() {
             val user = UserFactory.sample()
-            val collectionId = saveCollection(owner = user.id.value, discoverable = false)
+            val collectionId = saveCollection(owner = user.id!!.value, discoverable = false)
 
             collectionUpdateService.updateCollectionAsOwner(
                 listOf(
@@ -148,7 +148,7 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `doese not save updates of someone else's collection`() {
-            val collectionId = saveCollection(owner = UserFactory.sample(id = "user").id.value, discoverable = false)
+            val collectionId = saveCollection(owner = UserFactory.sample(id = "user").id!!.value, discoverable = false)
 
             assertThrows<CollectionIllegalOperationException> {
                 collectionUpdateService.updateCollectionAsOwner(

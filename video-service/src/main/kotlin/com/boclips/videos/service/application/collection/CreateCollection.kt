@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.service.collection.CollectionCreationSe
 class CreateCollection(private val collectionCreationService: CollectionCreationService) {
     operator fun invoke(createCollectionRequest: CreateCollectionRequest, requester: User): Collection {
         val createCollectionCommand = CreateCollectionCommand(
-            owner = requester.id,
+            owner = requester.idOrThrow(),
             title = createCollectionRequest.title!!,
             description = createCollectionRequest.description,
             createdByBoclips = requester.isBoclipsEmployee,

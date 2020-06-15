@@ -56,7 +56,7 @@ class GetVideosByQuery(
         validatePageNumber(pageNumber)
 
         val userSubjectIds =
-            user.let { userService.getSubjectIds(it.id.value) } ?: emptySet()
+            user.id?.let { userService.getSubjectIds(it.value) } ?: emptySet()
 
         val request = VideoRequest(
             ids = ids,

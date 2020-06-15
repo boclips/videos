@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
@@ -28,6 +29,8 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
         backoff = Backoff(multiplier = 1.5)
     )
     override fun getRules(user: User): AccessRules {
+        user.id ?: return AccessRules.anonymousAccess()
+
         val retrievedAccessRules: List<AccessRuleResource> =
             try {
                 usersClient.getAccessRulesOfUser(user.id.value)._embedded.accessRules
@@ -62,7 +65,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
             user.isPermittedToModifyAnyCollection -> CollectionAccessRule.everything()
             collectionIds.isNotEmpty() -> CollectionAccessRule.specificIds(collectionIds)
             collectionIds.isEmpty() -> CollectionAccessRule.everything() // TODO: remove this rule and replace with access rule
-            else -> CollectionAccessRule.asOwner(user.id)
+            else -> CollectionAccessRule.asOwner(user.id ?: UserId("anonymous"))
         }
     }
 

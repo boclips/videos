@@ -508,7 +508,7 @@ object SecurityUserFactory {
 
 object UserFactory {
     fun sample(
-        id: String = "userio-123",
+        id: String? = "userio-123",
         boclipsEmployee: Boolean = false,
         isPermittedToViewAnyCollection: Boolean = false,
         externalUserIdSupplier: () -> String? = { null },
@@ -521,7 +521,7 @@ object UserFactory {
         }
     ): User {
         return User(
-            id = UserId(id),
+            id = id?.let { UserId(it) },
             isAuthenticated = isAuthenticated,
             isBoclipsEmployee = boclipsEmployee,
             context = RequestContext(origin = "https://teachers.boclips.com"),

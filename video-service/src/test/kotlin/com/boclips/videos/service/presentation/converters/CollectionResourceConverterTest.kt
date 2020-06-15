@@ -139,7 +139,7 @@ class CollectionResourceConverterTest {
         )
 
         val collection = TestFactories.createCollection(
-            owner = if (collectionBelongsToUser) user.id.value else "random-user",
+            owner = if (collectionBelongsToUser) user.id!!.value else "random-user",
             title = "Collection Title",
             videos = listOf(video.videoId),
             default = isDefault,

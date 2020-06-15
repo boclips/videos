@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 
 class CollectionBookmarkService(
@@ -32,7 +33,7 @@ class CollectionBookmarkService(
             ?: throw CollectionNotFoundException(collectionId.value)
 
         if (collection.isOwner(user)) throw CollectionIllegalOperationException(
-            user.id,
+            user.id ?: UserId("anonymous"),
             collectionId.value,
             "unbookmark your own collection"
         )

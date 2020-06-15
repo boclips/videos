@@ -24,7 +24,7 @@ open class RateVideo(
         videoRepository.update(
             VideoUpdateCommand.AddRating(
                 VideoId(rateVideoRequest.videoId),
-                UserRating(rating = rateVideoRequest.rating!!, userId = user.id)
+                UserRating(rating = rateVideoRequest.rating!!, userId = user.idOrThrow())
             )
         )
     }

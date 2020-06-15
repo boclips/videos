@@ -36,7 +36,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
         assertThat(event.videoId).isEqualTo(videoId)
-        assertThat(event.userId).isEqualTo(user.id.value)
+        assertThat(event.userId).isEqualTo(user.id!!.value)
         assertThat(event.videoIndex).isEqualTo(1)
         assertThat(event.segmentEndSeconds).isEqualTo(20L)
         assertThat(event.segmentStartSeconds).isEqualTo(10L)
@@ -66,7 +66,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
 
         assertThat(events[0].videoId).isEqualTo(videoId)
-        assertThat(events[0].userId).isEqualTo(user.id.value)
+        assertThat(events[0].userId).isEqualTo(user.id!!.value)
         assertThat(events[0].videoIndex).isEqualTo(1)
         assertThat(events[0].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[0].segmentEndSeconds).isEqualTo(20L)
@@ -76,7 +76,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events.first().url).isEqualTo("https://teachers.boclips.com")
 
         assertThat(events[1].videoId).isEqualTo(videoId)
-        assertThat(events[1].userId).isEqualTo(user.id.value)
+        assertThat(events[1].userId).isEqualTo(user.id!!.value)
         assertThat(events[1].videoIndex).isEqualTo(1)
         assertThat(events[1].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[1].segmentEndSeconds).isEqualTo(20L)

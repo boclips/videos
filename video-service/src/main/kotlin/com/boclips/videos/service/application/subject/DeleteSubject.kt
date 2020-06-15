@@ -9,7 +9,7 @@ class DeleteSubject(private val subjectService: SubjectService) {
     companion object : KLogging()
 
     operator fun invoke(subjectId: SubjectId, user: User) {
-        logger.info { "Deleting subject ${subjectId.value} as behalf of ${user.id.value}" }
+        logger.info { "Deleting subject ${subjectId.value} as behalf of ${user.idOrThrow().value}" }
         subjectService.removeReferences(subjectId = subjectId, user = user)
     }
 }

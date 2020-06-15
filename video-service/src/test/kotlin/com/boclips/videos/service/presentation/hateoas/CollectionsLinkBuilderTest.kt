@@ -171,8 +171,8 @@ class CollectionsLinkBuilderTest {
             collectionsLinkBuilder.editCollection(
                 collection = TestFactories.createCollection(
                     id = CollectionId("c123"),
-                    owner = user.id.value,
-                    bookmarks = setOf(user.id)
+                    owner = user.id!!.value,
+                    bookmarks = setOf(user.id!!)
                 ),
                 user = user
             )
@@ -194,8 +194,8 @@ class CollectionsLinkBuilderTest {
             collectionsLinkBuilder.removeCollection(
                 collection = TestFactories.createCollection(
                     id = CollectionId("c123"),
-                    owner = user.id.value,
-                    bookmarks = setOf(user.id)
+                    owner = user.id!!.value,
+                    bookmarks = setOf(user.id!!)
                 ),
                 user = user
             )
@@ -215,8 +215,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.addVideoToCollection(
             collection = TestFactories.createCollection(
                 id = CollectionId("c123"),
-                owner = user.id.value,
-                bookmarks = setOf(user.id)
+                owner = user.id!!.value,
+                bookmarks = setOf(user.id!!)
             ),
             user = user
         )
@@ -236,8 +236,8 @@ class CollectionsLinkBuilderTest {
         val link = collectionsLinkBuilder.removeVideoFromCollection(
             collection = TestFactories.createCollection(
                 id = CollectionId("c123"),
-                owner = user.id.value,
-                bookmarks = setOf(user.id)
+                owner = user.id!!.value,
+                bookmarks = setOf(user.id!!)
             ),
             user = user
         )
@@ -482,7 +482,7 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.bookmark(
             collection = TestFactories.createCollection(
-                owner = user.id.value,
+                owner = user.id!!.value,
                 discoverable = false
             ),
             user = user
@@ -503,7 +503,7 @@ class CollectionsLinkBuilderTest {
             collection = TestFactories.createCollection(
                 owner = "another-user",
                 discoverable = false,
-                bookmarks = setOf(user.id)
+                bookmarks = setOf(user.id!!)
             ),
             user = user
         )
@@ -523,7 +523,7 @@ class CollectionsLinkBuilderTest {
             collection = TestFactories.createCollection(
                 owner = "another-user",
                 discoverable = true,
-                bookmarks = setOf(user.id)
+                bookmarks = setOf(user.id!!)
             ),
             user = user
         )
@@ -546,9 +546,9 @@ class CollectionsLinkBuilderTest {
 
         val link = collectionsLinkBuilder.unbookmark(
             collection = TestFactories.createCollection(
-                owner = user.id.value,
+                owner = user.id!!.value,
                 discoverable = true,
-                bookmarks = setOf(user.id)
+                bookmarks = setOf(user.id!!)
             ),
             user = user
         )

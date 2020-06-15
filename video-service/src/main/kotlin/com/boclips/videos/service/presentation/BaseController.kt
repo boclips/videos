@@ -24,15 +24,13 @@ open class BaseController(
     private val getUserIdOverride: GetUserIdOverride
 ) {
     fun getCurrentUser(): User {
-        val userRequest = UserExtractor.getCurrentUserIfNotAnonymous()
+        val userRequest = UserExtractor.getCurrentUser()
         val referer = RefererHeaderExtractor.getReferer()
         val externalUserIdSupplier = {
             userRequest?.let(getUserIdOverride::invoke)
         }
 
-        val id = UserId(
-            value = userRequest?.id ?: "anonymousUser"
-        )
+        val id = userRequest?.id?.let { UserId(it) }
 
         return User(
             id = id,

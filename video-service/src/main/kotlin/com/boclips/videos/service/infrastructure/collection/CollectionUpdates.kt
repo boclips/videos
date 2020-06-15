@@ -69,8 +69,8 @@ class CollectionUpdates {
                 command.collectionId,
                 command.videoIds
             )
-            is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.user.id.value)
-            is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.user.id.value)
+            is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.user.idOrThrow().value)
+            is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.user.idOrThrow().value)
             is CollectionUpdateCommand.AddCollectionToCollection -> addToSet(
                 CollectionDocument::subCollectionIds,
                 command.subCollectionId.value
