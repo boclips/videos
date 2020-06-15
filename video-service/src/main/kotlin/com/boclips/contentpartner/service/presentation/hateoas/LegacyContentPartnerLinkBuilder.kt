@@ -39,7 +39,7 @@ class LegacyContentPartnerLinkBuilder(private val uriComponentsBuilderFactory: U
                 getContentPartnersRoot()
                     .build()
                     .toUriString()
-                    .plus("{?name,official,accreditedToYtChannelId}"),
+                    .plus("{?name}"),
                 Rels.CONTENT_PARTNERS
             )
         }

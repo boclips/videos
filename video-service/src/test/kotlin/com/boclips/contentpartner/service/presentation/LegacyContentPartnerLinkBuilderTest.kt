@@ -29,7 +29,7 @@ class LegacyContentPartnerLinkBuilderTest {
 
         val link = legacyContentPartnerLinkBuilder.contentPartnersLink()!!
 
-        assertThat(link.href).endsWith("/v1/content-partners{?name,official,accreditedToYtChannelId}")
+        assertThat(link.href).endsWith("/v1/content-partners{?name}")
         assertThat(link.rel.value()).isEqualTo(LegacyContentPartnerLinkBuilder.Rels.CONTENT_PARTNERS)
         assertThat(link.isTemplated).isTrue()
     }

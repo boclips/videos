@@ -39,7 +39,7 @@ class ChannelLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsB
                 getChannelsRoot()
                     .build()
                     .toUriString()
-                    .plus("{?name,official,accreditedToYtChannelId}"),
+                    .plus("{?name}"),
                 Rels.CHANNELS
             )
         }

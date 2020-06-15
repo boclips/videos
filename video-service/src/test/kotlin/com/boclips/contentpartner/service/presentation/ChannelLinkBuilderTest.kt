@@ -29,7 +29,7 @@ class ChannelLinkBuilderTest {
 
         val link = channelLinkBuilder.channelsLink()!!
 
-        assertThat(link.href).endsWith("/v1/channels{?name,official,accreditedToYtChannelId}")
+        assertThat(link.href).endsWith("/v1/channels{?name}")
         assertThat(link.rel.value()).isEqualTo(ChannelLinkBuilder.Rels.CHANNELS)
         assertThat(link.isTemplated).isTrue()
     }
