@@ -10,7 +10,6 @@ import java.time.Instant
 
 data class ChannelDocument(
     @BsonId val id: ObjectId,
-    val youtubeChannelId: String? = null,
     val name: String,
     val ageRanges: List<AgeRangeDocument>? = emptyList(),
     val lastModified: Instant? = null,

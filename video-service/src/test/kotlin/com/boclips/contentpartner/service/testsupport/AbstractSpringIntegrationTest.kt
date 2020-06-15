@@ -261,7 +261,6 @@ abstract class AbstractSpringIntegrationTest {
     fun saveContentPartner(
         name: String? = "TED",
         ageRanges: List<String> = emptyList(),
-        accreditedToYtChannel: String? = null,
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null,
         description: String? = null,
@@ -286,7 +285,6 @@ abstract class AbstractSpringIntegrationTest {
             VideoServiceApiFactory.createChannelRequest(
                 name = name,
                 ageRanges = ageRanges,
-                accreditedToYtChannel = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
                 currency = currency,
                 description = description,

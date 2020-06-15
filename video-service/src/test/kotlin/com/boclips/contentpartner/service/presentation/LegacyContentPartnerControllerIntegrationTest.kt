@@ -95,32 +95,6 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
     }
 
     @Test
-    fun `can filter content partners by officiality`() {
-        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
-        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
-
-        mockMvc.perform(
-            get("/v1/content-partners?official=true").asBoclipsEmployee()
-        ).andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
-            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
-    }
-
-    @Test
-    fun `can filter content partners by youtube channel`() {
-        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
-        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
-
-        mockMvc.perform(
-            get("/v1/content-partners?accreditedToYtChannelId=1234").asBoclipsEmployee()
-        ).andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.contentPartners", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
-            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(false)))
-    }
-
-    @Test
     fun `get all content partners`() {
         createAgeRange(
             AgeRangeRequest(
@@ -137,7 +111,6 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
             .andExpect(jsonPath("$._embedded.contentPartners[0].id").exists())
             .andExpect(jsonPath("$._embedded.contentPartners[0].name", equalTo("TED-ED")))
             .andExpect(jsonPath("$._embedded.contentPartners[0].currency", equalTo("USD")))
-            .andExpect(jsonPath("$._embedded.contentPartners[0].official", equalTo(true)))
             .andExpect(
                 jsonPath(
                     "$._embedded.contentPartners[0]._links.self.href",

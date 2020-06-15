@@ -84,8 +84,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
             id = originalChannel.id,
             upsertChannelRequest = ChannelRequest(
                 ageRanges = listOf("early-years"),
-                name = null,
-                accreditedToYtChannelId = "test"
+                name = null
             )
         )
 

@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank
 data class ChannelRequest(
     @field:NotBlank
     val name: String? = null,
-    val accreditedToYtChannelId: String? = null,
     var legalRestrictions: LegalRestrictionsRequest? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     var ageRanges: List<String>? = null,

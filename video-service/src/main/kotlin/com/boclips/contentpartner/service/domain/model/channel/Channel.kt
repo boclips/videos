@@ -8,7 +8,6 @@ import java.util.Locale
 data class Channel(
     val id: ChannelId,
     val name: String,
-    val credit: Credit,
     val legalRestriction: LegalRestriction?,
     val distributionMethods: Set<DistributionMethod>,
     val remittance: Remittance?,

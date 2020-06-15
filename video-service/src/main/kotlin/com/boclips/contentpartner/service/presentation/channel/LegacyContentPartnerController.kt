@@ -32,8 +32,6 @@ class LegacyContentPartnerController(
     fun getLegacyContentPartners(channelFilterRequest: ChannelFilterRequest): LegacyContentPartnersResource {
         val channels = fetchChannels(
             name = channelFilterRequest.name,
-            official = channelFilterRequest.official,
-            accreditedToYtChannelId = channelFilterRequest.accreditedToYtChannelId,
             ingestTypes = channelFilterRequest.ingestType
         )
 

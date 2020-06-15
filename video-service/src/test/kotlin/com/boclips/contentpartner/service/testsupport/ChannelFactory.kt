@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
@@ -38,7 +37,6 @@ object ChannelFactory {
             ObjectId().toHexString()
         ),
         name: String = "TED",
-        credit: Credit = Credit.PartnerCredit,
         legalRestriction: LegalRestriction? = null,
         distributionMethods: Set<DistributionMethod> = emptySet(),
         remittance: Remittance? = null,
@@ -58,7 +56,6 @@ object ChannelFactory {
         return Channel(
             id = id,
             name = name,
-            credit = credit,
             legalRestriction = legalRestriction,
             distributionMethods = distributionMethods,
             remittance = remittance,
@@ -79,7 +76,6 @@ object ChannelFactory {
 
     fun createChannelDocument(
         objectId: ObjectId = ObjectId.get(),
-        youtubeChannelId: String? = null,
         name: String = "content partner",
         distributionMethods: Set<DistributionMethodDocument>? = null,
         contentCategories: List<String>? = emptyList(),
@@ -94,7 +90,6 @@ object ChannelFactory {
         contract: ContractDocument? = null
     ) = ChannelDocument(
         id = objectId,
-        youtubeChannelId = youtubeChannelId,
         name = name,
         distributionMethods = distributionMethods,
         contentCategories = contentCategories,

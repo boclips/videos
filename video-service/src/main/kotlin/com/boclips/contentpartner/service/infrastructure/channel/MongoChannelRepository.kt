@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
@@ -227,15 +226,6 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     private fun filterCommandsToBson(filter: ChannelFilter): Bson =
         when (filter) {
             is ChannelFilter.NameFilter -> ChannelDocument::name eq filter.name
-            is ChannelFilter.OfficialFilter -> if (filter.official) {
-                ChannelDocument::youtubeChannelId eq null
-            } else {
-                ChannelDocument::youtubeChannelId ne null
-            }
-            is ChannelFilter.AccreditedTo -> when (filter.credit) {
-                is Credit.YoutubeCredit -> ChannelDocument::youtubeChannelId eq filter.credit.channelId
-                Credit.PartnerCredit -> ChannelDocument::youtubeChannelId ne null
-            }
             is ChannelFilter.HubspotIdFilter -> ChannelDocument::hubspotId eq filter.hubspotId
             is ChannelFilter.IngestTypesFilter ->
                 ChannelDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }

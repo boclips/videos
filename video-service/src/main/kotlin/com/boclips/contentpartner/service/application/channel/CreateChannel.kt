@@ -13,7 +13,6 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
@@ -62,9 +61,7 @@ class CreateChannel(
         val validityFilter =
             ChannelFiltersConverter.convert(
                 name = name,
-                hubspotId = hubspotId,
-                official = upsertRequest.accreditedToYtChannelId == null,
-                accreditedYTChannelId = upsertRequest.accreditedToYtChannelId
+                hubspotId = hubspotId
             )
 
         val validateChannel = channelRepository.findAll(validityFilter).toList()
@@ -108,10 +105,6 @@ class CreateChannel(
                         value = ObjectId().toHexString()
                     ),
                     name = name,
-                    credit = upsertRequest.accreditedToYtChannelId?.let {
-                        Credit
-                            .YoutubeCredit(it)
-                    } ?: Credit.PartnerCredit,
                     legalRestriction = null,
                     distributionMethods = methods,
                     remittance = upsertRequest.currency?.let {

@@ -94,7 +94,6 @@ class VideoServiceApiFactory {
         fun createChannelRequest(
             name: String? = "TED",
             ageRanges: List<String>? = emptyList(),
-            accreditedToYtChannel: String? = null,
             distributionMethods: Set<DistributionMethodResource>? = null,
             legalRestrictions: LegalRestrictionsRequest? = null,
             currency: String? = null,
@@ -119,7 +118,6 @@ class VideoServiceApiFactory {
             return ChannelRequest(
                 name = name,
                 ageRanges = ageRanges,
-                accreditedToYtChannelId = accreditedToYtChannel,
                 distributionMethods = distributionMethods,
                 legalRestrictions = legalRestrictions,
                 currency = currency,
@@ -145,13 +143,9 @@ class VideoServiceApiFactory {
 
         @JvmStatic
         fun channelFilterRequest(
-            name: String? = null,
-            official: Boolean? = null,
-            accreditedToYtChannel: String? = null
+            name: String? = null
         ) = ChannelFilterRequest(
-            name = name,
-            official = official,
-            accreditedToYtChannelId = accreditedToYtChannel
+            name = name
         )
     }
 }

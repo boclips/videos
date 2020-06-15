@@ -1,12 +1,10 @@
 package com.boclips.contentpartner.service.presentation.converters
 
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
@@ -47,7 +45,6 @@ class ChannelToResourceConverterTest {
     @Test
     fun `convert content partner to resource`() {
         val contentPartner = createChannel(
-            credit = Credit.PartnerCredit,
             legalRestriction = ChannelFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(
@@ -71,7 +68,6 @@ class ChannelToResourceConverterTest {
 
         assertThat(contentPartnerResource.id).isNotEmpty()
         assertThat(contentPartnerResource.name).isNotEmpty()
-        assertThat(contentPartnerResource.official).isTrue()
         assertThat(contentPartnerResource.legalRestriction).isNotNull
         assertThat(contentPartnerResource.legalRestriction?.text).isEqualTo("Forbidden in the EU")
         assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
@@ -102,7 +98,6 @@ class ChannelToResourceConverterTest {
     @Test
     fun `a contract currency takes precedence over a content partner currency`() {
         val contentPartner = createChannel(
-            credit = Credit.PartnerCredit,
             legalRestriction = ChannelFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(

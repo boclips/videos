@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
@@ -35,10 +34,6 @@ object ChannelDocumentConverter : KLogging() {
     fun toChannelDocument(channel: Channel): ChannelDocument {
         return ChannelDocument(
             id = ObjectId(channel.id.value),
-            youtubeChannelId = when (channel.credit) {
-                is Credit.YoutubeCredit -> channel.credit.channelId
-                else -> null
-            },
             name = channel.name,
             ageRanges = channel.pedagogyInformation?.ageRangeBuckets?.ageRanges?.map {
                 AgeRangeDocumentConverter.toAgeRangeDocument(
@@ -100,11 +95,6 @@ object ChannelDocumentConverter : KLogging() {
                 value = document.id.toString()
             ),
             name = document.name,
-            credit = document.youtubeChannelId?.let {
-                Credit.YoutubeCredit(
-                    channelId = it
-                )
-            } ?: Credit.PartnerCredit,
             legalRestriction = document.legalRestrictions?.toRestrictions(),
             distributionMethods = reconstructDistributionMethods(
                 document
@@ -177,17 +167,7 @@ object ChannelDocumentConverter : KLogging() {
             convertDistributionMethodsFromDocument(
                 it
             )
-        } ?: convertToDefaultDistributionMethods(
-            document
-        )
-    }
-
-    private fun convertToDefaultDistributionMethods(channelDocument: ChannelDocument): Set<DistributionMethod> {
-        return if (!channelDocument.youtubeChannelId.isNullOrBlank()) {
-            setOf(DistributionMethod.STREAM)
-        } else {
-            DistributionMethod.ALL
-        }
+        } ?: DistributionMethod.ALL
     }
 
     private fun convertDistributionMethodsFromDocument(distributionMethodsDocument: Set<DistributionMethodDocument>): Set<DistributionMethod> {

@@ -58,25 +58,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create an official channel with the same name as a youtube channel`() {
-        val youtubeContentPartner = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                name = "Tsitsipas",
-                accreditedToYtChannel = "23456789"
-            )
-        )
-
-        val officialContentPartner = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                name = "Tsitsipas",
-                accreditedToYtChannel = null
-            )
-        )
-
-        assertThat(officialContentPartner.id).isNotEqualTo(youtubeContentPartner)
-    }
-
-    @Test
     fun `cannot create an official channel without a contract`() {
         assertThrows<MissingContractException> {
             createChannel(
@@ -87,21 +68,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
         }
-    }
-
-    @Test
-    fun `can create a youtube scrape channel without a contract`() {
-        val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
-
-        val youtubeContentPartner = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                name = "Tsitsipas",
-                accreditedToYtChannel = "23456789",
-                contractId = contractId.value
-            )
-        )
-
-        assertThat(youtubeContentPartner.id).isNotNull
     }
 
     @Test

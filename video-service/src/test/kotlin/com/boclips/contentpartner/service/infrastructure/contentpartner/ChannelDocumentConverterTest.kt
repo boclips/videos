@@ -6,7 +6,6 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
@@ -34,7 +33,6 @@ class ChannelDocumentConverterTest {
                 value = ObjectId().toHexString()
             ),
             name = "The grandest content partner there ever lived",
-            credit = Credit.PartnerCredit,
             legalRestriction = ChannelFactory.createLegalRestrictions(),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             remittance = Remittance(
@@ -93,17 +91,6 @@ class ChannelDocumentConverterTest {
 
             val convertedAsset = ChannelDocumentConverter.toChannel(document)
             assertThat(convertedAsset.distributionMethods).isEqualTo(DistributionMethod.ALL)
-        }
-
-        @Test
-        fun `the content partner from youtube is not available for download by default`() {
-            val document = createChannelDocument(
-                distributionMethods = null,
-                youtubeChannelId = "Awesome channel"
-            )
-
-            val convertedAsset = ChannelDocumentConverter.toChannel(document)
-            assertThat(convertedAsset.distributionMethods).containsOnly(DistributionMethod.STREAM)
         }
 
         @Test

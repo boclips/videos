@@ -76,8 +76,6 @@ class ChannelController(
     fun getChannels(channelFilterRequest: ChannelFilterRequest): ChannelsResource {
         val channels = fetchChannels(
             name = channelFilterRequest.name,
-            official = channelFilterRequest.official,
-            accreditedToYtChannelId = channelFilterRequest.accreditedToYtChannelId,
             ingestTypes = channelFilterRequest.ingestType
         )
 

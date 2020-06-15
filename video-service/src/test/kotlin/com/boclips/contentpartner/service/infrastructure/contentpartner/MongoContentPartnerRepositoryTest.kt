@@ -4,7 +4,6 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
@@ -80,84 +79,28 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `find all by official filter`() {
-        val officialChannelId = mongoChannelRepository.create(
-            createChannel(credit = Credit.PartnerCredit)
-        ).id
-
-
-        mongoChannelRepository.create(
-            createChannel(credit = Credit.YoutubeCredit(channelId = "123"))
-        ).id
-
-        val retrievedChannels =
-            mongoChannelRepository.findAll(listOf(ChannelFilter.OfficialFilter(official = true)))
-
-        assertThat(retrievedChannels.map { it.id }).containsExactly(officialChannelId)
-    }
-
-    @Test
-    fun `find all by accredited to youtube channel id`() {
-        mongoChannelRepository.create(
-            createChannel(credit = Credit.PartnerCredit)
-        ).id
-
-        val accreditedToYtChannelId = mongoChannelRepository.create(
-            createChannel(credit = Credit.YoutubeCredit(channelId = "123"))
-        ).id
-
-        val retrievedChannels =
-            mongoChannelRepository.findAll(
-                listOf(
-                    ChannelFilter.AccreditedTo(
-                        Credit.YoutubeCredit(
-                            channelId = "123"
-                        )
-                    )
-                )
-            )
-
-        assertThat(retrievedChannels.map { it.id }).containsExactly(
-            accreditedToYtChannelId
-        )
-    }
-
-    @Test
     fun `find all with multiple filters`() {
         val toBeFoundChannelId = mongoChannelRepository.create(
-            createChannel(credit = Credit.YoutubeCredit(channelId = "123"), name = "hello")
+            createChannel(hubspotId = "123", name = "hello")
         ).id
 
         mongoChannelRepository.create(
-            createChannel(credit = Credit.YoutubeCredit(channelId = "123"), name = "shwmae")
+            createChannel(hubspotId = "456", name = "shwmae")
         ).id
 
         mongoChannelRepository.create(
-            createChannel(credit = Credit.PartnerCredit, name = "hello")
+            createChannel(name = "hello")
         ).id
 
         val retrievedChannels =
             mongoChannelRepository.findAll(
                 listOf(
-                    ChannelFilter.OfficialFilter(official = false),
+                    ChannelFilter.HubspotIdFilter(hubspotId = "123"),
                     ChannelFilter.NameFilter(name = "hello")
                 )
             )
 
         assertThat(retrievedChannels.map { it.id }).containsExactly(toBeFoundChannelId)
-    }
-
-    @Test
-    fun `find by youtube channel name`() {
-        val originalChannel = mongoChannelRepository.create(
-            createChannel(
-                credit = Credit.YoutubeCredit(channelId = "123")
-            )
-        )
-
-        val retrievedAsset = mongoChannelRepository.findById(originalChannel.id)
-
-        assertThat(retrievedAsset).isEqualTo(originalChannel)
     }
 
     @Test

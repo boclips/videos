@@ -242,14 +242,12 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
 
             channelsClient.create(
                 VideoServiceApiFactory.createChannelRequest(
-                    name = "TED",
-                    accreditedToYtChannel = null
+                    name = "TED"
                 )
             )
             channelsClient.create(
                 VideoServiceApiFactory.createChannelRequest(
-                    name = "YoutubeChannel",
-                    accreditedToYtChannel = "YT-123"
+                    name = "other channel"
                 )
             )
 
@@ -260,25 +258,13 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(channelsClient.getChannel(channelId = channelId)).isNotNull
 
             assertThat(channels).hasSize(2)
-            assertThat(channels.map { it.name }).containsExactlyInAnyOrder("TED", "YoutubeChannel")
-
-            val officialChannels = channelsClient.getChannels(
-                channelFilterRequest = VideoServiceApiFactory.channelFilterRequest(official = true)
-            )._embedded.channels
-            assertThat(officialChannels).hasSize(1)
-            assertThat(officialChannels.first().name).isEqualTo("TED")
+            assertThat(channels.map { it.name }).containsExactlyInAnyOrder("TED", "other channel")
 
             val namedChannels = channelsClient.getChannels(
-                channelFilterRequest = VideoServiceApiFactory.channelFilterRequest(name = "YoutubeChannel")
+                channelFilterRequest = VideoServiceApiFactory.channelFilterRequest(name = "other channel")
             )._embedded.channels
             assertThat(namedChannels).hasSize(1)
-            assertThat(namedChannels.first().name).isEqualTo("YoutubeChannel")
-
-            val accreditedToChannels = channelsClient.getChannels(
-                channelFilterRequest = VideoServiceApiFactory.channelFilterRequest(accreditedToYtChannel = "YT-123")
-            )._embedded.channels
-            assertThat(accreditedToChannels).hasSize(1)
-            assertThat(accreditedToChannels.first().name).isEqualTo("YoutubeChannel")
+            assertThat(namedChannels.first().name).isEqualTo("other channel")
         }
     }
 }

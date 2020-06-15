@@ -2,7 +2,6 @@ package com.boclips.contentpartner.service.presentation.converters
 
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Credit
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.videos.api.response.channel.ChannelResource
@@ -19,10 +18,6 @@ class ChannelToResourceConverter(
         return ChannelResource(
             id = channel.id.value,
             name = channel.name,
-            official = when (channel.credit) {
-                is Credit.PartnerCredit -> true
-                is Credit.YoutubeCredit -> false
-            },
             legalRestriction = channel.legalRestriction?.let {
                 legalRestrictionsToResourceConverter.convert(it)
             },

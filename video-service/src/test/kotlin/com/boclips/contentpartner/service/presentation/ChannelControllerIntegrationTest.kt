@@ -386,31 +386,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.channels[0].currency").doesNotExist())
     }
 
-    @Test
-    fun `can filter channels by officiality`() {
-        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
-        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
-
-        mockMvc.perform(
-            get("/v1/channels?official=true").asBoclipsEmployee()
-        ).andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.channels[0].id").exists())
-            .andExpect(jsonPath("$._embedded.channels[0].official", equalTo(true)))
-    }
-
-    @Test
-    fun `can filter channels by youtube channel`() {
-        saveContentPartner(name = "cp-1", accreditedToYtChannel = "1234")
-        saveContentPartner(name = "cp-2", accreditedToYtChannel = null)
-
-        mockMvc.perform(
-            get("/v1/channels?accreditedToYtChannelId=1234").asBoclipsEmployee()
-        ).andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.channels[0].id").exists())
-            .andExpect(jsonPath("$._embedded.channels[0].official", equalTo(false)))
-    }
 
     @Test
     fun `create channel accredited to youtube`() {
@@ -636,7 +611,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.channels[0].id").exists())
             .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("TED-ED")))
             .andExpect(jsonPath("$._embedded.channels[0].currency", equalTo("USD")))
-            .andExpect(jsonPath("$._embedded.channels[0].official", equalTo(true)))
             .andExpect(
                 jsonPath(
                     "$._embedded.channels[0]._links.self.href",
