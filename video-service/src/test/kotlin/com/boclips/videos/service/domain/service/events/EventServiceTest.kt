@@ -434,7 +434,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
 
         assertThat(event.userId).isEqualTo(userId)
-        assertThat(event.overrideUserId).isEqualTo(externalUserId)
         assertThat(event.externalUserId).isEqualTo(externalUserId)
     }
 
@@ -450,7 +449,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
 
         assertThat(event.userId).isEqualTo(userId)
-        assertThat(event.overrideUserId).isNull()
         assertThat(event.externalUserId).isNull()
     }
 }

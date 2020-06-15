@@ -75,7 +75,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
 
             assertThat(event.userId).isEqualTo(userId)
-            assertThat(event.overrideUserId).isEqualTo(externalUserId)
             assertThat(event.externalUserId).isEqualTo(externalUserId)
         }
 
