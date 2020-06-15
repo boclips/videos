@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.application.contract.CreateContract
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.contract.Contract
@@ -212,9 +212,9 @@ abstract class AbstractSpringIntegrationTest {
         subjectIds: Set<String> = setOf()
     ): VideoId {
         val retrievedContentPartnerId = try {
-            saveContentPartner(name = contentProvider,
+            saveChannel(name = contentProvider,
                 distributionMethods = distributionMethods).id
-        } catch (e: ContentPartnerConflictException) {
+        } catch (e: ChannelConflictException) {
             getChannels.invoke(name = contentProvider).firstOrNull()!!.id
         }
 
@@ -258,7 +258,7 @@ abstract class AbstractSpringIntegrationTest {
         return video.videoId
     }
 
-    fun saveContentPartner(
+    fun saveChannel(
         name: String? = "TED",
         ageRanges: List<String> = emptyList(),
         distributionMethods: Set<DistributionMethodResource>? = null,
@@ -280,7 +280,7 @@ abstract class AbstractSpringIntegrationTest {
         subjects: List<String>? = null,
         contractId: String? = null
     ): Channel {
-        val contract = contractId ?: saveContentPartnerContract(name = UUID.randomUUID().toString()).id.value
+        val contract = contractId ?: saveContract(name = UUID.randomUUID().toString()).id.value
         val createdContentPartner = createChannel(
             VideoServiceApiFactory.createChannelRequest(
                 name = name,
@@ -318,7 +318,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun saveContentPartnerContract(
+    fun saveContract(
         name: String = "Contract name",
         contractDocument: String? = null,
         contractDateStart: String? = null,

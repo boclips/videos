@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
@@ -10,9 +11,9 @@ import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
-import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
+import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -40,28 +41,31 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
     @BeforeEach
     fun setUp() {
+        val contract = saveContract()
+
         originalChannel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
-                name = "My content partner",
+                name = "My channel",
                 distributionMethods = emptySet(),
                 legalRestrictions = null,
+                contractId = contract.id.value,
                 marketingInformation = MarketingInformationRequest(
                     showreel = Specified("http://www.server.com/showreel.mov")
                 )
             )
         )
         videoId = saveVideo(
-            contentProvider = "My content partner"
+            contentProvider = "My channel"
         )
     }
 
     @Test
-    fun `content partner gets updated`() {
+    fun `channel gets updated`() {
         val legalRestrictionsId = saveLegalRestrictions(text = "Legal restrictions")
         updateChannel(
             channelId = originalChannel.id.value,
             upsertRequest = ChannelRequest(
-                name = "My better content partner",
+                name = "My better channel",
                 distributionMethods = setOf(
                     DistributionMethodResource.STREAM,
                     DistributionMethodResource.DOWNLOAD
@@ -75,7 +79,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val updatedContentPartner = channelRepository.findById(originalChannel.id)!!
-        assertThat(updatedContentPartner.name).isEqualTo("My better content partner")
+        assertThat(updatedContentPartner.name).isEqualTo("My better channel")
         assertThat(updatedContentPartner.legalRestriction).isNotNull
         assertThat(updatedContentPartner.legalRestriction?.id).isEqualTo(legalRestrictionsId)
         assertThat(updatedContentPartner.legalRestriction?.text).isEqualTo("Legal restrictions")
@@ -187,6 +191,23 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
             updateChannel(
                 channelId = "irrelevant",
                 upsertRequest = ChannelRequest(contractId = "missing")
+            )
+        }
+    }
+
+    @Test
+    fun `cannot update channel ingest to non-YT without a contract`() {
+        val testChannel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                name = "the channel",
+                ingest = IngestDetailsResource.youtube()
+            )
+        )
+
+        assertThrows<MissingContractException> {
+            updateChannel(
+                channelId = testChannel.id.value,
+                upsertRequest = ChannelRequest(ingest = IngestDetailsResource.manual())
             )
         }
     }

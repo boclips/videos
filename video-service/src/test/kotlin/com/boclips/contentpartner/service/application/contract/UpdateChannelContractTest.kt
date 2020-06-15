@@ -13,7 +13,7 @@ class UpdateChannelContractTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `publishes a contract updated event`() {
-        val contract = saveContentPartnerContract(name = "old contract name")
+        val contract = saveContract(name = "old contract name")
 
         fakeEventBus.clearState()
 

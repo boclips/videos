@@ -37,12 +37,12 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @BeforeEach
     fun setUp() {
-        contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "USD").id.value
+        contractId = saveContract(name = "hello", remittanceCurrency = "USD").id.value
     }
 
     @Test
     fun `post video lookup by provider id returns 200 when video exists`() {
-        val channel = saveContentPartner(name = "ted")
+        val channel = saveChannel(name = "ted")
         saveVideo(
             contentProvider = "ted",
             contentProviderVideoId = "https://www.newsy.com/stories/u-s-announces-new-rules-for-migrant-family-detentions/"
@@ -333,8 +333,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can filter channels by name`() {
-        saveContentPartner(name = "hello")
-        saveContentPartner(name = "goodbye")
+        saveChannel(name = "hello")
+        saveChannel(name = "goodbye")
 
         mockMvc.perform(
             get("/v1/channels?name=hello").asBoclipsEmployee()
@@ -346,21 +346,21 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can filter channels by ingest types`() {
-        saveContentPartner(
+        saveChannel(
             name = "mrss",
             ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.MRSS,
                 urls = listOf("http://feed.me")
             )
         )
-        saveContentPartner(
+        saveChannel(
             name = "yt",
             ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.YOUTUBE,
                 playlistIds = listOf("http://yt.com")
             )
         )
-        saveContentPartner(
+        saveChannel(
             name = "manual",
             ingest = ChannelFactory.createIngestDetailsResource(type = IngestType.MANUAL)
         )
@@ -375,7 +375,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can find channel, but cannot see currency as just an API user`() {
-        saveContentPartner(name = "hello", currency = "USD")
+        saveChannel(name = "hello", currency = "USD")
 
         mockMvc.perform(
             get("/v1/channels?name=hello").asApiUser()
@@ -445,8 +445,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val firstContractId = saveContentPartnerContract(name = "first contract").id
-        val secondContractId = saveContentPartnerContract(name = "second contract").id
+        val firstContractId = saveContract(name = "first contract").id
+        val secondContractId = saveContract(name = "second contract").id
 
         val originalContent = """
             {
@@ -621,7 +621,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `enables channel for streaming`() {
-        val id = saveContentPartner().id.value
+        val id = saveChannel().id.value
 
         mockMvc.perform(
             patch("/v1/channels/$id").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(
@@ -661,7 +661,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `create a channel associated to a contract`() {
-        val contractId = saveContentPartnerContract(name = "a contract", remittanceCurrency = "USD").id
+        val contractId = saveContract(name = "a contract", remittanceCurrency = "USD").id
 
         val content = """
             {
@@ -689,7 +689,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class ChannelResourceProjections {
         @Test
         fun `boclips internal user has access to all fields`() {
-            val channel = saveContentPartner(
+            val channel = saveChannel(
                 name = "hello",
                 currency = "CAD",
                 awards = "this is an award",
@@ -760,7 +760,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `api user only has access to certain fields`() {
-            val channel = saveContentPartner(
+            val channel = saveChannel(
                 name = "hello",
                 currency = "CAD",
                 awards = "this is an award",
@@ -835,7 +835,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class VideoExists {
         @Test
         fun `video lookup by provider id returns 200 when video exists`() {
-            val contentPartner = saveContentPartner(name = "ted")
+            val contentPartner = saveChannel(name = "ted")
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(

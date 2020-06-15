@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
@@ -439,7 +439,7 @@ abstract class AbstractSpringIntegrationTest {
                     currency = currency
                 )
             )
-        } catch (e: ContentPartnerConflictException) {
+        } catch (e: ChannelConflictException) {
             getChannels.invoke(name = name).first()
         }
 

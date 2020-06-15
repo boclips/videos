@@ -8,9 +8,7 @@ import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -106,7 +104,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `a 409 when trying to create a contract with an pre-exisitng name`() {
-        saveContentPartnerContract(name = "already here")
+        saveContract(name = "already here")
 
         mockMvc.perform(
             post("/v1/contracts").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
@@ -146,8 +144,8 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `view all contracts`() {
-        val firstContractId = saveContentPartnerContract(name = "the best videos")
-        val secondContractId = saveContentPartnerContract(name = "okay videos")
+        val firstContractId = saveContract(name = "the best videos")
+        val secondContractId = saveContract(name = "okay videos")
 
         mockMvc.perform(get("/v1/contracts").asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -168,8 +166,8 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can page when fetching all contracts`() {
-        saveContentPartnerContract(name = "the best videos")
-        saveContentPartnerContract(name = "okay videos")
+        saveContract(name = "the best videos")
+        saveContract(name = "okay videos")
 
         mockMvc.perform(get("/v1/contracts?page=0&size=1").asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -206,7 +204,7 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `updates the contract, and ensures contract document deletion works correctly`() {
         fakeSignedLinkProvider.setLink(URL("http://server.com/oranges.png#signed"))
 
-        val contract = saveContentPartnerContract(name = "okay videos")
+        val contract = saveContract(name = "okay videos")
 
         val fullUpdate = """
             {
@@ -311,8 +309,8 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `gets a 409 when updating the name to a pre-existing contract`() {
-        saveContentPartnerContract(name = "already here")
-        val contract = saveContentPartnerContract(name = "change me")
+        saveContract(name = "already here")
+        val contract = saveContract(name = "change me")
 
         val nameChange = """
             {

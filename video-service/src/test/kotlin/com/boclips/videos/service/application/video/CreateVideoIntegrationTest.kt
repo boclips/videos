@@ -1,10 +1,10 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
@@ -135,7 +135,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        assertThrows<ContentPartnerNotFoundException> {
+        assertThrows<ChannelNotFoundException> {
             createVideo(
                 VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = "4321",

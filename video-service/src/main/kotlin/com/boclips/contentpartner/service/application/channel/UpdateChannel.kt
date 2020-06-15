@@ -1,21 +1,25 @@
 package com.boclips.contentpartner.service.application.channel
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.ChannelNotFoundException
+import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
+import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
+import com.boclips.contentpartner.service.domain.service.ChannelService
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
+import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.springframework.stereotype.Component
 
 @Component
 class UpdateChannel(
-    private val channelRepository: ChannelRepository,
+    private val channelService: ChannelService,
     private val channelUpdatesConverter: ChannelUpdatesConverter,
     private val createLegalRestrictions: CreateLegalRestrictions,
     private val subjectRepository: SubjectRepository,
@@ -36,19 +40,29 @@ class UpdateChannel(
         }
 
         val updateCommands = channelUpdatesConverter.convert(id, upsertRequest)
-        channelRepository.update(updateCommands)
+        val updateChannelResult = channelService.update(SingleChannelUpdate(id = id, updateCommands = updateCommands))
 
-        val updatedChannel = channelRepository.findById(id)
-            ?: throw ContentPartnerNotFoundException("Could not find content partner: $channelId")
+        return when (updateChannelResult) {
+            is UpdateChannelResult.Success -> {
+                publishChannelUpdated(updateChannelResult.channel, allSubjects)
 
+                updateChannelResult.channel
+            }
+            is UpdateChannelResult.ChannelNotFound -> throw ChannelNotFoundException(id)
+            is UpdateChannelResult.MissingContract -> throw MissingContractException()
+        }
+    }
+
+    private fun publishChannelUpdated(
+        channel: Channel,
+        allSubjects: List<Subject>
+    ) {
         eventBus.publish(
             ContentPartnerUpdated
                 .builder()
-                .contentPartner(eventConverter.toContentPartnerPayload(updatedChannel, allSubjects))
+                .contentPartner(eventConverter.toContentPartnerPayload(channel, allSubjects))
                 .build()
         )
-
-        return updatedChannel
     }
 }
 

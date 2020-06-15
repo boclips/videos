@@ -11,7 +11,7 @@ class GetChannelContractsTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can fetch all contracts`() {
-        val contractId = saveContentPartnerContract()
+        val contractId = saveContract()
         val allContracts = getContracts(page = null, size = null)
 
         assertThat(allContracts.elements.map { it.id }).containsExactly(contractId.id)
@@ -19,8 +19,8 @@ class GetChannelContractsTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can page contracts`() {
-        saveContentPartnerContract(name = "a")
-        saveContentPartnerContract(name = "b")
+        saveContract(name = "a")
+        saveContract(name = "b")
 
         val allContracts = getContracts(page = 0, size = 1)
 

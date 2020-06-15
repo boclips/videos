@@ -332,7 +332,7 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating contract`() {
-        val newContract = saveContentPartnerContract(name = "new name")
+        val newContract = saveContract(name = "new name")
 
         val commands = channelUpdatesConverter.convert(
             originalChannel.id, ChannelRequest(

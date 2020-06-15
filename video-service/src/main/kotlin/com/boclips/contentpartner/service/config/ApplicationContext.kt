@@ -22,6 +22,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.domain.service.ChannelService
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.contract.ContractService
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContractSignedLinkProvider
@@ -48,6 +49,7 @@ import org.springframework.context.annotation.Configuration
 class ApplicationContext(
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val channelRepository: ChannelRepository,
+    val channelService: ChannelService,
     val ageRangeRepository: AgeRangeRepository,
     val contractRepository: ContractRepository,
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
@@ -72,7 +74,7 @@ class ApplicationContext(
     @Bean
     fun createChannel(): CreateChannel {
         return CreateChannel(
-            channelRepository,
+            channelService,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
             contractRepository,

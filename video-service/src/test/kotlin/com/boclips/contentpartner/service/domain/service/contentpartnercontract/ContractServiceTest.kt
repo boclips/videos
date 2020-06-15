@@ -29,7 +29,7 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns error when trying to create with a duplicate name`() {
-            saveContentPartnerContract(name = "i exist")
+            saveContract(name = "i exist")
 
             val result = contractService.create(ContentPartnerContractFactory.sample(contentPartnerName = "i exist"))
                 as CreateContractResult.NameConflict
@@ -42,7 +42,7 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
     inner class Updating() {
         @Test
         fun `can update a contract`() {
-            val contract = saveContentPartnerContract(name = "old")
+            val contract = saveContract(name = "old")
 
             val result = contractService.update(
                 SingleContractUpdate(
@@ -60,7 +60,7 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `updating a content partner with the same name does not result in an error`() {
-            val contract = saveContentPartnerContract(name = "new")
+            val contract = saveContract(name = "new")
 
             val result = contractService.update(
                 SingleContractUpdate(
@@ -78,8 +78,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns error when updating to a duplicate name`() {
-            val contract = saveContentPartnerContract(name = "old")
-            saveContentPartnerContract("i exist")
+            val contract = saveContract(name = "old")
+            saveContract("i exist")
 
             val result = contractService.update(
                 SingleContractUpdate(

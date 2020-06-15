@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test
 class GetChannelsTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can fetch content partners by name`() {
-        val contentPartner1 = saveContentPartner(name = "hello")
-        saveContentPartner(name = "good night")
+        val contentPartner1 = saveChannel(name = "hello")
+        saveChannel(name = "good night")
 
         val contentPartners = getChannels.invoke(name = "hello")
 

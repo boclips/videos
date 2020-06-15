@@ -4,12 +4,10 @@ import com.boclips.web.exceptions.BoclipsApiException
 import com.boclips.web.exceptions.ExceptionDetails
 import org.springframework.http.HttpStatus
 
-class ContentPartnerHubspotIdExceptions(hubspotId: String) : BoclipsApiException(
+class ChannelConflictException(channelName: String) : BoclipsApiException(
     ExceptionDetails(
-        error = "Hubspot ID conflict",
-        message = "There's already a content partner with this hubspot ID '$hubspotId'",
+        error = "Channel conflict",
+        message = "There's already a channel named '$channelName'",
         status = HttpStatus.CONFLICT
     )
 )
-
-

@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
+import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -35,7 +35,7 @@ class CreateVideo(
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
         val contentPartner = findContentPartner(createRequest)
-            ?: throw ContentPartnerNotFoundException(
+            ?: throw ChannelNotFoundException(
                 "Could not find content partner with id: ${createRequest.providerId}"
             )
 

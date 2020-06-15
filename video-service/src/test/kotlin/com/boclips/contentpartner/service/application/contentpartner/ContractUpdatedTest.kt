@@ -17,8 +17,8 @@ class ContractUpdatedTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updating a contract also updates any associated content partners`() {
-        val oldContract = saveContentPartnerContract(name = "old contract")
-        val contentPartner = saveContentPartner(contractId = oldContract.id.value)
+        val oldContract = saveContract(name = "old contract")
+        val contentPartner = saveChannel(contractId = oldContract.id.value)
         val newContract = oldContract.copy(contentPartnerName = "new contract")
 
         contractRepository.update(

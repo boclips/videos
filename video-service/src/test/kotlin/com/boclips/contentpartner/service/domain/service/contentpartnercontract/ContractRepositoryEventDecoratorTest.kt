@@ -33,7 +33,7 @@ class ContractRepositoryEventDecoratorTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `publishes a ContractUpdate event on update`() {
-        val contract = saveContentPartnerContract(name = "old contract")
+        val contract = saveContract(name = "old contract")
         fakeEventBus.clearState()
 
         contractRepository.update(

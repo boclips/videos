@@ -40,6 +40,7 @@ class EventConverter {
         val subjects = channel.pedagogyInformation?.subjects?.mapNotNull {
             allSubjects.find { subject -> subject.id.value == it }
         }
+
         return EventBusChannel.builder()
             .id(ChannelId(channel.id.value))
             .name(channel.name)

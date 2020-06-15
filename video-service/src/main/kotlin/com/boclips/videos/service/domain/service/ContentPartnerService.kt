@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.service
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerNotFoundException
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.service.domain.model.video.contentpartner.Availability
 import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
@@ -13,18 +12,13 @@ class ContentPartnerService(val channelRepository: ChannelRepository) {
     var idCache: Pair<ContentPartnerId, Availability>? = null
 
     fun findById(id: String): ContentPartner? {
-        val contentPartner = find(
-            ContentPartnerId(
-                id
-            )
-        ) ?: throw ContentPartnerNotFoundException(id)
-
-        return ContentPartner(
-            contentPartnerId = ContentPartnerId(
-                value = contentPartner.id.value
-            ),
-            name = contentPartner.name
-        )
+        return find(ContentPartnerId(id))
+            ?.let {
+                ContentPartner(
+                    contentPartnerId = ContentPartnerId(value = it.id.value),
+                    name = it.name
+                )
+            }
     }
 
     fun findAvailabilityFor(contentPartnerId: ContentPartnerId): Availability {

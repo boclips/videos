@@ -14,15 +14,15 @@ class BroadcastChannelsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `dispatches an event for every channel`() {
-        saveContentPartner(
+        saveChannel(
             name = "First Content Partner"
         )
 
-        saveContentPartner(
+        saveChannel(
             name = "Second Content Partner"
         )
 
-        saveContentPartner(
+        saveChannel(
             name = "Third Content Partner"
         )
 

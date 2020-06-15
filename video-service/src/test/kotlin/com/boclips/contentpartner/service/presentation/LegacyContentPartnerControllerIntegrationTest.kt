@@ -9,9 +9,6 @@ import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -19,15 +16,9 @@ import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.net.URI
 import java.time.Period
 
 class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -36,13 +27,13 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
 
     @BeforeEach
     fun setUp() {
-        contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "USD").id.value
+        contractId = saveContract(name = "hello", remittanceCurrency = "USD").id.value
     }
 
     @Test
     fun `can filter content partners by name`() {
-        saveContentPartner(name = "hello")
-        saveContentPartner(name = "goodbye")
+        saveChannel(name = "hello")
+        saveChannel(name = "goodbye")
 
         mockMvc.perform(
             get("/v1/content-partners?name=hello").asBoclipsEmployee()
@@ -54,21 +45,21 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
 
     @Test
     fun `can filter content partners by ingest types`() {
-        saveContentPartner(
+        saveChannel(
             name = "mrss",
             ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.MRSS,
                 urls = listOf("http://feed.me")
             )
         )
-        saveContentPartner(
+        saveChannel(
             name = "yt",
             ingest = ChannelFactory.createIngestDetailsResource(
                 type = IngestType.YOUTUBE,
                 playlistIds = listOf("http://yt.com")
             )
         )
-        saveContentPartner(
+        saveChannel(
             name = "manual",
             ingest = ChannelFactory.createIngestDetailsResource(type = IngestType.MANUAL)
         )
@@ -83,7 +74,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
 
     @Test
     fun `can find content partner, but cannot see currency as just an API user`() {
-        saveContentPartner(name = "hello", currency = "USD")
+        saveChannel(name = "hello", currency = "USD")
 
         mockMvc.perform(
             get("/v1/content-partners?name=hello").asApiUser()
@@ -104,7 +95,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
                 label = "10-15"
             )
         )
-        saveContentPartner(name = "TED-ED", ageRanges = listOf("early-years"), contractId = contractId)
+        saveChannel(name = "TED-ED", ageRanges = listOf("early-years"), contractId = contractId)
 
         mockMvc.perform(get("/v1/content-partners").asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -122,7 +113,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
     inner class ContentPartnerResourceProjections {
         @Test
         fun `boclips internal user has access to all fields`() {
-            val contentPartner = saveContentPartner(
+            val contentPartner = saveChannel(
                 name = "hello",
                 currency = "CAD",
                 awards = "this is an award",
@@ -193,7 +184,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
 
         @Test
         fun `api user only has access to certain fields`() {
-            val contentPartner = saveContentPartner(
+            val contentPartner = saveChannel(
                 name = "hello",
                 currency = "CAD",
                 awards = "this is an award",

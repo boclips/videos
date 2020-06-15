@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.application
 
-import com.boclips.contentpartner.service.application.exceptions.ContentPartnerConflictException
+import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
+import com.boclips.contentpartner.service.application.exceptions.ChannelHubspotIdException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
@@ -58,7 +59,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `cannot create an official channel without a contract`() {
+    fun `cannot create a channel without a contract`() {
         assertThrows<MissingContractException> {
             createChannel(
                 VideoServiceApiFactory.createChannelRequest(
@@ -69,6 +70,17 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
             )
         }
     }
+
+    @Test
+    fun `can create a channel without a contract when it's from a youtube source`() {
+        val channel = createChannel(VideoServiceApiFactory.createChannelRequest(
+            name = "Gregor Dimitrov",
+            ingest = IngestDetailsResource.youtube()
+        ))
+
+        assertThat(channel.name).isEqualTo("Gregor Dimitrov")
+    }
+
 
     @Test
     fun `cannot create a channel with an invalid content category`() {
@@ -119,7 +131,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `cannot create the same channel with the same name`() {
         createChannel(VideoServiceApiFactory.createChannelRequest())
-        assertThrows<ContentPartnerConflictException> {
+        assertThrows<ChannelConflictException> {
             createChannel(
                 VideoServiceApiFactory.createChannelRequest()
             )
@@ -128,10 +140,10 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `cannot create the same channel with the same hubspotId`() {
-        createChannel(VideoServiceApiFactory.createChannelRequest(hubspotId = "123"))
-        assertThrows<ContentPartnerConflictException> {
+        createChannel(VideoServiceApiFactory.createChannelRequest(name = "old", hubspotId = "123"))
+        assertThrows<ChannelHubspotIdException> {
             createChannel(
-                VideoServiceApiFactory.createChannelRequest(hubspotId = "123")
+                VideoServiceApiFactory.createChannelRequest(name="new", hubspotId = "123")
             )
         }
     }
@@ -246,7 +258,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a channel with contract information`() {
-        val contractId = saveContentPartnerContract(name = "hello", remittanceCurrency = "GBP").id
+        val contractId = saveContract(name = "hello", remittanceCurrency = "GBP").id
         val channel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
                 contractId = contractId.value
