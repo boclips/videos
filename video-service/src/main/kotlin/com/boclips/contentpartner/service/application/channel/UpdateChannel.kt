@@ -7,29 +7,20 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
-import com.boclips.contentpartner.service.domain.service.ChannelService
-import com.boclips.contentpartner.service.domain.service.EventConverter
-import com.boclips.eventbus.EventBus
-import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
-import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.springframework.stereotype.Component
 
 @Component
 class UpdateChannel(
     private val channelService: ChannelService,
     private val channelUpdatesConverter: ChannelUpdatesConverter,
-    private val createLegalRestrictions: CreateLegalRestrictions,
-    private val subjectRepository: SubjectRepository,
-    private val eventConverter: EventConverter,
-    private val eventBus: EventBus
+    private val createLegalRestrictions: CreateLegalRestrictions
 ) {
     operator fun invoke(channelId: String, upsertRequest: ChannelRequest): Channel {
         val id = ChannelId(value = channelId)
 
-        val allSubjects = subjectRepository.findAll()
 
         upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
@@ -43,26 +34,10 @@ class UpdateChannel(
         val updateChannelResult = channelService.update(SingleChannelUpdate(id = id, updateCommands = updateCommands))
 
         return when (updateChannelResult) {
-            is UpdateChannelResult.Success -> {
-                publishChannelUpdated(updateChannelResult.channel, allSubjects)
-
-                updateChannelResult.channel
-            }
+            is UpdateChannelResult.Success -> updateChannelResult.channel
             is UpdateChannelResult.ChannelNotFound -> throw ChannelNotFoundException(id)
             is UpdateChannelResult.MissingContract -> throw MissingContractException()
         }
-    }
-
-    private fun publishChannelUpdated(
-        channel: Channel,
-        allSubjects: List<Subject>
-    ) {
-        eventBus.publish(
-            ContentPartnerUpdated
-                .builder()
-                .contentPartner(eventConverter.toContentPartnerPayload(channel, allSubjects))
-                .build()
-        )
     }
 }
 

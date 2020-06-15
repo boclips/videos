@@ -2,8 +2,8 @@ package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
-import com.boclips.contentpartner.service.domain.service.ChannelService
 import com.boclips.contentpartner.service.domain.service.EventConverter
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.contentpartner.service.domain.service.contract.ContractService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

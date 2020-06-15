@@ -19,17 +19,12 @@ import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformati
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
-import com.boclips.contentpartner.service.domain.service.ChannelService
-import com.boclips.contentpartner.service.domain.service.EventConverter
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.contentpartner.service.presentation.converters.ContentPartnerMarketingInformationConverter
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
-import com.boclips.eventbus.EventBus
-import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.channel.ChannelRequest
-import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentCategories
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import org.bson.types.ObjectId
 import java.util.Currency
 import java.util.Locale
@@ -38,10 +33,7 @@ class CreateChannel(
     private val channelService: ChannelService,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
-    private val contractRepository: ContractRepository,
-    private val subjectRepository: SubjectRepository,
-    private val eventConverter: EventConverter,
-    private val eventBus: EventBus
+    private val contractRepository: ContractRepository
 ) {
     operator fun invoke(upsertRequest: ChannelRequest): Channel {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
@@ -49,8 +41,6 @@ class CreateChannel(
                 ageRangeRepository.findById(ageRangeId) ?: throw InvalidAgeRangeException(ageRangeId)
             }
         }
-
-        val allSubjects = subjectRepository.findAll()
 
         val methods = upsertRequest.distributionMethods?.let(
             DistributionMethodResourceConverter::toDistributionMethods
@@ -111,31 +101,11 @@ class CreateChannel(
         val createdChannelResult = channelService.create(channel)
 
         return when (createdChannelResult) {
-            is CreateChannelResult.Success -> {
-                publishCreatedEvent(createdChannelResult.channel, allSubjects)
-                createdChannelResult.channel
-            }
+            is CreateChannelResult.Success -> createdChannelResult.channel
             is CreateChannelResult.NameConflict -> throw ChannelConflictException(createdChannelResult.name)
             is CreateChannelResult.HubSpotIdConflict -> throw ChannelHubspotIdException(createdChannelResult.hubSpotId)
             CreateChannelResult.MissingContract -> throw MissingContractException()
         }
-    }
-
-    private fun publishCreatedEvent(
-        channel: Channel,
-        allSubjects: List<Subject>
-    ) {
-        eventBus.publish(
-            ContentPartnerUpdated
-                .builder()
-                .contentPartner(
-                    eventConverter.toContentPartnerPayload(
-                        channel,
-                        allSubjects
-                    )
-                )
-                .build()
-        )
     }
 
     private fun validateContentCategories(contentCategories: List<String>?) {

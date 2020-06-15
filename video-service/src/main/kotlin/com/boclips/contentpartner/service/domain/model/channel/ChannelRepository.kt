@@ -6,8 +6,9 @@ interface ChannelRepository {
     fun create(channel: Channel): Channel
     fun findAll(): Iterable<Channel>
     fun findAll(filters: List<ChannelFilter>): Iterable<Channel>
+    fun findAllByIds(ids: List<ChannelId>): Iterable<Channel>
     fun findById(channelId: ChannelId): Channel?
     fun findByContractId(contractId: ContractId): List<Channel>
     fun findByName(query: String): List<Channel>
-    fun update(updateCommands: List<ChannelUpdateCommand>)
+    fun update(updateCommands: List<ChannelUpdateCommand>): List<Channel>
 }

@@ -1,4 +1,4 @@
-package com.boclips.contentpartner.service.domain.service
+package com.boclips.contentpartner.service.domain.service.channel
 
 import com.boclips.contentpartner.service.application.channel.ChannelFiltersConverter
 import com.boclips.contentpartner.service.domain.model.channel.Channel

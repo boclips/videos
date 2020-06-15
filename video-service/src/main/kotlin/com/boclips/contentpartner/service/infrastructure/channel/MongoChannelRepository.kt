@@ -28,7 +28,6 @@ import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-import org.litote.kmongo.ne
 import org.litote.kmongo.regex
 import org.litote.kmongo.set
 import java.time.Instant
@@ -50,10 +49,11 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
         getChannelCollection()
             .insertOne(channelDocument.copy(createdAt = Instant.now(), lastModified = Instant.now()))
 
-        val createChannel = findById(channel.id) ?: throw ResourceNotFoundApiException( // TODO this should not be throwing api exceptions
-            error = "Content partner not found",
-            message = "There has been an error in creating the content partner. Content partner id: ${channel.id.value} could not be found."
-        )
+        val createChannel = findById(channel.id)
+            ?: throw ResourceNotFoundApiException( // TODO this should not be throwing api exceptions
+                error = "Content partner not found",
+                message = "There has been an error in creating the content partner. Content partner id: ${channel.id.value} could not be found."
+            )
 
         logger.info { "Created channel ${createChannel.id.value}" }
 
@@ -63,6 +63,19 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     override fun findAll(): MongoIterable<Channel> =
         getChannelCollection().find()
             .map { ChannelDocumentConverter.toChannel(it) }
+
+    override fun findAllByIds(ids: List<ChannelId>): List<Channel> {
+        val uniqueChannelIds = ids.distinct()
+        val uniqueObjectIds = uniqueChannelIds.map { it.value }.distinct().map { ObjectId(it) }
+
+        val channels = getChannelCollection()
+            .find(ChannelDocument::id `in` uniqueObjectIds)
+            .map(ChannelDocumentConverter::toChannel)
+            .map { it.id to it }
+            .toMap()
+
+        return uniqueChannelIds.mapNotNull { channelId -> channels[channelId] }
+    }
 
     override fun findAll(filters: List<ChannelFilter>): Iterable<Channel> {
         val bson: Bson = filters.fold(and()) { bson: Bson, filter: ChannelFilter ->
@@ -93,16 +106,16 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
 
     override fun findByName(query: String): List<Channel> {
         return getChannelCollection().find(
-            ChannelDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
-        )
+                ChannelDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
+            )
             .distinctBy(selector = { input -> input.name })
             .map { ChannelDocumentConverter.toChannel(it) }
             .toList()
     }
 
-    override fun update(updateCommands: List<ChannelUpdateCommand>) {
+    override fun update(updateCommands: List<ChannelUpdateCommand>): List<Channel> {
         if (updateCommands.isEmpty()) {
-            return
+            return emptyList()
         }
 
         val updateDocs = updateCommands.map { updateCommand ->
@@ -114,6 +127,8 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
 
         val result = getChannelCollection().bulkWrite(updateDocs)
         logger.info { "Bulk content partner update: $result" }
+
+        return findAllByIds(updateCommands.map { it.channelId })
     }
 
     private fun updateCommandsToBson(updateCommand: ChannelUpdateCommand): Bson {

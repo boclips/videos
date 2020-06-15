@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure.contentpartner
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
@@ -10,7 +11,6 @@ import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformati
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
-import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
@@ -24,7 +24,7 @@ import java.time.Period
 
 class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var mongoChannelRepository: MongoChannelRepository
+    lateinit var mongoChannelRepository: ChannelRepository
 
     @Test
     fun `can create a content partner`() {
@@ -127,6 +127,18 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(results).hasSize(2)
         assertThat(results[0].name).isEqualTo("TED")
         assertThat(results[1].name).isEqualTo("TED-Ed")
+    }
+
+    @Test
+    fun `find all distinct channel by ids`() {
+        val channel1 = mongoChannelRepository.create(createChannel(name = "TED"))
+        val channel2 = mongoChannelRepository.create(createChannel(name = "TED 2"))
+
+        val results = mongoChannelRepository.findAllByIds(listOf(channel1.id, channel2.id, channel1.id)).toList()
+
+        assertThat(results).hasSize(2)
+        assertThat(results[0].name).isEqualTo("TED")
+        assertThat(results[1].name).isEqualTo("TED 2")
     }
 
     @Test

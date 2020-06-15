@@ -9,7 +9,9 @@ import com.boclips.contentpartner.service.application.exceptions.MissingContract
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Period
 import java.util.Locale
+import kotlin.contracts.contract
 
 class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -268,6 +271,49 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(channel.contract?.id).isEqualTo(contractId)
         assertThat(channel.contract?.contentPartnerName).isEqualTo("hello")
         assertThat(channel.contract?.remittanceCurrency?.currencyCode).isEqualTo("GBP")
+    }
+
+    @Test
+    fun `emits event`() {
+        val contractId = saveContract(name = "hello", remittanceCurrency = "GBP").id
+
+        val description = "Test description"
+        val contentCategories = listOf("WITH_A_HOST")
+        val contentTypes = listOf("NEWS")
+        val notes = "This is an interesting CP"
+        val hubspotId = "12345678"
+
+        val channel = createChannel(
+            upsertRequest = ChannelRequest(
+                name = "New Channel",
+                distributionMethods = setOf(
+                    DistributionMethodResource.STREAM,
+                    DistributionMethodResource.DOWNLOAD
+                ),
+                ingest = IngestDetailsResource.mrss("https://feed.me"),
+                deliveryFrequency = Period.ofYears(1),
+                language = "spa",
+                description = description,
+                contentCategories = contentCategories,
+                contentTypes = contentTypes,
+                notes = notes,
+                hubspotId = hubspotId,
+                contractId = contractId.value
+            )
+        )
+
+        assertThat(fakeEventBus.countEventsOfType(ContentPartnerUpdated::class.java)).isEqualTo(1)
+
+        val event = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java)
+
+        assertThat(event.contentPartner.id.value).isEqualTo(channel.id.value)
+        assertThat(event.contentPartner.details.language.isO3Language).isEqualTo("spa")
+        assertThat(event.contentPartner.details.contentCategories).isEqualTo(contentCategories)
+        assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
+        assertThat(event.contentPartner.details.notes).isEqualTo(notes)
+        assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
+        assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
+        assertThat(event.contentPartner.ingest.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test

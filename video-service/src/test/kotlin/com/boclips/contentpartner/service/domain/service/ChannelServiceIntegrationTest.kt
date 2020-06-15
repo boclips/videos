@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.videos.api.response.channel.IngestDetailsResource

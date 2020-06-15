@@ -22,21 +22,21 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
-import com.boclips.contentpartner.service.domain.service.ChannelService
 import com.boclips.contentpartner.service.domain.service.EventConverter
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.contentpartner.service.domain.service.contract.ContractService
-import com.boclips.contentpartner.service.infrastructure.signedlink.ContractSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContractSignedLinkProvider
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.ContractLegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.converters.contracts.ContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractCostsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractDatesToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRemittanceCurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRestrictionsConverter
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractRoyaltySplitConverter
+import com.boclips.contentpartner.service.presentation.converters.contracts.ContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
@@ -77,10 +77,7 @@ class ApplicationContext(
             channelService,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contractRepository,
-            subjectRepository,
-            eventConverter,
-            eventBus
+            contractRepository
         )
     }
 
