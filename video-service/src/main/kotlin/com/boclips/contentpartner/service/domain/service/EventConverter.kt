@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.domain.service
 
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
@@ -24,6 +25,7 @@ import mu.KLogging
 import com.boclips.eventbus.domain.Subject as EventBusSubject
 import com.boclips.eventbus.domain.SubjectId as EventBusSubjectId
 import com.boclips.eventbus.domain.contentpartner.Channel as EventBusChannel
+import com.boclips.eventbus.domain.contentpartner.DistributionMethod as EventBusDistributionMethod
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 import com.boclips.eventbus.domain.contract.ContractCosts as EventBusContractCosts
@@ -92,7 +94,7 @@ class EventConverter {
             .build()
     }
 
-    fun toIngestDetailsPayload(channel: Channel): EventBusIngestDetails {
+    private fun toIngestDetailsPayload(channel: Channel): EventBusIngestDetails {
         val ingest = channel.ingest
         val (type, urls) = when (ingest) {
             ManualIngest -> IngestType.MANUAL to null
@@ -101,11 +103,19 @@ class EventConverter {
             is YoutubeScrapeIngest -> IngestType.YOUTUBE to ingest.playlistIds
         }
 
+        val distributionMethods = channel.distributionMethods.map {
+            when (it) {
+                DistributionMethod.DOWNLOAD -> EventBusDistributionMethod.DOWNLOAD
+                DistributionMethod.STREAM -> EventBusDistributionMethod.STREAM
+            }
+        }.toSet()
+
         return EventBusIngestDetails
             .builder()
             .type(type.name)
             .urls(urls)
             .deliveryFrequency(channel.deliveryFrequency)
+            .distributionMethods(distributionMethods)
             .build()
     }
 
@@ -178,7 +188,7 @@ class EventConverter {
             .recoupable(costs.recoupable)
             .build()
 
-    fun toSubjectPayload(subject: Subject): EventBusSubject =
+    private fun toSubjectPayload(subject: Subject): EventBusSubject =
         subject.run {
             EventBusSubject.builder()
                 .id(

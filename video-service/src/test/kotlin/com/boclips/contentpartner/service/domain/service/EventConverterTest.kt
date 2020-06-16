@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.INSTRUCTIONAL
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
@@ -28,6 +29,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.util.Currency
 import java.util.Locale
+import com.boclips.eventbus.domain.contentpartner.DistributionMethod as EventBusDistributionMethod
 
 class EventConverterTest {
 
@@ -117,13 +119,19 @@ class EventConverterTest {
     fun `converts ingest details`() {
         val contentPartner = createChannel(
             ingest = ManualIngest,
-            deliveryFrequency = Period.ofMonths(1)
+            deliveryFrequency = Period.ofMonths(1),
+            distributionMethods = setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM)
         )
 
         val payload = converter.toContentPartnerPayload(contentPartner)
 
         assertThat(payload.ingest.deliveryFrequency.months).isEqualTo(1)
         assertThat(payload.ingest.type).isEqualTo("MANUAL")
+        assertThat(payload.ingest.distributionMethods).containsExactlyInAnyOrder(
+            EventBusDistributionMethod.DOWNLOAD,
+            EventBusDistributionMethod.STREAM
+        )
+
     }
 
     @Test
