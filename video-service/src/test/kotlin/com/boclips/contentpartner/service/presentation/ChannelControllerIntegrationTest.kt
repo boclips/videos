@@ -6,6 +6,7 @@ import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -694,7 +695,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 currency = "CAD",
                 awards = "this is an award",
                 description = "this is a description",
-                contentCategories = listOf("WITH_A_HOST"),
+                contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
                 hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",
@@ -765,7 +766,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 currency = "CAD",
                 awards = "this is an award",
                 description = "this is a description",
-                contentCategories = listOf("WITH_A_HOST"),
+                contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
                 hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",

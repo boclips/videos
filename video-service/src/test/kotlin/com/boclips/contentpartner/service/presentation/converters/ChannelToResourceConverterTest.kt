@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters
 
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
@@ -51,7 +52,7 @@ class ChannelToResourceConverterTest {
                 Currency.getInstance("GBP")
             ),
             description = "this is a description",
-            contentCategories = listOf("ANIMATION"),
+            contentCategories = listOf(ContentCategory.ANIMATION),
             hubspotId = "12345678d",
             awards = "first award",
             notes = "first note",
@@ -104,7 +105,7 @@ class ChannelToResourceConverterTest {
                 Currency.getInstance("GBP")
             ),
             description = "this is a description",
-            contentCategories = listOf("ANIMATION"),
+            contentCategories = listOf(ContentCategory.ANIMATION),
             hubspotId = "12345678d",
             awards = "first award",
             notes = "first note",

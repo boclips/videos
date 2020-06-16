@@ -7,6 +7,7 @@ import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.containsString
@@ -118,7 +119,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
                 currency = "CAD",
                 awards = "this is an award",
                 description = "this is a description",
-                contentCategories = listOf("WITH_A_HOST"),
+                contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
                 hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",
@@ -189,7 +190,7 @@ class LegacyContentPartnerControllerIntegrationTest : AbstractSpringIntegrationT
                 currency = "CAD",
                 awards = "this is an award",
                 description = "this is a description",
-                contentCategories = listOf("WITH_A_HOST"),
+                contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
                 hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",

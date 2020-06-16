@@ -1,20 +1,17 @@
-package com.boclips.videos.service.presentation
+package com.boclips.contentpartner.service.presentation
 
-import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
-import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class ContentCategoriesControllerIntegrationTest : AbstractSpringIntegrationTest() {
+class ContentCategoryControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -81,20 +78,5 @@ class ContentCategoriesControllerIntegrationTest : AbstractSpringIntegrationTest
     fun `returns a 403 response for unauthenticated users`() {
         mockMvc.perform(get("/v1/content-categories"))
             .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `successfully converts a content category key to a content category resource`() {
-        val resource = toContentCategoryResource("WITH_A_HOST")
-
-        assertThat(resource.label).isEqualTo("With a host")
-    }
-
-    @Test
-    fun `throw invalid content category if can't find a category`() {
-
-        assertThrows<IllegalStateException> {
-            toContentCategoryResource("CATEGORY_ONE")
-        }
     }
 }

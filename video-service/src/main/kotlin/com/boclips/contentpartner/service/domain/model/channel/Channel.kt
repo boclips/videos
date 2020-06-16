@@ -12,7 +12,7 @@ data class Channel(
     val distributionMethods: Set<DistributionMethod>,
     val remittance: Remittance?,
     val description: String?,
-    val contentCategories: List<String>? = emptyList(),
+    val contentCategories: List<ContentCategory>? = emptyList(),
     val hubspotId: String?,
     val language: Locale?,
     val awards: String?,

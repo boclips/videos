@@ -28,7 +28,7 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceContentTypes(channelId: ChannelId, val contentType: List<String>) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceContentCategories(channelId: ChannelId, val contentCategories: List<String>) :
+    class ReplaceContentCategories(channelId: ChannelId, val contentCategories: List<ContentCategory>) :
         ChannelUpdateCommand(channelId)
 
     class ReplaceLanguage(channelId: ChannelId, val language: String) :

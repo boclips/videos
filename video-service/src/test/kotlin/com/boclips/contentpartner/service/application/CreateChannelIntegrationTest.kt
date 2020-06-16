@@ -12,6 +12,7 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Period
 import java.util.Locale
-import kotlin.contracts.contract
 
 class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -76,31 +76,21 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a channel without a contract when it's from a youtube source`() {
-        val channel = createChannel(VideoServiceApiFactory.createChannelRequest(
-            name = "Gregor Dimitrov",
-            ingest = IngestDetailsResource.youtube()
-        ))
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                name = "Gregor Dimitrov",
+                ingest = IngestDetailsResource.youtube()
+            )
+        )
 
         assertThat(channel.name).isEqualTo("Gregor Dimitrov")
-    }
-
-
-    @Test
-    fun `cannot create a channel with an invalid content category`() {
-        assertThrows<InvalidContentCategoryException> {
-            createChannel(
-                VideoServiceApiFactory.createChannelRequest(
-                    contentCategories = listOf("non existent")
-                )
-            )
-        }
     }
 
     @Test
     fun `can create a channel with a content category`() {
         val channelWithCategory = createChannel(
             VideoServiceApiFactory.createChannelRequest(
-                contentCategories = listOf("VIRTUAL_REALITY_360")
+                contentCategories = listOf(ContentCategoryRequest.VIRTUAL_REALITY_360)
             )
         )
 
@@ -146,7 +136,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         createChannel(VideoServiceApiFactory.createChannelRequest(name = "old", hubspotId = "123"))
         assertThrows<ChannelHubspotIdException> {
             createChannel(
-                VideoServiceApiFactory.createChannelRequest(name="new", hubspotId = "123")
+                VideoServiceApiFactory.createChannelRequest(name = "new", hubspotId = "123")
             )
         }
     }
@@ -278,7 +268,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         val contractId = saveContract(name = "hello", remittanceCurrency = "GBP").id
 
         val description = "Test description"
-        val contentCategories = listOf("WITH_A_HOST")
+        val contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST)
         val contentTypes = listOf("NEWS")
         val notes = "This is an interesting CP"
         val hubspotId = "12345678"
@@ -308,7 +298,7 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.contentPartner.id.value).isEqualTo(channel.id.value)
         assertThat(event.contentPartner.details.language.isO3Language).isEqualTo("spa")
-        assertThat(event.contentPartner.details.contentCategories).isEqualTo(contentCategories)
+        assertThat(event.contentPartner.details.contentCategories).isEqualTo(listOf("WITH_A_HOST"))
         assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
         assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)

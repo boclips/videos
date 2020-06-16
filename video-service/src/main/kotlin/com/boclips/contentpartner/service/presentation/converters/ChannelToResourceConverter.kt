@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters
 
+import com.boclips.contentpartner.service.application.channel.ContentCategoryConverter
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
@@ -7,7 +8,6 @@ import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilde
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.toLanguageResource
-import com.boclips.videos.service.domain.model.video.toContentCategoryResource
 
 class ChannelToResourceConverter(
     private val channelLinkBuilder: ChannelLinkBuilder,
@@ -26,7 +26,7 @@ class ChannelToResourceConverter(
             ),
             description = channel.description,
             currency = channel.currency?.currencyCode,
-            contentCategories = channel.contentCategories?.map { toContentCategoryResource(it) },
+            contentCategories = channel.contentCategories?.let { ContentCategoryConverter.convertToResource(it) },
             hubspotId = channel.hubspotId,
             awards = channel.awards,
             notes = channel.notes,

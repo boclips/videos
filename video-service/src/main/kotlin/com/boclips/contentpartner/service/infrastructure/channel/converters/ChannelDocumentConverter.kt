@@ -3,11 +3,12 @@ package com.boclips.contentpartner.service.infrastructure.channel.converters
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
@@ -50,7 +51,7 @@ object ChannelDocumentConverter : KLogging() {
                 .toSet(),
             remittanceCurrency = channel.remittance?.currency?.currencyCode,
             description = channel.description,
-            contentCategories = channel.contentCategories,
+            contentCategories = channel.contentCategories?.map { it.name },
             hubspotId = channel.hubspotId,
             awards = channel.awards,
             notes = channel.notes,
@@ -105,7 +106,7 @@ object ChannelDocumentConverter : KLogging() {
                 )
             },
             description = document.description,
-            contentCategories = document.contentCategories,
+            contentCategories = document.contentCategories?.map { ContentCategory.valueOf(it) },
             hubspotId = document.hubspotId,
             awards = document.awards,
             notes = document.notes,

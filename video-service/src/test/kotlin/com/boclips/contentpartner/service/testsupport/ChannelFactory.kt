@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
@@ -41,7 +42,7 @@ object ChannelFactory {
         distributionMethods: Set<DistributionMethod> = emptySet(),
         remittance: Remittance? = null,
         description: String? = null,
-        contentCategories: List<String>? = emptyList(),
+        contentCategories: List<ContentCategory>? = emptyList(),
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,

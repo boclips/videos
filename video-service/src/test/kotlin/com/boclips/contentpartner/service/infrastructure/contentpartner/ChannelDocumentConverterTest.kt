@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
@@ -39,7 +40,7 @@ class ChannelDocumentConverterTest {
                 Currency.getInstance("GBP")
             ),
             description = "This is a description",
-            contentCategories = listOf("category_key"),
+            contentCategories = listOf(ContentCategory.ANIMATION),
             hubspotId = "123456789d",
             awards = "first award",
             notes = "first note",

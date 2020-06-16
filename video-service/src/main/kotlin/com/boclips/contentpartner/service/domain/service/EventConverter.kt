@@ -64,7 +64,7 @@ class EventConverter {
     private fun channelTopLevelDetails(channel: Channel): ChannelTopLevelDetails? {
         return ChannelTopLevelDetails.builder()
             .contentTypes(channel.contentTypes?.map { it.name })
-            .contentCategories(channel.contentCategories)
+            .contentCategories(channel.contentCategories?.map { it.name })
             .hubspotId(channel.hubspotId)
             .contractId(channel.contract?.id?.value)
             .awards(channel.awards)

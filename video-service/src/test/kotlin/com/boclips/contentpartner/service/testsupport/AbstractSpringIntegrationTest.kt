@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.contract.CreateContract
 import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
@@ -18,6 +19,7 @@ import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.contract.ContractCostsRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
@@ -265,7 +267,7 @@ abstract class AbstractSpringIntegrationTest {
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null,
         description: String? = null,
-        contentCategories: List<String>? = null,
+        contentCategories: List<ContentCategoryRequest>? = null,
         hubspotId: String? = null,
         awards: String? = null,
         notes: String? = null,

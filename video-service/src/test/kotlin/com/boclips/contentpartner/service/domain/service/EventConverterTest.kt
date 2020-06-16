@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.INSTRUCTIONAL
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS
 import com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK
@@ -54,7 +55,7 @@ class EventConverterTest {
             contentTypes = listOf(
                 INSTRUCTIONAL, STOCK, NEWS
             ),
-            contentCategories = listOf("Animation"),
+            contentCategories = listOf(ContentCategory.ANIMATION),
             language = Locale.CANADA_FRENCH,
             hubspotId = "hubspot-id",
             contract = ContentPartnerContractFactory.sample("contract-id"),
@@ -66,7 +67,7 @@ class EventConverterTest {
 
         assertThat(details).isNotNull
         assertThat(details.contentTypes).containsExactly("INSTRUCTIONAL", "STOCK", "NEWS")
-        assertThat(details.contentCategories).containsExactly("Animation")
+        assertThat(details.contentCategories).containsExactly("ANIMATION")
         assertThat(details.hubspotId).isEqualTo("hubspot-id")
         assertThat(details.contractId).isEqualTo("contract-id")
         assertThat(details.awards).isEqualTo("Outsell Company of the Year")

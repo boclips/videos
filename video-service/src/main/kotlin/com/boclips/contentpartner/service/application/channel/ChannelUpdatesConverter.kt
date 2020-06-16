@@ -124,7 +124,7 @@ class ChannelUpdateCommandCreator(
 
     fun updateContentContentCategories(): ChannelUpdateCommand.ReplaceContentCategories? =
         channelRequest.contentCategories?.let { contentCategories ->
-            ChannelUpdateCommand.ReplaceContentCategories(id, contentCategories)
+            ChannelUpdateCommand.ReplaceContentCategories(id, ContentCategoryConverter.convert(contentCategories))
         }
 
     fun updateContentLanguage(): ChannelUpdateCommand.ReplaceLanguage? =

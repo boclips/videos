@@ -5,6 +5,7 @@ import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
@@ -98,7 +99,7 @@ class VideoServiceApiFactory {
             legalRestrictions: LegalRestrictionsRequest? = null,
             currency: String? = null,
             description: String? = null,
-            contentCategories: List<String>? = null,
+            contentCategories: List<ContentCategoryRequest>? = null,
             hubspotId: String? = null,
             awards: String? = null,
             notes: String? = null,

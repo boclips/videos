@@ -1,5 +1,23 @@
 package com.boclips.videos.api.request.channel
 
-data class ContentCategoryRequest(
-    val key: String
-)
+enum class ContentCategoryRequest {
+    VIRTUAL_REALITY_360,
+    ANIMATION,
+    DOCUMENTARY_SHORTS,
+    EARLY_CHILDHOOD,
+    EDUCATIONAL_SONGS,
+    INSPIRATION_FOR_LESSONS,
+    INSTRUCTIONAL_VIDEOS,
+    INTERVIEW,
+    HISTORICAL_ARCHIVE,
+    MUSIC,
+    NARRATED,
+    NEWS_STORIES,
+    PRACTICAL_EXPERIMENTS,
+    SONGS,
+    STOCK_CLIPS,
+    STUDY_SKILLS,
+    SUSTAINABILITY,
+    WITH_A_CHILD_HOST,
+    WITH_A_HOST
+}

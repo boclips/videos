@@ -1,6 +1,7 @@
 package com.boclips.videos.api.request.channel
 
 import com.boclips.videos.api.request.validators.Language
+import com.boclips.videos.api.response.channel.ContentCategoryResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.fasterxml.jackson.annotation.JsonSetter
@@ -19,7 +20,7 @@ data class ChannelRequest(
     val currency: String? = null,
     val description: String? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
-    val contentCategories: List<String>? = null,
+    val contentCategories: List<ContentCategoryRequest>? = null,
     val hubspotId: String? = null,
     val awards: String? = null,
     val notes: String? = null,

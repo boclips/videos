@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.application
 import com.boclips.contentpartner.service.application.channel.ChannelUpdatesConverter
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
@@ -10,6 +11,7 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
@@ -136,14 +138,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
             upsertChannelRequest = ChannelRequest(
-                contentCategories = listOf("DOCUMENTARY_SHORTS", "ANIMATION")
+                contentCategories = listOf(ContentCategoryRequest.DOCUMENTARY_SHORTS, ContentCategoryRequest.ANIMATION)
             )
         )
 
         val command =
             commands.find { it is ChannelUpdateCommand.ReplaceContentCategories } as ChannelUpdateCommand.ReplaceContentCategories
 
-        assertThat(command.contentCategories).containsExactlyInAnyOrder("DOCUMENTARY_SHORTS", "ANIMATION")
+        assertThat(command.contentCategories).containsExactlyInAnyOrder(ContentCategory.DOCUMENTARY_SHORTS, ContentCategory.ANIMATION)
     }
 
     @Test

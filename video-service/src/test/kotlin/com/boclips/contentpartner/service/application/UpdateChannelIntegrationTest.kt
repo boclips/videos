@@ -12,6 +12,7 @@ import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
@@ -94,7 +95,8 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `emits event`() {
         val description = "Test description"
-        val contentCategories = listOf("WITH_A_HOST")
+        val contentCategories = listOf(
+            ContentCategoryRequest.WITH_A_HOST)
         val contentTypes = listOf("NEWS")
         val notes = "This is an interesting CP"
         val hubspotId = "12345678"
@@ -123,7 +125,7 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(event.contentPartner.id.value).isEqualTo(originalChannel.id.value)
         assertThat(event.contentPartner.details.language.isO3Language).isEqualTo("spa")
-        assertThat(event.contentPartner.details.contentCategories).isEqualTo(contentCategories)
+        assertThat(event.contentPartner.details.contentCategories).isEqualTo(listOf("WITH_A_HOST"))
         assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
         assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
