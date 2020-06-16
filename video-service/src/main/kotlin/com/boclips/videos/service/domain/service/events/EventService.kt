@@ -19,6 +19,7 @@ import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.resource.ResourcesSearched
 import com.boclips.eventbus.events.video.VideoInteractedWith
+import com.boclips.eventbus.events.video.VideoPlayerEvent
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
@@ -233,13 +234,13 @@ class EventService(val eventBus: EventBus) {
         eventBus.publish(
             msg(
                 builder = VideoSegmentPlayed.builder()
-                    .videoId(videoId.value)
                     .videoIndex(videoIndex)
                     .segmentStartSeconds(segmentStartSeconds)
                     .segmentEndSeconds(segmentEndSeconds)
                     .playbackDevice(deviceId)
                     .deviceId(deviceId)
                     .timestamp(timestamp),
+                videoId = videoId,
                 user = user
             )
         )
@@ -255,10 +256,10 @@ class EventService(val eventBus: EventBus) {
         eventBus.publish(
             msg(
                 builder = VideoPlayerInteractedWith.builder()
-                    .videoId(videoId.value)
                     .currentTime(currentTime)
                     .subtype(subtype)
                     .payload(payload),
+                videoId = videoId,
                 user = user
             )
         )
@@ -284,7 +285,20 @@ class EventService(val eventBus: EventBus) {
         user: User
     ): AbstractEventWithUserId {
         return builder
-            .userId(user.id?.value ?: "anonymousUser")
+            .userId(user.idOrThrow().value)
+            .externalUserId(user.externalUserId?.value)
+            .url(user.context.origin)
+            .build()
+    }
+
+    private fun msg(
+        builder: VideoPlayerEvent.VideoPlayerEventBuilder<*, *>,
+        videoId: VideoId,
+        user: User
+    ): VideoPlayerEvent {
+        return builder
+            .userId(user.id?.value)
+            .videoId(videoId.value)
             .externalUserId(user.externalUserId?.value)
             .url(user.context.origin)
             .build()
