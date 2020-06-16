@@ -30,7 +30,6 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
-import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -38,7 +37,6 @@ import mu.KLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -51,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 import javax.validation.Valid
 
 @RestController
@@ -147,28 +144,17 @@ class VideoController(
     @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,
-        @CookieValue(Cookies.DEVICE_ID) playbackConsumer: String? = null,
         @RequestParam(required = false) projection: Projection? = null
     ): ResponseEntity<VideoResource> {
-        val headers = HttpHeaders()
-        if (playbackConsumer == null) {
-            headers.add(
-                "Set-Cookie",
-                "${Cookies.DEVICE_ID}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
-            )
-        }
-
-        val resources: VideoResource = searchVideo.byId(id, getCurrentUser(), projection)
+        return searchVideo.byId(id, getCurrentUser(), projection)
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
             .let {
                 when (projection) {
                     Projection.full -> videoCaptionService.withCaptionDetails(it)
                     else -> it
                 }
-
             }
-
-        return ResponseEntity(resources, headers, HttpStatus.OK)
+            .let { ResponseEntity(it, HttpStatus.OK) }
     }
 
     @GetMapping("/v1/videos/{id}/transcript")
