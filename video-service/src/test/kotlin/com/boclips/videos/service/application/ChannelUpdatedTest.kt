@@ -18,10 +18,10 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updates name, legal restrictions, content types, and age ranges`() {
-        val contentPartner = TestFactories.createContentPartner(name = "test-999")
+        val channel = TestFactories.createChannel(name = "test-999")
         val video = videoRepository.create(
             TestFactories.createVideo(
-                contentPartner = contentPartner,
+                channel = channel,
                 legalRestrictions = "some restrictions",
                 ageRange = UnknownAgeRange,
                 types = listOf(ContentType.STOCK)
@@ -32,7 +32,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
                     Channel.builder()
-                        .id(ChannelId(contentPartner.contentPartnerId.value))
+                        .id(ChannelId(channel.channelId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
@@ -45,7 +45,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(video.videoId)!!
 
-        assertThat(updatedVideo.contentPartner.name).isEqualTo("test-888")
+        assertThat(updatedVideo.channel.name).isEqualTo("test-888")
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
         assertThat(updatedVideo.types).containsExactly(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
@@ -53,10 +53,10 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `does not update age ranges if set manually`() {
-        val contentPartner = TestFactories.createContentPartner(name = "test-999")
+        val channel = TestFactories.createChannel(name = "test-999")
         val video = videoRepository.create(
             TestFactories.createVideo(
-                contentPartner = contentPartner,
+                channel = channel,
                 legalRestrictions = "some restrictions",
                 ageRange = FixedAgeRange(min = 3, max = 5, curatedManually = true)
             )
@@ -66,7 +66,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
                     Channel.builder()
-                        .id(ChannelId(contentPartner.contentPartnerId.value))
+                        .id(ChannelId(channel.channelId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
@@ -83,17 +83,17 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updates videos of content partner`() {
-        val contentPartner = TestFactories.createContentPartner(name = "test-999")
-        val video1 = videoRepository.create(TestFactories.createVideo(contentPartner = contentPartner))
-        val video2 = videoRepository.create(TestFactories.createVideo(contentPartner = contentPartner))
+        val channel = TestFactories.createChannel(name = "test-999")
+        val video1 = videoRepository.create(TestFactories.createVideo(channel = channel))
+        val video2 = videoRepository.create(TestFactories.createVideo(channel = channel))
         val video3 =
-            videoRepository.create(TestFactories.createVideo(contentPartner = TestFactories.createContentPartner()))
+            videoRepository.create(TestFactories.createVideo(channel = TestFactories.createChannel()))
 
         fakeEventBus.publish(
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
                     Channel.builder()
-                        .id(ChannelId(contentPartner.contentPartnerId.value))
+                        .id(ChannelId(channel.channelId.value))
                         .name("test-888")
                         .legalRestrictions("some better restrictions")
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
@@ -103,15 +103,15 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         )
 
         videoRepository.find(video1.videoId).let {
-            assertThat(it!!.contentPartner.name).isEqualTo("test-888")
+            assertThat(it!!.channel.name).isEqualTo("test-888")
         }
 
         videoRepository.find(video2.videoId).let {
-            assertThat(it!!.contentPartner.name).isEqualTo("test-888")
+            assertThat(it!!.channel.name).isEqualTo("test-888")
         }
 
         videoRepository.find(video3.videoId).let {
-            assertThat(it!!.contentPartner.name).isNotEqualTo("test-888")
+            assertThat(it!!.channel.name).isNotEqualTo("test-888")
         }
     }
 }

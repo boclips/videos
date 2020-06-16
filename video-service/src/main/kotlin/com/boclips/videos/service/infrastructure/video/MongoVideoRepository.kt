@@ -5,7 +5,7 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
@@ -52,17 +52,17 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return uniqueVideoIds.mapNotNull { videoId -> videos[videoId] }
     }
 
-    override fun findByContentPartnerName(contentPartnerName: String): List<Video> {
+    override fun findByChannelName(channelName: String): List<Video> {
         return getVideoCollection()
-            .find((VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name) eq contentPartnerName)
+            .find((VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name) eq channelName)
             .map(VideoDocumentConverter::toVideo)
             .toList()
     }
 
-    override fun findByContentPartnerId(contentPartnerId: ContentPartnerId): List<Video> {
+    override fun findByChannelId(channelId: ChannelId): List<Video> {
         val bson =
             (VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id) eq
-                ObjectId(contentPartnerId.value)
+                ObjectId(channelId.value)
 
         return getVideoCollection()
             .find(bson)
@@ -79,9 +79,9 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
 
     override fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit) {
         val filterBson = when (filter) {
-            is VideoFilter.ContentPartnerNameIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.contentPartnerName
-            is VideoFilter.ContentPartnerIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
-                filter.contentPartnerId.value
+            is VideoFilter.ChannelNameIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.name
+            is VideoFilter.ChannelIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
+                filter.channelId.value
             )
             is VideoFilter.HasContentType -> VideoDocument::contentTypes contains filter.type.name
             VideoFilter.IsYoutube -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_YOUTUBE
@@ -180,11 +180,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         }
     }
 
-    override fun existsVideoFromContentPartnerName(contentPartnerName: String, partnerVideoId: String): Boolean {
+    override fun existsVideoFromChannelName(channelName: String, partnerVideoId: String): Boolean {
         val videoMatchingFilters = getVideoCollection()
             .find(
                 and(
-                    eq("source.contentPartner.name", contentPartnerName),
+                    eq("source.contentPartner.name", channelName),
                     eq("source.videoReference", partnerVideoId)
                 )
             )
@@ -193,11 +193,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return Optional.ofNullable(videoMatchingFilters).isPresent
     }
 
-    override fun findVideoByTitleFromContentPartnerName(contentPartnerName: String, videoTitle: String): Video? {
+    override fun findVideoByTitleFromChannelName(channelName: String, videoTitle: String): Video? {
         val matchingVideo = getVideoCollection()
             .find(
                 and(
-                    eq("source.contentPartner.name", contentPartnerName),
+                    eq("source.contentPartner.name", channelName),
                     eq("title", videoTitle)
                 )
             )
@@ -206,8 +206,8 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return matchingVideo?.let(VideoDocumentConverter::toVideo)
     }
 
-    override fun existsVideoFromContentPartnerId(contentPartnerId: ContentPartnerId, partnerVideoId: String): Boolean {
-        if (!ObjectId.isValid(contentPartnerId.value)) {
+    override fun existsVideoFromChannelId(channelId: ChannelId, partnerVideoId: String): Boolean {
+        if (!ObjectId.isValid(channelId.value)) {
             return false
         }
 
@@ -215,7 +215,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             .find(
                 and(
                     VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
-                        contentPartnerId.value
+                        channelId.value
                     ),
                     VideoDocument::source / SourceDocument::videoReference eq partnerVideoId
                 )
@@ -279,9 +279,9 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                     updateCommand.ageRange.max()
                 )
             )
-            is ReplaceContentPartner -> {
+            is ReplaceChannel -> {
                 val contentPartnerDocument =
-                    ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.contentPartner)
+                    ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.channel)
                 set(
                     VideoDocument::source / SourceDocument::contentPartner,
                     contentPartnerDocument.copy(lastModified = Instant.now())

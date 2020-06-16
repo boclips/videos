@@ -8,7 +8,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.channel.Channel
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -18,7 +18,7 @@ class CreateVideoRequestToVideoConverter {
     fun convert(
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
-        contentPartner: ContentPartner,
+        contentPartner: Channel,
         subjects: List<Subject>
     ): Video {
         return Video(
@@ -29,7 +29,7 @@ class CreateVideoRequestToVideoConverter {
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
-            contentPartner = contentPartner,
+            channel = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,
             types = createVideoRequest.videoTypes!!.map { ContentType.valueOf(it) },
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",

@@ -18,7 +18,7 @@ class VideoIdsRequest(val ids: List<VideoId>) {
             excludedTypes = VideoAccessRuleConverter.mapToExcludedVideoTypes(
                 videoAccess
             ),
-            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedContentPartnerIds(
+            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedChannelIds(
                 videoAccess
             )
         )

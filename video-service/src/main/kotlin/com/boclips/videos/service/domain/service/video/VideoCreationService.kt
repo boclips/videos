@@ -12,8 +12,8 @@ class VideoCreationService(
     private val videoDuplicationService: VideoDuplicationService
 ) {
     fun create(videoToBeCreated: Video): Video {
-        if (videoRepository.existsVideoFromContentPartnerId(
-                videoToBeCreated.contentPartner.contentPartnerId,
+        if (videoRepository.existsVideoFromChannelId(
+                videoToBeCreated.channel.channelId,
                 videoToBeCreated.videoReference
             )
         ) {
@@ -25,7 +25,7 @@ class VideoCreationService(
         if (videoToBeCreated.ageRange is UnknownAgeRange) {
             channelRepository.findById(
                 channelId = ChannelId(
-                    value = videoToBeCreated.contentPartner.contentPartnerId.value
+                    value = videoToBeCreated.channel.channelId.value
                 )
             )
                 ?.apply {
@@ -37,8 +37,8 @@ class VideoCreationService(
                 }
         }
 
-        val duplicatedVideo = videoRepository.findVideoByTitleFromContentPartnerName(
-                videoToBeCreated.contentPartner.name, videoToBeCreated.title)
+        val duplicatedVideo = videoRepository.findVideoByTitleFromChannelName(
+                videoToBeCreated.channel.name, videoToBeCreated.title)
 
 
         val newActiveVideo = videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.video.contentpartner.Availability
+import com.boclips.videos.service.domain.model.video.channel.Availability
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

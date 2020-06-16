@@ -10,8 +10,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.model.video.channel.Channel
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
@@ -22,7 +22,7 @@ import mu.KLogging
 class CreateVideo(
     private val videoCreationService: VideoCreationService,
     private val subjectRepository: SubjectRepository,
-    private val contentPartnerService: ContentPartnerService,
+    private val videoChannelService: VideoChannelService,
     private val createVideoRequestToVideoConverter: CreateVideoRequestToVideoConverter,
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
@@ -56,7 +56,7 @@ class CreateVideo(
         val createdVideo = try {
             videoCreationService.create(videoToBeCreated)
         } catch (ex: VideoNotCreatedException) {
-            throw VideoAssetAlreadyExistsException(ex.video.contentPartner.name, ex.video.videoReference)
+            throw VideoAssetAlreadyExistsException(ex.video.channel.name, ex.video.videoReference)
         }
 
         logger.info { "Successfully created video ${createRequest.providerId}" }
@@ -72,9 +72,9 @@ class CreateVideo(
         return createdVideo
     }
 
-    private fun findContentPartner(createRequest: CreateVideoRequest): ContentPartner? =
+    private fun findContentPartner(createRequest: CreateVideoRequest): Channel? =
         createRequest.providerId?.let {
-            contentPartnerService.findById(createRequest.providerId!!)
+            videoChannelService.findById(createRequest.providerId!!)
         }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

@@ -3,8 +3,8 @@ package com.boclips.videos.service.domain.service
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
-import com.boclips.videos.service.domain.model.video.contentpartner.Availability
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.Availability
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -13,16 +13,20 @@ import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ChannelServiceTest {
+class VideoChannelServiceTest {
 
     @Test
     fun `find content partner availability for all`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
-        val contentPartnerService = ContentPartnerService(channelRepository = contentPartnerRepository)
+        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+            contentPartnerService.findAvailabilityFor(
+                channelId = ChannelId(
+                    value = "test"
+                )
+            )
 
         assertThat(availability).isEqualTo(Availability.ALL)
     }
@@ -31,11 +35,13 @@ class ChannelServiceTest {
     fun `find content partner availability for streaming`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.STREAM))
 
-        val contentPartnerService = ContentPartnerService(channelRepository = contentPartnerRepository)
+        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
             contentPartnerService.findAvailabilityFor(
-                contentPartnerId = ContentPartnerId(value = "test")
+                channelId = ChannelId(
+                    value = "test"
+                )
             )
 
         assertThat(availability).isEqualTo(Availability.STREAMING)
@@ -45,11 +51,11 @@ class ChannelServiceTest {
     fun `find content partner availability for download`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.DOWNLOAD))
 
-        val contentPartnerService = ContentPartnerService(channelRepository = contentPartnerRepository)
+        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
             contentPartnerService.findAvailabilityFor(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = "test"
                 )
             )
@@ -61,10 +67,14 @@ class ChannelServiceTest {
     fun `find content partner availability for empty distribution methods`() {
         val contentPartnerRepository = mockRepository(emptySet())
 
-        val contentPartnerService = ContentPartnerService(channelRepository = contentPartnerRepository)
+        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
+            contentPartnerService.findAvailabilityFor(
+                channelId = ChannelId(
+                    value = "test"
+                )
+            )
 
         assertThat(availability).isEqualTo(Availability.NONE)
     }
@@ -73,12 +83,28 @@ class ChannelServiceTest {
     fun `memoises content partner look up`() {
         val contentPartnerRepository = mockRepository(emptySet())
 
-        val contentPartnerService = ContentPartnerService(channelRepository = contentPartnerRepository)
+        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
 
-        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
-        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
-        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "test"))
-        contentPartnerService.findAvailabilityFor(contentPartnerId = ContentPartnerId(value = "new content partner"))
+        contentPartnerService.findAvailabilityFor(
+            channelId = ChannelId(
+                value = "test"
+            )
+        )
+        contentPartnerService.findAvailabilityFor(
+            channelId = ChannelId(
+                value = "test"
+            )
+        )
+        contentPartnerService.findAvailabilityFor(
+            channelId = ChannelId(
+                value = "test"
+            )
+        )
+        contentPartnerService.findAvailabilityFor(
+            channelId = ChannelId(
+                value = "new content partner"
+            )
+        )
 
         verify(contentPartnerRepository, times(2)).findById(any())
     }

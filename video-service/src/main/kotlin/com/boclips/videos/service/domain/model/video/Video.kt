@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -14,7 +14,7 @@ import java.util.Locale
 data class Video(
     val videoId: VideoId,
     val playback: VideoPlayback,
-    val contentPartner: ContentPartner,
+    val channel: Channel,
     val videoReference: String,
     val title: String,
     val description: String,
@@ -57,6 +57,6 @@ data class Video(
     }
 
     override fun toString(): String {
-        return "Video(videoId=$videoId, title='$title', contentPartnerName='${contentPartner.name}', videoReference='$videoReference')"
+        return "Video(videoId=$videoId, title='$title', channelName='${channel.name}', videoReference='$videoReference')"
     }
 }

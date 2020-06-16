@@ -49,7 +49,7 @@ class SubjectClassificationService(
     fun classifyVideosByContentPartner(contentPartner: String?): CompletableFuture<Unit> {
         logger.info { "Requesting subject classification for all instructional videos: $contentPartner" }
         val future = CompletableFuture<Unit>()
-        val filter = contentPartner?.let { VideoFilter.ContentPartnerNameIs(it) } ?: VideoFilter.HasContentType(
+        val filter = contentPartner?.let { VideoFilter.ChannelNameIs(it) } ?: VideoFilter.HasContentType(
             ContentType.INSTRUCTIONAL_CLIPS
         )
         videoRepository.streamAll(filter) { videos ->

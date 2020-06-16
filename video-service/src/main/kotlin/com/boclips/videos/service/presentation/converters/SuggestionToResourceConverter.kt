@@ -11,7 +11,7 @@ class SuggestionToResourceConverter(
     fun convert(query: String, suggestions: Suggestions): SuggestionsResource {
         return SuggestionsResource(
             suggestionTerm = query,
-            contentPartners = suggestions.contentPartners.map {
+            contentPartners = suggestions.channels.map {
                 ContentPartnerSuggestionResource(
                     name = it,
                     _links = listOfNotNull(

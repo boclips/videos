@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.events.EventConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -220,7 +220,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
         val video = videoRepository.create(
             TestFactories.createVideo(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = createdContentPartner.id.value
                 )
             )

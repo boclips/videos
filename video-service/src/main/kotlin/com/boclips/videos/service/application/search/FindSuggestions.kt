@@ -12,6 +12,6 @@ class FindSuggestions(private val channelRepository: ChannelRepository) {
             .take(10)
             .map { it.name }
 
-        return Suggestions(contentPartners = contentPartners)
+        return Suggestions(channels = contentPartners)
     }
 }

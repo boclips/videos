@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCreateVideoRequest
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +17,7 @@ class CreateVideoRequestToVideoConverterTest {
 
     lateinit var converter: CreateVideoRequestToVideoConverter
     lateinit var videoPlayback: VideoPlayback
-    lateinit var contentPartner: ContentPartner
+    lateinit var contentPartner: Channel
     lateinit var subjects: List<Subject>
 
     @BeforeEach
@@ -25,7 +25,7 @@ class CreateVideoRequestToVideoConverterTest {
         converter =
             CreateVideoRequestToVideoConverter()
         videoPlayback = createKalturaPlayback()
-        contentPartner = TestFactories.createContentPartner()
+        contentPartner = TestFactories.createChannel()
         subjects = listOf(TestFactories.createSubject())
     }
 

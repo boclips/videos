@@ -68,7 +68,7 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
@@ -120,7 +120,7 @@ class ApplicationContext(
     val subjectRepository: SubjectRepository,
     val tagRepository: TagRepository,
     val disciplineRepository: DisciplineRepository,
-    val contentPartnerService: ContentPartnerService,
+    val videoChannelService: VideoChannelService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
     val accessRuleService: AccessRuleService,
@@ -154,7 +154,7 @@ class ApplicationContext(
         return CreateVideo(
             videoCreationService,
             subjectRepository,
-            contentPartnerService,
+            videoChannelService,
             CreateVideoRequestToVideoConverter(),
             playbackRepository,
             videoCounter,
@@ -304,7 +304,7 @@ class ApplicationContext(
     fun buildLegacySearchIndex(): RebuildLegacySearchIndex {
         return RebuildLegacySearchIndex(
             videoRepository,
-            contentPartnerService,
+            videoChannelService,
             legacyVideoSearchService
         )
     }
@@ -413,7 +413,7 @@ class ApplicationContext(
     fun videoUpdateService(): VideoIndexUpdater {
         return VideoIndexUpdater(
             videoRepository,
-            contentPartnerService,
+            videoChannelService,
             videoIndex,
             legacyVideoSearchService
         )

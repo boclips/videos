@@ -3,13 +3,13 @@ package com.boclips.videos.service.application.video.indexing
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 
 open class RebuildLegacySearchIndex(
     private val videoRepository: VideoRepository,
-    private val contentPartnerService: ContentPartnerService,
+    private val videoChannelService: VideoChannelService,
     private val legacyVideoSearchService: LegacyVideoSearchService
 ) {
     companion object : KLogging()
@@ -23,8 +23,8 @@ open class RebuildLegacySearchIndex(
                 .filter { it.isPlayable() }
                 .filter { it.isBoclipsHosted() }
                 .filter {
-                    contentPartnerService
-                        .findAvailabilityFor(it.contentPartner.contentPartnerId)
+                    videoChannelService
+                        .findAvailabilityFor(it.channel.channelId)
                         .isDownloadable()
                 }
                 .map(VideoToLegacyVideoMetadataConverter::convert)

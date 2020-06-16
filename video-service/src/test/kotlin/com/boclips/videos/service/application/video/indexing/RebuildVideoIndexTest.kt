@@ -9,7 +9,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.assertThrows
 
 class RebuildVideoIndexTest {
     lateinit var index: VideoIndex
-    lateinit var contentPartnerService: ContentPartnerService
+    lateinit var videoChannelService: VideoChannelService
 
     val streamableContentPartnerId = TestFactories.aValidId()
     val downloadContentPartnerId = TestFactories.aValidId()
@@ -57,11 +57,11 @@ class RebuildVideoIndexTest {
             )
         )
 
-        contentPartnerService = ContentPartnerService(channelRepository)
+        videoChannelService = VideoChannelService(channelRepository)
         index = DefaultVideoSearch(
             inMemorySearchService,
             inMemorySearchService,
-            contentPartnerService
+            videoChannelService
         )
     }
 
@@ -76,13 +76,13 @@ class RebuildVideoIndexTest {
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
                 videoId = videoId2,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     bothContentPartnerId
                 )
             ),
             TestFactories.createVideo(
                 videoId = videoId3,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     bothContentPartnerId
                 )
             )
@@ -119,13 +119,13 @@ class RebuildVideoIndexTest {
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
                 videoId = streamableVideoId,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     streamableContentPartnerId
                 )
             ),
             TestFactories.createVideo(
                 videoId = downloadableVideoId,
-                contentPartnerId = com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId(
+                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     downloadContentPartnerId
                 )
             )

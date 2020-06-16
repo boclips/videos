@@ -28,7 +28,7 @@ class VideoAnalysisService(
     companion object : KLogging()
 
     fun analyseVideosOfContentPartner(contentPartner: String, language: Locale?) {
-        videoRepository.streamAll(VideoFilter.ContentPartnerNameIs(contentPartner)) { videos ->
+        videoRepository.streamAll(VideoFilter.ChannelNameIs(contentPartner)) { videos ->
             videos.forEach { video ->
                 analysePlayableVideo(video.videoId.value, language)
             }

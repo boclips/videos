@@ -53,8 +53,8 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.Channel
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -79,8 +79,8 @@ object TestFactories {
         videoId: String = createVideoId().value,
         title: String = "title",
         description: String = "description",
-        contentPartnerName: String = "Reuters",
-        contentPartnerId: ContentPartnerId = ContentPartnerId(
+        channelName: String = "Reuters",
+        channelId: ChannelId = ChannelId(
             value = ObjectId().toHexString()
         ),
         contentPartnerVideoId: String = "cp-id-$videoId",
@@ -98,9 +98,9 @@ object TestFactories {
         ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
         ratings: List<UserRating> = emptyList(),
         tags: List<UserTag> = emptyList(),
-        contentPartner: ContentPartner = ContentPartner(
-            contentPartnerId = contentPartnerId,
-            name = contentPartnerName
+        channel: Channel = Channel(
+            channelId = channelId,
+            name = channelName
         ),
         videoReference: String = contentPartnerVideoId,
         promoted: Boolean? = null,
@@ -127,7 +127,7 @@ object TestFactories {
             transcript = transcript,
             topics = topics,
             ageRange = ageRange,
-            contentPartner = contentPartner,
+            channel = channel,
             videoReference = videoReference,
             ratings = ratings,
             tags = tags,
@@ -354,14 +354,14 @@ object TestFactories {
         )
     }
 
-    fun createContentPartner(
-        id: ContentPartnerId = ContentPartnerId(
+    fun createChannel(
+        id: ChannelId = ChannelId(
             ObjectId().toHexString()
         ),
         name: String = "TED"
-    ): ContentPartner {
-        return ContentPartner(
-            contentPartnerId = id,
+    ): Channel {
+        return Channel(
+            channelId = id,
             name = name
         )
     }

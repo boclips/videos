@@ -21,7 +21,7 @@ object VideoDocumentConverter {
             title = video.title,
             description = video.description,
             source = SourceDocument(
-                contentPartner = ContentPartnerDocumentConverter.toContentPartnerDocument(video.contentPartner),
+                contentPartner = ContentPartnerDocumentConverter.toContentPartnerDocument(video.channel),
                 videoReference = video.videoReference
             ),
             playback = PlaybackConverter.toDocument(video.playback),
@@ -61,7 +61,7 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
-            contentPartner = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
+            channel = ContentPartnerDocumentConverter.toContentPartner(document.source.contentPartner),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
             types = document.contentTypes.map { ContentType.valueOf(it) },

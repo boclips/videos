@@ -7,14 +7,14 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 
 class VideoIndexUpdater(
     private val videoRepository: VideoRepository,
-    private val contentPartnerService: ContentPartnerService,
+    private val videoChannelService: VideoChannelService,
     private val videoIndex: VideoIndex,
     private val legacyVideoSearchService: LegacyVideoSearchService
 ) {
@@ -98,6 +98,6 @@ class VideoIndexUpdater(
     }
 
     private fun isDownloadable(video: Video): Boolean {
-        return contentPartnerService.findAvailabilityFor(video.contentPartner.contentPartnerId).isDownloadable()
+        return videoChannelService.findAvailabilityFor(video.channel.channelId).isDownloadable()
     }
 }

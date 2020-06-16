@@ -6,18 +6,18 @@ import com.boclips.search.service.domain.videos.VideoSearchAdapter
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 
 class DefaultVideoSearch(
     indexReader: IndexReader<VideoMetadata, VideoQuery>,
     indexWriter: IndexWriter<VideoMetadata>,
-    private val contentPartnerService: ContentPartnerService
+    private val videoChannelService: VideoChannelService
 ) : VideoSearchAdapter<Video>(indexReader, indexWriter),
     VideoIndex {
 
     override fun convert(document: Video): VideoMetadata {
-        val videoAvailability = contentPartnerService.findAvailabilityFor(document.contentPartner.contentPartnerId)
+        val videoAvailability = videoChannelService.findAvailabilityFor(document.channel.channelId)
 
         return VideoMetadataConverter.convert(video = document, videoAvailability = videoAvailability)
     }

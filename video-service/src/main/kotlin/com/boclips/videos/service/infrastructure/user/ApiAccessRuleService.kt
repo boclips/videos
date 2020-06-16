@@ -12,7 +12,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import feign.FeignException
 import mu.KLogging
@@ -82,9 +82,9 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                     it.videoIds.map { id -> VideoId(id) }.toSet()
                 )
                 is AccessRuleResource.ExcludedVideoTypes -> extractExcludedContentTypes(it)
-                is AccessRuleResource.ExcludedContentPartners -> VideoAccessRule.ExcludedContentPartners(
+                is AccessRuleResource.ExcludedContentPartners -> VideoAccessRule.ExcludedChannels(
                     it.contentPartnerIds.map { id ->
-                        ContentPartnerId(
+                        ChannelId(
                             id
                         )
                     }.toSet()

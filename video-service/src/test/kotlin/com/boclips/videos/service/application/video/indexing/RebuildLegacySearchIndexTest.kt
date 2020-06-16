@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockitokotlin2.any
@@ -25,12 +25,12 @@ import org.junit.jupiter.api.assertThrows
 class RebuildLegacySearchIndexTest {
 
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
-    lateinit var contentPartnerService: ContentPartnerService
+    lateinit var videoChannelService: VideoChannelService
 
     @BeforeEach
     internal fun setUp() {
         legacyVideoSearchService = mock()
-        contentPartnerService = mock()
+        videoChannelService = mock()
     }
 
     @Test
@@ -52,7 +52,7 @@ class RebuildLegacySearchIndexTest {
 
         RebuildLegacySearchIndex(
             videoRepository,
-            contentPartnerService,
+            videoChannelService,
             legacyVideoSearchService
         ).invoke()
 
@@ -69,7 +69,7 @@ class RebuildLegacySearchIndexTest {
         val rebuildSearchIndex =
             RebuildLegacySearchIndex(
                 videoRepository,
-                contentPartnerService,
+                videoChannelService,
                 legacyVideoSearchService
             )
 
@@ -92,7 +92,7 @@ class RebuildLegacySearchIndexTest {
         val rebuildSearchIndex =
             RebuildLegacySearchIndex(
                 videoRepository,
-                contentPartnerService,
+                videoChannelService,
                 legacyVideoSearchService
             )
 
@@ -112,7 +112,7 @@ class RebuildLegacySearchIndexTest {
         val rebuildSearchIndex =
             RebuildLegacySearchIndex(
                 videoRepository,
-                contentPartnerService,
+                videoChannelService,
                 legacyVideoSearchService
             )
 

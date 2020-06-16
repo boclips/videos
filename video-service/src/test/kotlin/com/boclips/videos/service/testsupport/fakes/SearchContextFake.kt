@@ -3,7 +3,7 @@ package com.boclips.videos.service.testsupport.fakes
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
@@ -23,13 +23,13 @@ class SearchContextFake {
 
     @Bean
     fun videoMetadataSearchService(
-        contentPartnerService: ContentPartnerService,
+        videoChannelService: VideoChannelService,
         videoIndexFake: VideoIndexFake
     ): VideoIndex {
         return DefaultVideoSearch(
             videoIndexFake,
             videoIndexFake,
-            contentPartnerService
+            videoChannelService
         )
     }
 

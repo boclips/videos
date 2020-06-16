@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -70,12 +70,12 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `stream all by content partner name`() {
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "Bob"))
-        mongoVideoRepository.create(TestFactories.createVideo(contentPartnerName = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideo(channelName = "TED"))
+        mongoVideoRepository.create(TestFactories.createVideo(channelName = "Bob"))
+        mongoVideoRepository.create(TestFactories.createVideo(channelName = "TED"))
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.ContentPartnerNameIs("TED")) { videos = it.toList() }
+        mongoVideoRepository.streamAll(VideoFilter.ChannelNameIs("TED")) { videos = it.toList() }
 
         assertThat(videos).hasSize(2)
     }
@@ -85,21 +85,21 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         val contentPartnerIdToFind = ObjectId().toHexString()
         mongoVideoRepository.create(
             TestFactories.createVideo(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = contentPartnerIdToFind
                 )
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = contentPartnerIdToFind
                 )
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = ObjectId().toHexString()
                 )
             )
@@ -107,8 +107,8 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
 
         var videos: List<Video> = emptyList()
         mongoVideoRepository.streamAll(
-            VideoFilter.ContentPartnerIdIs(
-                ContentPartnerId(
+            VideoFilter.ChannelIdIs(
+                ChannelId(
                     value = contentPartnerIdToFind
                 )
             )

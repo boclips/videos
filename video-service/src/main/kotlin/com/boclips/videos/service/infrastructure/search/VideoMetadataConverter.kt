@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.contentpartner.Availability
+import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 
 object VideoMetadataConverter {
@@ -20,8 +20,8 @@ object VideoMetadataConverter {
             title = video.title,
             rawTitle = video.title,
             description = video.description,
-            contentProvider = video.contentPartner.name,
-            contentPartnerId = video.contentPartner.contentPartnerId.value,
+            contentProvider = video.channel.name,
+            contentPartnerId = video.channel.channelId.value,
             releaseDate = video.releasedOn,
             keywords = video.keywords,
             tags = tagsFrom(video),

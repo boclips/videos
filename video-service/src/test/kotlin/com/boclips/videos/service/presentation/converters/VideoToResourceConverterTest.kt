@@ -44,7 +44,7 @@ class VideoToResourceConverterTest {
     private val kalturaVideo = createVideo(
         title = "Do what you love",
         description = "Best bottle slogan",
-        contentPartnerName = "WeWork",
+        channelName = "WeWork",
         contentPartnerVideoId = "111",
         types = listOf(ContentType.NEWS),
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
@@ -76,7 +76,7 @@ class VideoToResourceConverterTest {
     private val youtubeVideo = createVideo(
         title = "Do what you love on youtube",
         description = "Best bottle slogan",
-        contentPartnerName = "JacekWork",
+        channelName = "JacekWork",
         contentPartnerVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
         types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
@@ -209,7 +209,7 @@ class VideoToResourceConverterTest {
         val video = createVideo(
             title = "Do what you love on youtube",
             description = "Best bottle slogan",
-            contentPartnerName = "JacekWork",
+            channelName = "JacekWork",
             contentPartnerVideoId = "222",
             playback = TestFactories.createYoutubePlayback(),
             types = listOf(ContentType.INSTRUCTIONAL_CLIPS),

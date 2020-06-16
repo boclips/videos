@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -374,42 +374,42 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `find by content partner name and content partner video id`() {
         val video = createVideo(
             videoId = TestFactories.aValidId(),
-            contentPartnerName = "TED Talks",
+            channelName = "TED Talks",
             contentPartnerVideoId = "ted-id-1"
         )
 
         mongoVideoRepository.create(video)
 
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks", "ted-id-1")).isTrue()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks", "ted-id-2")).isFalse()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerName("TED Talks abc", "ted-id-1")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromChannelName("TED Talks", "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromChannelName("TED Talks", "ted-id-2")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromChannelName("TED Talks abc", "ted-id-1")).isFalse()
     }
 
     @Test
     fun `find by content partner id and content partner video id`() {
         val contentPartnerId =
-            ContentPartnerId(value = "5d319070871956b43f45eb82")
+            ChannelId(value = "5d319070871956b43f45eb82")
 
         val video = createVideo(
             videoId = TestFactories.aValidId(),
             contentPartnerVideoId = "ted-id-1",
-            contentPartnerId = contentPartnerId
+            channelId = contentPartnerId
         )
 
         mongoVideoRepository.create(video)
 
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId, "ted-id-1")).isTrue()
-        assertThat(mongoVideoRepository.existsVideoFromContentPartnerId(contentPartnerId, "ted-id-2")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromChannelId(contentPartnerId, "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromChannelId(contentPartnerId, "ted-id-2")).isFalse()
 
         assertThat(
-            mongoVideoRepository.existsVideoFromContentPartnerId(
-                ContentPartnerId(value = ObjectId().toHexString()),
+            mongoVideoRepository.existsVideoFromChannelId(
+                ChannelId(value = ObjectId().toHexString()),
                 "ted-id-1"
             )
         ).isFalse()
         assertThat(
-            mongoVideoRepository.existsVideoFromContentPartnerId(
-                ContentPartnerId("invalid-hex-string"),
+            mongoVideoRepository.existsVideoFromChannelId(
+                ChannelId("invalid-hex-string"),
                 "ted-id-1"
             )
         ).isFalse()
@@ -468,13 +468,13 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `finds videos by content partner`() {
         val video1 =
-            mongoVideoRepository.create(createVideo(title = "Video 1", contentPartnerName = "TED"))
+            mongoVideoRepository.create(createVideo(title = "Video 1", channelName = "TED"))
         val video2 =
-            mongoVideoRepository.create(createVideo(title = "Video 2", contentPartnerName = "TED"))
+            mongoVideoRepository.create(createVideo(title = "Video 2", channelName = "TED"))
         val video3 =
-            mongoVideoRepository.create(createVideo(title = "Video 3", contentPartnerName = "Reuters"))
+            mongoVideoRepository.create(createVideo(title = "Video 3", channelName = "Reuters"))
 
-        val videos = mongoVideoRepository.findByContentPartnerName(contentPartnerName = "TED")
+        val videos = mongoVideoRepository.findByChannelName(channelName = "TED")
 
         assertThat(videos).contains(video1)
         assertThat(videos).contains(video2)
@@ -488,7 +488,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
-                    contentPartnerId = ContentPartnerId(
+                    channelId = ChannelId(
                         value = contentPartnerId
                     )
                 )
@@ -498,7 +498,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 2",
-                    contentPartnerId = ContentPartnerId(
+                    channelId = ChannelId(
                         value = contentPartnerId
                     )
                 )
@@ -507,15 +507,15 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             createVideo(
                 title = "Video 3",
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = ObjectId().toHexString()
                 )
             )
         )
 
         val videos =
-            mongoVideoRepository.findByContentPartnerId(
-                contentPartnerId = ContentPartnerId(
+            mongoVideoRepository.findByChannelId(
+                channelId = ChannelId(
                     value = contentPartnerId
                 )
             )
@@ -530,7 +530,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
-                    contentPartnerId = ContentPartnerId(
+                    channelId = ChannelId(
                         id
                     )
                 )
@@ -539,7 +539,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 2",
-                    contentPartnerId = ContentPartnerId(
+                    channelId = ChannelId(
                         id
                     )
                 )
@@ -549,14 +549,14 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         mongoVideoRepository.create(
             createVideo(
                 title = "Video 3",
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     id2
                 )
             )
         )
 
-        val videos = mongoVideoRepository.findByContentPartnerId(
-            contentPartnerId = ContentPartnerId(
+        val videos = mongoVideoRepository.findByChannelId(
+            channelId = ChannelId(
                 id
             )
         )
@@ -568,12 +568,12 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val video = mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
-                    contentPartnerName = "TestCP"
+                    channelName = "TestCP"
                 )
             )
 
-        val matchedVideo = mongoVideoRepository.findVideoByTitleFromContentPartnerName(
-            contentPartnerName = "TestCP",
+        val matchedVideo = mongoVideoRepository.findVideoByTitleFromChannelName(
+            channelName = "TestCP",
             videoTitle = "Video 1"
         )
         assertThat(matchedVideo).isEqualTo(video)

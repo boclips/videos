@@ -8,8 +8,8 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.Channel
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
@@ -29,10 +29,10 @@ class VideoDocumentConverterTest {
             videoId = "5c1786db5236de0001d77747",
             title = "the title",
             description = "the description",
-            contentPartnerName = "the contentPartner",
+            channelName = "the contentPartner",
             contentPartnerVideoId = "the contentPartnerVideoId",
-            contentPartner = ContentPartner(
-                contentPartnerId = ContentPartnerId(
+            channel = Channel(
+                channelId = ChannelId(
                     value = ObjectId().toHexString()
                 ),
                 name = "Some name"

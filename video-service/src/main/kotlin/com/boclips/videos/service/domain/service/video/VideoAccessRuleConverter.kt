@@ -38,12 +38,12 @@ object VideoAccessRuleConverter {
                 .toSet()
         }
 
-    fun mapToExcludedContentPartnerIds(videoAccess: VideoAccess): Set<String> =
+    fun mapToExcludedChannelIds(videoAccess: VideoAccess): Set<String> =
         when (videoAccess) {
             VideoAccess.Everything -> emptySet()
             is VideoAccess.Rules -> videoAccess.accessRules
-                .filterIsInstance<VideoAccessRule.ExcludedContentPartners>()
-                .flatMap { accessRule -> accessRule.contentPartnerIds.map { id -> id.value } }
+                .filterIsInstance<VideoAccessRule.ExcludedChannels>()
+                .flatMap { accessRule -> accessRule.channelIds.map { id -> id.value } }
                 .toSet()
         }
 

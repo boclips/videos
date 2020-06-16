@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 
 sealed class VideoAccessRule {
     data class ExcludedIds(val videoIds: Set<VideoId>) : VideoAccessRule() {
@@ -22,9 +22,9 @@ sealed class VideoAccessRule {
         }
     }
 
-    data class ExcludedContentPartners(val contentPartnerIds: Set<ContentPartnerId>) : VideoAccessRule() {
+    data class ExcludedChannels(val channelIds: Set<ChannelId>) : VideoAccessRule() {
         override fun toString(): String {
-            return "VideoAccessRule(restricted to exclude ${contentPartnerIds.size} content partners)"
+            return "VideoAccessRule(restricted to exclude ${channelIds.size} channels)"
         }
     }
 

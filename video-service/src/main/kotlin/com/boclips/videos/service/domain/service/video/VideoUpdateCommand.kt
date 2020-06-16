@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartner
+import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.Duration
 import java.util.Locale
 
@@ -28,7 +28,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceTopics(videoId: VideoId, val eventBus: Set<Topic>) : VideoUpdateCommand(videoId)
     class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)
-    class ReplaceContentPartner(videoId: VideoId, val contentPartner: ContentPartner) : VideoUpdateCommand(videoId)
+    class ReplaceChannel(videoId: VideoId, val channel: Channel) : VideoUpdateCommand(videoId)
     class AddRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
     class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
     class ReplaceTitle(videoId: VideoId, val title: String) : VideoUpdateCommand(videoId)

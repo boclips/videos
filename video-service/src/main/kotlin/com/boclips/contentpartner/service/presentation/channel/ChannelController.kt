@@ -13,7 +13,7 @@ import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ChannelWrapperResource
 import com.boclips.videos.api.response.channel.ChannelsResource
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -46,8 +46,8 @@ class ChannelController(
         @PathVariable("channelId") channelId: String,
         @RequestBody channelVideoId: String
     ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = channelId),
+        val exists = videoRepository.existsVideoFromChannelId(
+            ChannelId(value = channelId),
             channelVideoId
         )
 
@@ -63,8 +63,8 @@ class ChannelController(
         @PathVariable("channelId") channelId: String,
         @PathVariable("channelVideoId") channelVideoId: String
     ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = channelId),
+        val exists = videoRepository.existsVideoFromChannelId(
+            ChannelId(value = channelId),
             channelVideoId
         )
 

@@ -12,8 +12,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.contentpartner.Availability
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.Availability
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserRatingFactory
@@ -33,8 +33,8 @@ class VideoMetadataConverterTest {
             videoId = videoId,
             title = "video title",
             description = "video description",
-            contentPartnerName = "content partner",
-            contentPartnerId = ContentPartnerId(
+            channelName = "content partner",
+            channelId = ChannelId(
                 "content-partner-id"
             ),
             playback = TestFactories.createYoutubePlayback(

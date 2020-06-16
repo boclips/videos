@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -83,9 +83,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
             val secondExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
 
-            val accessRule = VideoAccessRule.ExcludedContentPartners(
-                contentPartnerIds = setOf(
-                    ContentPartnerId(
+            val accessRule = VideoAccessRule.ExcludedChannels(
+                channelIds = setOf(
+                    ChannelId(
                         value = excludedContentPartnerId
                     )
                 )
@@ -237,9 +237,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
 
-            val accessRule = VideoAccessRule.ExcludedContentPartners(
-                contentPartnerIds = setOf(
-                    ContentPartnerId(
+            val accessRule = VideoAccessRule.ExcludedChannels(
+                channelIds = setOf(
+                    ChannelId(
                         value = excludedContentPartnerId
                     )
                 )

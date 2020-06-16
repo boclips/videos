@@ -24,7 +24,7 @@ import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -184,8 +184,8 @@ class VideoController(
         @PathVariable("contentPartnerId") contentPartnerId: String,
         @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
     ): ResponseEntity<Void> {
-        val exists = videoRepository.existsVideoFromContentPartnerId(
-            ContentPartnerId(value = contentPartnerId),
+        val exists = videoRepository.existsVideoFromChannelId(
+            ChannelId(value = contentPartnerId),
             contentPartnerVideoId
         )
 

@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -31,8 +31,8 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
 
         val video = videoCreationService.create(
             TestFactories.createVideo(
-                contentPartnerName = "Our content partner",
-                contentPartnerId = ContentPartnerId(
+                channelName = "Our content partner",
+                channelId = ChannelId(
                     value = contentPartner.id.value
                 ),
                 ageRange = UnknownAgeRange
@@ -48,7 +48,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
 
         videoCreationService.create(
             TestFactories.createVideo(
-                contentPartnerId = ContentPartnerId(
+                channelId = ChannelId(
                     value = contentPartner.id.value
                 ),
                 videoReference = "video-123"
@@ -58,7 +58,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
         org.junit.jupiter.api.assertThrows<VideoNotCreatedException> {
             videoCreationService.create(
                 TestFactories.createVideo(
-                    contentPartnerId = ContentPartnerId(
+                    channelId = ChannelId(
                         value = contentPartner.id.value
                     ),
                     videoReference = "video-123"

@@ -10,7 +10,7 @@ import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.VideoFactory
@@ -30,7 +30,7 @@ class EventConverterTest {
         val video = createVideo(
             videoId = id,
             title = "the title",
-            contentPartnerId = ContentPartnerId("id-666"),
+            channelId = ChannelId("id-666"),
             playback = TestFactories.createKalturaPlayback(
                 duration = Duration.ofMinutes(2),
                 originalDimensions = Dimensions(

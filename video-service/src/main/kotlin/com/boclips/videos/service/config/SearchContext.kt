@@ -11,7 +11,7 @@ import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchSe
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.ReindexProperties
 import com.boclips.videos.service.config.properties.SolrProperties
-import com.boclips.videos.service.domain.service.ContentPartnerService
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
@@ -32,7 +32,7 @@ class SearchContext {
     @Profile("!fakes-search")
     fun videoSearchService(
         elasticSearchClient: ElasticSearchClient,
-        contentPartnerService: ContentPartnerService,
+        videoChannelService: VideoChannelService,
         reindexProperties: ReindexProperties
     ): VideoIndex {
         return DefaultVideoSearch(
@@ -42,7 +42,7 @@ class SearchContext {
                 IndexParameters(numberOfShards = 5),
                 reindexProperties.batchSize
             ),
-            contentPartnerService
+            videoChannelService
         )
     }
 

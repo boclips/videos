@@ -16,7 +16,7 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
             videoId = videoId,
             title = "the title",
             description = "the description",
-            contentPartnerName = "Reuters",
+            channelName = "Reuters",
             contentPartnerVideoId = "r001",
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10)),
             types = listOf(ContentType.NEWS),

@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.contentpartner.ContentPartnerId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
@@ -192,9 +192,9 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
             val videoAccess = accessRules.videoAccess as VideoAccess.Rules
             assertThat(videoAccess.accessRules).containsOnly(
-                VideoAccessRule.ExcludedContentPartners(
-                    contentPartnerIds = setOf(
-                        ContentPartnerId(
+                VideoAccessRule.ExcludedChannels(
+                    channelIds = setOf(
+                        ChannelId(
                             value = "content-partner-1"
                         )
                     )
