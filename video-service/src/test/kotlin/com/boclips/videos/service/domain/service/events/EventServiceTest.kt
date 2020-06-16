@@ -17,6 +17,7 @@ import com.boclips.eventbus.events.video.VideoSegmentPlayed
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
+import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -49,7 +50,13 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             totalResults = 20,
             pageVideoIds = listOf("v123"),
-            user = UserFactory.sample(id = "user@example.com")
+            user = UserFactory.sample(
+                id = "user@example.com",
+                context = RequestContext(
+                    origin = "https://mysearchpage.com",
+                    deviceId = "my-device"
+                )
+            )
         )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
@@ -60,6 +67,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.totalResults).isEqualTo(20)
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.pageVideoIds).containsExactly("v123")
+        assertThat(event.url).isEqualTo("https://mysearchpage.com")
+        assertThat(event.deviceId).isEqualTo("my-device")
     }
 
     @Test
@@ -344,8 +353,10 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             videoIndex = 2,
             segmentStartSeconds = 123,
             segmentEndSeconds = 345,
-            deviceId = "device-id",
-            user = UserFactory.sample(id = "user@example.com"),
+            user = UserFactory.sample(
+                id = "user@example.com",
+                context = RequestContext(origin = "https://b.com", deviceId = "device-1")
+            ),
             timestamp = ZonedDateTime.now()
         )
 
@@ -356,8 +367,9 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.segmentStartSeconds).isEqualTo(123)
         assertThat(event.segmentEndSeconds).isEqualTo(345)
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.playbackDevice).isEqualTo("device-id")
-        assertThat(event.deviceId).isEqualTo("device-id")
+        assertThat(event.playbackDevice).isEqualTo("device-1")
+        assertThat(event.deviceId).isEqualTo("device-1")
+        assertThat(event.url).isEqualTo("https://b.com")
     }
 
     @Test

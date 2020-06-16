@@ -513,6 +513,7 @@ object UserFactory {
         isPermittedToViewAnyCollection: Boolean = false,
         externalUserIdSupplier: () -> String? = { null },
         isAuthenticated: Boolean = true,
+        context: RequestContext = RequestContext(origin = null, deviceId = null),
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
                 videoAccess = VideoAccess.Everything,
@@ -524,7 +525,7 @@ object UserFactory {
             id = id?.let { UserId(it) },
             isAuthenticated = isAuthenticated,
             isBoclipsEmployee = boclipsEmployee,
-            context = RequestContext(origin = "https://teachers.boclips.com"),
+            context = context,
             isPermittedToUpdateVideo = true,
             isPermittedToModifyAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,

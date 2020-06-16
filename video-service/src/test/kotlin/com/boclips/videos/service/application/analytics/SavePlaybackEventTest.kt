@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.analytics
 
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
+import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.CreatePlaybackEventCommandFactory
 import com.boclips.videos.service.testsupport.TestFactories
@@ -29,8 +30,7 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 captureTime = ZonedDateTime.now()
-            )
-            , deviceId = null, user = user
+            ), user = user
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -44,7 +44,10 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `saves multiple events`() {
-        val user = UserFactory.sample()
+        val user = UserFactory.sample(context = RequestContext(
+            origin = "https://teachers.boclips.com",
+            deviceId = "my-device"
+        ))
         savePlaybackEvent.execute(
             listOf(
                 CreatePlaybackEventCommandFactory.sample(
@@ -70,26 +73,27 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[0].videoIndex).isEqualTo(1)
         assertThat(events[0].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[0].segmentEndSeconds).isEqualTo(20L)
-        assertThat(events[0].playbackDevice).isNull()
-        assertThat(events[0].deviceId).isNull()
+        assertThat(events[0].deviceId).isEqualTo("my-device")
+        assertThat(events[0].playbackDevice).isEqualTo("my-device")
         assertThat(events[0].timestamp).isNotNull()
-        assertThat(events.first().url).isEqualTo("https://teachers.boclips.com")
+        assertThat(events[0].url).isEqualTo("https://teachers.boclips.com")
 
         assertThat(events[1].videoId).isEqualTo(videoId)
         assertThat(events[1].userId).isEqualTo(user.id!!.value)
         assertThat(events[1].videoIndex).isEqualTo(1)
         assertThat(events[1].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[1].segmentEndSeconds).isEqualTo(20L)
-        assertThat(events[1].playbackDevice).isNull()
-        assertThat(events[1].deviceId).isNull()
+        assertThat(events[1].deviceId).isEqualTo("my-device")
+        assertThat(events[1].playbackDevice).isEqualTo("my-device")
         assertThat(events[1].timestamp).isNotNull()
+        assertThat(events[1].url).isEqualTo("https://teachers.boclips.com")
+
     }
 
     @Test
     fun `for single event we do not validate timestamp`() {
         savePlaybackEvent.execute(
             CreatePlaybackEventCommandFactory.sample(captureTime = null),
-            deviceId = null,
             user = UserFactory.sample()
         )
 

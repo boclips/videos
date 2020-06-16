@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.presentation.support.DeviceIdCookieExtractor
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.hateoas.MediaTypes
@@ -25,7 +26,6 @@ open class BaseController(
 ) {
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUser()
-        val referer = RefererHeaderExtractor.getReferer()
         val externalUserIdSupplier = {
             userRequest?.let(getUserIdOverride::invoke)
         }
@@ -41,7 +41,10 @@ open class BaseController(
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
             externalUserIdSupplier = externalUserIdSupplier,
-            context = RequestContext(origin = referer),
+            context = RequestContext(
+                origin = RefererHeaderExtractor.getReferer(),
+                deviceId = DeviceIdCookieExtractor.getDeviceId()
+            ),
             accessRulesSupplier = { user ->
                 if (user.isAuthenticated) {
                     accessRuleService.getRules(user)
@@ -75,7 +78,7 @@ object Administrator : User(
     isPermittedToModifyAnyCollection = true,
     isPermittedToViewCollections = true,
     isPermittedToUpdateVideo = true,
-    context = RequestContext(origin = null),
+    context = RequestContext(origin = null, deviceId = null),
     accessRulesSupplier = {
         AccessRules(
             collectionAccess = CollectionAccessRule.Everything,

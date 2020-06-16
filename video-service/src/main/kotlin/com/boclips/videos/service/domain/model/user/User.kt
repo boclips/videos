@@ -22,5 +22,5 @@ open class User(
     override fun toString() = "User(id=$id)"
 }
 
-data class RequestContext(val origin: String?)
+data class RequestContext(val origin: String?, val deviceId: String?)
 

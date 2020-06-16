@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.event
 
 import com.boclips.videos.service.presentation.support.Cookies
+import com.boclips.videos.service.presentation.support.DeviceIdCookieExtractor
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.util.UUID
@@ -16,7 +17,7 @@ class DeviceCookieFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         filterChain.doFilter(request, response)
-        if(request.cookies.orEmpty().none { cookie -> cookie.name == Cookies.DEVICE_ID }) {
+        if(DeviceIdCookieExtractor.getDeviceId(request) == null) {
             response.addHeader(
                     "Set-Cookie",
                     "${Cookies.DEVICE_ID}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
