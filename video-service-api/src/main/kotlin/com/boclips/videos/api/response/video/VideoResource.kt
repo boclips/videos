@@ -48,12 +48,24 @@ data class VideoResource(
     val attachments: List<AttachmentResource> = emptyList(),
     @get:JsonView(PublicApiProjection::class)
     val contentWarnings: List<ContentWarningResource>? = emptyList(),
+
     @get:JsonView(BoclipsInternalProjection::class)
+    @Deprecated("Use channel instead")
     val contentPartner: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
+    @Deprecated("Use channelId instead")
     val contentPartnerId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
+    @Deprecated("Use channelVideoId instead")
     val contentPartnerVideoId: String? = null,
+
+    @get:JsonView(BoclipsInternalProjection::class)
+    val channel: String? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val channelId: String? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val channelVideoId: String? = null,
+
     @get:JsonView(BoclipsInternalProjection::class)
     val type: VideoTypeResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)

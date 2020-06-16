@@ -6,7 +6,6 @@ import com.boclips.videos.api.request.channel.ChannelFilterRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ChannelsResource
-import com.boclips.videos.api.response.channel.LegacyContentPartnersResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Feign
 import feign.Logger

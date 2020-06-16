@@ -134,8 +134,8 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
         assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
-        assertThat(videoResource.contentPartner).isEqualTo("WeWork")
-        assertThat(videoResource.contentPartnerVideoId).isEqualTo("111")
+        assertThat(videoResource.contentPartner).isEqualTo("WeWork").isEqualTo(videoResource.channel)
+        assertThat(videoResource.contentPartnerVideoId).isEqualTo("111").isEqualTo(videoResource.channelVideoId)
         assertThat(videoResource.subjects).containsExactly(
             SubjectResource(
                 id = "maths-subject-id",

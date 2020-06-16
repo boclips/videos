@@ -26,9 +26,9 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         return database[videoId] ?: throw FakeClient.notFoundException("Video not found")
     }
 
-    override fun probeVideoReference(contentPartnerId: String, contentPartnerVideoId: String) {
+    override fun probeVideoReference(channelId: String, channelVideoId: String) {
         val results = database
-            .filter { it.value.contentPartnerId == contentPartnerId && it.value.contentPartnerVideoId == contentPartnerVideoId }
+            .filter { it.value.channelId == channelId && it.value.channelVideoId == channelVideoId }
 
         if (results.isEmpty()) throw FakeClient.notFoundException("Video not found")
     }
@@ -70,7 +70,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             id = "${id++}",
             title = createVideoRequest.title,
             description = createVideoRequest.description,
-            contentPartnerId = createVideoRequest.providerId,
+            channelId = createVideoRequest.providerId,
             playback = when (createVideoRequest.playbackProvider) {
                 "YOUTUBE" -> YoutubePlaybackResource(id = createVideoRequest.playbackId)
                 "KALTURA" -> StreamPlaybackResource(
@@ -83,7 +83,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             releasedOn = LocalDate.now(),
             legalRestrictions = createVideoRequest.legalRestrictions,
             ageRange = AgeRangeResource(min = createVideoRequest.ageRangeMin, max = createVideoRequest.ageRangeMax),
-            contentPartnerVideoId = createVideoRequest.providerVideoId,
+            channelVideoId = createVideoRequest.providerVideoId,
             _links = null
         )
 
