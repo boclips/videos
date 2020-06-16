@@ -1,9 +1,12 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoCaptionNotFound
+import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.CaptionService
@@ -29,9 +32,28 @@ class GetVideoAssets(
     }
 
     operator fun invoke(videoId: String, user: User): ResponseEntity<StreamingResponseBody> {
-        val video = searchVideo.byId(videoId, user)
+        searchVideo.byId(videoId, user).let { video ->
+            validateVideoIsDownloadable(video)
+            val captions = getDefaultCaptions(video)
+            return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"${buildFilename(video.title)}.zip\"")
+                .contentType(MediaType("application", "zip"))
+                .body(StreamingResponseBody { writeCompressedContent(it, video, captions) })
+        }
+    }
 
-        val caption = try {
+    private fun validateVideoIsDownloadable(
+        video: Video
+    ) {
+        if (video.playback is VideoPlayback.StreamPlayback) {
+            if (!video.playback.hasOriginalOrFHDResolution()) throw InsufficientVideoResolutionException(video.videoId)
+        } else {
+            throw VideoPlaybackNotFound("The requested video cannot be downloaded because it comes from an incompatible source")
+        }
+    }
+
+    private fun getDefaultCaptions(video: Video): Caption {
+        return try {
             val availableCaptions = captionService.getAvailableCaptions(video.videoId)
             availableCaptions.firstOrNull { it.default }
                 ?: availableCaptions.firstOrNull()
@@ -39,11 +61,6 @@ class GetVideoAssets(
         } catch (e: UnsupportedCaptionsException) {
             throw VideoCaptionNotFound(videoId = video.videoId)
         }
-
-        return ResponseEntity.ok()
-            .header("Content-Disposition", "attachment; filename=\"${buildFilename(video.title)}.zip\"")
-            .contentType(MediaType("application", "zip"))
-            .body(StreamingResponseBody { writeCompressedContent(it, video, caption) })
     }
 
     fun writeCompressedContent(outputStream: OutputStream, video: Video, caption: Caption) {
@@ -52,8 +69,8 @@ class GetVideoAssets(
                 os.write(caption.content.toByteArray())
             }
 
-            it.writeEntry(ZipEntry(buildFilename(video.title).plus(".${playbackProvider.getExtensionForAsset(video.playback.id)}"))){ os ->
-                playbackProvider.downloadFHDOrOriginalAsset(video.playback.id, os)
+            it.writeEntry(ZipEntry(buildFilename(video.title).plus(".${playbackProvider.getExtensionForAsset(video.playback.id)}"))) { os ->
+                playbackProvider.downloadHighestResolutionVideo(video.playback.id, os)
             }
         }
     }

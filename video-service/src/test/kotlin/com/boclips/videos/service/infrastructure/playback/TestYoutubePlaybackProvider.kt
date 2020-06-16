@@ -54,7 +54,7 @@ class TestYoutubePlaybackProvider :
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 
-    override fun downloadFHDOrOriginalAsset(
+    override fun downloadHighestResolutionVideo(
         playbackId: PlaybackId,
         outputStream: OutputStream
     ) {

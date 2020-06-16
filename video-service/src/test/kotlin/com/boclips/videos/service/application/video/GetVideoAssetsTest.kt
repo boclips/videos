@@ -36,7 +36,7 @@ class GetVideoAssetsTest {
 
     @Test
     fun `returns captions & video content`() {
-        whenever(playbackProvider.downloadFHDOrOriginalAsset(eq(PlaybackId.from("entry-id", "KALTURA")), any()))
+        whenever(playbackProvider.downloadHighestResolutionVideo(eq(PlaybackId.from("entry-id", "KALTURA")), any()))
             .then { invocation -> (invocation.arguments[1] as OutputStream).write("movie time!".toByteArray()) }
         whenever(playbackProvider.getExtensionForAsset(eq(PlaybackId.from("entry-id", "KALTURA")))).thenReturn("mov")
         val baos = ByteArrayOutputStream()

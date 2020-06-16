@@ -139,7 +139,7 @@ class KalturaPlaybackProvider(
         return playbackIds.map { it to VideoProviderMetadata.KalturaMetadata(id = it) }.toMap()
     }
 
-    override fun downloadFHDOrOriginalAsset(
+    override fun downloadHighestResolutionVideo(
         playbackId: PlaybackId,
         outputStream: OutputStream
     ) {
@@ -156,7 +156,6 @@ class KalturaPlaybackProvider(
         val asset = kalturaClient.getVideoAssets(playbackId.value)
             ?.maxBy { it.height }
             ?: throw VideoPlaybackNotFound(playbackId)
-        if (asset.height < 1080 && asset.isOriginal != true) throw InsufficientVideoResolutionException(playbackId)
 
         return kalturaClient.getDownloadAssetUrl(asset.id)
     }

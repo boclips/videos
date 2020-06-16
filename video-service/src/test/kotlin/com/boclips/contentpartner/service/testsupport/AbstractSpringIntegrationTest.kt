@@ -38,6 +38,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
+import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath

@@ -281,23 +281,9 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `download asset throws if no FHD or original flavor`() {
-        createMediaEntry(
-            id = "2", height = 1080, assets = setOf(
-                KalturaFactories.createKalturaAsset(id = "x", height = 100),
-                KalturaFactories.createKalturaAsset(id = "y", height = 200)
-            )
-        )
-
-        assertThrows<InsufficientVideoResolutionException> {
-            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
-        }
-    }
-
-    @Test
     fun `download asset throws if entry not found`() {
         assertThrows<VideoPlaybackNotFound> {
-            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("something-dude", "KALTURA"), ByteArrayOutputStream())
+            kalturaPlaybackProvider.downloadHighestResolutionVideo(PlaybackId.from("something-dude", "KALTURA"), ByteArrayOutputStream())
         }
     }
 
@@ -308,7 +294,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         )
 
         assertThrows<VideoPlaybackNotFound> {
-            kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
+            kalturaPlaybackProvider.downloadHighestResolutionVideo(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
         }
     }
 
@@ -326,7 +312,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             .andRespond(withSuccess("a video".toByteArray(), null))
 
         val os = ByteArrayOutputStream()
-        kalturaPlaybackProvider.downloadFHDOrOriginalAsset(PlaybackId.from("2", "KALTURA"), os)
+        kalturaPlaybackProvider.downloadHighestResolutionVideo(PlaybackId.from("2", "KALTURA"), os)
 
         assertThat(os.toByteArray()).isEqualTo("a video".toByteArray())
     }

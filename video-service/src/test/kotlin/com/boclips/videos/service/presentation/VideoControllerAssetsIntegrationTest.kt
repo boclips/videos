@@ -1,10 +1,10 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.assertj.core.api.Assertions.assertThat
@@ -12,16 +12,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.Duration
 
 class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
+
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
     @BeforeEach
     fun setUp() {
@@ -58,6 +59,12 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `404 if no video asset`() {
+        mockMvc.perform(get("/v1/videos/non-existent-video/assets").asBoclipsEmployee())
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `404 if no video captions`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
             .andExpect(status().isNotFound)
     }
