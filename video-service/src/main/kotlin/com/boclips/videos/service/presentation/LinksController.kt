@@ -12,6 +12,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLi
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.presentation.hateoas.AttachmentTypeLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -50,6 +51,7 @@ class LinksController(
     private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
+    private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -64,6 +66,8 @@ class LinksController(
                 videosLinkBuilder.searchVideosLink(),
 
                 videoTypeLinkBuilder.videoTypes(),
+
+                attachmentTypeLinkBuilder.attachmentTypes(),
 
                 collectionsLinkBuilder.discoverCollections(),
                 collectionsLinkBuilder.promotedCollections(),

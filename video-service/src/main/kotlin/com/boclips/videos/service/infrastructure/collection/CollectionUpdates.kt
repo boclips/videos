@@ -97,7 +97,8 @@ class CollectionUpdates {
                     linkToResource = linkToResource,
                     type = when (type) {
                         AttachmentType.LESSON_PLAN -> "LESSON_PLAN"
-                        AttachmentType.ACTIVITY -> throw IllegalArgumentException("Cannot add attachment of type ACTIVITY")
+                        AttachmentType.ACTIVITY -> "ACTIVITY"
+                        AttachmentType.FINAL_PROJECT -> "FINAL_PROJECT"
                     }
                 )
             )
