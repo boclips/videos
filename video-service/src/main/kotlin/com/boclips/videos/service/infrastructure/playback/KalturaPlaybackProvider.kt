@@ -16,7 +16,6 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlay
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.UnknownCaptionFormatException
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider

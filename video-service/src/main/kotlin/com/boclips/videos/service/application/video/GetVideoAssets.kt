@@ -65,21 +65,22 @@ class GetVideoAssets(
 
     fun writeCompressedContent(outputStream: OutputStream, video: Video, caption: Caption) {
         ZipOutputStream(outputStream).use {
-            it.writeEntry(ZipEntry(buildFilename(video.title).plus(".${caption.format.getFileExtension()}"))) { os ->
+            it.writeEntry(buildFilename(video.title).plus(".${caption.format.getFileExtension()}")) { os ->
                 os.write(caption.content.toByteArray())
             }
 
-            it.writeEntry(ZipEntry(buildFilename(video.title).plus(".${playbackProvider.getExtensionForAsset(video.playback.id)}"))) { os ->
+            it.writeEntry(buildFilename(video.title).plus(".${playbackProvider.getExtensionForAsset(video.playback.id)}")) { os ->
                 playbackProvider.downloadHighestResolutionVideo(video.playback.id, os)
             }
+
         }
     }
 
-    private fun ZipOutputStream.writeEntry(zipEntry: ZipEntry, contentWriter: (os: OutputStream) -> Unit) {
-        this.putNextEntry(zipEntry)
-        logger.info { "writing zip entry ${zipEntry.name}" }
+    private fun ZipOutputStream.writeEntry(filename: String, contentWriter: (os: OutputStream) -> Unit) {
+        this.putNextEntry(ZipEntry(filename).apply { compressedSize = -1 })
+        logger.info { "writing zip entry ${filename}" }
         contentWriter(this)
         this.closeEntry()
-        logger.info { "closed zip entry ${zipEntry.name}" }
+        logger.info { "closed zip entry ${filename}" }
     }
 }
