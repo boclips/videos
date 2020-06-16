@@ -300,7 +300,6 @@ class EventService(val eventBus: EventBus) {
             .externalUserId(user.externalUserId?.value)
             .url(user.context.origin)
             .deviceId(user.context.deviceId)
-            .playbackDevice(user.context.deviceId)
             .build()
     }
 }

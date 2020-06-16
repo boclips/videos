@@ -152,7 +152,6 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(event.segmentStartSeconds).isEqualTo(1469L)
             assertThat(event.segmentEndSeconds).isEqualTo(1470L)
             assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
-            assertThat(event.playbackDevice).isEqualTo("device-id")
             assertThat(event.deviceId).isEqualTo("device-id")
             assertThat(event.timestamp).isNotNull()
         }

@@ -367,7 +367,6 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.segmentStartSeconds).isEqualTo(123)
         assertThat(event.segmentEndSeconds).isEqualTo(345)
         assertThat(event.userId).isEqualTo("user@example.com")
-        assertThat(event.playbackDevice).isEqualTo("device-1")
         assertThat(event.deviceId).isEqualTo("device-1")
         assertThat(event.url).isEqualTo("https://b.com")
     }

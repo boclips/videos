@@ -74,7 +74,6 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[0].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[0].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[0].deviceId).isEqualTo("my-device")
-        assertThat(events[0].playbackDevice).isEqualTo("my-device")
         assertThat(events[0].timestamp).isNotNull()
         assertThat(events[0].url).isEqualTo("https://teachers.boclips.com")
 
@@ -84,7 +83,6 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[1].segmentStartSeconds).isEqualTo(10L)
         assertThat(events[1].segmentEndSeconds).isEqualTo(20L)
         assertThat(events[1].deviceId).isEqualTo("my-device")
-        assertThat(events[1].playbackDevice).isEqualTo("my-device")
         assertThat(events[1].timestamp).isNotNull()
         assertThat(events[1].url).isEqualTo("https://teachers.boclips.com")
 
