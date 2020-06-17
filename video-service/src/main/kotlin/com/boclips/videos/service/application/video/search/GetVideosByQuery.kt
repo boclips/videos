@@ -16,6 +16,9 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import mu.KLogging
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
     private val videoRetrievalService: VideoRetrievalService,
@@ -87,14 +90,23 @@ class GetVideosByQuery(
         val videoSearchResponse = videoRetrievalService.searchPlaybableVideos(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
-        eventService.saveSearchEvent(
-            query = query,
-            pageIndex = pageNumber,
-            pageSize = pageSize,
-            totalResults = videoSearchResponse.counts.total,
-            pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
-            user = user
-        )
+        try {
+            eventService.saveSearchEvent(
+                query = query,
+                pageIndex = pageNumber,
+                pageSize = pageSize,
+                totalResults = videoSearchResponse.counts.total,
+                pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
+                user = user
+            )
+            throw Exception()
+        } catch(e: Exception) {
+            val errorMessage = (RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes?)
+                ?.request
+                ?.let { requestToString(it) }
+                ?: "???"
+            logger.error(e) { "Error logging search event for request $errorMessage" }
+        }
 
         return ResultsPage(
             elements = videoSearchResponse.videos.asIterable(),
@@ -105,6 +117,11 @@ class GetVideosByQuery(
                 pageRequest = PageRequest(page = pageNumber, size = pageSize)
             )
         )
+    }
+
+    private fun requestToString(request: HttpServletRequest): String {
+        val headers = request.headerNames.toList().map { headerName -> "$headerName ${request.getHeader(headerName)}" }.joinToString()
+        return "${request.method} ${request.requestURI} [ headers: $headers ]"
     }
 
     private fun validatePageNumber(pageNumber: Int) {
