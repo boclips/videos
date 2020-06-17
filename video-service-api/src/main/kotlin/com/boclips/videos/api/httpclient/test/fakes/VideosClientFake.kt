@@ -1,6 +1,7 @@
 package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.VideosClient
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.request.video.StreamPlaybackResource
@@ -21,7 +22,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private var id = 0
 
     override fun getVideo(
-        videoId: String
+        videoId: String,
+        projection: Projection
     ): VideoResource {
         return database[videoId] ?: throw FakeClient.notFoundException("Video not found")
     }
