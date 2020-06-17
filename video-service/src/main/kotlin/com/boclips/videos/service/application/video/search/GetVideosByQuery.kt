@@ -99,7 +99,6 @@ class GetVideosByQuery(
                 pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
                 user = user
             )
-            throw Exception()
         } catch(e: Exception) {
             val errorMessage = (RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes?)
                 ?.request
