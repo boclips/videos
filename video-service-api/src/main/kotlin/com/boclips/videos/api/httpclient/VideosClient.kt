@@ -2,6 +2,7 @@ package com.boclips.videos.api.httpclient
 
 import com.boclips.videos.api.httpclient.helper.ObjectMapperDefinition
 import com.boclips.videos.api.httpclient.helper.TokenFactory
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
@@ -20,8 +21,11 @@ import feign.okhttp.OkHttpClient
 import feign.slf4j.Slf4jLogger
 
 interface VideosClient {
-    @RequestLine("GET /v1/videos/{videoId}")
-    fun getVideo(@Param("videoId") videoId: String): VideoResource
+    @RequestLine("GET /v1/videos/{videoId}?projection={projection}")
+    fun getVideo(
+        @Param("videoId") videoId: String,
+        @Param("projection") projection: Projection = Projection.details
+    ): VideoResource
 
     @RequestLine("HEAD /v1/channels/{channelId}/videos/{channelVideoId}")
     fun probeVideoReference(
