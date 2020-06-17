@@ -92,7 +92,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                 .asApiUser()
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.videos[0].contentPartnerId").doesNotExist())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.videos[0].channelId").doesNotExist())
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
@@ -100,7 +100,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                 .asBoclipsEmployee()
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.videos[0].contentPartnerId").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.videos[0].channelId").exists())
     }
 
     @Test

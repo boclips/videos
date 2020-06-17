@@ -94,9 +94,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
                 .andExpect(jsonPath("$.releasedOn", equalTo("2018-02-11")))
                 .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp")))
-                .andExpect(jsonPath("$.contentPartner", equalTo("enabled-cp")))
-                .andExpect(jsonPath("$.contentPartnerId").exists())
-                .andExpect(jsonPath("$.contentPartnerVideoId", equalTo("content-partner-video-id-entry-id-123")))
+                .andExpect(jsonPath("$.channel", equalTo("enabled-cp")))
+                .andExpect(jsonPath("$.channelId").exists())
+                .andExpect(jsonPath("$.channelVideoId", equalTo("content-partner-video-id-entry-id-123")))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").exists())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
@@ -132,8 +132,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").exists())
-                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").exists())
+                .andExpect(jsonPath("$._embedded.videos[0].channelVideoId").exists())
+                .andExpect(jsonPath("$._embedded.videos[0].channelId").exists())
                 .andExpect(jsonPath("$._embedded.videos[0].types[0]").isNotEmpty())
                 .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", endsWith("/videos/$kalturaVideoId")))
         }
@@ -183,8 +183,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         containsString("/videos/$kalturaVideoId")
                     )
                 )
-                .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
-                .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$.channelVideoId").doesNotExist())
+                .andExpect(jsonPath("$.channelId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
         }
@@ -224,16 +224,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
 
-                .andExpect(jsonPath("$.contentPartnerVideoId").doesNotExist())
-                .andExpect(jsonPath("$.contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$.channelVideoId").doesNotExist())
+                .andExpect(jsonPath("$.channelId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
 
             mockMvc.perform(get("/v1/videos?query=powerful").asApiUser())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerVideoId").doesNotExist())
-                .andExpect(jsonPath("$._embedded.videos[0].contentPartnerId").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].channelVideoId").doesNotExist())
+                .andExpect(jsonPath("$._embedded.videos[0].channelId").doesNotExist())
                 .andExpect(jsonPath("$._embedded.videos[0].type").doesNotExist())
                 .andExpect(jsonPath("$._embedded.videos[0].status").doesNotExist())
         }
@@ -426,12 +426,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val contentPartnerId = saveContentPartner().id.value
+            val channelId = saveContentPartner().id.value
 
             val content = """
             {
                 "providerVideoId": "1",
-                "providerId": "$contentPartnerId",
+                "providerId": "$channelId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -461,7 +461,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `create new video with subjects`() {
             val subjectId = saveSubject("Maths").id
-            val contentPartnerId = saveContentPartner().id.value
+            val channelId = saveContentPartner().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -471,7 +471,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val content = """
             {
                 "providerVideoId": "1",
-                "providerId": "$contentPartnerId",
+                "providerId": "$channelId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -500,7 +500,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `create new video with a language`() {
-            val contentPartnerId = saveContentPartner().id.value
+            val channelId = saveContentPartner().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -510,7 +510,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val content = """
             {
                 "providerVideoId": "1",
-                "providerId": "$contentPartnerId",
+                "providerId": "$channelId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -539,12 +539,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns a helpful error message when request is not valid`() {
-            val contentPartnerId = saveContentPartner().id.value
+            val channelId = saveContentPartner().id.value
 
             val content = """
             {
                 "providerVideoId": "1",
-                "providerId": "$contentPartnerId"
+                "providerId": "$channelId"
             }
         """.trimIndent()
 
@@ -560,12 +560,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val contentPartnerId = saveContentPartner(name = "AP").id.value
+            val channelId = saveContentPartner(name = "AP").id.value
 
             val content = """
             {
                 "providerVideoId": "1",
-                "providerId": "$contentPartnerId",
+                "providerId": "$channelId",
                 "title": "AP title",
                 "description": "AP description",
                 "releasedOn": "2018-12-04T00:00:00",
@@ -632,11 +632,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class VideoExists {
         @Test
         fun `video lookup by provider id returns 200 when video exists`() {
-            val contentPartner = saveContentPartner(name = "ted")
+            val channel = saveContentPartner(name = "ted")
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                MockMvcRequestBuilders.head("/v1/channels/${contentPartner.id.value}/videos/abc")
+                MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")
                     .asIngestor()
             )
                 .andExpect(status().isOk)

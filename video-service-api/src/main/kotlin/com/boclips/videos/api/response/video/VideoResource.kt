@@ -50,16 +50,6 @@ data class VideoResource(
     val contentWarnings: List<ContentWarningResource>? = emptyList(),
 
     @get:JsonView(BoclipsInternalProjection::class)
-    @Deprecated("Use channel instead")
-    val contentPartner: String? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
-    @Deprecated("Use channelId instead")
-    val contentPartnerId: String? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
-    @Deprecated("Use channelVideoId instead")
-    val contentPartnerVideoId: String? = null,
-
-    @get:JsonView(BoclipsInternalProjection::class)
     val channel: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val channelId: String? = null,

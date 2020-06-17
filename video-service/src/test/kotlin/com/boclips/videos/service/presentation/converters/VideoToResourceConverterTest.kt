@@ -118,9 +118,9 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
         assertThat(videoResource.description).isNull()
-        assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
-        assertThat(videoResource.contentPartner).isNull()
-        assertThat(videoResource.contentPartnerVideoId).isNull()
+        assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
+        assertThat(videoResource.channel).isNull()
+        assertThat(videoResource.channelVideoId).isNull()
         assertThat(videoResource.subjects).isNullOrEmpty()
         assertThat(videoResource.type).isNull()
         assertThat(videoResource.playback).isNull()
@@ -133,9 +133,9 @@ class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
-        assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
-        assertThat(videoResource.contentPartner).isEqualTo("WeWork").isEqualTo(videoResource.channel)
-        assertThat(videoResource.contentPartnerVideoId).isEqualTo("111").isEqualTo(videoResource.channelVideoId)
+        assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
+        assertThat(videoResource.channel).isEqualTo("WeWork").isEqualTo(videoResource.channel)
+        assertThat(videoResource.channelVideoId).isEqualTo("111").isEqualTo(videoResource.channelVideoId)
         assertThat(videoResource.subjects).containsExactly(
             SubjectResource(
                 id = "maths-subject-id",
@@ -178,9 +178,9 @@ class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
-        assertThat(videoResource.createdBy).isEqualTo(videoResource.contentPartner)
-        assertThat(videoResource.contentPartner).isEqualTo("JacekWork")
-        assertThat(videoResource.contentPartnerVideoId).isEqualTo("222")
+        assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
+        assertThat(videoResource.channel).isEqualTo("JacekWork")
+        assertThat(videoResource.channelVideoId).isEqualTo("222")
         assertThat(videoResource.subjects).containsExactly(
             SubjectResource(
                 id = "biology-subject-id",
