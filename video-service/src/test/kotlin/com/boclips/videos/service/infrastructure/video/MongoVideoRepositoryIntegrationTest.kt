@@ -375,7 +375,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val video = createVideo(
             videoId = TestFactories.aValidId(),
             channelName = "TED Talks",
-            contentPartnerVideoId = "ted-id-1"
+            channelVideoId = "ted-id-1"
         )
 
         mongoVideoRepository.create(video)
@@ -387,19 +387,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find by content partner id and content partner video id`() {
-        val contentPartnerId =
+        val channelId =
             ChannelId(value = "5d319070871956b43f45eb82")
 
         val video = createVideo(
             videoId = TestFactories.aValidId(),
-            contentPartnerVideoId = "ted-id-1",
-            channelId = contentPartnerId
+            channelVideoId = "ted-id-1",
+            channelId = channelId
         )
 
         mongoVideoRepository.create(video)
 
-        assertThat(mongoVideoRepository.existsVideoFromChannelId(contentPartnerId, "ted-id-1")).isTrue()
-        assertThat(mongoVideoRepository.existsVideoFromChannelId(contentPartnerId, "ted-id-2")).isFalse()
+        assertThat(mongoVideoRepository.existsVideoFromChannelId(channelId, "ted-id-1")).isTrue()
+        assertThat(mongoVideoRepository.existsVideoFromChannelId(channelId, "ted-id-2")).isFalse()
 
         assertThat(
             mongoVideoRepository.existsVideoFromChannelId(
@@ -483,13 +483,13 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `find videos by content partner youtube id`() {
-        val contentPartnerId = ObjectId().toHexString()
+        val channelId = ObjectId().toHexString()
         val video1 =
             mongoVideoRepository.create(
                 createVideo(
                     title = "Video 1",
                     channelId = ChannelId(
-                        value = contentPartnerId
+                        value = channelId
                     )
                 )
             )
@@ -499,7 +499,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 createVideo(
                     title = "Video 2",
                     channelId = ChannelId(
-                        value = contentPartnerId
+                        value = channelId
                     )
                 )
             )
@@ -516,7 +516,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val videos =
             mongoVideoRepository.findByChannelId(
                 channelId = ChannelId(
-                    value = contentPartnerId
+                    value = channelId
                 )
             )
 
@@ -619,7 +619,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append(
                             "source", Document()
                                 .append(
-                                    "contentPartner", Document()
+                                    "channel", Document()
                                         .append("name", "cp-name")
                                         .append("_id", ObjectId())
                                 )
@@ -655,7 +655,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append(
                             "source", Document()
                                 .append(
-                                    "contentPartner", Document()
+                                    "channel", Document()
                                         .append("name", "cp-name")
                                         .append("_id", ObjectId())
                                 )

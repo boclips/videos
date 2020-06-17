@@ -54,14 +54,14 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
 
     override fun findByChannelName(channelName: String): List<Video> {
         return getVideoCollection()
-            .find((VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name) eq channelName)
+            .find((VideoDocument::source / SourceDocument::channel / ChannelDocument::name) eq channelName)
             .map(VideoDocumentConverter::toVideo)
             .toList()
     }
 
     override fun findByChannelId(channelId: ChannelId): List<Video> {
         val bson =
-            (VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id) eq
+            (VideoDocument::source / SourceDocument::channel / ChannelDocument::id) eq
                 ObjectId(channelId.value)
 
         return getVideoCollection()
@@ -79,8 +79,8 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
 
     override fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit) {
         val filterBson = when (filter) {
-            is VideoFilter.ChannelNameIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::name eq filter.name
-            is VideoFilter.ChannelIdIs -> VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
+            is VideoFilter.ChannelNameIs -> VideoDocument::source / SourceDocument::channel / ChannelDocument::name eq filter.name
+            is VideoFilter.ChannelIdIs -> VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(
                 filter.channelId.value
             )
             is VideoFilter.HasContentType -> VideoDocument::contentTypes contains filter.type.name
@@ -184,7 +184,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         val videoMatchingFilters = getVideoCollection()
             .find(
                 and(
-                    eq("source.contentPartner.name", channelName),
+                    eq("source.channel.name", channelName),
                     eq("source.videoReference", partnerVideoId)
                 )
             )
@@ -197,7 +197,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         val matchingVideo = getVideoCollection()
             .find(
                 and(
-                    eq("source.contentPartner.name", channelName),
+                    eq("source.channel.name", channelName),
                     eq("title", videoTitle)
                 )
             )
@@ -214,7 +214,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         val videoMatchingFilters = getVideoCollection()
             .find(
                 and(
-                    VideoDocument::source / SourceDocument::contentPartner / ContentPartnerDocument::id eq ObjectId(
+                    VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(
                         channelId.value
                     ),
                     VideoDocument::source / SourceDocument::videoReference eq partnerVideoId
@@ -280,11 +280,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 )
             )
             is ReplaceChannel -> {
-                val contentPartnerDocument =
-                    ContentPartnerDocumentConverter.toContentPartnerDocument(updateCommand.channel)
+                val channelDocument =
+                    ChannelDocumentConverter.toChannelDocument(updateCommand.channel)
                 set(
-                    VideoDocument::source / SourceDocument::contentPartner,
-                    contentPartnerDocument.copy(lastModified = Instant.now())
+                    VideoDocument::source / SourceDocument::channel,
+                    channelDocument.copy(lastModified = Instant.now())
                 )
             }
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)

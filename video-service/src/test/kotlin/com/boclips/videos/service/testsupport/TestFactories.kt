@@ -83,7 +83,7 @@ object TestFactories {
         channelId: ChannelId = ChannelId(
             value = ObjectId().toHexString()
         ),
-        contentPartnerVideoId: String = "cp-id-$videoId",
+        channelVideoId: String = "cp-id-$videoId",
         playback: VideoPlayback = createKalturaPlayback(),
         types: List<ContentType> = listOf(ContentType.INSTRUCTIONAL_CLIPS),
         keywords: List<String> = listOf("keyword"),
@@ -102,7 +102,7 @@ object TestFactories {
             channelId = channelId,
             name = channelName
         ),
-        videoReference: String = contentPartnerVideoId,
+        videoReference: String = channelVideoId,
         promoted: Boolean? = null,
         attachments: List<Attachment> = emptyList(),
         contentWarnings: List<ContentWarning> = emptyList(),

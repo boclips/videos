@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
-import com.boclips.videos.service.infrastructure.video.ContentPartnerDocument
+import com.boclips.videos.service.infrastructure.video.ChannelDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.TopicDocument
@@ -65,11 +65,11 @@ object VideoFactory {
     }
 
     fun createSourceDocument(
-        contentPartner: ContentPartnerDocument = createContentPartnerDocument(),
+        channel: ChannelDocument = createContentPartnerDocument(),
         videoReference: String = "video-reference"
     ): SourceDocument {
         return SourceDocument(
-            contentPartner = contentPartner,
+            channel = channel,
             videoReference = videoReference
         )
     }
@@ -79,8 +79,8 @@ object VideoFactory {
         name: String = "content partner name",
         lastModified: Instant? = null,
         createdAt: Instant? = null
-    ): ContentPartnerDocument {
-        return ContentPartnerDocument(
+    ): ChannelDocument {
+        return ChannelDocument(
             id = id,
             name = name,
             lastModified = lastModified,

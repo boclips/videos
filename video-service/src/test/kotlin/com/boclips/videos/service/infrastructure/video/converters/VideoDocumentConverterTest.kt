@@ -30,7 +30,7 @@ class VideoDocumentConverterTest {
             title = "the title",
             description = "the description",
             channelName = "the contentPartner",
-            contentPartnerVideoId = "the contentPartnerVideoId",
+            channelVideoId = "the contentPartnerVideoId",
             channel = Channel(
                 channelId = ChannelId(
                     value = ObjectId().toHexString()
