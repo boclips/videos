@@ -277,7 +277,7 @@ abstract class AbstractSpringIntegrationTest {
         assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080))
     ): VideoId {
         val retrievedContentPartnerId =
-            saveContentPartner(name = contentProvider, distributionMethods = distributionMethods).id.value
+            saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -424,13 +424,13 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveContentWarning(label: String): ContentWarning = createContentWarning(CreateContentWarningRequest(label))
 
-    fun saveContentPartner(
+    fun saveChannel(
         name: String = "TeD",
         ageRanges: List<String>? = emptyList(),
         distributionMethods: Set<DistributionMethodResource>? = null,
         currency: String? = null
     ): Channel {
-        val createdContentPartner = try {
+        val createdChannel = try {
             createChannel(
                 VideoServiceApiFactory.createChannelRequest(
                     name = name,
@@ -445,7 +445,7 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeEventBus.clearState()
 
-        return createdContentPartner
+        return createdChannel
     }
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {

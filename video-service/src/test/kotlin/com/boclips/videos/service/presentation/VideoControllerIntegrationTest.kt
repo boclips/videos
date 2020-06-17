@@ -426,7 +426,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val channelId = saveContentPartner().id.value
+            val channelId = saveChannel().id.value
 
             val content = """
             {
@@ -461,7 +461,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `create new video with subjects`() {
             val subjectId = saveSubject("Maths").id
-            val channelId = saveContentPartner().id.value
+            val channelId = saveChannel().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -500,7 +500,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `create new video with a language`() {
-            val channelId = saveContentPartner().id.value
+            val channelId = saveChannel().id.value
 
             createMediaEntry(
                 id = "entry-$123",
@@ -539,7 +539,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns a helpful error message when request is not valid`() {
-            val channelId = saveContentPartner().id.value
+            val channelId = saveChannel().id.value
 
             val content = """
             {
@@ -560,7 +560,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 duration = Duration.ofMinutes(1)
             )
 
-            val channelId = saveContentPartner(name = "AP").id.value
+            val channelId = saveChannel(name = "AP").id.value
 
             val content = """
             {
@@ -632,7 +632,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class VideoExists {
         @Test
         fun `video lookup by provider id returns 200 when video exists`() {
-            val channel = saveContentPartner(name = "ted")
+            val channel = saveChannel(name = "ted")
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(

@@ -49,7 +49,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             val oldAgeRange = saveAgeRange(min = 12, max = 16, id = "12to16", label = "12-16")
 
             createMediaEntry(id = "123")
-            val contentPartner = saveContentPartner(ageRanges = listOf(oldAgeRange.id.value))
+            val contentPartner = saveChannel(ageRanges = listOf(oldAgeRange.id.value))
 
             assertThrows<Exception> {
                 videosClient.probeVideoReference(

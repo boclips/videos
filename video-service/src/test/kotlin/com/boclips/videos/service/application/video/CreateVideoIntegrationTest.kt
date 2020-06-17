@@ -34,7 +34,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val video = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
@@ -53,8 +53,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         createMediaEntry(id = "entry-$123", duration = Duration.ofMinutes(1))
 
-        val contentPartnerYt = saveContentPartner(name = "TED")
-        val contentPartnerNew = saveContentPartner(name = "TED")
+        val contentPartnerYt = saveChannel(name = "TED")
+        val contentPartnerNew = saveChannel(name = "TED")
 
         val scrapedVideo =
             createVideo(
@@ -89,7 +89,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `requesting creation of an existing youtube video creates the video`() {
         fakeYoutubePlaybackProvider.addVideo("8889", "thumbnailUrl-url", duration = Duration.ZERO)
         fakeYoutubePlaybackProvider.addMetadata("8889", "channel name", "channel id")
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val video =
             createVideo(
@@ -105,7 +105,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting creation of video without playback ignores video and throws`() {
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         assertThrows<VideoPlaybackNotFound> {
             createVideo(
@@ -154,7 +154,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = playbackProviderDuration
         )
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val createdVideo = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
@@ -170,7 +170,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when playback provider ID or type are missing`() {
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
         val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
             providerId = contentPartner.id.value,
             playbackId = null,
@@ -187,7 +187,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val video: Video = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
@@ -208,7 +208,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `it dispatches a video created event`() {
         createMediaEntry(id = "1")
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
@@ -249,7 +249,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
             language = "wel",
@@ -267,7 +267,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = saveContentPartner()
+        val contentPartner = saveChannel()
 
         val createRequest =
             VideoServiceApiFactory.createCreateVideoRequest(

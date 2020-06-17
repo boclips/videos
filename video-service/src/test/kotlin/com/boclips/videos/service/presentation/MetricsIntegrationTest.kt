@@ -29,7 +29,7 @@ class MetricsIntegrationTest : AbstractSpringIntegrationTest() {
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartnerId = saveContentPartner().id.value
+        val contentPartnerId = saveChannel().id.value
 
         val content = """
             {

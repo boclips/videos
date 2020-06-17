@@ -34,9 +34,9 @@ class CreateVideo(
     operator fun invoke(createRequest: CreateVideoRequest): Video {
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
-        val contentPartner = findContentPartner(createRequest)
+        val channel = findChannel(createRequest)
             ?: throw ChannelNotFoundException(
-                "Could not find content partner with id: ${createRequest.providerId}"
+                "Could not find channel with id: ${createRequest.providerId}"
             )
 
         val playbackId = PlaybackId.from(createRequest.playbackId, createRequest.playbackProvider)
@@ -49,7 +49,7 @@ class CreateVideo(
             createVideoRequestToVideoConverter.convert(
                 createVideoRequest = createRequest,
                 videoPlayback = videoPlayback,
-                contentPartner = contentPartner,
+                contentPartner = channel,
                 subjects = subjects
             )
 
@@ -72,7 +72,7 @@ class CreateVideo(
         return createdVideo
     }
 
-    private fun findContentPartner(createRequest: CreateVideoRequest): Channel? =
+    private fun findChannel(createRequest: CreateVideoRequest): Channel? =
         createRequest.providerId?.let {
             videoChannelService.findById(createRequest.providerId!!)
         }

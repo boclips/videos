@@ -37,9 +37,9 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `limits search to included distribution methods`() {
             val streamContentPartner =
-                saveContentPartner(name = "stream", distributionMethods = setOf(DistributionMethodResource.STREAM))
+                saveChannel(name = "stream", distributionMethods = setOf(DistributionMethodResource.STREAM))
             val downloadContentPartner =
-                saveContentPartner(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
+                saveChannel(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
 
             val streamVideo =
                 saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
@@ -81,8 +81,8 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `excludes certain videos with excluded content partners from results`() {
-            val allowedContentPartner = saveContentPartner(name = "Turna")
-            val excludedContentPartner = saveContentPartner(name = "Tiner")
+            val allowedContentPartner = saveChannel(name = "Turna")
+            val excludedContentPartner = saveChannel(name = "Tiner")
 
             val videoWithAllowedContentPartner =
                 saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.id.value)

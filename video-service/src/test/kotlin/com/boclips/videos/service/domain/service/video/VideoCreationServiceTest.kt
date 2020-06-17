@@ -24,7 +24,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
                 label = "3-7"
             )
         )
-        val contentPartner = saveContentPartner(
+        val contentPartner = saveChannel(
             name = "Our content partner",
             ageRanges = listOf("early-years")
         )
@@ -44,7 +44,7 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `do not create video when duplicate`() {
-        val contentPartner = saveContentPartner(name = "Our content partner")
+        val contentPartner = saveChannel(name = "Our content partner")
 
         videoCreationService.create(
             TestFactories.createVideo(

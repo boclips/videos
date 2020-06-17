@@ -16,9 +16,9 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `provides suggestions for content partner names`() {
-        saveContentPartner(name = "TED")
-        saveContentPartner(name = "TED-Ed")
-        saveContentPartner(name = "BBC")
+        saveChannel(name = "TED")
+        saveChannel(name = "TED-Ed")
+        saveChannel(name = "BBC")
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
