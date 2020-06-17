@@ -25,7 +25,6 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.*
 import java.time.Instant
 import java.util.*
-import kotlin.collections.toList
 
 class MongoVideoRepository(private val mongoClient: MongoClient, val batchProcessingConfig: BatchProcessingConfig) :
     VideoRepository {
@@ -78,6 +77,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
     }
 
     override fun streamAll(filter: VideoFilter, consumer: (Sequence<Video>) -> Unit) {
+        consumer(streamAll(filter))
+    }
+
+    fun streamAll(filter: VideoFilter): Sequence<Video> {
         val filterBson = when (filter) {
             is VideoFilter.ChannelNameIs -> VideoDocument::source / SourceDocument::channel / ChannelDocument::name eq filter.name
             is VideoFilter.ChannelIdIs -> VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(
@@ -97,8 +100,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 .iterator()
         }
             .map(VideoDocumentConverter::toVideo)
-
-        consumer(sequence)
+        return sequence
     }
 
     override fun delete(videoId: VideoId) {
@@ -153,31 +155,18 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return findAll(commands.map { it.videoId })
     }
 
-    override fun streamUpdate(consumer: (List<Video>) -> List<VideoUpdateCommand>) {
-        streamAll { videos ->
-            videos.windowed(
-                size = batchProcessingConfig.videoBatchSize,
-                step = batchProcessingConfig.videoBatchSize,
-                partialWindows = true
-            ).forEach { windowedVideos ->
-                bulkUpdate(commands = consumer(windowedVideos))
-            }
-        }
-    }
-
-    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>) {
-        streamAll(filter) { videos ->
-            videos.windowed(
-                size = batchProcessingConfig.videoBatchSize,
-                step = batchProcessingConfig.videoBatchSize,
-                partialWindows = true
-            ).forEachIndexed { index, windowedVideos ->
-                logger.info { "Starting update batch: $index" }
-                val updateCommands = consumer(windowedVideos)
-                val updatedVideos = bulkUpdate(commands = updateCommands)
-                logger.info { "Updated ${updatedVideos.size} videos" }
-            }
-        }
+    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>): Sequence<Video> {
+        return streamAll(filter).windowed(
+            size = batchProcessingConfig.videoBatchSize,
+            step = batchProcessingConfig.videoBatchSize,
+            partialWindows = true
+        ).mapIndexed { index, windowedVideos ->
+            logger.info { "Starting update batch: $index" }
+            val updateCommands = consumer(windowedVideos)
+            val updatedVideos = bulkUpdate(commands = updateCommands)
+            logger.info { "Updated ${updatedVideos.size} videos" }
+            updatedVideos
+        }.flatten()
     }
 
     override fun existsVideoFromChannelName(channelName: String, partnerVideoId: String): Boolean {

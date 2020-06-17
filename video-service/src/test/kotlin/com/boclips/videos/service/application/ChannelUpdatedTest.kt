@@ -2,6 +2,9 @@ package com.boclips.videos.service.application
 
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.*
+import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.eventbus.events.video.VideoUpdated
+import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -49,6 +52,10 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
         assertThat(updatedVideo.types).containsExactly(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+
+        val videoUpdatedEvents = fakeEventBus.getEventsOfType(VideosUpdated::class.java)
+        assertThat(videoUpdatedEvents).hasSize(1)
+        assertThat(videoUpdatedEvents[0].videos[0].types).containsExactly(VideoType.NEWS, VideoType.INSTRUCTIONAL)
     }
 
     @Test

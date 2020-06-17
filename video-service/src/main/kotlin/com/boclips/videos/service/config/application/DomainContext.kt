@@ -21,25 +21,13 @@ import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.collection.CollectionAccessService
-import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
-import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
-import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
+import com.boclips.videos.service.domain.service.collection.*
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.VideoCreationService
-import com.boclips.videos.service.domain.service.video.VideoDeletionService
-import com.boclips.videos.service.domain.service.video.VideoDuplicationService
-import com.boclips.videos.service.domain.service.video.VideoIndex
-import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.video.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -81,6 +69,7 @@ class DomainContext(
     ): VideoDuplicationService {
         return VideoDuplicationService(videoRepository)
     }
+
     @Bean
     fun videoCreationService(
         channelRepository: ChannelRepository,
@@ -166,7 +155,7 @@ class DomainContext(
             MongoVideoRepository(
                 mongoClient,
                 batchProcessingConfig = batchProcessingConfig
-            ), eventBus
+            ), eventBus, batchProcessingConfig = batchProcessingConfig
         )
     }
 

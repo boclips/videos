@@ -179,20 +179,6 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
-    fun `update all videos`() {
-        val video = mongoVideoRepository.create(TestFactories.createVideo(title = "Old Title"))
-
-        mongoVideoRepository.streamUpdate { videos: List<Video> ->
-            videos.map { video ->
-                VideoUpdateCommand.ReplaceTitle(videoId = video.videoId, title = "New Title")
-            }
-        }
-
-        val updatedAsset = mongoVideoRepository.find(video.videoId)!!
-        assertThat(updatedAsset.title).isEqualTo("New Title")
-    }
-
-    @Test
     fun `update all videos filtered by given subject`() {
         val mathsSubject = TestFactories.createSubject(name = "Maths")
         val englishSubject = TestFactories.createSubject(name = "English")
@@ -211,5 +197,18 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
             .containsExactlyInAnyOrder("MathsIsForLosers")
 
         assertThat(mongoVideoRepository.find(videoId = video2.videoId)!!.subjects.items).isEmpty()
+    }
+
+    @Test
+    fun `stream update returns updated videos in sequence`() {
+        mongoVideoRepository.create(TestFactories.createVideo(title = "Old Title"))
+
+        val updatedVideos: Sequence<Video> = mongoVideoRepository.streamUpdate(VideoFilter.IsKaltura) { videos: List<Video> ->
+            videos.map { video ->
+                VideoUpdateCommand.ReplaceTitle(video.videoId, "New Title")
+            }
+        }
+
+        assertThat(updatedVideos.toList().first().title).isEqualTo("New Title")
     }
 }

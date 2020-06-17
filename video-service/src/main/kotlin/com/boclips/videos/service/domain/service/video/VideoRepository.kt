@@ -15,8 +15,7 @@ interface VideoRepository {
     fun create(video: Video): Video
     fun update(command: VideoUpdateCommand): Video
     fun bulkUpdate(commands: List<VideoUpdateCommand>): List<Video>
-    fun streamUpdate(consumer: (List<Video>) -> List<VideoUpdateCommand>)
-    fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>)
+    fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>): Sequence<Video>
     fun delete(videoId: VideoId)
     fun existsVideoFromChannelName(channelName: String, partnerVideoId: String): Boolean
     fun findVideoByTitleFromChannelName(channelName: String, videoTitle: String): Video?
