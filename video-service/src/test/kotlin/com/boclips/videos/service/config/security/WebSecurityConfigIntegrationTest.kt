@@ -111,6 +111,18 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `looking up by slash respects videos rule`() {
+        mockMvc.perform(get("/v1/videos/"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(get("/v1/videos/").asTeacher())
+            .andExpect(status().is2xxSuccessful)
+    }
+
+    @Test
     fun `teachers cannot update videos`() {
         val videoId = saveVideo().value
 
