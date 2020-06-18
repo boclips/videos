@@ -36,7 +36,6 @@ class CollectionEsQuery {
                             )
                             .should(QueryBuilders.matchPhraseQuery(CollectionDocument.DESCRIPTION, query.phrase))
                     )
-                        .must(QueryBuilders.wildcardQuery(CollectionDocument.DESCRIPTION, "?*"))
                 }
             }
     }
