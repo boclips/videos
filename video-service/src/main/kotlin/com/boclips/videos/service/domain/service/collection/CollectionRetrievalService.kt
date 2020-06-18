@@ -26,7 +26,6 @@ class CollectionRetrievalService(
     companion object : KLogging()
 
     fun search(query: CollectionSearchQuery, user: User): ResultsPage<Collection, Nothing> {
-        val accessRules = user.accessRules
         val searchQuery = query.toSearchQuery()
 
         val searchRequest = PaginatedSearchRequest(
@@ -36,6 +35,9 @@ class CollectionRetrievalService(
         )
         val results = collectionIndex.search(searchRequest)
 
+        logger.info { "Found ${results.counts.totalHits} collections for query $searchRequest" }
+
+        val accessRules = user.accessRules
         val collectionIds = results.elements.map { CollectionId(value = it) }
         val collections = collectionRepository.findAll(collectionIds).map { collections ->
             addVideosToCollection(collections, accessRules.videoAccess)
