@@ -221,6 +221,44 @@ class CollectionUpdatesConverterTest {
     }
 
     @Test
+    fun `can handle Activity attachment`() {
+        val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
+            UpdateCollectionRequest(
+                attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "new description",
+                    type = "ACTIVITY"
+                )
+            ),
+            UserFactory.sample()
+        )
+
+        val command = commands.first() as CollectionUpdateCommand.AddAttachment
+        assertThat(command.collectionId.value).isEqualTo("testId")
+        assertThat(command.type).isEqualTo(AttachmentType.ACTIVITY)
+    }
+
+    @Test
+    fun `can handle Final Project attachment`() {
+        val commands = collectionUpdatesConverter.convert(
+            CollectionId("testId"),
+            UpdateCollectionRequest(
+                attachment = AttachmentRequest(
+                    linkToResource = "www.lesson-plan.com",
+                    description = "new description",
+                    type = "FINAL_PROJECT"
+                )
+            ),
+            UserFactory.sample()
+        )
+
+        val command = commands.first() as CollectionUpdateCommand.AddAttachment
+        assertThat(command.collectionId.value).isEqualTo("testId")
+        assertThat(command.type).isEqualTo(AttachmentType.FINAL_PROJECT)
+    }
+
+    @Test
     fun `invalid attachment type throws an exception`() {
         assertThrows<InvalidAttachmentTypeException> {
             collectionUpdatesConverter.convert(

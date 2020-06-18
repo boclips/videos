@@ -80,6 +80,8 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                     collectionId = collectionId,
                     type = when (attachment.type) {
                         "LESSON_PLAN" -> AttachmentType.LESSON_PLAN
+                        "ACTIVITY" -> AttachmentType.ACTIVITY
+                        "FINAL_PROJECT" -> AttachmentType.FINAL_PROJECT
                         else -> throw InvalidAttachmentTypeException(attachment.type)
                     },
                     description = attachment.description?.let { it },

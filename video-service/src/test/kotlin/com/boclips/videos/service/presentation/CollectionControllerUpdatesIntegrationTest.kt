@@ -41,7 +41,12 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
                     {
                         "title": "$newTitle",
                         "description": "$newDescription",
-                        "videos": ["$secondVideoId", "$thirdVideoId"]
+                        "videos": ["$secondVideoId", "$thirdVideoId"],
+                        "attachment": {
+                            "linkToResource": "http://google.com",
+                            "description": "My new activity for a collection",
+                            "type": "ACTIVITY"
+                        }
                     }
                     """.trimIndent()
                 )
@@ -57,6 +62,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
             .andExpect(jsonPath("$.title", equalTo(newTitle)))
             .andExpect(jsonPath("$.description", equalTo(newDescription)))
+            .andExpect(jsonPath("$.attachments[0].type", equalTo("ACTIVITY")))
             .andExpect(jsonPath("$.videos", hasSize<Any>(2)))
             .andExpect(jsonPath("$.videos[*].id", containsInAnyOrder(secondVideoId, thirdVideoId)))
     }
