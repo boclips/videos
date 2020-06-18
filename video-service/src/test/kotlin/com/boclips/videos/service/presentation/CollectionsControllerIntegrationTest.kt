@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
@@ -10,6 +11,7 @@ import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.asUserWithRoles
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
@@ -557,5 +559,21 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                     equalTo("collection without lesson plans 2")
                 )
             )
+    }
+
+    @Test
+    fun `returns all collection for backoffice user requesting all collections`() {
+        createCollection(title = "collection 1", discoverable = true)
+        createCollection(title = "collection 2", discoverable = false)
+
+        mockMvc.perform(get("/v1/collections?ignore_discoverable=true").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
+
+        mockMvc.perform(get("/v1/collections?ignore_discoverable=true").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
     }
 }

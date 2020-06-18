@@ -14,6 +14,16 @@ class GetCollections(
         collectionFilterRequest: CollectionFilterRequest,
         user: User
     ): ResultsPage<Collection, Nothing> {
+        val isDiscoverable = if (collectionFilterRequest.ignore_discoverable != null) {
+            if (collectionFilterRequest.ignore_discoverable == true && user.isPermittedToModifyAnyCollection) {
+                null
+            } else {
+                collectionFilterRequest.discoverable ?: true
+            }
+        } else {
+            collectionFilterRequest.discoverable ?: true
+        }
+
         val assembledQuery = collectionSearchQueryAssembler(
             query = collectionFilterRequest.query,
             subjects = collectionFilterRequest.subject?.split(",")?.toList() ?: emptyList(),
@@ -24,7 +34,7 @@ class GetCollections(
             sort = collectionFilterRequest.getSortKeys(),
             hasLessonPlans = collectionFilterRequest.has_lesson_plans,
             promoted = collectionFilterRequest.promoted,
-            discoverable = collectionFilterRequest.discoverable ?: true,
+            discoverable = isDiscoverable,
             user = user,
             ageRangeMin = collectionFilterRequest.age_range_min,
             ageRangeMax = collectionFilterRequest.age_range_max,
