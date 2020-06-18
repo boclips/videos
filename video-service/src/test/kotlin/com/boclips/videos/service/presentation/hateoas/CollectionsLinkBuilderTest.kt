@@ -56,6 +56,21 @@ class CollectionsLinkBuilderTest {
     }
 
     @Test
+    fun `when searching collections with VIEW_ANY_COLLECTION role`() {
+        setSecurityContext("backofficeuser@boclips.com", UserRoles.VIEW_ANY_COLLECTION)
+
+        val mock = mock<UriComponentsBuilderFactory>()
+        whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))
+        val collectionsLinkBuilder = CollectionsLinkBuilder(mock)
+
+        val link = collectionsLinkBuilder.searchAllCollections()!!
+
+        assertThat(link.href).isEqualTo("https://localhost/v1/collections{?query,subject,discoverable,ignore_discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types,sort_by}")
+        assertThat(link.rel).isEqualTo("searchAllCollections")
+        assertThat(link.templated).isEqualTo(true)
+    }
+
+    @Test
     fun `my collections contains all collections created by a user`() {
         setSecurityContext("user1", UserRoles.VIEW_COLLECTIONS)
 

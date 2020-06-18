@@ -72,6 +72,7 @@ class LinksController(
                 collectionsLinkBuilder.discoverCollections(),
                 collectionsLinkBuilder.promotedCollections(),
                 collectionsLinkBuilder.searchCollections(),
+                collectionsLinkBuilder.searchAllCollections(),
                 collectionsLinkBuilder.collection(null),
                 collectionsLinkBuilder.myOwnCollections(),
                 collectionsLinkBuilder.mySavedCollections(),

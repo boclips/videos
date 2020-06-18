@@ -117,6 +117,16 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         }
     }
 
+    fun searchAllCollections(): HateoasLink? {
+        return getIfHasRole(UserRoles.VIEW_ANY_COLLECTION) {
+            HateoasLink(
+                href = getCollectionsRoot()
+                    .toUriString() + "{?query,subject,discoverable,ignore_discoverable,projection,page,size,age_range_min,age_range_max,age_range,resource_types,sort_by}",
+                rel = "searchAllCollections"
+            )
+        }
+    }
+
     fun myOwnCollections(): HateoasLink? {
         return getIfHasRole(UserRoles.VIEW_COLLECTIONS) { currentUser ->
             HateoasLink(
