@@ -15,7 +15,7 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun `provides suggestions for content partner names`() {
+    fun `provides suggestions for channels names`() {
         saveChannel(name = "TED")
         saveChannel(name = "TED-Ed")
         saveChannel(name = "BBC")
@@ -23,20 +23,20 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=ted").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.suggestionTerm", equalTo("ted")))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.contentPartners", hasSize<String>(2)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.channels", hasSize<String>(2)))
             .andExpect(
                 MockMvcResultMatchers.jsonPath(
-                    "$.contentPartners[0].name",
+                    "$.channels[0].name",
                     equalTo("TED")
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.contentPartners[0]._links.searchVideos")
+                MockMvcResultMatchers.jsonPath("$.channels[0]._links.searchVideos")
                     .exists()
             )
             .andExpect(
                 MockMvcResultMatchers.jsonPath(
-                    "$.contentPartners[1].name",
+                    "$.channels[1].name",
                     equalTo("TED-Ed")
                 )
             )
