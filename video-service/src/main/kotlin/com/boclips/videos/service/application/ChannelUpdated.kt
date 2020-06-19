@@ -53,6 +53,9 @@ class ChannelUpdated(private val videoRepository: VideoRepository) {
                     )
                 }
                 val updateContentTypes = contentPartner.details?.contentTypes?.let {
+                    if (it.size == 0) {
+                        return@let null
+                    }
                     VideoUpdateCommand.ReplaceContentTypes(
                         videoId = video.videoId,
                         types = it.map { contentType -> VideoTypeConverter.convert(VideoType.valueOf(contentType)) }

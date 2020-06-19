@@ -88,6 +88,35 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 5, curatedManually = true))
     }
 
+
+    @Test
+    fun `does not update content types if empty`() {
+        val channel = TestFactories.createChannel(name = "test-999")
+        val video = videoRepository.create(
+            TestFactories.createVideo(
+                channel = channel,
+                types = listOf(ContentType.STOCK)
+            )
+        )
+
+        fakeEventBus.publish(
+            com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
+                .contentPartner(
+                    Channel.builder()
+                        .id(ChannelId(channel.channelId.value))
+                        .name("test-888")
+                        .details(ChannelTopLevelDetails.builder().contentTypes(emptyList()).build())
+                        .build()
+                )
+                .build()
+        )
+
+        val updatedVideo = videoRepository.find(videoId = video.videoId)!!
+
+        assertThat(updatedVideo.channel.name).isEqualTo("test-888")
+        assertThat(updatedVideo.types).isEqualTo(listOf(ContentType.STOCK))
+    }
+
     @Test
     fun `updates videos of content partner`() {
         val channel = TestFactories.createChannel(name = "test-999")
