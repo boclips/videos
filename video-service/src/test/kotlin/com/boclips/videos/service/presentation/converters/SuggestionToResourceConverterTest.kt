@@ -12,7 +12,7 @@ class SuggestionToResourceConverterTest {
 
         val resource = SuggestionToResourceConverter(mock()).convert(query = "ted", suggestions = suggestions)
 
-        assertThat(resource.contentPartners[0].name).isEqualTo("Ted")
-        assertThat(resource.contentPartners[1].name).isEqualTo("Crash Course Biology")
+        assertThat(resource.channels[0].name).isEqualTo("Ted")
+        assertThat(resource.channels[1].name).isEqualTo("Crash Course Biology")
     }
 }

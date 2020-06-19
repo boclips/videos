@@ -8,10 +8,10 @@ class FindSuggestions(private val channelRepository: ChannelRepository) {
     companion object : KLogging()
 
     operator fun invoke(query: String): Suggestions {
-        val contentPartners = channelRepository.findByName(query)
+        val channels = channelRepository.findByName(query)
             .take(10)
             .map { it.name }
 
-        return Suggestions(channels = contentPartners)
+        return Suggestions(channels = channels)
     }
 }

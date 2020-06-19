@@ -1,6 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.videos.api.response.search.ContentPartnerSuggestionResource
+import com.boclips.videos.api.response.search.ChannelSuggestionResource
 import com.boclips.videos.api.response.search.SuggestionsResource
 import com.boclips.videos.service.domain.model.Suggestions
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -11,8 +11,8 @@ class SuggestionToResourceConverter(
     fun convert(query: String, suggestions: Suggestions): SuggestionsResource {
         return SuggestionsResource(
             suggestionTerm = query,
-            contentPartners = suggestions.channels.map {
-                ContentPartnerSuggestionResource(
+            channels = suggestions.channels.map {
+                ChannelSuggestionResource(
                     name = it,
                     _links = listOfNotNull(
                         videosLinkBuilder.searchVideosByText(query = query)
