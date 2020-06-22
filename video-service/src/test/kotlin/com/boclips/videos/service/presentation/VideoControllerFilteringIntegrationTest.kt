@@ -481,6 +481,20 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `sort by ingest date`() {
+        saveVideo(title = "oldest ingested video")
+        saveVideo(title = "newer ingested video")
+        saveVideo(title = "newest ingested video")
+
+        mockMvc.perform(get("/v1/videos?query=ingested&sort_by=INGEST_ASC&size=3").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("oldest ingested video")))
+            .andExpect(jsonPath("$._embedded.videos[1].title", equalTo("newer ingested video")))
+            .andExpect(jsonPath("$._embedded.videos[2].title", equalTo("newest ingested video")))
+    }
+
+    @Test
     fun `returns 400 with invalid source`() {
         mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher())
             .andDo(MockMvcResultHandlers.print())

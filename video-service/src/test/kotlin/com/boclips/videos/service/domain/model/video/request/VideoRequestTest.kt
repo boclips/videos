@@ -101,6 +101,38 @@ class VideoRequestTest {
     }
 
     @Test
+    fun `allows ordering of results by ingest date ascending`() {
+        val searchQuery = VideoRequest(
+            text = "testing",
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.INGEST_ASC
+        )
+            .toQuery(VideoAccess.Everything)
+
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.ASC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestAt)
+    }
+
+    @Test
+    fun `allows ordering of results by ingest date descending`() {
+        val searchQuery = VideoRequest(
+            text = "testing",
+            pageSize = 2,
+            pageIndex = 0,
+            sortBy = SortKey.INGEST_DESC
+        )
+            .toQuery(VideoAccess.Everything)
+
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.DESC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestAt)
+    }
+
+    @Test
     fun `allows ordering of results by random`() {
         val searchQuery = VideoRequest(
             text = "testing",
