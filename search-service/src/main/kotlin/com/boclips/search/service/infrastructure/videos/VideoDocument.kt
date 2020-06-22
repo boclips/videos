@@ -4,6 +4,7 @@ import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
@@ -30,7 +31,8 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
     @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?,
     @param:JsonProperty(ATTACHMENT_TYPES) val attachmentTypes: Set<String>?,
-    @param:JsonProperty(DEACTIVATED) val deactivated: Boolean
+    @param:JsonProperty(DEACTIVATED) val deactivated: Boolean,
+    @param:JsonProperty(INGESTED_AT) val ingestedAt: ZonedDateTime?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"
@@ -55,5 +57,6 @@ data class VideoDocument @JsonCreator constructor(
         const val ELIGIBLE_FOR_DOWNLOAD = "eligibleForDownload"
         const val ATTACHMENT_TYPES = "attachmentTypes"
         const val DEACTIVATED = "deactivated"
+        const val INGESTED_AT = "ingestedAt"
     }
 }

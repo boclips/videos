@@ -35,7 +35,8 @@ object SearchableVideoMetadataFactory {
         eligibleForDownload: Boolean = true,
         attachmentTypes: Set<String> = emptySet(),
         deactivated: Boolean = false,
-        types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL)
+        types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
+        ingestAt: ZonedDateTime = ZonedDateTime.now()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -58,7 +59,8 @@ object SearchableVideoMetadataFactory {
         eligibleForDownload = eligibleForDownload,
         attachmentTypes = attachmentTypes,
         deactivated = deactivated,
-        types = types
+        types = types,
+        ingestAt = ingestAt
     )
 }
 
@@ -97,7 +99,8 @@ object TestFactories {
             eligibleForStream = true,
             attachmentTypes = emptySet(),
             deactivated = false,
-            types = listOf("NEWS")
+            types = listOf("NEWS"),
+            ingestedAt = ZonedDateTime.parse("2011-12-03T10:15:30+01:00")
         )
     }
 }

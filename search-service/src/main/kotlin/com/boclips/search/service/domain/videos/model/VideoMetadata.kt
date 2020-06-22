@@ -1,6 +1,7 @@
 package com.boclips.search.service.domain.videos.model
 
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 data class VideoMetadata(
     val id: String,
@@ -24,5 +25,6 @@ data class VideoMetadata(
     val eligibleForStream: Boolean,
     val eligibleForDownload: Boolean,
     val attachmentTypes: Set<String>?,
-    val deactivated: Boolean
+    val deactivated: Boolean,
+    val ingestAt: ZonedDateTime
 )

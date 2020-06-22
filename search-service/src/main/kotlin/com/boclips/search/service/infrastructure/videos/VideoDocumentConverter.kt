@@ -37,7 +37,8 @@ object VideoDocumentConverter {
             eligibleForDownload = video.eligibleForDownload,
             eligibleForStream = video.eligibleForStream,
             attachmentTypes = video.attachmentTypes,
-            deactivated = video.deactivated
+            deactivated = video.deactivated,
+            ingestedAt = video.ingestAt
         )
     }
 }

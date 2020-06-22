@@ -10,6 +10,8 @@ import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 class VideoDocumentConverterTest {
 
@@ -42,7 +44,8 @@ class VideoDocumentConverterTest {
                 "eligibleForStream": true,
                 "eligibleForDownload": true,
                 "attachmentTypes": ["ACTIVITY"],
-                "deactivated": false
+                "deactivated": false,
+                "ingestedAt": "2017-04-24T09:30Z[UTC]"
             }
         """.trimIndent()
             )
@@ -76,7 +79,8 @@ class VideoDocumentConverterTest {
                 eligibleForDownload = true,
                 attachmentTypes = setOf("ACTIVITY"),
                 deactivated = false,
-                types = listOf("NEWS")
+                types = listOf("NEWS"),
+                ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]")
             )
         )
     }
@@ -136,8 +140,8 @@ class VideoDocumentConverterTest {
             eligibleForDownload = true,
             attachmentTypes = emptySet(),
             deactivated = false,
-            types = listOf(VideoType.INSTRUCTIONAL)
-
+            types = listOf(VideoType.INSTRUCTIONAL),
+            ingestAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -168,7 +172,8 @@ class VideoDocumentConverterTest {
                 eligibleForStream = false,
                 eligibleForDownload = true,
                 attachmentTypes = emptySet(),
-                deactivated = false
+                deactivated = false,
+                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
             )
         )
     }
@@ -200,7 +205,8 @@ class VideoDocumentConverterTest {
             eligibleForDownload = true,
             attachmentTypes = emptySet(),
             deactivated = false,
-            types = listOf(VideoType.INSTRUCTIONAL)
+            types = listOf(VideoType.INSTRUCTIONAL),
+            ingestAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

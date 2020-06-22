@@ -20,9 +20,7 @@ import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
-import java.time.Duration
-import java.time.LocalDate
-import java.time.Month
+import java.time.*
 
 class VideoMetadataConverterTest {
     @Test
@@ -54,7 +52,8 @@ class VideoMetadataConverterTest {
             subjectsSetManually = true,
             promoted = true,
             ratings = emptyList(),
-            attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY))
+            attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY)),
+            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.NONE)
@@ -85,7 +84,8 @@ class VideoMetadataConverterTest {
                 eligibleForDownload = false,
                 attachmentTypes = setOf("Activity"),
                 deactivated = false,
-                types = listOf(VideoType.INSTRUCTIONAL)
+                types = listOf(VideoType.INSTRUCTIONAL),
+                ingestAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
             )
         )
     }

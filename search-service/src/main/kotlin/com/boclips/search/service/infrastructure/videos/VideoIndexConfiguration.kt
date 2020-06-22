@@ -34,7 +34,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.ELIGIBLE_FOR_STREAM to IndexConfiguration.Fields.boolean,
                 VideoDocument.TAGS to keywordField,
                 VideoDocument.CONTENT_PARTNER_ID to IndexConfiguration.Fields.simpleText,
-                VideoDocument.ATTACHMENT_TYPES to IndexConfiguration.Fields.simpleTextArray
+                VideoDocument.ATTACHMENT_TYPES to IndexConfiguration.Fields.simpleTextArray,
+                VideoDocument.INGESTED_AT to IndexConfiguration.Fields.date
             )
         )
     }
