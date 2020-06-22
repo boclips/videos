@@ -133,16 +133,15 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun transcriptLink(video: Video): HateoasLink? {
-        return when {
-            !currentUserHasRole(UserRoles.DOWNLOAD_TRANSCRIPT) -> null
-            !video.hasTranscript() -> null
-
-            else -> HateoasLink.of(
+        return if (video.hasTranscript()) {
+            HateoasLink.of(
                 WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(VideoController::class.java)
                         .getTranscript(video.videoId.value)
                 ).withRel(Rels.TRANSCRIPT)
             )
+        } else {
+            null
         }
     }
 

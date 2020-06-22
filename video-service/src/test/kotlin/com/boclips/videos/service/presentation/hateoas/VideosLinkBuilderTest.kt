@@ -176,10 +176,15 @@ class VideosLinkBuilderTest {
     }
 
     @Test
-    fun `transcript link returns null when not authenticated`() {
-        val link = videosLinkBuilder.transcriptLink(createVideo())
+    fun `transcript link returns a link when not authenticated`() {
+        val videoId = aValidId()
+        val link = videosLinkBuilder.transcriptLink(createVideo(videoId = videoId, transcript = "hi"))
 
-        assertThat(link).isNull()
+        assertThat(link).isNotNull
+
+        assertThat(link!!.href).endsWith("/v1/videos/$videoId/transcript")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TRANSCRIPT)
+        assertThat(link.templated).isFalse()
     }
 
     @Test

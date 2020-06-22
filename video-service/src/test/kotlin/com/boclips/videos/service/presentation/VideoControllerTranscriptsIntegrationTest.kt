@@ -147,16 +147,6 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
     }
 
     @Test
-    fun `transcript link is not present when not authenticated`() {
-        val videoId = saveVideoWithTranscript()
-
-        mockMvc.perform(get("/v1/videos/$videoId"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.self.href").exists())
-            .andExpect(jsonPath("$._links.transcript").doesNotExist())
-    }
-
-    @Test
     fun `transcript link is present when authenticated`() {
         val videoId = saveVideoWithTranscript()
 
