@@ -32,7 +32,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                 title = "a kaltura video"
             )
 
-            val results = videoRetrievalService.searchPlaybableVideos(
+            val results = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "kaltura",
                     pageSize = 10,
@@ -52,7 +52,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                 title = "a youtube video"
             )
 
-            val results = videoRetrievalService.searchPlaybableVideos(
+            val results = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "youtube",
                     pageSize = 10,

@@ -117,7 +117,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 saveVideo(title = "video", contentProviderId = streamContentPartner.id.value)
             saveVideo(title = "video", contentProviderId = downloadContentPartner.id.value)
 
-            val searchResults = videoRetrievalService.searchPlaybableVideos(
+            val searchResults = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "video",
                     pageSize = 10,
@@ -134,7 +134,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "access")
             saveVideo(title = "no access")
 
-            val searchResults = videoRetrievalService.searchPlaybableVideos(
+            val searchResults = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
@@ -153,7 +153,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "access")
             saveVideo(title = "no access")
 
-            val searchResults = videoRetrievalService.searchPlaybableVideos(
+            val searchResults = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
@@ -171,7 +171,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstVideo = saveVideo(title = "Wild Elephant")
             val secondVideo = saveVideo(title = "Wild Rhino")
 
-            val searchResults = videoRetrievalService.searchPlaybableVideos(
+            val searchResults = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
@@ -193,7 +193,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val results = videoRetrievalService.searchPlaybableVideos(
+            val results = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
@@ -214,7 +214,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
-            val results = videoRetrievalService.searchPlaybableVideos(
+            val results = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
@@ -245,7 +245,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            val results = videoRetrievalService.searchPlaybableVideos(
+            val results = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),

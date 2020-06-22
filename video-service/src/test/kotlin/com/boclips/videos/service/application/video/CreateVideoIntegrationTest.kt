@@ -117,7 +117,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         assertThat(
-            videoRetrievalService.searchPlaybableVideos(
+            videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,

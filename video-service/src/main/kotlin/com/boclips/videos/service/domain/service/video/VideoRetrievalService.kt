@@ -27,7 +27,7 @@ class VideoRetrievalService(
         )
     )
 
-    fun searchPlaybableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
+    fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
         /**
          * Default access rules aren't technically needed anymore as they have been added to the classroom content package.
          * Though, as it's a legal restriction (can't get non-streamable videos) we might want to enforce it here as well.

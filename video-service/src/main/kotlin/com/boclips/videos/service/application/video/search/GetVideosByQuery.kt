@@ -87,7 +87,7 @@ class GetVideosByQuery(
             attachmentTypes = resourceTypes
         )
 
-        val videoSearchResponse = videoRetrievalService.searchPlaybableVideos(request = request, videoAccess = user.accessRules.videoAccess)
+        val videoSearchResponse = videoRetrievalService.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
         try {
