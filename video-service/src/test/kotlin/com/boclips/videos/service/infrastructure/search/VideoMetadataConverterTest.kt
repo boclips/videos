@@ -85,7 +85,7 @@ class VideoMetadataConverterTest {
                 attachmentTypes = setOf("Activity"),
                 deactivated = false,
                 types = listOf(VideoType.INSTRUCTIONAL),
-                ingestAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
             )
         )
     }

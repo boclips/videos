@@ -36,7 +36,7 @@ object SearchableVideoMetadataFactory {
         attachmentTypes: Set<String> = emptySet(),
         deactivated: Boolean = false,
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
-        ingestAt: ZonedDateTime = ZonedDateTime.now()
+        ingestedAt: ZonedDateTime = ZonedDateTime.now()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -60,7 +60,7 @@ object SearchableVideoMetadataFactory {
         attachmentTypes = attachmentTypes,
         deactivated = deactivated,
         types = types,
-        ingestAt = ingestAt
+        ingestedAt = ingestedAt
     )
 }
 
@@ -73,7 +73,7 @@ object TestFactories {
         name = name
     )
 
-    fun createVideoDocument(releaseDate: LocalDate): VideoDocument {
+    fun createVideoDocument(releaseDate: LocalDate, ingestDate: ZonedDateTime): VideoDocument {
         return VideoDocument(
             id = "1",
             title = "title",
@@ -100,7 +100,7 @@ object TestFactories {
             attachmentTypes = emptySet(),
             deactivated = false,
             types = listOf("NEWS"),
-            ingestedAt = ZonedDateTime.parse("2011-12-03T10:15:30+01:00")
+            ingestedAt = ingestDate
         )
     }
 }

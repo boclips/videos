@@ -113,7 +113,7 @@ class VideoRequestTest {
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.ASC)
-        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestAt)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestedAt)
     }
 
     @Test
@@ -129,7 +129,7 @@ class VideoRequestTest {
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
         assertThat(sort.order).isEqualTo(SortOrder.DESC)
-        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestAt)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::ingestedAt)
     }
 
     @Test

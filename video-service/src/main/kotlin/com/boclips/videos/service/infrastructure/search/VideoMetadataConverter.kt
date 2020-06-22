@@ -8,8 +8,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOU
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
-import java.time.LocalDate
-import java.time.ZonedDateTime
 
 object VideoMetadataConverter {
     fun convert(video: Video, videoAvailability: Availability): VideoMetadata {
@@ -43,7 +41,7 @@ object VideoMetadataConverter {
             eligibleForDownload = videoAvailability.isDownloadable(),
             attachmentTypes = attachmentTypes(video.attachments),
             deactivated = video.deactivated,
-            ingestAt = video.ingestedAt
+            ingestedAt = video.ingestedAt
         )
     }
 
