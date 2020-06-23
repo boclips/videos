@@ -26,6 +26,8 @@ class VideoIndexUpdater(
         val createdVideo = videoRepository.find(VideoId(value = videoId))
             ?: throw VideoNotFoundException(VideoId(value = videoId))
 
+        logger.info { "Updating index for created video: ${videoCreatedEvent.video.id.value}" }
+
         updateIndexWith(createdVideo)
     }
 
@@ -34,6 +36,8 @@ class VideoIndexUpdater(
         val videoId = videoUpdatedEvent.video.id.value
         val updatedVideo = videoRepository.find(VideoId(value = videoId))
             ?: throw VideoNotFoundException(VideoId(value = videoId))
+
+        logger.info { "Updating index for updated video: ${videoUpdatedEvent.video.id.value}" }
 
         updateIndexWith(updatedVideo)
     }
