@@ -79,7 +79,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(POST, "/v1/videos/*").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(PATCH, "/v1/videos/*").hasAnyRole(ROLE.RATE_VIDEOS, ROLE.UPDATE_VIDEOS, ROLE.SHARE_VIDEOS)
             .mvcMatchers(GET, "/v1/videos").hasRole(ROLE.VIEW_VIDEOS)
-            .mvcMatchers(GET, "/v1/videos/*/transcript").hasRole(ROLE.DOWNLOAD_TRANSCRIPT)
+            .mvcMatchers(GET, "/v1/videos/*/transcript").permitAll()
             .mvcMatchers(PUT, "/v1/videos/*/captions").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(GET, "/v1/videos/*/captions").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(PUT, "/v1/videos/*/attachments").hasRole(ROLE.UPDATE_VIDEOS)
