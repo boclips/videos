@@ -20,6 +20,8 @@ data class CreateVideoRequest(
     @field:NotBlank(message = "A video description is required")
     val description: String? = null,
 
+    val additionalDescription: String? = null,
+
     @field:NotNull(message = "Keywords are required")
     @JsonSetter(contentNulls = Nulls.FAIL)
     val keywords: List<String>? = null,

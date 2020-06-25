@@ -18,6 +18,7 @@ data class Video(
     val videoReference: String,
     val title: String,
     val description: String,
+    val additionalDescription: String?,
     val keywords: List<String>,
     val releasedOn: LocalDate,
     val ingestedAt: ZonedDateTime,

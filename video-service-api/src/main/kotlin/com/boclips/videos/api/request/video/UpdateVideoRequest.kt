@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Range
 data class UpdateVideoRequest(
     val title: String? = null,
     val description: String? = null,
+    val additionalDescription: String? = null,
     val promoted: Boolean? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val subjectIds: List<String>? = null,

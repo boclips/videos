@@ -79,6 +79,7 @@ object TestFactories {
         videoId: String = createVideoId().value,
         title: String = "title",
         description: String = "description",
+        additionalDescription: String = "additional description",
         channelName: String = "Reuters",
         channelId: ChannelId = ChannelId(
             value = ObjectId().toHexString()
@@ -114,6 +115,7 @@ object TestFactories {
             playback = playback,
             title = title,
             description = description,
+            additionalDescription = additionalDescription,
             keywords = keywords,
             releasedOn = releasedOn,
             ingestedAt = ingestedAt,

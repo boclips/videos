@@ -346,6 +346,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             VideoUpdateCommand.ReplacePromoted(
                 videoId = originalVideo2.videoId,
                 promoted = true
+            ),
+            VideoUpdateCommand.ReplaceAdditionalDescription(
+                videoId = originalVideo2.videoId,
+                additionalDescription = "edited additional description"
             )
         )
 
@@ -363,11 +367,13 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             "subjects",
             "duration",
             "playback",
-            "promoted"
+            "promoted",
+            "additionalDescription"
         )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
         assertThat(updatedVideo2.subjects.items).isEqualTo(setOf(biology))
         assertThat(updatedVideo2.promoted).isTrue()
+        assertThat(updatedVideo2.additionalDescription).isEqualTo("edited additional description")
     }
 
     @Test

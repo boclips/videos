@@ -44,6 +44,7 @@ class VideoToResourceConverterTest {
     private val kalturaVideo = createVideo(
         title = "Do what you love",
         description = "Best bottle slogan",
+        additionalDescription = "additional description",
         channelName = "WeWork",
         channelVideoId = "111",
         types = listOf(ContentType.NEWS),
@@ -76,6 +77,7 @@ class VideoToResourceConverterTest {
     private val youtubeVideo = createVideo(
         title = "Do what you love on youtube",
         description = "Best bottle slogan",
+        additionalDescription = "additional description",
         channelName = "JacekWork",
         channelVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
@@ -118,6 +120,7 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.id).isEqualTo(videoId)
         assertThat(videoResource.title).isNull()
         assertThat(videoResource.description).isNull()
+        assertThat(videoResource.additionalDescription).isNull()
         assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
         assertThat(videoResource.channel).isNull()
         assertThat(videoResource.channelVideoId).isNull()
@@ -133,6 +136,7 @@ class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
+        assertThat(videoResource.additionalDescription).isEqualTo("additional description")
         assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
         assertThat(videoResource.channel).isEqualTo("WeWork").isEqualTo(videoResource.channel)
         assertThat(videoResource.channelVideoId).isEqualTo("111").isEqualTo(videoResource.channelVideoId)
@@ -178,6 +182,7 @@ class VideoToResourceConverterTest {
 
         assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")
+        assertThat(videoResource.additionalDescription).isEqualTo("additional description")
         assertThat(videoResource.createdBy).isEqualTo(videoResource.channel)
         assertThat(videoResource.channel).isEqualTo("JacekWork")
         assertThat(videoResource.channelVideoId).isEqualTo("222")

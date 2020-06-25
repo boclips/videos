@@ -278,6 +278,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             }
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
+            is ReplaceAdditionalDescription -> set(VideoDocument::additionalDescription, updateCommand.additionalDescription)
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
             is ReplaceSubjectsWereSetManually -> set(

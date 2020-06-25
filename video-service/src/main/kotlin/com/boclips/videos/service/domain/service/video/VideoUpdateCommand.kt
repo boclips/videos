@@ -33,6 +33,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
     class ReplaceTitle(videoId: VideoId, val title: String) : VideoUpdateCommand(videoId)
     class ReplaceDescription(videoId: VideoId, val description: String) : VideoUpdateCommand(videoId)
+    class ReplaceAdditionalDescription(videoId: VideoId, val additionalDescription: String) : VideoUpdateCommand(videoId)
     class ReplaceLegalRestrictions(videoId: VideoId, val text: String) : VideoUpdateCommand(videoId)
     class ReplacePromoted(videoId: VideoId, val promoted: Boolean) : VideoUpdateCommand(videoId)
     class ReplaceContentTypes(videoId: VideoId, val types: List<ContentType>) : VideoUpdateCommand(videoId)

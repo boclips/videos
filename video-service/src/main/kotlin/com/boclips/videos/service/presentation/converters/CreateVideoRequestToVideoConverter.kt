@@ -26,6 +26,7 @@ class CreateVideoRequestToVideoConverter {
             playback = videoPlayback,
             title = createVideoRequest.title!!,
             description = createVideoRequest.description!!,
+            additionalDescription = createVideoRequest.additionalDescription,
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),

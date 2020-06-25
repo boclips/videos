@@ -72,6 +72,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             id = "${id++}",
             title = createVideoRequest.title,
             description = createVideoRequest.description,
+            additionalDescription = createVideoRequest.additionalDescription,
             channelId = createVideoRequest.providerId,
             playback = when (createVideoRequest.playbackProvider) {
                 "YOUTUBE" -> YoutubePlaybackResource(id = createVideoRequest.playbackId)

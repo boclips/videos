@@ -20,6 +20,7 @@ object VideoDocumentConverter {
             id = ObjectId(video.videoId.value),
             title = video.title,
             description = video.description,
+            additionalDescription = video.additionalDescription,
             source = SourceDocument(
                 channel = ChannelDocumentConverter.toChannelDocument(video.channel),
                 videoReference = video.videoReference
@@ -61,6 +62,7 @@ object VideoDocumentConverter {
             videoId = VideoId(document.id.toHexString()),
             title = document.title,
             description = document.description,
+            additionalDescription = document.additionalDescription,
             channel = ChannelDocumentConverter.toChannel(document.source.channel),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),

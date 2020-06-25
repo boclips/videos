@@ -53,6 +53,7 @@ class VideoToResourceConverter(
             id = video.videoId.value,
             title = video.title,
             description = video.description,
+            additionalDescription = video.additionalDescription,
             createdBy = video.channel.name,
             channel = video.channel.name,
             channelId = video.channel.channelId.value,

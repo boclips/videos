@@ -80,7 +80,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                 VideoServiceApiFactory.createUpdateVideoRequest(
                     title = "new title",
                     ageRangeMin = 3,
-                    ageRangeMax = 9
+                    ageRangeMax = 9,
+                    additionalDescription = "updated penguin description"
                 )
             )
             videosClient.updateVideoRating(createdVideo, 4)
@@ -93,6 +94,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
             assertThat(updatedVideo.ageRange!!.getLabel()).isEqualTo("3-9")
             assertThat(updatedVideo.playback).isNotNull
             assertThat(updatedVideo.playback!!.id).isNotNull()
+            assertThat(updatedVideo.additionalDescription).isEqualTo("updated penguin description")
             assertThat(updatedVideo._links?.get("self")?.href).isNotEmpty()
 
             videosClient.deleteVideo(createdVideo)

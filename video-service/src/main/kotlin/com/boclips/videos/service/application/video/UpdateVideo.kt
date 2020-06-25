@@ -32,6 +32,8 @@ class UpdateVideo(
             ?.let { VideoUpdateCommand.ReplaceTitle(videoId, it) }
         val updateDescription = updateRequest.description
             ?.let { VideoUpdateCommand.ReplaceDescription(videoId, it) }
+        val updateAdditionalDescription = updateRequest.additionalDescription
+            ?.let { VideoUpdateCommand.ReplaceAdditionalDescription(videoId, it) }
         val replacePromoted = updateRequest.promoted
             ?.let { VideoUpdateCommand.ReplacePromoted(videoId, it) }
         val updateSubjectIds = updateRequest.subjectIds
@@ -60,6 +62,7 @@ class UpdateVideo(
             listOfNotNull(
                 updateTitle,
                 updateDescription,
+                updateAdditionalDescription,
                 replacePromoted,
                 updateSubjectIds,
                 updateManuallySetSubjects,

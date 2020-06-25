@@ -74,6 +74,7 @@ class VideoServiceApiFactory {
         fun createUpdateVideoRequest(
             title: String? = "video-title",
             description: String? = "description",
+            additionalDescription: String? = "additional description",
             promoted: Boolean? = false,
             subjectIds: List<String>? = null,
             ageRangeMin: Int? = null,
@@ -83,6 +84,7 @@ class VideoServiceApiFactory {
             return UpdateVideoRequest(
                 title = title,
                 description = description,
+                additionalDescription = additionalDescription,
                 promoted = promoted,
                 subjectIds = subjectIds,
                 ageRangeMin = ageRangeMin,

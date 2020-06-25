@@ -21,6 +21,8 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val description: String? = null,
     @get:JsonView(PublicApiProjection::class)
+    val additionalDescription: String? = null,
+    @get:JsonView(PublicApiProjection::class)
     val releasedOn: LocalDate? = null,
     @get:JsonView(PublicApiProjection::class)
     val playback: PlaybackResource? = null,

@@ -36,4 +36,20 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo.ageRange).isEqualTo(OpenEndedAgeRange(min = 13, curatedManually = true))
     }
+
+    @Test
+    fun `updates video with additional description`() {
+        val videoId = saveVideo(additionalDescription ="additional description")
+
+
+        updateVideo(
+            id = videoId.value,
+            updateRequest = VideoServiceApiFactory.createUpdateVideoRequest(additionalDescription ="updated description"),
+            user = UserFactory.sample(id = "admin@boclips.com")
+        )
+
+        val updatedVideo = videoRepository.find(videoId)!!
+
+        assertThat(updatedVideo.additionalDescription).isEqualTo("updated description")
+    }
 }

@@ -10,6 +10,7 @@ data class VideoDocument(
     @BsonId val id: ObjectId,
     val title: String,
     val description: String,
+    val additionalDescription: String? = null,
     val source: SourceDocument,
     val playback: PlaybackDocument?,
     val contentTypes: List<String> = emptyList(),
