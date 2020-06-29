@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
+import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -85,6 +86,21 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
+
+        assertThat(event.videoId).contains(videoId.value)
+        assertThat(event.videoUrl).contains("https://download.com/entryId/entry-123/format/download")
+        assertThat(event.language.toLanguageTag()).isEqualTo("en-US")
+    }
+
+    @Test
+    fun `retry analyse video publishes event`() {
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-123"))
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US&retry=true").asOperator()
+            )
+            .andExpect(status().isAccepted)
+
+        val event = fakeEventBus.getEventOfType(RetryVideoAnalysisRequested::class.java)
 
         assertThat(event.videoId).contains(videoId.value)
         assertThat(event.videoUrl).contains("https://download.com/entryId/entry-123/format/download")

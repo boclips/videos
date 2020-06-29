@@ -34,9 +34,9 @@ class AdminController(
     companion object : KLogging()
 
     @PostMapping("/analyse_video/{videoId}")
-    fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
+    fun postAnalyseVideo(@PathVariable videoId: String, @RequestParam language: Locale?, @RequestParam retry: Boolean?): ResponseEntity<Void> {
         try {
-            videoAnalysisService.analysePlayableVideo(videoId, language = language)
+            videoAnalysisService.analysePlayableVideo(videoId, language = language, retry = retry)
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }

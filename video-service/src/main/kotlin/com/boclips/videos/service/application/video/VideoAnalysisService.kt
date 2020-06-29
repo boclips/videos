@@ -3,6 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
+import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
@@ -35,7 +36,7 @@ class VideoAnalysisService(
         }
     }
 
-    fun analysePlayableVideo(id: String, language: Locale?) {
+    fun analysePlayableVideo(id: String, language: Locale?, retry: Boolean? = false) {
         val videoId = VideoId(id)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
         if (!video.isPlayable()) throw VideoPlaybackNotFound()
@@ -52,15 +53,29 @@ class VideoAnalysisService(
             return
         }
 
-        val videoToAnalyse = VideoAnalysisRequested.builder()
-            .videoId(video.videoId.value)
-            .videoUrl(playback.downloadUrl)
-            .language(language)
-            .build()
 
-        eventBus.publish(videoToAnalyse)
-
-        logger.info { "Analysis of video $id requested" }
+        when (retry) {
+            true -> {
+                eventBus.publish(
+                    RetryVideoAnalysisRequested.builder()
+                        .videoId(video.videoId.value)
+                        .videoUrl(playback.downloadUrl)
+                        .language(language)
+                        .build()
+                )
+                logger.info { "Retrying Analysis of video $id requested" }
+            }
+            else -> {
+                eventBus.publish(
+                    VideoAnalysisRequested.builder()
+                        .videoId(video.videoId.value)
+                        .videoUrl(playback.downloadUrl)
+                        .language(language)
+                        .build()
+                )
+                logger.info { "Analysis of video $id requested" }
+            }
+        }
     }
 
     @BoclipsEventListener
