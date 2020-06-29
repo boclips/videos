@@ -125,7 +125,6 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.channel).isNull()
         assertThat(videoResource.channelVideoId).isNull()
         assertThat(videoResource.subjects).isNullOrEmpty()
-        assertThat(videoResource.type).isNull()
         assertThat(videoResource.playback).isNull()
         assertThat(videoResource.badges).isNullOrEmpty()
     }

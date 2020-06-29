@@ -1,9 +1,9 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.contract.Contract
-import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.video.Captions
@@ -405,7 +405,7 @@ object VideoResourceFactory {
         description: String = "description",
         channelVideoId: String = "cp-id-$id",
         playback: PlaybackResource? = PlaybackResourceFactory.sample(),
-        type: VideoTypeResource = VideoTypeResourceFactory.sample(),
+        types: List<VideoTypeResource> = emptyList(),
         subjects: Set<com.boclips.videos.api.response.subject.SubjectResource> = emptySet(),
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         legalRestrictions: String = "",
@@ -420,13 +420,13 @@ object VideoResourceFactory {
         description = description,
         releasedOn = releasedOn,
         channelVideoId = channelVideoId,
-        type = type,
         legalRestrictions = legalRestrictions,
         subjects = subjects,
         channel = channel,
         badges = badges,
         hasTranscripts = hasTranscripts,
         rating = rating,
+        types = types,
         _links = null
     )
 }

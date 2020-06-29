@@ -59,8 +59,6 @@ data class VideoResource(
     val channelVideoId: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
-    val type: VideoTypeResource? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
     val types: List<VideoTypeResource>? = emptyList(),
     @get:JsonView(BoclipsInternalProjection::class)
     val captionStatus: CaptionStatus? = null,
