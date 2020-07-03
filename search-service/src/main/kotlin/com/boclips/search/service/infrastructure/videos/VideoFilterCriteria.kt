@@ -82,6 +82,10 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
             }
 
+            if (videoQuery.includedChannelIds.isNotEmpty()) {
+                boolQueryBuilder.must(matchIncludedChannelIds(videoQuery.includedChannelIds))
+            }
+
             if (videoQuery.includedTypes.isNotEmpty()) {
                 boolQueryBuilder.must(matchIncludedType(videoQuery.includedTypes))
             }
@@ -162,6 +166,11 @@ class VideoFilterCriteria {
         private fun matchExcludedContentPartnerIds(excludedContentPartnerIds: Set<String>): BoolQueryBuilder =
             boolQuery().mustNot(
                 termsQuery(VideoDocument.CONTENT_PARTNER_ID, excludedContentPartnerIds)
+            )
+
+        private fun matchIncludedChannelIds(includedChannelIds: Set<String>): BoolQueryBuilder =
+            boolQuery().must(
+                termsQuery(VideoDocument.CONTENT_PARTNER_ID, includedChannelIds)
             )
 
         private fun matchSubjectsSetManually(subjectsSetManually: Boolean): TermsQueryBuilder =

@@ -184,4 +184,34 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
             )
         }
     }
+
+    @Nested
+    inner class IncludedChannelIds {
+        @Test
+        fun `filters by channel id if specified`() {
+            contentPartnerTest(
+                given = sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1",
+                        title = "science",
+                        contentPartnerId = "cp-id-1"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "2",
+                        title = "science",
+                        contentPartnerId = "cp-id-2"
+                    ),
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        title = "science",
+                        contentPartnerId = "cp-id-3"
+                    )),
+                searchFor = VideoQuery(
+                    phrase = "science",
+                    includedChannelIds = setOf("cp-id-3", "cp-id-1")
+                ),
+                expectIds = listOf("1", "3")
+            )
+        }
+    }
 }

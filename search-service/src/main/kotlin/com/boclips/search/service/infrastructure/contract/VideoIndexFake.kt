@@ -49,6 +49,10 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 else !query.excludedContentPartnerIds.contains(entry.value.contentPartnerId)
             }
             .filter { entry ->
+                if (query.includedChannelIds.isEmpty()) true
+                else query.includedChannelIds.contains(entry.value.contentPartnerId)
+            }
+            .filter { entry ->
                 if (query.durationRanges.isNullOrEmpty()) {
                     return@filter true
                 }

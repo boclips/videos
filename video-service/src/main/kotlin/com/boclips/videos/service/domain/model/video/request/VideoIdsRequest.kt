@@ -1,26 +1,13 @@
 package com.boclips.videos.service.domain.model.video.request
 
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 
 class VideoIdsRequest(val ids: List<VideoId>) {
-    fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
+    fun toSearchQuery(): VideoQuery {
         return VideoQuery(
-            ids = ids.map { it.value }.toSet(),
-            permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(
-                videoAccess
-            ),
-            deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(
-                videoAccess
-            ),
-            excludedTypes = VideoAccessRuleConverter.mapToExcludedVideoTypes(
-                videoAccess
-            ),
-            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedChannelIds(
-                videoAccess
-            )
+            ids = ids.map { it.value }.toSet()
         )
     }
 }
+

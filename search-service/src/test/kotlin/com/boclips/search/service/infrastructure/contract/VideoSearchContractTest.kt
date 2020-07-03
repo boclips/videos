@@ -132,7 +132,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "gentleman",
-                    sort = Sort.ByRandom()
+                    videoSort = Sort.ByRandom()
                 )
             )
         )
@@ -642,7 +642,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
-                    sort = Sort.ByField(
+                    videoSort = Sort.ByField(
                         fieldName = VideoMetadata::releaseDate,
                         order = SortOrder.ASC
                     )
@@ -685,7 +685,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
-                    sort = Sort.ByField(
+                    videoSort = Sort.ByField(
                         fieldName = VideoMetadata::releaseDate,
                         order = SortOrder.DESC
                     )
@@ -732,7 +732,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
-                    sort = Sort.ByField(
+                    videoSort = Sort.ByField(
                         fieldName = VideoMetadata::meanRating,
                         order = SortOrder.DESC
                     )
@@ -776,7 +776,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
-                    sort = Sort.ByField(
+                    videoSort = Sort.ByField(
                         fieldName = VideoMetadata::rawTitle,
                         order = SortOrder.ASC
                     )
@@ -819,7 +819,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    sort = Sort.ByRandom()
+                    videoSort = Sort.ByRandom()
                 ),
                 startIndex = 0,
                 windowSize = 3

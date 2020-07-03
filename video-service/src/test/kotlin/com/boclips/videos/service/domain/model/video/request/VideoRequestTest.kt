@@ -5,9 +5,6 @@ import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -21,7 +18,7 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toQuery(videoAccess = VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.phrase).isEqualTo("some phrase")
     }
@@ -34,7 +31,7 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toQuery(videoAccess = VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.ids).isEqualTo(setOf("id 1", "id 2"))
     }
@@ -47,7 +44,7 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.bestFor).contains("explainer")
     }
@@ -60,7 +57,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.RELEASE_DATE
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -76,7 +73,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.TITLE_DESC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -92,7 +89,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.TITLE_ASC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -108,7 +105,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.INGEST_ASC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -124,7 +121,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.INGEST_DESC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -140,7 +137,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = SortKey.RANDOM
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.sort.first() is Sort.ByRandom<VideoMetadata>)
     }
@@ -153,7 +150,7 @@ class VideoRequestTest {
             pageIndex = 0,
             sortBy = null
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.sort).isEmpty()
     }
@@ -167,7 +164,7 @@ class VideoRequestTest {
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
@@ -180,7 +177,7 @@ class VideoRequestTest {
             pageIndex = 0,
             types = setOf(VideoType.NEWS, VideoType.STOCK)
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery()
 
         assertThat(searchQuery.includedTypes).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
@@ -194,7 +191,7 @@ class VideoRequestTest {
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery()
 
         assertThat(searchQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
@@ -207,7 +204,7 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery()
 
         assertThat(searchQuery.promoted).isEqualTo(true)
     }
@@ -219,35 +216,9 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0,
             attachmentTypes = setOf("Activity")
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery()
 
         assertThat(searchQuery.attachmentTypes).isEqualTo(setOf("Activity"))
-    }
-
-    @Test
-    fun `limits query to specific ids`() {
-        val firstId = TestFactories.createVideoId()
-        val secondId = TestFactories.createVideoId()
-
-        val searchQuery = VideoRequest(
-            text = "",
-            pageSize = 2,
-            pageIndex = 0,
-            promoted = true
-        ).toQuery(
-            VideoAccess.Rules(
-                accessRules = listOf(
-                    VideoAccessRule.IncludedIds(
-                        videoIds = setOf(
-                            firstId,
-                            secondId
-                        )
-                    )
-                )
-            )
-        )
-
-        assertThat(searchQuery.permittedVideoIds).containsExactlyInAnyOrder(firstId.value, secondId.value)
     }
 
     @Test
@@ -257,7 +228,7 @@ class VideoRequestTest {
             pageSize = 2,
             pageIndex = 0,
             promoted = true
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery()
 
         assertThat(searchQuery.permittedVideoIds).isNull()
     }

@@ -254,5 +254,25 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoAccessRule.ExcludedIds(setOf(secondId))
             )
         }
+
+        @Test
+        fun `can convert included channel rule to domain`() {
+            createAccessRulesResource(
+                "test-user",
+                listOf(AccessRuleResource.IncludedChannels(name = "good channels", channelIds = listOf("123")))
+            )
+
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val channelAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(channelAccess.accessRules).containsExactlyInAnyOrder(
+                VideoAccessRule.IncludedChannelIds(
+                    setOf(
+                        ChannelId("123")
+                    )
+                )
+            )
+        }
     }
 }

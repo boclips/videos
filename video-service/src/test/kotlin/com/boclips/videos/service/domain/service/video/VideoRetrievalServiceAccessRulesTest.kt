@@ -229,7 +229,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `does not have access to excluded content partners`() {
+        fun `does not have access to excluded channel`() {
             val allowedContentPartnerId = saveChannel(name = "Tuner").id.value
             val excludedContentPartnerId = saveChannel(name = "Tina").id.value
 
@@ -241,6 +241,37 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 channelIds = setOf(
                     ChannelId(
                         value = excludedContentPartnerId
+                    )
+                )
+            )
+
+            val results = videoRetrievalService.searchPlayableVideos(
+                VideoRequest(
+                    text = "Wild",
+                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    pageSize = 10,
+                    pageIndex = 0
+                ), VideoAccess.Rules(
+                    listOf(accessRule)
+                )
+            )
+
+            assertThat(results.videos.map { it.videoId }).containsOnly(allowedVideoId)
+        }
+
+        @Test
+        fun `only has access to included channels`() {
+            val allowedChannelId = saveChannel(name = "Tuner").id.value
+            val excludedChannelId = saveChannel(name = "Tina").id.value
+
+            val allowedVideoId = saveVideo(title = "Wild Elephant1", contentProviderId = allowedChannelId)
+            saveVideo(title = "Wild Elephant2", contentProviderId = excludedChannelId)
+            saveVideo(title = "Wild Elephant3", contentProviderId = excludedChannelId)
+
+            val accessRule = VideoAccessRule.IncludedChannelIds(
+                channelIds = setOf(
+                    ChannelId(
+                        value = allowedChannelId
                     )
                 )
             )

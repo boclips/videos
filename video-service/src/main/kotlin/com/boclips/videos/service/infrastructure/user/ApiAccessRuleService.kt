@@ -89,6 +89,13 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                         )
                     }.toSet()
                 )
+                is AccessRuleResource.IncludedChannels -> VideoAccessRule.IncludedChannelIds(
+                    it.channelIds.map { id ->
+                        ChannelId(
+                            id
+                        )
+                    }.toSet()
+                )
                 is AccessRuleResource.IncludedCollections -> null
             }
         }

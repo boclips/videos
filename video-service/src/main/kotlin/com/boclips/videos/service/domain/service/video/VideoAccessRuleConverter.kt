@@ -38,6 +38,15 @@ object VideoAccessRuleConverter {
                 .toSet()
         }
 
+    fun mapToIncludedChannelIds(videoAccess: VideoAccess): Set<String> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.IncludedChannelIds>()
+                .flatMap { accessRule -> accessRule.channelIds.map { it.value } }
+                .toSet()
+        }
+
     fun mapToExcludedChannelIds(videoAccess: VideoAccess): Set<String> =
         when (videoAccess) {
             VideoAccess.Everything -> emptySet()
@@ -50,8 +59,10 @@ object VideoAccessRuleConverter {
     fun isEligibleForStreaming(videoAccess: VideoAccess): Boolean? =
         when (videoAccess) {
             VideoAccess.Everything -> null
-            is VideoAccess.Rules -> videoAccess.accessRules.filterIsInstance<VideoAccessRule.IncludedDistributionMethods>()
-                .flatMap { accessRule -> accessRule.distributionMethods }
-                .contains(DistributionMethod.STREAM)
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.IncludedDistributionMethods>()
+                .takeUnless { it.isEmpty() }
+                ?.flatMap { accessRule -> accessRule.distributionMethods }
+                ?.contains(DistributionMethod.STREAM)
         }
 }

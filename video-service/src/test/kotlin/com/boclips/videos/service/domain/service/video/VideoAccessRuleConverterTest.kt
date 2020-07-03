@@ -141,7 +141,7 @@ class VideoAccessRuleConverterTest {
         }
 
         @Test
-        fun `returns empty when no ExcludedVideoTypes in rules`() {
+        fun `returns empty when no excluded channel ids in rules`() {
             val videoId = TestFactories.createVideoId()
             val excludedIds = converter.mapToExcludedChannelIds(
                 VideoAccess.Rules(
@@ -156,7 +156,7 @@ class VideoAccessRuleConverterTest {
         }
 
         @Test
-        fun `returns excluded video types if specified`() {
+        fun `returns excluded channels if specified`() {
             val excludedIds = converter.mapToExcludedChannelIds(
                 VideoAccess.Rules(
                     listOf(
@@ -171,6 +171,48 @@ class VideoAccessRuleConverterTest {
                 )
             )
             assertThat(excludedIds).containsOnly("123")
+        }
+    }
+
+    @Nested
+    inner class ToIncludedChannelIds {
+        @Test
+        fun `returns empty when access to everything`() {
+            val includedChannelIds = converter.mapToIncludedChannelIds(VideoAccess.Everything)
+            assertThat(includedChannelIds).isEmpty()
+        }
+
+        @Test
+        fun `returns empty when no included channel ids in rules`() {
+            val videoId = TestFactories.createVideoId()
+            val includedChannelIds = converter.mapToIncludedChannelIds(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedIds(
+                            videoIds = setOf(videoId)
+                        )
+                    )
+                )
+            )
+            assertThat(includedChannelIds).isEmpty()
+        }
+
+        @Test
+        fun `returns included channels if specified`() {
+            val includedChannelIds = converter.mapToIncludedChannelIds(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedChannelIds(
+                            channelIds = setOf(
+                                ChannelId(
+                                    value = "123"
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            assertThat(includedChannelIds).containsOnly("123")
         }
     }
 
@@ -197,7 +239,7 @@ class VideoAccessRuleConverterTest {
         }
 
         @Test
-        fun `returns true with no stream access rule`() {
+        fun `returns false with no stream access rule`() {
             val isEligibleForStreaming = converter.isEligibleForStreaming(
                 VideoAccess.Rules(
                     listOf(
@@ -208,6 +250,20 @@ class VideoAccessRuleConverterTest {
                 )
             )
             assertThat(isEligibleForStreaming).isFalse()
+        }
+
+        @Test
+        fun `returns nothing when streaming rule is not specified`() {
+            val isEligibleForStreaming = converter.isEligibleForStreaming(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedIds(
+                            setOf(TestFactories.createVideoId())
+                        )
+                    )
+                )
+            )
+            assertThat(isEligibleForStreaming).isNull()
         }
     }
 }

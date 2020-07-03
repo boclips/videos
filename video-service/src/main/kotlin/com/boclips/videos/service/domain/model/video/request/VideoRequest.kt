@@ -46,7 +46,7 @@ class VideoRequest(
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet()
 ) {
-    fun toQuery(videoAccess: VideoAccess): VideoQuery {
+    fun toQuery(): VideoQuery {
         val sort = sortBy?.let {
             when (it) {
                 SortKey.RELEASE_DATE -> Sort.ByField(
@@ -83,7 +83,7 @@ class VideoRequest(
             bestFor = bestFor,
             durationRanges = durationRanges,
             source = source,
-            sort = sort,
+            videoSort = sort,
             releaseDateFrom = releaseDateFrom,
             releaseDateTo = releaseDateTo,
             ageRangeMin = ageRangeMin,
@@ -96,16 +96,11 @@ class VideoRequest(
             active = true,
             channelNames = channelNames,
             includedTypes = types,
-            excludedTypes = VideoAccessRuleConverter.mapToExcludedVideoTypes(videoAccess),
             facetDefinition = FacetDefinition.Video(
                 ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
                 resourceTypes = facets.attachmentTypes
             ),
-            permittedVideoIds = VideoAccessRuleConverter.mapToPermittedVideoIds(videoAccess),
-            deniedVideoIds = VideoAccessRuleConverter.mapToDeniedVideoIds(videoAccess),
-            excludedContentPartnerIds = VideoAccessRuleConverter.mapToExcludedChannelIds(videoAccess),
-            isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess),
             attachmentTypes = attachmentTypes
         )
     }
