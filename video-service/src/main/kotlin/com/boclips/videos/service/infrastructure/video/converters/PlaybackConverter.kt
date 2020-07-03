@@ -25,6 +25,7 @@ object PlaybackConverter : KLogging() {
                 downloadUrl = videoPlayback.downloadUrl,
                 thumbnailUrl = null,
                 thumbnailSecond = videoPlayback.thumbnailSecond,
+                customThumbnail = videoPlayback.customThumbnail,
                 lastVerified = Instant.now(),
                 duration = videoPlayback.duration.seconds.toInt(),
                 assets = videoPlayback.assets?.map { convertAssetsToDocument(it) },
@@ -42,7 +43,8 @@ object PlaybackConverter : KLogging() {
                 assets = null,
                 originalWidth = null,
                 originalHeight = null,
-                thumbnailSecond = null
+                thumbnailSecond = null,
+                customThumbnail = null
             )
             else -> throw IllegalStateException("Stream class ${videoPlayback.javaClass.name} not supported.")
         }
@@ -69,6 +71,7 @@ object PlaybackConverter : KLogging() {
                     duration = Duration.ofSeconds(playbackDocument.duration!!.toLong()),
                     downloadUrl = playbackDocument.downloadUrl!!,
                     thumbnailSecond = playbackDocument.thumbnailSecond,
+                    customThumbnail = playbackDocument.customThumbnail ?: false,
                     assets = playbackDocument.assets?.map { convertDocumentToAsset(it) }?.toSet(),
                     createdAt = null,
                     originalDimensions = convertOriginalDimensions(

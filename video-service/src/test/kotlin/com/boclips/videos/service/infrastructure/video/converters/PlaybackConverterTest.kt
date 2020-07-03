@@ -22,6 +22,7 @@ class PlaybackConverterTest {
             duration = Duration.ofSeconds(100),
             downloadUrl = "download",
             thumbnailSecond = 24,
+            customThumbnail = true,
             assets = setOf(VideoFactory.createVideoAsset()),
             originalDimensions = Dimensions(
                 width = 320,
@@ -34,6 +35,7 @@ class PlaybackConverterTest {
         assertThat(playbackDocument.entryId).isEqualTo("entry_id_1234")
         assertThat(playbackDocument.thumbnailUrl).isNull()
         assertThat(playbackDocument.thumbnailSecond).isEqualTo(24)
+        assertThat(playbackDocument.customThumbnail).isTrue()
         assertThat(playbackDocument.downloadUrl).isEqualTo("download")
         assertThat(playbackDocument.duration).isEqualTo(100)
         assertThat(playbackDocument.lastVerified).isNotNull()
@@ -50,6 +52,7 @@ class PlaybackConverterTest {
             duration = 100,
             downloadUrl = "download",
             thumbnailSecond = 35,
+            customThumbnail = true,
             assets = listOf(
                 VideoFactory.createVideoAssetDocument(
                     id = "the_asset_id",
@@ -69,6 +72,7 @@ class PlaybackConverterTest {
         assertThat(playback.referenceId).isEqualTo("1234")
         assertThat(playback.downloadUrl).isEqualTo("download")
         assertThat(playback.thumbnailSecond).isEqualTo(35)
+        assertThat(playback.customThumbnail).isTrue()
         assertThat(playback.duration).isEqualTo(Duration.ofSeconds(100))
         assertThat(playback.assets?.first()).isEqualTo(
             VideoAsset(
@@ -86,16 +90,18 @@ class PlaybackConverterTest {
     }
 
     @Test
-    fun `converting from Kaltura document to a playback when no thumbnailSec`() {
+    fun `converting from Kaltura document to a playback when no thumbnailSec and no customThumbnail`() {
         val document = TestFactories.createKalturaPlaybackDocument(
             downloadUrl = "download-url",
             thumbnailSecond = null,
+            customThumbnail = false,
             duration = 10
         )
 
         val playback = PlaybackConverter.toPlayback(document) as VideoPlayback.StreamPlayback
 
         assertThat(playback.thumbnailSecond).isNull()
+        assertThat(playback.customThumbnail).isFalse()
     }
 
     @Test

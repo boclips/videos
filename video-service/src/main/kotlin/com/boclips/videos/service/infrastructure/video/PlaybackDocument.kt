@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import java.time.Instant
 
 data class VideoAssetDocument(
@@ -16,6 +17,7 @@ data class PlaybackDocument(
     val entryId: String?,
     val thumbnailUrl: List<String>?,
     val thumbnailSecond: Int?,
+    val customThumbnail: Boolean?,
     val downloadUrl: String?,
     val lastVerified: Instant?,
     val duration: Int?,

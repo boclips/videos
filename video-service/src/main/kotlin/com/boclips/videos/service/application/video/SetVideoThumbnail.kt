@@ -9,10 +9,16 @@ class SetVideoThumbnail(
     private val videoRepository: VideoRepository
 ) {
     operator fun invoke(request: SetThumbnailRequest) {
-        videoRepository.update(
-            VideoUpdateCommand.ReplaceThumbnailSecond(
-                VideoId(request.videoId), request.thumbnailSecond!!
+        val setThumbnailCommand: VideoUpdateCommand? = when (request) {
+            is SetThumbnailRequest.SetCustomThumbnail -> VideoUpdateCommand.ReplaceCustomThumbnail(
+                VideoId(request.videoId), true
             )
-        )
+            is SetThumbnailRequest.SetThumbnailSecond -> VideoUpdateCommand.ReplaceThumbnailSecond(
+                VideoId(request.videoId), request.thumbnailSecond
+            )
+            else -> null
+        }
+
+        setThumbnailCommand?.let { videoRepository.update(it) }
     }
 }

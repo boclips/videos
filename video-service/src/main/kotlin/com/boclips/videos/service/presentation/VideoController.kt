@@ -251,11 +251,11 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/playback"], params = ["thumbnailSecond"])
-    fun setThumbnail(
-        @RequestParam(required = true) thumbnailSecond: Int?,
+    fun setThumbnailSecond(
+        @RequestParam thumbnailSecond: Int?,
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
-        return setVideoThumbnail(SetThumbnailRequest(thumbnailSecond, videoId = id)).let { this.getVideo(id) }
+        return setVideoThumbnail(SetThumbnailRequest.SetThumbnailSecond(videoId = id, thumbnailSecond = thumbnailSecond)).let { this.getVideo(id) }
     }
 
     @DeleteMapping(path = ["/v1/videos/{id}/playback/thumbnail"])

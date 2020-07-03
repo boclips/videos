@@ -296,6 +296,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::playback / PlaybackDocument::thumbnailSecond,
                 updateCommand.thumbnailSecond
             )
+            is VideoUpdateCommand.ReplaceCustomThumbnail -> set(
+                VideoDocument::playback / PlaybackDocument::customThumbnail,
+                updateCommand.customThumbnail
+            )
             is VideoUpdateCommand.ReplaceContentWarnings -> set(
                 VideoDocument::contentWarnings,
                 updateCommand.contentWarnings.map { ContentWarningDocumentConverter.toDocument(it) }

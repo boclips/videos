@@ -46,7 +46,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
                 getIfHasRole(UserRoles.UPDATE_VIDEOS) {
                     HateoasLink.of(
                         WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnail(null, videoId.value)
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailSecond(null, videoId.value)
                         ).withRel("setThumbnail")
                     )
                 }

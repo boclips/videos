@@ -350,6 +350,10 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             VideoUpdateCommand.ReplaceAdditionalDescription(
                 videoId = originalVideo2.videoId,
                 additionalDescription = "edited additional description"
+            ),
+            VideoUpdateCommand.ReplaceCustomThumbnail(
+                videoId = originalVideo2.videoId,
+                customThumbnail = true
             )
         )
 
@@ -357,7 +361,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo1 = updatedVideos.find { it.videoId == originalVideo1.videoId }!!
         val updatedVideo2 = updatedVideos.find { it.videoId == originalVideo2.videoId }!!
-
         assertThat(updatedVideo1).isEqualToIgnoringGivenFields(originalVideo1, "subjects", "duration", "playback")
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
         assertThat(updatedVideo1.subjects.items).isEmpty()
@@ -371,6 +374,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             "additionalDescription"
         )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
+        assertThat(updatedVideo2.playback).isInstanceOf(StreamPlayback::class.java)
+        assertThat((updatedVideo2.playback as StreamPlayback).customThumbnail).isTrue()
         assertThat(updatedVideo2.subjects.items).isEqualTo(setOf(biology))
         assertThat(updatedVideo2.promoted).isTrue()
         assertThat(updatedVideo2.additionalDescription).isEqualTo("edited additional description")

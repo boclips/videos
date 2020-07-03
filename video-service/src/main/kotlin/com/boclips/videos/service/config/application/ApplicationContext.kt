@@ -57,6 +57,7 @@ import com.boclips.videos.service.application.video.UpdateCaptionContent
 import com.boclips.videos.service.application.video.UpdateCaptions
 import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.application.video.UpdateYoutubePlayback
+import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
@@ -171,6 +172,11 @@ class ApplicationContext(
     @Bean
     fun setVideoThumbnail(): SetVideoThumbnail {
         return SetVideoThumbnail(videoRepository)
+    }
+
+    @Bean
+    fun uploadThumbnailImageToVideo(kalturaClient: KalturaClient, setVideoThumbnail: SetVideoThumbnail): UploadThumbnailImageToVideo {
+        return UploadThumbnailImageToVideo(kalturaClient, setVideoThumbnail)
     }
 
     @Bean

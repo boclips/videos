@@ -58,6 +58,7 @@ class KalturaPlaybackProvider(
                     duration = it.value.duration,
                     downloadUrl = it.value.downloadUrl,
                     thumbnailSecond = null,
+                    customThumbnail = false,
                     createdAt = it.value.createdAt,
                     assets = convertAndValidateAssetsToSet(assetsByEntryId[it.value.id]),
                     originalDimensions = Dimensions(

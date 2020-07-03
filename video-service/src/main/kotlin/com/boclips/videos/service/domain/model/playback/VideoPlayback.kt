@@ -22,7 +22,8 @@ sealed class VideoPlayback {
         val createdAt: ZonedDateTime?,
         val assets: Set<VideoAsset>?,
         val originalDimensions: Dimensions?,
-        val thumbnailSecond: Int?
+        val thumbnailSecond: Int?,
+        val customThumbnail: Boolean = false
     ) : VideoPlayback() {
         fun hasOriginalOrFHDResolution(): Boolean {
             return assets?.any { it.dimensions.isFHD() || it.dimensions.height == originalDimensions?.height } ?: false
