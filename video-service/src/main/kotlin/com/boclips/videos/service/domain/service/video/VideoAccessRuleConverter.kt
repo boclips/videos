@@ -51,7 +51,7 @@ object VideoAccessRuleConverter {
         when (videoAccess) {
             VideoAccess.Everything -> emptySet()
             is VideoAccess.Rules -> videoAccess.accessRules
-                .filterIsInstance<VideoAccessRule.ExcludedChannels>()
+                .filterIsInstance<VideoAccessRule.ExcludedChannelIds>()
                 .flatMap { accessRule -> accessRule.channelIds.map { id -> id.value } }
                 .toSet()
         }

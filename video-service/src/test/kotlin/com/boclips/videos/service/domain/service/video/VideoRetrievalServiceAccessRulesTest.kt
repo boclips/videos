@@ -83,7 +83,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val firstExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
             val secondExcludedVideoId = saveVideo(contentProviderId = excludedContentPartnerId)
 
-            val accessRule = VideoAccessRule.ExcludedChannels(
+            val accessRule = VideoAccessRule.ExcludedChannelIds(
                 channelIds = setOf(
                     ChannelId(
                         value = excludedContentPartnerId
@@ -237,7 +237,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
             saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
 
-            val accessRule = VideoAccessRule.ExcludedChannels(
+            val accessRule = VideoAccessRule.ExcludedChannelIds(
                 channelIds = setOf(
                     ChannelId(
                         value = excludedContentPartnerId

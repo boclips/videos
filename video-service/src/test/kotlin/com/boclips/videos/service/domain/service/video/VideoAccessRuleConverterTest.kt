@@ -160,7 +160,7 @@ class VideoAccessRuleConverterTest {
             val excludedIds = converter.mapToExcludedChannelIds(
                 VideoAccess.Rules(
                     listOf(
-                        VideoAccessRule.ExcludedChannels(
+                        VideoAccessRule.ExcludedChannelIds(
                             channelIds = setOf(
                                 ChannelId(
                                     value = "123"

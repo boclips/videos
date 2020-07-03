@@ -88,7 +88,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.id.value)
             saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.id.value)
 
-            removeAccessToContentPartner("api-user@gmail.com", excludedContentPartner.id.value)
+            removeAccessToChannel("api-user@gmail.com", excludedContentPartner.id.value)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

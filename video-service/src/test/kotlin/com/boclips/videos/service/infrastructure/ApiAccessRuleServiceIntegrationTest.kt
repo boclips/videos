@@ -180,9 +180,9 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             createAccessRulesResource(
                 "test-user",
                 listOf(
-                    AccessRuleResource.ExcludedContentPartners(
+                    AccessRuleResource.ExcludedChannels(
                         name = "bad video types",
-                        contentPartnerIds = listOf("content-partner-1")
+                        channelIds = listOf("content-partner-1")
                     )
                 )
             )
@@ -192,7 +192,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
             val videoAccess = accessRules.videoAccess as VideoAccess.Rules
             assertThat(videoAccess.accessRules).containsOnly(
-                VideoAccessRule.ExcludedChannels(
+                VideoAccessRule.ExcludedChannelIds(
                     channelIds = setOf(
                         ChannelId(
                             value = "content-partner-1"

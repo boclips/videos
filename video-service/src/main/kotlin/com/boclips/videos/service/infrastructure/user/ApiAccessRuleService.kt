@@ -82,8 +82,8 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                     it.videoIds.map { id -> VideoId(id) }.toSet()
                 )
                 is AccessRuleResource.ExcludedVideoTypes -> extractExcludedContentTypes(it)
-                is AccessRuleResource.ExcludedContentPartners -> VideoAccessRule.ExcludedChannels(
-                    it.contentPartnerIds.map { id ->
+                is AccessRuleResource.ExcludedChannels -> VideoAccessRule.ExcludedChannelIds(
+                    it.channelIds.map { id ->
                         ChannelId(
                             id
                         )
