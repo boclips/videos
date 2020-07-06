@@ -376,5 +376,31 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*/vid_slices/3/vid_slice/1")))
     }
+
+    @Test
+    fun `can remove the custom thumbnail image`() {
+        val file = MockMultipartFile("thumbnailImage", "thumbnailImage.jpeg",
+            "image/jpeg", loadFile("thumbnailImage.jpeg"))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.multipart("/v1/videos/$kalturaVideoId/playback")
+                .file(file)
+                .param("playbackId", "entry-id-123")
+                .asBoclipsEmployee())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            delete("/v1/videos/$kalturaVideoId/playback/thumbnail")
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*/vid_slices/3/vid_slice/1")))
+    }
 }
 
