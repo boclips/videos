@@ -254,7 +254,7 @@ class VideoController(
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/playback"], params = ["thumbnailSecond"])
-    fun setThumbnailSecond(
+    fun setThumbnailBySecond(
         @RequestParam thumbnailSecond: Int?,
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
@@ -262,7 +262,7 @@ class VideoController(
     }
 
     @PostMapping(path = ["/v1/videos/{id}/playback"], params = ["playbackId"])
-    fun setThumbnailImage(
+    fun setCustomThumbnail(
         @RequestParam playbackId: String?,
         @RequestParam("thumbnailImage") thumbnailImage: MultipartFile?,
         @PathVariable id: String

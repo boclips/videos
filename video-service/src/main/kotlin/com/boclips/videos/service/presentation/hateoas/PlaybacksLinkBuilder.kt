@@ -46,8 +46,23 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
                 getIfHasRole(UserRoles.UPDATE_VIDEOS) {
                     HateoasLink.of(
                         WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailSecond(null, videoId.value)
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailBySecond(null, videoId.value)
                         ).withRel("setThumbnail")
+                    )
+                }
+            }
+            else -> null
+        }
+    }
+
+    fun setThumbnailBySecond(playback: VideoPlayback, videoId: VideoId): HateoasLink? {
+        return when (playback) {
+            is StreamPlayback -> takeUnless { hasManuallySetThumbnail(playback) }?.let {
+                getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                    HateoasLink.of(
+                        WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailBySecond(null, videoId.value)
+                        ).withRel("setThumbnailBySecond")
                     )
                 }
             }
@@ -61,7 +76,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
                 getIfHasRole(UserRoles.UPDATE_VIDEOS) {
                     HateoasLink.of(
                         WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailImage(null, null, videoId.value)
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setCustomThumbnail(null, null, videoId.value)
                         ).withRel("setCustomThumbnail")
                     )
                 }

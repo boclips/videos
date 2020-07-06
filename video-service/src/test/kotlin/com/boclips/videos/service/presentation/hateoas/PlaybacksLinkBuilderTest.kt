@@ -138,6 +138,21 @@ internal class PlaybacksLinkBuilderTest {
         }
 
         @Test
+        fun `it returns the thumbnail editor link under 'setThumbnailBySecond' name`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+            val video = TestFactories.createVideo(playback = playback)
+
+            val setLink = linkBuilder.setThumbnailBySecond(playback, videoId = video.videoId)
+            val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
+
+            assertThat(deleteLink).isNull()
+            assertThat(setLink).isNotNull
+            assertThat(setLink!!.href).contains("/v1/videos/${video.videoId.value}/playback{?thumbnailSecond}")
+            assertThat(setLink.rel).isEqualTo("setThumbnailBySecond")
+        }
+
+        @Test
         fun `it returns the custom thumbnail link when kaltura video and user can update video`() {
             setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
