@@ -43,7 +43,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     @Autowired
     lateinit var tagVideo: TagVideo
 
-    lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
 
@@ -68,18 +67,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
             ageRangeMin = 7, ageRangeMax = 10
-        ).value
-
-        disabledVideoId = saveVideo(
-            playbackId = PlaybackId(value = "entry-id-125", type = PlaybackProviderType.KALTURA),
-            title = "elephants eat a lot",
-            description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
-            date = "2018-05-10",
-            duration = Duration.ofMinutes(5),
-            contentProvider = "disabled-cp",
-            ageRangeMin = null,
-            ageRangeMax = null,
-            distributionMethods = emptySet()
         ).value
     }
 
