@@ -107,7 +107,7 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
 
     private fun getKalturaThumbnailUrl(playback: StreamPlayback): String = when  {
         playback.thumbnailSecond != null -> kalturaClient.linkBuilder.getThumbnailUrlBySecond(playback.id.value, playback.thumbnailSecond)
-        playback.customThumbnail -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value).substringBefore("/vid_slices")
+        playback.customThumbnail -> kalturaClient.linkBuilder.getDefaultThumbnailUrl(playback.id.value)
         else -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
     }
 }
