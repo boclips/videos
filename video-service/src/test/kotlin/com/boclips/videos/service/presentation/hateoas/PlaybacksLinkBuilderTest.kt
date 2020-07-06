@@ -87,6 +87,19 @@ internal class PlaybacksLinkBuilderTest {
         }
 
         @Test
+        fun `it returns the playback custom thumbnail if set when kaltura`() {
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", customThumbnail = true)
+
+            val link = linkBuilder.thumbnailLink(playback)
+
+            assertThat(link).isNotNull
+            assertThat(link!!.href).contains("thumbnail-entry-id")
+            assertThat(link.href).contains("{thumbnailWidth}")
+            assertThat(link.href).doesNotContain("/vid_sec")
+            assertThat(link.rel).isEqualTo("thumbnail")
+        }
+
+        @Test
         fun `it returns the playback thumbnail when youtube`() {
             val playback = TestFactories.createYoutubePlayback(thumbnailUrl = "expected-thumbnail-url")
 
@@ -125,9 +138,24 @@ internal class PlaybacksLinkBuilderTest {
         }
 
         @Test
-        fun `it returns the delete thumbnail link when thumbnail was manually set`() {
+        fun `it returns the delete thumbnail link when thumbnail second was manually set`() {
             setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", thumbnailSecond = 20)
+            val video = TestFactories.createVideo(playback = playback)
+
+            val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
+
+            assertThat(setLink).isNull()
+            assertThat(deleteLink).isNotNull
+            assertThat(deleteLink!!.href).contains("/v1/videos/${video.videoId.value}/playback/thumbnail")
+            assertThat(deleteLink.rel).isEqualTo("deleteThumbnail")
+        }
+
+        @Test
+        fun `it returns the delete thumbnail link when custom thumbnail was manually set`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", customThumbnail = true)
             val video = TestFactories.createVideo(playback = playback)
 
             val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)

@@ -36,6 +36,6 @@ sealed class VideoPlayback {
     ) : VideoPlayback()
 
     companion object {
-        fun hasManuallySetThumbnail(playback: StreamPlayback): Boolean = playback.thumbnailSecond != null
+        fun hasManuallySetThumbnail(playback: StreamPlayback): Boolean = playback.thumbnailSecond != null || playback.customThumbnail
     }
 }

@@ -15,6 +15,6 @@ sealed class SetThumbnailRequest {
 
     data class SetCustomThumbnail(
         override var videoId: String,
-        var customThumbnal: Boolean?
+        var customThumbnail: Boolean?
     ) : SetThumbnailRequest()
 }

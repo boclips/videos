@@ -6,6 +6,8 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.loadFile
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.matchesPattern
@@ -13,7 +15,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -321,6 +325,30 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*vid_sec/20")))
+            .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
+    }
+
+    @Test
+    fun `can upload image and set it as custom thumbnail`() {
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
+
+        val file = MockMultipartFile("thumbnailImage", "thumbnailImage.jpeg",
+            "image/jpeg", loadFile("thumbnailImage.jpeg"))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.multipart("/v1/videos/$kalturaVideoId/playback")
+                .file(file)
+                .param("playbackId", "entry-id-123")
+                .asBoclipsEmployee()
+        ).andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.playback._links.thumbnail.href", endsWith("/width/{thumbnailWidth}")))
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
             .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
     }

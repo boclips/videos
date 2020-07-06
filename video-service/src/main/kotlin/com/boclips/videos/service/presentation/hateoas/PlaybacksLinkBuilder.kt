@@ -90,9 +90,9 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         return href?.let { HateoasLink(href = it, rel = "hlsStream") }
     }
 
-    private fun getKalturaThumbnailUrl(playback: StreamPlayback): String = if (playback.thumbnailSecond != null) {
-        kalturaClient.linkBuilder.getThumbnailUrlBySecond(playback.id.value, playback.thumbnailSecond)
-    } else {
-        kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
+    private fun getKalturaThumbnailUrl(playback: StreamPlayback): String = when  {
+        playback.thumbnailSecond != null -> kalturaClient.linkBuilder.getThumbnailUrlBySecond(playback.id.value, playback.thumbnailSecond)
+        playback.customThumbnail -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value).substringBefore("/vid_slices")
+        else -> kalturaClient.linkBuilder.getThumbnailUrl(playback.id.value)
     }
 }

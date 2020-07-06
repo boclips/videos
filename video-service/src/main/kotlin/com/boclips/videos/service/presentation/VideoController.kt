@@ -20,6 +20,7 @@ import com.boclips.videos.service.application.video.SetVideoThumbnail
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.application.video.UpdateCaptionContent
 import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
 import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 
 @RestController
@@ -60,6 +62,7 @@ class VideoController(
     private val rateVideo: RateVideo,
     private val setVideoThumbnail: SetVideoThumbnail,
     private val deleteVideoThumbnail: DeleteVideoThumbnail,
+    private val uploadThumbnailImageToVideo: UploadThumbnailImageToVideo,
     private val videoTranscriptService: VideoTranscriptService,
     private val videoCaptionService: VideoCaptionService,
     private val updateCaptionContent: UpdateCaptionContent,
@@ -256,6 +259,20 @@ class VideoController(
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
         return setVideoThumbnail(SetThumbnailRequest.SetThumbnailSecond(videoId = id, thumbnailSecond = thumbnailSecond)).let { this.getVideo(id) }
+    }
+
+    @PostMapping(path = ["/v1/videos/{id}/playback"], params = ["playbackId"])
+    fun setThumbnailImage(
+        @RequestParam playbackId: String?,
+        @RequestParam("thumbnailImage") thumbnailImage: MultipartFile?,
+        @PathVariable id: String
+    ): ResponseEntity<VideoResource> {
+        return uploadThumbnailImageToVideo(
+            videoId= id,
+            playbackId = playbackId,
+            imageStream = thumbnailImage?.inputStream,
+            filename = thumbnailImage?.originalFilename
+        ).let {this.getVideo(id)}
     }
 
     @DeleteMapping(path = ["/v1/videos/{id}/playback/thumbnail"])
