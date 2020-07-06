@@ -77,30 +77,18 @@ class EsVideoQuery {
                 }
             }
             .apply {
-                permittedIdsFilter(this, videoQuery.ids, videoQuery.permittedVideoIds)
+                idFilter(this, videoQuery.ids)
             }
     }
 
-    private fun permittedIdsFilter(
+    private fun idFilter(
         currentQueryBuilder: BoolQueryBuilder,
-        idsToLookup: Collection<String>,
-        permittedVideoIds: Collection<String>?
+        idsToLookup: Collection<String>
     ): BoolQueryBuilder {
-        val ids = permittedVideoIds
-            ?.takeUnless { it.isNullOrEmpty() }
-            ?.let {
-                if (idsToLookup.isNotEmpty()) {
-                    idsToLookup.intersect(permittedVideoIds)
-                } else {
-                    permittedVideoIds
-                }
-            }
-            ?: idsToLookup
-
-        if (ids.isNotEmpty()) {
+        if (idsToLookup.isNotEmpty()) {
             currentQueryBuilder.must(
                 QueryBuilders.boolQuery().must(
-                    QueryBuilders.idsQuery().addIds(*(ids.toTypedArray()))
+                    QueryBuilders.idsQuery().addIds(*(idsToLookup.toTypedArray()))
                 )
             )
         }
@@ -111,7 +99,8 @@ class EsVideoQuery {
     private fun boostInstructionalVideos(): (QueryBuilder) -> BoostingQueryBuilder = { innerQuery: QueryBuilder ->
         QueryBuilders.boostingQuery(
             innerQuery,
-            QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery(VideoDocument.TYPES, VideoType.INSTRUCTIONAL.name))
+            QueryBuilders.boolQuery()
+                .mustNot(QueryBuilders.termsQuery(VideoDocument.TYPES, VideoType.INSTRUCTIONAL.name))
         ).negativeBoost(0.4F)
     }
 

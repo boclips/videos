@@ -1,14 +1,14 @@
 package com.boclips.search.service.infrastructure.videos.aggregations
 
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria
 import org.assertj.core.api.Assertions.assertThat
-import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.junit.jupiter.api.Test
 
 class SubjectAggregationTest {
     @Test
     fun `filters by`() {
-        val filter = boolQuery()
+        val filter = VideoFilterCriteria.allCriteria(VideoQuery())
         val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQuery())
 
         assertThat(aggregateSubjects.filter).isEqualTo(filter)

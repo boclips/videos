@@ -7,9 +7,14 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
 import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
-import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.termsQuery
+import org.elasticsearch.index.query.RangeQueryBuilder
+import org.elasticsearch.index.query.TermQueryBuilder
+import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
 class VideoFilterCriteria {
@@ -20,8 +25,36 @@ class VideoFilterCriteria {
         const val ATTACHMENT_TYPES = "attachment-types-filter"
 
         fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
-            val boolQueryBuilder = boolQuery()
+            val boolQueryBuilder = andFilters(videoQuery)
 
+            val orFilters = orFilters(videoQuery)
+            return if (orFilters.hasClauses()) {
+                boolQueryBuilder.must(orFilters)
+            } else {
+                boolQueryBuilder
+            }
+        }
+
+        fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
+            fun removeFromList(must: MutableList<QueryBuilder>) {
+                val filter = must.find { it.queryName() === filterName }
+                filter?.let { must.remove(it) }
+            }
+
+            queryBuilder
+                .apply {
+                    removeFromList(this.must() ?: mutableListOf())
+                    removeFromList(this.should() ?: mutableListOf())
+                    removeFromList(this.filter() ?: mutableListOf())
+                }
+
+            return queryBuilder
+        }
+
+        private fun andFilters(
+            videoQuery: VideoQuery
+        ): BoolQueryBuilder {
+            val boolQueryBuilder = boolQuery()
             if (videoQuery.channelNames.isNotEmpty()) {
                 boolQueryBuilder.filter(
                     boolQuery().must(
@@ -82,10 +115,6 @@ class VideoFilterCriteria {
                 boolQueryBuilder.must(matchExcludedContentPartnerIds(videoQuery.excludedContentPartnerIds))
             }
 
-            if (videoQuery.includedChannelIds.isNotEmpty()) {
-                boolQueryBuilder.must(matchIncludedChannelIds(videoQuery.includedChannelIds))
-            }
-
             if (videoQuery.includedTypes.isNotEmpty()) {
                 boolQueryBuilder.must(matchIncludedType(videoQuery.includedTypes))
             }
@@ -113,20 +142,17 @@ class VideoFilterCriteria {
             return boolQueryBuilder
         }
 
-        fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
-            fun removeFromList(must: MutableList<QueryBuilder>) {
-                val filter = must.find { it.queryName() === filterName }
-                filter?.let { must.remove(it) }
+        private fun orFilters(videoQuery: VideoQuery): BoolQueryBuilder {
+            val combinedQuery = boolQuery()
+            if (!videoQuery.permittedVideoIds.isNullOrEmpty()) {
+                combinedQuery.should(matchPermittedIds(videoQuery.permittedVideoIds))
             }
 
-            queryBuilder
-                .apply {
-                    removeFromList(this.must() ?: mutableListOf())
-                    removeFromList(this.should() ?: mutableListOf())
-                    removeFromList(this.filter() ?: mutableListOf())
-                }
+            if (!videoQuery.includedChannelIds.isNullOrEmpty()) {
+                combinedQuery.should(matchIncludedChannelIds(videoQuery.includedChannelIds))
+            }
 
-            return queryBuilder
+            return combinedQuery
         }
 
         private fun matchStreamEligibilityFilter(isEligibleForStream: Boolean) =
@@ -238,6 +264,14 @@ class VideoFilterCriteria {
                 .fold(boolQuery()) { acc: BoolQueryBuilder, term: String ->
                     acc.must(QueryBuilders.termQuery(VideoDocument.TAGS, term))
                 }
+        }
+
+        private fun matchPermittedIds(
+            permittedVideoIds: Collection<String>
+        ): BoolQueryBuilder {
+            return boolQuery().must(
+                QueryBuilders.idsQuery().addIds(*(permittedVideoIds.toTypedArray()))
+            )
         }
     }
 }

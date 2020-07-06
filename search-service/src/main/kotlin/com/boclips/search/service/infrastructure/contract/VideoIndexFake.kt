@@ -25,7 +25,7 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 query.ids.isNullOrEmpty() || query.ids.contains(entry.value.id)
             }
             .filter { entry ->
-                query.permittedVideoIds.isNullOrEmpty() || query.permittedVideoIds.contains(entry.value.id)
+                matchOrFilters(query, entry)
             }
             .filter { entry ->
                 query.deniedVideoIds.isNullOrEmpty() || !query.deniedVideoIds.contains(entry.value.id)
@@ -47,10 +47,6 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
             }.filter { entry ->
                 if (query.excludedContentPartnerIds.isEmpty()) true
                 else !query.excludedContentPartnerIds.contains(entry.value.contentPartnerId)
-            }
-            .filter { entry ->
-                if (query.includedChannelIds.isEmpty()) true
-                else query.includedChannelIds.contains(entry.value.contentPartnerId)
             }
             .filter { entry ->
                 if (query.durationRanges.isNullOrEmpty()) {
@@ -123,5 +119,20 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 }
             }
             .map { video -> video.key }
+    }
+
+    private fun matchOrFilters(
+        query: VideoQuery,
+        entry: Map.Entry<String, VideoMetadata>
+    ): Boolean {
+        val noCombinedFilterSpecified =
+            query.permittedVideoIds.isNullOrEmpty() && query.includedChannelIds.isEmpty()
+
+        return if (noCombinedFilterSpecified) {
+            true
+        } else {
+            query.includedChannelIds.contains(entry.value.contentPartnerId) ||
+                query.permittedVideoIds?.contains(entry.value.id) == true
+        }
     }
 }
