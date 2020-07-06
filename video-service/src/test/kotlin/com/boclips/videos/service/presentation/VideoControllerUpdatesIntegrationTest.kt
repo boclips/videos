@@ -334,6 +334,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.setCustomThumbnail").exists())
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
 
         val file = MockMultipartFile("thumbnailImage", "thumbnailImage.jpeg",
@@ -351,6 +352,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.thumbnail.href", endsWith("/width/{thumbnailWidth}")))
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
             .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
+            .andExpect(jsonPath("$.playback._links.setCustomThumbnail").doesNotExist())
     }
 
     @Test

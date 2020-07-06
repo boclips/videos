@@ -55,6 +55,21 @@ class PlaybacksLinkBuilder(val kalturaClient: KalturaClient) {
         }
     }
 
+    fun setCustomThumbnail(playback: VideoPlayback, videoId: VideoId): HateoasLink? {
+        return when (playback) {
+            is StreamPlayback -> takeUnless { hasManuallySetThumbnail(playback) }?.let {
+                getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+                    HateoasLink.of(
+                        WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(VideoController::class.java).setThumbnailImage(null, null, videoId.value)
+                        ).withRel("setCustomThumbnail")
+                    )
+                }
+            }
+            else -> null
+        }
+    }
+
     fun deleteThumbnail(playback: VideoPlayback, videoId: VideoId): HateoasLink? {
         return when (playback) {
             is StreamPlayback -> takeIf { hasManuallySetThumbnail(playback) }?.let {

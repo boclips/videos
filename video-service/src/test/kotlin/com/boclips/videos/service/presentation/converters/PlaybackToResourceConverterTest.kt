@@ -12,9 +12,12 @@ import com.boclips.videos.service.testsupport.VideoFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.mockito.Mockito.never
 
 internal class PlaybackToResourceConverterTest {
 
@@ -61,6 +64,7 @@ internal class PlaybackToResourceConverterTest {
         verify(playbacksLinkBuilder).downloadLink(kalturaPlayback)
         verify(playbacksLinkBuilder).thumbnailLink(kalturaPlayback)
         verify(playbacksLinkBuilder).setThumbnail(kalturaPlayback, videoId)
+        verify(playbacksLinkBuilder).setCustomThumbnail(kalturaPlayback, videoId)
         verify(playbacksLinkBuilder).videoPreviewLink(kalturaPlayback)
         verify(playbacksLinkBuilder).hlsStreamLink(kalturaPlayback)
     }
@@ -77,5 +81,8 @@ internal class PlaybackToResourceConverterTest {
         verify(eventsLinkBuilder).createPlaybackEventLink()
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
         verify(playbacksLinkBuilder).thumbnailLink(youtubePlayback)
+
+        assertThat(playbacksLinkBuilder.setCustomThumbnail(youtubePlayback, videoId)).isNull()
+        assertThat(playbacksLinkBuilder.setThumbnail(youtubePlayback, videoId)).isNull()
     }
 }

@@ -138,15 +138,32 @@ internal class PlaybacksLinkBuilderTest {
         }
 
         @Test
+        fun `it returns the custom thumbnail link when kaltura video and user can update video`() {
+            setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
+            val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
+            val video = TestFactories.createVideo(playback = playback)
+
+            val setLink = linkBuilder.setCustomThumbnail(playback, videoId = video.videoId)
+            val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
+
+            assertThat(deleteLink).isNull()
+            assertThat(setLink).isNotNull
+            assertThat(setLink!!.href).contains("/v1/videos/${video.videoId.value}/playback{?playbackId,thumbnailImage}")
+            assertThat(setLink.rel).isEqualTo("setCustomThumbnail")
+        }
+
+        @Test
         fun `it returns the delete thumbnail link when thumbnail second was manually set`() {
             setSecurityContext("editor", UserRoles.UPDATE_VIDEOS)
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", thumbnailSecond = 20)
             val video = TestFactories.createVideo(playback = playback)
 
-            val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val setThumbnailSecondLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val setCustomThumbnailLink = linkBuilder.setCustomThumbnail(playback, videoId = video.videoId)
             val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
 
-            assertThat(setLink).isNull()
+            assertThat(setCustomThumbnailLink).isNull()
+            assertThat(setThumbnailSecondLink).isNull()
             assertThat(deleteLink).isNotNull
             assertThat(deleteLink!!.href).contains("/v1/videos/${video.videoId.value}/playback/thumbnail")
             assertThat(deleteLink.rel).isEqualTo("deleteThumbnail")
@@ -158,10 +175,12 @@ internal class PlaybacksLinkBuilderTest {
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id", customThumbnail = true)
             val video = TestFactories.createVideo(playback = playback)
 
-            val setLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val setThumbnailSecondLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val setCustomThumbnailLink = linkBuilder.setCustomThumbnail(playback, videoId = video.videoId)
             val deleteLink = linkBuilder.deleteThumbnail(playback, videoId = video.videoId)
 
-            assertThat(setLink).isNull()
+            assertThat(setThumbnailSecondLink).isNull()
+            assertThat(setCustomThumbnailLink).isNull()
             assertThat(deleteLink).isNotNull
             assertThat(deleteLink!!.href).contains("/v1/videos/${video.videoId.value}/playback/thumbnail")
             assertThat(deleteLink.rel).isEqualTo("deleteThumbnail")
@@ -173,9 +192,11 @@ internal class PlaybacksLinkBuilderTest {
             val playback = TestFactories.createYoutubePlayback()
             val video = TestFactories.createVideo(playback = playback)
 
-            val link = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val thumbnailBySecondLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val customThumbnailLink = linkBuilder.setCustomThumbnail(playback, videoId = video.videoId)
 
-            assertThat(link).isNull()
+            assertThat(thumbnailBySecondLink).isNull()
+            assertThat(customThumbnailLink).isNull()
         }
 
         @Test
@@ -185,9 +206,11 @@ internal class PlaybacksLinkBuilderTest {
             val playback = TestFactories.createKalturaPlayback(entryId = "thumbnail-entry-id")
             val video = TestFactories.createVideo(playback = playback)
 
-            val link = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val thumbnailBySecondLink = linkBuilder.setThumbnail(playback, videoId = video.videoId)
+            val customThumbnailLink = linkBuilder.setCustomThumbnail(playback, videoId = video.videoId)
 
-            assertThat(link).isNull()
+            assertThat(thumbnailBySecondLink).isNull()
+            assertThat(customThumbnailLink).isNull()
         }
     }
 
