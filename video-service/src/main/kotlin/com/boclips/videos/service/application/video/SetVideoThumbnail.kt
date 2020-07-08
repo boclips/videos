@@ -13,7 +13,7 @@ class SetVideoThumbnail(
             is SetThumbnailRequest.SetCustomThumbnail -> VideoUpdateCommand.ReplaceCustomThumbnail(
                 VideoId(request.videoId), true
             )
-            is SetThumbnailRequest.SetThumbnailBySecond -> VideoUpdateCommand.ReplaceThumbnailSecond(
+            is SetThumbnailRequest.SetThumbnailSecond -> VideoUpdateCommand.ReplaceThumbnailSecond(
                 VideoId(request.videoId), request.thumbnailSecond
             )
             else -> null

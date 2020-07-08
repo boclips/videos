@@ -39,6 +39,7 @@ class PlaybackToResourceConverter(
             this.eventsLinkBuilder.createPlayerInteractedWithEventLink(),
             this.playbacksLinkBuilder.downloadLink(videoPlayback),
             this.playbacksLinkBuilder.thumbnailLink(videoPlayback),
+            this.playbacksLinkBuilder.setThumbnail(videoPlayback, videoId),
             this.playbacksLinkBuilder.setThumbnailBySecond(videoPlayback, videoId),
             this.playbacksLinkBuilder.setCustomThumbnail(videoPlayback, videoId),
             this.playbacksLinkBuilder.deleteThumbnail(videoPlayback, videoId),
