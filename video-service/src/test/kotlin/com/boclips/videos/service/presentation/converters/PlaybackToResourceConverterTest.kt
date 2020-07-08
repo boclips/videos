@@ -63,7 +63,7 @@ internal class PlaybackToResourceConverterTest {
         verify(eventsLinkBuilder).createPlayerInteractedWithEventLink()
         verify(playbacksLinkBuilder).downloadLink(kalturaPlayback)
         verify(playbacksLinkBuilder).thumbnailLink(kalturaPlayback)
-        verify(playbacksLinkBuilder).setThumbnail(kalturaPlayback, videoId)
+        verify(playbacksLinkBuilder).setThumbnailBySecond(kalturaPlayback, videoId)
         verify(playbacksLinkBuilder).setCustomThumbnail(kalturaPlayback, videoId)
         verify(playbacksLinkBuilder).videoPreviewLink(kalturaPlayback)
         verify(playbacksLinkBuilder).hlsStreamLink(kalturaPlayback)
@@ -83,6 +83,6 @@ internal class PlaybackToResourceConverterTest {
         verify(playbacksLinkBuilder).thumbnailLink(youtubePlayback)
 
         assertThat(playbacksLinkBuilder.setCustomThumbnail(youtubePlayback, videoId)).isNull()
-        assertThat(playbacksLinkBuilder.setThumbnail(youtubePlayback, videoId)).isNull()
+        assertThat(playbacksLinkBuilder.setThumbnailBySecond(youtubePlayback, videoId)).isNull()
     }
 }

@@ -258,7 +258,7 @@ class VideoController(
         @RequestParam thumbnailSecond: Int?,
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
-        return setVideoThumbnail(SetThumbnailRequest.SetThumbnailSecond(videoId = id, thumbnailSecond = thumbnailSecond)).let { this.getVideo(id) }
+        return setVideoThumbnail(SetThumbnailRequest.SetThumbnailBySecond(videoId = id, thumbnailSecond = thumbnailSecond)).let { this.getVideo(id) }
     }
 
     @PostMapping(path = ["/v1/videos/{id}/playback"], params = ["playbackId"])
