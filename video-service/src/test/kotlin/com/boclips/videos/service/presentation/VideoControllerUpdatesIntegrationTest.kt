@@ -313,7 +313,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can set a thumbnailSecond`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.setThumbnailBySecond").exists())
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
 
         mockMvc.perform(
@@ -326,28 +326,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*vid_sec/20")))
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
-            .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
-    }
-
-    @Test
-    fun `has setThumbnailBySecond link by both 'setThumbnail' and new 'setThumbnailBySecond' names`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
-            .andExpect(jsonPath("$.playback._links.setThumbnailBySecond").exists())
-            .andExpect(jsonPath("$.playback._links.deleteThumbnail.href").doesNotExist())
-
-        mockMvc.perform(
-            patch("/v1/videos/$kalturaVideoId/playback?thumbnailSecond=20")
-                .asBoclipsEmployee()
-        )
-            .andExpect(status().isOk)
-
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*vid_sec/20")))
-            .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
-            .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
+            .andExpect(jsonPath("$.playback._links.setCustomThumbnail").doesNotExist())
             .andExpect(jsonPath("$.playback._links.setThumbnailBySecond").doesNotExist())
     }
 
@@ -355,7 +334,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can upload image and set it as custom thumbnail`() {
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.playback._links.setThumbnail").exists())
+            .andExpect(jsonPath("$.playback._links.setThumbnailBySecond").exists())
             .andExpect(jsonPath("$.playback._links.setCustomThumbnail").exists())
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
 
@@ -373,7 +352,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.thumbnail.href", endsWith("/width/{thumbnailWidth}")))
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").exists())
-            .andExpect(jsonPath("$.playback._links.setThumbnail").doesNotExist())
+            .andExpect(jsonPath("$.playback._links.setThumbnailBySecond").doesNotExist())
             .andExpect(jsonPath("$.playback._links.setCustomThumbnail").doesNotExist())
     }
 

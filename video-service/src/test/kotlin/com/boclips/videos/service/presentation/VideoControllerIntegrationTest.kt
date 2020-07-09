@@ -109,8 +109,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
-                .andExpect(jsonPath("$.playback._links.setThumbnail.href", containsString("/videos/$kalturaVideoId/playback{?thumbnailSecond}")))
-                .andExpect(jsonPath("$.playback._links.setThumbnail.templated", equalTo(true)))
+                .andExpect(jsonPath("$.playback._links.setThumbnailBySecond.href", containsString("/videos/$kalturaVideoId/playback{?thumbnailSecond}")))
+                .andExpect(jsonPath("$.playback._links.setThumbnailBySecond.templated", equalTo(true)))
                 .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(

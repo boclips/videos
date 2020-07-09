@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull
 sealed class SetThumbnailRequest {
     abstract val videoId: String
 
-    data class SetThumbnailSecond(
+    data class SetThumbnailBySecond(
         override var videoId: String,
         @field:NotNull(message = "thumbnailSecond is required")
         @field:Range(min = 0, message = "thumbnailSecond must be greater than 0")
