@@ -137,4 +137,17 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
 
         assertThat(retrievedCollection.id.value).isEqualTo(savedCollectionId.value)
     }
+
+    @Test
+    fun `provides a public collection without populating videos`() {
+        val videoId = saveVideo()
+        val savedCollectionId = saveCollection(discoverable = true, owner = "12345", videos = listOf(videoId.value))
+
+        val retrievedCollection = getCollection.withoutPopulatingVideos(
+            savedCollectionId.value,
+            user = UserFactory.sample(id = "12345", isAuthenticated = true)
+        )
+        assertThat(retrievedCollection.id.value).isEqualTo(savedCollectionId.value)
+        assertThat(retrievedCollection.videos).isEmpty()
+    }
 }

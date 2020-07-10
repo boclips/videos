@@ -222,6 +222,19 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
 
             assertThat(collection).isNull()
         }
+
+        @Test
+        fun `can find a collection by ID without adding videos to it`() {
+            val videoId = saveVideo()
+            val collectionId = saveCollection(videos = listOf(videoId.value), discoverable = true)
+            val collection = collectionRetrievalService.findAnyCollection(
+                id = collectionId,
+                user = UserFactory.sample(),
+                populateVideos = false
+            )!!
+            assertThat(collection.id).isEqualTo(collectionId)
+            assertThat(collection.videos).isEmpty()
+        }
     }
 
     @Nested

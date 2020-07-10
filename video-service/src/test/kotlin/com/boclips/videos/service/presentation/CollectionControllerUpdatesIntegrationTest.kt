@@ -278,8 +278,11 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
     }
 
     @Test
-    fun `bookmark collections returns updated collection`() {
-        val collectionId = createCollection("collection 1")
+    fun `bookmark collections returns updated collection with not populated videos`() {
+        val firstVideoId = saveVideo(title = "first").value
+        val collectionId = createCollection("collection 1").also {
+            addVideo(it, firstVideoId)
+        }
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
@@ -288,6 +291,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.unbookmark.href").exists())
@@ -295,9 +299,12 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
     }
 
     @Test
-    fun `unbookmark collections returns updated collection`() {
+    fun `unbookmark collections returns updated collection with not populated videos`() {
+        val firstVideoId = saveVideo(title = "first").value
         val collectionId = createCollection("collection 1").apply {
-            bookmarkCollection(this, "notTheOwner@gmail.com")
+                bookmarkCollection(this, "notTheOwner@gmail.com")
+            }.also {
+            addVideo(it, firstVideoId)
         }
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=false").asTeacher(email = "notTheOwner@gmail.com"))
@@ -307,6 +314,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
             .andExpect(jsonPath("$.title", equalTo("collection 1")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(0)))
 
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.bookmark.href").exists())

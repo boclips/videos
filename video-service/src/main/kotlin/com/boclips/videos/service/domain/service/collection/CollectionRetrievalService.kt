@@ -69,14 +69,14 @@ class CollectionRetrievalService(
         )
     }
 
-    fun findAnyCollection(id: CollectionId, user: User): Collection? {
+    fun findAnyCollection(id: CollectionId, user: User, populateVideos: Boolean = true): Collection? {
         val collection = collectionRepository.find(id)
 
         return collection?.let {
-            return if (collectionAccessService.hasReadAccess(collection = collection, user = user)) {
-                addVideosToCollection(it, user.accessRules.videoAccess)
-            } else {
-                null
+            return when {
+                !collectionAccessService.hasReadAccess(collection, user) -> null
+                populateVideos -> addVideosToCollection(it, user.accessRules.videoAccess)
+                else -> it.copy(videos = emptyList())
             }
         }
     }

@@ -56,14 +56,20 @@ class CollectionController(
 
     @PatchMapping("/{id}", params = ["bookmarked=true"])
     fun patchBookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
-        bookmarkCollection(id, getCurrentUser())
-        return this.show(id)
+        val user = getCurrentUser()
+        bookmarkCollection(id, user)
+        return getCollection.withoutPopulatingVideos(collectionId = id, user = user).let { collection ->
+            withProjection(collectionResourceConverter.buildCollectionListResource(collection, user))
+        }
     }
 
     @PatchMapping("/{id}", params = ["bookmarked=false"])
     fun patchUnbookmarkCollection(@PathVariable("id") id: String): MappingJacksonValue {
-        unbookmarkCollection(id, getCurrentUser())
-        return this.show(id)
+        val user = getCurrentUser()
+        unbookmarkCollection(id, user)
+        return getCollection.withoutPopulatingVideos(collectionId = id, user = user).let { collection ->
+            withProjection(collectionResourceConverter.buildCollectionListResource(collection, user))
+        }
     }
 
     @DeleteMapping("/{id}")

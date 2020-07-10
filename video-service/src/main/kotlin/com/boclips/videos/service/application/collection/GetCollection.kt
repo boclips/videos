@@ -38,4 +38,18 @@ class GetCollection(
             }
         }
     }
+
+    fun withoutPopulatingVideos(collectionId: String, user: User): Collection {
+        if(!user.isAuthenticated) {
+            throw OperationForbiddenException()
+        }
+
+        val collection = collectionRetrievalService.findAnyCollection(
+            id = CollectionId(value = collectionId),
+            user = user,
+            populateVideos = false
+        )
+
+        return collection ?: throw CollectionNotFoundException(collectionId)
+    }
 }
