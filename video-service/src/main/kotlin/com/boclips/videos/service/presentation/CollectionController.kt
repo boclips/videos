@@ -88,13 +88,12 @@ class CollectionController(
         val user = getCurrentUser()
         val collection =
             getCollection(collectionId = id, user = user, referer = referer, shareCode = shareCode)
-        val videos = videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess)
 
         val collectionResource = when (projection) {
             Projection.details -> collectionResourceConverter.buildCollectionDetailsResource(
                 collection,
                 user,
-                videos
+                videoRetrievalService.getPlayableVideos(collection.videos, user.accessRules.videoAccess)
             )
             else -> collectionResourceConverter.buildCollectionListResource(collection, user)
         }
