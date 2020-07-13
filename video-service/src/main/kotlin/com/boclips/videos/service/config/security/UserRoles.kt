@@ -6,6 +6,7 @@ object UserRoles {
     const val PUBLISHER = "PUBLISHER"
     const val BACKOFFICE = "BACKOFFICE"
     const val BOCLIPS_SERVICE = "BOCLIPS_SERVICE"
+    const val E2E = "E2E"
 
     const val CREATE_SUBJECTS = "CREATE_SUBJECTS"
     const val DELETE_SUBJECTS = "DELETE_SUBJECTS"
