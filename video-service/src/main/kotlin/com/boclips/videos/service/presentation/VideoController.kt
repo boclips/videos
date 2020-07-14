@@ -204,7 +204,7 @@ class VideoController(
     @PostMapping("/v1/videos")
     fun postCreateVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
         val resource: VideoResource = try {
-            createVideo(createVideoRequest)
+            createVideo(createVideoRequest, getCurrentUser())
                 .let { videoToResourceConverter.convert(it, getCurrentUser()) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(

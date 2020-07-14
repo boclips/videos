@@ -65,9 +65,10 @@ class DomainContext(
 
     @Bean
     fun videoDuplicationHandler(
-        videoRepository: VideoRepository
+        videoRepository: VideoRepository,
+        collectionRepository: CollectionRepository
     ): VideoDuplicationService {
-        return VideoDuplicationService(videoRepository)
+        return VideoDuplicationService(videoRepository, collectionRepository)
     }
 
     @Bean

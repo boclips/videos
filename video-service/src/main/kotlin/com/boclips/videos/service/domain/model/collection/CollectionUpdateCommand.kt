@@ -19,9 +19,6 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId, val user: U
     class RemoveVideoFromCollection(collectionId: CollectionId, val videoId: VideoId, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
-    class BulkUpdateCollectionVideos(collectionId: CollectionId, val videoIds: List<VideoId>, user: User) :
-        CollectionUpdateCommand(collectionId, user)
-
     class RenameCollection(collectionId: CollectionId, val title: String, user: User) :
         CollectionUpdateCommand(collectionId, user)
 
@@ -54,4 +51,10 @@ sealed class CollectionUpdateCommand(val collectionId: CollectionId, val user: U
     class Bookmark(collectionId: CollectionId, user: User) : CollectionUpdateCommand(collectionId, user)
 
     class Unbookmark(collectionId: CollectionId, user: User) : CollectionUpdateCommand(collectionId, user)
+
+    class ReplaceVideos(
+        collectionId: CollectionId,
+        val videoIds: List<VideoId>,
+        user: User
+    ) : CollectionUpdateCommand(collectionId, user)
 }

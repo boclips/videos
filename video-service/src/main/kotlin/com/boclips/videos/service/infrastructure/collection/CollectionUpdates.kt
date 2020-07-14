@@ -65,10 +65,6 @@ class CollectionUpdates {
                 command.linkToResource,
                 command.type
             )
-            is CollectionUpdateCommand.BulkUpdateCollectionVideos -> bulkUpdateVideos(
-                command.collectionId,
-                command.videoIds
-            )
             is CollectionUpdateCommand.Bookmark -> addToSet(CollectionDocument::bookmarks, command.user.idOrThrow().value)
             is CollectionUpdateCommand.Unbookmark -> pull(CollectionDocument::bookmarks, command.user.idOrThrow().value)
             is CollectionUpdateCommand.AddCollectionToCollection -> addToSet(
@@ -78,6 +74,10 @@ class CollectionUpdates {
             is CollectionUpdateCommand.RemoveCollectionFromCollection -> pull(
                 CollectionDocument::subCollectionIds,
                 command.subCollectionId.value
+            )
+            is CollectionUpdateCommand.ReplaceVideos -> replaceVideos(
+                collectionId = command.collectionId,
+                videos = command.videoIds
             )
         }
     }
@@ -126,6 +126,11 @@ class CollectionUpdates {
         return pull(CollectionDocument::videos, videoId.value)
     }
 
+    private fun replaceVideos(collectionId: CollectionId, videos: List<VideoId>): Bson {
+        logger.info { "Prepare videos for replacement in collection $collectionId" }
+        return set(CollectionDocument::videos, videos.map { it.value} )
+    }
+
     private fun removeSubject(collectionId: CollectionId, subjectId: SubjectId): Bson {
         logger.info { "Prepare subject for removal from collection $collectionId" }
         return pull(CollectionDocument::subjects, DocumentWithId(_id = ObjectId(subjectId.value)))
@@ -134,11 +139,6 @@ class CollectionUpdates {
     private fun addVideo(collectionId: CollectionId, videoId: VideoId): Bson {
         logger.info { "Prepare video for addition to collection $collectionId" }
         return addToSet(CollectionDocument::videos, videoId.value)
-    }
-
-    private fun bulkUpdateVideos(collectionId: CollectionId, videoIds: List<VideoId>): Bson {
-        logger.info { "Collection $collectionId will have it's videos bulk updated" }
-        return set(CollectionDocument::videos, videoIds.map { it.value })
     }
 
     private fun renameCollection(collectionId: CollectionId, title: String): Bson {

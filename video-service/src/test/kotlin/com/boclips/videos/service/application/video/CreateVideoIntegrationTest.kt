@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -40,7 +41,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
                 playbackId = "entry-\$123"
-            )
+            ),
+            UserFactory.sample()
         )
 
         assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
@@ -64,7 +66,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     playbackId = "8889",
                     title = "The same video",
                     playbackProvider = "YOUTUBE"
-                )
+                ),
+                UserFactory.sample()
             )
 
 
@@ -74,7 +77,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 providerVideoId = "1234",
                 title = "The same video",
                 playbackId = "entry-\$123"
-            )
+            ),
+            UserFactory.sample()
         )
 
         val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(scrapedVideo.videoId, VideoAccess.Everything)
@@ -97,7 +101,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     providerId = contentPartner.id.value,
                     playbackId = "8889",
                     playbackProvider = "YOUTUBE"
-                )
+                ),
+                UserFactory.sample()
             )
 
         assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
@@ -112,7 +117,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = contentPartner.id.value,
                     playbackId = "1234"
-                )
+                ),
+                UserFactory.sample()
             )
         }
 
@@ -140,7 +146,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoServiceApiFactory.createCreateVideoRequest(
                     providerId = "4321",
                     playbackId = "entry-$123"
-                )
+                ),
+                UserFactory.sample()
             )
         }
     }
@@ -160,7 +167,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
                 playbackId = "entry-\$123"
-            )
+            ),
+            UserFactory.sample()
         )
 
         val video = videoRetrievalService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything)
@@ -177,7 +185,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             playbackProvider = null
         )
 
-        assertThrows<VideoPlaybackNotFound> { createVideo(createRequest) }
+        assertThrows<VideoPlaybackNotFound> {
+            createVideo(createRequest,
+                UserFactory.sample())
+        }
     }
 
     @Test
@@ -195,7 +206,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 videoTypes = listOf("INSTRUCTIONAL_CLIPS"),
                 playbackId = "entry-\$123",
                 analyseVideo = true
-            )
+            ),
+            UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideoAnalysisRequested::class.java)
@@ -215,7 +227,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 providerId = contentPartner.id.value,
                 title = "parabole",
                 playbackId = "1"
-            )
+            ),
+            UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideoCreated::class.java)
@@ -256,7 +269,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             providerId = contentPartner.id.value,
             playbackId = "entry-\$123"
         )
-        val createdVideo = createVideo(createRequest)
+        val createdVideo = createVideo(createRequest, UserFactory.sample())
 
         assertThat(createdVideo.language?.displayLanguage).isEqualTo("Welsh")
     }
@@ -277,6 +290,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 playbackId = "entry-\$123"
             )
 
-        createVideo(createRequest)
+        createVideo(createRequest, UserFactory.sample())
     }
 }

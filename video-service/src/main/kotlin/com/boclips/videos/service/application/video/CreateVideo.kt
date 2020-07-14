@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.service.VideoChannelService
@@ -31,7 +32,7 @@ class CreateVideo(
 ) {
     companion object : KLogging()
 
-    operator fun invoke(createRequest: CreateVideoRequest): Video {
+    operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
         val channel = findChannel(createRequest)
@@ -54,7 +55,7 @@ class CreateVideo(
             )
 
         val createdVideo = try {
-            videoCreationService.create(videoToBeCreated)
+            videoCreationService.create(videoToBeCreated, user)
         } catch (ex: VideoNotCreatedException) {
             throw VideoAssetAlreadyExistsException(ex.video.channel.name, ex.video.videoReference)
         }

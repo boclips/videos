@@ -190,7 +190,7 @@ class CollectionUpdatesConverterTest {
             UserFactory.sample()
         )
 
-        val command = commands.first() as CollectionUpdateCommand.BulkUpdateCollectionVideos
+        val command = commands.first() as CollectionUpdateCommand.ReplaceVideos
         assertThat(command.collectionId).isEqualTo(collectionId)
         assertThat(command.videoIds).containsExactlyInAnyOrder(
             VideoId(firstId),

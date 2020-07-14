@@ -68,7 +68,7 @@ class CollectionUpdatesConverter(val subjectRepository: SubjectRepository) {
                 )
             },
             updateCollectionRequest.videos?.let { videos ->
-                CollectionUpdateCommand.BulkUpdateCollectionVideos(
+                CollectionUpdateCommand.ReplaceVideos(
                     collectionId = collectionId,
                     videoIds = videos.map { VideoId(it) },
                     user = user

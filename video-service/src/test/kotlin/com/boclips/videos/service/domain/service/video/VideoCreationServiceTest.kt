@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +37,8 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
                     value = contentPartner.id.value
                 ),
                 ageRange = UnknownAgeRange
-            )
+            ),
+            UserFactory.sample()
         )
 
         assertThat(video.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 7, curatedManually = false))
@@ -52,7 +54,8 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
                     value = contentPartner.id.value
                 ),
                 videoReference = "video-123"
-            )
+            ),
+            UserFactory.sample()
         )
 
         org.junit.jupiter.api.assertThrows<VideoNotCreatedException> {
@@ -62,7 +65,8 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
                         value = contentPartner.id.value
                     ),
                     videoReference = "video-123"
-                )
+                ),
+                UserFactory.sample()
             )
         }
     }
@@ -73,7 +77,8 @@ class VideoCreationServiceTest : AbstractSpringIntegrationTest() {
         val video = videoCreationService.create(
             TestFactories.createVideo(
                 tags = listOf(TestFactories.createUserTag(label = tagLabel))
-            )
+            ),
+            UserFactory.sample()
         )
 
         assertThat(video.tags.first().tag.label).isEqualTo(tagLabel)

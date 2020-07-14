@@ -42,6 +42,7 @@ import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestMongoProcess
+import com.boclips.videos.service.testsupport.UserFactory
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
@@ -253,7 +254,8 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
                 subjects = subjectIds
-            )
+            ),
+            UserFactory.sample()
         )
 
         fakeEventBus.clearState()

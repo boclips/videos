@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
@@ -24,7 +25,7 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
 
         val newVideoId = saveVideo(title = "dogs eat a lot")
 
-        videoDuplicationService.markDuplicate(oldVideoId, newVideoId)
+        videoDuplicationService.markDuplicate(oldVideoId, newVideoId, UserFactory.sample())
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos?query=dogs").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -41,7 +42,7 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
             title = "dogs eat a lot"
         ).value
 
-        videoDuplicationService.markDuplicate(VideoId(oldVideoId), VideoId(newVideoId))
+        videoDuplicationService.markDuplicate(VideoId(oldVideoId), VideoId(newVideoId), UserFactory.sample())
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${oldVideoId}").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)

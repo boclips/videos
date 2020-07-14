@@ -125,6 +125,25 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
+    inner class ReplaceVideos {
+        @Test
+        fun `can replace a video with a new one`() {
+            val oldVideoId = saveVideo()
+            val newVideoId = saveVideo()
+            val collectionId = saveCollection(owner = "owner@collections.com", videos = listOf(oldVideoId.value))
+
+            assertThat(collectionRepository.find(collectionId)?.videos).containsExactly(oldVideoId)
+
+            collectionRepository.update(CollectionUpdateCommand.ReplaceVideos(
+                collectionId = collectionId,
+                videoIds = listOf(newVideoId),
+                user = UserFactory.sample()
+            ))
+
+            assertThat(collectionRepository.find(collectionId)?.videos).containsExactly(newVideoId)
+        }
+    }
+    @Nested
     inner class ApplyUpdates() {
         @Test
         fun `saves update of legitimate collection owner`() {

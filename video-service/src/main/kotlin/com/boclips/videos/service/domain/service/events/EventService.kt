@@ -186,7 +186,7 @@ class EventService(val eventBus: EventBus) {
                 )
             )
             is CollectionUpdateCommand.AddAttachment -> null
-            is CollectionUpdateCommand.BulkUpdateCollectionVideos -> eventBus.publish(
+            is CollectionUpdateCommand.ReplaceVideos -> eventBus.publish(
                 msg(
                     builder = CollectionVideosBulkChanged.builder()
                         .collectionId(updateCommand.collectionId.value)
