@@ -3,6 +3,7 @@ package com.boclips.videos.service.config
 import com.boclips.videos.service.application.analytics.SaveCollectionInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
+import com.boclips.videos.service.application.analytics.SaveSearchQuerySuggestionsCompletedEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
 import com.boclips.videos.service.domain.service.events.EventService
 import org.springframework.context.annotation.Bean
@@ -29,5 +30,10 @@ class AnalyticsEventContext(private val eventService: EventService) {
     @Bean
     fun saveCollectionInteractedWithEvent(): SaveCollectionInteractedWithEvent {
         return SaveCollectionInteractedWithEvent(eventService)
+    }
+
+    @Bean
+    fun saveSearchSuggestionsCompletedEvent(): SaveSearchQuerySuggestionsCompletedEvent {
+        return SaveSearchQuerySuggestionsCompletedEvent(eventService)
     }
 }

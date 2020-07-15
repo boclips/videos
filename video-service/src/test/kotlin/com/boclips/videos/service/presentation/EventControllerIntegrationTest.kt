@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.collection.CollectionInteractedWith
 import com.boclips.eventbus.events.collection.CollectionInteractionType
+import com.boclips.eventbus.events.searchsuggestions.SearchQueryCompletionsSuggested
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -42,12 +43,14 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val externalUserId = aValidId()
             val organisationId = aValidId()
 
-            usersClient.add(UserResourceFactory.sample(
-                id = userId,
-                organisation = OrganisationResourceFactory.sampleDetails(
-                    id = organisationId
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = userId,
+                    organisation = OrganisationResourceFactory.sampleDetails(
+                        id = organisationId
+                    )
                 )
-            ))
+            )
             organisationsClient.add(
                 OrganisationResourceFactory.sample(
                     id = organisationId,
@@ -85,12 +88,14 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val overrideUserId = aValidId()
             val organisationId = aValidId()
 
-            usersClient.add(UserResourceFactory.sample(
-                id = userId,
-                organisation = OrganisationResourceFactory.sampleDetails(
-                    id = organisationId
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = userId,
+                    organisation = OrganisationResourceFactory.sampleDetails(
+                        id = organisationId
+                    )
                 )
-            ))
+            )
             organisationsClient.add(
                 OrganisationResourceFactory.sample(
                     id = organisationId,
@@ -363,5 +368,30 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val event = fakeEventBus.getEventOfType(CollectionInteractedWith::class.java)
         assertThat(event.url).isEqualTo("http://www.boclips.com")
+    }
+
+    @Test
+    fun `search query suggestions completed event is saved`() {
+        val content = """{
+                    "searchQuery": "bio",
+                    "impressions": ["biodiversity", "biology"],
+                    "componentId": "component-id",
+                    "completionId": "completion-id"
+                    }""".trimMargin()
+
+        mockMvc.perform(
+            post("/v1/events/suggested-search-completions")
+                .asTeacher(email = "teacher@gmail.com")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+            .andExpect(status().isCreated)
+
+        val event = fakeEventBus.getEventOfType(SearchQueryCompletionsSuggested::class.java)
+
+        assertThat(event.searchQuery).isEqualTo("bio")
+        assertThat(event.impressions).isEqualTo(listOf("biodiversity", "biology"))
+        assertThat(event.componentId).isEqualTo("component-id")
+        assertThat(event.completionId).isEqualTo("completion-id")
     }
 }

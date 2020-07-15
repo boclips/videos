@@ -3,16 +3,16 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.application.analytics.SaveCollectionInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
+import com.boclips.videos.service.application.analytics.SaveSearchQuerySuggestionsCompletedEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
-import com.boclips.videos.service.presentation.support.Cookies
+import com.boclips.videos.service.presentation.event.SearchQuerySuggestionsCompletedEvent
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -25,6 +25,7 @@ class EventController(
     private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
     private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
     private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent,
+    private val saveSearchQuerySuggestionsCompletedEvent: SaveSearchQuerySuggestionsCompletedEvent,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -66,5 +67,11 @@ class EventController(
     ): ResponseEntity<Void> {
         saveVideoInteractedWithEvent.execute(videoId, type, getCurrentUser())
         return ResponseEntity(HttpStatus.OK)
+    }
+
+    @PostMapping("/v1/events/suggested-search-completions")
+    fun logSearchQuerySuggestionsCompletedEvent(@RequestBody event: SearchQuerySuggestionsCompletedEvent?): ResponseEntity<Void> {
+        saveSearchQuerySuggestionsCompletedEvent.execute(event, getCurrentUser())
+        return ResponseEntity(HttpStatus.CREATED)
     }
 }

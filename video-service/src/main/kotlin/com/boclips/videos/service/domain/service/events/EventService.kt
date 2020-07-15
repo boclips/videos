@@ -18,6 +18,7 @@ import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.resource.ResourcesSearched
+import com.boclips.eventbus.events.searchsuggestions.SearchQueryCompletionsSuggested
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerEvent
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
@@ -273,6 +274,25 @@ class EventService(val eventBus: EventBus) {
                     .collectionId(collectionId)
                     .subtype(subtype),
                 user
+            )
+        )
+    }
+
+    fun saveSearchQueryCompletionsSuggestedEvent(
+        searchQuery: String,
+        impressions: List<String>,
+        componentId: String,
+        completionId: String,
+        user: User
+    ) {
+        eventBus.publish(
+            msg(
+                builder = SearchQueryCompletionsSuggested.builder()
+                    .searchQuery(searchQuery)
+                    .impressions(impressions)
+                    .componentId(componentId)
+                    .completionId(completionId),
+                user = user
             )
         )
     }

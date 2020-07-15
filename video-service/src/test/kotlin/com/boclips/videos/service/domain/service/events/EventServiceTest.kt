@@ -11,6 +11,7 @@ import com.boclips.eventbus.events.collection.CollectionVisibilityChanged
 import com.boclips.eventbus.events.collection.VideoAddedToCollection
 import com.boclips.eventbus.events.collection.VideoRemovedFromCollection
 import com.boclips.eventbus.events.resource.ResourcesSearched
+import com.boclips.eventbus.events.searchsuggestions.SearchQueryCompletionsSuggested
 import com.boclips.eventbus.events.video.VideoInteractedWith
 import com.boclips.eventbus.events.video.VideoPlayerInteractedWith
 import com.boclips.eventbus.events.video.VideoSegmentPlayed
@@ -415,6 +416,24 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.subtype).isEqualTo("share-to-google-classroom")
         assertThat(event.userId).isEqualTo("user@example.com")
         assertThat(event.payload).isEmpty()
+    }
+
+    @Test
+    fun saveSearchQueryCompletionsSuggested() {
+        eventService.saveSearchQueryCompletionsSuggestedEvent(
+            searchQuery = "bio",
+            impressions = listOf("biodiversity", "biology"),
+            componentId = "component-id",
+            completionId = "completion-id",
+            user = UserFactory.sample()
+        )
+
+        val event = fakeEventBus.getEventOfType(SearchQueryCompletionsSuggested::class.java)
+
+        assertThat(event.searchQuery).isEqualTo("bio")
+        assertThat(event.impressions).containsExactly("biodiversity", "biology")
+        assertThat(event.componentId).isEqualTo("component-id")
+        assertThat(event.completionId).isEqualTo("completion-id")
     }
 
     @Test
