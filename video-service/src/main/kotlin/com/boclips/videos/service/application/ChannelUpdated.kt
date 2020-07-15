@@ -2,14 +2,12 @@ package com.boclips.videos.service.application
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
-import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.infrastructure.search.VideoTypeConverter
 import mu.KLogging
 
 class ChannelUpdated(private val videoRepository: VideoRepository) {
@@ -52,21 +50,11 @@ class ChannelUpdated(private val videoRepository: VideoRepository) {
                         text = contentPartner.legalRestrictions
                     )
                 }
-                val updateContentTypes = contentPartner.details?.contentTypes?.let {
-                    if (it.size == 0) {
-                        return@let null
-                    }
-                    VideoUpdateCommand.ReplaceContentTypes(
-                        videoId = video.videoId,
-                        types = it.map { contentType -> VideoTypeConverter.convert(VideoType.valueOf(contentType)) }
-                    )
-                }
 
                 listOfNotNull(
                     updateContentPartner,
                     updateAgeRanges,
-                    updateLegalRestrictions,
-                    updateContentTypes
+                    updateLegalRestrictions
                 )
             }
         }
