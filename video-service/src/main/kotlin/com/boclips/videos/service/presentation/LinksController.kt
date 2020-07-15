@@ -3,10 +3,10 @@ package com.boclips.videos.service.presentation
 import com.boclips.contentpartner.service.presentation.ageRange.AgeRangeLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContentCategoriesLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
@@ -78,11 +78,13 @@ class LinksController(
                 collectionsLinkBuilder.mySavedCollections(),
                 collectionsLinkBuilder.createCollection(),
 
+                eventsLinkBuilder.createPlaybackEventsLink(),
+                eventsLinkBuilder.createSearchQueryCompletionsSuggestedEventLink(),
+
                 legalRestrictionsLinkBuilder.getAllLink(),
                 contentWarningLinkBuilder.getAllLink(),
                 disciplinesLinkBuilder.disciplines(),
                 tagsLinkBuilder.tags(),
-                eventsLinkBuilder.createPlaybackEventsLink(),
                 ageRangesLinkBuilder.ageRanges(),
                 suggestionLinkBuilder.suggestions(),
 

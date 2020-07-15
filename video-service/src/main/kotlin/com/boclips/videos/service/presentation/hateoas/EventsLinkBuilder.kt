@@ -4,7 +4,6 @@ import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.presentation.EventController
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.stereotype.Component
@@ -34,6 +33,14 @@ class EventsLinkBuilder {
             linkTo(
                 methodOn(EventController::class.java).logPlayerInteractedWithEvent(null)
             ).withRel("createPlayerInteractedWithEvent")
+        )
+    }
+
+    fun createSearchQueryCompletionsSuggestedEventLink(): HateoasLink {
+        return HateoasLink.of(
+            linkTo(
+                methodOn(EventController::class.java).logSearchQuerySuggestionsCompletedEvent(null)
+            ).withRel("createSearchQueryCompletionsSuggestedEvent")
         )
     }
 }
