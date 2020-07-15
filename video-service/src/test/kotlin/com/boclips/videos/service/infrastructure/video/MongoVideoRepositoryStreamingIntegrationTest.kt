@@ -179,6 +179,20 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
     }
 
     @Test
+    fun `stream all by deactivated`() {
+        val video1 = mongoVideoRepository.create(TestFactories.createVideo(deactivated = true))
+        val video2 = mongoVideoRepository.create(TestFactories.createVideo(deactivated = true))
+        mongoVideoRepository.create(TestFactories.createVideo(deactivated = false))
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsDeactivated) {
+            videos = it.toList()
+        }
+
+        assertThat(videos).containsExactlyInAnyOrder(video1, video2)
+    }
+
+    @Test
     fun `update all videos filtered by given subject`() {
         val mathsSubject = TestFactories.createSubject(name = "Maths")
         val englishSubject = TestFactories.createSubject(name = "English")

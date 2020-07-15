@@ -62,6 +62,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .mvcMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)
+            .mvcMatchers(POST, "/v1/admin/actions/clean_deactivated_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(POST, "/v1/admin/actions/classify_videos").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(POST, "/v1/admin/actions/broadcast_videos").hasRole(ROLE.BROADCAST_EVENTS)
             .mvcMatchers(POST, "/v1/admin/actions/broadcast_collections").hasRole(ROLE.BROADCAST_EVENTS)

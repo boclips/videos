@@ -9,6 +9,7 @@ import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,6 +29,7 @@ class AdminController(
     private val broadcastContracts: BroadcastContracts,
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService,
+    private val videoDuplicationService: VideoDuplicationService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -57,6 +59,12 @@ class AdminController(
     @PostMapping("/classify_videos")
     fun postClassifyVideos(@RequestParam contentPartner: String?): ResponseEntity<Void> {
         subjectClassificationService.classifyVideosByContentPartner(contentPartner)
+        return ResponseEntity(HttpStatus.ACCEPTED)
+    }
+
+    @PostMapping("/clean_deactivated_videos")
+    fun cleanDeactivatedVideos(): ResponseEntity<Void> {
+        videoDuplicationService.cleanAllDeactivatedVideos()
         return ResponseEntity(HttpStatus.ACCEPTED)
     }
 

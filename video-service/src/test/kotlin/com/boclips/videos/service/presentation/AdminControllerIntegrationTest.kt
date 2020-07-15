@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
+import com.boclips.eventbus.events.video.CleanUpDeactivatedVideoRequested
 import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -178,5 +179,21 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isForbidden)
 
         assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
+    }
+
+    @Test
+    fun `clean deactivated videos publishes events for deactivated videos`() {
+        val oldVideoId = saveVideo(contentProvider = "TED", title = "Duplicate video")
+        saveVideo(contentProvider = "TED", title = "Duplicate video")
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/v1/admin/actions/clean_deactivated_videos")
+                .asOperator()
+            )
+            .andExpect(status().isAccepted)
+
+        val event = fakeEventBus.getEventOfType(CleanUpDeactivatedVideoRequested::class.java)
+
+        assertThat(event.videoId).isEqualTo(oldVideoId.value)
     }
 }

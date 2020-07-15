@@ -91,6 +91,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             VideoFilter.IsKaltura -> VideoDocument::playback / PlaybackDocument::type eq PlaybackDocument.PLAYBACK_TYPE_KALTURA
             is VideoFilter.HasSubjectId -> VideoDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(filter.subjectId.value))
             is VideoFilter.HasVideoId -> VideoDocument::id `in` filter.videoId.map { ObjectId(it.value) }
+            is VideoFilter.IsDeactivated -> VideoDocument::deactivated eq true
         }
 
         val sequence = Sequence {

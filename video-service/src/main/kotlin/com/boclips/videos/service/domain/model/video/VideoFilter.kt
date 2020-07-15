@@ -11,4 +11,5 @@ sealed class VideoFilter {
     class HasVideoId(vararg val videoId: VideoId): VideoFilter()
     object IsYoutube : VideoFilter()
     object IsKaltura : VideoFilter()
+    object IsDeactivated : VideoFilter()
 }
