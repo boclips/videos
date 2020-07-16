@@ -31,6 +31,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -70,6 +71,7 @@ class VideoController(
     private val tagVideo: TagVideo,
     private val videoToResourceConverter: VideoToResourceConverter,
     private val videoRepository: VideoRepository,
+    private val videosLinkBuilder: VideosLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
     private val getVideoAssets: GetVideoAssets
@@ -149,7 +151,13 @@ class VideoController(
         @PathVariable("id") id: String?,
         @RequestParam(required = false) projection: Projection? = null
     ): ResponseEntity<VideoResource> {
-        return searchVideo.byId(id, getCurrentUser(), projection)
+        val video = searchVideo.byId(id, getCurrentUser(), projection)
+        if (video.deactivated) {
+            return ResponseEntity(HttpHeaders().apply {
+                set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
+            }, HttpStatus.PERMANENT_REDIRECT)
+        }
+        return video
             .let { videoToResourceConverter.convert(it, getCurrentUser()) }
             .let {
                 when (projection) {
@@ -258,7 +266,12 @@ class VideoController(
         @RequestParam thumbnailSecond: Int?,
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
-        return setVideoThumbnail(SetThumbnailRequest.SetThumbnailBySecond(videoId = id, thumbnailSecond = thumbnailSecond)).let { this.getVideo(id) }
+        return setVideoThumbnail(
+            SetThumbnailRequest.SetThumbnailBySecond(
+                videoId = id,
+                thumbnailSecond = thumbnailSecond
+            )
+        ).let { this.getVideo(id) }
     }
 
     @PostMapping(path = ["/v1/videos/{id}/playback"], params = ["playbackId"])
@@ -268,11 +281,11 @@ class VideoController(
         @PathVariable id: String
     ): ResponseEntity<VideoResource> {
         return uploadThumbnailImageToVideo(
-            videoId= id,
+            videoId = id,
             playbackId = playbackId,
             imageStream = thumbnailImage?.inputStream,
             filename = thumbnailImage?.originalFilename
-        ).let {this.getVideo(id)}
+        ).let { this.getVideo(id) }
     }
 
     @DeleteMapping(path = ["/v1/videos/{id}/playback/thumbnail"])

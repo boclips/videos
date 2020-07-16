@@ -6,6 +6,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
@@ -33,7 +34,7 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `get by id only shows any video`() {
+    fun `get by a deactivated id will redirect`() {
         val oldVideoId = saveVideo(
             title = "dogs eat a lot"
         ).value
@@ -45,6 +46,7 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
         videoDuplicationService.markDuplicate(VideoId(oldVideoId), VideoId(newVideoId), UserFactory.sample())
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${oldVideoId}").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isPermanentRedirect)
+            .andExpect(MockMvcResultMatchers.header().string("Location", endsWith("/v1/videos/${newVideoId}")))
     }
 }
