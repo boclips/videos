@@ -65,8 +65,8 @@ class VideoDuplicationService(
         activeVideoId: VideoId,
         user: User = Administrator
     ) {
-        logger.info { "Overriding deactivated video: $oldVideoId with new video: $activeVideoId in all collections" }
         collectionRepository.streamUpdate(CollectionFilter.HasVideoId(oldVideoId), { collection ->
+            logger.info { "Overriding deactivated video: $oldVideoId with new video: $activeVideoId in collection: ${collection.id}" }
             CollectionUpdateCommand.ReplaceVideos(
                 collectionId = collection.id,
                 videoIds = collection.videos.map { if (it == oldVideoId) activeVideoId else it },
