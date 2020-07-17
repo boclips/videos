@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
@@ -11,7 +10,6 @@ import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
-import com.boclips.videos.service.testsupport.asUserWithRoles
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
@@ -421,6 +419,36 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
+    }
+
+    @Test
+    fun `can filter collections by multiple resource types`() {
+        val collectionWithLessonPlan = createCollectionWithTitle("My Collection with lesson guide")
+        val collectionWithActivity = createCollectionWithTitle("My Collection with activity")
+
+        updateCollectionAttachment(
+            collectionId = collectionWithLessonPlan,
+            attachmentType = "LESSON_PLAN",
+            attachmentDescription = "My lesson plan",
+            attachmentURL = "http://www.boclips.com"
+        )
+
+        updateCollectionAttachment(
+            collectionId = collectionWithActivity,
+            attachmentType = "ACTIVITY",
+            attachmentDescription = "My activity",
+            attachmentURL = "http://www.boclips.com"
+        )
+
+        listOf(collectionWithLessonPlan, collectionWithActivity).forEach {
+            updateCollectionToBeDiscoverable(it)
+        }
+
+        mockMvc.perform(
+                get("/v1/collections?resource_types=LESSON_PLAN,ACTIVITY").asTeacher("teacher@gmail.com")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }
 
     @Test

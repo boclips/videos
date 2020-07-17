@@ -32,7 +32,7 @@ class GetCollectionsOfUser(
             ageRangeMin = request.age_range_min,
             ageRangeMax = request.age_range_max,
             ageRange = request.getAgeRanges(),
-            resourceTypes = request.resource_types
+            resourceTypes = request.getResourceTypes()
         )
 
         return collectionRetrievalService.search(assembledQuery, requester)

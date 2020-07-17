@@ -17,11 +17,15 @@ class CollectionFilterRequest(
     val age_range_max: Int? = null,
     val age_range: String? = null,
     val sort_by: String? = null,
-    val resource_types: Set<String>? = null,
+    val resource_types: String? = null,
     val projection: Projection? = Projection.list
 ) {
     fun getAgeRanges(): List<String> {
         return age_range?.split(",") ?: emptyList()
+    }
+
+    fun getResourceTypes(): Set<String> {
+        return resource_types?.split(",")?.toSet() ?: emptySet()
     }
 
     fun getSortKeys(): List<CollectionSortKey> {
