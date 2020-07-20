@@ -2,6 +2,7 @@ package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.infrastructure.ElasticSearchClient
 import com.boclips.search.service.infrastructure.videos.legacy.KGenericContainer
+import io.opentracing.util.GlobalTracer
 import mu.KLogging
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest
 import org.elasticsearch.client.RequestOptions
@@ -40,7 +41,8 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                 host = "localhost",
                 port = container.getMappedPort(httpPort),
                 username = "",
-                password = ""
+                password = "",
+                tracer = GlobalTracer.get()
             )
         }
     }

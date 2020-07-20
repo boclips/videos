@@ -16,12 +16,15 @@ import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
+import io.opentracing.Tracer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
-class SearchContext {
+class SearchContext(
+    private val tracer: Tracer
+) {
     @Bean
     @Profile("!fakes-search")
     fun legacySearchService(solrProperties: SolrProperties): LegacyVideoSearchService {
@@ -70,7 +73,8 @@ class SearchContext {
             host = elasticSearchProperties.host,
             port = elasticSearchProperties.port,
             username = elasticSearchProperties.username,
-            password = elasticSearchProperties.password
+            password = elasticSearchProperties.password,
+            tracer = tracer
         )
     }
 }

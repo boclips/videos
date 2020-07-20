@@ -31,6 +31,7 @@ dependencies {
     compile("io.github.microutils:kotlin-logging:1.4.9")
     compile("org.apache.solr:solr-solrj:$solrVersion")
     compile("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.3")
+    compile("io.opentracing.contrib:opentracing-elasticsearch7-client:0.1.6")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
