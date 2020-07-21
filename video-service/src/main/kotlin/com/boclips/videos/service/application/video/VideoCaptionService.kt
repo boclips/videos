@@ -20,7 +20,8 @@ class VideoCaptionService(
             captionStatus = when (status) {
                 REQUESTED -> CaptionStatus.REQUESTED
                 PROCESSING -> CaptionStatus.PROCESSING
-                AVAILABLE -> CaptionStatus.AVAILABLE
+                HUMAN_GENERATED_AVAILABLE -> CaptionStatus.HUMAN_GENERATED_AVAILABLE
+                AUTO_GENERATED_AVAILABLE -> CaptionStatus.AUTO_GENERATED_AVAILABLE
                 NOT_AVAILABLE -> CaptionStatus.NOT_AVAILABLE
                 else -> CaptionStatus.UNKNOWN
             }

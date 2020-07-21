@@ -123,7 +123,10 @@ class KalturaPlaybackProvider(
     }
 
     override fun requestCaptionsIfNotAvailable(playbackId: PlaybackId) {
-        if (kalturaClient.getCaptionStatus(playbackId.value) == KalturaCaptionManager.CaptionStatus.NOT_AVAILABLE) {
+         val captionStatus = kalturaClient.getCaptionStatus(playbackId.value)
+        if (captionStatus == KalturaCaptionManager.CaptionStatus.NOT_AVAILABLE ||
+            captionStatus == KalturaCaptionManager.CaptionStatus.AUTO_GENERATED_AVAILABLE
+        ) {
             kalturaClient.requestCaption(playbackId.value)
         }
     }
