@@ -45,6 +45,7 @@ class EventConverter {
             .originalDimensions(originalDimensions)
             .assets(assets)
             .releasedOn(video.releasedOn)
+            .promoted(video.promoted ?: false)
             .build()
     }
 
@@ -72,6 +73,7 @@ class EventConverter {
             .isDefault(collection.default)
             .ageRange(toAgeRangePayload(collection.ageRange))
             .bookmarks(collection.bookmarks.map { UserId(it.value) })
+            .promoted(collection.promoted)
             .build()
     }
 

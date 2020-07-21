@@ -442,7 +442,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
-        """.trimIndent()
+            """.trimIndent()
 
             val createdResourceUrl =
                 mockMvc.perform(
@@ -469,21 +469,21 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             val content = """
-            {
-                "providerVideoId": "1",
-                "providerId": "$channelId",
-                "title": "AP title",
-                "description": "AP description",
-                "releasedOn": "2018-12-04T00:00:00",
-                "duration": 100,
-                "legalRestrictions": "none",
-                "keywords": ["k1", "k2"],
-                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
-                "playbackId": "entry-$123",
-                "playbackProvider": "KALTURA",
-                "subjects": ["${subjectId.value}"]
-            }
-        """.trimIndent()
+                {
+                    "providerVideoId": "1",
+                    "providerId": "$channelId",
+                    "title": "AP title",
+                    "description": "AP description",
+                    "releasedOn": "2018-12-04T00:00:00",
+                    "duration": 100,
+                    "legalRestrictions": "none",
+                    "keywords": ["k1", "k2"],
+                    "videoTypes": ["INSTRUCTIONAL_CLIPS"],
+                    "playbackId": "entry-$123",
+                    "playbackProvider": "KALTURA",
+                    "subjects": ["${subjectId.value}"]
+                }
+            """.trimIndent()
 
             val createdResourceUrl =
                 mockMvc.perform(

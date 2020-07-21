@@ -43,7 +43,8 @@ class EventConverterTest {
             types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
             releasedOn = LocalDate.of(1939, 9, 1),
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
-            ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true)
+            ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true),
+            promoted = true
         )
 
         val videoEvent = converter.toVideoPayload(video)
@@ -63,6 +64,7 @@ class EventConverterTest {
         assertThat(videoEvent.assets).hasSize(1)
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
+        assertThat(videoEvent.promoted).isTrue()
     }
 
     @Test
@@ -132,7 +134,8 @@ class EventConverterTest {
             bookmarks = setOf(UserId("bookmarked-user-id")),
             subjects = setOf(TestFactories.createSubject(id = "subject-id", name = "subject name")),
             ageRangeMin = 0,
-            ageRangeMax = 23
+            ageRangeMax = 23,
+            promoted = true
         )
         val nonDiscoverableCollection = TestFactories.createCollection(discoverable = false)
 
@@ -152,6 +155,7 @@ class EventConverterTest {
         assertThat(publicCollectionEvent.bookmarks).containsExactly(com.boclips.eventbus.domain.user.UserId("bookmarked-user-id"))
         assertThat(publicCollectionEvent.createdAt).isEqualTo("2017-11-10T01:02:03Z")
         assertThat(publicCollectionEvent.updatedAt).isEqualTo("2018-11-10T01:02:03Z")
+        assertThat(publicCollectionEvent.promoted).isTrue()
     }
 
     @Test
