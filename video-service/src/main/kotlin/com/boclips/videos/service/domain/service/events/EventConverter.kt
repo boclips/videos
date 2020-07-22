@@ -13,10 +13,12 @@ import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
 import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
+import com.boclips.eventbus.domain.video.VideoTopic as EventVideoTopic
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
@@ -46,6 +48,7 @@ class EventConverter {
             .assets(assets)
             .releasedOn(video.releasedOn)
             .promoted(video.promoted ?: false)
+            .topics(toTopicsPayload(video.topics))
             .build()
     }
 
@@ -107,5 +110,20 @@ class EventConverter {
                 .name(it.name)
                 .build()
         }
+    }
+
+    private fun toTopicsPayload(topics: Set<Topic>): List<EventVideoTopic> {
+        return topics.map {
+            toTopicPayload(it)
+        }
+    }
+
+    private fun toTopicPayload(topic: Topic): EventVideoTopic {
+        return EventVideoTopic.builder()
+            .name(topic.name)
+            .confidence(topic.confidence)
+            .language(topic.language)
+            .parent(topic.parent?.let { toTopicPayload(it) })
+            .build()
     }
 }

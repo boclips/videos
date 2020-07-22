@@ -302,6 +302,20 @@ object TestFactories {
             .build()
     }
 
+    fun createTopic(
+        name: String = "MLK",
+        language: Locale = Locale.UK,
+        confidence: Double = 0.8,
+        parent: Topic? = null
+    ): Topic {
+        return Topic(
+            name = name,
+            language = language,
+            confidence = confidence,
+            parent = parent
+        )
+    }
+
     fun createVideoAnalysedKeyword(
         name: String = "pH"
     ): VideoAnalysedKeyword {
