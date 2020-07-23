@@ -239,6 +239,23 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `returns 200 for valid youtube video as API user`() {
+            mockMvc.perform(get("/v1/videos/$youtubeVideoId").asApiUser())
+                    .andExpect(status().isOk)
+                    .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                    .andExpect(jsonPath("$.id", equalTo(youtubeVideoId)))
+                    .andExpect(jsonPath("$.title", equalTo("elephants took out jobs")))
+                    .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
+                    .andExpect(jsonPath("$.releasedOn", equalTo("2017-02-11")))
+                    .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp2")))
+                    .andExpect(jsonPath("$.playback.id").exists())
+                    .andExpect(jsonPath("$.playback.duration", equalTo("PT8M")))
+                    .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                    .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
+                    .andExpect(jsonPath("$.playback.type", equalTo("YOUTUBE")))
+        }
+
+        @Test
         fun `returns full projection with caption processing data`() {
             fakeKalturaClient.requestCaption("entry-id-123")
 
