@@ -39,8 +39,6 @@ data class StreamPlaybackResource(
     var referenceId: String?,
     @get:JsonView(BoclipsInternalProjection::class)
     val maxResolutionAvailable: Boolean? = null,
-    @get:JsonIgnore
-    val downloadUrl: String? = null,
     override val _links: Map<String, HateoasLink>? = null
 ) : PlaybackResource()
 
@@ -52,4 +50,4 @@ data class YoutubePlaybackResource(
     @get:JsonView(PublicApiProjection::class)
     override var duration: Duration? = null,
     override val _links: Map<String, HateoasLink>? = null
-) : PlaybackResource()
+) : PlaybackResource();
