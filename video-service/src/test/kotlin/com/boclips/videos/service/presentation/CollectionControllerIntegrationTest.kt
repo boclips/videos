@@ -1,6 +1,8 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
@@ -150,6 +152,29 @@ class CollectionControllerIntegrationTest : AbstractCollectionsControllerIntegra
             .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
             .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
             .andReturn()
+    }
+
+    @Test
+    fun `fetching a specific collection with youtube video`() {
+        val collectionId = createCollection("collection 1")
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123" ), title = "a video title").value
+        addVideo(collectionId, videoId)
+
+        mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(collectionId)))
+                .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+                .andExpect(jsonPath("$.title", equalTo("collection 1")))
+                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
+                .andExpect(jsonPath("$.videos[0].title", nullValue()))
+                .andExpect(jsonPath("$.videos[0].description", nullValue()))
+                .andExpect(jsonPath("$.videos[0].playback", nullValue()))
+                .andExpect(jsonPath("$.videos[0].playback.downloadUrl").doesNotExist())
+                .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
+                .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
+                .andReturn()
     }
 
     @Test
