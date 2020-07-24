@@ -137,6 +137,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
             userId = userId,
             accessRulesResource = AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedCollections(
+                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     collectionIds = contractedCollectionIds.toList()
                 )

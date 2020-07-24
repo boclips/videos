@@ -33,10 +33,12 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         createAccessRulesResource(
             "test-user", listOf(
                 AccessRuleResource.IncludedCollections(
+                    id = "access-rule-id",
                     name = "Test Contract",
                     collectionIds = listOf("test-collection-id")
                 ),
                 AccessRuleResource.IncludedVideos(
+                    id = "access-rule-id",
                     name = "Test Contract",
                     videoIds = listOf(videoId)
                 )
@@ -108,6 +110,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 "test-user",
                 listOf(
                     AccessRuleResource.ExcludedVideos(
+                        id = "access-rule-id",
                         name = "bad videos",
                         videoIds = listOf(firstId.value, secondId.value)
                     )
@@ -126,6 +129,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             createAccessRulesResource(
                 "test-user", listOf(
                     AccessRuleResource.ExcludedVideoTypes(
+                        id = "access-rule-id",
                         name = "bad video types",
                         videoTypes = listOf("NEWS")
                     )
@@ -144,6 +148,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 "test-user",
                 listOf(
                     AccessRuleResource.ExcludedVideoTypes(
+                        id = "access-rule-id",
                         name = "bad video types",
                         videoTypes = listOf("UNKNOWN", "NEWS")
                     )
@@ -163,6 +168,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 "test-user",
                 listOf(
                     AccessRuleResource.ExcludedVideoTypes(
+                        id = "access-rule-id",
                         name = "bad video types",
                         videoTypes = listOf("UNKNOWN")
                     )
@@ -181,6 +187,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 "test-user",
                 listOf(
                     AccessRuleResource.ExcludedChannels(
+                        id = "access-rule-id",
                         name = "bad video types",
                         channelIds = listOf("content-partner-1")
                     )
@@ -207,7 +214,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             createAccessRulesResource(
                 "test-user",
                 listOf(
-                    AccessRuleResource.IncludedDistributionMethod(
+                    AccessRuleResource.IncludedDistributionMethods(
+                        id = "access-rule-id",
                         name = "bad video types",
                         distributionMethods = listOf("STREAM", "DOWNLOAD")
                     )
@@ -234,10 +242,12 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             createAccessRulesResource(
                 "test-user", listOf(
                     AccessRuleResource.IncludedVideos(
+                        id = "access-rule-id",
                         name = "good videos",
                         videoIds = listOf(firstId.value)
                     ),
                     AccessRuleResource.ExcludedVideos(
+                        id = "access-rule-id2",
                         name = "bad videos",
                         videoIds = listOf(secondId.value)
                     )
@@ -259,7 +269,10 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `can convert included channel rule to domain`() {
             createAccessRulesResource(
                 "test-user",
-                listOf(AccessRuleResource.IncludedChannels(name = "good channels", channelIds = listOf("123")))
+                listOf(AccessRuleResource.IncludedChannels(
+                    id = "access-rule-id",
+                    name = "good channels",
+                    channelIds = listOf("123")))
             )
 
             val user = UserFactory.sample(id = "test-user")

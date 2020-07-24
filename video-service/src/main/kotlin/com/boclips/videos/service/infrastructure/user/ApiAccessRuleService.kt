@@ -72,7 +72,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
     private fun getVideoAccessRule(accessRules: List<AccessRuleResource>): VideoAccess {
         val videoAccessRules = accessRules.mapNotNull {
             when (it) {
-                is AccessRuleResource.IncludedDistributionMethod -> VideoAccessRule.IncludedDistributionMethods(
+                is AccessRuleResource.IncludedDistributionMethods -> VideoAccessRule.IncludedDistributionMethods(
                     it.distributionMethods.map { method -> DistributionMethod.valueOf(method) }.toSet()
                 )
                 is AccessRuleResource.IncludedVideos -> VideoAccessRule.IncludedIds(

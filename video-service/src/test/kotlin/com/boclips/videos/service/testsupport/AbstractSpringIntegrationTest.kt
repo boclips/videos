@@ -480,6 +480,7 @@ abstract class AbstractSpringIntegrationTest {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideos(
+                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoIds = contractedVideoIds.toList()
                 )
@@ -490,7 +491,9 @@ abstract class AbstractSpringIntegrationTest {
     fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.IncludedDistributionMethod(name = UUID.randomUUID().toString(),
+                AccessRuleResource.IncludedDistributionMethods(
+                    id = "access-rule-id",
+                    name = UUID.randomUUID().toString(),
                     distributionMethods = includedDistributionMethods.map { it.name })
             )
         )
@@ -500,6 +503,7 @@ abstract class AbstractSpringIntegrationTest {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideos(
+                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoIds = excludedVideoIds.toList()
                 )
@@ -510,8 +514,11 @@ abstract class AbstractSpringIntegrationTest {
     fun addAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
-                AccessRuleResource.ExcludedVideoTypes(name = UUID.randomUUID().toString(),
-                    videoTypes = excludedVideoType.map { it.name })
+                AccessRuleResource.ExcludedVideoTypes(
+                    id = "access-rule-id",
+                    name = UUID.randomUUID().toString(),
+                    videoTypes = excludedVideoType.map { it.name }
+                )
             )
         )
     }
@@ -520,6 +527,7 @@ abstract class AbstractSpringIntegrationTest {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedChannels(
+                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     channelIds = excludeContentPartners.toList()
                 )
