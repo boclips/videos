@@ -1,0 +1,51 @@
+{
+  "bool" : {
+    "filter" : [
+      {
+        "terms" : {
+          "types" : [
+            "INSTRUCTIONAL"
+          ],
+          "boost" : 1.0
+        }
+      },
+      {
+        "term" : {
+          "eligibleForStream" : {
+            "value" : true,
+            "boost" : 1.0
+          }
+        }
+      }
+    ],
+    "must_not" : [
+      {
+        "terms" : {
+          "contentPartnerId" : [
+            "CH1"
+          ],
+          "boost" : 1.0
+        }
+      },
+      {
+        "terms" : {
+          "types" : [
+            "STOCK",
+            "NEWS"
+          ],
+          "boost" : 1.0
+        }
+      },
+      {
+        "terms" : {
+          "id" : [
+            "badvid2"
+          ],
+          "boost" : 1.0
+        }
+      }
+    ],
+    "adjust_pure_negative" : true,
+    "boost" : 1.0
+  }
+}

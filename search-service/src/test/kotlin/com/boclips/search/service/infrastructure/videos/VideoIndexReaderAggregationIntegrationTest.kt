@@ -146,6 +146,48 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.getFacetCounts(FacetType.Subjects)).contains(Count(id = "1", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.Subjects)).contains(Count(id = "2", hits = 1))
             }
+
+            @Test
+            fun `access rule constraints are applied for facet count`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", subjects = setOf(
+                                SubjectMetadata(id = "1", name = "French")
+                            ),
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple", subjects = setOf(
+                                SubjectMetadata(id = "2", name = "Maths")
+                            ),
+                            types = listOf(VideoType.STOCK)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "banana apple candy", subjects = setOf(
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            excludedTypes = setOf(VideoType.STOCK)
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                assertThat(results.counts.getFacetCounts(FacetType.Subjects)).hasSize(2)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Subjects)).contains(Count(id = "1", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Subjects)).contains(Count(id = "3", hits = 1))
+            }
+
         }
 
         @Nested

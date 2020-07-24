@@ -1,0 +1,158 @@
+{
+  "bool" : {
+    "must" : [
+      {
+        "bool" : {
+          "should" : [
+            {
+              "match_phrase" : {
+                "title" : {
+                  "query" : "apple",
+                  "slop" : 2,
+                  "zero_terms_query" : "NONE",
+                  "boost" : 10.0
+                }
+              }
+            },
+            {
+              "match_phrase" : {
+                "title.unstemmed" : {
+                  "query" : "apple",
+                  "slop" : 2,
+                  "zero_terms_query" : "NONE",
+                  "boost" : 10.0
+                }
+              }
+            },
+            {
+              "match_phrase" : {
+                "description" : {
+                  "query" : "apple",
+                  "slop" : 1,
+                  "zero_terms_query" : "NONE",
+                  "boost" : 1.0
+                }
+              }
+            },
+            {
+              "multi_match" : {
+                "query" : "apple",
+                "fields" : [
+                  "description^1.0",
+                  "description.unstemmed^1.0",
+                  "keywords^1.0",
+                  "title^1.0",
+                  "title.unstemmed^1.0",
+                  "transcript^1.0",
+                  "transcript.unstemmed^1.0"
+                ],
+                "type" : "most_fields",
+                "operator" : "OR",
+                "slop" : 0,
+                "fuzziness" : "0",
+                "prefix_length" : 0,
+                "max_expansions" : 50,
+                "minimum_should_match" : "75%",
+                "zero_terms_query" : "NONE",
+                "auto_generate_synonyms_phrase_query" : true,
+                "fuzzy_transpositions" : true,
+                "boost" : 1.0
+              }
+            },
+            {
+              "term" : {
+                "contentProvider" : {
+                  "value" : "apple",
+                  "boost" : 1000.0
+                }
+              }
+            },
+            {
+              "match_phrase" : {
+                "subjectNames" : {
+                  "query" : "apple",
+                  "slop" : 0,
+                  "zero_terms_query" : "NONE",
+                  "boost" : 1000.0
+                }
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "minimum_should_match" : "1",
+          "boost" : 1.0
+        }
+      },
+      {
+        "boosting" : {
+          "positive" : {
+            "boosting" : {
+              "positive" : {
+                "bool" : {
+                  "adjust_pure_negative" : true,
+                  "boost" : 1.0
+                }
+              },
+              "negative" : {
+                "bool" : {
+                  "must_not" : [
+                    {
+                      "terms" : {
+                        "types" : [
+                          "INSTRUCTIONAL"
+                        ],
+                        "boost" : 1.0
+                      }
+                    }
+                  ],
+                  "adjust_pure_negative" : true,
+                  "boost" : 1.0
+                }
+              },
+              "negative_boost" : 0.4,
+              "boost" : 1.0
+            }
+          },
+          "negative" : {
+            "bool" : {
+              "adjust_pure_negative" : true,
+              "boost" : 1.0
+            }
+          },
+          "negative_boost" : 0.5,
+          "boost" : 1.0
+        }
+      }
+    ],
+    "filter" : [
+      {
+        "terms" : {
+          "types" : [
+            "INSTRUCTIONAL"
+          ],
+          "boost" : 1.0
+        }
+      },
+      {
+        "term" : {
+          "eligibleForStream" : {
+            "value" : true,
+            "boost" : 1.0
+          }
+        }
+      }
+    ],
+    "must_not" : [
+      {
+        "terms" : {
+          "types" : [
+            "STOCK"
+          ],
+          "boost" : 1.0
+        }
+      }
+    ],
+    "adjust_pure_negative" : true,
+    "boost" : 1.0
+  }
+}

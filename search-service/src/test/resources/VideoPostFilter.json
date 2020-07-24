@@ -75,52 +75,6 @@
         "bool" : {
           "should" : [
             {
-              "match_phrase" : {
-                "types" : {
-                  "query" : "INSTRUCTIONAL",
-                  "slop" : 0,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
-              }
-            },
-            {
-              "match_phrase" : {
-                "types" : {
-                  "query" : "STOCK",
-                  "slop" : 0,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
-              }
-            }
-          ],
-          "adjust_pure_negative" : true,
-          "boost" : 1.0
-        }
-      },
-      {
-        "bool" : {
-          "must_not" : [
-            {
-              "match_phrase" : {
-                "types" : {
-                  "query" : "INSTRUCTIONAL",
-                  "slop" : 0,
-                  "zero_terms_query" : "NONE",
-                  "boost" : 1.0
-                }
-              }
-            }
-          ],
-          "adjust_pure_negative" : true,
-          "boost" : 1.0
-        }
-      },
-      {
-        "bool" : {
-          "should" : [
-            {
               "terms" : {
                 "attachmentTypes" : [
                   "ACTIVITY"

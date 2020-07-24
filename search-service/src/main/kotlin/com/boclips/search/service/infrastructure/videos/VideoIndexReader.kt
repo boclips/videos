@@ -47,11 +47,11 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
         val query = SearchSourceBuilder()
             .apply {
                 query(EsVideoQuery().buildQuery(videoQuery))
-                postFilter(allCriteria(videoQuery))
                 aggregation(aggregateSubjects(videoQuery))
                 aggregation(aggregateAgeRanges(videoQuery))
                 aggregation(aggregateDuration(videoQuery))
                 aggregation(aggregateAttachmentTypes(videoQuery))
+                postFilter(allCriteria(videoQuery))
                 if (videoQuery.sort.isNotEmpty()) {
                     videoQuery.sort.forEach {
                         applySort(it)

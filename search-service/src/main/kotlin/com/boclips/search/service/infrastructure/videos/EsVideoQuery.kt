@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.IndexConfiguration
 import com.boclips.search.service.infrastructure.common.HasAgeRange
+import com.boclips.search.service.infrastructure.videos.AccessRulesFilter.Companion.buildAccessRulesFilter
 import org.elasticsearch.common.unit.Fuzziness
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.BoostingQueryBuilder
@@ -19,6 +20,9 @@ import org.elasticsearch.script.ScriptType
 class EsVideoQuery {
     fun buildQuery(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders.boolQuery()
+            .apply {
+                buildAccessRulesFilter(this, videoQuery)
+            }
             .apply {
                 if (videoQuery.phrase.isNotBlank()) {
                     must(
