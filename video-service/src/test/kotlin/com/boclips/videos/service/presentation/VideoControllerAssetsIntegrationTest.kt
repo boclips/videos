@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -38,12 +39,15 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can fetch a video asset`() {
-        fakeKalturaClient.createCaptionForVideo(
-            "entry-id-123", CaptionAsset.builder().fileType(CaptionFormat.WEBVTT).build(), "what a caption!"
-        )
+    fun `can fetch a video asset without a caption`() {
 
-        val contentAsByteArray = mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
+        val content = """
+            {
+                "captions": false
+            }
+        """.trimIndent()
+
+        val contentAsByteArray = mockMvc.perform(post("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee().content(content))
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/zip"))
             .andExpect(
@@ -53,6 +57,32 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andReturn().response.contentAsByteArray
+
+        assertThat(contentAsByteArray).isNotEmpty()
+    }
+
+    @Test
+    fun `can fetch a video asset with a caption`() {
+        fakeKalturaClient.createCaptionForVideo(
+                "entry-id-123", CaptionAsset.builder().fileType(CaptionFormat.WEBVTT).build(), "what a caption!"
+        )
+
+        val content = """
+            {
+                "captions": true
+            }
+        """.trimIndent()
+
+        val contentAsByteArray = mockMvc.perform(post("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee().content(content))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType("application/zip"))
+                .andExpect(
+                        header().string(
+                                "Content-Disposition",
+                                "attachment; filename=\"6-little-horses-a-beautiful-cow.zip\""
+                        )
+                )
+                .andReturn().response.contentAsByteArray
 
         assertThat(contentAsByteArray).isNotEmpty()
     }

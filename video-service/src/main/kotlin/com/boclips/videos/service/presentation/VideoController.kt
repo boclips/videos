@@ -1,12 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.CreateVideoRequest
-import com.boclips.videos.api.request.video.RateVideoRequest
-import com.boclips.videos.api.request.video.SetThumbnailRequest
-import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
-import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.request.video.*
 import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
@@ -336,6 +331,6 @@ class VideoController(
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
-    @GetMapping(value = ["/v1/videos/{id}/assets"])
-    fun getAssets(@PathVariable("id") videoId: String) = getVideoAssets(videoId, getCurrentUser())
+    @PostMapping("/v1/videos/{id}/assets")
+    fun getAssets(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) = getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
 }

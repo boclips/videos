@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.request.video.VideoAssetRequest
 import com.boclips.videos.service.application.video.exceptions.VideoCaptionNotFound
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -31,10 +32,10 @@ class GetVideoAssets(
                 .replace(Regex("[\\s]+"), "-")
     }
 
-    operator fun invoke(videoId: String, user: User): ResponseEntity<StreamingResponseBody> {
+    operator fun invoke(videoId: String, user: User, videoAssetRequest: VideoAssetRequest): ResponseEntity<StreamingResponseBody> {
         searchVideo.byId(videoId, user).let { video ->
             validateVideoIsDownloadable(video)
-            val captions = getDefaultCaptions(video)
+            val captions = videoAssetRequest.let { if (it.captions == true) getDefaultCaptions(video) else null  }
             return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"${buildFilename(video.title)}.zip\"")
                 .contentType(MediaType("application", "zip"))
@@ -63,16 +64,18 @@ class GetVideoAssets(
         }
     }
 
-    fun writeCompressedContent(outputStream: OutputStream, video: Video, caption: Caption) {
+    fun writeCompressedContent(outputStream: OutputStream, video: Video, caption: Caption?) {
+        var fileName = buildFilename(video.title)
         ZipOutputStream(outputStream).use {
-            it.writeEntry(buildFilename(video.title).plus(".${caption.format.getFileExtension()}")) { os ->
-                os.write(caption.content.toByteArray())
+            if(caption !== null){
+                fileName = fileName.plus(".${caption.format.getFileExtension()}")
+                it.writeEntry(fileName) { os ->
+                    os.write(caption.content.toByteArray())
+                }
             }
-
             it.writeEntry(buildFilename(video.title).plus(".${playbackProvider.getExtensionForAsset(video.playback.id)}")) { os ->
                 playbackProvider.downloadHighestResolutionVideo(video.playback.id, os)
             }
-
         }
     }
 
