@@ -89,19 +89,24 @@ class VideoControllerAssetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `404 if no video asset`() {
-        mockMvc.perform(get("/v1/videos/non-existent-video/assets").asBoclipsEmployee())
+        val content = """
+            {
+            "captions": false
+            }
+        """.trimIndent()
+        mockMvc.perform(post("/v1/videos/non-existent-video/assets").asBoclipsEmployee().content(content))
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun `404 if no video captions`() {
-        mockMvc.perform(get("/v1/videos/$kalturaVideoId/assets").asBoclipsEmployee())
-            .andExpect(status().isNotFound)
-    }
 
     @Test
     fun `404 for non boclips hosted videos`() {
-        mockMvc.perform(get("/v1/videos/$youtubeVideoId/assets").asBoclipsEmployee())
+        val content = """
+            {
+            "captions": false
+            }
+        """.trimIndent()
+        mockMvc.perform(post("/v1/videos/$youtubeVideoId/assets").asBoclipsEmployee().content(content))
             .andExpect(status().isNotFound)
     }
 }
