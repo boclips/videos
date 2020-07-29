@@ -93,6 +93,17 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `find by query`() {
+        val subjectOne = mongoSubjectRepository.create(name = "Art History")
+        val subjectTwo = mongoSubjectRepository.create(name = "European History")
+        mongoSubjectRepository.create(name = "Art")
+
+        val retrievedSubjects = mongoSubjectRepository.findByQuery("his")
+
+        assertThat(retrievedSubjects).containsExactly(subjectOne, subjectTwo)
+    }
+
+    @Test
     fun `update a name of a subject`() {
         val subject = mongoSubjectRepository.create(name = "French")
 

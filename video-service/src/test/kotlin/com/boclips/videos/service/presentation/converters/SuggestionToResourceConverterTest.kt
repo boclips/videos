@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.testsupport.SuggestionFactory
+import com.boclips.videos.service.testsupport.TestFactories.createSubject
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,11 +9,19 @@ import org.junit.jupiter.api.Test
 class SuggestionToResourceConverterTest {
     @Test
     fun `convert suggestions`() {
-        val suggestions = SuggestionFactory.create(listOf("Ted", "Crash Course Biology"))
+        val subjectOne = createSubject(name = "Biology")
+        val subjectTwo = createSubject(name = "Biological Sciences")
+        val suggestions = SuggestionFactory.create(channels = listOf("Ted", "Crash Course Biology"), subjects = listOf(subjectOne, subjectTwo))
 
         val resource = SuggestionToResourceConverter(mock()).convert(query = "ted", suggestions = suggestions)
 
         assertThat(resource.channels[0].name).isEqualTo("Ted")
         assertThat(resource.channels[1].name).isEqualTo("Crash Course Biology")
+
+        assertThat(resource.subjects[0].name).isEqualTo(subjectOne.name)
+        assertThat(resource.subjects[1].name).isEqualTo(subjectTwo.name)
+
+        assertThat(resource.subjects[0].id).isEqualTo(subjectOne.id.value)
+        assertThat(resource.subjects[1].id).isEqualTo(subjectTwo.id.value)
     }
 }

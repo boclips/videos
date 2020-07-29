@@ -143,8 +143,8 @@ class ApplicationContext(
     )
 
     @Bean
-    fun suggestSearchQuery(channelRepository: ChannelRepository): FindSuggestions =
-        FindSuggestions(channelRepository)
+    fun suggestSearchQuery(channelRepository: ChannelRepository, subjectRepository: SubjectRepository): FindSuggestions =
+        FindSuggestions(channelRepository, subjectRepository)
 
     @Bean
     fun createVideo(

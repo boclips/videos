@@ -12,7 +12,9 @@ import org.litote.kmongo.`in`
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.regex
 import org.litote.kmongo.set
+import java.util.regex.Pattern
 
 class MongoSubjectRepository(
     private val mongoClient: MongoClient
@@ -47,6 +49,14 @@ class MongoSubjectRepository(
             .findOne(SubjectDocument::name eq name) ?: return null
 
         return toSubject(document)
+    }
+
+    override fun findByQuery(query: String): List<Subject> {
+        return getSubjectCollection().find(
+            SubjectDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
+        )
+            .map(this::toSubject)
+            .toList()
     }
 
     override fun create(name: String): Subject {

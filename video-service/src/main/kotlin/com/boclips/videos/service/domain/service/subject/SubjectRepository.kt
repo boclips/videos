@@ -10,6 +10,7 @@ interface SubjectRepository {
     fun findByIds(ids: Iterable<String>): List<Subject>
     fun findByOrderedIds(ids: Iterable<String>): List<Subject>
     fun findByName(name: String): Subject?
+    fun findByQuery(query: String): List<Subject>
     fun create(name: String): Subject
     fun delete(id: SubjectId)
     fun update(updateCommand: SubjectUpdateCommand): Subject

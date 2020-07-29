@@ -15,19 +15,24 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun `provides suggestions for channels names`() {
-        saveChannel(name = "TED")
+    fun `provides suggestions for channels and subjects`() {
+        saveChannel(name = "The History Channel")
         saveChannel(name = "TED-Ed")
-        saveChannel(name = "BBC")
+        saveChannel(name = "We Love History")
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=ted").asTeacher())
+        val subjectOne = saveSubject(name = "History")
+        val subjectTwo = saveSubject(name = "Art History")
+        saveSubject(name = "Mathematics")
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=his").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.suggestionTerm", equalTo("ted")))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.suggestionTerm", equalTo("his")))
             .andExpect(MockMvcResultMatchers.jsonPath("$.channels", hasSize<String>(2)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.subjects", hasSize<String>(2)))
             .andExpect(
                 MockMvcResultMatchers.jsonPath(
                     "$.channels[0].name",
-                    equalTo("TED")
+                    equalTo("The History Channel")
                 )
             )
             .andExpect(
@@ -37,7 +42,35 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 MockMvcResultMatchers.jsonPath(
                     "$.channels[1].name",
-                    equalTo("TED-Ed")
+                    equalTo("We Love History")
+                )
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath(
+                    "$.subjects[0].name",
+                    equalTo(subjectOne.name)
+                )
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath(
+                    "$.subjects[0].id",
+                    equalTo(subjectOne.id.value)
+                )
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("$.subjects[0]._links.searchVideos")
+                    .exists()
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath(
+                    "$.subjects[1].name",
+                    equalTo(subjectTwo.name)
+                )
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath(
+                    "$.subjects[1].id",
+                    equalTo(subjectTwo.id.value)
                 )
             )
     }
