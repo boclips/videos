@@ -32,10 +32,14 @@ class GetVideoAssets(
                 .replace(Regex("[\\s]+"), "-")
     }
 
-    operator fun invoke(videoId: String, user: User, videoAssetRequest: VideoAssetRequest): ResponseEntity<StreamingResponseBody> {
+    operator fun invoke(
+        videoId: String,
+        user: User,
+        videoAssetRequest: VideoAssetRequest
+    ): ResponseEntity<StreamingResponseBody> {
         searchVideo.byId(videoId, user).let { video ->
             validateVideoIsDownloadable(video)
-            val captions = videoAssetRequest.let { if (it.captions == true) getDefaultCaptions(video) else null  }
+            val captions = videoAssetRequest.let { if (it.captions == true) getDefaultCaptions(video) else null }
             return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"${buildFilename(video.title)}.zip\"")
                 .contentType(MediaType("application", "zip"))
@@ -67,7 +71,7 @@ class GetVideoAssets(
     fun writeCompressedContent(outputStream: OutputStream, video: Video, caption: Caption?) {
         var fileName = buildFilename(video.title)
         ZipOutputStream(outputStream).use {
-            if(caption !== null){
+            if (caption !== null) {
                 fileName = fileName.plus(".${caption.format.getFileExtension()}")
                 it.writeEntry(fileName) { os ->
                     os.write(caption.content.toByteArray())

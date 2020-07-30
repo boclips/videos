@@ -5,7 +5,6 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Caption
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.VideoId
 
@@ -35,11 +34,7 @@ class CaptionService(
     fun requestCaption(videoId: VideoId) {
         videoRepository.find(videoId)?.let { video ->
             (video.playback as? VideoPlayback.StreamPlayback)?.let {
-                if (it.hasOriginalOrFHDResolution()) {
-                    playbackRepository.requestCaptions(playbackId = video.playback.id)
-                } else {
-                    throw InsufficientVideoResolutionException(videoId)
-                }
+                playbackRepository.requestCaptions(playbackId = video.playback.id)
             } ?: throw UnsupportedCaptionsException(video)
         } ?: throw VideoNotFoundException(videoId)
     }

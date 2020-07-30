@@ -3,17 +3,13 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.kalturaclient.flavorAsset.Asset
-import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat.SRT
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
@@ -161,18 +157,6 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         captionService.requestCaption(videoId)
 
         assertThat(kalturaClient.getCaptionStatus("playback-id")).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
-    }
-
-    @Test
-    fun `throws when attempting to request captions for a non-original or low-res video`() {
-        val videoId = saveVideo(
-            height = 1080,
-            assets = setOf(KalturaFactories.createKalturaAsset(height = 100)),
-            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
-        )
-
-        assertThrows<InsufficientVideoResolutionException> {
-            captionService.requestCaption(videoId) }
     }
 
     @Test
