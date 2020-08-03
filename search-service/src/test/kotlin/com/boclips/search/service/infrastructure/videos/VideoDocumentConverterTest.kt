@@ -80,7 +80,8 @@ class VideoDocumentConverterTest {
                 attachmentTypes = setOf("ACTIVITY"),
                 deactivated = false,
                 types = listOf("NEWS"),
-                ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]")
+                ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]"),
+                isVoiced = null
             )
         )
     }
@@ -141,7 +142,8 @@ class VideoDocumentConverterTest {
             attachmentTypes = emptySet(),
             deactivated = false,
             types = listOf(VideoType.INSTRUCTIONAL),
-            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+            isVoiced = false
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -173,7 +175,8 @@ class VideoDocumentConverterTest {
                 eligibleForDownload = true,
                 attachmentTypes = emptySet(),
                 deactivated = false,
-                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+                isVoiced = false
             )
         )
     }
@@ -206,7 +209,8 @@ class VideoDocumentConverterTest {
             attachmentTypes = emptySet(),
             deactivated = false,
             types = listOf(VideoType.INSTRUCTIONAL),
-            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+            isVoiced = null
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

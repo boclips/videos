@@ -32,7 +32,8 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(ELIGIBLE_FOR_DOWNLOAD) val eligibleForDownload: Boolean?,
     @param:JsonProperty(ATTACHMENT_TYPES) val attachmentTypes: Set<String>?,
     @param:JsonProperty(DEACTIVATED) val deactivated: Boolean,
-    @param:JsonProperty(INGESTED_AT) val ingestedAt: ZonedDateTime?
+    @param:JsonProperty(INGESTED_AT) val ingestedAt: ZonedDateTime?,
+    @param:JsonProperty(IS_VOICED) val isVoiced: Boolean?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"
@@ -58,5 +59,6 @@ data class VideoDocument @JsonCreator constructor(
         const val ATTACHMENT_TYPES = "attachmentTypes"
         const val DEACTIVATED = "deactivated"
         const val INGESTED_AT = "ingestedAt"
+        const val IS_VOICED = "isVoiced"
     }
 }

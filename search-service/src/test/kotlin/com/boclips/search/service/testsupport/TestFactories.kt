@@ -36,7 +36,8 @@ object SearchableVideoMetadataFactory {
         attachmentTypes: Set<String> = emptySet(),
         deactivated: Boolean = false,
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
-        ingestedAt: ZonedDateTime = ZonedDateTime.now()
+        ingestedAt: ZonedDateTime = ZonedDateTime.now(),
+        isVoiced: Boolean? = null
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -60,7 +61,8 @@ object SearchableVideoMetadataFactory {
         attachmentTypes = attachmentTypes,
         deactivated = deactivated,
         types = types,
-        ingestedAt = ingestedAt
+        ingestedAt = ingestedAt,
+        isVoiced = isVoiced
     )
 }
 
@@ -100,7 +102,8 @@ object TestFactories {
             attachmentTypes = emptySet(),
             deactivated = false,
             types = listOf("NEWS"),
-            ingestedAt = ingestDate
+            ingestedAt = ingestDate,
+            isVoiced = null
         )
     }
 }

@@ -26,5 +26,6 @@ data class VideoMetadata(
     val eligibleForDownload: Boolean,
     val attachmentTypes: Set<String>?,
     val deactivated: Boolean,
-    val ingestedAt: ZonedDateTime
+    val ingestedAt: ZonedDateTime,
+    val isVoiced: Boolean?
 )

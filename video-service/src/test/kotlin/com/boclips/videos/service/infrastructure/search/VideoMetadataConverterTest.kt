@@ -77,6 +77,7 @@ class VideoMetadataConverterTest {
                 durationSeconds = 10,
                 source = SourceType.YOUTUBE,
                 transcript = "a great transcript",
+                isVoiced = null,
                 ageRangeMin = 5,
                 ageRangeMax = 11,
                 subjects = SubjectsMetadata(
