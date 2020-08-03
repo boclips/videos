@@ -8,11 +8,12 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 
 class CreateVideoRequestToVideoConverter {
     fun convert(
@@ -44,8 +45,10 @@ class CreateVideoRequestToVideoConverter {
                 items = subjects.toSet()
             ),
             topics = emptySet(),
-            language = createVideoRequest.language?.let { Locale.forLanguageTag(it) },
-            transcript = null,
+            voice = Voice.UnknownVoice(
+                language = createVideoRequest.language?.let { Locale.forLanguageTag(it) },
+                transcript = null
+            ),
             ratings = emptyList(),
             tags = emptyList(),
             promoted = null,

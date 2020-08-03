@@ -155,7 +155,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
             val video = videoRepository.find(videoId)!!
 
-            assertThat(video.language).isEqualTo(Locale.ITALY)
+            assertThat(video.voice.language).isEqualTo(Locale.ITALY)
         }
 
         @Test
@@ -171,7 +171,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
             val video = videoRepository.find(videoId)!!
 
-            assertThat(video.transcript).isEqualTo("bla bla bla")
+            assertThat(video.voice.transcript).isEqualTo("bla bla bla")
         }
 
         @Test
@@ -241,7 +241,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             fakeEventBus.publish(videoAnalysed)
 
             val video = videoRepository.find(videoId)!!
-            assertThat(video.language?.isO3Language).isEqualTo(Locale.CANADA.isO3Language)
+            assertThat(video.voice.language?.isO3Language).isEqualTo(Locale.CANADA.isO3Language)
         }
     }
 }

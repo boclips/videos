@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
 import com.boclips.videos.service.infrastructure.video.SourceDocument
@@ -12,7 +13,8 @@ import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 object VideoDocumentConverter {
     fun toVideoDocument(video: Video): VideoDocument {
@@ -32,8 +34,8 @@ object VideoDocumentConverter {
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             ingestedAt = video.ingestedAt.toString(),
             legalRestrictions = video.legalRestrictions,
-            language = video.language?.toLanguageTag(),
-            transcript = video.transcript,
+            language = video.voice.language?.toLanguageTag(),
+            transcript = video.voice.transcript,
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
@@ -73,8 +75,10 @@ object VideoDocumentConverter {
             ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) }
                 ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
             legalRestrictions = document.legalRestrictions,
-            language = document.language?.let(Locale::forLanguageTag),
-            transcript = document.transcript,
+            voice = Voice.UnknownVoice(
+                language = document.language?.let(Locale::forLanguageTag),
+                transcript = document.transcript
+            ),
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
             ageRange = AgeRange.of(
                 min = document.ageRangeMin,

@@ -142,7 +142,7 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
         val updatedVideo = videoRepository.find(video)
 
-        assertThat(updatedVideo?.transcript).isEqualTo(
+        assertThat(updatedVideo?.voice?.transcript).isEqualTo(
             """
                         We're quite content to be the odd<br>browser out.
                         We don't have a fancy stock abbreviation <br>to go alongside our name in the press.

@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import java.util.Locale
 
 data class Video(
     val videoId: VideoId,
@@ -26,8 +25,7 @@ data class Video(
     val legalRestrictions: String,
     val subjects: VideoSubjects,
     val topics: Set<Topic>,
-    val language: Locale?,
-    val transcript: String?,
+    val voice: Voice,
     val ageRange: AgeRange,
     val ratings: List<UserRating>,
     val tags: List<UserTag>,
@@ -54,7 +52,7 @@ data class Video(
         ratings.any { it.userId == user }
 
     fun hasTranscript(): Boolean {
-        return this.transcript != null
+        return this.voice.transcript != null
     }
 
     override fun toString(): String {

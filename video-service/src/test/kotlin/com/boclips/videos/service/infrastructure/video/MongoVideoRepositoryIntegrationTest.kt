@@ -434,7 +434,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.language).isEqualTo(Locale.GERMAN)
+        assertThat(updatedAsset!!.voice.language).isEqualTo(Locale.GERMAN)
     }
 
     @Test
@@ -445,7 +445,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.transcript).isEqualTo("bla bla bla")
+        assertThat(updatedAsset!!.voice.transcript).isEqualTo("bla bla bla")
     }
 
     @Test

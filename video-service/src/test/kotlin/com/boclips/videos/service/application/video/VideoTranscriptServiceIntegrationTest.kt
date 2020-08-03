@@ -22,6 +22,6 @@ class VideoTranscriptServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         fakeEventBus.publish(transcriptCreated)
 
-        assertThat(videoRepository.find(videoId)!!.transcript).isEqualTo("some transcripts")
+        assertThat(videoRepository.find(videoId)!!.voice.transcript).isEqualTo("some transcripts")
     }
 }

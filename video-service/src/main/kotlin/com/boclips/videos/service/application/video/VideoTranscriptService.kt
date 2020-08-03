@@ -20,11 +20,7 @@ class VideoTranscriptService(val videoRepository: VideoRepository) {
         val videoId = VideoId(value = rawVideoId)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
-        if (video.transcript == null) {
-            throw VideoTranscriptNotFound(videoId)
-        }
-
-        return video.transcript
+        return video.voice.transcript ?: throw VideoTranscriptNotFound(videoId)
     }
 
     @BoclipsEventListener

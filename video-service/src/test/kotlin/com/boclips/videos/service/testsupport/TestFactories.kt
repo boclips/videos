@@ -53,6 +53,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
@@ -125,8 +126,10 @@ object TestFactories {
                 items = subjects,
                 setManually = subjectsSetManually
             ),
-            language = language,
-            transcript = transcript,
+            voice = Voice.UnknownVoice(
+                language = language,
+                transcript = transcript
+            ),
             topics = topics,
             ageRange = ageRange,
             channel = channel,

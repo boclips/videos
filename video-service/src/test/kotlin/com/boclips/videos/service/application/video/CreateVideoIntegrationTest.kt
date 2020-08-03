@@ -271,7 +271,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
         val createdVideo = createVideo(createRequest, UserFactory.sample())
 
-        assertThat(createdVideo.language?.displayLanguage).isEqualTo("Welsh")
+        assertThat(createdVideo.voice.language?.displayLanguage).isEqualTo("Welsh")
     }
 
     private fun createAVideo(title: String) {
