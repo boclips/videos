@@ -87,6 +87,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             legalRestrictions = createVideoRequest.legalRestrictions,
             ageRange = AgeRangeResource(min = createVideoRequest.ageRangeMin, max = createVideoRequest.ageRangeMax),
             channelVideoId = createVideoRequest.providerVideoId,
+            isVoiced = createVideoRequest.isVoiced,
             _links = null
         )
 
