@@ -1,12 +1,12 @@
 package com.boclips.videos.api.request
 
 import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
-import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
+import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
@@ -33,13 +33,14 @@ class VideoServiceApiFactory {
             releasedOn: LocalDate? = LocalDate.now(),
             legalRestrictions: String? = "None",
             keywords: List<String>? = listOf("k1", "k2"),
-            videoTypes: List<String>?  = listOf("NEWS"),
+            videoTypes: List<String>? = listOf("NEWS"),
             playbackId: String? = "123",
             playbackProvider: String? = "KALTURA",
             analyseVideo: Boolean = false,
             subjects: Set<String> = setOf(),
             youtubeChannelId: String = "1234",
-            language: String? = "cym"
+            language: String? = "cym",
+            isVoiced: Boolean? = null
         ) = CreateVideoRequest(
             providerId = providerId,
             providerVideoId = providerVideoId,
@@ -54,7 +55,8 @@ class VideoServiceApiFactory {
             analyseVideo = analyseVideo,
             subjects = subjects,
             youtubeChannelId = youtubeChannelId,
-            language = language
+            language = language,
+            isVoiced = isVoiced
         )
 
         @JvmStatic
@@ -106,7 +108,10 @@ class VideoServiceApiFactory {
             awards: String? = null,
             notes: String? = null,
             language: String? = null,
-            ingest: IngestDetailsResource? = IngestDetailsResource(type = IngestType.YOUTUBE, playlistIds = listOf("yt-id")),
+            ingest: IngestDetailsResource? = IngestDetailsResource(
+                type = IngestType.YOUTUBE,
+                playlistIds = listOf("yt-id")
+            ),
             deliveryFrequency: Period? = null,
             oneLineDescription: String? = null,
             marketingInformation: MarketingInformationRequest? = null,

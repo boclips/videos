@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createUserTag
@@ -152,7 +153,12 @@ class VideosLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.DOWNLOAD_TRANSCRIPT)
 
         val videoId = aValidId()
-        val link = videosLinkBuilder.transcriptLink(createVideo(videoId = videoId, transcript = "hi"))
+        val link = videosLinkBuilder.transcriptLink(
+            createVideo(
+                videoId = videoId,
+                voice = Voice.UnknownVoice(language = null, transcript = "hi")
+            )
+        )
 
         assertThat(link).isNotNull
 
@@ -168,7 +174,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = aValidId(),
-                transcript = null
+                voice = Voice.UnknownVoice(language = null, transcript = null)
             )
         )
 
@@ -178,7 +184,12 @@ class VideosLinkBuilderTest {
     @Test
     fun `transcript link returns a link when not authenticated`() {
         val videoId = aValidId()
-        val link = videosLinkBuilder.transcriptLink(createVideo(videoId = videoId, transcript = "hi"))
+        val link = videosLinkBuilder.transcriptLink(
+            createVideo(
+                videoId = videoId,
+                voice = Voice.UnknownVoice(language = null, transcript = "hi")
+            )
+        )
 
         assertThat(link).isNotNull
 

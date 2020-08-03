@@ -36,6 +36,7 @@ object VideoDocumentConverter {
             legalRestrictions = video.legalRestrictions,
             language = video.voice.language?.toLanguageTag(),
             transcript = video.voice.transcript,
+            isVoiced = video.isVoiced(),
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
@@ -75,10 +76,17 @@ object VideoDocumentConverter {
             ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) }
                 ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
             legalRestrictions = document.legalRestrictions,
-            voice = Voice.UnknownVoice(
-                language = document.language?.let(Locale::forLanguageTag),
-                transcript = document.transcript
-            ),
+            voice = when (document.isVoiced) {
+                true -> Voice.WithVoice(
+                    language = document.language?.let(Locale::forLanguageTag),
+                    transcript = document.transcript
+                )
+                false -> Voice.WithoutVoice
+                null -> Voice.UnknownVoice(
+                    language = document.language?.let(Locale::forLanguageTag),
+                    transcript = document.transcript
+                )
+            },
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
             ageRange = AgeRange.of(
                 min = document.ageRangeMin,

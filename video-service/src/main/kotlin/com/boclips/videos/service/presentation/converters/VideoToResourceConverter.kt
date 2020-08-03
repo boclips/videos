@@ -62,7 +62,7 @@ class VideoToResourceConverter(
             playback = playbackToResourceConverter.convert(video.playback, video.videoId),
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             badges = convertBadges(video),
-            types = video.types.map {  VideoTypeResource(id = it.id, name = it.title)},
+            types = video.types.map { VideoTypeResource(id = it.id, name = it.title) },
             legalRestrictions = video.legalRestrictions,
             hasTranscripts = video.voice.transcript != null,
             ageRange = convertAgeRange(video),
@@ -71,6 +71,7 @@ class VideoToResourceConverter(
             bestFor = video.tags.map { TagResource(it.tag.label) },
             promoted = video.promoted,
             language = video.voice.language?.let { LanguageResource.from(it) },
+            isVoiced = video.isVoiced(),
             attachments = video.attachments.map { attachmentToResourceConverter.convert(it) },
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             _links = (

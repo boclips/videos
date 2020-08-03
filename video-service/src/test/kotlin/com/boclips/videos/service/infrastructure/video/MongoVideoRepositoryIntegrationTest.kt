@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -428,7 +429,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces language`() {
-        val video = mongoVideoRepository.create(createVideo(language = Locale.TAIWAN))
+        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = Locale.TAIWAN, transcript = null)))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceLanguage(video.videoId, Locale.GERMAN))
 
@@ -439,7 +440,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces transcript`() {
-        val video = mongoVideoRepository.create(createVideo(transcript = null))
+        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla"))
 
@@ -449,8 +450,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `replaces eventBus`() {
-        val video = mongoVideoRepository.create(createVideo(transcript = null))
+    fun `replaces topics`() {
+        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,

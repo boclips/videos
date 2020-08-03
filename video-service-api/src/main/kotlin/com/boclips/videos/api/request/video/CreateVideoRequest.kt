@@ -43,5 +43,6 @@ data class CreateVideoRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val subjects: Set<String>? = null,
     @field:Language
-    val language: String? = null
+    val language: String? = null,
+    val isVoiced: Boolean? = null
 )

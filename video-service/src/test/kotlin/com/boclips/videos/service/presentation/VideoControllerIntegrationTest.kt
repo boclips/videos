@@ -109,7 +109,12 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
-                .andExpect(jsonPath("$.playback._links.setThumbnailBySecond.href", containsString("/videos/$kalturaVideoId/playback{?thumbnailSecond}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.setThumbnailBySecond.href",
+                        containsString("/videos/$kalturaVideoId/playback{?thumbnailSecond}")
+                    )
+                )
                 .andExpect(jsonPath("$.playback._links.setThumbnailBySecond.templated", equalTo(true)))
                 .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
@@ -123,8 +128,18 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.types[0].id", equalTo(3)))
                 .andExpect(jsonPath("$.types[0].name", equalTo("Instructional Clips")))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
-                .andExpect(jsonPath("$._links.detailsProjection.href", containsString("/videos/$kalturaVideoId?projection=details")))
-                .andExpect(jsonPath("$._links.fullProjection.href", containsString("/videos/$kalturaVideoId?projection=full")))
+                .andExpect(
+                    jsonPath(
+                        "$._links.detailsProjection.href",
+                        containsString("/videos/$kalturaVideoId?projection=details")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$._links.fullProjection.href",
+                        containsString("/videos/$kalturaVideoId?projection=full")
+                    )
+                )
                 .andExpect(jsonPath("$._links.assets.href", containsString("/videos/$kalturaVideoId/assets")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
@@ -241,18 +256,18 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `returns 200 for valid youtube video as API user`() {
             mockMvc.perform(get("/v1/videos/$youtubeVideoId").asApiUser())
-                    .andExpect(status().isOk)
-                    .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-                    .andExpect(jsonPath("$.id", equalTo(youtubeVideoId)))
-                    .andExpect(jsonPath("$.title", equalTo("elephants took out jobs")))
-                    .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
-                    .andExpect(jsonPath("$.releasedOn", equalTo("2017-02-11")))
-                    .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp2")))
-                    .andExpect(jsonPath("$.playback.id").exists())
-                    .andExpect(jsonPath("$.playback.duration", equalTo("PT8M")))
-                    .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
-                    .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
-                    .andExpect(jsonPath("$.playback.type", equalTo("YOUTUBE")))
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.id", equalTo(youtubeVideoId)))
+                .andExpect(jsonPath("$.title", equalTo("elephants took out jobs")))
+                .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
+                .andExpect(jsonPath("$.releasedOn", equalTo("2017-02-11")))
+                .andExpect(jsonPath("$.createdBy", equalTo("enabled-cp2")))
+                .andExpect(jsonPath("$.playback.id").exists())
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT8M")))
+                .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
+                .andExpect(jsonPath("$.playback.type", equalTo("YOUTUBE")))
         }
 
         @Test
@@ -264,7 +279,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.captionStatus", equalTo("REQUESTED")))
-
         }
 
         @Test
@@ -552,6 +566,47 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.language.code", equalTo("ave")))
                 .andExpect(jsonPath("$.language.displayName", equalTo("Avestan")))
+        }
+
+        @Test
+        fun `create new video that is voiced`() {
+            val channelId = saveChannel().id.value
+
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
+
+            val content = """
+            {
+                "providerVideoId": "1",
+                "providerId": "$channelId",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
+                "playbackId": "entry-$123",
+                "playbackProvider": "KALTURA",
+                "language": "ave",
+                "isVoiced": true
+            }
+        """.trimIndent()
+
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
+
+            mockMvc.perform(get(createdResourceUrl!!).asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.language.code", equalTo("ave")))
+                .andExpect(jsonPath("$.language.displayName", equalTo("Avestan")))
+                .andExpect(jsonPath("$.isVoiced", equalTo(true)))
         }
 
         @Test

@@ -45,10 +45,17 @@ class CreateVideoRequestToVideoConverter {
                 items = subjects.toSet()
             ),
             topics = emptySet(),
-            voice = Voice.UnknownVoice(
-                language = createVideoRequest.language?.let { Locale.forLanguageTag(it) },
-                transcript = null
-            ),
+            voice = when (createVideoRequest.isVoiced) {
+                true -> Voice.WithVoice(
+                    language = convertLanguage(createVideoRequest),
+                    transcript = null
+                )
+                false -> Voice.WithoutVoice
+                null -> Voice.UnknownVoice(
+                    language = convertLanguage(createVideoRequest),
+                    transcript = null
+                )
+            },
             ratings = emptyList(),
             tags = emptyList(),
             promoted = null,
@@ -57,5 +64,9 @@ class CreateVideoRequestToVideoConverter {
             deactivated = false,
             activeVideoId = null
         )
+    }
+
+    private fun convertLanguage(createVideoRequest: CreateVideoRequest): Locale? {
+        return createVideoRequest.language?.let { Locale.forLanguageTag(it) }
     }
 }

@@ -12,12 +12,18 @@ sealed class Voice {
     }
 
     data class WithVoice(
-        override val transcript: String,
-        override val language: Locale
+        override val transcript: String?,
+        override val language: Locale?
     ) : Voice()
 
     data class UnknownVoice(
         override val transcript: String?,
         override val language: Locale?
     ) : Voice()
+
+    fun isVoiced(): Boolean? = when (this) {
+        WithoutVoice -> false
+        is WithVoice -> true
+        is UnknownVoice -> null
+    }
 }

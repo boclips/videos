@@ -22,6 +22,7 @@ import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -50,7 +51,7 @@ class VideoToResourceConverterTest {
         types = listOf(ContentType.NEWS),
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
-        language = Locale("khm"),
+        voice = Voice.WithVoice(language = Locale("khm"), transcript = "Hello there"),
         ageRange = AgeRange.of(min = 5, max = 11, curatedManually = false),
         ratings = listOf(
             UserRating(
@@ -158,6 +159,8 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.promoted).isEqualTo(true)
         assertThat(videoResource.language?.code).isEqualTo("khm")
         assertThat(videoResource.language?.displayName).isEqualTo("Central Khmer")
+        assertThat(videoResource.hasTranscripts).isEqualTo(true)
+        assertThat(videoResource.isVoiced).isEqualTo(true)
 
         assertThat(videoResource.attachments).hasSize(1)
         assertThat(videoResource.attachments[0].id).isNotNull()

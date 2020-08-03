@@ -64,6 +64,8 @@ data class VideoResource(
     val captionStatus: CaptionStatus? = null,
     @get:JsonIgnore
     val hasTranscripts: Boolean? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val isVoiced: Boolean? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>?
 )

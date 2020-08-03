@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -20,7 +21,11 @@ import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
-import java.time.*
+import java.time.Duration
+import java.time.LocalDate
+import java.time.Month
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 class VideoMetadataConverterTest {
     @Test
@@ -41,7 +46,7 @@ class VideoMetadataConverterTest {
             types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-            transcript = "a great transcript",
+            voice = Voice.UnknownVoice(language = null, transcript = "a great transcript"),
             ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
             subjects = setOf(
                 Subject(

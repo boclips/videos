@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -45,8 +46,10 @@ class VideoDocumentConverterTest {
             releasedOn = LocalDate.ofYearDay(2018, 10),
             ingestedAt = ZonedDateTime.of(2019, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             legalRestrictions = "legal restrictions",
-            language = Locale.GERMANY,
-            transcript = "hello",
+            voice = Voice.WithVoice(
+                language = Locale.GERMANY,
+                transcript = "hello"
+            ),
             topics = setOf(
                 Topic(
                     name = "topic name",
@@ -122,5 +125,35 @@ class VideoDocumentConverterTest {
         val video = VideoDocumentConverter.toVideo(videoDocument)
 
         assertThat(video.ingestedAt).isEqualTo("2019-12-01T12:12:12Z")
+    }
+
+    @Nested
+    inner class VoicedContent {
+        @Test
+        fun `can convert to with voiced`() {
+            val videoDocument = createVideoDocument(id = ObjectId("5de3ae1c0000000000000000"), isVoiced = true)
+
+            val video = VideoDocumentConverter.toVideo(videoDocument)
+
+            assertThat(video.voice).isInstanceOf(Voice.WithVoice::class.java)
+        }
+
+        @Test
+        fun `can convert to without voiced`() {
+            val videoDocument = createVideoDocument(id = ObjectId("5de3ae1c0000000000000000"), isVoiced = false)
+
+            val video = VideoDocumentConverter.toVideo(videoDocument)
+
+            assertThat(video.voice).isInstanceOf(Voice.WithoutVoice::class.java)
+        }
+
+        @Test
+        fun `can convert to unknown voiced`() {
+            val videoDocument = createVideoDocument(id = ObjectId("5de3ae1c0000000000000000"), isVoiced = null)
+
+            val video = VideoDocumentConverter.toVideo(videoDocument)
+
+            assertThat(video.voice).isInstanceOf(Voice.UnknownVoice::class.java)
+        }
     }
 }

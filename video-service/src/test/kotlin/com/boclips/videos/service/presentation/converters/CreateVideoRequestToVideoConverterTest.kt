@@ -95,4 +95,40 @@ class CreateVideoRequestToVideoConverterTest {
             ).legalRestrictions
         ).isEmpty()
     }
+
+    @Test
+    fun `sets video to WithVoice when isVoiced is true`() {
+        val video = converter.convert(
+            createCreateVideoRequest(isVoiced = true),
+            videoPlayback,
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.isVoiced()).isTrue()
+    }
+
+    @Test
+    fun `sets video to WithoutVoice when isVoiced is false`() {
+        val video = converter.convert(
+            createCreateVideoRequest(isVoiced = false),
+            videoPlayback,
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.isVoiced()).isFalse()
+    }
+
+    @Test
+    fun `sets video to UnknownVoice when isVoiced is null`() {
+        val video = converter.convert(
+            createCreateVideoRequest(isVoiced = null),
+            videoPlayback,
+            contentPartner,
+            subjects
+        )
+
+        assertThat(video.isVoiced()).isNull()
+    }
 }
