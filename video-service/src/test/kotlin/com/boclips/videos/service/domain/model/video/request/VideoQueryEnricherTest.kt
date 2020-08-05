@@ -1,11 +1,14 @@
 package com.boclips.videos.service.domain.model.video.request
 
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 
@@ -24,8 +27,8 @@ class VideoQueryEnricherTest {
             )
         )
 
-        Assertions.assertThat(query.ids).containsExactlyInAnyOrder(id.value)
-        Assertions.assertThat(query.permittedVideoIds)
+        assertThat(query.ids).containsExactlyInAnyOrder(id.value)
+        assertThat(query.permittedVideoIds)
             .containsExactlyInAnyOrder(*allowedVideos.map { it.value }.toTypedArray())
     }
 
@@ -46,10 +49,29 @@ class VideoQueryEnricherTest {
             )
         )
 
-        Assertions.assertThat(query.includedVoiceType).containsExactly(
+        assertThat(query.includedVoiceType).containsExactly(
             SearchVoiceType.WITH,
             SearchVoiceType.UNKNOWN,
             SearchVoiceType.WITHOUT
         )
+    }
+
+    @Test
+    fun `respects previously set content type filters`() {
+        val query = VideoQueryEnricher.enrichFromAccessRules(
+            VideoQuery(
+                phrase = "hello",
+                includedTypes = setOf(VideoType.NEWS)
+            ),
+            videoAccess = VideoAccess.Rules(
+                listOf(
+                    VideoAccessRule.IncludedContentTypes(
+                        contentTypes = setOf(ContentType.INSTRUCTIONAL_CLIPS)
+                    )
+                )
+            )
+        )
+
+        assertThat(query.includedTypes).containsExactlyInAnyOrder(VideoType.INSTRUCTIONAL, VideoType.NEWS)
     }
 }

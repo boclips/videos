@@ -514,13 +514,25 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
+    fun removeAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
         usersClient.addAccessRules(
             userId, AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideoTypes(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoTypes = excludedVideoType.map { it.name }
+                )
+            )
+        )
+    }
+
+    fun addAccessToVideoTypes(userId: String, vararg includedVideoType: ContentType) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedVideoTypes(
+                    id = "access-rule-id",
+                    name = UUID.randomUUID().toString(),
+                    videoTypes = includedVideoType.map { it.name }
                 )
             )
         )

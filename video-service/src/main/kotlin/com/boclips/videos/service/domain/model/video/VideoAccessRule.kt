@@ -22,6 +22,12 @@ sealed class VideoAccessRule {
         }
     }
 
+    data class IncludedContentTypes(val contentTypes: Set<ContentType>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to include ${contentTypes.size} content types)"
+        }
+    }
+
     data class ExcludedChannelIds(val channelIds: Set<ChannelId>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to exclude ${channelIds.size} channels)"

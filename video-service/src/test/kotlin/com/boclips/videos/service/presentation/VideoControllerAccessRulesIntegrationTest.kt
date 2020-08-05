@@ -72,12 +72,25 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val stockVideo = saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
             saveVideo(title = "Some Video 2", types = listOf(ContentType.NEWS))
 
-            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+            removeAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideo.value)))
+        }
+
+        @Test
+        fun `includes certain video ContentTypes from results`() {
+           saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
+            val newsVideo = saveVideo(title = "Some Video 2", types = listOf(ContentType.NEWS))
+
+            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(newsVideo.value)))
         }
 
         @Test

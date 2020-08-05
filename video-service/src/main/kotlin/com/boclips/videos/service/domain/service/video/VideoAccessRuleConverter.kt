@@ -83,4 +83,13 @@ object VideoAccessRuleConverter {
                     }
                 }.toSet()
         }
+
+    fun mapToIncludedVideoTypes(videoAccess: VideoAccess): Set<VideoType> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.IncludedContentTypes>()
+                .flatMap { accessRule -> accessRule.contentTypes.map { SearchQueryConverter().convertType(it.name) } }
+                .toSet()
+        }
 }

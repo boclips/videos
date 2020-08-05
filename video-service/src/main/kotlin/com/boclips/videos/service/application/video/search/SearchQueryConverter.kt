@@ -47,6 +47,7 @@ class SearchQueryConverter {
             "NEWS" -> VideoType.NEWS
             "STOCK" -> VideoType.STOCK
             "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL
+            "INSTRUCTIONAL_CLIPS" -> VideoType.INSTRUCTIONAL
             else -> throw InvalidTypeException(type, VideoType.values())
         }
 

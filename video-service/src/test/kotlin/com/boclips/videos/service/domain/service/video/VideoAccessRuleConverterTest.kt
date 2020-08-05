@@ -133,6 +133,44 @@ class VideoAccessRuleConverterTest {
     }
 
     @Nested
+    inner class ToIncludedVideoTypes {
+        @Test
+        fun `returns empty when access to everything`() {
+            val excludedTypes = converter.mapToIncludedVideoTypes(VideoAccess.Everything)
+            assertThat(excludedTypes).isEmpty()
+        }
+
+        @Test
+        fun `returns empty when no included video type in rules`() {
+            val videoId = TestFactories.createVideoId()
+            val excludedTypes = converter.mapToIncludedVideoTypes(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedIds(
+                            videoIds = setOf(videoId)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedTypes).isEmpty()
+        }
+
+        @Test
+        fun `returns included video types if specified`() {
+            val includedTypes = converter.mapToIncludedVideoTypes(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedContentTypes(
+                            contentTypes = setOf(ContentType.STOCK)
+                        )
+                    )
+                )
+            )
+            assertThat(includedTypes).containsOnly(VideoType.STOCK)
+        }
+    }
+
+    @Nested
     inner class ToExcludedContentPartnersIds {
         @Test
         fun `returns empty when access to everything`() {

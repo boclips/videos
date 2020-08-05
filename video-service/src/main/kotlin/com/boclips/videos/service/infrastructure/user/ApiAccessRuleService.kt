@@ -83,6 +83,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                     it.videoIds.map { id -> VideoId(id) }.toSet()
                 )
                 is AccessRuleResource.ExcludedVideoTypes -> extractExcludedContentTypes(it)
+                is AccessRuleResource.IncludedVideoTypes -> extractIncludedContentTypes(it)
                 is AccessRuleResource.ExcludedChannels -> VideoAccessRule.ExcludedChannelIds(
                     it.channelIds.map { id ->
                         ChannelId(
@@ -121,7 +122,17 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
     }
 
     private fun extractExcludedContentTypes(accessRule: AccessRuleResource.ExcludedVideoTypes): VideoAccessRule.ExcludedContentTypes? =
-        accessRule.videoTypes
+        convertVideoTypes(accessRule.videoTypes)
+            .takeIf { contentTypes -> contentTypes.isNotEmpty() }
+            ?.let { contentTypes -> VideoAccessRule.ExcludedContentTypes(contentTypes = contentTypes.toSet()) }
+
+    private fun extractIncludedContentTypes(accessRule: AccessRuleResource.IncludedVideoTypes): VideoAccessRule.IncludedContentTypes? =
+        convertVideoTypes(accessRule.videoTypes)
+            .takeIf { contentTypes -> contentTypes.isNotEmpty() }
+            ?.let { contentTypes -> VideoAccessRule.IncludedContentTypes(contentTypes = contentTypes.toSet()) }
+
+    private fun convertVideoTypes(videoTypes: List<String>): List<ContentType> {
+        return videoTypes
             .mapNotNull { type ->
                 when (type) {
                     "NEWS" -> ContentType.NEWS
@@ -133,8 +144,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                     }
                 }
             }
-            .takeIf { contentTypes -> contentTypes.isNotEmpty() }
-            ?.let { contentTypes -> VideoAccessRule.ExcludedContentTypes(contentTypes = contentTypes.toSet()) }
+    }
 
     @Recover
     fun getRulesRecoveryMethod(e: Exception): AccessRules {

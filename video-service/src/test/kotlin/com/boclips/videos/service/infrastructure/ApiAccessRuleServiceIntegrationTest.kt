@@ -144,6 +144,32 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can convert IncludedVideoTypesAccess rule to domain`() {
+            createAccessRulesResource(
+                "test-user", listOf(
+                    AccessRuleResource.IncludedVideoTypes(
+                        id = "access-rule-id",
+                        name = "bad video types",
+                        videoTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
+                    )
+                )
+            )
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(
+                VideoAccessRule.IncludedContentTypes(
+                    setOf(
+                        ContentType.NEWS,
+                        ContentType.INSTRUCTIONAL_CLIPS,
+                        ContentType.STOCK
+                    )
+                )
+            )
+        }
+
+        @Test
         fun `ignores any unknown content types`() {
             createAccessRulesResource(
                 "test-user",
