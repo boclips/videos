@@ -51,6 +51,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
@@ -276,7 +277,8 @@ abstract class AbstractSpringIntegrationTest {
         language: String? = null,
         width: Int = 1920,
         height: Int = 1080,
-        assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080))
+        assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
+        isVoiced: Boolean? = null
     ): VideoId {
         val retrievedContentPartnerId =
             saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
@@ -317,7 +319,8 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
                 subjects = subjectIds,
-                language = language
+                language = language,
+                isVoiced = isVoiced
             ),
             UserFactory.sample()
         )
@@ -518,6 +521,18 @@ abstract class AbstractSpringIntegrationTest {
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoTypes = excludedVideoType.map { it.name }
+                )
+            )
+        )
+    }
+
+    fun addAccessToVoiceType(userId: String, vararg voiceType: VoiceType) {
+        usersClient.addAccessRules(
+            userId, AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedVideoVoiceTypes(
+                    id = "access-rule-id",
+                    name = UUID.randomUUID().toString(),
+                    voiceTypes = voiceType.map { it.name }
                 )
             )
         )

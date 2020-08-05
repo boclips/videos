@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VoiceType
 import java.time.LocalDate
 
 class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
@@ -115,6 +116,19 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                         entry.value.attachmentTypes?.any { videoAttachments ->
                             videoAttachments.contains(queryAttachmentType)
                         } ?: true
+                    }
+                }
+            }
+            .filter { entry ->
+                if (query.includedVoiceType.isEmpty()) {
+                    true
+                } else {
+                    query.includedVoiceType.any { voiceType ->
+                        when (voiceType) {
+                            VoiceType.UNKNOWN -> entry.value.isVoiced == null
+                            VoiceType.WITH -> entry.value.isVoiced == true
+                            VoiceType.WITHOUT -> entry.value.isVoiced == false
+                        }
                     }
                 }
             }

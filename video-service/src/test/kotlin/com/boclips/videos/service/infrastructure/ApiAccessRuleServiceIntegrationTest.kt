@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -269,10 +270,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         fun `can convert included channel rule to domain`() {
             createAccessRulesResource(
                 "test-user",
-                listOf(AccessRuleResource.IncludedChannels(
-                    id = "access-rule-id",
-                    name = "good channels",
-                    channelIds = listOf("123")))
+                listOf(
+                    AccessRuleResource.IncludedChannels(
+                        id = "access-rule-id",
+                        name = "good channels",
+                        channelIds = listOf("123")
+                    )
+                )
             )
 
             val user = UserFactory.sample(id = "test-user")
@@ -283,6 +287,34 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoAccessRule.IncludedChannelIds(
                     setOf(
                         ChannelId("123")
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `can convert included video voice type to domain`() {
+            createAccessRulesResource(
+                "test-user",
+                listOf(
+                    AccessRuleResource.IncludedVideoVoiceTypes(
+                        id = "access-rule-id",
+                        name = "voices",
+                        voiceTypes = listOf("bad", "WITH_VOICE", "WITHOUT_VOICE", "UNKNOWN_VOICE")
+                    )
+                )
+            )
+
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsExactly(
+                VideoAccessRule.IncludedVideoVoiceTypes(
+                    setOf(
+                        VoiceType.WITH_VOICE,
+                        VoiceType.WITHOUT_VOICE,
+                        VoiceType.UNKNOWN
                     )
                 )
             )

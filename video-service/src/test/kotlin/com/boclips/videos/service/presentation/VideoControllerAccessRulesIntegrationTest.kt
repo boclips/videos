@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.equalTo
@@ -54,9 +55,9 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         }
 
         @Test
-        fun `excludes blacklisted videos from results`() {
+        fun `removes access to videos`() {
             val video = saveVideo(title = "Some Video")
-            val excludedVideo = saveVideo(title = "Blacklisted Video")
+            val excludedVideo = saveVideo(title = "Bad Video")
 
             removeAccessToVideo("api-user@gmail.com", excludedVideo.value)
 
@@ -94,6 +95,19 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithAllowedContentPartner.value)))
+        }
+
+        @Test
+        fun `includes voiced content only`() {
+            val voicedVideo = saveVideo(title = "voice", isVoiced = true)
+            saveVideo(title = "no voice", isVoiced = false)
+
+            addAccessToVoiceType("api-user@gmail.com", VoiceType.WITH_VOICE)
+
+            mockMvc.perform(get("/v1/videos?query=voice").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(voicedVideo.value)))
         }
     }
 }

@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import feign.FeignException
@@ -97,6 +98,19 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                     }.toSet()
                 )
                 is AccessRuleResource.IncludedCollections -> null
+                is AccessRuleResource.IncludedVideoVoiceTypes -> VideoAccessRule.IncludedVideoVoiceTypes(
+                    it.voiceTypes.mapNotNull { voiceTypes ->
+                        when (voiceTypes) {
+                            "WITH_VOICE" -> VoiceType.WITH_VOICE
+                            "WITHOUT_VOICE" -> VoiceType.WITHOUT_VOICE
+                            "UNKNOWN_VOICE" -> VoiceType.UNKNOWN
+                            else -> {
+                                logger.warn { "Invalid voice type: $voiceTypes" }
+                                null
+                            }
+                        }
+                    }.toSet()
+                )
             }
         }
 

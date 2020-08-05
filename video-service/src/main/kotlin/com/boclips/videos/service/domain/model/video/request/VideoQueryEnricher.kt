@@ -20,7 +20,8 @@ object VideoQueryEnricher {
                 videoAccess
             ),
             includedChannelIds = VideoAccessRuleConverter.mapToIncludedChannelIds(videoAccess),
-            isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess)
+            isEligibleForStream = VideoAccessRuleConverter.isEligibleForStreaming(videoAccess),
+            includedVoiceType = VideoAccessRuleConverter.mapToIncludedVoiceTypes(videoAccess)
         )
     }
 }

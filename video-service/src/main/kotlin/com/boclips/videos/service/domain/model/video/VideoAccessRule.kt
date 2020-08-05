@@ -28,7 +28,6 @@ sealed class VideoAccessRule {
         }
     }
 
-
     data class IncludedChannelIds(val channelIds: Set<ChannelId>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to include ${channelIds.size} channels)"
@@ -38,6 +37,12 @@ sealed class VideoAccessRule {
     data class IncludedDistributionMethods(val distributionMethods: Set<DistributionMethod>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to included $distributionMethods distribution methods)"
+        }
+    }
+
+    data class IncludedVideoVoiceTypes(val voiceTypes: Set<VoiceType>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to included ${voiceTypes.joinToString { it.name }} voiced content)"
         }
     }
 }
