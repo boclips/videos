@@ -45,6 +45,8 @@ class VideoRetrievalService(
          */
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
 
+        logger.info { "Searching for videos with access $videoAccess" }
+
         val query = VideoQueryEnricher.enrichFromAccessRules(
             request.toQuery(),
             videoAccessWithDefaultRules
@@ -115,6 +117,8 @@ class VideoRetrievalService(
             VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(),
             videoAccess
         )
+
+        logger.info { "Getting playable video: $videoId, with access: $videoAccess" }
 
         val results = videoIndex.search(
             PaginatedSearchRequest(
