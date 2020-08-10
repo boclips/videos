@@ -51,7 +51,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 aggregation(aggregateAgeRanges(videoQuery))
                 aggregation(aggregateDuration(videoQuery))
                 aggregation(aggregateAttachmentTypes(videoQuery))
-                postFilter(allCriteria(videoQuery))
+                postFilter(allCriteria(videoQuery.userQuery))
                 if (videoQuery.sort.isNotEmpty()) {
                     videoQuery.sort.forEach {
                         applySort(it)

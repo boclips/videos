@@ -29,7 +29,7 @@ class DurationAggregation {
 
         fun aggregateDuration(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregate(
-                queryBuilder = removeCriteria(queryBuilder = allCriteria(videoQuery), filterName = DURATION_RANGES),
+                queryBuilder = removeCriteria(queryBuilder = allCriteria(videoQuery.userQuery), filterName = DURATION_RANGES),
                 durationRanges = videoQuery.facetDefinition?.duration ?: emptyList()
             )
         }

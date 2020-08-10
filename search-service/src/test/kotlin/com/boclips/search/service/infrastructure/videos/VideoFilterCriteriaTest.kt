@@ -12,7 +12,7 @@ class VideoFilterCriteriaTest {
             .readText()
             .trimEnd()
 
-        val generatedQuery = VideoFilterCriteria.allCriteria(videoQuery).toString()
+        val generatedQuery = VideoFilterCriteria.allCriteria(videoQuery.userQuery).toString()
         assertThat(generatedQuery).isEqualTo(expectedQuery)
     }
 }

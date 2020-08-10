@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -39,8 +41,11 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    "Trump",
-                    bestFor = listOf("news")
+                    phrase = "Trump",
+                    userQuery = UserQuery(
+                        bestFor = listOf("news")
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -75,7 +80,8 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    "Trump"
+                    phrase = "Trump",
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -111,7 +117,11 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "Trump",
-                    bestFor = emptyList()
+                    userQuery = UserQuery(
+                        bestFor = emptyList()
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
+
                 )
             )
         )
@@ -145,7 +155,8 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    includedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
+                    userQuery = UserQuery(types = setOf(VideoType.NEWS, VideoType.STOCK)),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )

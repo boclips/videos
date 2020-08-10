@@ -4,13 +4,15 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.events.EventConverter
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.any
@@ -50,7 +52,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(ids = setOf(video.videoId.value)),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(1)
         }
@@ -71,7 +78,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(ids = setOf(video.videoId.value)),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(1)
         }
@@ -91,14 +103,23 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter()
-                        .toVideoPayload(it) })
+                    .videos(videos.map {
+                        EventConverter()
+                            .toVideoPayload(it)
+                    })
                     .build()
             )
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(
+                                ids = videos.map { it.videoId.value }.toSet()
+                            ),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(2)
 
@@ -111,18 +132,29 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter()
-                        .toVideoPayload(it) })
+                    .videos(videos.map {
+                        EventConverter()
+                            .toVideoPayload(it)
+                    })
                     .build()
             )
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(
+                                ids = videos.map { it.videoId.value }.toSet()
+                            ),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(1)
 
-            verify(legacyVideoSearchService, times(1)).upsert(any(), anyOrNull())
+            verify(
+                legacyVideoSearchService, times(1)
+            ).upsert(any(), anyOrNull())
         }
 
         @Test
@@ -139,8 +171,10 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map { EventConverter()
-                        .toVideoPayload(it) })
+                    .videos(videos.map {
+                        EventConverter()
+                            .toVideoPayload(it)
+                    })
                     .build()
             )
 
@@ -148,7 +182,14 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
             verify(legacyVideoSearchService, times(1)).bulkRemoveFromSearch(any())
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = videos.map { it.videoId.value }.toSet()))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(
+                                ids = videos.map { it.videoId.value }.toSet()
+                            ),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(3)
         }
@@ -192,7 +233,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(ids = setOf(video.videoId.value)),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(1)
         }
@@ -205,7 +251,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(query = VideoQuery(ids = setOf(video.videoId.value)))
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            userQuery = UserQuery(ids = setOf(video.videoId.value)),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
                 ).counts.totalHits
             ).isEqualTo(1)
         }

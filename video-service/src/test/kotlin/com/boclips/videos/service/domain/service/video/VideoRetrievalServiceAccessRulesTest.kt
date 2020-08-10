@@ -189,7 +189,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
         fun `excluded content types are not returned in search results`() {
             saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
             saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
-            val instructionalVideoId = saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+            val instructionalVideoId =
+                saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
@@ -210,7 +211,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
         fun `excluded content types are not return in search results even when filtering by an excluded type`() {
             saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
             saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
-            val instructionalVideoId = saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+            val instructionalVideoId =
+                saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
 
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
@@ -303,5 +305,26 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 videoRetrievalService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))
             }
         }
+    }
+
+    @Test
+    fun `access rules take precedence over user query`() {
+        saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+
+        val accessRule = VideoAccessRule.IncludedContentTypes(setOf(ContentType.NEWS))
+
+        val results = videoRetrievalService.searchPlayableVideos(
+            VideoRequest(
+                text = "Elephant",
+                types = setOf(VideoType.INSTRUCTIONAL),
+                pageSize = 10,
+                pageIndex = 0
+            ),
+            VideoAccess.Rules(
+                listOf(accessRule)
+            )
+        )
+
+        assertThat(results.videos).hasSize(0)
     }
 }

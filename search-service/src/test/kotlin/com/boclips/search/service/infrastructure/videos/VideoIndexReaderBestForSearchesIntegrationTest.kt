@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -45,7 +47,12 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(bestFor = listOf("other", "explainer")))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    userQuery = UserQuery(bestFor = listOf("other", "explainer")),
+                    accessRuleQuery = AccessRuleQuery()
+                )
+            )
         )
 
         assertThat(results.elements).containsOnly("3")
@@ -81,7 +88,12 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(bestFor = null))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    userQuery = UserQuery(bestFor = null),
+                    accessRuleQuery = AccessRuleQuery()
+                )
+            )
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("1", "2", "3")
@@ -108,7 +120,12 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(bestFor = listOf("Other")))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    userQuery = UserQuery(bestFor = listOf("Other")),
+                    accessRuleQuery = AccessRuleQuery()
+                )
+            )
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("3")

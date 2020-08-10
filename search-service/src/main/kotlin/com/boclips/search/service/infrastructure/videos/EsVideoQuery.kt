@@ -21,7 +21,7 @@ class EsVideoQuery {
     fun buildQuery(videoQuery: VideoQuery): BoolQueryBuilder {
         return QueryBuilders.boolQuery()
             .apply {
-                buildAccessRulesFilter(this, videoQuery)
+                buildAccessRulesFilter(this, videoQuery.accessRuleQuery)
             }
             .apply {
                 if (videoQuery.phrase.isNotBlank()) {
@@ -70,18 +70,18 @@ class EsVideoQuery {
                 must(
                     QueryBuilders.boolQuery()
                         .let(boostInstructionalVideos())
-                        .let(boostWhenSubjectsMatch(videoQuery.userSubjectIds))
+                        .let(boostWhenSubjectsMatch(videoQuery.userQuery.userSubjectIds))
                 )
 
-                if (videoQuery.ageRanges != null) {
+                if (videoQuery.userQuery.ageRanges != null) {
                     must(
                         QueryBuilders.boolQuery()
-                            .let(boostAgeRangeOverlap(videoQuery.ageRanges))
+                            .let(boostAgeRangeOverlap(videoQuery.userQuery.ageRanges))
                     )
                 }
             }
             .apply {
-                idFilter(this, videoQuery.ids)
+                idFilter(this, videoQuery.userQuery.ids)
             }
     }
 

@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -49,9 +51,12 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "World war",
-                        releaseDateFrom = LocalDate.of(1999, 1, 10),
-                        releaseDateTo = LocalDate.of(2002, 1, 10)
+                        phrase = "World war",
+                        userQuery = UserQuery(
+                            releaseDateFrom = LocalDate.of(1999, 1, 10),
+                            releaseDateTo = LocalDate.of(2002, 1, 10)
+                        ),
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )
@@ -95,8 +100,11 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "World war",
-                        releaseDateFrom = LocalDate.of(2002, 5, 5)
+                        phrase = "World war",
+                        userQuery = UserQuery(
+                            releaseDateFrom = LocalDate.of(2002, 5, 5)
+                        ),
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )
@@ -140,8 +148,11 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "World war",
-                        releaseDateTo = LocalDate.of(2002, 5, 5)
+                        phrase = "World war",
+                        userQuery = UserQuery(
+                            releaseDateTo = LocalDate.of(2002, 5, 5)
+                        ),
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )

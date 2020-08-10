@@ -19,7 +19,7 @@ class AttachmentTypeAggregation {
         fun aggregateAttachmentTypes(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregateAttachmentTypes(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
-                    VideoFilterCriteria.allCriteria(videoQuery),
+                    VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.ATTACHMENT_TYPES
                 )
             )

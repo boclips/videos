@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -29,7 +30,14 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             )
         )
 
-        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("one four")))
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "one four"
+                )
+            )
+        )
 
         assertThat(results.elements.first()).isEqualTo("1")
     }
@@ -43,7 +51,14 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             )
         )
 
-        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("six two")))
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "six two"
+                )
+            )
+        )
 
         assertThat(results.elements).hasSize(2)
         assertThat(results.elements.first()).isEqualTo("1")
@@ -60,7 +75,12 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("Apple banana candy"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "Apple banana candy"
+                )
+            )
         )
 
         assertThat(results.elements.first()).isEqualTo("1")
@@ -77,7 +97,12 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("Apple banana candy"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "Apple banana candy"
+                )
+            )
         )
 
         assertThat(results.elements.first()).isEqualTo("1")
@@ -91,7 +116,14 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             )
         )
 
-        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery("dogs")))
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "dogs"
+                )
+            )
+        )
 
         assertThat(results.elements).containsExactly("2")
     }
@@ -105,7 +137,14 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
             )
         )
 
-        val results = videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "science")))
+        val results = videoIndexReader.search(
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "science"
+                )
+            )
+        )
 
         assertThat(results.elements).containsExactly("2")
     }
@@ -126,7 +165,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("thrones"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "thrones"))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -152,7 +191,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("thrones"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "thrones"))
         )
 
         assertThat(results.elements).hasSize(3)
@@ -169,7 +208,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("i have a dream"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "i have a dream"))
         )
 
         assertThat(results.elements).containsExactly("2")
@@ -184,7 +223,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("rain"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "rain"))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -205,7 +244,12 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("Napalm bombing during Vietnam War"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "Napalm bombing during Vietnam War"
+                )
+            )
         )
 
         assertThat(results.elements.first()).isEqualTo("2")
@@ -220,7 +264,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("WW2"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "WW2"))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -236,13 +280,18 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         assertThat(
             videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery("second world war"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(),
+                        phrase = "second world war"
+                    )
+                )
             ).elements
         ).containsExactly("1")
 
         assertThat(
             videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery("second world"))
+                PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "second world"))
             ).elements
         ).isEmpty()
     }
@@ -256,7 +305,14 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         assertThat(
-            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(phrase = "ww2"))).elements
+            videoIndexReader.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(),
+                        phrase = "ww2"
+                    )
+                )
+            ).elements
         ).isEmpty()
     }
 
@@ -270,7 +326,12 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("United States of America"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "United States of America"
+                )
+            )
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -289,7 +350,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("empire"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "empire"))
         )
 
         assertThat(results.elements).startsWith("3")
@@ -308,7 +369,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("empire"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "empire"))
         )
 
         assertThat(results.elements).startsWith("3")
@@ -334,7 +395,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("history"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "history"))
         )
 
         assertThat(results.elements).containsExactly("2", "1")
@@ -352,7 +413,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("art history"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "art history"))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -376,7 +437,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("history"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "history"))
         )
 
         assertThat(results.elements).containsExactly("2", "1")
@@ -404,7 +465,12 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("mathematics fractions"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "mathematics fractions"
+                )
+            )
         )
 
         assertThat(results.elements).containsExactly("2", "3")
@@ -422,7 +488,7 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("maths"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "maths"))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -432,20 +498,41 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
     fun `instructional videos prioritised over news or stock`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "London Underground", types = listOf(VideoType.NEWS)),
-                SearchableVideoMetadataFactory.create(id = "2", title = "London Underground", types = listOf(VideoType.NEWS)),
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "London Underground",
+                    types = listOf(VideoType.NEWS)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "London Underground",
+                    types = listOf(VideoType.NEWS)
+                ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "London Underground",
                     types = listOf(VideoType.INSTRUCTIONAL)
                 ),
-                SearchableVideoMetadataFactory.create(id = "4", title = "London Underground", types = listOf(VideoType.STOCK)),
-                SearchableVideoMetadataFactory.create(id = "5", title = "London Underground", types = listOf(VideoType.STOCK))
+                SearchableVideoMetadataFactory.create(
+                    id = "4",
+                    title = "London Underground",
+                    types = listOf(VideoType.STOCK)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "5",
+                    title = "London Underground",
+                    types = listOf(VideoType.STOCK)
+                )
             )
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(phrase = "London Underground"))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    phrase = "London Underground"
+                )
+            )
         )
 
         assertThat(results.elements).startsWith("3")
@@ -464,7 +551,8 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
                 SearchableVideoMetadataFactory.create(
                     id = "2", title = "TED-ED: Why is glass transparent? - Mark Miodownik",
                     description = "If you look through your glasses, binoculars or a window, you see the world on the other side. How is it that something so solid can be so invisible? Mark Miodownik melts the scientific secret behind amorphous solids. Glasses",
-                    transcript = "glasses lots of glasses" ),
+                    transcript = "glasses lots of glasses"
+                ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "TED-Ed: How do glasses help us see? - Andrew Bastawrous and Clare Gilbert",
@@ -474,10 +562,10 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("ted ed glasses"))
+            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(), phrase = "ted ed glasses"))
         )
 
-        assertThat(results.elements).containsExactly("3","2","1")
+        assertThat(results.elements).containsExactly("3", "2", "1")
         assertThat(results.elements).hasSize(3)
     }
 }

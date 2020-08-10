@@ -1,7 +1,9 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -69,7 +71,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
     inner class AgeRangeQueriesWithMinMax {
         @Test
         fun `Filtering across a single bracket`() {
-            val results = getSearchResults(VideoQuery(ageRangeMin = 7, ageRangeMax = 11))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 11), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(1)
 
@@ -78,7 +84,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `Filter across two brackets`() {
-            val results = getSearchResults(VideoQuery(ageRangeMin = 7, ageRangeMax = 14))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 14), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(2)
             assertThat(results.elements).contains("Upper-Elementary")
@@ -87,7 +97,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `Filtering across three brackets`() {
-            val results = getSearchResults(VideoQuery(ageRangeMin = 7, ageRangeMax = 16))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 16), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(3)
             assertThat(results.elements).contains("Upper-Elementary")
@@ -97,7 +111,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `Filtering mid bracket only returns videos within the filter`() {
-            val results = getSearchResults(VideoQuery(ageRangeMin = 6, ageRangeMax = 16))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMin = 6, ageRangeMax = 16), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(3)
             assertThat(results.elements).contains("Upper-Elementary")
@@ -107,7 +125,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `Filtering with max age range returns only videos in brackets below`() {
-            val results = getSearchResults(VideoQuery(ageRangeMax = 15))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMax = 15), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(5)
             assertThat(results.elements).contains("Pre-school")
@@ -119,7 +141,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `Filtering with lower bound returns only videos in brackets above`() {
-            val results = getSearchResults(VideoQuery(ageRangeMin = 7))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRangeMin = 7), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(5)
             assertThat(results.elements).contains("Upper-Elementary")
@@ -134,7 +160,11 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
     inner class AgeRangeQueriesWithRanges {
         @Test
         fun `providing single range with min`() {
-            val results = getSearchResults(VideoQuery(ageRanges = listOf(AgeRange(min = 7))))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRanges = listOf(AgeRange(min = 7))), accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(6)
 
@@ -148,7 +178,12 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
         @Test
         fun `providing single range with min and max`() {
-            val results = getSearchResults(VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))))
+            val results = getSearchResults(
+                VideoQuery(
+                    userQuery = UserQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))),
+                    accessRuleQuery = AccessRuleQuery()
+                )
+            )
 
             assertThat(results.elements).hasSize(2)
 
@@ -160,10 +195,13 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `providing multiple ranges with min and max`() {
             val results = getSearchResults(
                 VideoQuery(
-                    ageRanges = listOf(
-                        AgeRange(min = 7, max = 8),
-                        AgeRange(min = 11, max = 14)
-                    )
+                    userQuery = UserQuery(
+                        ageRanges = listOf(
+                            AgeRange(min = 7, max = 8),
+                            AgeRange(min = 11, max = 14)
+                        )
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
 
@@ -181,35 +219,41 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         @Test
         fun `boost bigger age range overlap between query and video`() {
             val results = getSearchResults(
-                VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11)))
+                VideoQuery(
+                    userQuery = UserQuery(
+                        ageRanges = listOf(AgeRange(min = 7, max = 11))
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
+                )
             )
 
             assertThat(results.elements).hasSize(2)
             assertThat(results.elements[0]).isEqualTo("Upper-Elementary")
             assertThat(results.elements[1]).isEqualTo("Middle-School-And-Down")
-
-
         }
 
         @Test
         fun `boost bigger age range overlap between query and video with multiple ageRanges`() {
             val results = getSearchResults(
-                VideoQuery(ageRanges = listOf(AgeRange(min = 7, max = 11), AgeRange(min=14, max=16)))
+                VideoQuery(
+                    userQuery = UserQuery(
+                        ageRanges = listOf(AgeRange(min = 7, max = 11), AgeRange(min = 14, max = 16))
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
+                )
             )
 
             assertThat(results.elements).hasSize(4)
 
-            val topResults = results.elements.subList(0,1)
+            val topResults = results.elements.subList(0, 1)
 
             assertThat(topResults).contains("Upper-Elementary")
 
-            val bottomResults = results.elements.subList(1,4)
+            val bottomResults = results.elements.subList(1, 4)
 
             assertThat(bottomResults).contains("Middle-School-And-Down")
             assertThat(bottomResults).contains("Middle-School-And-Up")
             assertThat(bottomResults).contains("Jr-High-School")
-
-
         }
     }
 

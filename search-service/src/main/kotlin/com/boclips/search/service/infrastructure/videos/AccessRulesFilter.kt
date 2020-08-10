@@ -1,9 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
 import org.elasticsearch.index.query.BoolQueryBuilder
-import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
 import org.elasticsearch.index.query.QueryBuilders.existsQuery
 import org.elasticsearch.index.query.QueryBuilders.idsQuery
@@ -12,7 +11,7 @@ import org.elasticsearch.index.query.QueryBuilders.termsQuery
 
 class AccessRulesFilter {
     companion object {
-        fun buildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, videoQuery: VideoQuery): BoolQueryBuilder {
+        fun buildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, videoQuery: AccessRuleQuery): BoolQueryBuilder {
             if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.mustNot(
                     termsQuery(
@@ -61,7 +60,7 @@ class AccessRulesFilter {
                     }
                 }.forEach { voicedQuery.should(it) }
 
-               boolQueryBuilder.filter(voicedQuery)
+                boolQueryBuilder.filter(voicedQuery)
             }
 
             return boolQueryBuilder

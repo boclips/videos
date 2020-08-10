@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -46,6 +47,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByField(
                         fieldName = VideoMetadata::releaseDate,
                         order = SortOrder.ASC
@@ -89,6 +91,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByField(
                         fieldName = VideoMetadata::releaseDate,
                         order = SortOrder.DESC
@@ -136,6 +139,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByField(
                         fieldName = VideoMetadata::meanRating,
                         order = SortOrder.DESC
@@ -180,6 +184,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByField(
                         fieldName = VideoMetadata::rawTitle,
                         order = SortOrder.ASC
@@ -223,6 +228,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByRandom()
                 ),
                 startIndex = 0,
@@ -255,6 +261,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "gentleman",
+                    accessRuleQuery = AccessRuleQuery(),
                     videoSort = Sort.ByRandom()
                 )
             )

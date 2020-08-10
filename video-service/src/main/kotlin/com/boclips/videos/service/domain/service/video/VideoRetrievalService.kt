@@ -17,8 +17,8 @@ import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoResults
+import com.boclips.videos.service.domain.model.video.request.AccessRuleQueryConverter
 import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
-import com.boclips.videos.service.domain.model.video.request.VideoQueryEnricher
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
@@ -47,13 +47,8 @@ class VideoRetrievalService(
 
         logger.info { "Searching for videos with access $videoAccess" }
 
-        val query = VideoQueryEnricher.enrichFromAccessRules(
-            request.toQuery(),
-            videoAccessWithDefaultRules
-        )
-
         val searchRequest = PaginatedSearchRequest(
-            query = query,
+            query = request.toQuery(videoAccessWithDefaultRules),
             startIndex = convertPageToIndex(request.pageSize, request.pageIndex),
             windowSize = request.pageSize
         )
@@ -89,12 +84,10 @@ class VideoRetrievalService(
     fun getPlayableVideos(videoIds: List<VideoId>, videoAccess: VideoAccess): List<Video> {
         val orderById = videoIds.withIndex().associate { it.value to it.index }
 
-        val query =
-            VideoQueryEnricher.enrichFromAccessRules(VideoIdsRequest(ids = videoIds).toSearchQuery(), videoAccess)
-
         val results = videoIndex.search(
             PaginatedSearchRequest(
-                query, windowSize = videoIds.size
+                VideoIdsRequest(ids = videoIds).toSearchQuery(videoAccess),
+                windowSize = videoIds.size
             )
         )
 
@@ -113,16 +106,11 @@ class VideoRetrievalService(
     }
 
     fun getPlayableVideo(videoId: VideoId, videoAccess: VideoAccess): Video {
-        val query = VideoQueryEnricher.enrichFromAccessRules(
-            VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(),
-            videoAccess
-        )
-
         logger.info { "Getting playable video: $videoId, with access: $videoAccess" }
 
         val results = videoIndex.search(
             PaginatedSearchRequest(
-                query = query,
+                query =  VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
                 windowSize = 1
             )
         )

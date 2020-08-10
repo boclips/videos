@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -30,7 +32,12 @@ class VideoIndexReaderIdSearchesIntegrationTest : EmbeddedElasticSearchIntegrati
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(ids = setOf("2", "5")))
+            PaginatedSearchRequest(
+                query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(ids = setOf("2", "5"))
+                )
+            )
         )
 
         assertThat(results.elements).containsExactly("2")

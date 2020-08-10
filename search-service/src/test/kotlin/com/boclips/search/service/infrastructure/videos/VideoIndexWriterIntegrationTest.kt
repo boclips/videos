@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -68,7 +69,7 @@ class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery("candy"))
+            PaginatedSearchRequest(query = VideoQuery("candy", accessRuleQuery = AccessRuleQuery()))
         )
 
         assertThat(results.elements).hasSize(2)

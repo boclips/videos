@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
 import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
@@ -24,7 +24,7 @@ class VideoFilterCriteria {
         const val DURATION_RANGES = "duration-ranges-filter"
         const val ATTACHMENT_TYPES = "attachment-types-filter"
 
-        fun allCriteria(videoQuery: VideoQuery): BoolQueryBuilder {
+        fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()
             if (videoQuery.channelNames.isNotEmpty()) {
                 query.filter(
@@ -86,6 +86,10 @@ class VideoFilterCriteria {
                 query.must(matchAttachmentTypes(videoQuery.attachmentTypes))
             }
 
+            if (videoQuery.types.isNotEmpty()) {
+                query.must(matchVideoTypes(videoQuery))
+            }
+
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->
                 query.must(matchSubjectsSetManually(subjectsSetManually))
             }
@@ -93,6 +97,8 @@ class VideoFilterCriteria {
             return query
         }
 
+        private fun matchVideoTypes(videoQuery: UserQuery) =
+            termsQuery(VideoDocument.TYPES, videoQuery.types)
 
         fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
             fun removeFromList(must: MutableList<QueryBuilder>) {

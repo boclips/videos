@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -45,7 +47,8 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    subjectIds = setOf("subject-two")
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(subjectIds = setOf("subject-two"))
                 )
             )
         )
@@ -71,7 +74,8 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "",
-                    subjectIds = setOf("biology-987")
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(subjectIds = setOf("biology-987"))
                 )
             )
         )
@@ -108,7 +112,11 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
 
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
-                query = VideoQuery(phrase = "ted", userSubjectIds = setOf("subject-two", "subject-four"))
+                query = VideoQuery(
+                    phrase = "ted",
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(userSubjectIds = setOf("subject-two", "subject-four"))
+                )
             )
         )
 

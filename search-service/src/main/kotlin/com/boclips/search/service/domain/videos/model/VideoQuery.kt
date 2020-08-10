@@ -9,6 +9,11 @@ data class VideoQuery(
     override val phrase: String = "",
     override val facetDefinition: FacetDefinition.Video? = null,
     val videoSort: Sort<VideoMetadata>? = null,
+    val userQuery: UserQuery = UserQuery(),
+    val accessRuleQuery: AccessRuleQuery
+) : SearchQuery<VideoMetadata>(phrase, videoSort?.let { listOf(it) } ?: emptyList(), facetDefinition)
+
+data class UserQuery(
     val ids: Set<String> = emptySet(),
     val bestFor: List<String>? = null,
     val durationRanges: List<DurationRange>? = null,
@@ -23,7 +28,12 @@ data class VideoQuery(
     val subjectsSetManually: Boolean? = null,
     val promoted: Boolean? = null,
     val active: Boolean? = null,
-    val channelNames: Set<String> = emptySet(),
+    val types: Set<VideoType> = emptySet(),
+    val attachmentTypes: Set<String> = emptySet(),
+    val channelNames: Set<String> = emptySet()
+)
+
+data class AccessRuleQuery(
     val excludedContentPartnerIds: Set<String> = emptySet(),
     val includedChannelIds: Set<String> = emptySet(),
     val includedTypes: Set<VideoType> = emptySet(),
@@ -31,6 +41,5 @@ data class VideoQuery(
     val permittedVideoIds: Set<String>? = null,
     val deniedVideoIds: Set<String>? = null,
     val isEligibleForStream: Boolean? = null,
-    val attachmentTypes: Set<String> = emptySet(),
     val includedVoiceType: Set<VoiceType> = emptySet()
-) : SearchQuery<VideoMetadata>(phrase, videoSort?.let { listOf(it) } ?: emptyList(), facetDefinition)
+)

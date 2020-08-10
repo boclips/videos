@@ -82,7 +82,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `includes certain video ContentTypes from results`() {
-           saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
+            saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
             val newsVideo = saveVideo(title = "Some Video 2", types = listOf(ContentType.NEWS))
 
             addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS)
@@ -121,6 +121,17 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(voicedVideo.value)))
+        }
+
+        @Test
+        fun `setting query params does not give access if access rules do not permit access to this content`() {
+            saveVideo(title = "instructional", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+
+            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS)
+
+            mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
         }
     }
 }

@@ -5,12 +5,14 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
@@ -97,11 +99,14 @@ class RebuildVideoIndexTest {
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
-                ids = setOf(
-                    videoId1,
-                    videoId2,
-                    videoId3
-                )
+                userQuery = UserQuery(
+                    ids = setOf(
+                        videoId1,
+                        videoId2,
+                        videoId3
+                    )
+                ),
+                accessRuleQuery = AccessRuleQuery()
             )
         )
         val results = index.search(searchRequest)
@@ -140,10 +145,13 @@ class RebuildVideoIndexTest {
 
         val searchRequest = PaginatedSearchRequest(
             VideoQuery(
-                ids = setOf(
-                    streamableVideoId,
-                    downloadableVideoId
-                )
+                userQuery = UserQuery(
+                    ids = setOf(
+                        streamableVideoId,
+                        downloadableVideoId
+                    )
+                ),
+                accessRuleQuery = AccessRuleQuery()
             )
         )
 

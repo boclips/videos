@@ -5,13 +5,13 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.convertAgeRange
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.service.video.VideoAccessRuleConverter
 import java.time.LocalDate
 
 enum class SortKey {
@@ -46,7 +46,8 @@ class VideoRequest(
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet()
 ) {
-    fun toQuery(): VideoQuery {
+    fun toQuery(videoAccess: VideoAccess): VideoQuery {
+
         val sort = sortBy?.let {
             when (it) {
                 SortKey.RELEASE_DATE -> Sort.ByField(
@@ -78,30 +79,33 @@ class VideoRequest(
         }
 
         return VideoQuery(
-            ids = ids,
             phrase = text,
-            bestFor = bestFor,
-            durationRanges = durationRanges,
-            source = source,
             videoSort = sort,
-            releaseDateFrom = releaseDateFrom,
-            releaseDateTo = releaseDateTo,
-            ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax,
-            ageRanges = ageRanges?.map { ageRange -> convertAgeRange(ageRange) },
-            userSubjectIds = userSubjectIds,
-            subjectIds = subjectsRequest.ids,
-            subjectsSetManually = subjectsRequest.setManually,
-            promoted = promoted,
-            active = true,
-            channelNames = channelNames,
-            includedTypes = types,
             facetDefinition = FacetDefinition.Video(
                 ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
                 resourceTypes = facets.attachmentTypes
             ),
-            attachmentTypes = attachmentTypes
+            accessRuleQuery = AccessRuleQueryConverter.fromAccessRules(videoAccess),
+            userQuery = UserQuery(
+                ids = ids,
+                bestFor = bestFor,
+                durationRanges = durationRanges,
+                source = source,
+                releaseDateFrom = releaseDateFrom,
+                releaseDateTo = releaseDateTo,
+                ageRangeMin = ageRangeMin,
+                ageRangeMax = ageRangeMax,
+                ageRanges = ageRanges?.map { ageRange -> convertAgeRange(ageRange) },
+                userSubjectIds = userSubjectIds,
+                subjectIds = subjectsRequest.ids,
+                subjectsSetManually = subjectsRequest.setManually,
+                promoted = promoted,
+                active = true,
+                channelNames = channelNames,
+                types = types,
+                attachmentTypes = attachmentTypes
+            )
         )
     }
 

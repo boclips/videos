@@ -28,7 +28,7 @@ class AgeRangeAggregation {
         fun aggregateAgeRanges(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
-                    VideoFilterCriteria.allCriteria(videoQuery),
+                    VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.AGE_RANGES
                 ),
                 ageRangeBuckets = videoQuery.facetDefinition?.ageRangeBuckets ?: emptyList()

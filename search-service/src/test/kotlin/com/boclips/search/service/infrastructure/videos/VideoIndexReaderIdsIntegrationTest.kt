@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -33,7 +35,14 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = setOf("1"), phrase = "apple"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(
+                            permittedVideoIds = setOf("1")
+                        ),
+                        phrase = "apple"
+                    )
+                )
             )
 
             assertThat(results.elements).containsExactly("1")
@@ -45,16 +54,20 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
                 sequenceOf(
                     SearchableVideoMetadataFactory.create(id = "1", title = "apple", types = listOf(VideoType.NEWS)),
                     SearchableVideoMetadataFactory.create(id = "2", title = "apple & bananas"),
-                    SearchableVideoMetadataFactory.create(id = "3", title = "golf is cool", types = listOf(VideoType.NEWS))
+                    SearchableVideoMetadataFactory.create(
+                        id = "3",
+                        title = "golf is cool",
+                        types = listOf(VideoType.NEWS)
+                    )
                 )
             )
 
             val results = videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        permittedVideoIds = setOf("1", "2"),
+                        accessRuleQuery = AccessRuleQuery(permittedVideoIds = setOf("1", "2")),
                         phrase = "apple",
-                        includedTypes = setOf(VideoType.NEWS)
+                        userQuery = UserQuery(types = setOf(VideoType.NEWS))
                     )
                 )
             )
@@ -72,7 +85,14 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = null, phrase = "apple"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(
+                            permittedVideoIds = null
+                        ),
+                        phrase = "apple"
+                    )
+                )
             )
 
             assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
@@ -88,7 +108,14 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery(permittedVideoIds = emptySet(), phrase = "apple"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(
+                            permittedVideoIds = emptySet()
+                        ),
+                        phrase = "apple"
+                    )
+                )
             )
 
             assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
@@ -107,7 +134,12 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery(deniedVideoIds = setOf("1"), phrase = "apple"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(deniedVideoIds = setOf("1")),
+                        phrase = "apple"
+                    )
+                )
             )
 
             assertThat(results.elements).containsExactly("2")
@@ -126,8 +158,10 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             val results = videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        deniedVideoIds = setOf("1"),
-                        permittedVideoIds = setOf("1", "2"),
+                        accessRuleQuery = AccessRuleQuery(
+                            deniedVideoIds = setOf("1"),
+                            permittedVideoIds = setOf("1", "2")
+                        ),
                         phrase = "apple"
                     )
                 )
@@ -146,7 +180,12 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(query = VideoQuery(deniedVideoIds = setOf("100"), phrase = "apple"))
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        accessRuleQuery = AccessRuleQuery(deniedVideoIds = setOf("100")),
+                        phrase = "apple"
+                    )
+                )
             )
 
             assertThat(results.elements).containsExactly("1", "2")

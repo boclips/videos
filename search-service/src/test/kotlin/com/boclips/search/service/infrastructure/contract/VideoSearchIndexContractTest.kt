@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -33,7 +34,8 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "gentleman"
+                        phrase = "gentleman",
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -69,7 +71,8 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "gentleman"
+                        phrase = "gentleman",
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -97,7 +100,8 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "boy"
+                        phrase = "boy",
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -114,7 +118,16 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
             sequenceOf(SearchableVideoMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        Assertions.assertThat(queryService.search(PaginatedSearchRequest(query = VideoQuery("Boy"))).counts.totalHits)
+        Assertions.assertThat(
+            queryService.search(
+                PaginatedSearchRequest(
+                    query = VideoQuery(
+                        phrase = "Boy",
+                        accessRuleQuery = AccessRuleQuery()
+                    )
+                )
+            ).counts.totalHits
+        )
             .isEqualTo(1)
     }
 }

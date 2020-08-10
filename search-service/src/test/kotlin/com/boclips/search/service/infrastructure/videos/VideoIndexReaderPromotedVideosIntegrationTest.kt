@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -24,14 +26,18 @@ class VideoIndexReaderPromotedVideosIntegrationTest : EmbeddedElasticSearchInteg
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
-                SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple", promoted = true)
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "candy banana apple",
+                    promoted = true
+                )
             )
         )
 
         val results =
             videoIndexReader.search(
                 PaginatedSearchRequest(
-                    query = VideoQuery(promoted = true),
+                    query = VideoQuery(userQuery = UserQuery(promoted = true), accessRuleQuery = AccessRuleQuery()),
                     startIndex = 0,
                     windowSize = 2
                 )
@@ -45,14 +51,22 @@ class VideoIndexReaderPromotedVideosIntegrationTest : EmbeddedElasticSearchInteg
         videoIndexWriter.upsert(
             sequenceOf(
                 SearchableVideoMetadataFactory.create(id = "1", description = "Apple banana candy"),
-                SearchableVideoMetadataFactory.create(id = "2", description = "candy banana apple", promoted = true)
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    description = "candy banana apple",
+                    promoted = true
+                )
             )
         )
 
         val results =
             videoIndexReader.search(
                 PaginatedSearchRequest(
-                    query = VideoQuery(phrase = "banana", promoted = null),
+                    query = VideoQuery(
+                        phrase = "banana",
+                        userQuery = UserQuery(promoted = null),
+                        accessRuleQuery = AccessRuleQuery()
+                    ),
                     startIndex = 0,
                     windowSize = 2
                 )

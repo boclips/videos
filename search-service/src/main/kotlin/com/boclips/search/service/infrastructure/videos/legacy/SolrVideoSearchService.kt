@@ -42,7 +42,7 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         if (searchRequest.query.phrase.isNotEmpty()) {
             throw java.lang.UnsupportedOperationException()
         }
-        val query = searchRequest.query.ids.joinToString(separator = " OR ", prefix = "id:")
+        val query = searchRequest.query.userQuery.ids.joinToString(separator = " OR ", prefix = "id:")
         val videoIds = client.query(SolrQuery(query)).results.toList()
         val elements = videoIds.map { it.getFieldValue("id").toString() }
         return SearchResults(elements = elements, counts = ResultCounts(totalHits = videoIds.size.toLong()))

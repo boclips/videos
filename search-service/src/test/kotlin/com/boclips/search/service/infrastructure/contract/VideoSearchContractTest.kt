@@ -3,8 +3,10 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
@@ -56,7 +58,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    "videoQuery that matches nothing"
+                    phrase = "videoQuery that matches nothing",
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -95,7 +98,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    "gentleman"
+                    phrase = "gentleman",
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -133,7 +137,9 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    excludedContentPartnerIds = setOf("excluded-cp")
+                    accessRuleQuery = AccessRuleQuery(
+                        excludedContentPartnerIds = setOf("excluded-cp")
+                    )
                 )
             )
         )
@@ -157,7 +163,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    "video"
+                    phrase = "video",
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -197,7 +204,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "gentleman"
+                        phrase = "gentleman", accessRuleQuery = AccessRuleQuery()
                     ), startIndex = 0, windowSize = 2
                 )
             )
@@ -205,7 +212,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             queryService.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        "gentleman"
+                        phrase = "gentleman",
+                        accessRuleQuery = AccessRuleQuery()
                     ), startIndex = 2, windowSize = 2
                 )
             )
@@ -232,7 +240,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             )
         )
 
-        val query = VideoQuery(ids = setOf("1", "2", "3", "4"))
+        val query =
+            VideoQuery(userQuery = UserQuery(ids = setOf("1", "2", "3", "4")), accessRuleQuery = AccessRuleQuery())
         assertThat(queryService.search(PaginatedSearchRequest(query = query)).counts.totalHits).isEqualTo(1)
 
         val results = queryService.search(
@@ -282,7 +291,10 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         "World war",
-                        source = SourceType.BOCLIPS
+                        userQuery = UserQuery(
+                            source = SourceType.BOCLIPS
+                        ),
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )
@@ -316,7 +328,10 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjectIds = setOf("subject-one")
+                    userQuery = UserQuery(
+                        subjectIds = setOf("subject-one")
+                    ),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -349,7 +364,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "",
-                    promoted = true
+                    userQuery = UserQuery(promoted = true),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -373,7 +389,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ageRanges = listOf(AgeRange(3, 7))
+                    userQuery = UserQuery(ageRanges = listOf(AgeRange(3, 7))),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -398,7 +415,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    isEligibleForStream = true
+                    accessRuleQuery = AccessRuleQuery(isEligibleForStream = true)
                 )
             )
         )
@@ -424,8 +441,10 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    permittedVideoIds = setOf("3"),
-                    includedChannelIds = setOf("channel-1")
+                    accessRuleQuery = AccessRuleQuery(
+                        permittedVideoIds = setOf("3"),
+                        includedChannelIds = setOf("channel-1")
+                    )
                 )
             )
         )

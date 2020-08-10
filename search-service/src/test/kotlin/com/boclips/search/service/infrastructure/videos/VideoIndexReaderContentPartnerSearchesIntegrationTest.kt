@@ -1,8 +1,10 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -51,7 +53,8 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = contentProvider,
-                        includedTypes = setOf(VideoType.NEWS)
+                        userQuery = UserQuery(types = setOf(VideoType.NEWS)),
+                        accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )
@@ -82,7 +85,10 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = contentProvider,
-                    bestFor = listOf("education")
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        bestFor = listOf("education")
+                    )
                 )
             )
         )
@@ -108,7 +114,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed"))
+            PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed", accessRuleQuery = AccessRuleQuery()))
         )
 
         assertThat(results.elements).startsWith("3")
@@ -149,7 +155,15 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    durationRanges = listOf(DurationRange(min = Duration.ofSeconds(5), max = Duration.ofSeconds(10)))
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        durationRanges = listOf(
+                            DurationRange(
+                                min = Duration.ofSeconds(5),
+                                max = Duration.ofSeconds(10)
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -178,7 +192,10 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    subjectIds = setOf("History")
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        subjectIds = setOf("History")
+                    )
                 )
             )
         )
@@ -209,8 +226,11 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    ageRangeMin = 2,
-                    ageRangeMax = 5
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        ageRangeMin = 2,
+                        ageRangeMax = 5
+                    )
                 )
             )
         )
@@ -239,8 +259,11 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    releaseDateFrom = LocalDate.of(2019, Month.JANUARY, 1),
-                    releaseDateTo = LocalDate.of(2019, Month.FEBRUARY, 1)
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        releaseDateFrom = LocalDate.of(2019, Month.JANUARY, 1),
+                        releaseDateTo = LocalDate.of(2019, Month.FEBRUARY, 1)
+                    )
                 )
             )
         )
@@ -269,7 +292,10 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    source = SourceType.BOCLIPS
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(
+                        source = SourceType.BOCLIPS
+                    )
                 )
             )
         )

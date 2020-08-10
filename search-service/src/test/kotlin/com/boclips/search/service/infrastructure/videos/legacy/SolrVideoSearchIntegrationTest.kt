@@ -1,6 +1,8 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory
 import org.apache.solr.client.solrj.impl.HttpSolrClient
@@ -61,7 +63,7 @@ class SolrSearchServiceIntegrationTest {
             solrVideoSearch.search(
                 PaginatedSearchRequest(
                     VideoQuery(
-                        phrase = "phrase"
+                        phrase = "phrase", accessRuleQuery = AccessRuleQuery()
                     )
                 )
             )
@@ -81,7 +83,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = setOf("1", "2", "5")
+                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "5"))
                 )
             )
         )
@@ -97,7 +99,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = setOf("10")
+                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("10"))
                 )
             )
         )
@@ -119,7 +121,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = setOf("1", "2", "3")
+                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "3"))
                 )
             )
         )
@@ -139,7 +141,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    ids = setOf("1", "2")
+                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2"))
                 )
             )
         )

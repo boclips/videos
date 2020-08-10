@@ -19,7 +19,7 @@ class SubjectAggregation {
         fun aggregateSubjects(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
-                    VideoFilterCriteria.allCriteria(videoQuery),
+                    VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.SUBJECTS
                 )
             )

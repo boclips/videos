@@ -1,7 +1,9 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -35,10 +37,12 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        durationRanges = listOf(
-                            DurationRange(
-                                min = Duration.ofSeconds(60),
-                                max = Duration.ofSeconds(110)
+                        accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(
+                            durationRanges = listOf(
+                                DurationRange(
+                                    min = Duration.ofSeconds(60),
+                                    max = Duration.ofSeconds(110)
+                                )
                             )
                         )
                     )
@@ -63,11 +67,12 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        durationRanges = listOf(DurationRange(min = Duration.ofSeconds(60)))
+                        accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(
+                            durationRanges = listOf(DurationRange(min = Duration.ofSeconds(60)))
+                        )
                     )
                 )
             )
-
         assertThat(results.counts.totalHits).isEqualTo(2)
         assertThat(results.elements).containsExactlyInAnyOrder("1", "2")
     }
@@ -86,10 +91,12 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedSearchRequest(
                     query = VideoQuery(
-                        durationRanges = listOf(
-                            DurationRange(
-                                min = Duration.ofSeconds(0),
-                                max = Duration.ofSeconds(110)
+                        accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(
+                            durationRanges = listOf(
+                                DurationRange(
+                                    min = Duration.ofSeconds(0),
+                                    max = Duration.ofSeconds(110)
+                                )
                             )
                         )
                     )

@@ -18,18 +18,20 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
     override fun idsMatching(index: MutableMap<String, VideoMetadata>, query: VideoQuery): List<String> {
         val phrase = query.phrase
 
-        val releaseDateFrom: LocalDate = query.releaseDateFrom ?: LocalDate.MIN
-        val releaseDateTo: LocalDate = query.releaseDateTo ?: LocalDate.MAX
+        val releaseDateFrom: LocalDate = query.userQuery.releaseDateFrom ?: LocalDate.MIN
+        val releaseDateTo: LocalDate = query.userQuery.releaseDateTo ?: LocalDate.MAX
 
         return index
             .filter { entry ->
-                query.ids.isNullOrEmpty() || query.ids.contains(entry.value.id)
+                query.userQuery.ids.isNullOrEmpty() || query.userQuery.ids.contains(entry.value.id)
             }
             .filter { entry ->
                 matchOrFilters(query, entry)
             }
             .filter { entry ->
-                query.deniedVideoIds.isNullOrEmpty() || !query.deniedVideoIds.contains(entry.value.id)
+                query.accessRuleQuery.deniedVideoIds.isNullOrEmpty() || !query.accessRuleQuery.deniedVideoIds.contains(
+                    entry.value.id
+                )
             }
             .filter { entry ->
                 entry.value.title.contains(phrase, ignoreCase = true)
@@ -38,23 +40,27 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                     || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
             }
             .filter { entry ->
-                if (query.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.bestFor)
+                if (query.userQuery.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.userQuery.bestFor)
             }
             .filter { entry ->
-                if (query.includedTypes.isEmpty()) true else query.includedTypes.any { entry.value.types.contains(it) }
+                filterByIncludedType(query, entry)
             }
             .filter { entry ->
-                if (query.excludedTypes.isEmpty()) true else !query.excludedTypes.any { entry.value.types.contains(it) }
+                if (query.accessRuleQuery.excludedTypes.isEmpty()) true else !query.accessRuleQuery.excludedTypes.any {
+                    entry.value.types.contains(
+                        it
+                    )
+                }
             }.filter { entry ->
-                if (query.excludedContentPartnerIds.isEmpty()) true
-                else !query.excludedContentPartnerIds.contains(entry.value.contentPartnerId)
+                if (query.accessRuleQuery.excludedContentPartnerIds.isEmpty()) true
+                else !query.accessRuleQuery.excludedContentPartnerIds.contains(entry.value.contentPartnerId)
             }
             .filter { entry ->
-                if (query.durationRanges.isNullOrEmpty()) {
+                if (query.userQuery.durationRanges.isNullOrEmpty()) {
                     return@filter true
                 }
 
-                query.durationRanges.forEach { durationRange ->
+                query.userQuery.durationRanges.forEach { durationRange ->
                     val minSeconds = durationRange.min.seconds
                     val maxSeconds = durationRange.max?.seconds ?: Long.MAX_VALUE
                     if ((minSeconds..maxSeconds).contains(entry.value.durationSeconds)) {
@@ -65,54 +71,54 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 return@filter false
             }
             .filter { entry ->
-                if (query.ageRangeMin == null && query.ageRangeMax == null) {
+                if (query.userQuery.ageRangeMin == null && query.userQuery.ageRangeMax == null) {
                     return@filter true
                 }
 
-                return@filter (entry.value.ageRangeMin == query.ageRangeMin && entry.value.ageRangeMax == query.ageRangeMax)
+                return@filter (entry.value.ageRangeMin == query.userQuery.ageRangeMin && entry.value.ageRangeMax == query.userQuery.ageRangeMax)
             }
             .filter { entry ->
-                if (query.ageRanges.isNullOrEmpty()) {
+                if (query.userQuery.ageRanges.isNullOrEmpty()) {
                     return@filter true
                 }
 
-                return@filter query.ageRanges.any { ageRange ->
+                return@filter query.userQuery.ageRanges.any { ageRange ->
                     AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
                 }
             }
             .filter { entry ->
-                query.source?.let { it == entry.value.source } ?: true
+                query.userQuery.source?.let { it == entry.value.source } ?: true
             }.filter { entry ->
                 (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
             }.filter { entry ->
-                if (query.subjectIds.isEmpty()) {
+                if (query.userQuery.subjectIds.isEmpty()) {
                     true
                 } else {
-                    query.subjectIds.any { querySubject ->
+                    query.userQuery.subjectIds.any { querySubject ->
                         entry.value.subjects.items.any { videoSubject ->
                             videoSubject.id.contains(querySubject)
                         }
                     }
                 }
             }.filter { entry ->
-                query.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
+                query.userQuery.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
             }.filter { entry ->
-                query.promoted?.let { entry.value.promoted == it } ?: true
+                query.userQuery.promoted?.let { entry.value.promoted == it } ?: true
             }.filter { entry ->
-                query.active?.let { entry.value.deactivated != it } ?: true
+                query.userQuery.active?.let { entry.value.deactivated != it } ?: true
             }
             .filter { entry ->
-                if (query.channelNames.isNotEmpty())
-                    query.channelNames.contains(entry.value.contentProvider)
+                if (query.userQuery.channelNames.isNotEmpty())
+                    query.userQuery.channelNames.contains(entry.value.contentProvider)
                 else true
             }
             .filter { entry ->
-                query.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
+                query.accessRuleQuery.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
             }.filter { entry ->
-                if (query.attachmentTypes.isEmpty()) {
+                if (query.userQuery.attachmentTypes.isEmpty()) {
                     true
                 } else {
-                    query.attachmentTypes.any { queryAttachmentType ->
+                    query.userQuery.attachmentTypes.any { queryAttachmentType ->
                         entry.value.attachmentTypes?.any { videoAttachments ->
                             videoAttachments.contains(queryAttachmentType)
                         } ?: true
@@ -120,10 +126,10 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 }
             }
             .filter { entry ->
-                if (query.includedVoiceType.isEmpty()) {
+                if (query.accessRuleQuery.includedVoiceType.isEmpty()) {
                     true
                 } else {
-                    query.includedVoiceType.any { voiceType ->
+                    query.accessRuleQuery.includedVoiceType.any { voiceType ->
                         when (voiceType) {
                             VoiceType.UNKNOWN -> entry.value.isVoiced == null
                             VoiceType.WITH -> entry.value.isVoiced == true
@@ -135,18 +141,49 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
             .map { video -> video.key }
     }
 
+    private fun filterByIncludedType(
+        query: VideoQuery,
+        entry: Map.Entry<String, VideoMetadata>
+    ) = if (query.accessRuleQuery.includedTypes.isEmpty() && query.userQuery.types.isEmpty()) {
+        true
+    } else {
+        when {
+            query.accessRuleQuery.includedTypes.isEmpty() -> {
+                query.userQuery.types.any {
+                    entry.value.types.contains(
+                        it
+                    )
+                }
+            }
+            query.userQuery.types.isEmpty() -> {
+                query.accessRuleQuery.includedTypes.any {
+                    entry.value.types.contains(
+                        it
+                    )
+                }
+            }
+            else -> {
+                query.accessRuleQuery.includedTypes.intersect(query.userQuery.types).any {
+                    entry.value.types.contains(
+                        it
+                    )
+                }
+            }
+        }
+    }
+
     private fun matchOrFilters(
         query: VideoQuery,
         entry: Map.Entry<String, VideoMetadata>
     ): Boolean {
         val noCombinedFilterSpecified =
-            query.permittedVideoIds.isNullOrEmpty() && query.includedChannelIds.isEmpty()
+            query.accessRuleQuery.permittedVideoIds.isNullOrEmpty() && query.accessRuleQuery.includedChannelIds.isEmpty()
 
         return if (noCombinedFilterSpecified) {
             true
         } else {
-            query.includedChannelIds.contains(entry.value.contentPartnerId) ||
-                query.permittedVideoIds?.contains(entry.value.id) == true
+            query.accessRuleQuery.includedChannelIds.contains(entry.value.contentPartnerId) ||
+                query.accessRuleQuery.permittedVideoIds?.contains(entry.value.id) == true
         }
     }
 }

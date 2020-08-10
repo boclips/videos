@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -44,7 +46,8 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjectsSetManually = true
+                    userQuery = UserQuery(subjectsSetManually = true),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -83,7 +86,8 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjectsSetManually = false
+                    userQuery = UserQuery(subjectsSetManually = false),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -128,7 +132,8 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjectIds = setOf("subject-three")
+                    userQuery = UserQuery(subjectIds = setOf("subject-three")),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )
@@ -178,7 +183,8 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    subjectIds = setOf("subject-one", "subject-two")
+                    userQuery = UserQuery(subjectIds = setOf("subject-one", "subject-two")),
+                    accessRuleQuery = AccessRuleQuery()
                 )
             )
         )

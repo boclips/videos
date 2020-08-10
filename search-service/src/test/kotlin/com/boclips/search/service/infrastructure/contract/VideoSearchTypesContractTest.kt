@@ -3,6 +3,8 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -38,7 +40,7 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    includedTypes = emptySet()
+                    accessRuleQuery = AccessRuleQuery(includedTypes = emptySet())
                 )
             )
         )
@@ -72,7 +74,7 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
+                    accessRuleQuery = AccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK))
                 )
             )
         )
@@ -98,8 +100,11 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    ids = setOf("1", "2", "3"),
-                    excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)
+                    accessRuleQuery = AccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)),
+                    userQuery = UserQuery(
+                        ids = setOf("1", "2", "3")
+                    )
+
                 )
             )
         )
