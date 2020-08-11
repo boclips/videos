@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -154,7 +156,14 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `returns 200 for valid video as anonymous user`() {
+        fun `returns 200 for valid video as anonymous user, shows full video if no sharecode`() {
+            mockMvc.perform(
+                patch("/v1/videos/$kalturaVideoId")
+                    .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .asBoclipsEmployee()
+            )
+
             mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
@@ -202,6 +211,78 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.channelId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
+                .andExpect(jsonPath("$.attachments", hasSize<Int>(1)))
+        }
+
+        @Test
+        fun `anonymous user with valid referer & shareCode can access playback and attachments`() {
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "referer-id",
+                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "valid")
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/videos/$kalturaVideoId")
+                    .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .asBoclipsEmployee()
+            )
+
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId?referer=referer-id&shareCode=valid"))
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.playback.id").exists())
+                .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
+                .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
+                .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT1M")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.hlsStream.href",
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
+                .andExpect(jsonPath("$.playback._links.download.href").doesNotExist())
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
+                .andExpect(jsonPath("$.playback._links.editThumbnail").doesNotExist())
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.videoPreview.href",
+                        containsString("/vid_slices/{thumbnailCount}")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
+                .andExpect(jsonPath("$.attachments", hasSize<Int>(1)))
+        }
+
+        @Test
+        fun `anonymous user with invalid referer & shareCode cannot access playback and attachments`() {
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "referer-id",
+                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "valid")
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/videos/$kalturaVideoId")
+                    .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .asBoclipsEmployee()
+            )
+
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId?referer=referer-id&shareCode=invalid"))
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(jsonPath("$.playback").doesNotExist())
+                .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
         }
 
         @Test
@@ -413,9 +494,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("A tag")
 
             mockMvc.perform(
-                patch(tagVideoUrl).content(tagUrl)
-                    .contentType("text/uri-list").asTeacher()
-            )
+                    patch(tagVideoUrl).content(tagUrl)
+                        .contentType("text/uri-list").asTeacher()
+                )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -434,9 +515,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("Tag")
 
             mockMvc.perform(
-                patch(tagVideoUrl).content(tagUrl)
-                    .contentType("text/uri-list").asTeacher()
-            )
+                    patch(tagVideoUrl).content(tagUrl)
+                        .contentType("text/uri-list").asTeacher()
+                )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -708,9 +789,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")
-                    .asIngestor()
-            )
+                    MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")
+                        .asIngestor()
+                )
                 .andExpect(status().isOk)
         }
 
@@ -740,13 +821,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
-                """
+                    """
                 {
                   "label": "$name",
                   "UserId": "User-1"
                 }
                 """.trimIndent()
-            )
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         ).andReturn().response.getHeader("Location")!!

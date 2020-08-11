@@ -1,7 +1,13 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.*
+import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.SetThumbnailRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.request.video.VideoAssetRequest
 import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
@@ -24,6 +30,7 @@ import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -69,7 +76,8 @@ class VideoController(
     private val videosLinkBuilder: VideosLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    private val getVideoAssets: GetVideoAssets
+    private val getVideoAssets: GetVideoAssets,
+    private val userService: UserService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -144,9 +152,18 @@ class VideoController(
     @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,
-        @RequestParam(required = false) projection: Projection? = null
+        @RequestParam(required = false) projection: Projection? = null,
+        @RequestParam(required = false) referer: String? = null,
+        @RequestParam(required = false) shareCode: String? = null
     ): ResponseEntity<VideoResource> {
         val video = searchVideo.byId(id, getCurrentUser(), projection)
+
+        val canAccessProtectedAttributes = when {
+            getCurrentUser().isAuthenticated -> true
+            shareCode == null || referer == null -> true
+            else -> userService.isShareCodeValid(referer, shareCode)
+        }
+
         if (video.deactivated) {
             return ResponseEntity(HttpHeaders().apply {
                 set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
@@ -158,6 +175,12 @@ class VideoController(
                 when (projection) {
                     Projection.full -> videoCaptionService.withCaptionDetails(it)
                     else -> it
+                }
+            }
+            .let {
+                when {
+                    canAccessProtectedAttributes -> it
+                    else -> it.copy(playback = null, attachments = emptyList())
                 }
             }
             .let { ResponseEntity(it, HttpStatus.OK) }
@@ -332,5 +355,6 @@ class VideoController(
     }
 
     @PostMapping("/v1/videos/{id}/assets")
-    fun getAssets(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) = getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
+    fun getAssets(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) =
+        getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
 }

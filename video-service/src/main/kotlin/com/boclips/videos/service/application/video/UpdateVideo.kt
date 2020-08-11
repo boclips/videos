@@ -50,7 +50,10 @@ class UpdateVideo(
             ?.let { VideoUpdateCommand.ReplaceSubjectsWereSetManually(videoId, true) }
         val ageRange = AgeRange
             .of(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax, curatedManually = true)
-        val replaceAgeRange = VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange)
+        val replaceAgeRange = when {
+            updateRequest.ageRangeMin != null || updateRequest.ageRangeMax!= null -> VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange)
+            else -> null
+        }
         val replaceAttachments = AttachmentRequestConverter().convert(videoId, updateRequest.attachments)
         val replaceBestFor = updateRequest.tagId?.let {
             tagRepository.findById(TagId(value = updateRequest.tagId!!))?.let {
