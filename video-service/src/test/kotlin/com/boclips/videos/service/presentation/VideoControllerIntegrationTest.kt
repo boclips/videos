@@ -263,7 +263,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `anonymous user with invalid referer & shareCode cannot access playback and attachments`() {
+        fun `anonymous user with invalid referer & shareCode cannot access attachments, and only sees playback thumbnail`() {
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "referer-id",
@@ -281,7 +281,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(get("/v1/videos/$kalturaVideoId?referer=referer-id&shareCode=invalid"))
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
-                .andExpect(jsonPath("$.playback").doesNotExist())
+                .andExpect(jsonPath("$.playback._links.hlsStream").doesNotExist())
+                .andExpect(jsonPath("$.playback._links.thumbnail").exists())
                 .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
         }
 

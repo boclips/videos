@@ -212,6 +212,22 @@ class VideoToResourceConverterTest {
     }
 
     @Test
+    fun `omits attachments + playback details except thumbnail when omitProtectedAttributes is true`() {
+        val videoResource = videoToResourceConverter.convert(
+            youtubeVideo,
+            user = UserFactory.sample(),
+            omitProtectedAttributes = true
+        )
+
+        assertThat(videoResource.title).isEqualTo("Do what you love on youtube")
+        val playback = videoResource.playback!! as YoutubePlaybackResource
+
+        assertThat(playback._links!!.keys).hasSize(1)
+        assertThat(playback._links!!["thumbnail"]).isNotNull
+        assertThat(videoResource.attachments).hasSize(0)
+    }
+
+    @Test
     fun `converts bestFor to empty list when video does not have a tag`() {
         val video = createVideo(
             title = "Do what you love on youtube",

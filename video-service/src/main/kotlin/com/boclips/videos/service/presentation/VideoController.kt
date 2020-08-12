@@ -170,17 +170,15 @@ class VideoController(
             }, HttpStatus.PERMANENT_REDIRECT)
         }
         return video
-            .let { videoToResourceConverter.convert(it, getCurrentUser()) }
+            .let { videoToResourceConverter.convert(
+                it,
+                user = getCurrentUser(),
+                omitProtectedAttributes = !canAccessProtectedAttributes
+            ) }
             .let {
                 when (projection) {
                     Projection.full -> videoCaptionService.withCaptionDetails(it)
                     else -> it
-                }
-            }
-            .let {
-                when {
-                    canAccessProtectedAttributes -> it
-                    else -> it.copy(playback = null, attachments = emptyList())
                 }
             }
             .let { ResponseEntity(it, HttpStatus.OK) }

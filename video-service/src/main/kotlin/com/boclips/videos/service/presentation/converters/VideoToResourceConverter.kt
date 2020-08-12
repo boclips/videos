@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -48,7 +50,7 @@ class VideoToResourceConverter(
         )
     }
 
-    fun convert(video: Video, user: User): VideoResource {
+    fun convert(video: Video, user: User, omitProtectedAttributes: Boolean? = false): VideoResource {
         return VideoResource(
             id = video.videoId.value,
             title = video.title,
@@ -59,7 +61,7 @@ class VideoToResourceConverter(
             channelId = video.channel.channelId.value,
             channelVideoId = video.videoReference,
             releasedOn = video.releasedOn,
-            playback = playbackToResourceConverter.convert(video.playback, video.videoId),
+            playback = playbackToResourceConverter.convert(video.playback, video.videoId, omitProtectedAttributes),
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             badges = convertBadges(video),
             types = video.types.map { VideoTypeResource(id = it.id, name = it.title) },
@@ -72,7 +74,10 @@ class VideoToResourceConverter(
             promoted = video.promoted,
             language = video.voice.language?.let { LanguageResource.from(it) },
             isVoiced = video.isVoiced(),
-            attachments = video.attachments.map { attachmentToResourceConverter.convert(it) },
+            attachments = when (omitProtectedAttributes) {
+                true -> emptyList()
+                else -> video.attachments.map { attachmentToResourceConverter.convert(it) }
+            },
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             _links = (
                 resourceLinks(video.videoId.value) +
