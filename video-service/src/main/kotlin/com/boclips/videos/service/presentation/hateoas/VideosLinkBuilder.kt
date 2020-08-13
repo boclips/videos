@@ -55,7 +55,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun videoLink(): HateoasLink {
-        return HateoasLink.of(Link(getVideosRootWithoutParams().pathSegment("{id}").build().toUriString(), VIDEO))
+        return HateoasLink.of(Link(getVideosRootWithoutParams().pathSegment("{id}").build().toUriString()+ "{" +
+            "?referer,shareCode}", VIDEO))
     }
 
     fun createVideoInteractedWithEvent(videoId: String?): HateoasLink {

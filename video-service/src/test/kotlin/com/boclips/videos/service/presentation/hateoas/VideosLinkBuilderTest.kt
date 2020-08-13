@@ -114,7 +114,7 @@ class VideosLinkBuilderTest {
     fun `video link`() {
         val link = videosLinkBuilder.videoLink()
 
-        assertThat(link.href).endsWith("/v1/videos/{id}")
+        assertThat(link.href).endsWith("/v1/videos/{id}{?referer,shareCode}")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.VIDEO)
         assertThat(link.templated).isTrue()
     }

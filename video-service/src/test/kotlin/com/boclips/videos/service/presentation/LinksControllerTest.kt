@@ -28,7 +28,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     fun `as a not authenticated`() {
         mockMvc.perform(get("/v1"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.video.href", containsString("/videos/{id}")))
+            .andExpect(jsonPath("$._links.video.href", endsWith("videos/{id}{?referer,shareCode}")))
             .andExpect(jsonPath("$._links.video.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
