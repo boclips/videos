@@ -10,10 +10,24 @@ tidy () {
 trap tidy EXIT
 
 mkdir "$dir/version"
-echo TEST_VERSION > "$dir/version/version"
+echo TEST_VERSION > "$dir/version/tag"
 
 YOUTUBE_API_KEY="$(bo show credential concourse-main boclips.videos youtube-contract-test-api-key)"
+GCS_BUCKET_NAME="$(bo show credential concourse-main boclips.videos GCS_BUCKET_NAME)"
+GCS_SECRET="$(bo show credential concourse-main boclips.videos GCS_SECRET)"
+GCS_PROJECT_ID="$(bo show credential concourse-main boclips.videos GCS_PROJECT_ID)"
+GCS_CONTRACT_SECRET="$(bo show credential concourse-main boclips.videos GCS_CONTRACT_SECRET)"
+GCS_CONTRACT_BUCKET_NAME="$(bo show credential concourse-main boclips.videos GCS_CONTRACT_BUCKET_NAME)"
+KEYCLOAK_REALM=boclips
+KEYCLOAK_URL=https://login.testing-boclips.com/auth
 export YOUTUBE_API_KEY
+export GCS_BUCKET_NAME
+export GCS_SECRET
+export GCS_PROJECT_ID
+export GCS_CONTRACT_SECRET
+export GCS_CONTRACT_BUCKET_NAME
+export KEYCLOAK_REALM
+export KEYCLOAK_URL
 
 fly --target ci execute \
     --input source="$cwd" \
