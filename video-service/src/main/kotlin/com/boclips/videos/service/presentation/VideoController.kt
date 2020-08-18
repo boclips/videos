@@ -160,7 +160,7 @@ class VideoController(
 
         val canAccessProtectedAttributes = when {
             getCurrentUser().isAuthenticated -> true
-            shareCode == null || referer == null -> false
+            shareCode == null || referer == null -> true
             else -> userService.isShareCodeValid(referer, shareCode)
         }
 
