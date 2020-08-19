@@ -184,4 +184,11 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-jcl@.*$</packageUrl>
         <cve>CVE-2020-5398</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: okhttp-3.9.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.okhttp3/okhttp@.*$</packageUrl>
+        <cve>CVE-2018-20200</cve>
+    </suppress>
 </suppressions>
