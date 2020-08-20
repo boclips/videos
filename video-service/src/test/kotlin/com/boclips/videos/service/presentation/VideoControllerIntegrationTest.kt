@@ -156,7 +156,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `returns 200 for valid video as anonymous user, shows only non-protected video details if no sharecode`() {
+        fun `returns 200 for valid video as anonymous user, shows full video if no sharecode`() {
             mockMvc.perform(
                 patch("/v1/videos/$kalturaVideoId")
                     .content("""{ "attachments": [{ "linkToResource": "alex.bagpipes.com", "type": "ACTIVITY", "description": "Amazing description" }] }""".trimIndent())
@@ -176,12 +176,28 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
                 .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))
-                .andExpect(jsonPath("$.playback._links.hlsStream").doesNotExist())
+                .andExpect(jsonPath("$.playback.duration", equalTo("PT1M")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.hlsStream.href",
+                        equalTo("https://cdnapisec.kaltura.com/p/partner-id/sp/partner-id00/playManifest/entryId/entry-id-123/format/applehttp/flavorParamIds/487041%2C487071%2C487081%2C487091/protocol/https/video.mp4")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.createPlaybackEvent.href", containsString("/events/playback")))
                 .andExpect(jsonPath("$.playback._links.download.href").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/entry_id/entry-id-123")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.href", containsString("/width/{thumbnailWidth}")))
                 .andExpect(jsonPath("$.playback._links.thumbnail.templated", equalTo(true)))
                 .andExpect(jsonPath("$.playback._links.editThumbnail").doesNotExist())
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/entry_id/entry-id-123")))
+                .andExpect(jsonPath("$.playback._links.videoPreview.href", containsString("/width/{thumbnailWidth}")))
+                .andExpect(
+                    jsonPath(
+                        "$.playback._links.videoPreview.href",
+                        containsString("/vid_slices/{thumbnailCount}")
+                    )
+                )
+                .andExpect(jsonPath("$.playback._links.videoPreview.templated", equalTo(true)))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
                 .andExpect(jsonPath("$._links.self.href", containsString("/videos/$kalturaVideoId")))
@@ -195,7 +211,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.channelId").doesNotExist())
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
-                .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
+                .andExpect(jsonPath("$.attachments", hasSize<Int>(1)))
         }
 
         @Test
