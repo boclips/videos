@@ -22,6 +22,9 @@ allprojects {
         elasticSearchVersion = "7.8.1"
         solrVersion = "7.7.1"
     }
+    subprojects {
+        task allDeps(type: DependencyReportTask) {}
+    }
 
     dependencyCheck {
         failBuildOnCVSS = 7 // Fail on high severity or greater
