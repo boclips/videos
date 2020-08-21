@@ -98,8 +98,8 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation('com.github.boclips:boclips-spring-web:0.128.0')
-    implementation('com.github.boclips:boclips-spring-security:0.463.0')
-    implementation("com.github.boclips:event-bus:4.2.18")
+    implementation('com.github.boclips:boclips-spring-security:0.412.0')
+    implementation("com.github.boclips:event-bus:4.2.16")
     implementation('com.github.boclips:kaltura-client:2.0.2')
     implementation("com.github.boclips:user-service:v226")
 
@@ -107,7 +107,6 @@ dependencies {
     implementation('io.github.openfeign:feign-core:10.7.0')
 
     implementation("io.github.microutils:kotlin-logging:1.8.3")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
     implementation('com.google.apis:google-api-services-youtube:v3-rev206-1.25.0')
     implementation('com.google.cloud:google-cloud-storage:1.103.1')
     implementation('org.apache.commons:commons-lang3:3.7')
