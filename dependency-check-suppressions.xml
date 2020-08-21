@@ -32,27 +32,6 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport-native-epoll:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport\-native\-epoll@.*$</packageUrl>
-        <cve>CVE-2019-16869</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-http2:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-http2@.*$</packageUrl>
-        <cve>CVE-2019-16869</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-handler-proxy:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-handler\-proxy@.*$</packageUrl>
-        <cve>CVE-2019-16869</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
    file name: spring-security-web-5.2.1.RELEASE.jar
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-web@.*$</packageUrl>
@@ -78,69 +57,6 @@
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.zookeeper/zookeeper@.*$</packageUrl>
         <vulnerabilityName>CVE-2019-0201</vulnerabilityName>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport-native-unix-common:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport\-native\-unix\-common@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-transport:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-transport@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-buffer:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-buffer@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-http:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-http@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-handler:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-handler@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec-socks:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec\-socks@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-codec:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-codec@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-resolver:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-resolver@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
-   file name: grpc-netty-shaded-1.23.0.jar (shaded: io.netty:netty-common:4.1.38.Final)
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.netty/netty\-common@.*$</packageUrl>
-        <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
     <suppress>
         <notes><![CDATA[
