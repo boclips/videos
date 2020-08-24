@@ -109,13 +109,6 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-   file name: kotlin-reflect-1.3.50.jar
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-reflect@.*$</packageUrl>
-        <cve>CVE-2020-15824</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
    file name: opentracing-elasticsearch7-client-0.1.6.jar
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch7\-client@.*$</packageUrl>
@@ -134,5 +127,14 @@
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch\-client\-common@.*$</packageUrl>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
+    </suppress>
+    <suppress until="2020-09-21">
+        <notes><![CDATA[
+   file name: kotlin-reflect-1.3.72.jar
+   ]]>
+        waiting on jackson updating to kotlin 1.4: they just need to merge a pull request
+        </notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-reflect@.*$</packageUrl>
+        <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
 </suppressions>
