@@ -7,6 +7,9 @@ import com.boclips.eventbus.domain.video.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.Dimensions
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -103,7 +106,8 @@ class EventConverterTest {
     fun `sets correct video type`() {
         val newsVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.NEWS)))
         val stockVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.STOCK)))
-        val instructionalVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS)))
+        val instructionalVideoEvent =
+            converter.toVideoPayload(createVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS)))
 
         assertThat(newsVideoEvent.type).isEqualTo(VideoType.NEWS)
         assertThat(stockVideoEvent.type).isEqualTo(VideoType.STOCK)
@@ -112,12 +116,18 @@ class EventConverterTest {
 
     @Test
     fun `set video topics`() {
-        val videoEvent = converter.toVideoPayload(createVideo(topics = setOf(createTopic(
-            name = "Taxonomies",
-            language = Locale.forLanguageTag("fr_FR"),
-            confidence = 0.8,
-            parent = null
-        ))))
+        val videoEvent = converter.toVideoPayload(
+            createVideo(
+                topics = setOf(
+                    createTopic(
+                        name = "Taxonomies",
+                        language = Locale.forLanguageTag("fr_FR"),
+                        confidence = 0.8,
+                        parent = null
+                    )
+                )
+            )
+        )
         assertThat(videoEvent.topics?.first().name).contains("Taxonomies")
         assertThat(videoEvent.topics?.first().language).isEqualTo(Locale.forLanguageTag("fr_FR"))
         assertThat(videoEvent.topics?.first().confidence).isEqualTo(0.8)
@@ -126,17 +136,26 @@ class EventConverterTest {
 
     @Test
     fun `set video topics for parent`() {
-        val videoEvent = converter.toVideoPayload(createVideo(topics = setOf(createTopic(
-            parent = createTopic(name = "Types of categorisation")
-        ))))
+        val videoEvent = converter.toVideoPayload(
+            createVideo(
+                topics = setOf(
+                    createTopic(
+                        parent = createTopic(name = "Types of categorisation")
+                    )
+                )
+            )
+        )
 
         assertThat(videoEvent.topics?.first().parent.name).isEqualTo("Types of categorisation")
     }
 
     @Test
     fun `deals with empty topic set`() {
-        val videoEvent = converter.toVideoPayload(createVideo(topics = emptySet()
-        ))
+        val videoEvent = converter.toVideoPayload(
+            createVideo(
+                topics = emptySet()
+            )
+        )
 
         assertThat(videoEvent.topics.size).isEqualTo(0)
     }
@@ -150,6 +169,38 @@ class EventConverterTest {
         val videoEvent = converter.toVideoPayload(video)
 
         assertThat(videoEvent.playbackProviderType).isEqualTo(PlaybackProviderType.YOUTUBE)
+    }
+
+    @Test
+    fun `sets playback ID when YouTube`() {
+        val video = createVideo(
+            playback = TestFactories.createYoutubePlayback(
+                playbackId = PlaybackId(
+                    type = YOUTUBE,
+                    value = "playback id"
+                )
+            )
+        )
+
+        val videoEvent = converter.toVideoPayload(video)
+
+        assertThat(videoEvent.playbackId).isEqualTo("playback id")
+    }
+
+    @Test
+    fun `sets playback ID when Kaltura`() {
+        val video = createVideo(
+            playback = TestFactories.createYoutubePlayback(
+                playbackId = PlaybackId(
+                    type = KALTURA,
+                    value = "playback id"
+                )
+            )
+        )
+
+        val videoEvent = converter.toVideoPayload(video)
+
+        assertThat(videoEvent.playbackId).isEqualTo("playback id")
     }
 
     @Test

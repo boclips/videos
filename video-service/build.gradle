@@ -1,3 +1,12 @@
+buildscript {
+    ext.kotlin_version = '1.4.0'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 plugins {
     id 'org.springframework.boot' version '2.2.5.RELEASE'
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
@@ -99,7 +108,7 @@ dependencies {
 
     implementation('com.github.boclips:boclips-spring-web:0.128.0')
     implementation('com.github.boclips:boclips-spring-security:0.463.0')
-    implementation("com.github.boclips:event-bus:4.2.18")
+    implementation("com.github.boclips:event-bus:4.2.19")
     implementation('com.github.boclips:kaltura-client:2.0.2')
     implementation("com.github.boclips:user-service:v226")
 
@@ -134,4 +143,5 @@ dependencies {
         exclude group: 'junit', module: 'junit'
     }
     testImplementation("com.damnhandy:handy-uri-templates:2.1.8")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }

@@ -38,6 +38,7 @@ class EventConverter {
             .title(video.title)
             .channelId(ChannelId(video.channel.channelId.value))
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
+            .playbackId(video.playback.id.value)
             .subjects(subjects)
             .ageRange(toAgeRangePayload(video.ageRange))
             .durationSeconds(video.playback.duration.seconds.toInt())
