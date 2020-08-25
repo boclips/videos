@@ -144,4 +144,21 @@
         <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-reflect@.*$</packageUrl>
         <cpe>cpe:/a:jetbrains:kotlin</cpe>
     </suppress>
+    <suppress until="2020-09-25">
+        <notes><![CDATA[
+   file name: google-oauth-client-1.30.5.jar
+   ]]>
+        needs an update from google-api-services-youtube:v3-rev222-1.25.0</notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.oauth\-client/google\-oauth\-client@.*$</packageUrl>
+        <cve>CVE-2020-7692</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: keycloak-spring-security-adapter-11.0.0.jar
+    ]]>
+        not a real vulnerability
+  </notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-spring\-security\-adapter@.*$</packageUrl>
+        <cve>CVE-2020-1728</cve>
+    </suppress>
 </suppressions>

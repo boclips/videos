@@ -92,14 +92,20 @@ dependencies {
     implementation project(':video-service-api')
     implementation project(':search-service')
 
+    implementation('org.springframework.boot:spring-boot-starter-validation:2.3.3.RELEASE')
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security:2.3.3.RELEASE")
+    implementation("org.springframework.security:spring-security-config:5.3.4.RELEASE")
+    implementation("org.springframework.security:spring-security-core:5.3.4.RELEASE")
+    implementation("org.springframework.security:spring-security-web:5.3.4.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat:2.3.3.RELEASE")
+    implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.37")
+    implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
+
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation('org.springframework.retry:spring-retry')
-
-    implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE')
 
     implementation("org.mongodb:mongo-java-driver:3.10.1")
 
@@ -126,7 +132,7 @@ dependencies {
     implementation("io.opentracing.contrib:opentracing-mongo-driver:0.1.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.security:spring-security-test:5.3.4.RELEASE")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
