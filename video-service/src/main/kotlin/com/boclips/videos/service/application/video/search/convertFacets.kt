@@ -8,7 +8,8 @@ class FacetConverter {
     operator fun invoke(
         ageRangesFacets: List<FixedAgeRangeFacet>?,
         durationFacets: List<String>?,
-        resourcesFacets: List<String>?
+        resourcesFacets: List<String>?,
+        includeChannelFacets: Boolean?
     ): VideoFacets {
         return VideoFacets()
             .apply {
@@ -33,5 +34,8 @@ class FacetConverter {
                     attachmentTypes = resourcesFacets
                 }
             }
+            .apply { includeChannelFacets?.let {
+                this.includeChannelFacets = it
+            } }
     }
 }

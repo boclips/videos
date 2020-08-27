@@ -19,7 +19,8 @@ data class VideoFacets(
         Pair(Duration.ofMinutes(10), Duration.ofMinutes(20)),
         Pair(Duration.ofMinutes(20), Duration.ofHours(24))
     ),
-    var attachmentTypes: List<String> = listOf(AttachmentType.values().toString())
+    var attachmentTypes: List<String> = listOf(AttachmentType.values().toString()),
+    var includeChannelFacets: Boolean = false
 )
 
 class FixedAgeRangeFacet(val min: Int, val max: Int)

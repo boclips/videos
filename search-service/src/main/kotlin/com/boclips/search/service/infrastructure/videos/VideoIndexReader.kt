@@ -49,11 +49,13 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .apply {
                 query(EsVideoQuery().buildQuery(videoQuery))
                 aggregation(aggregateSubjects(videoQuery))
-                aggregation(aggregateChannels(videoQuery))
                 aggregation(aggregateAgeRanges(videoQuery))
                 aggregation(aggregateDuration(videoQuery))
                 aggregation(aggregateAttachmentTypes(videoQuery))
                 postFilter(allCriteria(videoQuery.userQuery))
+                if(videoQuery.facetDefinition?.includeChannelFacets == true) {
+                    aggregation(aggregateChannels(videoQuery))
+                }
                 if (videoQuery.sort.isNotEmpty()) {
                     videoQuery.sort.forEach {
                         applySort(it)

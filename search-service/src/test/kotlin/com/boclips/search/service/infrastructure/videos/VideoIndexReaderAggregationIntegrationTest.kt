@@ -302,7 +302,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             facetDefinition = FacetDefinition.Video(
                                 ageRangeBuckets = ageRangeBuckets,
                                 duration = emptyList(),
-                                resourceTypes = emptyList()
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = false
                             )
                         )
                     )
@@ -611,7 +612,13 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 val results = videoIndexReader.search(
                     PaginatedSearchRequest(
                         query = VideoQuery(
-                            accessRuleQuery = AccessRuleQuery(), phrase = "apple"
+                            accessRuleQuery = AccessRuleQuery(), phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true
+                            )
                         )
                     )
                 )
@@ -647,6 +654,12 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             phrase = "apple",
                             userQuery = UserQuery(
                                 channelNames = setOf("TED")
+                            ),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true
                             )
                         )
                     )
@@ -703,8 +716,17 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     PaginatedSearchRequest(
                         VideoQuery(
                             phrase = "apple",
-                            userQuery = UserQuery(channelNames = setOf("TED"), ageRanges = listOf(AgeRange(1, 3))),
-                            accessRuleQuery = AccessRuleQuery()
+                            userQuery = UserQuery(
+                                channelNames = setOf("TED"),
+                                ageRanges = listOf(AgeRange(1, 3))
+                            ),
+                            accessRuleQuery = AccessRuleQuery(),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true
+                            )
                         )
                     )
                 )
@@ -747,6 +769,12 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             phrase = "apple",
                             accessRuleQuery = AccessRuleQuery(
                                 excludedTypes = setOf(VideoType.STOCK)
+                            ),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true
                             )
                         )
                     )
@@ -758,6 +786,33 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "1", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "3", hits = 1))
             }
+        }
+
+
+        @Test
+        fun `channel facets are not returned when includeChannelFacets is not set to true`() {
+            videoIndexWriter.upsert(
+                sequenceOf(
+                    SearchableVideoMetadataFactory.create(
+                        id = "1", title = "Apple banana candy",
+                        contentProvider = "TED",
+                        contentPartnerId = "1",
+                        types = listOf(VideoType.INSTRUCTIONAL)
+                    )
+                )
+            )
+
+            val results = videoIndexReader.search(
+                PaginatedSearchRequest(
+                    VideoQuery(
+                        phrase = "apple",
+                        accessRuleQuery = AccessRuleQuery()
+                    )
+                )
+            )
+
+            assertThat(results.counts.totalHits).isEqualTo(1)
+            assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(0)
         }
     }
 }

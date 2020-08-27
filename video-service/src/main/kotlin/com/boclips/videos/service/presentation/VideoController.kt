@@ -111,7 +111,8 @@ class VideoController(
         @RequestParam(name = "type", required = false) type: Set<String>?,
         @RequestParam(name = "id", required = false) ids: Set<String>?,
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
-        @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?
+        @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
+        @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
@@ -140,7 +141,8 @@ class VideoController(
             user = getCurrentUser(),
             sortBy = sortBy,
             pageSize = pageSize,
-            pageNumber = pageNumber
+            pageNumber = pageNumber,
+            includeChannelFacets = includeChannelFacets
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())

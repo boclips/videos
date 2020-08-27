@@ -53,7 +53,8 @@ class GetVideosByQuery(
         subjectsSetManually: Boolean?,
         releasedDateFrom: String?,
         resourceTypes: Set<String>,
-        resourceTypeFacets: List<String>?
+        resourceTypeFacets: List<String>?,
+        includeChannelFacets: Boolean?
         ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -83,7 +84,7 @@ class GetVideosByQuery(
             promoted = promoted,
             channelNames = channelNames,
             types = type.map { searchQueryConverter.convertType(it) }.toSet(),
-            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets),
+            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, includeChannelFacets),
             attachmentTypes = resourceTypes
         )
 

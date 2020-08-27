@@ -84,7 +84,8 @@ class VideoRequest(
             facetDefinition = FacetDefinition.Video(
                 ageRangeBuckets = facets.ageRanges.map { ageRange -> convertAgeRange(ageRange) },
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
-                resourceTypes = facets.attachmentTypes
+                resourceTypes = facets.attachmentTypes,
+                includeChannelFacets = facets.includeChannelFacets
             ),
             accessRuleQuery = AccessRuleQueryConverter.fromAccessRules(videoAccess),
             userQuery = UserQuery(

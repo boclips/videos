@@ -26,11 +26,13 @@ class ChannelAggregation {
         }
 
         fun extractBucketCounts(response: SearchResponse): List<Count> {
-            return response
-                .aggregations.get<ParsedFilter>(CHANNEL_AGGREGATION_FILTER)
-                .aggregations.get<ParsedStringTerms>(CHANNEL_SUB_AGGREGATION)
-                .buckets
-                .let { buckets -> parseBuckets(buckets) }
+            return if (response.aggregations.asList().any { aggregation -> aggregation.name == CHANNEL_AGGREGATION_FILTER }) {
+                response
+                    .aggregations.get<ParsedFilter>(CHANNEL_AGGREGATION_FILTER)
+                    .aggregations.get<ParsedStringTerms>(CHANNEL_SUB_AGGREGATION)
+                    .buckets
+                    .let { buckets -> parseBuckets(buckets) }
+            } else emptyList()
         }
 
         private fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
