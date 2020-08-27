@@ -45,7 +45,8 @@ class CollectionResourceConverterTest {
                 playbacksLinkBuilder = PlaybacksLinkBuilder(TestKalturaClient())
             ),
             attachmentToResourceConverter = attachmentToResourceConverter,
-            contentWarningToResourceConverter = ContentWarningToResourceConverter(ContentWarningLinkBuilder())
+            contentWarningToResourceConverter = ContentWarningToResourceConverter(ContentWarningLinkBuilder()),
+            mock()
         )
 
         val collectionsLinkBuilder = CollectionsLinkBuilder(uriComponentsBuilderFactory)

@@ -15,4 +15,5 @@ sealed class FacetType {
     object AgeRanges : FacetType()
     object Duration: FacetType()
     object AttachmentTypes: FacetType()
+    object Channels: FacetType()
 }

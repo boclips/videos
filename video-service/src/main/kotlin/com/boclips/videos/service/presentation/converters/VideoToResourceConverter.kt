@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.videos.api.request.video.StreamPlaybackResource
-import com.boclips.videos.api.request.video.YoutubePlaybackResource
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -17,6 +16,7 @@ import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.video.ChannelFacet
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -27,7 +27,8 @@ class VideoToResourceConverter(
     private val videosLinkBuilder: VideosLinkBuilder,
     private val playbackToResourceConverter: PlaybackToResourceConverter,
     private val attachmentToResourceConverter: AttachmentToResourceConverter,
-    private val contentWarningToResourceConverter: ContentWarningToResourceConverter
+    private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
+    private val getChannels: GetChannels
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
         return videos.map { video -> convert(video, user) }
@@ -116,7 +117,8 @@ class VideoToResourceConverter(
                 }.toMap(),
                 resourceTypes = counts.attachmentTypes.map {
                     it.attachmentType to VideoFacetResource(hits = it.total)
-                }.toMap()
+                }.toMap(),
+                channels = toChannelFacetResource(counts.channels)
             )
         }
     }
@@ -130,6 +132,15 @@ class VideoToResourceConverter(
             is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
             else -> setOf(VideoBadge.AD_FREE.id)
         }
+    }
+
+    private fun toChannelFacetResource(channelFacets: List<ChannelFacet>):  Map<String, VideoFacetResource> {
+        val channels = getChannels()
+        return channelFacets.mapNotNull { channelFacet ->
+            channels
+                .find { channel -> channel.id.value == channelFacet.channelId.value }
+                ?.let { it.name to VideoFacetResource(hits = channelFacet.total) }
+        }.toMap()
     }
 
     private fun resourceLinks(videoId: String) =

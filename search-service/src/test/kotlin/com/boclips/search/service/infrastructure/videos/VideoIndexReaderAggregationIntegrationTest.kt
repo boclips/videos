@@ -586,5 +586,178 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(facetCounts).contains(Count(id = "Activity", hits = 1))
             }
         }
+
+        @Nested
+        inner class ChannelsFacet {
+            @Test
+            fun `returns counts for all channel ids without filter`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", contentProvider = "TED", contentPartnerId = "1"
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple", contentProvider = "TED1", contentPartnerId = "2"
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "candy apple", contentProvider = "TED1", contentPartnerId = "2"
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4", title = "banana apple candy", contentProvider = "TED2", contentPartnerId = "3"
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            accessRuleQuery = AccessRuleQuery(), phrase = "apple"
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(4)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(3)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "1", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "2", hits = 2))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "3", hits = 1))
+            }
+
+            @Test
+            fun `returns counts for all channel ids with filter`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", contentPartnerId = "1", contentProvider = "TED"
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple", contentPartnerId = "2", contentProvider = "TED-ED"
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "banana apple candy", contentPartnerId = "3", contentProvider = "AP"
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            accessRuleQuery = AccessRuleQuery(),
+                            phrase = "apple",
+                            userQuery = UserQuery(
+                                channelNames = setOf("TED")
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(3)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "1", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "2", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "3", hits = 1))
+            }
+
+            @Test
+            fun `returns channel id counts when another filter is applied`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            contentProvider = "TED",
+                            contentPartnerId = "123",
+                            ageRangeMin = 1,
+                            ageRangeMax = 3
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "candy banana apple",
+                            contentProvider = "AP",
+                            contentPartnerId = "456",
+                            ageRangeMin = 1,
+                            ageRangeMax = 3
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "banana apple candy",
+                            contentProvider = "AP",
+                            contentPartnerId = "456",
+                            ageRangeMin = 13,
+                            ageRangeMax = 17
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4",
+                            title = "banana apple candy",
+                            contentProvider = "AP",
+                            contentPartnerId = "456",
+                            ageRangeMin = 1,
+                            ageRangeMax = 3
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            userQuery = UserQuery(channelNames = setOf("TED"), ageRanges = listOf(AgeRange(1, 3))),
+                            accessRuleQuery = AccessRuleQuery()
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(2)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "123", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "456", hits = 2))
+            }
+
+            @Test
+            fun `access rule constraints are applied for facet count`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy",
+                            contentProvider = "TED",
+                            contentPartnerId = "1",
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple",
+                            contentProvider = "TED-ED",
+                            contentPartnerId = "2",
+                            types = listOf(VideoType.STOCK)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "banana apple candy",
+                            contentProvider = "AP",
+                            contentPartnerId = "3",
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            accessRuleQuery = AccessRuleQuery(
+                                excludedTypes = setOf(VideoType.STOCK)
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(2)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "1", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "3", hits = 1))
+            }
+        }
     }
 }

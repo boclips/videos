@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
@@ -86,13 +87,15 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
-        contentWarningLinkBuilder: ContentWarningLinkBuilder
+        contentWarningLinkBuilder: ContentWarningLinkBuilder,
+        getChannels: GetChannels
     ): VideoToResourceConverter {
         return VideoToResourceConverter(
             videosLinkBuilder = videosLinkBuilder,
             playbackToResourceConverter = playbackToResourceConverter,
             attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder),
-            contentWarningToResourceConverter = ContentWarningToResourceConverter(contentWarningLinkBuilder)
+            contentWarningToResourceConverter = ContentWarningToResourceConverter(contentWarningLinkBuilder),
+            getChannels = getChannels
         )
     }
 
@@ -118,14 +121,16 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsToResourceConverter: AttachmentToResourceConverter,
         contentWarningToResourceConverter: ContentWarningToResourceConverter,
-        collectionsLinkBuilder: CollectionsLinkBuilder
+        collectionsLinkBuilder: CollectionsLinkBuilder,
+        getChannels: GetChannels
     ): CollectionResourceConverter {
         return CollectionResourceConverter(
             VideoToResourceConverter(
                 videosLinkBuilder,
                 playbackToResourceConverter,
                 attachmentsToResourceConverter,
-                contentWarningToResourceConverter
+                contentWarningToResourceConverter,
+                getChannels
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,

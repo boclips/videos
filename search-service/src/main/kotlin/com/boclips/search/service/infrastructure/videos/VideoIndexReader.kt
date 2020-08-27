@@ -13,6 +13,7 @@ import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAgg
 import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentTypeAggregation.Companion.aggregateAttachmentTypes
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
 import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
+import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
@@ -48,6 +49,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .apply {
                 query(EsVideoQuery().buildQuery(videoQuery))
                 aggregation(aggregateSubjects(videoQuery))
+                aggregation(aggregateChannels(videoQuery))
                 aggregation(aggregateAgeRanges(videoQuery))
                 aggregation(aggregateDuration(videoQuery))
                 aggregation(aggregateAttachmentTypes(videoQuery))

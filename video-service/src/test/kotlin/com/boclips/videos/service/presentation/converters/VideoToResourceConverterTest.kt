@@ -1,6 +1,8 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
+import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
@@ -16,6 +18,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ChannelFacet
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.SubjectFacet
@@ -23,6 +26,7 @@ import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -34,6 +38,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import java.time.Duration
 import java.util.Locale
 
@@ -41,6 +46,7 @@ class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
+    private lateinit var getChannels: GetChannels
 
     private val kalturaVideo = createVideo(
         title = "Do what you love",
@@ -98,6 +104,8 @@ class VideoToResourceConverterTest {
     @BeforeEach
     fun setUp() {
         videosLinkBuilder = mock()
+        getChannels = mock()
+
         playbackToResourceConverter =
             PlaybackToResourceConverter(
                 mock(),
@@ -108,7 +116,8 @@ class VideoToResourceConverterTest {
                 videosLinkBuilder,
                 playbackToResourceConverter,
                 AttachmentToResourceConverter(mock()),
-                ContentWarningToResourceConverter(mock())
+                ContentWarningToResourceConverter(mock()),
+                getChannels
             )
     }
 
@@ -259,6 +268,11 @@ class VideoToResourceConverterTest {
 
     @Test
     fun `produces facets if they exist on the search results`() {
+        Mockito.`when`(getChannels.invoke()).thenReturn(listOf(ChannelFactory.createChannel(
+            id = com.boclips.contentpartner.service.domain.model.channel.ChannelId("channel-id"),
+            name = "TED"
+        )))
+
         val resultResource = videoToResourceConverter.convert(
             resultsPage = ResultsPage(
                 elements = listOf(),
@@ -278,7 +292,11 @@ class VideoToResourceConverterTest {
                         )
                     ),
                     durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10)),
-                    attachmentTypes = listOf(AttachmentTypeFacet(attachmentType = "Activity", total = 5))
+                    attachmentTypes = listOf(AttachmentTypeFacet(attachmentType = "Activity", total = 5)),
+                    channels = listOf(
+                        ChannelFacet(channelId = ChannelId("channel-id"), total = 7),
+                        ChannelFacet(channelId = ChannelId("non-existing-channel-id"), total = 9)
+                    )
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -294,6 +312,8 @@ class VideoToResourceConverterTest {
         assertThat(resultResource._embedded.facets?.ageRanges?.get("5-11")?.hits).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.durations?.get("PT0S-PT1M")?.hits).isEqualTo(10)
         assertThat(resultResource._embedded.facets?.resourceTypes?.get("Activity")?.hits).isEqualTo(5)
+        assertThat(resultResource._embedded.facets?.channels?.size).isEqualTo(1)
+        assertThat(resultResource._embedded.facets?.channels?.get("TED")?.hits).isEqualTo(7)
     }
 
     @Test

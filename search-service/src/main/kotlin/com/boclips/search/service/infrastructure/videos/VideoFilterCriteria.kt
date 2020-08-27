@@ -23,12 +23,13 @@ class VideoFilterCriteria {
         const val AGE_RANGES = "age-ranges-filter"
         const val DURATION_RANGES = "duration-ranges-filter"
         const val ATTACHMENT_TYPES = "attachment-types-filter"
+        const val CHANNELS = "content-provider-filter"
 
         fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()
             if (videoQuery.channelNames.isNotEmpty()) {
                 query.filter(
-                    boolQuery().must(
+                    boolQuery().queryName(CHANNELS).must(
                         termsQuery(
                             VideoDocument.CONTENT_PROVIDER,
                             videoQuery.channelNames
