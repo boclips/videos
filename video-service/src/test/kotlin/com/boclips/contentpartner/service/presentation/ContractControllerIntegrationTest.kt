@@ -3,10 +3,13 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.assertj.core.api.Assertions
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.closeTo
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.notNullValue
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -156,6 +159,29 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     contains(firstContractId.id.value, secondContractId.id.value)
                 )
             )
+    }
+
+    @Test
+    fun `view contracts with list projection`() {
+        saveContract(name = "the best videos")
+
+        mockMvc.perform(get("/v1/contracts?projection=list").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.contracts", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.contracts[0].id", notNullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].contentPartnerName", notNullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].contractDocument", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].contractDates", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].contractIsRolling", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].daysBeforeTerminationWarning", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].yearsForMaximumLicense", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].daysForSellOffPeriod", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].royaltySplit", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].minimumPriceDescription", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].remittanceCurrency", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].restrictions", nullValue()))
+            .andExpect(jsonPath("$._embedded.contracts[0].costs", nullValue()))
+
     }
 
     @Test

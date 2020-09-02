@@ -10,6 +10,7 @@ import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.presentation.converters.contracts.ContractToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.UpdateContractRequest
@@ -44,9 +45,10 @@ class ContractController(
     @GetMapping
     fun getAll(
         @RequestParam(name = "size", required = false) size: Int?,
-        @RequestParam(name = "page", required = false) page: Int?
-    ): ResponseEntity<ContractsResource> {
-        val resources = fetch(page = page, size = size).let { toResourceConverter.convert(it) }
+        @RequestParam(name = "page", required = false) page: Int?,
+        @RequestParam(required = false) projection: Projection? = null,
+        ): ResponseEntity<ContractsResource> {
+        val resources = fetch(page = page, size = size).let { toResourceConverter.convert(it, projection) }
 
         return ResponseEntity(resources, HttpStatus.OK)
     }

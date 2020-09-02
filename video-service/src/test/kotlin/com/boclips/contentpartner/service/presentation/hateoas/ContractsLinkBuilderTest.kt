@@ -26,7 +26,7 @@ class ContractsLinkBuilderTest {
 
         val link = contractsLinkBuilder.contractsLink()!!
 
-        assertThat(link.href).endsWith("/v1/contracts{?size,page}")
+        assertThat(link.href).endsWith("/v1/contracts{?size,page,projection}")
         assertThat(link.rel.value()).isEqualTo(ContractsLinkBuilder.Rels.CONTRACTS)
         assertThat(link.isTemplated).isEqualTo(true)
     }

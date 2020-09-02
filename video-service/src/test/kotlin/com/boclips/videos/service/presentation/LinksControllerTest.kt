@@ -194,7 +194,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.contracts.href",
-                    endsWith("/contracts{?size,page}")
+                    endsWith("/contracts{?size,page,projection}")
                 )
             )
             .andExpect(jsonPath("$._links.contracts.templated", equalTo(true)))
