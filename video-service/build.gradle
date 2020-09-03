@@ -137,7 +137,7 @@ dependencies {
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
-    testImplementation('org.yaml:snakeyaml:1.23')
+    testImplementation('org.yaml:snakeyaml:1.26')
 
     youtubeContractTestImplementation sourceSets.main.output
     youtubeContractTestImplementation configurations.compile

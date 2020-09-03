@@ -168,4 +168,9 @@
 		<packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-.+$</packageUrl>
 		<cve>CVE-2020-15824</cve>
 	</suppress>
+	<suppress until="2020-12-01">
+		<notes>We upgraded to 1.26, and this still matches.</notes>
+		<packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+		<cve>CVE-2017-18640</cve>
+	</suppress>
 </suppressions>
