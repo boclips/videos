@@ -103,15 +103,16 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
     @Nested
     inner class VideoContracts {
         @Test
-        fun `limits videos returned on a collection search results to contracted ones`() {
-            val collectionId = createCollection(title = "A Collection", discoverable = false)
+        fun `limits videos returned on a collection search results to contracted ones for public collections`() {
+            val collectionId = createCollection(title = "A Collection", discoverable = true)
+
             val contractedVideoId = saveVideo()
             val nonContractedVideoId = saveVideo()
+
             addVideo(collectionId, contractedVideoId.value)
             addVideo(collectionId, nonContractedVideoId.value)
 
             addAccessToVideoIds("api-user@gmail.com", contractedVideoId.value)
-            createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
             mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -125,14 +126,12 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
         }
 
         @Test
-        fun `limits videos returned on a single collection to contracted ones`() {
+        fun `collection access is transitive to their contained videos`() {
             val collectionId = createCollection(title = "A Collection", discoverable = false)
             val contractedVideoId = saveVideo()
             val nonContractedVideoId = saveVideo()
             addVideo(collectionId, contractedVideoId.value)
-            addVideo(collectionId, nonContractedVideoId.value)
 
-            addAccessToVideoIds("api-user@gmail.com", contractedVideoId.value)
             createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
             mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asApiUser(email = "api-user@gmail.com"))

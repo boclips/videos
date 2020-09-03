@@ -15,13 +15,17 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import feign.FeignException
 import mu.KLogging
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Recover
 import org.springframework.retry.annotation.Retryable
 
-open class ApiAccessRuleService(private val usersClient: UsersClient) :
+open class ApiAccessRuleService(
+    private val usersClient: UsersClient,
+    private val collectionRepository: CollectionRepository
+) :
     AccessRuleService {
     companion object : KLogging()
 
@@ -98,7 +102,7 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
                         )
                     }.toSet()
                 )
-                is AccessRuleResource.IncludedCollections -> null
+                is AccessRuleResource.IncludedCollections -> extractIncludedVideoIds(it)
                 is AccessRuleResource.IncludedVideoVoiceTypes -> VideoAccessRule.IncludedVideoVoiceTypes(
                     it.voiceTypes.mapNotNull { voiceTypes ->
                         when (voiceTypes) {
@@ -130,6 +134,15 @@ open class ApiAccessRuleService(private val usersClient: UsersClient) :
         convertVideoTypes(accessRule.videoTypes)
             .takeIf { contentTypes -> contentTypes.isNotEmpty() }
             ?.let { contentTypes -> VideoAccessRule.IncludedContentTypes(contentTypes = contentTypes.toSet()) }
+
+    private fun extractIncludedVideoIds(accessRule: AccessRuleResource.IncludedCollections): VideoAccessRule {
+        val videoIds = accessRule.collectionIds.flatMap {
+            val collection = collectionRepository.find(CollectionId(it))
+            collection?.videos ?: emptySet()
+
+        }
+        return VideoAccessRule.IncludedIds(videoIds.toSet())
+    }
 
     private fun convertVideoTypes(videoTypes: List<String>): List<ContentType> {
         return videoTypes

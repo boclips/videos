@@ -56,8 +56,8 @@ class InfrastructureContext(
     }
 
     @Bean
-    fun apiAccessRuleService(usersClient: UsersClient): ApiAccessRuleService {
-        return ApiAccessRuleService(usersClient)
+    fun apiAccessRuleService(usersClient: UsersClient, collectionRepository: CollectionRepository): ApiAccessRuleService {
+        return ApiAccessRuleService(usersClient, collectionRepository)
     }
 
     @Bean

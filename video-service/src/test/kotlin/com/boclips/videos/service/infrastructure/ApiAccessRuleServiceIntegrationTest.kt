@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -30,18 +31,22 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `passes through client's response if all is well`() {
         val videoId = ObjectId().toHexString()
+        val collectionId = createCollection(
+            CreateCollectionRequest(title = "hello there", videos = listOf(videoId)),
+            UserFactory.sample(id = "another-user")
+        ).id
 
         createAccessRulesResource(
             "test-user", listOf(
                 AccessRuleResource.IncludedCollections(
                     id = "access-rule-id",
                     name = "Test Contract",
-                    collectionIds = listOf("test-collection-id")
+                    collectionIds = listOf(collectionId.value)
                 ),
-                AccessRuleResource.IncludedVideos(
+                AccessRuleResource.IncludedVideoTypes(
                     id = "access-rule-id",
                     name = "Test Contract",
-                    videoIds = listOf(videoId)
+                    videoTypes = listOf("NEWS")
                 )
             )
         )
@@ -49,12 +54,13 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
 
         assertThat(accessRules.collectionAccess).isEqualTo(
-            CollectionAccessRule.SpecificIds(setOf(CollectionId("test-collection-id")))
+            CollectionAccessRule.SpecificIds(setOf(collectionId))
         )
         assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
             VideoAccessRule.IncludedIds(
                 videoIds = setOf(VideoId(videoId))
-            )
+            ),
+            VideoAccessRule.IncludedContentTypes(contentTypes = setOf(ContentType.NEWS))
         )
     }
 
@@ -87,6 +93,34 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = accessRuleService.getRules(user)
 
             assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.Everything)
+        }
+
+        @Test
+        fun `access to collection provides access to collection's videos`() {
+            val firstId = TestFactories.createVideoId()
+            val user = UserFactory.sample(id = "test-user")
+            val collectionId = createCollection(
+                CreateCollectionRequest(
+                    title = "hello there",
+                    videos = listOf(firstId.value)
+                ), user
+            ).id.value
+
+            createAccessRulesResource(
+                "test-user",
+                listOf(
+                    AccessRuleResource.IncludedCollections(
+                        id = "access-rule-id",
+                        name = "bad videos",
+                        collectionIds = listOf(collectionId)
+                    )
+                )
+            )
+
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.IncludedIds(setOf(firstId)))
         }
     }
 

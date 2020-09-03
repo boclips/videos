@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VoiceType
@@ -14,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -132,6 +135,28 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
+        }
+
+        @Test
+        fun `includes the videos of collection access rules`() {
+            val videoId = saveVideo(title = "hello")
+            saveVideo(title = "hello there")
+            val collectionId = saveCollection(videos = listOf(videoId.value) )
+
+            usersClient.addAccessRules(
+                "api-user@gmail.com", AccessRulesResourceFactory.sample(
+                    AccessRuleResource.IncludedCollections(
+                        id = "access-rule-id",
+                        name = UUID.randomUUID().toString(),
+                        collectionIds = listOf(collectionId.value)
+                    )
+                )
+            )
+
+            mockMvc.perform(get("/v1/videos?query=hello").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("hello")))
         }
     }
 }
