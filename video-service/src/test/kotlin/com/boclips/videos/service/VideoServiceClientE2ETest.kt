@@ -104,7 +104,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `search videos with filters`() {
+        fun `xsearch videos with filters`() {
             val videosClient = VideosClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
                 objectMapper = objectMapper,

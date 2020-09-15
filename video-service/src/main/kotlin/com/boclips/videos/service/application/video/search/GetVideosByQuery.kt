@@ -48,6 +48,7 @@ class GetVideosByQuery(
         subjects: Set<String>,
         promoted: Boolean?,
         channelNames: Set<String>,
+        channelIds: Set<String>?,
         type: Set<String>,
         user: User,
         subjectsSetManually: Boolean?,
@@ -83,6 +84,7 @@ class GetVideosByQuery(
             ),
             promoted = promoted,
             channelNames = channelNames,
+            channelIds = channelIds,
             types = type.map { searchQueryConverter.convertType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, includeChannelFacets),
             attachmentTypes = resourceTypes

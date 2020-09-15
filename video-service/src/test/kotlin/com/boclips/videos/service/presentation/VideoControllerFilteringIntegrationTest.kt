@@ -8,10 +8,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoDuplicationService
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.UserFactory
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.testsupport.*
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -22,6 +19,7 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.litote.kmongo.util.idValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -91,6 +89,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             )
             .andExpect(jsonPath("$._embedded.videos[0]._links.self.href", containsString("/videos/$youtubeVideoId")))
             .andExpect(jsonPath("$._embedded.videos[0].badges", equalTo(listOf("youtube"))))
+    }
+
+    @Test
+    fun `can filter by channel id`() {
+
+        val channelId = saveChannel(name="test").id
+        val video = saveVideo(contentProviderId = channelId.value)
+
+
+        mockMvc.perform(get("/v1/videos?channel_ids=${channelId}").asApiUser())
+                .andExpect(status().isOk)
     }
 
     @Test
