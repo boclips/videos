@@ -58,7 +58,7 @@ class SearchVideo(
         subjectsSetManually: Boolean? = null,
         promoted: Boolean? = null,
         channelNames: Set<String> = emptySet(),
-        channelIds: Set<String>? = emptySet(),
+        channelIds: Set<String> = emptySet(),
         type: Set<String> = emptySet(),
         user: User,
         resourceTypes: Set<String> = emptySet(),

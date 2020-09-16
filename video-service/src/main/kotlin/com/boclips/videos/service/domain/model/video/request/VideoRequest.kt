@@ -42,7 +42,7 @@ class VideoRequest(
     val subjectsRequest: SubjectsRequest = SubjectsRequest(),
     val promoted: Boolean? = null,
     val channelNames: Set<String> = emptySet(),
-    val channelIds: Set<String>? = emptySet(),
+    val channelIds: Set<String> = emptySet(),
     val types: Set<VideoType> = emptySet(),
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet()

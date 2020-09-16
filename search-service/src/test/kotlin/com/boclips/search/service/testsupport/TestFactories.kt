@@ -124,7 +124,8 @@ object SearchableCollectionMetadataFactory {
         ageRangeMax: Int? = null,
         lastModified: ZonedDateTime = ZonedDateTime.now(),
         attachmentTypes: Set<String> = emptySet(),
-        default: Boolean = false
+        default: Boolean = false,
+        channelId: Set<String>? = emptySet()
     ) = CollectionMetadata(
         id = id,
         title = title,
@@ -140,7 +141,8 @@ object SearchableCollectionMetadataFactory {
         ageRangeMax = ageRangeMax,
         lastModified = lastModified,
         attachmentTypes = attachmentTypes,
-        default = default
+        default = default,
+        channelId = channelId
     )
 }
 

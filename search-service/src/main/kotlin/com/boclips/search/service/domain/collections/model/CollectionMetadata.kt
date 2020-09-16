@@ -17,5 +17,6 @@ data class CollectionMetadata(
     val lastModified: ZonedDateTime,
     val subjectIds: List<String>,
     val bookmarkedByUsers: Set<String>,
-    val attachmentTypes: Set<String>?
+    val attachmentTypes: Set<String>?,
+    val channelId: Set<String>?
 )

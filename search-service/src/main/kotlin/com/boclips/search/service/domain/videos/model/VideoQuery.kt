@@ -31,7 +31,7 @@ data class UserQuery(
     val types: Set<VideoType> = emptySet(),
     val attachmentTypes: Set<String> = emptySet(),
     val channelNames: Set<String> = emptySet(),
-    val channelIds: Set<String>? = emptySet()
+    val channelIds: Set<String> = emptySet()
 )
 
 data class AccessRuleQuery(

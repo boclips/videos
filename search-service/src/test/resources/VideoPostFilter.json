@@ -91,6 +91,41 @@
     ],
     "filter" : [
       {
+        "bool" : {
+          "must" : [
+            {
+              "terms" : {
+                "contentProvider" : [
+                  "a channel name"
+                ],
+                "boost" : 1.0
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0,
+          "_name" : "content-provider-filter"
+        }
+      },
+      {
+        "bool" : {
+          "must" : [
+            {
+              "terms" : {
+                "contentPartnerId" : [
+                  "Achannel-ID11-1111-adc1-0242ac120002",
+                  "Achannel-ID22-2222-adc1-0242ac120002"
+                ],
+                "boost" : 1.0
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0,
+          "_name" : "content-partner-id-filter"
+        }
+      },
+      {
         "term" : {
           "source" : {
             "value" : "boclips",

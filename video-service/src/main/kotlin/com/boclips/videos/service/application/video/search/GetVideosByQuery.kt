@@ -48,7 +48,7 @@ class GetVideosByQuery(
         subjects: Set<String>,
         promoted: Boolean?,
         channelNames: Set<String>,
-        channelIds: Set<String>?,
+        channelIds: Set<String>,
         type: Set<String>,
         user: User,
         subjectsSetManually: Boolean?,

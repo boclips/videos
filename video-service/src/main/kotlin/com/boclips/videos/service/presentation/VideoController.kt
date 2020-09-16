@@ -138,7 +138,7 @@ class VideoController(
             resourceTypeFacets = resourceTypeFacets.orEmpty(),
             promoted = promoted,
             channelNames = (contentPartners ?: emptySet()) + (channels ?: emptySet()),
-            channelIds = channelIds,
+            channelIds = channelIds ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
             user = getCurrentUser(),
             sortBy = sortBy,

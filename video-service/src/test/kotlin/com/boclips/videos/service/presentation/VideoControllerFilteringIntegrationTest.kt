@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.testsupport.*
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
@@ -19,7 +18,6 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.litote.kmongo.util.idValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -95,11 +93,33 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     fun `can filter by channel id`() {
 
         val channelId = saveChannel(name="test").id
-        val video = saveVideo(contentProviderId = channelId.value)
+        val videoId = saveVideo(contentProviderId = channelId.value)
 
-
-        mockMvc.perform(get("/v1/videos?channel_ids=${channelId}").asApiUser())
+        mockMvc.perform(get("/v1/videos?channel_ids=${channelId.value}").asApiUser())
                 .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId.value)))
+    }
+
+    @Test
+    fun `can filter by channel ids`() {
+        val contentProviderName = "enabled-cp2"
+        val newVideoId = saveVideo(
+                playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+                title = "powerful video about elephants",
+                description = "test description 3",
+                date = "2018-02-11",
+                duration = Duration.ofSeconds(23),
+                contentProvider = contentProviderName,
+                legalRestrictions = "None"
+        ).value
+        val channel = getChannel(contentProviderName)
+
+        mockMvc.perform(get("/v1/videos?channel_ids=${channel.id.value}").asTeacher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+                .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
     }
 
     @Test
