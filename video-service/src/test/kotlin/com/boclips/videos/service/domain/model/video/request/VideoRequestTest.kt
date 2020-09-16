@@ -38,6 +38,20 @@ class VideoRequestTest {
     }
 
     @Test
+    fun `pass channel ids through`() {
+        val searchQuery = VideoRequest(
+                text = "any query",
+                ids = setOf("id 1", "id 2"),
+                channelIds = setOf("1", "2", "3"),
+                pageSize = 2,
+                pageIndex = 0
+        )
+                .toQuery(VideoAccess.Everything)
+
+        assertThat(searchQuery.userQuery.channelIds).isEqualTo(setOf("1", "2", "3"))
+    }
+
+    @Test
     fun `allows filtering by bestFor`() {
         val searchQuery = VideoRequest(
             text = "any query",

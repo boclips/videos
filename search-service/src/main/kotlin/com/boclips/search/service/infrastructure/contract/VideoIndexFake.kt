@@ -113,6 +113,11 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 else true
             }
             .filter { entry ->
+                if (query.userQuery.channelIds.isNotEmpty())
+                    query.userQuery.channelIds.contains(entry.value.contentPartnerId)
+                else true
+            }
+            .filter { entry ->
                 query.accessRuleQuery.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
             }.filter { entry ->
                 if (query.userQuery.attachmentTypes.isEmpty()) {

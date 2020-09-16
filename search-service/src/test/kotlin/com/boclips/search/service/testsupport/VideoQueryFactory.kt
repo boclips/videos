@@ -26,7 +26,9 @@ class VideoQueryFactory {
                     releaseDateFrom = LocalDate.of(2014, 1, 30),
                     releaseDateTo = LocalDate.of(2015, 1, 30),
                     promoted = true,
-                    attachmentTypes = setOf("ACTIVITY")
+                    attachmentTypes = setOf("ACTIVITY"),
+                    channelIds = setOf("Achannel-ID11-1111-adc1-0242ac120002", "Achannel-ID22-2222-adc1-0242ac120002"),
+                    channelNames = setOf("a channel name")
                 ),
                 accessRuleQuery = AccessRuleQuery(
                     includedTypes = setOf(VideoType.INSTRUCTIONAL, VideoType.STOCK),

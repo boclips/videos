@@ -447,12 +447,16 @@ abstract class AbstractSpringIntegrationTest {
                 )
             )
         } catch (e: ChannelConflictException) {
-            getChannels.invoke(name = name).first()
+            getChannel(name)
         }
 
         fakeEventBus.clearState()
 
         return createdChannel
+    }
+
+    fun getChannel(name: String): Channel {
+        return getChannels.invoke(name = name).first()
     }
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {
