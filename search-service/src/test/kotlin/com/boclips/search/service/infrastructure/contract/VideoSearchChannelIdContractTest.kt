@@ -14,16 +14,38 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
 
     @ParameterizedTest
     @ArgumentsSource(SearchServiceProvider::class)
-    fun `finds a matching video by channel id`(
+    fun `finds multiple matching videos`(
         readService: IndexReader<VideoMetadata, VideoQuery>,
         writeService: IndexWriter<VideoMetadata>
     ) {
         writeService.safeRebuildIndex(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", contentPartnerId = "karate"),
-                SearchableVideoMetadataFactory.create(id = "2", contentPartnerId = "bjj"),
-                SearchableVideoMetadataFactory.create(id = "3", contentPartnerId = "bjj"),
-                SearchableVideoMetadataFactory.create(id = "4", contentPartnerId = "judo")
+                SearchableVideoMetadataFactory.create(id = "1", contentPartnerId = "bjj"),
+                SearchableVideoMetadataFactory.create(id = "2", contentPartnerId = "bjj")
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(),
+                    userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
+            ))
+        )
+
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.counts.totalHits).isEqualTo(2)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `finds a matching video by more than one channel id`(
+        readService: IndexReader<VideoMetadata, VideoQuery>,
+        writeService: IndexWriter<VideoMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", contentPartnerId = "bjj"),
+                SearchableVideoMetadataFactory.create(id = "2", contentPartnerId = "judo")
             )
         )
 
@@ -34,7 +56,31 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
             ))
         )
 
-        assertThat(result.elements).containsExactlyInAnyOrder("2", "3", "4")
-        assertThat(result.counts.totalHits).isEqualTo(3)
+        assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
+        assertThat(result.counts.totalHits).isEqualTo(2)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `removes denied video ids`(
+        readService: IndexReader<VideoMetadata, VideoQuery>,
+        writeService: IndexWriter<VideoMetadata>
+    ) {
+        writeService.safeRebuildIndex(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", contentPartnerId = "karate"),
+                SearchableVideoMetadataFactory.create(id = "2", contentPartnerId = "bjj")
+            )
+        )
+
+        val result = readService.search(
+            PaginatedSearchRequest(query = VideoQuery(
+                    accessRuleQuery = AccessRuleQuery(deniedVideoIds = setOf("karate")),
+                    userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
+            ))
+        )
+
+        assertThat(result.elements).containsExactlyInAnyOrder("2")
+        assertThat(result.counts.totalHits).isEqualTo(1)
     }
 }
