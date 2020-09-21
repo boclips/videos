@@ -139,7 +139,7 @@ class VideoController(
             promoted = promoted,
             channelNames = (contentPartners ?: emptySet()) + (channels ?: emptySet()),
             channelIds = channelIds ?: emptySet(),
-            type = type?.let { type } ?: emptySet(),
+            type = type ?: emptySet(),
             user = getCurrentUser(),
             sortBy = sortBy,
             pageSize = pageSize,

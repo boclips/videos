@@ -59,6 +59,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(GET, "/v1/attachment-types").hasRole(ROLE.VIEW_ATTACHMENT_TYPES)
             .mvcMatchers(GET, "/v1/content-categories").hasRole(ROLE.VIEW_CONTENT_CATEGORIES)
 
+            .mvcMatchers(GET, "/v1/admin/actions/get_all_video_ids_for_content_package/*").hasRole(ROLE.VIEW_ADMIN_SEARCH)
             .mvcMatchers(POST, "/v1/admin/actions/build_legacy_search_index").hasRole(ROLE.REBUILD_SEARCH_INDEX)
             .mvcMatchers(POST, "/v1/admin/actions/analyse_video/*").hasRole(ROLE.UPDATE_VIDEOS)
             .mvcMatchers(POST, "/v1/admin/actions/analyse_videos").hasRole(ROLE.UPDATE_VIDEOS)

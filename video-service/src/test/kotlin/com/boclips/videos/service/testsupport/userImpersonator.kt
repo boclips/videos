@@ -99,7 +99,8 @@ fun MockHttpServletRequestBuilder.asOperator() =
                 UserRoles.REMOVE_VIDEOS,
                 UserRoles.BROADCAST_EVENTS,
                 UserRoles.REBUILD_SEARCH_INDEX,
-                UserRoles.UPDATE_CONTENT_PARTNERS
+                UserRoles.UPDATE_CONTENT_PARTNERS,
+                UserRoles.VIEW_ADMIN_SEARCH
             )
     )
 

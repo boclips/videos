@@ -17,6 +17,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.httpclient.test.fakes.ContentPackagesClientFake
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
@@ -163,6 +164,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var usersClient: UsersClientFake
+
+    @Autowired
+    lateinit var contentPackagesClient: ContentPackagesClientFake
 
     @Autowired
     lateinit var organisationsClient: OrganisationsClientFake
