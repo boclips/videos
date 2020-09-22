@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.application.channel.BroadcastChannels
 import com.boclips.contentpartner.service.application.contract.BroadcastContracts
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.BroadcastContractLegalRestrictions
 import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
@@ -30,6 +31,7 @@ class AdminController(
     private val subjectClassificationService: SubjectClassificationService,
     private val videoAnalysisService: VideoAnalysisService,
     private val videoDuplicationService: VideoDuplicationService,
+    private val broadcastContractLegalRestrictions: BroadcastContractLegalRestrictions,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -86,5 +88,9 @@ class AdminController(
     @PostMapping("/broadcast_contracts")
     fun issueBroadcastContracts() {
         broadcastContracts()
+    }
+    @PostMapping("/broadcast_contract_legal_restrictions")
+    fun issueBroadcastContractLegalRestrictions() {
+        broadcastContractLegalRestrictions()
     }
 }

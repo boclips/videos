@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
 import com.boclips.eventbus.events.video.CleanUpDeactivatedVideoRequested
 import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
@@ -75,6 +76,18 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `broadcast contract events returns 403 when user is not allowed`() {
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contracts").asTeacher())
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `broadcast contract legal restriction events`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asOperator())
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `broadcast contract legal restriction events returns 403 when user is not allowed`() {
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asTeacher())
             .andExpect(status().isForbidden)
     }
 

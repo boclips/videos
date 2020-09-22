@@ -1,5 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions
 
+import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.infrastructure.contract.legalrestrictions.MongoContractLegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class MongoContractLegalRestrictionsRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var repository: MongoContractLegalRestrictionsRepository
+    lateinit var repository: ContractLegalRestrictionsRepository
 
     @Test
     fun `can find all legal restrictions`() {

@@ -68,6 +68,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(POST, "/v1/admin/actions/broadcast_collections").hasRole(ROLE.BROADCAST_EVENTS)
             .mvcMatchers(POST, "/v1/admin/actions/broadcast_channels").hasRole(ROLE.BROADCAST_EVENTS)
             .mvcMatchers(POST, "/v1/admin/actions/broadcast_contracts").hasRole(ROLE.BROADCAST_EVENTS)
+            .mvcMatchers(POST, "/v1/admin/actions/broadcast_contract_legal_restrictions").hasRole(ROLE.BROADCAST_EVENTS)
             .mvcMatchers(POST, "/v1/admin/actions/update_youtube_channel_names").hasRole(ROLE.UPDATE_VIDEOS)
 
             .mvcMatchers(GET, "/v1/content-warnings").hasRole(ROLE.VIEW_CONTENT_WARNINGS)

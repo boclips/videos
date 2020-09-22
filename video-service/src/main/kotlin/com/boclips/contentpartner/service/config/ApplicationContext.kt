@@ -13,6 +13,7 @@ import com.boclips.contentpartner.service.application.contract.ContractConverter
 import com.boclips.contentpartner.service.application.contract.CreateContract
 import com.boclips.contentpartner.service.application.contract.GetContract
 import com.boclips.contentpartner.service.application.contract.GetContracts
+import com.boclips.contentpartner.service.application.contract.legalrestrictions.BroadcastContractLegalRestrictions
 import com.boclips.contentpartner.service.application.contract.legalrestrictions.CreateContractLegalRestriction
 import com.boclips.contentpartner.service.application.contract.legalrestrictions.FindAllContractLegalRestrictions
 import com.boclips.contentpartner.service.config.properties.GcsProperties
@@ -162,6 +163,10 @@ class ApplicationContext(
     @Bean
     fun broadcastContracts(): BroadcastContracts =
         BroadcastContracts(eventBus, eventConverter, contractRepository)
+
+    @Bean
+    fun broadcastContractLegalRestrictions(): BroadcastContractLegalRestrictions =
+        BroadcastContractLegalRestrictions(eventBus, contractLegalRestrictionsRepository)
 
     @Bean
     fun createAgeRange(): CreateAgeRange {
