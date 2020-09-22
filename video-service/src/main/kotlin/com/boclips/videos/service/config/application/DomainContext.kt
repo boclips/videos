@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.channel.ChannelRepositoryEventDecorator
 import com.boclips.contentpartner.service.domain.service.contract.ContractRepositoryEventDecorator
+import com.boclips.contentpartner.service.domain.service.contract.legalrestrictions.ContractLegalRestrictionsEventDecorator
 import com.boclips.contentpartner.service.infrastructure.agerange.MongoAgeRangeRepository
 import com.boclips.contentpartner.service.infrastructure.channel.MongoChannelRepository
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
@@ -21,13 +22,25 @@ import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.collection.*
+import com.boclips.videos.service.domain.service.collection.CollectionAccessService
+import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
+import com.boclips.videos.service.domain.service.collection.CollectionCreationService
+import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
+import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.*
+import com.boclips.videos.service.domain.service.video.VideoCreationService
+import com.boclips.videos.service.domain.service.video.VideoDeletionService
+import com.boclips.videos.service.domain.service.video.VideoDuplicationService
+import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
+import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -91,7 +104,6 @@ class DomainContext(
     ): VideoDeletionService {
         return VideoDeletionService(videoRepository, collectionRepository, videoIndex, playbackRepository)
     }
-
 
     @Bean
     fun collectionRetrievalService(
@@ -250,8 +262,11 @@ class DomainContext(
 
     @Bean
     fun contractLegalRestrictionsRepository(): ContractLegalRestrictionsRepository {
-        return MongoContractLegalRestrictionsRepository(
-            mongoClient
+        return ContractLegalRestrictionsEventDecorator(
+            legalRestrictionsRepository = MongoContractLegalRestrictionsRepository(
+                mongoClient
+            ),
+            eventBus = eventBus
         )
     }
 
