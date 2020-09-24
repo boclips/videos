@@ -1,6 +1,7 @@
 package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.response.video.CaptionStatus
 import feign.FeignException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
@@ -33,8 +34,7 @@ class VideosClientFakeTest {
         fun `throws a feign Conflict exception when captions are already requested`() {
             val fake = VideosClientFake()
             val videoResource = fake.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
-
-            fake.requestVideoCaptions(videoResource.id!!)
+            fake.updateCaptionStatus(videoId = videoResource.id!!, captionStatus = CaptionStatus.REQUESTED)
 
             assertThatThrownBy {
                 fake.requestVideoCaptions(videoResource.id!!)

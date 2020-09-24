@@ -121,8 +121,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             throw FakeClient.conflictException("Captions exist or are already requested!")
         }
 
-        database[videoId] = database[videoId]?.copy(captionStatus = CaptionStatus.REQUESTED)
-            ?: VideoResource(id = videoId, captionStatus = CaptionStatus.REQUESTED, _links = emptyMap())
+        updateCaptionStatus(videoId, CaptionStatus.REQUESTED)
     }
 
     override fun add(element: VideoResource): VideoResource {
@@ -136,5 +135,10 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
 
     override fun findAll(): List<VideoResource> {
         return database.values.toList()
+    }
+
+    fun updateCaptionStatus(videoId: String, captionStatus: CaptionStatus) {
+        database[videoId] = database[videoId]?.copy(captionStatus = captionStatus)
+            ?: VideoResource(id = videoId, captionStatus = captionStatus, _links = emptyMap())
     }
 }
