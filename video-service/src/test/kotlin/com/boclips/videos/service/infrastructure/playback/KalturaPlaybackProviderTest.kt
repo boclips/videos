@@ -4,7 +4,6 @@ import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntryStatus
-import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -12,7 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat.WEBVTT
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
@@ -207,7 +206,13 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
         val captions = kalturaPlaybackProvider.getCaptions(playbackId)
 
-        assertThat(captions).containsExactly(Caption(content = "Captions content to retrieve", format = WEBVTT, default = false))
+        assertThat(captions).containsExactly(
+            Caption(
+                content = "Captions content to retrieve",
+                format = WEBVTT,
+                default = false
+            )
+        )
     }
 
     @Test
@@ -224,7 +229,12 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `requests captions when not available`() {
         createMediaEntry("123")
 
-        kalturaPlaybackProvider.requestCaptionsIfNotAvailable(PlaybackId(value = "123", type = PlaybackProviderType.KALTURA))
+        kalturaPlaybackProvider.requestCaptions(
+            PlaybackId(
+                value = "123",
+                type = PlaybackProviderType.KALTURA
+            )
+        )
 
         val captionStatus = fakeKalturaClient.getCaptionStatus("123")
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
@@ -234,20 +244,40 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `does request captions when no human generated captions available`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
 
-        kalturaPlaybackProvider.requestCaptionsIfNotAvailable(playbackId)
+        kalturaPlaybackProvider.requestCaptions(playbackId)
 
         val captionStatus = fakeKalturaClient.getCaptionStatus(playbackId.value)
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
     }
 
     @Test
-    fun `does not request captions when human generated captions are available`() {
+    fun `throws when human generated captions are already available`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English")
 
-        kalturaPlaybackProvider.requestCaptionsIfNotAvailable(playbackId)
+        assertThrows<CaptionConflictException> {
+            kalturaPlaybackProvider.requestCaptions(playbackId)
+        }
+    }
 
-        val captionStatus = fakeKalturaClient.getCaptionStatus(playbackId.value)
-        assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.HUMAN_GENERATED_AVAILABLE)
+    @Test
+    fun `throws when human generated captions are already requested`() {
+        fakeKalturaClient.createEntry("playback-id")
+        fakeKalturaClient.tag("playback-id", listOf("caption48"))
+
+
+        assertThrows<CaptionConflictException> {
+            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "playback-id"))
+        }
+    }
+
+    @Test
+    fun `throws when human generated captions are already processing`() {
+        fakeKalturaClient.createEntry("playback-id")
+        fakeKalturaClient.tag("playback-id", listOf("processing"))
+
+        assertThrows<CaptionConflictException> {
+            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "playback-id"))
+        }
     }
 
     private fun mediaEntryWithCaptionsByEntryId(

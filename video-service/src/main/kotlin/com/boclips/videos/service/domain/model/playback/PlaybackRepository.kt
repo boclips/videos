@@ -56,7 +56,7 @@ class PlaybackRepository(
     }
 
     fun requestCaptions(playbackId: PlaybackId) {
-        getProvider(playbackId).requestCaptionsIfNotAvailable(playbackId)
+        getProvider(playbackId).requestCaptions(playbackId)
     }
 
     fun getProviderMetadata(playbackId: PlaybackId): VideoProviderMetadata? {

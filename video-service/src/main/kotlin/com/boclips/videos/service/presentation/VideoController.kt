@@ -26,6 +26,7 @@ import com.boclips.videos.service.application.video.VideoCaptionService
 import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -174,11 +175,13 @@ class VideoController(
             }, HttpStatus.PERMANENT_REDIRECT)
         }
         return video
-            .let { videoToResourceConverter.convert(
-                it,
-                user = getCurrentUser(),
-                omitProtectedAttributes = !canAccessProtectedAttributes
-            ) }
+            .let {
+                videoToResourceConverter.convert(
+                    it,
+                    user = getCurrentUser(),
+                    omitProtectedAttributes = !canAccessProtectedAttributes
+                )
+            }
             .let {
                 when (projection) {
                     Projection.full -> videoCaptionService.withCaptionDetails(it)
@@ -344,12 +347,18 @@ class VideoController(
     fun generateCaptions(
         @PathVariable("id") videoId: String?
     ): ResponseEntity<String> {
-        videoCaptionService.requestCaptionIfMissing(videoId)
+        try {
+            videoCaptionService.requestCaptionIfMissing(videoId)
+        } catch (ex: CaptionConflictException) {
+            return ResponseEntity(HttpStatus.CONFLICT)
+        }
         return ResponseEntity.accepted().build()
     }
 
     @GetMapping("/v1/videos/{id}/captions")
-    fun getCaptions(@PathVariable("id") videoId: String?): ResponseEntity<CaptionsResource> {
+    fun getCaptions(
+        @PathVariable("id") videoId: String?,
+    ): ResponseEntity<CaptionsResource> {
         videoCaptionService.getCaptionContent(videoId!!)?.let {
             return ResponseEntity(it, HttpStatus.OK)
         }

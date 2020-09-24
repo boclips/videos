@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.kalturaclient.KalturaCaptionManager
+import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -46,13 +47,15 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `Put request to a update a video's captions endpoint updates its transcript`() {
-        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
         val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content").id
-
 
         val content = """
             {
@@ -60,9 +63,11 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             }
         """.trimIndent()
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions").asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content))
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/transcript").asTeacher())
@@ -70,20 +75,26 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
             .andExpect(
                 MockMvcResultMatchers.content().string(
-                    Matchers.equalTo("""
+                    Matchers.equalTo(
+                        """
                         While regaling you with daring stories from her youth,
                         it might be hard to believe your
                         grandmother used to be a trapeze artist.""".trimIndent()
                     )
                 )
             )
-            .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.equalTo("attachment; filename=\"Today_Video_.txt\"")))
+            .andExpect(
+                MockMvcResultMatchers.header()
+                    .string("Content-Disposition", Matchers.equalTo("attachment; filename=\"Today_Video_.txt\""))
+            )
     }
 
     @Test
     fun `invalid caption update returns bad request`() {
-        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
-
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
 
         val captionContent = """"DEFORMED WEBVTT FILE\n
                                 1\n
@@ -99,24 +110,32 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
                                 We don't have a profit margin."""".trimIndent()
 
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions").asBoclipsEmployee()
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions").asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
             {
                "captions": "$captionContent"
             }
-        """.trimIndent()))
+        """.trimIndent()
+                )
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
     fun `gets a video's caption content successfully`() {
-        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
         val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
             language = KalturaLanguage.ENGLISH,
             label = "English (auto-generated)"
         )
-        val captionContent = "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
+        val captionContent =
+            "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, captionContent).id
 
 
@@ -127,12 +146,35 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requests captions for video successfully`() {
-        val video = saveVideo(title = "Today Video?", playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions?generated=true").asBoclipsEmployee())
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions?generated=true").asBoclipsEmployee()
+        )
             .andExpect(status().isAccepted)
             .andExpect(content().string(""))
 
         assertThat(fakeKalturaClient.getCaptionStatus("playback-id")).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
+    }
+
+    @Test
+    fun `returns a conflict when captions already available`() {
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
+        fakeKalturaClient.createCaptionForVideo(
+            "playback-id",
+            CaptionAsset.builder().label("wow what a caption").build(),
+            "hhi"
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions?generated=true").asBoclipsEmployee()
+        )
+            .andExpect(status().isConflict)
     }
 }

@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 
 class CaptionService(
     private val videoRepository: VideoRepository,

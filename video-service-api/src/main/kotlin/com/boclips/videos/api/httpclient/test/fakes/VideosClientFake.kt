@@ -114,6 +114,13 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     }
 
     override fun requestVideoCaptions(videoId: String) {
+        if (database[videoId]?.captionStatus == CaptionStatus.REQUESTED ||
+            database[videoId]?.captionStatus == CaptionStatus.PROCESSING ||
+            database[videoId]?.captionStatus == CaptionStatus.HUMAN_GENERATED_AVAILABLE
+        ) {
+            throw FakeClient.conflictException("Captions exist or are already requested!")
+        }
+
         database[videoId] = database[videoId]?.copy(captionStatus = CaptionStatus.REQUESTED)
             ?: VideoResource(id = videoId, captionStatus = CaptionStatus.REQUESTED, _links = emptyMap())
     }

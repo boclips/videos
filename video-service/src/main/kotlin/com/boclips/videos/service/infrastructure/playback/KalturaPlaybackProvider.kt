@@ -19,6 +19,7 @@ import com.boclips.videos.service.domain.model.video.CaptionFormat
 import com.boclips.videos.service.domain.model.video.UnknownCaptionFormatException
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -122,12 +123,14 @@ class KalturaPlaybackProvider(
         }
     }
 
-    override fun requestCaptionsIfNotAvailable(playbackId: PlaybackId) {
-         val captionStatus = kalturaClient.getCaptionStatus(playbackId.value)
+    override fun requestCaptions(playbackId: PlaybackId) {
+        val captionStatus = kalturaClient.getCaptionStatus(playbackId.value)
         if (captionStatus == KalturaCaptionManager.CaptionStatus.NOT_AVAILABLE ||
             captionStatus == KalturaCaptionManager.CaptionStatus.AUTO_GENERATED_AVAILABLE
         ) {
             kalturaClient.requestCaption(playbackId.value)
+        } else {
+            throw CaptionConflictException("Captions for playback id: ${playbackId.value} have already been requested")
         }
     }
 

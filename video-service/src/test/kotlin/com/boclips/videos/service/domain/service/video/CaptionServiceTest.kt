@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId

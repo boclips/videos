@@ -22,5 +22,20 @@ interface FakeClient<T> {
             ),
             null
         )
+
+        @JvmStatic
+        fun conflictException(message: String) = FeignException.Conflict(
+            message,
+            Request.create(
+                Request.HttpMethod.PUT,
+                "http://this.com/does/exist",
+                emptyMap(),
+                Request.Body.empty(),
+                RequestTemplate()
+            ),
+            null
+        )
+
+
     }
 }
