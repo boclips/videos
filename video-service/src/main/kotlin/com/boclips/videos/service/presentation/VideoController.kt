@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
@@ -55,6 +56,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.lang.IllegalArgumentException
 import javax.validation.Valid
 
 @RestController
@@ -78,7 +80,9 @@ class VideoController(
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
     private val getVideoAssets: GetVideoAssets,
-    private val userService: UserService
+    private val userService: UserService,
+    // FIXME - remove when clients no longer use channel names for video filtering
+    private val channelRepository: ChannelRepository
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -108,8 +112,7 @@ class VideoController(
         @RequestParam(name = "subjects_set_manually", required = false) subjectsSetManually: Boolean?,
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
-        @RequestParam(name = "channel", required = false) channels: Set<String>?,
-        @RequestParam(name = "channel_ids", required = false) channelIds: Set<String>?,
+        @RequestParam(name = "channel", required = false) channelParam: Set<String>?,
         @RequestParam(name = "type", required = false) type: Set<String>?,
         @RequestParam(name = "id", required = false) ids: Set<String>?,
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
@@ -118,6 +121,9 @@ class VideoController(
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
+
+        val channels = (contentPartners ?: emptySet()) + (channelParam ?: emptySet())
+        val filteringByChannelIds = isFilteringByChannelIdsRequested(channels)
         val results = searchVideo.byQuery(
             query = query,
             ids = ids ?: emptySet(),
@@ -138,8 +144,8 @@ class VideoController(
             resourceTypes = resourceTypes ?: emptySet(),
             resourceTypeFacets = resourceTypeFacets.orEmpty(),
             promoted = promoted,
-            channelNames = (contentPartners ?: emptySet()) + (channels ?: emptySet()),
-            channelIds = channelIds ?: emptySet(),
+            channelNames = if (filteringByChannelIds) emptySet() else channels,
+            channelIds = if (filteringByChannelIds) channels else emptySet(),
             type = type?.let { type } ?: emptySet(),
             user = getCurrentUser(),
             sortBy = sortBy,
@@ -368,4 +374,18 @@ class VideoController(
     @PostMapping("/v1/videos/{id}/assets")
     fun getAssets(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) =
         getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
+
+    // FIXME - remove when clients no longer use channel names for video filtering
+    private fun isFilteringByChannelIdsRequested(channels: Set<String>): Boolean {
+        return try {
+            channelRepository
+                    .findAllByIds(
+                            channels.map { com.boclips.contentpartner.service.domain.model.channel.ChannelId(it) }
+                    )
+                    .iterator()
+                    .hasNext()
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
 }

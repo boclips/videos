@@ -95,7 +95,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val channelId = saveChannel(name="test").id
         val videoId = saveVideo(contentProviderId = channelId.value)
 
-        mockMvc.perform(get("/v1/videos?channel_ids=${channelId.value}").asApiUser())
+        mockMvc.perform(get("/v1/videos?channel=${channelId.value}").asApiUser())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId.value)))
@@ -115,7 +115,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         ).value
         val channel = getChannel(contentProviderName)
 
-        mockMvc.perform(get("/v1/videos?channel_ids=${channel.id.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?channel=${channel.id.value}").asTeacher())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -620,4 +620,3 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(patch(rateUrl, rating).asTeacher()).andExpect(status().isOk)
     }
 }
-
