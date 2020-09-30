@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -16,9 +17,9 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `provides suggestions for channels and subjects`() {
-        saveChannel(name = "The History Channel")
+        val historyChannel = saveChannel(name = "The History Channel")
         saveChannel(name = "TED-Ed")
-        saveChannel(name = "We Love History")
+        val weLoveHistoryChannel = saveChannel(name = "We Love History")
 
         val subjectOne = saveSubject(name = "History")
         val subjectTwo = saveSubject(name = "Art History")
@@ -26,49 +27,61 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/suggestions?query=his").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.suggestionTerm", equalTo("his")))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.channels", hasSize<String>(2)))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.subjects", hasSize<String>(2)))
+            .andExpect(jsonPath("$.suggestionTerm", equalTo("his")))
+            .andExpect(jsonPath("$.channels", hasSize<String>(2)))
+            .andExpect(jsonPath("$.subjects", hasSize<String>(2)))
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                jsonPath(
                     "$.channels[0].name",
                     equalTo("The History Channel")
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.channels[0]._links.searchVideos")
+                jsonPath(
+                    "$.channels[0].id",
+                    equalTo(historyChannel.id.value)
+                )
+            )
+            .andExpect(
+                jsonPath("$.channels[0]._links.searchVideos")
                     .exists()
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                jsonPath(
                     "$.channels[1].name",
                     equalTo("We Love History")
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                    jsonPath(
+                            "$.channels[1].id",
+                            equalTo(weLoveHistoryChannel.id.value)
+                    )
+            )
+            .andExpect(
+                jsonPath(
                     "$.subjects[0].name",
                     equalTo(subjectOne.name)
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                jsonPath(
                     "$.subjects[0].id",
                     equalTo(subjectOne.id.value)
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.subjects[0]._links.searchVideos")
+                jsonPath("$.subjects[0]._links.searchVideos")
                     .exists()
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                jsonPath(
                     "$.subjects[1].name",
                     equalTo(subjectTwo.name)
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath(
+                jsonPath(
                     "$.subjects[1].id",
                     equalTo(subjectTwo.id.value)
                 )

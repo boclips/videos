@@ -14,7 +14,6 @@ class FindSuggestions(
     operator fun invoke(query: String): Suggestions {
         val channels = channelRepository.findByName(query)
             .take(10)
-            .map { it.name }
 
         val subjects = subjectRepository.findByQuery(query)
             .take(5)

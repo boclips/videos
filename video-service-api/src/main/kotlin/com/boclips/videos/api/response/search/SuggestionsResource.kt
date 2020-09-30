@@ -13,6 +13,7 @@ data class SuggestionsResource(
 )
 
 data class ChannelSuggestionResource(
+    val id: String,
     val name: String,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>?

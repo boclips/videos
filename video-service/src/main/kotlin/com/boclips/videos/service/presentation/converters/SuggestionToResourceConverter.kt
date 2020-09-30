@@ -14,7 +14,8 @@ class SuggestionToResourceConverter(
             suggestionTerm = query,
             channels = suggestions.channels.map {
                 ChannelSuggestionResource(
-                    name = it,
+                    id = it.id.value,
+                    name = it.name,
                     _links = listOfNotNull(
                         videosLinkBuilder.searchVideosByText(query = query)
                     ).map { link -> link.rel to link }.toMap()
