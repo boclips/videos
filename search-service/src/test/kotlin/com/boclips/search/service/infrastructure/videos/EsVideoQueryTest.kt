@@ -10,7 +10,7 @@ class EsVideoQueryTest {
     @Test
     fun `creates video filters for given query`() {
         val videoQuery = VideoQuery(
-            phrase = "apple",
+            phrase = "\"oranges\" \"in orchard\" apple",
             accessRuleQuery = AccessRuleQuery(
                 excludedTypes = setOf(VideoType.STOCK),
                 includedTypes = setOf(VideoType.INSTRUCTIONAL),

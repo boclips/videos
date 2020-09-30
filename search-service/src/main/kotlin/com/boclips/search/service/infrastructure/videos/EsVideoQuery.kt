@@ -19,30 +19,61 @@ import org.elasticsearch.script.ScriptType
 
 class EsVideoQuery {
     fun buildQuery(videoQuery: VideoQuery): BoolQueryBuilder {
+        val quotation = videoQuery.phrase.quotedParts()
         return QueryBuilders.boolQuery()
             .apply {
                 buildAccessRulesFilter(this, videoQuery.accessRuleQuery)
             }
             .apply {
-                if (videoQuery.phrase.isNotBlank()) {
+                filter(
+                    QueryBuilders.boolQuery().let { filterQuery ->
+                        quotation.quotedParts.forEach { phrase ->
+                            filterQuery.must(
+                                QueryBuilders.boolQuery()
+                                    .should(
+                                        QueryBuilders.matchPhraseQuery(
+                                            IndexConfiguration.unstemmed(VideoDocument.TITLE),
+                                            phrase
+                                        )
+                                    )
+                                    .should(
+                                        QueryBuilders.matchPhraseQuery(
+                                            IndexConfiguration.unstemmed(VideoDocument.DESCRIPTION),
+                                            phrase
+                                        )
+                                    )
+                                    .should(
+                                        QueryBuilders.matchPhraseQuery(
+                                            IndexConfiguration.unstemmed(VideoDocument.TRANSCRIPT),
+                                            phrase
+                                        )
+                                    )
+                            )
+                        }
+                        filterQuery
+                    }
+                )
+            }
+            .apply {
+                if (quotation.unquoted.isNotBlank()) {
                     must(
                         QueryBuilders.boolQuery()
                             .should(
-                                QueryBuilders.matchPhraseQuery(VideoDocument.TITLE, videoQuery.phrase).slop(2)
+                                QueryBuilders.matchPhraseQuery(VideoDocument.TITLE, quotation.unquoted).slop(2)
                                     .boost(10F)
                             )
                             .should(
                                 QueryBuilders.matchPhraseQuery(
                                     IndexConfiguration.unstemmed(VideoDocument.TITLE),
-                                    videoQuery.phrase
+                                    quotation.unquoted
                                 ).slop(2).boost(10F)
                             )
                             .should(
-                                QueryBuilders.matchPhraseQuery(VideoDocument.DESCRIPTION, videoQuery.phrase).slop(1)
+                                QueryBuilders.matchPhraseQuery(VideoDocument.DESCRIPTION, quotation.unquoted).slop(1)
                             )
                             .should(
                                 QueryBuilders.multiMatchQuery(
-                                    videoQuery.phrase,
+                                    quotation.unquoted,
                                     VideoDocument.TITLE,
                                     IndexConfiguration.unstemmed(VideoDocument.TITLE),
                                     VideoDocument.DESCRIPTION,
@@ -56,14 +87,13 @@ class EsVideoQuery {
                                     .fuzziness(Fuzziness.ZERO)
                             )
                             .should(
-                                QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, videoQuery.phrase).boost(1000F)
+                                QueryBuilders.termQuery(VideoDocument.CONTENT_PROVIDER, quotation.unquoted).boost(1000F)
                             )
                             .should(
-                                QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_NAMES, videoQuery.phrase)
+                                QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_NAMES, quotation.unquoted)
                                     .boost(1000F)
                             )
                             .minimumShouldMatch(1)
-
                     )
                 }
 

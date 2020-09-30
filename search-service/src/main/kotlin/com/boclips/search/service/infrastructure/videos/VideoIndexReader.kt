@@ -24,6 +24,7 @@ import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import java.io.File
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {

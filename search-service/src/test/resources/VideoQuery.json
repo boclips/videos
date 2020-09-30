@@ -7,7 +7,7 @@
             {
               "match_phrase" : {
                 "title" : {
-                  "query" : "apple",
+                  "query" : "oranges in orchard apple",
                   "slop" : 2,
                   "zero_terms_query" : "NONE",
                   "boost" : 10.0
@@ -17,7 +17,7 @@
             {
               "match_phrase" : {
                 "title.unstemmed" : {
-                  "query" : "apple",
+                  "query" : "oranges in orchard apple",
                   "slop" : 2,
                   "zero_terms_query" : "NONE",
                   "boost" : 10.0
@@ -27,7 +27,7 @@
             {
               "match_phrase" : {
                 "description" : {
-                  "query" : "apple",
+                  "query" : "oranges in orchard apple",
                   "slop" : 1,
                   "zero_terms_query" : "NONE",
                   "boost" : 1.0
@@ -36,7 +36,7 @@
             },
             {
               "multi_match" : {
-                "query" : "apple",
+                "query" : "oranges in orchard apple",
                 "fields" : [
                   "description^1.0",
                   "description.unstemmed^1.0",
@@ -62,7 +62,7 @@
             {
               "term" : {
                 "contentProvider" : {
-                  "value" : "apple",
+                  "value" : "oranges in orchard apple",
                   "boost" : 1000.0
                 }
               }
@@ -70,7 +70,7 @@
             {
               "match_phrase" : {
                 "subjectNames" : {
-                  "query" : "apple",
+                  "query" : "oranges in orchard apple",
                   "slop" : 0,
                   "zero_terms_query" : "NONE",
                   "boost" : 1000.0
@@ -139,6 +139,90 @@
             "value" : true,
             "boost" : 1.0
           }
+        }
+      },
+      {
+        "bool" : {
+          "must" : [
+            {
+              "bool" : {
+                "should" : [
+                  {
+                    "match_phrase" : {
+                      "title.unstemmed" : {
+                        "query" : "oranges",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase" : {
+                      "description.unstemmed" : {
+                        "query" : "oranges",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase" : {
+                      "transcript.unstemmed" : {
+                        "query" : "oranges",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  }
+                ],
+                "adjust_pure_negative" : true,
+                "boost" : 1.0
+              }
+            },
+            {
+              "bool" : {
+                "should" : [
+                  {
+                    "match_phrase" : {
+                      "title.unstemmed" : {
+                        "query" : "in orchard",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase" : {
+                      "description.unstemmed" : {
+                        "query" : "in orchard",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  },
+                  {
+                    "match_phrase" : {
+                      "transcript.unstemmed" : {
+                        "query" : "in orchard",
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  }
+                ],
+                "adjust_pure_negative" : true,
+                "boost" : 1.0
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0
         }
       }
     ],
