@@ -139,7 +139,7 @@ class VideoToResourceConverter(
         return channelFacets.mapNotNull { channelFacet ->
             channels
                 .find { channel -> channel.id.value == channelFacet.channelId.value }
-                ?.let { it.name to VideoFacetResource(hits = channelFacet.total) }
+                ?.let { it.name to VideoFacetResource(hits = channelFacet.total, id = it.id.value) }
         }.toMap()
     }
 

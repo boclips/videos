@@ -8,4 +8,4 @@ data class VideoFacetsResource(
     val channels: Map<String, VideoFacetResource>
 )
 
-data class VideoFacetResource(val hits: Long)
+data class VideoFacetResource(val hits: Long, val id: String? = null)

@@ -314,6 +314,7 @@ class VideoToResourceConverterTest {
         assertThat(resultResource._embedded.facets?.resourceTypes?.get("Activity")?.hits).isEqualTo(5)
         assertThat(resultResource._embedded.facets?.channels?.size).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.channels?.get("TED")?.hits).isEqualTo(7)
+        assertThat(resultResource._embedded.facets?.channels?.get("TED")?.id).isEqualTo("channel-id")
     }
 
     @Test
