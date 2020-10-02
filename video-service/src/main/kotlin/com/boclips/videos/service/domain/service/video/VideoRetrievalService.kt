@@ -114,7 +114,7 @@ class VideoRetrievalService(
 
         val results = videoIndex.search(
             PaginatedSearchRequest(
-                query =  VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
+                query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
                 windowSize = 1
             )
         )
@@ -139,4 +139,3 @@ class VideoRetrievalService(
         }
     }
 }
-

@@ -169,16 +169,21 @@ class VideoController(
         }
 
         if (video.deactivated) {
-            return ResponseEntity(HttpHeaders().apply {
-                set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
-            }, HttpStatus.PERMANENT_REDIRECT)
+            return ResponseEntity(
+                HttpHeaders().apply {
+                    set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
+                },
+                HttpStatus.PERMANENT_REDIRECT
+            )
         }
         return video
-            .let { videoToResourceConverter.convert(
-                it,
-                user = getCurrentUser(),
-                omitProtectedAttributes = !canAccessProtectedAttributes
-            ) }
+            .let {
+                videoToResourceConverter.convert(
+                    it,
+                    user = getCurrentUser(),
+                    omitProtectedAttributes = !canAccessProtectedAttributes
+                )
+            }
             .let {
                 when (projection) {
                     Projection.full -> videoCaptionService.withCaptionDetails(it)
@@ -261,9 +266,13 @@ class VideoController(
             )
         }
 
-        return ResponseEntity(resource, HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
-        }, HttpStatus.CREATED)
+        return ResponseEntity(
+            resource,
+            HttpHeaders().apply {
+                set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
+            },
+            HttpStatus.CREATED
+        )
     }
 
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["rating"])

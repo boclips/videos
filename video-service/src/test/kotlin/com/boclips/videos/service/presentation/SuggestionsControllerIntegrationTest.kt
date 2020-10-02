@@ -1,7 +1,11 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asTeacher
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
@@ -73,5 +77,26 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     equalTo(subjectTwo.id.value)
                 )
             )
+    }
+
+    @Test
+    fun `provides suggestions based on access rules`() {
+        saveChannel(name = "super channel")
+        saveChannel(name = "super extra channel")
+        val excludedChannel = saveChannel(name = "bad channel")
+
+        usersClient.addAccessRules(
+            "api-user@gmail.com",
+            AccessRulesResourceFactory.sample(
+                AccessRuleResource.ExcludedChannels(
+                    id = "super bad channel",
+                    name = "bad channel",
+                    channelIds = listOf(excludedChannel.id.toString())
+                )
+            )
+        )
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/new-suggestions?query=cha").asApiUser())
+            .andExpect(MockMvcResultMatchers.status().isOk)
     }
 }
