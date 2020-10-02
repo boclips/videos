@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionUpdateComman
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.UserFactory
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
@@ -49,7 +50,7 @@ class CollectionsControllerSubCollectionsIntegrationTest : AbstractCollectionsCo
 
         mockMvc.perform(get("/v1/collections/${collection.id.value}").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$.id", Matchers.not(Matchers.emptyString())))
             .andExpect(jsonPath("$.title", Matchers.equalTo("some collection")))
             .andExpect(jsonPath("$.subCollections[*]", hasSize<Any>(1)))

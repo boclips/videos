@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -20,7 +21,7 @@ class DistributionMethodsControllerTest : AbstractSpringIntegrationTest() {
     fun `can fetch distribution methods`() {
         mockMvc.perform(get("/v1/distribution-methods").asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(
                 jsonPath(
                     "$._embedded.distributionMethods[0]", equalTo(DistributionMethodResource.DOWNLOAD.toString())

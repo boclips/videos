@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.CoreMatchers.equalTo
@@ -40,7 +41,7 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get(ageRangeUrl).asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$.id", equalTo("id1")))
             .andExpect(jsonPath("$.label", equalTo("label1")))
             .andExpect(jsonPath("$.min", equalTo(3)))
@@ -65,7 +66,7 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get(ageRangeUrl).asBoclipsEmployee())
             .andExpect(status().isOk)
-            .andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$.id", equalTo("id1")))
             .andExpect(jsonPath("$.label", equalTo("label1")))
             .andExpect(jsonPath("$.min", equalTo(3)))

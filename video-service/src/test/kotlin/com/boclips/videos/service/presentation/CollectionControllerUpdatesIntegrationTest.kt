@@ -3,6 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
@@ -56,7 +58,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.createdBy", equalTo("Teacher")))
@@ -86,7 +88,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
             .andExpect(jsonPath("$.promoted", equalTo(true)))
     }
@@ -110,7 +112,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$.id", equalTo(collectionId)))
             .andExpect(jsonPath("$.promoted", equalTo(false)))
     }
@@ -286,7 +288,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=true").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$.id", Matchers.not(Matchers.emptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))
@@ -309,7 +311,7 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
 
         mockMvc.perform(patch("/v1/collections/$collectionId?bookmarked=false").asTeacher(email = "notTheOwner@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$.id", Matchers.not(Matchers.emptyString())))
             .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.mine", equalTo(false)))

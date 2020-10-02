@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -90,7 +91,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns 200 for valid video as boclips employee`() {
             mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
@@ -166,7 +167,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(get("/v1/videos/$kalturaVideoId"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
@@ -232,7 +233,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(get("/v1/videos/$kalturaVideoId?referer=referer-id&shareCode=valid"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").doesNotExist())
                 .andExpect(jsonPath("$.playback.downloadUrl").doesNotExist())
@@ -280,7 +281,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(get("/v1/videos/$kalturaVideoId?referer=referer-id&shareCode=invalid"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.playback._links.hlsStream").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail").exists())
                 .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
@@ -290,7 +291,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns 200 for valid video as API user`() {
             mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.title", equalTo("powerful video about elephants")))
                 .andExpect(jsonPath("$.description", equalTo("test description 3")))
@@ -339,7 +340,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns 200 for valid youtube video as API user`() {
             mockMvc.perform(get("/v1/videos/$youtubeVideoId").asApiUser())
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(youtubeVideoId)))
                 .andExpect(jsonPath("$.title", equalTo("elephants took out jobs")))
                 .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
@@ -358,7 +359,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(get("/v1/videos/$kalturaVideoId?projection=full").asBoclipsEmployee())
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
                 .andExpect(jsonPath("$.captionStatus", equalTo("REQUESTED")))
         }

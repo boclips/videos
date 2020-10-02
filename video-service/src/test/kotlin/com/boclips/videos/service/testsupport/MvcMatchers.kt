@@ -12,7 +12,7 @@ object MvcMatchers {
 
 class HalJson : ResultMatcher {
     override fun match(result: MvcResult) {
-        assertThat(result.response.contentType).isEqualTo("application/hal+json;charset=UTF-8")
+        assertThat(result.response.contentType).matches("^application/hal\\+json.*$")
     }
 }
 

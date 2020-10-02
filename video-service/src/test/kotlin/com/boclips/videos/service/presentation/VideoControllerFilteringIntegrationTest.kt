@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.*
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -129,7 +130,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideoId.value)))
     }
@@ -485,14 +486,14 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         // first page
         mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=0").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(secondTitle)))
             .andExpect(jsonPath("$._embedded.videos[1].title", equalTo(thirdTitle)))
 
         // second page
         mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=1").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(firstTitle)))
     }
 
@@ -504,7 +505,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         mockMvc.perform(get("/v1/videos?query=ingested&sort_by=INGEST_ASC&size=3").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("oldest ingested video")))
             .andExpect(jsonPath("$._embedded.videos[1].title", equalTo("newer ingested video")))
             .andExpect(jsonPath("$._embedded.videos[2].title", equalTo("newest ingested video")))

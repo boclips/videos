@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -36,7 +37,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.facets.subjects.*", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.facets.subjects.subject1.hits", equalTo(56)))
     }
@@ -54,7 +55,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.ageRanges.*", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.facets.ageRanges.agerange1.hits", equalTo(86)))
     }
@@ -65,7 +66,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.subjects[*]", hasSize<Int>(0)))
             .andExpect(jsonPath("$._embedded.facets.ageRanges[*]", hasSize<Int>(0)))
     }
@@ -96,7 +97,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.durations.*", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.facets.durations.duration1.hits", equalTo(94)))
     }
@@ -127,7 +128,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/videos?query=content").asTeacher())
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.resourceTypes.*", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.facets.resourceTypes.activity.hits", equalTo(94)))
     }

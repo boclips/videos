@@ -3,6 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Nested
@@ -28,7 +30,7 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
 
             mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher(email = "12345"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(collectionId)))
                 .andExpect(jsonPath("$.title", equalTo("Some Private Collection")))
         }
@@ -46,7 +48,7 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
 
             mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=VALID").asTeacher(email = "another-teacher"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(collectionId)))
                 .andExpect(jsonPath("$.title", equalTo("Some Private Collection")))
         }
@@ -75,7 +77,7 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
 
             mockMvc.perform(get("/v1/collections/$collectionId?referer=12345&shareCode=TEST"))
                 .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+                .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(collectionId)))
                 .andExpect(jsonPath("$.title", equalTo("Some discoverable Collection")))
         }

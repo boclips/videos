@@ -233,7 +233,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
 
         val searchUrlTemplate: String = JsonPath.parse(response).read("$._links.searchVideos.href")
         val searchUrl =
-            UriTemplate(searchUrlTemplate).expand(mapOf(("query" to "phrase"), ("size" to 1), ("page" to 1)))
+            UriTemplate.of(searchUrlTemplate).expand(mapOf(("query" to "phrase"), ("size" to 1), ("page" to 1)))
 
         assertThat(searchUrl.toASCIIString()).endsWith("/videos?query=phrase&size=1&page=1")
     }

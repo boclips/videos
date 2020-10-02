@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
+import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.endsWith
@@ -27,7 +28,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
             .andExpect(
                 jsonPath(
@@ -46,7 +47,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
         mockMvc.perform(get("/v1/collections").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.collections", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
@@ -70,7 +71,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
 
         mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))
             .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", "application/hal+json;charset=UTF-8"))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))

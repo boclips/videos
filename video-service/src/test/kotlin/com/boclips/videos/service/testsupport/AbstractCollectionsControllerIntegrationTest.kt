@@ -151,7 +151,7 @@ abstract class AbstractCollectionsControllerIntegrationTest : AbstractSpringInte
 
     fun MvcResult.extractVideoLink(relName: String, videoId: String): URI {
         val templateString = JsonPath.parse(response.contentAsString).read<String>("$._links.$relName.href")
-        return UriTemplate(templateString).expand(mapOf(("video_id" to videoId)))
+        return UriTemplate.of(templateString).expand(mapOf(("video_id" to videoId)))
     }
 
     protected fun bookmarkCollection(collectionId: String, user: String) {
