@@ -23,9 +23,11 @@ data class ElasticSearchClient(
         credentialsProvider.setCredentials(AuthScope.ANY, UsernamePasswordCredentials(this.username, this.password))
 
         val builder = RestClient.builder(HttpHost(this.host, this.port, this.scheme))
-            .setHttpClientConfigCallback(TracingHttpClientConfigCallback(tracer) { httpClientBuilder: HttpAsyncClientBuilder ->
-                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
-            })
+            .setHttpClientConfigCallback(
+                TracingHttpClientConfigCallback(tracer) { httpClientBuilder: HttpAsyncClientBuilder ->
+                    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                }
+            )
         return RestHighLevelClient(builder)
     }
 }
