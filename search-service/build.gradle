@@ -21,6 +21,10 @@ task testWithoutSolr(type: Test) {
     exclude '**/SolrSearchServiceIntegrationTest.class'
 }
 
+ext {
+    jettyVersion = "9.4.32.v20200930"
+}
+
 dependencies {
     compile("com.fasterxml.jackson.core:jackson-databind:2.10.1")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1")
@@ -30,6 +34,18 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("io.github.microutils:kotlin-logging:1.8.3")
     compile("org.apache.solr:solr-solrj:$solrVersion")
+    compile("org.eclipse.jetty:jetty-alpn-client:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-alpn-client:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-alpn-java-client:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-client:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-http:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-io:$jettyVersion")
+    compile("org.eclipse.jetty:jetty-util:$jettyVersion")
+    compile("org.eclipse.jetty.http2:http2-client:$jettyVersion")
+    compile("org.eclipse.jetty.http2:http2-common:$jettyVersion")
+    compile("org.eclipse.jetty.http2:http2-hpack:$jettyVersion")
+    compile("org.eclipse.jetty.http2:http2-http-client-transport:$jettyVersion")
+
     compile("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:3.2.0")
     compile("org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE")
     compile("io.opentracing.contrib:opentracing-elasticsearch7-client:0.1.6")
