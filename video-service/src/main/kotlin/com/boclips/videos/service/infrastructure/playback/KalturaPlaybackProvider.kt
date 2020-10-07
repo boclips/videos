@@ -160,7 +160,7 @@ class KalturaPlaybackProvider(
 
     private fun getAssetUrl(playbackId: PlaybackId): URI {
         val asset = kalturaClient.getVideoAssets(playbackId.value)
-            ?.maxBy { it.height }
+            ?.maxByOrNull { it.height }
             ?: throw VideoPlaybackNotFound(playbackId)
 
         return kalturaClient.getDownloadAssetUrl(asset.id)

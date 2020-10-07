@@ -24,7 +24,7 @@ class AgeRangeLinkBuilder(private val uriComponentsBuilderFactory: UriComponents
 
     fun ageRanges(): Link? {
         return getIfHasRole(UserRoles.VIEW_AGE_RANGES) {
-            Link(
+            Link.of(
                 getAgeRangesRoot().build().toUriString(),
                 Rels.AGE_RANGES
             )

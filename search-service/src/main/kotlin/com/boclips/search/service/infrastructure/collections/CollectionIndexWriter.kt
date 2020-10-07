@@ -35,8 +35,8 @@ class CollectionIndexWriter private constructor(
         }
     }
 
-    override fun serializeToIndexDocument(collectionMetadata: CollectionMetadata) =
-        CollectionDocumentConverter().convertToDocument(collectionMetadata)
+    override fun serializeToIndexDocument(entry: CollectionMetadata) =
+        CollectionDocumentConverter().convertToDocument(entry)
 
     override fun getIdentifier(entry: CollectionMetadata) = entry.id
 }

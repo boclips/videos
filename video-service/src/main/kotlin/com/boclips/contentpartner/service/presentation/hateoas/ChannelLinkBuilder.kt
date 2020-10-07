@@ -35,7 +35,7 @@ class ChannelLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsB
 
     fun channelsLink(): Link? {
         return getIfHasRole(UserRoles.VIEW_CHANNELS) {
-            Link(
+            Link.of(
                 getChannelsRoot()
                     .build()
                     .toUriString()
@@ -47,7 +47,7 @@ class ChannelLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsB
 
     fun channelsSignedUploadLink(): Link? =
         getIfHasAnyRole(UserRoles.INSERT_CHANNELS, UserRoles.UPDATE_CHANNELS) {
-            Link(
+            Link.of(
                 getChannelsRoot()
                     .build()
                     .toUriString()

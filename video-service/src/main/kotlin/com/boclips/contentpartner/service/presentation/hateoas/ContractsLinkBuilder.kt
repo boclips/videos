@@ -48,7 +48,7 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
         return getIfHasRole(
             UserRoles.INSERT_CONTRACTS
         ) {
-            Link(
+            Link.of(
                 getContractsRoot()
                     .build()
                     .toUriString(),
@@ -59,7 +59,7 @@ class ContractsLinkBuilder(private val uriComponentsBuilderFactory: UriComponent
 
     fun createSignedUploadLink(): Link? =
         getIfHasRole(UserRoles.INSERT_CONTRACTS) {
-            Link(
+            Link.of(
                 getContractsRoot()
                     .build()
                     .toUriString()

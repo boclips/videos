@@ -16,11 +16,11 @@ class ChannelRepositoryEventDecorator(
 ) : ChannelRepository by channelRepository {
 
     override fun create(channel: Channel): Channel {
-        val channel = channelRepository.create(channel)
+        val createdChannel = channelRepository.create(channel)
 
-        publishCreatedEvent(channel)
+        publishCreatedEvent(createdChannel)
 
-        return channel
+        return createdChannel
     }
 
     override fun update(updateCommands: List<ChannelUpdateCommand>): List<Channel> {

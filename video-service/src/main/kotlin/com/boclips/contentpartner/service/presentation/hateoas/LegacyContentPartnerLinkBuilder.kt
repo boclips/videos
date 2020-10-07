@@ -35,7 +35,7 @@ class LegacyContentPartnerLinkBuilder(private val uriComponentsBuilderFactory: U
 
     fun contentPartnersLink(): Link? {
         return getIfHasRole(UserRoles.VIEW_CONTENT_PARTNERS) {
-            Link(
+            Link.of(
                 getContentPartnersRoot()
                     .build()
                     .toUriString()

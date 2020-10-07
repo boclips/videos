@@ -112,7 +112,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val retrievedAsset = mongoChannelRepository.findAll()
 
         assertThat(retrievedAsset).hasSize(1)
-        assertThat(retrievedAsset.first()!!.name).isEqualTo("my bloody valentine")
+        assertThat(retrievedAsset.first().name).isEqualTo("my bloody valentine")
     }
 
     @Test

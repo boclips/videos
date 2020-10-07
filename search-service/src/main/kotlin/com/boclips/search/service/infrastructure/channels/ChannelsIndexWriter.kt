@@ -35,8 +35,8 @@ class ChannelsIndexWriter private constructor(
         }
     }
 
-    override fun serializeToIndexDocument(channelMetadata: ChannelMetadata) =
-        ChannelsDocumentConverter().convertToDocument(channelMetadata)
+    override fun serializeToIndexDocument(entry: ChannelMetadata) =
+        ChannelsDocumentConverter().convertToDocument(entry)
 
     override fun getIdentifier(entry: ChannelMetadata) = entry.id
 }

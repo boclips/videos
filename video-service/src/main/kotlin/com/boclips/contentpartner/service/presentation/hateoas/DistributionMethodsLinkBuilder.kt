@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class DistributionMethodsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     fun distributionMethods(rel: String = "distributionMethods") =
         getIfHasAnyRole(UserRoles.VIEW_DISTRIBUTION_METHODS) {
-            Link(getRoot().toUriString(), rel)
+            Link.of(getRoot().toUriString(), rel)
         }
 
     private fun getRoot() = uriComponentsBuilderFactory.getInstance()

@@ -7,6 +7,6 @@ class TestTokenFactory(
     private vararg val roles: String = arrayOf("ROLE_WINNER")
 ) : TokenFactory {
     override fun getAccessToken(): String {
-        return FakeTokenHelper().createToken(username = username, roles = *roles)
+        return FakeTokenHelper().createToken(username = username, roles = roles)
     }
 }
