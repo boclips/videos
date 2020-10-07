@@ -82,8 +82,8 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
     }
 
     private fun getVideoListByIds(playbackIds: List<PlaybackId>): YouTube.Videos.List {
-        val videosListByIdRequest = youtube.videos().list("snippet,contentDetails")
-        videosListByIdRequest.id = playbackIds.joinToString(separator = ",", transform = PlaybackId::value)
+        val videosListByIdRequest = youtube.videos().list(listOf("snippet,contentDetails"))
+        videosListByIdRequest.id = playbackIds.map(PlaybackId::value)
         return videosListByIdRequest
     }
 
