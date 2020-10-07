@@ -12,6 +12,7 @@ interface IndexConfiguration {
             const val ENGLISH_SEARCH = "english_search_analyzer"
             const val UNSTEMMED = "unstemmed_analyzer"
             const val UNSTEMMED_SYNONYMS = "unstemmed_synonyms"
+            const val NGRAM = "ngram"
         }
 
         object Filters {
@@ -23,6 +24,8 @@ interface IndexConfiguration {
             const val ENGLISH_STOP = "english_stop_filter"
             const val ENGLISH_STEMMER = "english_stemmer_filter"
             const val ENGLISH_POSSESSIVE_STEMMER = "english_possessive_stemmer_filter"
+
+            const val NGRAM = "ngram_filter"
         }
 
         object Normalizers {
@@ -41,6 +44,18 @@ interface IndexConfiguration {
     object Fields {
         val simpleText = mapOf(
             "type" to "keyword"
+        )
+
+        val autocomplete = mapOf(
+            "search_analyzer" to "standard",
+            "analyzer" to "ngram",
+            "fields" to mapOf(
+                FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
+                    "type" to "text",
+                    "analyzer" to Analyzers.UNSTEMMED
+                ),
+            ),
+            "type" to "text"
         )
 
         val freeTextSortable = mapOf(
@@ -127,7 +142,7 @@ interface IndexConfiguration {
                     Filters.ENGLISH_POSSESSIVE_STEMMER to mapOf(
                         "type" to "stemmer",
                         "language" to "possessive_english"
-                    )
+                    ),
                 ),
                 "analyzer" to mapOf(
                     Analyzers.ENGLISH to mapOf(
@@ -156,6 +171,51 @@ interface IndexConfiguration {
                             Filters.ENGLISH_STEMMER,
                             Filters.ENGLISH_SYNONYMS,
                             Filters.ENGLISH_STOP
+                        )
+                    ),
+                    Analyzers.UNSTEMMED to mapOf(
+                        "tokenizer" to "standard",
+                        "filter" to listOf(
+                            "lowercase"
+                        )
+                    )
+                ),
+                "normalizer" to mapOf(
+                    Normalizers.LOWERCASE to mapOf(
+                        "type" to "custom",
+                        "filter" to listOf(Filters.PREDEFINED_LOWERCASE)
+                    )
+                )
+            )
+        )
+    }
+
+    fun ngramSetting(numberOfShards: Int): Map<String, Any> {
+        return mapOf(
+            "index" to mapOf(
+                "number_of_shards" to numberOfShards,
+                "number_of_replicas" to 1,
+                "max_ngram_diff" to 30
+            ),
+            "analysis" to mapOf(
+                "filter" to mapOf(
+                    Filters.NGRAM to mapOf(
+                        "max_gram" to "30",
+                        "min_gram" to "1",
+                        "side" to "front",
+                        "type" to "ngram"
+                    ),
+                    Filters.PREDEFINED_LOWERCASE to mapOf(
+                        "type" to "lowercase"
+                    )
+                ),
+                "analyzer" to mapOf(
+                    Analyzers.NGRAM to mapOf(
+                        "tokenizer" to "keyword",
+                        "type" to "custom",
+                        "filter" to listOf(
+                            Filters.PREDEFINED_LOWERCASE,
+                            Filters.NGRAM
                         )
                     ),
                     Analyzers.UNSTEMMED to mapOf(

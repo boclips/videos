@@ -15,7 +15,8 @@ class VideoIndexWriter private constructor(
         client,
         indexParameters,
         VideosIndex,
-        batchSize
+        batchSize,
+        ngram = false
     ) {
     companion object {
         fun createTestInstance(client: RestHighLevelClient, batchSize: Int): VideoIndexWriter =

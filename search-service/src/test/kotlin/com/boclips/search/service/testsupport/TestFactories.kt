@@ -1,5 +1,6 @@
 package com.boclips.search.service.testsupport
 
+import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
@@ -141,6 +142,16 @@ object SearchableCollectionMetadataFactory {
         lastModified = lastModified,
         attachmentTypes = attachmentTypes,
         default = default
+    )
+}
+
+object SearchableChannelMetadataFactory {
+    fun create(
+        id: String = "id1",
+        name: String = "",
+    ) = ChannelMetadata(
+        id = id,
+        name = name
     )
 }
 

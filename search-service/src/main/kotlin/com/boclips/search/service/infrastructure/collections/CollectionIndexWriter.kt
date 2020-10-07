@@ -15,7 +15,8 @@ class CollectionIndexWriter private constructor(
         indexParameters = indexParameters,
         client = client,
         esIndex = CollectionsIndex,
-        batchSize = batchSize
+        batchSize = batchSize,
+        ngram = false
     ) {
     companion object {
         fun createInstance(

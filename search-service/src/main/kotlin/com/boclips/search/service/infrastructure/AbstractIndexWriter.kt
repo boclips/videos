@@ -24,7 +24,8 @@ abstract class AbstractIndexWriter<T>(
     val client: RestHighLevelClient,
     private val indexParameters: IndexParameters,
     private val esIndex: Index,
-    private val batchSize: Int
+    private val batchSize: Int,
+    private val ngram: Boolean
 ) : IndexWriter<T> {
     companion object : KLogging()
 
@@ -32,7 +33,12 @@ abstract class AbstractIndexWriter<T>(
         val newIndexName = esIndex.generateIndexName()
 
         notifier?.send("Creating index using ${indexParameters.numberOfShards} shards...")
-        createIndex(newIndexName)
+
+        if (ngram) {
+            createNgramIndex(newIndexName)
+        } else {
+            createIndex(newIndexName)
+        }
 
         upsertToIndex(items, newIndexName, notifier)
 
@@ -108,6 +114,15 @@ abstract class AbstractIndexWriter<T>(
     private fun createIndex(indexName: String) {
         val createIndexRequest = CreateIndexRequest(indexName)
             .settings(indexConfiguration.defaultEnglishSettings(indexParameters.numberOfShards))
+            .mapping(indexConfiguration.generateMapping())
+
+        logger.info("Creating index $indexName")
+        client.indices().create(createIndexRequest, RequestOptions.DEFAULT)
+    }
+
+    private fun createNgramIndex(indexName: String) {
+        val createIndexRequest = CreateIndexRequest(indexName)
+            .settings(indexConfiguration.ngramSetting(indexParameters.numberOfShards))
             .mapping(indexConfiguration.generateMapping())
 
         logger.info("Creating index $indexName")
