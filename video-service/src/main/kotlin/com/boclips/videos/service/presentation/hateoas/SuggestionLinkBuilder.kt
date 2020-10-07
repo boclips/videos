@@ -15,7 +15,7 @@ class SuggestionLinkBuilder(val uriComponentsBuilderFactory: UriComponentsBuilde
         return when {
             currentUserHasRole(UserRoles.VIEW_VIDEOS) -> {
                 HateoasLink.of(
-                    Link(
+                    Link.of(
                         getRoot()
                             .queryParam("query", "{query}")
                             .build()

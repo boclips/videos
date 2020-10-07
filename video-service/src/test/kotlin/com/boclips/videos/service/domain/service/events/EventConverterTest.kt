@@ -128,10 +128,10 @@ class EventConverterTest {
                 )
             )
         )
-        assertThat(videoEvent.topics?.first().name).contains("Taxonomies")
-        assertThat(videoEvent.topics?.first().language).isEqualTo(Locale.forLanguageTag("fr_FR"))
-        assertThat(videoEvent.topics?.first().confidence).isEqualTo(0.8)
-        assertThat(videoEvent.topics?.first().parent).isNull()
+        assertThat(videoEvent.topics.first().name).contains("Taxonomies")
+        assertThat(videoEvent.topics.first().language).isEqualTo(Locale.forLanguageTag("fr_FR"))
+        assertThat(videoEvent.topics.first().confidence).isEqualTo(0.8)
+        assertThat(videoEvent.topics.first().parent).isNull()
     }
 
     @Test
@@ -146,7 +146,7 @@ class EventConverterTest {
             )
         )
 
-        assertThat(videoEvent.topics?.first().parent.name).isEqualTo("Types of categorisation")
+        assertThat(videoEvent.topics.first().parent.name).isEqualTo("Types of categorisation")
     }
 
     @Test

@@ -25,19 +25,19 @@ class TagsLinkBuilderTest {
 
     @Test
     fun tags() {
-        assertThat(tagsLinkBuilder.tags()).isEqualTo(Link("https://localhost/v1/tags", "tags"))
+        assertThat(tagsLinkBuilder.tags()).isEqualTo(Link.of("https://localhost/v1/tags", "tags"))
     }
 
     @Test
     fun `tags link with rel`() {
-        assertThat(tagsLinkBuilder.tags("rel")).isEqualTo(Link("https://localhost/v1/tags", "rel"))
+        assertThat(tagsLinkBuilder.tags("rel")).isEqualTo(Link.of("https://localhost/v1/tags", "rel"))
     }
 
     @Test
     fun `tag link defaults to self`() {
         val rel = TagResource("id")
         assertThat(tagsLinkBuilder.tag(id = rel.id)).isEqualTo(
-            Link(
+            Link.of(
                 "https://localhost/v1/tags/id",
                 "self"
             )
@@ -52,7 +52,7 @@ class TagsLinkBuilderTest {
                 "rel",
                 rel.id
             )
-        ).isEqualTo(Link("https://localhost/v1/tags/id", "rel"))
+        ).isEqualTo(Link.of("https://localhost/v1/tags/id", "rel"))
     }
 
     @Test

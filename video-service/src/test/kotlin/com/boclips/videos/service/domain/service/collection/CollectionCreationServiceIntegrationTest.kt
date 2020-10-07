@@ -36,7 +36,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
             ),
             videos = emptyList(),
             user = UserFactory.sample(id = "123")
-        )!!
+        )
 
         val retrievedCollection = collectionRepository.find(createdCollection.id)!!
 
@@ -69,7 +69,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
             ),
             videos = listOf(firstVideoId, secondVideoId),
             user = UserFactory.sample(id = "123")
-        )!!
+        )
 
         assertThat(createdCollection.videos).containsExactlyInAnyOrder(firstVideoId, secondVideoId)
     }
@@ -119,7 +119,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                     )
                 }
             )
-        )!!
+        )
 
         assertThat(createdCollection.videos).isEmpty()
     }

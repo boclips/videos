@@ -25,7 +25,7 @@ class DisciplinesLinkBuilderTest {
     fun disciplines() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
         assertThat(disciplinesLinkBuilder.disciplines()).isEqualTo(
-            Link(
+            Link.of(
                 "https://localhost/v1/disciplines",
                 "disciplines"
             )
@@ -35,7 +35,7 @@ class DisciplinesLinkBuilderTest {
     @Test
     fun `disciplines link with rel`() {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
-        assertThat(disciplinesLinkBuilder.disciplines("rel")).isEqualTo(Link("https://localhost/v1/disciplines", "rel"))
+        assertThat(disciplinesLinkBuilder.disciplines("rel")).isEqualTo(Link.of("https://localhost/v1/disciplines", "rel"))
     }
 
     @Test
@@ -43,7 +43,7 @@ class DisciplinesLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.VIEW_DISCIPLINES)
 
         assertThat(disciplinesLinkBuilder.discipline(id = "id")).isEqualTo(
-            Link("https://localhost/v1/disciplines/id", "self")
+            Link.of("https://localhost/v1/disciplines/id", "self")
         )
     }
 
@@ -55,7 +55,7 @@ class DisciplinesLinkBuilderTest {
                 "rel",
                 "id"
             )
-        ).isEqualTo(Link("https://localhost/v1/disciplines/id", "rel"))
+        ).isEqualTo(Link.of("https://localhost/v1/disciplines/id", "rel"))
     }
 
     @Test
@@ -63,7 +63,7 @@ class DisciplinesLinkBuilderTest {
         setSecurityContext("teacher@boclips.com", UserRoles.UPDATE_DISCIPLINES)
 
         assertThat(disciplinesLinkBuilder.subjectsForDiscipline("id")).isEqualTo(
-            Link("https://localhost/v1/disciplines/id/subjects", "subjects")
+            Link.of("https://localhost/v1/disciplines/id/subjects", "subjects")
         )
     }
 
@@ -72,7 +72,7 @@ class DisciplinesLinkBuilderTest {
         setSecurityContext("admin@boclips.com", UserRoles.UPDATE_DISCIPLINES)
 
         assertThat(disciplinesLinkBuilder.updateDiscipline("id")).isEqualTo(
-            Link("https://localhost/v1/disciplines/id", "update")
+            Link.of("https://localhost/v1/disciplines/id", "update")
         )
     }
 }

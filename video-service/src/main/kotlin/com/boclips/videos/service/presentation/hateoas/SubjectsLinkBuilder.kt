@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component
 class SubjectsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
     fun subjects(rel: String = "subjects"): HateoasLink {
-        return HateoasLink.of(Link(getSubjectsRoot().toUriString(), rel))
+        return HateoasLink.of(Link.of(getSubjectsRoot().toUriString(), rel))
     }
 
     fun self(id: String): HateoasLink {
-        return HateoasLink.of(Link(getSubjectsRoot().pathSegment(id).toUriString(), "self"))
+        return HateoasLink.of(Link.of(getSubjectsRoot().pathSegment(id).toUriString(), "self"))
     }
 
     fun updateSubject(subject: SubjectResource): HateoasLink? {
         return UserExtractor.getIfHasRole(UserRoles.UPDATE_SUBJECTS) {
-            HateoasLink.of(Link(getSubjectsRoot().pathSegment(subject.id).toUriString(), "update"))
+            HateoasLink.of(Link.of(getSubjectsRoot().pathSegment(subject.id).toUriString(), "update"))
         }
     }
 

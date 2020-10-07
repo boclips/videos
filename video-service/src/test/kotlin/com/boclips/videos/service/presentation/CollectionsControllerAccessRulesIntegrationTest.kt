@@ -4,10 +4,10 @@ import com.boclips.videos.service.testsupport.AbstractCollectionsControllerInteg
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Nested
@@ -49,14 +49,14 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.collections", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("A Collection")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].createdBy", nullValue()))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].playback", nullValue()))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.details.href").exists())
@@ -73,7 +73,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("A Collection")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Int>(1)))
@@ -82,10 +82,10 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
             .andExpect(
                 jsonPath(
                     "$._embedded.collections[0].videos[0].playback._links.thumbnail.href",
-                    not(isEmptyString())
+                    not(emptyString())
                 )
             )
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.details.href").exists())
@@ -130,7 +130,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
         fun `collection access is transitive to their contained videos`() {
             val collectionId = createCollection(title = "A Collection", discoverable = false)
             val contractedVideoId = saveVideo()
-            val nonContractedVideoId = saveVideo()
+            saveVideo() // non-contracted video
             addVideo(collectionId, contractedVideoId.value)
 
             createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)

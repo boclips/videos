@@ -12,10 +12,10 @@ import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asSubjectClassifier
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.isEmptyString
 import org.hamcrest.Matchers.not
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
@@ -58,7 +58,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         mockMvc.perform(MockMvcRequestBuilders.get(collectionUrl).asTeacher())
             .andExpect(status().isOk)
             .andExpect(halJson())
-            .andExpect(jsonPath("$.id", Matchers.not(Matchers.emptyString())))
+            .andExpect(jsonPath("$.id", Matchers.not(emptyString())))
             .andExpect(jsonPath("$.owner", Matchers.equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$.createdBy", Matchers.equalTo("Teacher")))
             .andExpect(jsonPath("$.title", Matchers.equalTo("a collection")))
@@ -149,16 +149,16 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(true)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
             .andExpect(jsonPath("$._embedded.collections[0].videos[0].id", equalTo(savedVideoId.value)))
-            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].videos[0]._links.self.href", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0]._links.self.href", endsWith(collectionId)))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(isEmptyString())))
-            .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.addVideo.href", not(emptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0]._links.removeVideo.href", not(emptyString())))
             .andExpect(jsonPath("$._links.self.href").exists())
             .andExpect(jsonPath("$._links.details.href").exists())
             .andExpect(jsonPath("$._links.list.href").exists())
@@ -175,7 +175,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].videos", hasSize<Any>(1)))
@@ -230,7 +230,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(isEmptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))
@@ -502,7 +502,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(1)))
-            .andExpect(jsonPath("$._embedded.collections[0].id", not(Matchers.emptyString())))
+            .andExpect(jsonPath("$._embedded.collections[0].id", not(emptyString())))
             .andExpect(jsonPath("$._embedded.collections[0].owner", equalTo("teacher@gmail.com")))
             .andExpect(jsonPath("$._embedded.collections[0].mine", equalTo(false)))
             .andExpect(jsonPath("$._embedded.collections[0].title", equalTo("collection 1")))

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class AttachmentsLinkBuilder {
     fun download(attachment: Attachment): HateoasLink {
         return HateoasLink.of(
-            Link(
+            Link.of(
                 attachment.linkToResource,
                 "download"
             )

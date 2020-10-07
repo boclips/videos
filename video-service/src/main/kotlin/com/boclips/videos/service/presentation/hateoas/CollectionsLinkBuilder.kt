@@ -40,7 +40,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun addVideoToCollection(collection: Collection, user: User): HateoasLink? {
         return if (collection.isOwner(user) || user.isPermittedToModifyAnyCollection) {
             HateoasLink.of(
-                Link(
+                Link.of(
                     getCollectionsRoot()
                         .pathSegment(collection.id.value)
                         .pathSegment("videos")
@@ -53,7 +53,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun removeVideoFromCollection(collection: Collection, user: User): HateoasLink? {
         return if (collection.isOwner(user)) {
             HateoasLink.of(
-                Link(
+                Link.of(
                     getCollectionsRoot()
                         .pathSegment(collection.id.value)
                         .pathSegment("videos")
@@ -66,7 +66,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     fun createCollection(): HateoasLink? {
         return getIfHasRole(UserRoles.INSERT_COLLECTIONS) {
             HateoasLink.of(
-                Link(
+                Link.of(
                     getCollectionsRoot().toUriString(),
                     "createCollection"
                 )
@@ -152,7 +152,7 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         if (id != null) {
             return collectionResourceLink(id, "self")
         }
-        return HateoasLink.of(Link(uriComponentsBuilderFactory.getInstance().toUriString()))
+        return HateoasLink.of(Link.of(uriComponentsBuilderFactory.getInstance().toUriString()))
     }
 
     fun next(pageInfo: PageInfo): HateoasLink? {
@@ -210,14 +210,14 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
     private fun collectionResourceLink(id: String?, rel: String): HateoasLink {
         return if (id == null) {
             HateoasLink.of(
-                Link(
+                Link.of(
                     getCollectionsRoot().toUriString() + "/{id}{?referer,shareCode}",
                     rel
                 )
             )
         } else {
             HateoasLink.of(
-                Link(
+                Link.of(
                     getCollectionsRoot()
                         .pathSegment(id)
                         .toUriString(), rel

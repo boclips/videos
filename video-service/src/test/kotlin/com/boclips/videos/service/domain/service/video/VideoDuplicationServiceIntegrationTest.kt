@@ -121,7 +121,7 @@ internal class VideoDuplicationServiceIntegrationTest : AbstractSpringIntegratio
         fakeEventBus.publish(CleanUpDeactivatedVideoRequested.builder().videoId(oldVideo.videoId.value).build())
 
         val updatedCollection = mongoCollectionRepository.find(collectionWithDeactivatedVideo.id)
-        assertThat(collectionWithDeactivatedVideo!!.videos).containsOnly(oldVideo.videoId)
+        assertThat(collectionWithDeactivatedVideo.videos).containsOnly(oldVideo.videoId)
         assertThat(updatedCollection!!.videos).containsOnly(newVideo.videoId)
     }
 

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component
 class TagsLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
 
     fun tags(rel: String = "tags") = getIfHasRole(UserRoles.VIEW_TAGS) {
-        Link(getTagRoot().toUriString(), rel)
+        Link.of(getTagRoot().toUriString(), rel)
     }
 
     fun tag(rel: String = "self", id: String): Link? {
         return getIfHasRole(UserRoles.VIEW_TAGS) {
-            Link(getTagRoot().pathSegment(id).toUriString(), rel)
+            Link.of(getTagRoot().pathSegment(id).toUriString(), rel)
         }
     }
 
