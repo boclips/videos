@@ -24,7 +24,7 @@ ext["junit-jupiter.version"] = junitVersion
 dependencies {
     implementation('io.github.openfeign:feign-core:10.7.0')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1')
-    implementation('org.springframework.boot:spring-boot-starter-hateoas:2.3.3.RELEASE')
+    implementation('org.springframework.boot:spring-boot-starter-hateoas:2.3.4.RELEASE')
     implementation('org.springframework.hateoas:spring-hateoas:1.1.1.RELEASE')
     implementation('io.github.openfeign:feign-jackson:10.7.0')
     implementation('io.github.openfeign:feign-okhttp:10.7.0')
