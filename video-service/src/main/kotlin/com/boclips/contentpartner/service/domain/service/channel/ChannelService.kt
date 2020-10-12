@@ -8,9 +8,12 @@ import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResu
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 
 class ChannelService(
-    private val channelRepository: ChannelRepository
+    private val channelRepository: ChannelRepository,
+    private val channelIndex: ChannelIndex
 ) {
     fun create(channel: Channel): CreateChannelResult {
         if (hasNameConflict(channel)) {
@@ -25,7 +28,18 @@ class ChannelService(
             return CreateChannelResult.MissingContract
         }
 
-        return CreateChannelResult.Success(channelRepository.create(channel))
+        val persistedChannel = channelRepository.create(channel)
+
+        channelIndex.upsert(
+            sequenceOf(
+                ChannelSuggestion(
+                    name = channel.name,
+                    id = channel.id
+                )
+            )
+        )
+
+        return CreateChannelResult.Success(persistedChannel)
     }
 
     fun update(update: SingleChannelUpdate): UpdateChannelResult {
@@ -52,7 +66,6 @@ class ChannelService(
 
     private fun hasNameConflict(channel: Channel): Boolean =
         channelRepository.findAll(ChannelFiltersConverter.convert(name = channel.name)).toList().isNotEmpty()
-
 
     private fun isMissingContract(update: SingleChannelUpdate): Boolean {
         update.getUpdateByType<ChannelUpdateCommand.ReplaceIngestDetails>()

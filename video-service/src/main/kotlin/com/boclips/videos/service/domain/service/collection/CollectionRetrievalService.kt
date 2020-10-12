@@ -84,12 +84,13 @@ class CollectionRetrievalService(
     fun findOwnCollection(id: CollectionId, user: User): Collection? {
         return collectionRepository.find(id)?.let { collection ->
             if (!collectionAccessService.hasWriteAccess(collection, user).also {
-                    if (!it) {
-                        logger.info {
-                            "User ${user.id} does not have write access to Collection ${collection.id}"
-                        }
+                if (!it) {
+                    logger.info {
+                        "User ${user.id} does not have write access to Collection ${collection.id}"
                     }
-                }) {
+                }
+            }
+            ) {
                 null
             } else {
                 addVideosToCollection(collection, user.accessRules.videoAccess)

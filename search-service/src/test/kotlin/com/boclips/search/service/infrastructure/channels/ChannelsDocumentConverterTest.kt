@@ -6,7 +6,6 @@ import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
 
-
 internal class ChannelsDocumentConverterTest {
     private val elasticSearchResultConverter = ChannelsDocumentConverter()
 
@@ -19,7 +18,7 @@ internal class ChannelsDocumentConverterTest {
                 "id": "14",
                 "name": "this is channel name"
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 

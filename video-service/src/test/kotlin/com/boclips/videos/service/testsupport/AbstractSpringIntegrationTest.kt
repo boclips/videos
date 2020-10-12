@@ -14,6 +14,7 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
@@ -106,6 +107,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var collectionIndexFake: CollectionIndexFake
+
+    @Autowired
+    lateinit var channelIndexFake: ChannelIndexFake
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -207,6 +211,7 @@ abstract class AbstractSpringIntegrationTest {
 
         collectionIndexFake.safeRebuildIndex(emptySequence())
         videoIndexFake.safeRebuildIndex(emptySequence())
+        channelIndexFake.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
@@ -485,7 +490,8 @@ abstract class AbstractSpringIntegrationTest {
 
     fun addAccessToVideoIds(userId: String, vararg contractedVideoIds: String) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideos(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
@@ -497,18 +503,21 @@ abstract class AbstractSpringIntegrationTest {
 
     fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedDistributionMethods(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
-                    distributionMethods = includedDistributionMethods.map { it.name })
+                    distributionMethods = includedDistributionMethods.map { it.name }
+                )
             )
         )
     }
 
     fun removeAccessToVideo(userId: String, vararg excludedVideoIds: String) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideos(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
@@ -520,7 +529,8 @@ abstract class AbstractSpringIntegrationTest {
 
     fun removeAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideoTypes(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
@@ -532,7 +542,8 @@ abstract class AbstractSpringIntegrationTest {
 
     fun addAccessToVideoTypes(userId: String, vararg includedVideoType: ContentType) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideoTypes(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
@@ -544,7 +555,8 @@ abstract class AbstractSpringIntegrationTest {
 
     fun addAccessToVoiceType(userId: String, vararg voiceType: VoiceType) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideoVoiceTypes(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
@@ -556,7 +568,8 @@ abstract class AbstractSpringIntegrationTest {
 
     fun removeAccessToChannel(userId: String, vararg excludeContentPartners: String) {
         usersClient.addAccessRules(
-            userId, AccessRulesResourceFactory.sample(
+            userId,
+            AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedChannels(
                     id = "access-rule-id",
                     name = UUID.randomUUID().toString(),

@@ -33,6 +33,8 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.subject.SubjectService
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
+import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
@@ -106,6 +108,15 @@ class DomainContext(
     }
 
     @Bean
+    fun newSuggestionsRetrievalService(
+        channelIndex: ChannelIndex,
+    ): NewSuggestionsRetrievalService {
+        return NewSuggestionsRetrievalService(
+            channelIndex,
+        )
+    }
+
+    @Bean
     fun collectionRetrievalService(
         collectionRepository: CollectionRepository,
         collectionIndex: CollectionIndex,
@@ -169,7 +180,8 @@ class DomainContext(
             MongoVideoRepository(
                 mongoClient,
                 batchProcessingConfig = batchProcessingConfig
-            ), eventBus, batchProcessingConfig = batchProcessingConfig
+            ),
+            eventBus, batchProcessingConfig = batchProcessingConfig
         )
     }
 
@@ -190,8 +202,8 @@ class DomainContext(
     }
 
     @Bean
-    fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider)
-        : PlaybackRepository {
+    fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider):
+        PlaybackRepository {
         return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
     }
 

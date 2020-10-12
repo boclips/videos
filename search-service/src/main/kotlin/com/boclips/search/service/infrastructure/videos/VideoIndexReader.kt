@@ -11,9 +11,9 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.allCriteria
 import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAggregation.Companion.aggregateAgeRanges
 import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentTypeAggregation.Companion.aggregateAttachmentTypes
+import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
 import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
-import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
@@ -24,11 +24,10 @@ import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import java.io.File
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
-    companion object : KLogging();
+    companion object : KLogging()
 
     override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): SearchResults {
         val results = search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
@@ -54,7 +53,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                 aggregation(aggregateDuration(videoQuery))
                 aggregation(aggregateAttachmentTypes(videoQuery))
                 postFilter(allCriteria(videoQuery.userQuery))
-                if(videoQuery.facetDefinition?.includeChannelFacets == true) {
+                if (videoQuery.facetDefinition?.includeChannelFacets == true) {
                     aggregation(aggregateChannels(videoQuery))
                 }
                 if (videoQuery.sort.isNotEmpty()) {

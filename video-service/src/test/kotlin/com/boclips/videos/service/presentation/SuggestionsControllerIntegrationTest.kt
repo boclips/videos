@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -53,10 +56,10 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(
-                    jsonPath(
-                            "$.channels[1].id",
-                            equalTo(weLoveHistoryChannel.id.value)
-                    )
+                jsonPath(
+                    "$.channels[1].id",
+                    equalTo(weLoveHistoryChannel.id.value)
+                )
             )
             .andExpect(
                 jsonPath(
@@ -86,5 +89,19 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     equalTo(subjectTwo.id.value)
                 )
             )
+    }
+
+    @Test
+    fun `provides suggestions for channels without access rules`() {
+        saveChannel(name = "The History Channel")
+        val channel2 = saveChannel(name = "TED-Ed")
+        saveChannel(name = "We Love History")
+        saveChannel(name = "YMH")
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/new-suggestions?query=ted").asApiUser(email = "api-user@gmail.com"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.channels", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.channels[0].id", equalTo(channel2.id.value)))
+            .andExpect(jsonPath("$.channels[0].name", equalTo(channel2.name)))
     }
 }

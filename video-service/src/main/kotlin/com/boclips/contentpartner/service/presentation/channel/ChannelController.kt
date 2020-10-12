@@ -99,12 +99,15 @@ class ChannelController(
     fun postChannel(@Valid @RequestBody upsertChannelRequest: ChannelRequest): ResponseEntity<Void> {
         val channel = createChannel(upsertChannelRequest)
 
-        return ResponseEntity(HttpHeaders().apply {
-            set(
-                "Location",
-                channelLinkBuilder.self(channel.id.value).href
-            )
-        }, HttpStatus.CREATED)
+        return ResponseEntity(
+            HttpHeaders().apply {
+                set(
+                    "Location",
+                    channelLinkBuilder.self(channel.id.value).href
+                )
+            },
+            HttpStatus.CREATED
+        )
     }
 
     @PatchMapping("/{id}")
@@ -121,11 +124,14 @@ class ChannelController(
         @RequestBody signedLinkRequest: SignedLinkRequest
     ): ResponseEntity<Void> {
         val link = marketingSignedLinkProvider.signedPutLink(signedLinkRequest.filename)
-        return ResponseEntity(HttpHeaders().apply {
-            set(
-                "Location",
-                link.toString()
-            )
-        }, HttpStatus.NO_CONTENT)
+        return ResponseEntity(
+            HttpHeaders().apply {
+                set(
+                    "Location",
+                    link.toString()
+                )
+            },
+            HttpStatus.NO_CONTENT
+        )
     }
 }

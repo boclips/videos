@@ -3,7 +3,6 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -55,7 +54,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
                     id = "1",
                     title = "Beautiful Boy Dancing",
                     description = "A verbose description about this collection"
-                ) ,
+                ),
                 SearchableCollectionMetadataFactory.create(
                     id = "2",
                     title = "Beautiful Boy Dancing",

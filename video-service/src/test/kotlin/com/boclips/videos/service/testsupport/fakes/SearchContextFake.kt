@@ -1,11 +1,14 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.infrastructure.search.DefaultChannelSearch
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.nhaarman.mockitokotlin2.mock
@@ -22,6 +25,11 @@ class SearchContextFake {
     }
 
     @Bean
+    fun channelIndexFake(): ChannelIndexFake {
+        return ChannelIndexFake()
+    }
+
+    @Bean
     fun videoMetadataSearchService(
         videoChannelService: VideoChannelService,
         videoIndexFake: VideoIndexFake
@@ -30,6 +38,16 @@ class SearchContextFake {
             videoIndexFake,
             videoIndexFake,
             videoChannelService
+        )
+    }
+
+    @Bean
+    fun channelMetadataSearchService(
+        channelIndexFake: ChannelIndexFake
+    ): ChannelIndex {
+        return DefaultChannelSearch(
+            channelIndexFake,
+            channelIndexFake
         )
     }
 

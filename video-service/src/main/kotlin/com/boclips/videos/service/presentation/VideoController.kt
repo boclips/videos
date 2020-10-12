@@ -176,9 +176,12 @@ class VideoController(
         }
 
         if (video.deactivated) {
-            return ResponseEntity(HttpHeaders().apply {
-                set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
-            }, HttpStatus.PERMANENT_REDIRECT)
+            return ResponseEntity(
+                HttpHeaders().apply {
+                    set(HttpHeaders.LOCATION, videosLinkBuilder.self(video.activeVideoId?.value).href)
+                },
+                HttpStatus.PERMANENT_REDIRECT
+            )
         }
         return video
             .let {
@@ -270,9 +273,13 @@ class VideoController(
             )
         }
 
-        return ResponseEntity(resource, HttpHeaders().apply {
-            set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
-        }, HttpStatus.CREATED)
+        return ResponseEntity(
+            resource,
+            HttpHeaders().apply {
+                set(HttpHeaders.LOCATION, resource._links?.get("self")?.href)
+            },
+            HttpStatus.CREATED
+        )
     }
 
     @PatchMapping(path = ["/v1/videos/{id}"], params = ["rating"])
@@ -379,11 +386,11 @@ class VideoController(
     private fun isFilteringByChannelIdsRequested(channels: Set<String>): Boolean {
         return try {
             channelRepository
-                    .findAllByIds(
-                            channels.map { com.boclips.contentpartner.service.domain.model.channel.ChannelId(it) }
-                    )
-                    .iterator()
-                    .hasNext()
+                .findAllByIds(
+                    channels.map { com.boclips.contentpartner.service.domain.model.channel.ChannelId(it) }
+                )
+                .iterator()
+                .hasNext()
         } catch (e: IllegalArgumentException) {
             false
         }

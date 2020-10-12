@@ -7,7 +7,6 @@ import com.boclips.contentpartner.service.application.contract.CreateContract
 import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
@@ -22,8 +21,8 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
 import com.boclips.videos.api.request.contract.ContractCostsRequest
-import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.CreateContractRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
@@ -38,9 +37,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOU
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
-import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestMongoProcess
 import com.boclips.videos.service.testsupport.UserFactory
 import com.damnhandy.uri.template.UriTemplate
@@ -90,6 +89,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var videoIndex: VideoIndex
+
+    @Autowired
+    lateinit var channelIndex: ChannelIndex
 
     @Autowired
     lateinit var collectionIndex: CollectionIndex
@@ -167,6 +169,7 @@ abstract class AbstractSpringIntegrationTest {
 
         collectionIndex.safeRebuildIndex(emptySequence())
         videoIndex.safeRebuildIndex(emptySequence())
+        channelIndex.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()
@@ -216,8 +219,10 @@ abstract class AbstractSpringIntegrationTest {
         subjectIds: Set<String> = setOf()
     ): VideoId {
         val retrievedContentPartnerId = try {
-            saveChannel(name = contentProvider,
-                distributionMethods = distributionMethods).id
+            saveChannel(
+                name = contentProvider,
+                distributionMethods = distributionMethods
+            ).id
         } catch (e: ChannelConflictException) {
             getChannels.invoke(name = contentProvider).firstOrNull()!!.id
         }

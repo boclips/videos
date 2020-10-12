@@ -1,13 +1,9 @@
 package com.boclips.search.service.infrastructure.channels
 
 import com.boclips.search.service.domain.channels.model.ChannelQuery
-import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
-
-import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,8 +26,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("Super")))
 
-        assertThat(results.counts.totalHits).isEqualTo(1)
-        assertThat(results.elements[0]).isEqualTo("1")
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("1")
     }
 
     @Test
@@ -48,8 +44,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("2")))
 
-        assertThat(results.counts.totalHits).isEqualTo(1)
-        assertThat(results.elements[0]).isEqualTo("2")
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("2")
     }
 
     @Test
@@ -66,7 +62,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("sup")))
 
-        assertThat(results.counts.totalHits).isEqualTo(4)
+        assertThat(results.elements.size).isEqualTo(4)
     }
 
     @Test
@@ -83,7 +79,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("annel")))
 
-        assertThat(results.counts.totalHits).isEqualTo(5)
+        assertThat(results.elements.size).isEqualTo(5)
     }
 
     @Test
@@ -105,8 +101,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("minute")))
 
-        assertThat(results.counts.totalHits).isEqualTo(1)
-        assertThat(results.elements[0]).isEqualTo("1")
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("1")
     }
 
     @Test
@@ -128,9 +124,9 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("ted")))
 
-        assertThat(results.counts.totalHits).isEqualTo(2)
-        assertThat(results.elements[0]).isEqualTo("6")
-        assertThat(results.elements[1]).isEqualTo("7")
+        assertThat(results.elements.size).isEqualTo(2)
+        assertThat(results.elements[0].id).isEqualTo("6")
+        assertThat(results.elements[1].id).isEqualTo("7")
     }
 
     @Test
@@ -152,8 +148,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("crash")))
 
-        assertThat(results.counts.totalHits).isEqualTo(3)
-        assertThat(results.elements[0]).isEqualTo("9") // elements[0] = Crash Course
+        assertThat(results.elements.size).isEqualTo(3)
+        assertThat(results.elements[0].id).isEqualTo("9") // elements[0] = Crash Course
     }
 
     @Test
@@ -175,8 +171,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("ering")))
 
-        assertThat(results.counts.totalHits).isEqualTo(1)
-        assertThat(results.elements[0]).isEqualTo("8")
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("8")
     }
 
     @Test
@@ -198,10 +194,26 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("3")))
 
-        assertThat(results.counts.totalHits).isEqualTo(1)
-        assertThat(results.elements[0]).isEqualTo("5")
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("5")
     }
 
+    @Test
+    fun `upserts channel to index`() {
+        indexWriter.upsert(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(
+                    id = "1",
+                    name = "Beautiful Boy Dancing"
+                )
+            )
+        )
+
+        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("Boy")))
+
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("1")
+    }
 
     @Test
     fun `creates a new index and removes the outdated one`() {

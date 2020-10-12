@@ -5,18 +5,19 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 
 class DefaultCollectionSearch(
     indexReader: IndexReader<CollectionMetadata, CollectionQuery>,
     indexWriter: IndexWriter<CollectionMetadata>
-) : CollectionSearchAdapter<com.boclips.videos.service.domain.model.collection.Collection>(
+) : CollectionSearchAdapter<Collection>(
     indexReader,
     indexWriter
 ),
     CollectionIndex {
 
-    override fun convert(document: com.boclips.videos.service.domain.model.collection.Collection): CollectionMetadata {
+    override fun convert(document: Collection): CollectionMetadata {
         return CollectionMetadataConverter.convert(document)
     }
 }

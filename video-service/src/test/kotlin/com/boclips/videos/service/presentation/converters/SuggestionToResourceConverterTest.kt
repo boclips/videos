@@ -14,11 +14,11 @@ class SuggestionToResourceConverterTest {
         val subjectTwo = createSubject(name = "Biological Sciences")
         val channels = listOf(
             ChannelFactory.create(id = "123", name = "Ted"),
-            ChannelFactory.create(id="234", name = "Crash Course Biology")
+            ChannelFactory.create(id = "234", name = "Crash Course Biology")
         )
         val suggestions = SuggestionFactory.create(
-                channels = channels,
-                subjects = listOf(subjectOne, subjectTwo)
+            channels = channels,
+            subjects = listOf(subjectOne, subjectTwo)
         )
 
         val resource = SuggestionToResourceConverter(mock()).convert(query = "ted", suggestions = suggestions)

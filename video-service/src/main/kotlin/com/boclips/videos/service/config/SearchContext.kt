@@ -3,6 +3,8 @@ package com.boclips.videos.service.config
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.ElasticSearchClient
 import com.boclips.search.service.infrastructure.IndexParameters
+import com.boclips.search.service.infrastructure.channels.ChannelsIndexReader
+import com.boclips.search.service.infrastructure.channels.ChannelsIndexWriter
 import com.boclips.search.service.infrastructure.collections.CollectionIndexReader
 import com.boclips.search.service.infrastructure.collections.CollectionIndexWriter
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
@@ -13,7 +15,9 @@ import com.boclips.videos.service.config.properties.ReindexProperties
 import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.infrastructure.search.DefaultChannelSearch
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import io.opentracing.Tracer
@@ -46,6 +50,22 @@ class SearchContext(
                 reindexProperties.batchSize
             ),
             videoChannelService
+        )
+    }
+
+    @Bean
+    @Profile("!fakes-search")
+    fun channelSearchService(
+        elasticSearchClient: ElasticSearchClient,
+        reindexProperties: ReindexProperties
+    ): ChannelIndex {
+        return DefaultChannelSearch(
+            ChannelsIndexReader(elasticSearchClient.buildClient()),
+            ChannelsIndexWriter.createInstance(
+                elasticSearchClient.buildClient(),
+                IndexParameters(numberOfShards = 5),
+                reindexProperties.batchSize
+            )
         )
     }
 

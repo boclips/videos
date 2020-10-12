@@ -28,18 +28,20 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
             }
         }
 
-        return (channelRepository.findById(
-            channelId = ContentPartnerServiceChannelId(
-                value = channelId.value
+        return (
+            channelRepository.findById(
+                channelId = ContentPartnerServiceChannelId(
+                    value = channelId.value
+                )
+            )?.let {
+                when {
+                    it.isDownloadable() && it.isStreamable() -> Availability.ALL
+                    it.isDownloadable() -> Availability.DOWNLOAD
+                    it.isStreamable() -> Availability.STREAMING
+                    else -> Availability.NONE
+                }
+            } ?: Availability.NONE
             )
-        )?.let {
-            when {
-                it.isDownloadable() && it.isStreamable() -> Availability.ALL
-                it.isDownloadable() -> Availability.DOWNLOAD
-                it.isStreamable() -> Availability.STREAMING
-                else -> Availability.NONE
-            }
-        } ?: Availability.NONE)
             .also {
                 idCache = channelId to it
             }

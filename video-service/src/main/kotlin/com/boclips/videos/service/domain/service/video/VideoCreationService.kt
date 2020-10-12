@@ -39,8 +39,8 @@ class VideoCreationService(
         }
 
         val duplicatedVideo = videoRepository.findVideoByTitleFromChannelName(
-                videoToBeCreated.channel.name, videoToBeCreated.title)
-
+            videoToBeCreated.channel.name, videoToBeCreated.title
+        )
 
         val newActiveVideo = videoRepository.create(videoToBeCreated.copy(ageRange = ageRange))
         duplicatedVideo?.let { videoDuplicationService.markDuplicate(it.videoId, newActiveVideo.videoId, user) }

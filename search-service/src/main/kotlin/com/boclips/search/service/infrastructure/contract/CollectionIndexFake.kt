@@ -6,7 +6,8 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.videos.model.AgeRange
 
-class CollectionIndexFake : AbstractInMemoryFake<CollectionQuery, CollectionMetadata>(),
+class CollectionIndexFake :
+    AbstractInMemoryFake<CollectionQuery, CollectionMetadata>(),
     IndexReader<CollectionMetadata, CollectionQuery>,
     IndexWriter<CollectionMetadata> {
 

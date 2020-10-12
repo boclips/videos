@@ -8,7 +8,8 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
 import java.time.LocalDate
 
-class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
+class VideoIndexFake :
+    AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
     IndexReader<VideoMetadata, VideoQuery>,
     IndexWriter<VideoMetadata> {
     override fun upsertMetadata(index: MutableMap<String, VideoMetadata>, item: VideoMetadata) {
@@ -34,10 +35,10 @@ class VideoIndexFake : AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
                 )
             }
             .filter { entry ->
-                entry.value.title.contains(phrase, ignoreCase = true)
-                    || entry.value.description.contains(phrase, ignoreCase = true)
-                    || entry.value.contentProvider.contains(phrase, ignoreCase = true)
-                    || entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
+                entry.value.title.contains(phrase, ignoreCase = true) ||
+                    entry.value.description.contains(phrase, ignoreCase = true) ||
+                    entry.value.contentProvider.contains(phrase, ignoreCase = true) ||
+                    entry.value.transcript?.contains(phrase, ignoreCase = true) ?: false
             }
             .filter { entry ->
                 if (query.userQuery.bestFor.isNullOrEmpty()) true else entry.value.tags.containsAll(query.userQuery.bestFor)

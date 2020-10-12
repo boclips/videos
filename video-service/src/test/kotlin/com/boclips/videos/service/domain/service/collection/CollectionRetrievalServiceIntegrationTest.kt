@@ -31,7 +31,8 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
             val nonPermittedId = saveVideo()
 
             saveCollection(
-                title = "a collection", videos = listOf(
+                title = "a collection",
+                videos = listOf(
                     firstPermittedId.value,
                     nonPermittedId.value
                 )
@@ -48,20 +49,22 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                     hasLessonPlans = null
                 ),
 
-                user = UserFactory.sample(accessRulesSupplier = {
-                    AccessRulesFactory.sample(
-                        videoAccess = VideoAccess.Rules(
-                            listOf(
-                                VideoAccessRule.IncludedIds(
-                                    setOf(
-                                        firstPermittedId,
-                                        secondPermittedId
+                user = UserFactory.sample(
+                    accessRulesSupplier = {
+                        AccessRulesFactory.sample(
+                            videoAccess = VideoAccess.Rules(
+                                listOf(
+                                    VideoAccessRule.IncludedIds(
+                                        setOf(
+                                            firstPermittedId,
+                                            secondPermittedId
+                                        )
                                     )
                                 )
                             )
                         )
-                    )
-                })
+                    }
+                )
             )
 
             assertThat(pagedCollectionResult.elements).hasSize(1)
@@ -71,7 +74,8 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `when searching collections filtered by age range`() {
             saveCollection(
-                title = "pre-school collection", videos = listOf(
+                title = "pre-school collection",
+                videos = listOf(
                     TestFactories.createVideoId().value,
                     TestFactories.createVideoId().value
                 ),
@@ -79,7 +83,8 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                 ageRangeMax = 5
             )
             val lowerElementaryCollectionId: CollectionId = saveCollection(
-                title = "lower-elementary collection", videos = listOf(
+                title = "lower-elementary collection",
+                videos = listOf(
                     TestFactories.createVideoId().value,
                     TestFactories.createVideoId().value
                 ),
@@ -111,7 +116,8 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
         @Test
         fun `when searching collections it sends a ResourcesSearched event`() {
             val collectionId = saveCollection(
-                title = "a collection", videos = listOf(
+                title = "a collection",
+                videos = listOf(
                     TestFactories.createVideoId().value,
                     TestFactories.createVideoId().value
                 )
@@ -172,20 +178,23 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
             )
 
             val collection = collectionRetrievalService.findAnyCollection(
-                collectionId, UserFactory.sample(accessRulesSupplier = {
-                    AccessRulesFactory.sample(
-                        videoAccess = VideoAccess.Rules(
-                            listOf(
-                                VideoAccessRule.IncludedIds(
-                                    videoIds = setOf(
-                                        firstPermittedId,
-                                        secondPermittedId
+                collectionId,
+                UserFactory.sample(
+                    accessRulesSupplier = {
+                        AccessRulesFactory.sample(
+                            videoAccess = VideoAccess.Rules(
+                                listOf(
+                                    VideoAccessRule.IncludedIds(
+                                        videoIds = setOf(
+                                            firstPermittedId,
+                                            secondPermittedId
+                                        )
                                     )
                                 )
                             )
                         )
-                    )
-                })
+                    }
+                )
             )!!
 
             assertThat(collection.id).isEqualTo(collectionId)

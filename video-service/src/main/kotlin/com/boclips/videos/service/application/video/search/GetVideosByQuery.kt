@@ -56,7 +56,7 @@ class GetVideosByQuery(
         resourceTypes: Set<String>,
         resourceTypeFacets: List<String>?,
         includeChannelFacets: Boolean?
-        ): ResultsPage<Video, VideoCounts> {
+    ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
@@ -102,7 +102,7 @@ class GetVideosByQuery(
                 pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
                 user = user
             )
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             val errorMessage = (RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes?)
                 ?.request
                 ?.let { requestToString(it) }

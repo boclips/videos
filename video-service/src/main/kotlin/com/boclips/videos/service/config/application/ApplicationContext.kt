@@ -34,6 +34,8 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
+import com.boclips.videos.service.application.search.FindNewSuggestions
+import com.boclips.videos.service.application.search.FindNewSuggestionsByQuery
 import com.boclips.videos.service.application.search.FindSuggestions
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
@@ -69,10 +71,10 @@ import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchQueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.TagRepository
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
@@ -83,6 +85,8 @@ import com.boclips.videos.service.domain.service.collection.CollectionUpdateServ
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectService
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
+import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
@@ -106,6 +110,8 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ApplicationContext(
     val videoRetrievalService: VideoRetrievalService,
+    val newSuggestionsRetrievalService: NewSuggestionsRetrievalService,
+    val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
     val videoIndex: VideoIndex,
     val collectionIndex: CollectionIndex,
@@ -145,6 +151,12 @@ class ApplicationContext(
     @Bean
     fun suggestSearchQuery(channelRepository: ChannelRepository, subjectRepository: SubjectRepository): FindSuggestions =
         FindSuggestions(channelRepository, subjectRepository)
+
+    @Bean
+    fun findNewSuggestions(findNewSuggestionsByQuery: FindNewSuggestionsByQuery) = FindNewSuggestions(findNewSuggestionsByQuery)
+
+    @Bean
+    fun findNewSuggestionsByQuery(): FindNewSuggestionsByQuery = FindNewSuggestionsByQuery(newSuggestionsRetrievalService)
 
     @Bean
     fun createVideo(

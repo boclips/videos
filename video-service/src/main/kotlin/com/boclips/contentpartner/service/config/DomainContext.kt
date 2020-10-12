@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.contract.ContractReposito
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.contentpartner.service.domain.service.contract.ContractService
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -27,10 +28,12 @@ class DomainContext {
 
     @Bean
     fun channelService(
-        channelRepository: ChannelRepository
+        channelRepository: ChannelRepository,
+        channelIndex: ChannelIndex
     ): ChannelService {
         return ChannelService(
-            channelRepository
+            channelRepository,
+            channelIndex
         )
     }
 }
