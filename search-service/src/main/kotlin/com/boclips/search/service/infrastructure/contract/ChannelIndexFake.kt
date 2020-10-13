@@ -22,7 +22,12 @@ class ChannelIndexFake :
 
         return index
             .filter { entry ->
-                if (phraseQuery(query)) entry.value.name.contains(phrase, ignoreCase = true) else true
+                query.accessRuleQuery.includedChannelIds.isNullOrEmpty() || !query.accessRuleQuery.includedChannelIds.contains(
+                    entry.value.id
+                )
+            }
+            .filter { entry ->
+                entry.value.name.contains(phrase, ignoreCase = true) ?: false
             }.map { it ->
                 ChannelSuggestion(
                     name = it.value.name,

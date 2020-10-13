@@ -48,7 +48,7 @@ interface IndexConfiguration {
 
         val autocomplete = mapOf(
             "search_analyzer" to "standard",
-            "analyzer" to "ngram",
+            "analyzer" to Analyzers.NGRAM,
             "fields" to mapOf(
                 FIELD_DESCRIPTOR_UNSTEMMED to mapOf(
                     "type" to "text",
@@ -202,8 +202,12 @@ interface IndexConfiguration {
                     Filters.NGRAM to mapOf(
                         "max_gram" to "30",
                         "min_gram" to "1",
-                        "side" to "front",
-                        "type" to "ngram"
+                        "type" to "ngram",
+                        "token_chars" to listOf(
+                            "letter",
+                            "digit",
+                            "whitespace"
+                        ),
                     ),
                     Filters.PREDEFINED_LOWERCASE to mapOf(
                         "type" to "lowercase"
@@ -211,8 +215,7 @@ interface IndexConfiguration {
                 ),
                 "analyzer" to mapOf(
                     Analyzers.NGRAM to mapOf(
-                        "tokenizer" to "keyword",
-                        "type" to "custom",
+                        "tokenizer" to "standard",
                         "filter" to listOf(
                             Filters.PREDEFINED_LOWERCASE,
                             Filters.NGRAM

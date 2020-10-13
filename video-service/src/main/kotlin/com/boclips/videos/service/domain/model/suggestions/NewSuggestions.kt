@@ -10,4 +10,3 @@ data class ChannelSuggestion(
     val name: String,
     val id: ChannelId
 )
-

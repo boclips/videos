@@ -1,6 +1,7 @@
 package com.boclips.contentpartner.service.domain.model.channel
 
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 
 interface ChannelRepository {
     fun create(channel: Channel): Channel
@@ -11,4 +12,5 @@ interface ChannelRepository {
     fun findByContractId(contractId: ContractId): List<Channel>
     fun findByName(query: String): List<Channel>
     fun update(updateCommands: List<ChannelUpdateCommand>): List<Channel>
+    fun streamAll(consumer: (Sequence<ChannelSuggestion>) -> Unit)
 }

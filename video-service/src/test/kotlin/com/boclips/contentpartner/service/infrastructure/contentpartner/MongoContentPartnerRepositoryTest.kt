@@ -14,6 +14,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
@@ -76,6 +77,23 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoChannelRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
 
         assertThat(retrievedChannel.map { it.id }).isEqualTo(channelIds)
+    }
+
+    @Test
+    fun `stream all`() {
+        mongoChannelRepository.create(
+            createChannel(name = "good day")
+        )
+
+        mongoChannelRepository.create(
+            createChannel(name = "good great day")
+        )
+
+        var channels: List<ChannelSuggestion> = emptyList()
+
+        mongoChannelRepository.streamAll { channels = it.toList() }
+
+        assertThat(channels).hasSize(2)
     }
 
     @Test

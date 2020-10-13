@@ -1,6 +1,5 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.infrastructure.collections.CollectionDocument
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 

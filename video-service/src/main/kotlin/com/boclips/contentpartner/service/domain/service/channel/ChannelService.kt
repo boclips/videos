@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.domain.service.channel
 
 import com.boclips.contentpartner.service.application.channel.ChannelFiltersConverter
 import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
@@ -34,7 +35,7 @@ class ChannelService(
             sequenceOf(
                 ChannelSuggestion(
                     name = channel.name,
-                    id = channel.id
+                    id = ChannelId(channel.id.value)
                 )
             )
         )

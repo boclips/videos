@@ -54,7 +54,6 @@ abstract class AbstractInMemoryFakeChannel<QUERY : SearchQuery<METADATA>, METADA
         index.clear()
     }
 
-//    abstract fun idsMatching(index: MutableMap<String, METADATA>, query: QUERY): List<String>
     abstract fun nameMatching(index: MutableMap<String, METADATA>, query: QUERY): List<ChannelSuggestion>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 

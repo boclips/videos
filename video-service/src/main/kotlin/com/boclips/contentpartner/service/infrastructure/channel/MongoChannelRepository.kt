@@ -13,6 +13,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.converters.Inge
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
@@ -106,11 +107,19 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
 
     override fun findByName(query: String): List<Channel> {
         return getChannelCollection().find(
-                ChannelDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
-            )
+            ChannelDocument::name regex Regex(Pattern.quote(query), RegexOption.IGNORE_CASE)
+        )
             .distinctBy(selector = { input -> input.name })
             .map { ChannelDocumentConverter.toChannel(it) }
             .toList()
+    }
+
+    override fun streamAll(consumer: (Sequence<ChannelSuggestion>) -> Unit) {
+        val sequence = Sequence {
+            getChannelCollection().find().iterator()
+        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map { ChannelSuggestion(name = it.name, id = it.id) }
+
+        consumer(sequence)
     }
 
     override fun update(updateCommands: List<ChannelUpdateCommand>): List<Channel> {

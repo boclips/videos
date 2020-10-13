@@ -11,6 +11,7 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
+import com.boclips.videos.service.application.channels.RebuildChannelsIndex
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.BroadcastCollections
@@ -114,6 +115,8 @@ class ApplicationContext(
     val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
     val videoIndex: VideoIndex,
+    val channelRepository: ChannelRepository,
+    val channelsIndex: ChannelIndex,
     val collectionIndex: CollectionIndex,
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
@@ -310,6 +313,14 @@ class ApplicationContext(
         return RebuildVideoIndex(
             videoRepository,
             videoIndex
+        )
+    }
+
+    @Bean
+    fun rebuildChannelIndex(): RebuildChannelsIndex {
+        return RebuildChannelsIndex(
+            channelRepository,
+            channelsIndex
         )
     }
 

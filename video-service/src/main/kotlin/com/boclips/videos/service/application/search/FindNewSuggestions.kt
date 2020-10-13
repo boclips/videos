@@ -10,9 +10,11 @@ class FindNewSuggestions(
 ) {
     fun byQuery(
         query: String,
+        user: User
     ): SuggestionsResults<ChannelSuggestion> {
         return findNewSuggestionsByQuery(
-            query = query
+            query = query,
+            user = user
         )
     }
 }

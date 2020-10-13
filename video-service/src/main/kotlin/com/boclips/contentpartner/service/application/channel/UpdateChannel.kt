@@ -21,7 +21,6 @@ class UpdateChannel(
     operator fun invoke(channelId: String, upsertRequest: ChannelRequest): Channel {
         val id = ChannelId(value = channelId)
 
-
         upsertRequest.legalRestrictions?.let { legalRestrictionsRequest ->
             if (legalRestrictionsRequest.id.isNullOrEmpty()) {
                 val legalRestrictions = createLegalRestrictions(legalRestrictionsRequest.text)
@@ -40,5 +39,3 @@ class UpdateChannel(
         }
     }
 }
-
-

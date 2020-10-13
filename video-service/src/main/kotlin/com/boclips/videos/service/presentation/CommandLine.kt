@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.videos.service.application.channels.RebuildChannelsIndex
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.video.UpdateYoutubePlayback
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
@@ -16,6 +17,7 @@ class CommandLine(
     val env: Environment,
     val collectionIndex: RebuildCollectionIndex,
     val videoIndex: RebuildVideoIndex,
+    val channelsIndex: RebuildChannelsIndex,
     val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
     val updateYoutubePlayback: UpdateYoutubePlayback
 ) {
@@ -30,6 +32,10 @@ class CommandLine(
             }
             "reindex-videos" -> {
                 videoIndex.invoke(ConsoleProgressNotifier())
+                exitProcess(0)
+            }
+            "reindex-channels" -> {
+                channelsIndex.invoke(ConsoleProgressNotifier())
                 exitProcess(0)
             }
             "reindex-legacy" -> {

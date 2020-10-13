@@ -104,4 +104,26 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.channels[0].id", equalTo(channel2.id.value)))
             .andExpect(jsonPath("$.channels[0].name", equalTo(channel2.name)))
     }
+
+    @Test
+    fun `provides suggestions for channels with access rules`() {
+        val channel1 = saveChannel(name = "The History Channel")
+        val channel2 = saveChannel(name = "TED-Ed")
+        saveChannel(name = "We Love History")
+
+        usersClient.addAccessRules(
+            "api-user@gmail.com",
+            AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedChannels(
+                    id = "include channels",
+                    name = "channels",
+                    channelIds = listOf(channel1.id.value, channel2.id.value)
+                )
+            )
+        )
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/new-suggestions?query=history").asApiUser(email = "api-user@gmail.com"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.channels", hasSize<Int>(1)))
+    }
 }

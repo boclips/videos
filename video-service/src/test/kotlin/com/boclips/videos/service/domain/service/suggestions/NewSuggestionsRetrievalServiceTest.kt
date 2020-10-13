@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.suggestions
 
 import com.boclips.videos.service.domain.model.suggestions.request.ChannelsSuggestionsRequest
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -17,12 +18,13 @@ internal class NewSuggestionsRetrievalServiceTest : AbstractSpringIntegrationTes
         fun `retrieve channel by query returns channel from elastic search`() {
 
             val superChannel = saveChannel(name = "Super Channel")
-            val badChannel = saveChannel(name = "Bad Channel")
+            saveChannel(name = "Bad Channel")
 
             val results = newSuggestionsRetrievalService.findSuggestions(
                 ChannelsSuggestionsRequest(
                     text = "Super"
-                )
+                ),
+                VideoAccess.Everything
             )
 
             assertThat(results.channels[0].id).isEqualTo(superChannel.id)

@@ -132,9 +132,11 @@ class MongoCollectionRepository(
         updateResultConsumer: (CollectionUpdateResult) -> Unit
     ) {
         val filterCriteria = when (filter) {
-            is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(
-                filter.subjectId.value
-            ))
+            is CollectionFilter.HasSubjectId -> CollectionDocument::subjects elemMatch (
+                SubjectDocument::id eq ObjectId(
+                    filter.subjectId.value
+                )
+                )
             is CollectionFilter.HasVideoId -> CollectionDocument::videos contains filter.videoId.value
         }
 

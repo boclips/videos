@@ -33,5 +33,4 @@ data class ChannelDocument(
     val bestForTags: List<String>? = null,
     val subjects: List<String>? = null,
     val contract: ContractDocument?
-) {
-}
+)

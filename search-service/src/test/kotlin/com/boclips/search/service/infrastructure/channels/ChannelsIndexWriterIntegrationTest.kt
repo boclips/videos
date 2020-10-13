@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.channels
 
 import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +25,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             sequenceOf(SearchableChannelMetadataFactory.create(id = "1", name = "Super Channel"))
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("Super")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "super",
+                    AccessRuleQuery(includedChannelIds = setOf("1"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("1")
@@ -42,10 +50,17 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("2")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "1",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
-        assertThat(results.elements[0].id).isEqualTo("2")
+        assertThat(results.elements[0].id).isEqualTo("1")
     }
 
     @Test
@@ -60,7 +75,17 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("sup")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "chan",
+                    AccessRuleQuery(
+                        includedChannelIds = setOf("1", "2", "3", "4"),
+                        excludedContentPartnerIds = setOf("5")
+                    )
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(4)
     }
@@ -77,7 +102,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("annel")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "annel",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(5)
     }
@@ -99,7 +131,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("minute")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "1 Minute",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("1")
@@ -122,11 +161,50 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("ted")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "ted",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(2)
         assertThat(results.elements[0].id).isEqualTo("6")
         assertThat(results.elements[1].id).isEqualTo("7")
+    }
+
+    @Test
+    fun `returns channel suggestions with whitespace in query`() {
+        indexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "1 Minute in a Museum"),
+                SearchableChannelMetadataFactory.create(id = "2", name = "AP"),
+                SearchableChannelMetadataFactory.create(id = "3", name = "AllTime 10s"),
+                SearchableChannelMetadataFactory.create(id = "4", name = "AFPTV"),
+                SearchableChannelMetadataFactory.create(id = "5", name = "360 Cities"),
+                SearchableChannelMetadataFactory.create(id = "6", name = "TED"),
+                SearchableChannelMetadataFactory.create(id = "7", name = "TED-X"),
+                SearchableChannelMetadataFactory.create(id = "8", name = "Crash Course Engineering"),
+                SearchableChannelMetadataFactory.create(id = "9", name = "Crash Course"),
+                SearchableChannelMetadataFactory.create(id = "10", name = "Crash Course Physics"),
+            )
+        )
+
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "crash co",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(3)
+        assertThat(results.elements[0].id).isEqualTo("9")
+        assertThat(results.elements[1].id).isEqualTo("8")
+        assertThat(results.elements[2].id).isEqualTo("10")
     }
 
     @Test
@@ -146,9 +224,49 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("crash")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "Crash",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(3)
+        assertThat(results.elements[0].id).isEqualTo("9") // elements[0] = Crash Course
+    }
+
+    @Test
+    fun `returns channel suggestions with crash course channels with access rules`() {
+        indexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "1 Minute in a Museum"),
+                SearchableChannelMetadataFactory.create(id = "2", name = "AP"),
+                SearchableChannelMetadataFactory.create(id = "3", name = "AllTime 10s"),
+                SearchableChannelMetadataFactory.create(id = "4", name = "AFPTV"),
+                SearchableChannelMetadataFactory.create(id = "5", name = "360 Cities"),
+                SearchableChannelMetadataFactory.create(id = "6", name = "TED"),
+                SearchableChannelMetadataFactory.create(id = "7", name = "TED-X"),
+                SearchableChannelMetadataFactory.create(id = "8", name = "Crash Course Engineering"),
+                SearchableChannelMetadataFactory.create(id = "9", name = "Crash Course"),
+                SearchableChannelMetadataFactory.create(id = "10", name = "Crash Course Physics"),
+            )
+        )
+
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "crash",
+                    AccessRuleQuery(
+                        includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9"),
+                        excludedContentPartnerIds = setOf("10")
+                    )
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(2)
         assertThat(results.elements[0].id).isEqualTo("9") // elements[0] = Crash Course
     }
 
@@ -169,7 +287,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("ering")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "ering",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("8")
@@ -192,7 +317,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("3")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery(
+                    "3",
+                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                )
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("5")
@@ -209,7 +341,11 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
         )
 
-        val results = indexReader.search(SearchRequestWithoutPagination(query = ChannelQuery("Boy")))
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = ChannelQuery("Boy", AccessRuleQuery(includedChannelIds = setOf("1")))
+            )
+        )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("1")
@@ -230,7 +366,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             indexReader.search(
                 SearchRequestWithoutPagination(
                     query = ChannelQuery(
-                        "boy"
+                        "boy",
+                        AccessRuleQuery(includedChannelIds = setOf("1"))
                     )
                 )
             ).elements
@@ -242,7 +379,8 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             indexReader.search(
                 SearchRequestWithoutPagination(
                     query = ChannelQuery(
-                        "boy"
+                        "boy",
+                        AccessRuleQuery(includedChannelIds = setOf("1"))
                     )
                 )
             ).elements.isEmpty()
