@@ -87,6 +87,12 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("suggestions?query={query}")
                 )
             )
+            .andExpect(
+                jsonPath(
+                    "$._links.newSuggestions.href",
+                    endsWith("new-suggestions?query={query}")
+                )
+            )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(
                 jsonPath(
