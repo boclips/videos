@@ -19,7 +19,7 @@ import org.elasticsearch.search.sort.SortOrder
 import kotlin.reflect.full.createType
 
 class CollectionIndexReader(val client: RestHighLevelClient) : IndexReader<CollectionMetadata, CollectionQuery> {
-    companion object : KLogging();
+    companion object : KLogging()
 
     private val elasticSearchResultConverter = CollectionDocumentConverter()
 

@@ -58,7 +58,10 @@ class RebuildCollectionIndexTest {
 
         val results = index.search(PaginatedSearchRequest(CollectionQuery(phrase = "collection")))
 
-        assertThat(results.elements).containsExactlyInAnyOrder()
+        assertThat(results.elements).containsExactlyInAnyOrder(
+            collectionId2.value,
+            collectionId3.value
+        )
     }
 
     @Test
