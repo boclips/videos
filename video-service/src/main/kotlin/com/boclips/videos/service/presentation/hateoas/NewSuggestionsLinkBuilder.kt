@@ -8,7 +8,7 @@ import org.springframework.hateoas.Link
 
 class NewSuggestionsLinkBuilder(val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
-        const val NEW_SUGGESTIONS = "new-suggestions"
+        const val NEW_SUGGESTIONS = "newSuggestions"
     }
 
     fun suggestions(): HateoasLink? {

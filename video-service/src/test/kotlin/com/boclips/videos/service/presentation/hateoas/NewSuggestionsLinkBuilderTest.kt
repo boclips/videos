@@ -25,7 +25,7 @@ internal class NewSuggestionsLinkBuilderTest {
     fun `suggestions link`() {
         setSecurityContext("bambi", UserRoles.VIEW_VIDEOS)
 
-        Assertions.assertThat(newSuggestionsLinkBuilder.suggestions()?.rel).isEqualTo("new-suggestions")
+        Assertions.assertThat(newSuggestionsLinkBuilder.suggestions()?.rel).isEqualTo("newSuggestions")
         Assertions.assertThat(newSuggestionsLinkBuilder.suggestions()?.href)
             .isEqualTo("https://localhost/v1/new-suggestions?query={query}")
     }

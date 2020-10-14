@@ -10,6 +10,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPart
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.videos.service.presentation.converters.SuggestionToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.NewSuggestionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.SuggestionLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.context.annotation.Bean
@@ -33,6 +34,9 @@ class PresentationContext(
 
     @Bean
     fun suggestionsLinkBuilder(): SuggestionLinkBuilder = SuggestionLinkBuilder(uriComponentsBuilderFactory)
+
+    @Bean
+    fun newSuggestionsLinkBuilder(): NewSuggestionsLinkBuilder = NewSuggestionsLinkBuilder(uriComponentsBuilderFactory)
 
     @Bean
     fun getChannelToResourceConverter(
