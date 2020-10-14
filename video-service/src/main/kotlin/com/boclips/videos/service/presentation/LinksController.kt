@@ -12,16 +12,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLi
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
-import com.boclips.videos.service.presentation.hateoas.AttachmentTypeLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.SuggestionLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.*
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.hateoas.Link
@@ -41,6 +32,7 @@ class LinksController(
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
     private val suggestionLinkBuilder: SuggestionLinkBuilder,
+    private val newSuggestionsLinkBuilder: NewSuggestionsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
     private val channelLinkBuilder: ChannelLinkBuilder,
@@ -87,6 +79,7 @@ class LinksController(
                 tagsLinkBuilder.tags(),
                 ageRangesLinkBuilder.ageRanges(),
                 suggestionLinkBuilder.suggestions(),
+                newSuggestionsLinkBuilder.suggestions(),
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),
