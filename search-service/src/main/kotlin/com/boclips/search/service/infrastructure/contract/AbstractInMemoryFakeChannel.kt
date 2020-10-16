@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.suggestions.IndexReader
-import com.boclips.search.service.domain.channels.SearchSuggestionsResults
+import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier

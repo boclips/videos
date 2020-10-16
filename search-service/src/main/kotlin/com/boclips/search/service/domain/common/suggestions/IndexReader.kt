@@ -1,6 +1,6 @@
 package com.boclips.search.service.domain.common.suggestions
 
-import com.boclips.search.service.domain.channels.SearchSuggestionsResults
+import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 

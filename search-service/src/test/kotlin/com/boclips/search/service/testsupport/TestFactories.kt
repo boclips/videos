@@ -155,6 +155,16 @@ object SearchableChannelMetadataFactory {
     )
 }
 
+object SearchableSubjectMetadataFactory {
+    fun create(
+        id: String = "id1",
+        name: String = "",
+    ) = SubjectMetadata(
+        id = id,
+        name = name
+    )
+}
+
 object LegacyVideoMetadataFactory {
     fun create(
         id: String,

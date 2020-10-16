@@ -7,6 +7,8 @@ import com.boclips.search.service.infrastructure.channels.ChannelsIndexReader
 import com.boclips.search.service.infrastructure.channels.ChannelsIndexWriter
 import com.boclips.search.service.infrastructure.collections.CollectionIndexReader
 import com.boclips.search.service.infrastructure.collections.CollectionIndexWriter
+import com.boclips.search.service.infrastructure.subjects.SubjectsIndexReader
+import com.boclips.search.service.infrastructure.subjects.SubjectsIndexWriter
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
@@ -16,9 +18,11 @@ import com.boclips.videos.service.config.properties.SolrProperties
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
+import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultChannelSearch
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
+import com.boclips.videos.service.infrastructure.search.DefaultSubjectSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import io.opentracing.Tracer
 import org.springframework.context.annotation.Bean
@@ -62,6 +66,22 @@ class SearchContext(
         return DefaultChannelSearch(
             ChannelsIndexReader(elasticSearchClient.buildClient()),
             ChannelsIndexWriter.createInstance(
+                elasticSearchClient.buildClient(),
+                IndexParameters(numberOfShards = 5),
+                reindexProperties.batchSize
+            )
+        )
+    }
+
+    @Bean
+    @Profile("!fakes-search")
+    fun subjectSearchService(
+        elasticSearchClient: ElasticSearchClient,
+        reindexProperties: ReindexProperties
+    ): SubjectIndex {
+        return DefaultSubjectSearch(
+            SubjectsIndexReader(elasticSearchClient.buildClient()),
+            SubjectsIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),
                 reindexProperties.batchSize
