@@ -1,17 +1,17 @@
-package com.boclips.search.service.domain.channels
+package com.boclips.search.service.domain.subjects
 
-import com.boclips.search.service.domain.channels.model.ChannelMetadata
-import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectQuery
 
-abstract class ChannelSearchAdapter<T>(
-    private val indexReader: IndexReader<ChannelMetadata, ChannelQuery>,
-    private val indexWriter: IndexWriter<ChannelMetadata>
-) : IndexReader<ChannelMetadata, ChannelQuery>, IndexWriter<T> {
+abstract class SubjectSearchAdapter<T>(
+    private val indexReader: IndexReader<SubjectMetadata, SubjectQuery>,
+    private val indexWriter: IndexWriter<SubjectMetadata>
+) : IndexReader<SubjectMetadata, SubjectQuery>, IndexWriter<T> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -20,7 +20,7 @@ abstract class ChannelSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<ChannelQuery>): SearchSuggestionsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<SubjectQuery>): SearchSuggestionsResults {
         return indexReader.search(searchRequest)
     }
 
@@ -36,5 +36,5 @@ abstract class ChannelSearchAdapter<T>(
         indexWriter.makeSureIndexIsThere()
     }
 
-    abstract fun convert(document: T): ChannelMetadata
+    abstract fun convert(document: T): SubjectMetadata
 }

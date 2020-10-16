@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.search
 
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.*
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType

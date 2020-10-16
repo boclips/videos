@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -150,6 +150,16 @@ object SearchableChannelMetadataFactory {
         id: String = "id1",
         name: String = "",
     ) = ChannelMetadata(
+        id = id,
+        name = name
+    )
+}
+
+object SearchableSubjectMetadataFactory {
+    fun create(
+        id: String = "id1",
+        name: String = "",
+    ) = SubjectMetadata(
         id = id,
         name = name
     )

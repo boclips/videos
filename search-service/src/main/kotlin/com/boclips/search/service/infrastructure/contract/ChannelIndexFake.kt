@@ -1,9 +1,9 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.channels.IndexReader
+import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ChannelQuery
-import com.boclips.search.service.domain.channels.model.ChannelSuggestion
+import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.IndexWriter
 
 class ChannelIndexFake :
@@ -17,7 +17,7 @@ class ChannelIndexFake :
     override fun nameMatching(
         index: MutableMap<String, ChannelMetadata>,
         query: ChannelQuery
-    ): List<ChannelSuggestion> {
+    ): List<Suggestion> {
         val phrase = query.phrase
 
         return index
@@ -29,7 +29,7 @@ class ChannelIndexFake :
             .filter { entry ->
                 entry.value.name.contains(phrase, ignoreCase = true) ?: false
             }.map { it ->
-                ChannelSuggestion(
+                Suggestion(
                     name = it.value.name,
                     id = it.value.id
                 )

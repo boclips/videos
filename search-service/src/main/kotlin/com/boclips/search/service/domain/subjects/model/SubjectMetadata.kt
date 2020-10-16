@@ -1,4 +1,4 @@
-package com.boclips.search.service.domain.videos.model
+package com.boclips.search.service.domain.subjects.model
 
 data class SubjectMetadata(
     val id: String,

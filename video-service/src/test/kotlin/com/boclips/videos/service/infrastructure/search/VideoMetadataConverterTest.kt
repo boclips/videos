@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
