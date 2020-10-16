@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.util.UriComponentsBuilder
 
 internal class NewSuggestionsLinkBuilderTest {
-    lateinit var newSuggestionsLinkBuilder: NewSuggestionsLinkBuilder
+    private lateinit var newSuggestionsLinkBuilder: NewSuggestionsLinkBuilder
 
     @BeforeEach
     fun setUp() {

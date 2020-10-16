@@ -1,8 +1,8 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.channels.IndexReader
-import com.boclips.search.service.domain.channels.SearchChannelsResults
-import com.boclips.search.service.domain.channels.model.ChannelSuggestion
+import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.channels.SearchSuggestionsResults
+import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchQuery
@@ -14,14 +14,14 @@ abstract class AbstractInMemoryFakeChannel<QUERY : SearchQuery<METADATA>, METADA
     private val index = mutableMapOf<String, METADATA>()
     private var requests: MutableList<SearchRequestWithoutPagination<QUERY>> = mutableListOf()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<QUERY>): SearchChannelsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<QUERY>): SearchSuggestionsResults {
         requests.add(searchRequest)
 
         val nameMatching = nameMatching(index, searchRequest.query)
 
-        return SearchChannelsResults(
+        return SearchSuggestionsResults(
             elements = nameMatching.map { it ->
-                ChannelSuggestion(
+                Suggestion(
                     id = it.id,
                     name = it.name
                 )
@@ -54,7 +54,7 @@ abstract class AbstractInMemoryFakeChannel<QUERY : SearchQuery<METADATA>, METADA
         index.clear()
     }
 
-    abstract fun nameMatching(index: MutableMap<String, METADATA>, query: QUERY): List<ChannelSuggestion>
+    abstract fun nameMatching(index: MutableMap<String, METADATA>, query: QUERY): List<Suggestion>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 
 }

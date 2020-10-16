@@ -7,7 +7,7 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
-import com.boclips.search.service.domain.videos.model.SubjectMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType

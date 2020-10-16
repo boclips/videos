@@ -1,11 +1,11 @@
-package com.boclips.search.service.infrastructure.channels
+package com.boclips.search.service.infrastructure.subjects
 
-import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.channels.SearchSuggestionsResults
-import com.boclips.search.service.domain.channels.model.ChannelMetadata
-import com.boclips.search.service.domain.channels.model.ChannelQuery
-import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.suggestions.Suggestion
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectQuery
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -13,12 +13,12 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 
-class ChannelsIndexReader(val client: RestHighLevelClient) : IndexReader<ChannelMetadata, ChannelQuery> {
+class SubjectsIndexReader(val client: RestHighLevelClient) : IndexReader<SubjectMetadata, SubjectQuery> {
     companion object : KLogging()
 
-    private val elasticSearchResultConverter = ChannelsDocumentConverter()
+    private val elasticSearchResultConverter = SubjectsDocumentConverter()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<ChannelQuery>): SearchSuggestionsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<SubjectQuery>): SearchSuggestionsResults {
         val results = searchQuery(searchRequest.query)
 
         val elements = results
@@ -33,13 +33,13 @@ class ChannelsIndexReader(val client: RestHighLevelClient) : IndexReader<Channel
         return SearchSuggestionsResults(elements = elements)
     }
 
-    private fun searchQuery(channelQuery: ChannelQuery): SearchHits {
+    private fun searchQuery(subjectQuery: SubjectQuery): SearchHits {
         val query = SearchSourceBuilder().apply {
-            query(ChannelEsQuery().mainQuery(channelQuery))
+            query(SubjectsEsQuery().mainQuery(subjectQuery))
         }
 
         val request = SearchRequest(
-            arrayOf(ChannelsIndex.getIndexAlias()),
+            arrayOf(SubjectsIndex.getIndexAlias()),
             query.from(0).size(10)
         )
 

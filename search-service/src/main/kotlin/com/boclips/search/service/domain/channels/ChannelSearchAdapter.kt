@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.suggestions.IndexReader
 
 abstract class ChannelSearchAdapter<T>(
     private val indexReader: IndexReader<ChannelMetadata, ChannelQuery>,
@@ -18,7 +19,7 @@ abstract class ChannelSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<ChannelQuery>): SearchChannelsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<ChannelQuery>): SearchSuggestionsResults {
         return indexReader.search(searchRequest)
     }
 
