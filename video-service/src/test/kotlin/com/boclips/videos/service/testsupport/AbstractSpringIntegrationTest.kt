@@ -17,6 +17,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
+import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
@@ -110,6 +111,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var channelIndexFake: ChannelIndexFake
+
+    @Autowired
+    lateinit var subjectsIndexFake: SubjectIndexFake
 
     @Autowired
     lateinit var fakeKalturaClient: TestKalturaClient
@@ -212,6 +216,7 @@ abstract class AbstractSpringIntegrationTest {
         collectionIndexFake.safeRebuildIndex(emptySequence())
         videoIndexFake.safeRebuildIndex(emptySequence())
         channelIndexFake.safeRebuildIndex(emptySequence())
+        subjectsIndexFake.safeRebuildIndex(emptySequence())
 
         fakeYoutubePlaybackProvider.clear()
         fakeKalturaClient.clear()

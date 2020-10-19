@@ -88,6 +88,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
@@ -115,6 +116,7 @@ class ApplicationContext(
     val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
     val videoIndex: VideoIndex,
+    val subjectIndex: SubjectIndex,
     val channelRepository: ChannelRepository,
     val channelsIndex: ChannelIndex,
     val collectionIndex: CollectionIndex,
@@ -365,7 +367,7 @@ class ApplicationContext(
 
     @Bean
     fun createSubject(): CreateSubject {
-        return CreateSubject(subjectRepository)
+        return CreateSubject(subjectRepository, subjectIndex)
     }
 
     @Bean

@@ -5,7 +5,6 @@ import com.boclips.videos.api.response.search.SubjectSuggestionResource
 import com.boclips.videos.api.response.search.SuggestionsResource
 import com.boclips.videos.service.common.SuggestionsResults
 import com.boclips.videos.service.domain.model.Suggestions
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 
 class SuggestionToResourceConverter(
@@ -36,7 +35,7 @@ class SuggestionToResourceConverter(
         )
     }
 
-    fun convertNewSuggestions(query: String, suggestions: SuggestionsResults<ChannelSuggestion>): SuggestionsResource {
+    fun convertNewSuggestions(query: String, suggestions: SuggestionsResults): SuggestionsResource {
         return SuggestionsResource(
             suggestionTerm = query,
             channels = suggestions.channels.map {
@@ -46,7 +45,13 @@ class SuggestionToResourceConverter(
                     _links = null
                 )
             },
-            subjects = emptyList(),
+            subjects = suggestions.subjects.map {
+                SubjectSuggestionResource(
+                    id = it.id.value,
+                    name = it.name,
+                    _links = null
+                )
+            },
             _links = null
         )
     }

@@ -1,7 +1,7 @@
 package com.boclips.search.service.domain.channels
 
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
-import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
@@ -9,9 +9,9 @@ import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 
 abstract class ChannelSearchAdapter<T>(
-    private val indexReader: IndexReader<ChannelMetadata, ChannelQuery>,
+    private val indexReader: IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
     private val indexWriter: IndexWriter<ChannelMetadata>
-) : IndexReader<ChannelMetadata, ChannelQuery>, IndexWriter<T> {
+) : IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>, IndexWriter<T> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -20,7 +20,7 @@ abstract class ChannelSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<ChannelQuery>): SearchSuggestionsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
         return indexReader.search(searchRequest)
     }
 

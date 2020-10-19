@@ -1,11 +1,11 @@
 package com.boclips.search.service.infrastructure.subjects
 
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.subjects.model.SubjectQuery
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -13,12 +13,12 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 
-class SubjectsIndexReader(val client: RestHighLevelClient) : IndexReader<SubjectMetadata, SubjectQuery> {
+class SubjectsIndexReader(val client: RestHighLevelClient) : IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>> {
     companion object : KLogging()
 
     private val elasticSearchResultConverter = SubjectsDocumentConverter()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SubjectQuery>): SearchSuggestionsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
         val results = searchQuery(searchRequest.query)
 
         val elements = results
@@ -33,7 +33,7 @@ class SubjectsIndexReader(val client: RestHighLevelClient) : IndexReader<Subject
         return SearchSuggestionsResults(elements = elements)
     }
 
-    private fun searchQuery(subjectQuery: SubjectQuery): SearchHits {
+    private fun searchQuery(subjectQuery: SuggestionQuery<SubjectMetadata>): SearchHits {
         val query = SearchSourceBuilder().apply {
             query(SubjectsEsQuery().mainQuery(subjectQuery))
         }

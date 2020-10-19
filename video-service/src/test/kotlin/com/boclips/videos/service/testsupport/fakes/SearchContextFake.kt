@@ -4,12 +4,15 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
+import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
+import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.search.DefaultChannelSearch
 import com.boclips.videos.service.infrastructure.search.DefaultCollectionSearch
+import com.boclips.videos.service.infrastructure.search.DefaultSubjectSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.nhaarman.mockitokotlin2.mock
 import org.springframework.context.annotation.Bean
@@ -27,6 +30,21 @@ class SearchContextFake {
     @Bean
     fun channelIndexFake(): ChannelIndexFake {
         return ChannelIndexFake()
+    }
+
+    @Bean
+    fun subjectIndexFake(): SubjectIndexFake {
+        return SubjectIndexFake()
+    }
+
+    @Bean
+    fun subjectMetadataSearchService(
+        subjectIndexFake: SubjectIndexFake
+    ): SubjectIndex {
+        return DefaultSubjectSearch(
+            subjectIndexFake,
+            subjectIndexFake
+        )
     }
 
     @Bean

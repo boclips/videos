@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -27,7 +27,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "super",
                     AccessRuleQuery(includedChannelIds = setOf("1"))
                 )
@@ -52,7 +52,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "1",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
                 )
@@ -77,7 +77,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "chan",
                     AccessRuleQuery(
                         includedChannelIds = setOf("1", "2", "3", "4"),
@@ -104,7 +104,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "annel",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
                 )
@@ -133,7 +133,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "1 Minute",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -163,7 +163,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "ted",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -194,7 +194,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "crash co",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -226,7 +226,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "Crash",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -256,7 +256,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "crash",
                     AccessRuleQuery(
                         includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9"),
@@ -289,7 +289,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "ering",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -319,7 +319,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery(
+                query = SuggestionQuery(
                     "3",
                     AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
@@ -343,7 +343,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = ChannelQuery("Boy", AccessRuleQuery(includedChannelIds = setOf("1")))
+                query = SuggestionQuery("Boy", AccessRuleQuery(includedChannelIds = setOf("1")))
             )
         )
 
@@ -365,7 +365,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         assertThat(
             indexReader.search(
                 SearchRequestWithoutPagination(
-                    query = ChannelQuery(
+                    query = SuggestionQuery(
                         "boy",
                         AccessRuleQuery(includedChannelIds = setOf("1"))
                     )
@@ -378,7 +378,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         assertThat(
             indexReader.search(
                 SearchRequestWithoutPagination(
-                    query = ChannelQuery(
+                    query = SuggestionQuery(
                         "boy",
                         AccessRuleQuery(includedChannelIds = setOf("1"))
                     )

@@ -35,6 +35,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventD
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
@@ -110,9 +111,11 @@ class DomainContext(
     @Bean
     fun newSuggestionsRetrievalService(
         channelIndex: ChannelIndex,
+        subjectIndex: SubjectIndex
     ): NewSuggestionsRetrievalService {
         return NewSuggestionsRetrievalService(
-            channelIndex,
+            channelIndex = channelIndex,
+            subjectIndex = subjectIndex
         )
     }
 
@@ -204,8 +207,8 @@ class DomainContext(
     @Bean
     fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider):
         PlaybackRepository {
-        return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
-    }
+            return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
+        }
 
     @Bean
     fun playbackService(

@@ -1,17 +1,17 @@
 package com.boclips.search.service.domain.subjects
 
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.subjects.model.SubjectQuery
 
 abstract class SubjectSearchAdapter<T>(
-    private val indexReader: IndexReader<SubjectMetadata, SubjectQuery>,
+    private val indexReader: IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>,
     private val indexWriter: IndexWriter<SubjectMetadata>
-) : IndexReader<SubjectMetadata, SubjectQuery>, IndexWriter<T> {
+) : IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>, IndexWriter<T> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -20,7 +20,7 @@ abstract class SubjectSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SubjectQuery>): SearchSuggestionsResults {
+    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
         return indexReader.search(searchRequest)
     }
 

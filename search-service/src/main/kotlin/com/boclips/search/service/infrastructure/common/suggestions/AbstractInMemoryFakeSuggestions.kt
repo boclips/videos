@@ -1,14 +1,14 @@
-package com.boclips.search.service.infrastructure.contract
+package com.boclips.search.service.infrastructure.common.suggestions
 
-import com.boclips.search.service.domain.common.suggestions.IndexReader
-import com.boclips.search.service.domain.search.SearchSuggestionsResults
-import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.suggestions.Suggestion
+import com.boclips.search.service.domain.search.SearchSuggestionsResults
 
-abstract class AbstractInMemoryFakeChannel<QUERY : SearchQuery<METADATA>, METADATA> :
+abstract class AbstractInMemoryFakeSuggestions<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
@@ -56,5 +56,4 @@ abstract class AbstractInMemoryFakeChannel<QUERY : SearchQuery<METADATA>, METADA
 
     abstract fun nameMatching(index: MutableMap<String, METADATA>, query: QUERY): List<Suggestion>
     abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
-
 }

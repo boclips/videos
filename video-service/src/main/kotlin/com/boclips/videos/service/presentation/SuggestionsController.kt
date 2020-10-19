@@ -39,8 +39,6 @@ class SuggestionsController(
     fun getNewSuggestions(
         @RequestParam(name = "query", required = true) query: String
     ): ResponseEntity<SuggestionsResource> {
-        // TODO: add exception if query.length < 3
-
         val suggestions = findNewSuggestions.byQuery(query = query, user = getCurrentUser())
 
         val resource = suggestionToResourceConverter.convertNewSuggestions(

@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.channels
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
-import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
 import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
@@ -73,7 +73,7 @@ internal class RebuildChannelsIndexTest {
 
         val results = index.search(
             SearchRequestWithoutPagination(
-                ChannelQuery(
+                SuggestionQuery(
                     phrase = "chan",
                     accessRuleQuery = AccessRuleQuery()
                 )
