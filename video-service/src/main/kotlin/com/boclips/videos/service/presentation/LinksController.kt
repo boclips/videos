@@ -32,7 +32,6 @@ class LinksController(
     private val tagsLinkBuilder: TagsLinkBuilder,
     private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
     private val suggestionLinkBuilder: SuggestionLinkBuilder,
-    private val newSuggestionsLinkBuilder: NewSuggestionsLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
     private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
     private val channelLinkBuilder: ChannelLinkBuilder,
@@ -79,7 +78,6 @@ class LinksController(
                 tagsLinkBuilder.tags(),
                 ageRangesLinkBuilder.ageRanges(),
                 suggestionLinkBuilder.suggestions(),
-                newSuggestionsLinkBuilder.suggestions(),
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),

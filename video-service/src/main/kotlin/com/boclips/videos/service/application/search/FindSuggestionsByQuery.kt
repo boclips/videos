@@ -3,10 +3,10 @@ package com.boclips.videos.service.application.search
 import com.boclips.videos.service.common.SuggestionsResults
 import com.boclips.videos.service.domain.model.suggestions.request.SuggestionsRequest
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 
-class FindNewSuggestionsByQuery(
-    private val newSuggestionsRetrievalService: NewSuggestionsRetrievalService
+class FindSuggestionsByQuery(
+    private val suggestionsRetrievalService: SuggestionsRetrievalService
 ) {
     operator fun invoke(
         query: String,
@@ -17,7 +17,7 @@ class FindNewSuggestionsByQuery(
             text = query,
         )
 
-        val suggestionsResponse = newSuggestionsRetrievalService.findSuggestions(suggestionsRequest, user.accessRules.videoAccess)
+        val suggestionsResponse = suggestionsRetrievalService.findSuggestions(suggestionsRequest, user.accessRules.videoAccess)
 
         return SuggestionsResults(
             channels = suggestionsResponse.channels.asIterable(),

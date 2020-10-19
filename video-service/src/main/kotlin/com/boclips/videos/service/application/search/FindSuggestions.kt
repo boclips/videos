@@ -1,23 +1,18 @@
 package com.boclips.videos.service.application.search
 
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.videos.service.domain.model.Suggestions
-import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import mu.KLogging
+import com.boclips.videos.service.common.SuggestionsResults
+import com.boclips.videos.service.domain.model.user.User
 
 class FindSuggestions(
-    private val channelRepository: ChannelRepository,
-    private val subjectRepository: SubjectRepository
+    private val findSuggestionsByQuery: FindSuggestionsByQuery
 ) {
-    companion object : KLogging()
-
-    operator fun invoke(query: String): Suggestions {
-        val channels = channelRepository.findByName(query)
-            .take(10)
-
-        val subjects = subjectRepository.findByQuery(query)
-            .take(5)
-
-        return Suggestions(channels = channels, subjects = subjects)
+    fun byQuery(
+        query: String,
+        user: User
+    ): SuggestionsResults {
+        return findSuggestionsByQuery(
+            query = query,
+            user = user
+        )
     }
 }

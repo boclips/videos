@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.api.request.search.SuggestionsRequest
 import com.boclips.videos.api.response.search.SuggestionsResource
-import com.boclips.videos.service.application.search.FindNewSuggestions
 import com.boclips.videos.service.application.search.FindSuggestions
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -14,32 +12,22 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v1")
 class SuggestionsController(
-    private val findSuggestions: FindSuggestions,
     private val suggestionToResourceConverter: SuggestionToResourceConverter,
-    private val findNewSuggestions: FindNewSuggestions,
+    private val findSuggestions: FindSuggestions,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging()
 
     @GetMapping("/suggestions")
-    fun getSuggestions(@Valid request: SuggestionsRequest): ResponseEntity<SuggestionsResource> {
-        val query = request.query!!
-        val suggestions = findSuggestions(query)
-        val resource = suggestionToResourceConverter.convert(query = query, suggestions = suggestions)
-        return ResponseEntity(resource, HttpStatus.OK)
-    }
-
-    @GetMapping("/new-suggestions")
     fun getNewSuggestions(
         @RequestParam(name = "query", required = true) query: String
     ): ResponseEntity<SuggestionsResource> {
-        val suggestions = findNewSuggestions.byQuery(query = query, user = getCurrentUser())
+        val suggestions = findSuggestions.byQuery(query = query, user = getCurrentUser())
 
         val resource = suggestionToResourceConverter.convertNewSuggestions(
             query = query,

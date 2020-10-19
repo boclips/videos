@@ -34,7 +34,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
-import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
@@ -112,8 +112,8 @@ class DomainContext(
     fun newSuggestionsRetrievalService(
         channelIndex: ChannelIndex,
         subjectIndex: SubjectIndex
-    ): NewSuggestionsRetrievalService {
-        return NewSuggestionsRetrievalService(
+    ): SuggestionsRetrievalService {
+        return SuggestionsRetrievalService(
             channelIndex = channelIndex,
             subjectIndex = subjectIndex
         )

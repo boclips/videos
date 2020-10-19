@@ -35,9 +35,8 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
-import com.boclips.videos.service.application.search.FindNewSuggestions
-import com.boclips.videos.service.application.search.FindNewSuggestionsByQuery
 import com.boclips.videos.service.application.search.FindSuggestions
+import com.boclips.videos.service.application.search.FindSuggestionsByQuery
 import com.boclips.videos.service.application.search.RebuildSubjectIndex
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
@@ -88,7 +87,7 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
-import com.boclips.videos.service.domain.service.suggestions.NewSuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -113,7 +112,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ApplicationContext(
     val videoRetrievalService: VideoRetrievalService,
-    val newSuggestionsRetrievalService: NewSuggestionsRetrievalService,
+    val suggestionsRetrievalService: SuggestionsRetrievalService,
     val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
     val videoIndex: VideoIndex,
@@ -155,14 +154,10 @@ class ApplicationContext(
     )
 
     @Bean
-    fun suggestSearchQuery(channelRepository: ChannelRepository, subjectRepository: SubjectRepository): FindSuggestions =
-        FindSuggestions(channelRepository, subjectRepository)
+    fun findNewSuggestions(findSuggestionsByQuery: FindSuggestionsByQuery) = FindSuggestions(findSuggestionsByQuery)
 
     @Bean
-    fun findNewSuggestions(findNewSuggestionsByQuery: FindNewSuggestionsByQuery) = FindNewSuggestions(findNewSuggestionsByQuery)
-
-    @Bean
-    fun findNewSuggestionsByQuery(): FindNewSuggestionsByQuery = FindNewSuggestionsByQuery(newSuggestionsRetrievalService)
+    fun findNewSuggestionsByQuery(): FindSuggestionsByQuery = FindSuggestionsByQuery(suggestionsRetrievalService)
 
     @Bean
     fun createVideo(

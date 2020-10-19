@@ -155,10 +155,6 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(GET, "/v1/contract-legal-restrictions").hasRole(ROLE.VIEW_LEGAL_RESTRICTIONS)
             .mvcMatchers(POST, "/v1/contract-legal-restrictions").hasRole(ROLE.CREATE_LEGAL_RESTRICTIONS)
 
-            .mvcMatchers(GET, "/v1/new-suggestions*").hasAnyRole(ROLE.VIEW_VIDEOS, ROLE.VIEW_COLLECTIONS)
-
             .anyRequest().denyAll()
     }
 }
-
-

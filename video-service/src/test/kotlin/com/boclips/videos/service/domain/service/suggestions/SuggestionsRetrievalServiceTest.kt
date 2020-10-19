@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-internal class NewSuggestionsRetrievalServiceTest : AbstractSpringIntegrationTest() {
+internal class SuggestionsRetrievalServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var newSuggestionsRetrievalService: NewSuggestionsRetrievalService
+    lateinit var suggestionsRetrievalService: SuggestionsRetrievalService
 
     @Nested
     inner class Retrieving {
@@ -22,7 +22,7 @@ internal class NewSuggestionsRetrievalServiceTest : AbstractSpringIntegrationTes
             val superSubject = saveSubject(name = "super subjects")
             saveSubject(name = "bad subjects")
 
-            val results = newSuggestionsRetrievalService.findSuggestions(
+            val results = suggestionsRetrievalService.findSuggestions(
                 SuggestionsRequest(
                     text = "Super"
                 ),

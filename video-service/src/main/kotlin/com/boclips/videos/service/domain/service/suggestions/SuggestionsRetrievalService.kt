@@ -7,14 +7,14 @@ import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagina
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
-import com.boclips.videos.service.domain.model.suggestions.NewSuggestions
 import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
+import com.boclips.videos.service.domain.model.suggestions.Suggestions
 import com.boclips.videos.service.domain.model.suggestions.request.SuggestionsRequest
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import mu.KLogging
 
-class NewSuggestionsRetrievalService(
+class SuggestionsRetrievalService(
     private val channelIndex: ChannelIndex,
     private val subjectIndex: SubjectIndex
 ) {
@@ -28,7 +28,7 @@ class NewSuggestionsRetrievalService(
         )
     )
 
-    fun findSuggestions(request: SuggestionsRequest, videoAccess: VideoAccess): NewSuggestions {
+    fun findSuggestions(request: SuggestionsRequest, videoAccess: VideoAccess): Suggestions {
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
 
         val channelsQuery = SearchRequestWithoutPagination(
@@ -56,7 +56,7 @@ class NewSuggestionsRetrievalService(
             )
         }
 
-        return NewSuggestions(
+        return Suggestions(
             channels = channelsResults,
             subjects = subjectsResults
         )

@@ -87,12 +87,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
                     endsWith("suggestions?query={query}")
                 )
             )
-            .andExpect(
-                jsonPath(
-                    "$._links.newSuggestions.href",
-                    endsWith("new-suggestions?query={query}")
-                )
-            )
             .andExpect(jsonPath("$._links.subjects.href", endsWith("/subjects")))
             .andExpect(
                 jsonPath(
@@ -156,7 +150,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.createContractsSignedUploadLink").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.attachmentTypes").doesNotExist())
-
     }
 
     @Test
@@ -191,7 +184,8 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contract.templated", equalTo(true)))
             .andExpect(
                 jsonPath(
-                    "$._links.createContractsSignedUploadLink.href", containsString(
+                    "$._links.createContractsSignedUploadLink.href",
+                    containsString(
                         "/contracts/signed-upload-link"
                     )
                 )
@@ -211,7 +205,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentWarnings.href", endsWith("/content-warnings")))
             .andExpect(jsonPath("$._links.contentWarnings.templated", equalTo(false)))
             .andExpect(jsonPath("$._links.attachmentTypes.href", endsWith("/attachment-types")))
-
     }
 
     @Test

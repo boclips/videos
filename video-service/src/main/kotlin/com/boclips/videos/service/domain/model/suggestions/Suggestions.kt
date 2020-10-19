@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.model.suggestions
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 
-data class NewSuggestions(
+data class Suggestions(
     val channels: List<ChannelSuggestion>,
     val subjects: List<SubjectSuggestion>
 )
