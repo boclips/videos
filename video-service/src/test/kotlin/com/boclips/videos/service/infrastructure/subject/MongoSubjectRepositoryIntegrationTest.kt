@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.subject
 
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
+import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -124,5 +125,22 @@ class MongoSubjectRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
         }
+    }
+
+    @Test
+    fun `stream all`() {
+        mongoSubjectRepository.create(
+            name = "subject one"
+        )
+
+        mongoSubjectRepository.create(
+            name = "subject two"
+        )
+
+        var subjects: List<SubjectSuggestion> = emptyList()
+
+        mongoSubjectRepository.streamAll { subjects = it.toList() }
+
+        assertThat(subjects).hasSize(2)
     }
 }

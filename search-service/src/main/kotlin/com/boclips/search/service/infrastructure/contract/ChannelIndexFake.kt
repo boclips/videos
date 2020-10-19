@@ -28,8 +28,8 @@ class ChannelIndexFake :
                 )
             }
             .filter { entry ->
-                entry.value.name.contains(phrase, ignoreCase = true) ?: false
-            }.map { it ->
+                entry.value.name.contains(phrase, ignoreCase = true)
+            }.map {
                 Suggestion(
                     name = it.value.name,
                     id = it.value.id

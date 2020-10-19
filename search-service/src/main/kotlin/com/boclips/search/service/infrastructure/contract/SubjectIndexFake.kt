@@ -1,6 +1,5 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.suggestions.IndexReader
@@ -24,8 +23,8 @@ class SubjectIndexFake :
 
         return index
             .filter { entry ->
-                entry.value.name.contains(phrase, ignoreCase = true) ?: false
-            }.map { it ->
+                entry.value.name.contains(phrase, ignoreCase = true)
+            }.map {
                 Suggestion(
                     name = it.value.name,
                     id = it.value.id

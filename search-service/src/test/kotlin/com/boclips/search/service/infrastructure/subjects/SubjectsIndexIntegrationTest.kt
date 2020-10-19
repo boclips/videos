@@ -1,7 +1,8 @@
 package com.boclips.search.service.infrastructure.subjects
 
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.subjects.model.SubjectQuery
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableSubjectMetadataFactory
 import org.assertj.core.api.Assertions
@@ -13,20 +14,20 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     lateinit var indexWriter: SubjectsIndexWriter
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         indexReader = SubjectsIndexReader(esClient)
         indexWriter = SubjectsIndexWriter.createTestInstance(esClient, 20)
     }
 
     @Test
-    fun `creates a new index and upserts the subject provided`(){
+    fun `creates a new index and upserts the subject provided`() {
         indexWriter.safeRebuildIndex(
             sequenceOf(SearchableSubjectMetadataFactory.create(id = "1", name = "Super Subject"))
         )
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "super"
                 )
             )
@@ -50,7 +51,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "1"
                 )
             )
@@ -74,7 +75,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "upe"
                 )
             )
@@ -97,10 +98,11 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "subje"
+                )
             )
-        ))
+        )
 
         Assertions.assertThat(results.elements.size).isEqualTo(5)
     }
@@ -124,7 +126,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "1 Minute"
                 )
             )
@@ -153,7 +155,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "ted"
                 )
             )
@@ -163,7 +165,6 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         Assertions.assertThat(results.elements[0].id).isEqualTo("6")
         Assertions.assertThat(results.elements[1].id).isEqualTo("7")
     }
-
 
     @Test
     fun `returns subject suggestions with crash course channels`() {
@@ -184,7 +185,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "Crash"
                 )
             )
@@ -193,7 +194,6 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         Assertions.assertThat(results.elements.size).isEqualTo(3)
         Assertions.assertThat(results.elements[0].id).isEqualTo("9") // elements[0] = Crash Course
     }
-
 
     @Test
     fun `returns subject suggestions with crash course engineering channels`() {
@@ -214,7 +214,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "ering"
                 )
             )
@@ -243,7 +243,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery(
+                query = SuggestionQuery<SubjectMetadata>(
                     "3"
                 )
             )
@@ -266,7 +266,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SubjectQuery("Boy")
+                query = SuggestionQuery<SubjectMetadata>("Boy")
             )
         )
 
@@ -288,7 +288,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         Assertions.assertThat(
             indexReader.search(
                 SearchRequestWithoutPagination(
-                    query = SubjectQuery(
+                    query = SuggestionQuery<SubjectMetadata>(
                         "boy"
                     )
                 )
@@ -300,7 +300,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         Assertions.assertThat(
             indexReader.search(
                 SearchRequestWithoutPagination(
-                    query = SubjectQuery(
+                    query = SuggestionQuery<SubjectMetadata>(
                         "boy"
                     )
                 )

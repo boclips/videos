@@ -3,6 +3,7 @@ package com.boclips.videos.service.domain.service.subject
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
+import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 
 interface SubjectRepository {
     fun findAll(): List<Subject>
@@ -14,4 +15,5 @@ interface SubjectRepository {
     fun create(name: String): Subject
     fun delete(id: SubjectId)
     fun update(updateCommand: SubjectUpdateCommand): Subject
+    fun streamAll(consumer: (Sequence<SubjectSuggestion>) -> Unit)
 }

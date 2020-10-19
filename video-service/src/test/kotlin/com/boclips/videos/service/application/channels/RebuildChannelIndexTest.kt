@@ -18,7 +18,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class RebuildChannelsIndexTest {
+internal class RebuildChannelIndexTest {
     lateinit var index: ChannelIndex
 
     @BeforeEach
@@ -67,7 +67,7 @@ internal class RebuildChannelsIndexTest {
             }
         }
 
-        val rebuildSearchIndex = RebuildChannelsIndex(channelRepository, index)
+        val rebuildSearchIndex = RebuildChannelIndex(channelRepository, index)
 
         rebuildSearchIndex()
 

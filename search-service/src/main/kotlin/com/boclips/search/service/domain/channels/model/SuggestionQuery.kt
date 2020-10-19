@@ -5,5 +5,5 @@ import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 
 class SuggestionQuery<T>(
     override val phrase: String = "",
-    val accessRuleQuery: AccessRuleQuery?
+    val accessRuleQuery: AccessRuleQuery? = null
 ) : SearchQuery<T>(phrase)

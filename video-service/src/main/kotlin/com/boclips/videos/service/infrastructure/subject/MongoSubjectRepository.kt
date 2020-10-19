@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.subject
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.subject.SubjectUpdateCommand
+import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
@@ -83,6 +84,19 @@ class MongoSubjectRepository(
 
     override fun delete(id: SubjectId) {
         getSubjectCollection().deleteOne(SubjectDocument::id eq ObjectId(id.value))
+    }
+
+    override fun streamAll(consumer: (Sequence<SubjectSuggestion>) -> Unit) {
+        val sequence = Sequence {
+            getSubjectCollection().find().iterator()
+        }.mapNotNull { SubjectDocumentConverter.toSubject(it) }.map {
+            SubjectSuggestion(
+                name = it.name,
+                id = it.id
+            )
+        }
+
+        consumer(sequence)
     }
 
     override fun update(updateCommand: SubjectUpdateCommand): Subject {

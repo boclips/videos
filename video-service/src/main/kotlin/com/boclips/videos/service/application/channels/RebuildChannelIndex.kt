@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import mu.KLogging
 
-open class RebuildChannelsIndex(
+open class RebuildChannelIndex(
     private val channelRepository: ChannelRepository,
     private val channelsIndex: ChannelIndex
 ) {

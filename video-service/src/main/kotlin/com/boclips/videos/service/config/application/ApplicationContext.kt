@@ -11,7 +11,7 @@ import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
-import com.boclips.videos.service.application.channels.RebuildChannelsIndex
+import com.boclips.videos.service.application.channels.RebuildChannelIndex
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.BroadcastCollections
@@ -38,6 +38,7 @@ import com.boclips.videos.service.application.disciplines.UpdateDiscipline
 import com.boclips.videos.service.application.search.FindNewSuggestions
 import com.boclips.videos.service.application.search.FindNewSuggestionsByQuery
 import com.boclips.videos.service.application.search.FindSuggestions
+import com.boclips.videos.service.application.search.RebuildSubjectIndex
 import com.boclips.videos.service.application.subject.CreateSubject
 import com.boclips.videos.service.application.subject.DeleteSubject
 import com.boclips.videos.service.application.subject.GetSubject
@@ -319,8 +320,16 @@ class ApplicationContext(
     }
 
     @Bean
-    fun rebuildChannelIndex(): RebuildChannelsIndex {
-        return RebuildChannelsIndex(
+    fun rebuildSubjectIndex(): RebuildSubjectIndex {
+        return RebuildSubjectIndex(
+            subjectRepository,
+            subjectIndex
+        )
+    }
+
+    @Bean
+    fun rebuildChannelIndex(): RebuildChannelIndex {
+        return RebuildChannelIndex(
             channelRepository,
             channelsIndex
         )
