@@ -29,7 +29,7 @@ class SuggestionsController(
     ): ResponseEntity<SuggestionsResource> {
         val suggestions = findSuggestions.byQuery(query = query, user = getCurrentUser())
 
-        val resource = suggestionToResourceConverter.convertNewSuggestions(
+        val resource = suggestionToResourceConverter.convert(
             query = query,
             suggestions = suggestions
         )

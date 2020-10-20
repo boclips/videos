@@ -1,16 +1,16 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.videos.service.domain.model.Suggestions
-import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.common.SuggestionsResults
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 
 class SuggestionFactory {
     companion object {
         fun create(
-            channels: List<Channel>,
-            subjects: List<Subject>
-        ): Suggestions {
-            return Suggestions(channels = channels, subjects = subjects)
+            channels: List<ChannelSuggestion>,
+            subjects: List<SubjectSuggestion>
+        ): SuggestionsResults {
+            return SuggestionsResults(channels = channels, subjects = subjects)
         }
     }
 }

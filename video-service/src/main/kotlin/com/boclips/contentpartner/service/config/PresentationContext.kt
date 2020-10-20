@@ -59,8 +59,8 @@ class PresentationContext(
     }
 
     @Bean
-    fun getSuggestionConverter(videosLinkBuilder: VideosLinkBuilder): SuggestionToResourceConverter {
-        return SuggestionToResourceConverter(videosLinkBuilder)
+    fun getSuggestionConverter(): SuggestionToResourceConverter {
+        return SuggestionToResourceConverter()
     }
 
     @Bean
