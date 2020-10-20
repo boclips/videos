@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 import com.boclips.videos.service.testsupport.ChannelFactory
 import com.boclips.videos.service.testsupport.SuggestionFactory
 import com.boclips.videos.service.testsupport.TestFactories.createSubject
@@ -10,18 +12,20 @@ import org.junit.jupiter.api.Test
 class SuggestionToResourceConverterTest {
     @Test
     fun `convert suggestions`() {
-        val subjectOne = createSubject(name = "Biology")
-        val subjectTwo = createSubject(name = "Biological Sciences")
+        val subjectOne = SubjectSuggestion(name = "nice subject", id = SubjectId("1"))
+        val subjectTwo = SubjectSuggestion(name = "nicer subject", id = SubjectId("2"))
+
         val channels = listOf(
-            ChannelFactory.create(id = "123", name = "Ted"),
-            ChannelFactory.create(id = "234", name = "Crash Course Biology")
+            ChannelFactory.createSuggestion(id = "123", name = "Ted"),
+            ChannelFactory.createSuggestion(id = "234", name = "Crash Course Biology")
         )
+
         val suggestions = SuggestionFactory.create(
             channels = channels,
             subjects = listOf(subjectOne, subjectTwo)
         )
 
-        val resource = SuggestionToResourceConverter(mock()).convert(query = "ted", suggestions = suggestions)
+        val resource = SuggestionToResourceConverter().convert(query = "ted", suggestions = suggestions)
 
         assertThat(resource.channels[0].id).isEqualTo("123")
         assertThat(resource.channels[1].id).isEqualTo("234")
