@@ -1,6 +1,7 @@
 package com.boclips.videos.service.testsupport.fakes
 
 import com.boclips.users.api.httpclient.UsersClient
+import com.boclips.users.api.httpclient.test.fakes.ContentPackagesClientFake
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import org.springframework.context.annotation.Bean
@@ -15,4 +16,7 @@ class UserServiceClientFake {
 
     @Bean
     fun organisationsClient(): OrganisationsClientFake = OrganisationsClientFake()
+
+    @Bean
+    fun contentPackagesClient(): ContentPackagesClientFake = ContentPackagesClientFake()
 }

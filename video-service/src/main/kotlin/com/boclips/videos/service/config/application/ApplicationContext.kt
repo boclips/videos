@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.users.api.httpclient.ContentPackagesClient
 import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
@@ -53,6 +54,7 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DeleteVideoThumbnail
 import com.boclips.videos.service.application.video.GetVideoAssets
+import com.boclips.videos.service.application.video.GetVideosByContentPackage
 import com.boclips.videos.service.application.video.RateVideo
 import com.boclips.videos.service.application.video.SetVideoThumbnail
 import com.boclips.videos.service.application.video.TagVideo
@@ -90,6 +92,7 @@ import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.CaptionValidator
@@ -138,7 +141,8 @@ class ApplicationContext(
     val accessRuleService: AccessRuleService,
     val videoCreationService: VideoCreationService,
     val subjectService: SubjectService,
-    val contentWarningRepository: ContentWarningRepository
+    val contentWarningRepository: ContentWarningRepository,
+    val contentPackageService: ContentPackageService
 ) {
     @Bean
     fun searchVideo(
@@ -201,6 +205,10 @@ class ApplicationContext(
     fun updateVideo(): UpdateVideo {
         return UpdateVideo(videoRepository, subjectRepository, tagRepository, contentWarningRepository)
     }
+
+    @Bean
+    fun getVideosByContentPackage(): GetVideosByContentPackage =
+        GetVideosByContentPackage(videoRetrievalService, contentPackageService)
 
     @Bean
     fun updateCaptionContent(captionService: CaptionService): UpdateCaptionContent {

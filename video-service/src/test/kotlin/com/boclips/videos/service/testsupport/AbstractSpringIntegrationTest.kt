@@ -19,6 +19,7 @@ import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
+import com.boclips.users.api.httpclient.test.fakes.ContentPackagesClientFake
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
@@ -60,6 +61,7 @@ import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
+import com.boclips.videos.service.testsupport.ContentPackageResourceFactory.createContentPackageResource
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.MongoClient
@@ -173,6 +175,9 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var usersClient: UsersClientFake
 
     @Autowired
+    lateinit var contentPackagesClient: ContentPackagesClientFake
+
+    @Autowired
     lateinit var organisationsClient: OrganisationsClientFake
 
     @Autowired
@@ -224,6 +229,7 @@ abstract class AbstractSpringIntegrationTest {
         fakeEventBus.clearState()
 
         usersClient.clear()
+        contentPackagesClient.clear()
         organisationsClient.clear()
 
         reset(legacyVideoSearchService)
@@ -505,6 +511,15 @@ abstract class AbstractSpringIntegrationTest {
             )
         )
     }
+
+    fun saveContentPackage(
+        id: String,
+        name: String,
+        vararg accessRules: AccessRuleResource
+    ) =
+        contentPackagesClient.add(
+            createContentPackageResource(id, name, accessRules.toList())
+        )
 
     fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
         usersClient.addAccessRules(

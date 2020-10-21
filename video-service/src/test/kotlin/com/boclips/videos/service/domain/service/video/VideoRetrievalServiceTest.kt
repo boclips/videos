@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -93,16 +94,72 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
             val videoId2 = saveVideo()
             val videoId3 = saveVideo()
 
-            val videos = videoRetrievalService.getPlayableVideos(listOf(videoId3, videoId1, videoId2), VideoAccess.Everything)
+            val videos =
+                videoRetrievalService.getPlayableVideos(listOf(videoId3, videoId1, videoId2), VideoAccess.Everything)
             assertThat(videos.map { it.videoId }).containsExactly(videoId3, videoId1, videoId2)
         }
 
         @Test
         fun `look up by id throws if video does not exist`() {
             Assertions.assertThatThrownBy {
-                videoRetrievalService.getPlayableVideo(VideoId(value = TestFactories.aValidId()), VideoAccess.Everything)
+                videoRetrievalService.getPlayableVideo(
+                    VideoId(value = TestFactories.aValidId()),
+                    VideoAccess.Everything
+                )
             }
                 .isInstanceOf(VideoNotFoundException::class.java)
+        }
+
+        @Test
+        fun `retrieve all video ids with Everything permission`() {
+            val videoId1 = saveVideo(title = "video 1")
+            val videoId2 = saveVideo(title = "video 2")
+            val videoId3 = saveVideo(title = "video 3")
+
+            val videoIds = videoRetrievalService.getVideoIds(
+                pageIndex = 0,
+                pageSize = 5,
+                videoAccess = VideoAccess.Everything
+            )
+
+            assertThat(videoIds).containsExactlyInAnyOrder(videoId1, videoId2, videoId3)
+        }
+
+        @Test
+        fun `respect page and size parameters in video ids query`() {
+            saveVideo(title = "video 1")
+            saveVideo(title = "video 2")
+            saveVideo(title = "video 3")
+
+            val videoIds = videoRetrievalService.getVideoIds(
+                pageIndex = 1,
+                pageSize = 2,
+                videoAccess = VideoAccess.Everything
+            )
+            assertThat(videoIds).hasSize(1)
+        }
+
+        @Test
+        fun `restrict to video access rules in video ids query`() {
+            val video1 = saveVideo(title = "1")
+            saveVideo(title = "2")
+            val video3 = saveVideo(title = "3")
+
+            val videoIds = videoRetrievalService.getVideoIds(
+                pageIndex = 0,
+                pageSize = 5,
+                videoAccess = VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedIds(
+                            setOf(video1, video3)
+                        )
+                    )
+                )
+            )
+
+            assertThat(videoIds).containsExactlyInAnyOrder(
+                video1, video3
+            )
         }
     }
 }

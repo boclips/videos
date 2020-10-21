@@ -17,8 +17,10 @@ import com.boclips.contentpartner.service.infrastructure.contract.legalrestricti
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.MongoLegalRestrictionsRepository
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
+import com.boclips.users.api.httpclient.ContentPackagesClient
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
+import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
@@ -34,8 +36,9 @@ import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
-import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
+import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
@@ -48,6 +51,7 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvide
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
+import com.boclips.videos.service.infrastructure.contentpackage.ApiContentPackageService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
@@ -65,7 +69,8 @@ class DomainContext(
     private val mongoClient: MongoClient,
     private val eventBus: EventBus,
     private val mongoCollectionRepository: MongoCollectionRepository,
-    private val mongoSubjectRepository: MongoSubjectRepository
+    private val mongoSubjectRepository: MongoSubjectRepository,
+    private val contentPackagesClient: ContentPackagesClient
 ) {
 
     @Bean
@@ -207,8 +212,8 @@ class DomainContext(
     @Bean
     fun playbackRepository(kalturaPlaybackProvider: PlaybackProvider, youtubePlaybackProvider: PlaybackProvider):
         PlaybackRepository {
-            return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
-        }
+        return PlaybackRepository(kalturaPlaybackProvider, youtubePlaybackProvider)
+    }
 
     @Bean
     fun playbackService(
@@ -289,6 +294,12 @@ class DomainContext(
     fun userService(usersClient: UsersClient, organisationsClient: OrganisationsClient): UserService {
         return ApiUserService(usersClient, organisationsClient)
     }
+
+    @Bean
+    fun contentPackageService(
+        accessRulesConverter: AccessRulesConverter
+    ): ContentPackageService =
+        ApiContentPackageService(contentPackagesClient, accessRulesConverter)
 
     @Bean
     fun eventService(): EventService = EventService(eventBus)

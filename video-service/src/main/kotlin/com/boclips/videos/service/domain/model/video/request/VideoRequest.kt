@@ -26,14 +26,14 @@ enum class SortKey {
 
 class VideoRequest(
     val text: String,
+    val pageSize: Int,
+    val pageIndex: Int,
     val ids: Set<String> = emptySet(),
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
     val durationRanges: List<DurationRange>? = null,
     val releaseDateFrom: LocalDate? = null,
     val releaseDateTo: LocalDate? = null,
-    val pageSize: Int,
-    val pageIndex: Int,
     val source: SourceType? = null,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,

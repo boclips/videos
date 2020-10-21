@@ -11,6 +11,8 @@ import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.users.api.response.accessrule.ContentPackageResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.contract.ContractCostsRequest
 import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
@@ -398,6 +400,20 @@ object UserRatingFactory {
         )
     ): UserRating =
         UserRating(rating, userId)
+}
+
+object ContentPackageResourceFactory {
+    fun createContentPackageResource(
+        id: String = "content-package",
+        name: String = "content package",
+        accessRules: List<AccessRuleResource>
+    ) =
+        ContentPackageResource(
+            id = id,
+            name = name,
+            accessRules = accessRules,
+            _links = mapOf()
+        )
 }
 
 object PlaybackResourceFactory {

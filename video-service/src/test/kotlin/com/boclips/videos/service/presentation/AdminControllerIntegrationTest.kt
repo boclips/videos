@@ -1,21 +1,24 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.contract.legalrestrictions.ContractLegalRestrictionsRepository
 import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
 import com.boclips.eventbus.events.video.CleanUpDeactivatedVideoRequested
 import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
+import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.users.api.response.accessrule.ContentPackageResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -81,13 +84,17 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `broadcast contract legal restriction events`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asOperator())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asOperator()
+        )
             .andExpect(status().isOk)
     }
 
     @Test
     fun `broadcast contract legal restriction events returns 403 when user is not allowed`() {
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asTeacher())
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/v1/admin/actions/broadcast_contract_legal_restrictions").asTeacher()
+        )
             .andExpect(status().isForbidden)
     }
 
@@ -110,8 +117,9 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `retry analyse video publishes event`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "entry-123"))
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US&retry=true").asOperator()
-            )
+            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_video/$videoId?language=en_US&retry=true")
+                .asOperator()
+        )
             .andExpect(status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(RetryVideoAnalysisRequested::class.java)
@@ -199,14 +207,61 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val oldVideoId = saveVideo(contentProvider = "TED", title = "Duplicate video")
         saveVideo(contentProvider = "TED", title = "Duplicate video")
 
-        mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(
+            MockMvcRequestBuilders
                 .post("/v1/admin/actions/clean_deactivated_videos")
                 .asOperator()
-            )
+        )
             .andExpect(status().isAccepted)
 
         val event = fakeEventBus.getEventOfType(CleanUpDeactivatedVideoRequested::class.java)
 
         assertThat(event.videoId).isEqualTo(oldVideoId.value)
+    }
+
+    @Test
+    fun `get all videos for access rule associated with given content package ID`() {
+        saveVideo(title = "1")
+        val video2 = saveVideo(title = "2")
+        val video3 = saveVideo(title = "3")
+
+        val accessRules = AccessRuleResource.IncludedVideos(
+            id = "some-id",
+            name = "included video rule",
+            videoIds = listOf(video3, video2).map { it.value }
+        )
+
+        val contentPackage = ContentPackageResource(
+            id = "content-package-id",
+            name = "content package",
+            accessRules = listOf(accessRules),
+            _links = mapOf()
+        )
+
+        contentPackagesClient.add(contentPackage)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(
+                "/v1/admin/actions/videos_for_content_package/content-package-id?page=0&size=50"
+            )
+                .asOperator()
+        )
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath(
+                    "videoIds",
+                    containsInAnyOrder(video3.value, video2.value)
+                )
+            )
+    }
+
+    @Test
+    fun `get 403 in response when querying videos_for_content_package endpoint`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(
+                "/v1/admin/actions/videos_for_content_package/some-id"
+            ).asTeacher()
+        )
+            .andExpect(status().isForbidden)
     }
 }

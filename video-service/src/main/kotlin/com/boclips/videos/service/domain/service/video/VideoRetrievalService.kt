@@ -114,7 +114,7 @@ class VideoRetrievalService(
 
         val results = videoIndex.search(
             PaginatedSearchRequest(
-                query =  VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
+                query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
                 windowSize = 1
             )
         )
@@ -130,6 +130,23 @@ class VideoRetrievalService(
             ?: throw VideoNotFoundException().also {
                 logger.info { "Could not find playable video $videoId with access rules $videoAccess" }
             }
+    }
+
+    fun getVideoIds(pageIndex: Int, pageSize: Int, videoAccess: VideoAccess): List<VideoId> {
+        val videoRequest = VideoRequest(
+            text = "",
+            pageIndex = pageIndex,
+            pageSize = pageSize
+        )
+        val searchRequest = PaginatedSearchRequest(
+            query = videoRequest.toQuery(videoAccess),
+            startIndex = convertPageToIndex(pageSize, pageIndex),
+            windowSize = pageSize
+        )
+        return videoIndex
+            .search(searchRequest)
+            .elements
+            .map(::VideoId)
     }
 
     private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {

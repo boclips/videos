@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config
 
+import com.boclips.users.api.httpclient.ContentPackagesClient
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.users.api.httpclient.helper.ServiceAccountCredentials
@@ -13,26 +14,32 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class UserServiceContext {
     @Bean
-    fun usersClient(userClientProperties: UserClientProperties) = UsersClient.create(
-        apiUrl = userClientProperties.baseUrl,
-        tokenFactory = ServiceAccountTokenFactory(
-            serviceAccountCredentials = ServiceAccountCredentials(
-                authEndpoint = userClientProperties.tokenUrl,
-                clientId = userClientProperties.clientId,
-                clientSecret = userClientProperties.clientSecret
-            )
+    fun usersClient(userClientProperties: UserClientProperties) =
+        UsersClient.create(
+            apiUrl = userClientProperties.baseUrl,
+            tokenFactory = userClientProperties.tokenFactory()
         )
-    )
 
     @Bean
-    fun organisationsClient(userClientProperties: UserClientProperties) = OrganisationsClient.create(
-        apiUrl = userClientProperties.baseUrl,
-        tokenFactory = ServiceAccountTokenFactory(
-            serviceAccountCredentials = ServiceAccountCredentials(
-                authEndpoint = userClientProperties.tokenUrl,
-                clientId = userClientProperties.clientId,
-                clientSecret = userClientProperties.clientSecret
-            )
+    fun organisationsClient(userClientProperties: UserClientProperties) =
+        OrganisationsClient.create(
+            apiUrl = userClientProperties.baseUrl,
+            tokenFactory = userClientProperties.tokenFactory()
+        )
+
+    @Bean
+    fun contentPackagesClient(userClientProperties: UserClientProperties) =
+        ContentPackagesClient.create(
+            apiUrl = userClientProperties.baseUrl,
+            tokenFactory = userClientProperties.tokenFactory()
+        )
+}
+
+fun UserClientProperties.tokenFactory() =
+    ServiceAccountTokenFactory(
+        serviceAccountCredentials = ServiceAccountCredentials(
+            authEndpoint = tokenUrl,
+            clientId = clientId,
+            clientSecret = clientSecret
         )
     )
-}
