@@ -129,14 +129,15 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class PlaybackEvents {
         @Test
-        fun `single playback events is being saved`() {
+        fun `single playback event is being saved`() {
             val videoId = aValidId()
 
             val content = """{
             "videoId":"$videoId",
             "videoIndex":135,
             "segmentStartSeconds":1469.128248,
-            "segmentEndSeconds":1470.728248
+            "segmentEndSeconds":1470.728248,
+            "query":"the awesome dogs"
         }""".trimIndent()
 
             mockMvc.perform(
@@ -159,6 +160,7 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(event.url).isEqualTo("https://teachers.boclips.com/videos?q=abc")
             assertThat(event.deviceId).isEqualTo("device-id")
             assertThat(event.timestamp).isNotNull()
+            assertThat(event.query).isEqualTo("the awesome dogs")
         }
 
         @Test

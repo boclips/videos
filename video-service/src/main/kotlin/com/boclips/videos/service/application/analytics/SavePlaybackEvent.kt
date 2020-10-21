@@ -20,6 +20,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
             videoIndex = event.videoIndex,
             segmentStartSeconds = event.segmentStartSeconds!!,
             segmentEndSeconds = event.segmentEndSeconds!!,
+            query = event.query,
             timestamp = event.captureTime ?: ZonedDateTime.now(),
             user = user
         )
@@ -39,6 +40,7 @@ class SavePlaybackEvent(private val eventService: EventService) {
                 segmentStartSeconds = event.segmentStartSeconds!!,
                 segmentEndSeconds = event.segmentEndSeconds!!,
                 timestamp = event.captureTime?.toInstant()?.atZone(ZoneOffset.UTC) ?: ZonedDateTime.now(),
+                query = event.query,
                 user = user
             )
         }

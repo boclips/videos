@@ -358,6 +358,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
                 id = "user@example.com",
                 context = RequestContext(origin = "https://b.com", deviceId = "device-1")
             ),
+            query = null,
             timestamp = ZonedDateTime.now()
         )
 

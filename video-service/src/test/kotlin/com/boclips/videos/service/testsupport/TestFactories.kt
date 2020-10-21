@@ -578,14 +578,16 @@ object CreatePlaybackEventCommandFactory {
         videoIndex: Int = 0,
         segmentStartSeconds: Long = 0,
         segmentEndSeconds: Long = 0,
-        captureTime: ZonedDateTime? = null
+        captureTime: ZonedDateTime? = null,
+        query: String? = null
     ): CreatePlaybackEventCommand {
         return CreatePlaybackEventCommand(
             videoId = videoId,
             videoIndex = videoIndex,
             segmentStartSeconds = segmentStartSeconds,
             segmentEndSeconds = segmentEndSeconds,
-            captureTime = captureTime
+            captureTime = captureTime,
+            query = query
         )
     }
 }

@@ -9,7 +9,8 @@ data class CreatePlaybackEventCommand(
     val videoIndex: Int?,
     val segmentStartSeconds: Long?,
     val segmentEndSeconds: Long?,
-    val captureTime: ZonedDateTime? = null
+    val captureTime: ZonedDateTime? = null,
+    val query: String? = null
 ) : EventCommand() {
     override fun isValidOrThrows() {
         if (this.videoId.isNullOrBlank()) throw InvalidEventException("videoId must be specified")
