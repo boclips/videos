@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -40,7 +40,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results =
-            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery())))
+            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery())))
 
         assertThat(results.elements).hasSize(2)
     }
@@ -75,7 +75,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         ageRangeMin = 3,
                         ageRangeMax = 5,
@@ -112,7 +112,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "Intercom Learning",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         ageRangeMin = 3,
                         ageRangeMax = 5
@@ -161,7 +161,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = setOf(VideoType.STOCK, VideoType.NEWS)
                     )
@@ -203,7 +203,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "Intercom Learning",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         ageRangeMin = 3,
                         ageRangeMax = 5,
@@ -249,7 +249,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "elephant",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         ageRanges = listOf(AgeRange(3, 6), AgeRange(7, 8)),
                         subjectIds = setOf("subject-1")
@@ -282,7 +282,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         subjectIds = setOf("subject-two")
                     )
@@ -316,7 +316,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         subjectIds = setOf("subject-two"),
                         bestFor = listOf("other")
@@ -347,7 +347,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "banana",
-                        accessRuleQuery = AccessRuleQuery(),
+                        videoAccessRuleQuery = VideoAccessRuleQuery(),
                         userQuery = UserQuery(bestFor = listOf("explainer"))
                     )
                 )
@@ -383,7 +383,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "matching-query",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         durationRanges = listOf(
                             DurationRange(
@@ -423,7 +423,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         subjectIds = setOf("subject-two"),
                         durationRanges = listOf(
@@ -463,7 +463,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         subjectIds = setOf("subject-two"),
                         promoted = true

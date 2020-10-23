@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -55,7 +55,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             userQuery = UserQuery(ids = setOf(video.videoId.value)),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -81,7 +81,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             userQuery = UserQuery(ids = setOf(video.videoId.value)),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -117,7 +117,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                             userQuery = UserQuery(
                                 ids = videos.map { it.videoId.value }.toSet()
                             ),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -146,7 +146,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                             userQuery = UserQuery(
                                 ids = videos.map { it.videoId.value }.toSet()
                             ),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -187,7 +187,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                             userQuery = UserQuery(
                                 ids = videos.map { it.videoId.value }.toSet()
                             ),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -236,7 +236,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             userQuery = UserQuery(ids = setOf(video.videoId.value)),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits
@@ -254,7 +254,7 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
                     PaginatedSearchRequest(
                         query = VideoQuery(
                             userQuery = UserQuery(ids = setOf(video.videoId.value)),
-                            accessRuleQuery = AccessRuleQuery()
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
                 ).counts.totalHits

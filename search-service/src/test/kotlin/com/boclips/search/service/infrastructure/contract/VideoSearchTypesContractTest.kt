@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -40,7 +40,7 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(includedTypes = emptySet())
+                    videoAccessRuleQuery = VideoAccessRuleQuery(includedTypes = emptySet())
                 )
             )
         )
@@ -74,7 +74,7 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK))
                 )
             )
         )
@@ -100,7 +100,7 @@ class VideoSearchTypesContractTest : EmbeddedElasticSearchIntegrationTest() {
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(excludedTypes = setOf(VideoType.NEWS, VideoType.STOCK)),
                     userQuery = UserQuery(
                         ids = setOf("1", "2", "3")
                     )

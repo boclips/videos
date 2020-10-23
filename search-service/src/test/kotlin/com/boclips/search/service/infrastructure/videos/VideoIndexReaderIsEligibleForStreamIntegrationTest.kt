@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -37,7 +37,7 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(isEligibleForStream = true)))
+            PaginatedSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery(isEligibleForStream = true)))
         )
 
         assertThat(results.elements).containsExactly("1")
@@ -60,7 +60,7 @@ class VideoIndexReaderIsEligibleForStreamIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(accessRuleQuery = AccessRuleQuery(isEligibleForStream = null)))
+            PaginatedSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery(isEligibleForStream = null)))
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder("1", "3")

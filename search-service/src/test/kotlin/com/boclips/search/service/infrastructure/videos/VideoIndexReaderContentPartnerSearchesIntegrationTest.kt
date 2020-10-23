@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -54,7 +54,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                     query = VideoQuery(
                         phrase = contentProvider,
                         userQuery = UserQuery(types = setOf(VideoType.NEWS)),
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )
@@ -85,7 +85,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = contentProvider,
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         bestFor = listOf("education")
                     )
@@ -114,7 +114,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed", accessRuleQuery = AccessRuleQuery()))
+            PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed", videoAccessRuleQuery = VideoAccessRuleQuery()))
         )
 
         assertThat(results.elements).startsWith("3")
@@ -155,7 +155,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         durationRanges = listOf(
                             DurationRange(
@@ -192,7 +192,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         subjectIds = setOf("History")
                     )
@@ -226,7 +226,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         ageRangeMin = 2,
                         ageRangeMax = 5
@@ -259,7 +259,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         releaseDateFrom = LocalDate.of(2019, Month.JANUARY, 1),
                         releaseDateTo = LocalDate.of(2019, Month.FEBRUARY, 1)
@@ -292,7 +292,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         source = SourceType.BOCLIPS
                     )

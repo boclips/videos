@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -37,7 +37,7 @@ class VideoSearchDurationContractTest : EmbeddedElasticSearchIntegrationTest() {
                 query = VideoQuery(
                     "World war",
                     userQuery = UserQuery(durationRanges = listOf(DurationRange(min = Duration.ofSeconds(10)))),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -73,7 +73,7 @@ class VideoSearchDurationContractTest : EmbeddedElasticSearchIntegrationTest() {
                                     max = Duration.ofSeconds(9)
                                 )
                             )
-                        ), accessRuleQuery = AccessRuleQuery()
+                        ), videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )

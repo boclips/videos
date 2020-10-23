@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.channels
 
+import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.*
 import org.elasticsearch.common.bytes.BytesArray
@@ -16,7 +17,9 @@ internal class ChannelsDocumentConverterTest {
                 """
             {
                 "id": "14",
-                "name": "this is channel name"
+                "name": "this is channel name",
+                "eligibleForStream": true,
+                "types": ["NEWS", "STOCK", "INSTRUCTIONAL"]
             }
                 """.trimIndent()
             )
@@ -27,6 +30,8 @@ internal class ChannelsDocumentConverterTest {
         val expectedDocument = ChannelDocument(
             id = "14",
             name = "this is channel name",
+            eligibleForStream = true,
+            types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL)
         )
 
         assertThat(actualDocument).isEqualTo(expectedDocument)
@@ -37,6 +42,8 @@ internal class ChannelsDocumentConverterTest {
         val metadata = SearchableChannelMetadataFactory.create(
             id = "14",
             name = "The title",
+            eligibleForStream = true,
+            contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL)
         )
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
@@ -45,6 +52,8 @@ internal class ChannelsDocumentConverterTest {
             ChannelDocument(
                 id = "14",
                 name = "The title",
+                eligibleForStream = true,
+                types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL)
             )
         )
     }

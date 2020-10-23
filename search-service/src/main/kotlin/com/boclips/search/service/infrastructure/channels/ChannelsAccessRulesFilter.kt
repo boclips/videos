@@ -1,21 +1,35 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders.termsQuery
 
 class ChannelsAccessRulesFilter {
     companion object {
-        fun channelsBuildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, accessRulesQuery: AccessRuleQuery): BoolQueryBuilder {
+        fun channelsBuildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder,
+                                           accessRulesQuery: SuggestionAccessRuleQuery): BoolQueryBuilder {
 
             if (accessRulesQuery.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.mustNot(
                     termsQuery(
-                        VideoDocument.ID,
+                        ChannelDocument.ID,
                         accessRulesQuery.excludedContentPartnerIds
                     )
                 )
+            }
+
+            if (accessRulesQuery.includedTypes.isNotEmpty()) {
+                boolQueryBuilder.filter(termsQuery(ChannelDocument.TYPES, accessRulesQuery.includedTypes))
+            }
+
+            if (accessRulesQuery.excludedTypes.isNotEmpty()) {
+                boolQueryBuilder.mustNot(termsQuery(ChannelDocument.TYPES, accessRulesQuery.excludedTypes))
+            }
+
+            if (accessRulesQuery.isEligibleForStream != null) {
+                boolQueryBuilder.filter(QueryBuilders.termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, accessRulesQuery.isEligibleForStream))
             }
 
             if (!accessRulesQuery.includedChannelIds.isNullOrEmpty()) {

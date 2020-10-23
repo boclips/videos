@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateComm
 import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
+import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
@@ -35,7 +36,9 @@ class ChannelService(
             sequenceOf(
                 ChannelSuggestion(
                     name = channel.name,
-                    id = ChannelId(channel.id.value)
+                    id = ChannelId(channel.id.value),
+                    eligibleForStream = true,
+                    contentTypes = channel.contentTypes ?: emptyList()
                 )
             )
         )

@@ -12,12 +12,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 
-class AccessRuleQueryConverterTest {
+class VideoAccessRuleQueryConverterTest {
     @Test
     fun `can convert access rules to query`() {
         val allowedVideos = setOf(TestFactories.createVideoId(), TestFactories.createVideoId())
         val deniedVideoIds = setOf(TestFactories.createVideoId())
-        val query = AccessRuleQueryConverter.fromAccessRules(
+        val query = AccessRuleQueryConverter.toVideoAccessRuleQuery(
             videoAccess = VideoAccess.Rules(
                 listOf(
                     VideoAccessRule.IncludedIds(allowedVideos),

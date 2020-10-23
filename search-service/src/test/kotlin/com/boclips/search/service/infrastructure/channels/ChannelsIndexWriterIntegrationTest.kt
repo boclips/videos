@@ -1,8 +1,9 @@
 package com.boclips.search.service.infrastructure.channels
 
+import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -29,7 +30,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "super",
-                    AccessRuleQuery(includedChannelIds = setOf("1"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
                 )
             )
         )
@@ -54,7 +55,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "1",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
                 )
             )
         )
@@ -79,7 +80,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "chan",
-                    AccessRuleQuery(
+                    SuggestionAccessRuleQuery(
                         includedChannelIds = setOf("1", "2", "3", "4"),
                         excludedContentPartnerIds = setOf("5")
                     )
@@ -106,7 +107,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "annel",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
                 )
             )
         )
@@ -135,7 +136,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "1 Minute",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
@@ -165,7 +166,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "ted",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
@@ -196,7 +197,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "crash co",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
@@ -228,7 +229,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "Crash",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
@@ -258,7 +259,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "crash",
-                    AccessRuleQuery(
+                    SuggestionAccessRuleQuery(
                         includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9"),
                         excludedContentPartnerIds = setOf("10")
                     )
@@ -291,7 +292,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "ering",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
@@ -321,13 +322,90 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             SearchRequestWithoutPagination(
                 query = SuggestionQuery(
                     "3",
-                    AccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+                    SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
                 )
             )
         )
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("5")
+    }
+
+    @Test
+    fun `creates a new index and applies eligible for stream filter`() {
+        indexWriter.safeRebuildIndex(sequenceOf(
+            SearchableChannelMetadataFactory.create(id = "1", name = "Super Channel", eligibleForStream = true),
+            SearchableChannelMetadataFactory.create(id = "2", name = "Super Mega Channel", eligibleForStream = false)
+        )
+        )
+
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = SuggestionQuery(
+                    "super",
+                    SuggestionAccessRuleQuery(isEligibleForStream = true)
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("1")
+    }
+
+    @Test
+    fun `creates a new index and applies excluded content types filter`() {
+        indexWriter.safeRebuildIndex(sequenceOf(
+            SearchableChannelMetadataFactory.create(
+                id = "1",
+                name = "Super Channel",
+                contentTypes = listOf(ContentType.NEWS)
+            ),
+            SearchableChannelMetadataFactory.create(
+                id = "2",
+                name = "Super Mega Channel",
+                contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK)
+            )
+        ))
+
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = SuggestionQuery(
+                    "super",
+                    SuggestionAccessRuleQuery(excludedTypes = setOf(ContentType.STOCK))
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("1")
+    }
+
+    @Test
+    fun `creates a new index and applies included content types filter`() {
+        indexWriter.safeRebuildIndex(sequenceOf(
+            SearchableChannelMetadataFactory.create(
+                id = "1",
+                name = "Super Channel",
+                contentTypes = listOf(ContentType.NEWS)
+            ),
+            SearchableChannelMetadataFactory.create(
+                id = "2",
+                name = "Super Mega Channel",
+                contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK)
+            )
+        ))
+
+        val results = indexReader.search(
+            SearchRequestWithoutPagination(
+                query = SuggestionQuery(
+                    "super",
+                    SuggestionAccessRuleQuery(includedTypes = setOf(ContentType.STOCK))
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(1)
+        assertThat(results.elements[0].id).isEqualTo("2")
     }
 
     @Test
@@ -343,7 +421,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         val results = indexReader.search(
             SearchRequestWithoutPagination(
-                query = SuggestionQuery("Boy", AccessRuleQuery(includedChannelIds = setOf("1")))
+                query = SuggestionQuery("Boy", SuggestionAccessRuleQuery(includedChannelIds = setOf("1")))
             )
         )
 
@@ -367,7 +445,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
                 SearchRequestWithoutPagination(
                     query = SuggestionQuery(
                         "boy",
-                        AccessRuleQuery(includedChannelIds = setOf("1"))
+                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
                     )
                 )
             ).elements
@@ -380,7 +458,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
                 SearchRequestWithoutPagination(
                     query = SuggestionQuery(
                         "boy",
-                        AccessRuleQuery(includedChannelIds = setOf("1"))
+                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
                     )
                 )
             ).elements.isEmpty()

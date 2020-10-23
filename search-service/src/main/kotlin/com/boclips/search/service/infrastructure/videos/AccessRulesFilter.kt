@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders.boolQuery
@@ -11,48 +11,48 @@ import org.elasticsearch.index.query.QueryBuilders.termsQuery
 
 class AccessRulesFilter {
     companion object {
-        fun buildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, videoQuery: AccessRuleQuery): BoolQueryBuilder {
-            if (videoQuery.excludedContentPartnerIds.isNotEmpty()) {
+        fun buildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, videoQueryVideo: VideoAccessRuleQuery): BoolQueryBuilder {
+            if (videoQueryVideo.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.mustNot(
                     termsQuery(
                         VideoDocument.CONTENT_PARTNER_ID,
-                        videoQuery.excludedContentPartnerIds
+                        videoQueryVideo.excludedContentPartnerIds
                     )
                 )
             }
 
-            if (videoQuery.includedTypes.isNotEmpty()) {
-                boolQueryBuilder.filter(termsQuery(VideoDocument.TYPES, videoQuery.includedTypes))
+            if (videoQueryVideo.includedTypes.isNotEmpty()) {
+                boolQueryBuilder.filter(termsQuery(VideoDocument.TYPES, videoQueryVideo.includedTypes))
             }
 
-            if (videoQuery.excludedTypes.isNotEmpty()) {
-                boolQueryBuilder.mustNot(termsQuery(VideoDocument.TYPES, videoQuery.excludedTypes))
+            if (videoQueryVideo.excludedTypes.isNotEmpty()) {
+                boolQueryBuilder.mustNot(termsQuery(VideoDocument.TYPES, videoQueryVideo.excludedTypes))
             }
 
-            if (!videoQuery.deniedVideoIds.isNullOrEmpty()) {
-                boolQueryBuilder.mustNot(termsQuery(VideoDocument.ID, videoQuery.deniedVideoIds))
+            if (!videoQueryVideo.deniedVideoIds.isNullOrEmpty()) {
+                boolQueryBuilder.mustNot(termsQuery(VideoDocument.ID, videoQueryVideo.deniedVideoIds))
             }
 
-            if (videoQuery.isEligibleForStream != null) {
-                boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, videoQuery.isEligibleForStream))
+            if (videoQueryVideo.isEligibleForStream != null) {
+                boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, videoQueryVideo.isEligibleForStream))
             }
 
             val combinedQuery = boolQuery()
-            if (!videoQuery.permittedVideoIds.isNullOrEmpty()) {
-                combinedQuery.should(idsQuery().addIds(* (videoQuery.permittedVideoIds.toTypedArray())))
+            if (!videoQueryVideo.permittedVideoIds.isNullOrEmpty()) {
+                combinedQuery.should(idsQuery().addIds(* (videoQueryVideo.permittedVideoIds.toTypedArray())))
             }
 
-            if (!videoQuery.includedChannelIds.isNullOrEmpty()) {
-                combinedQuery.should(termsQuery(VideoDocument.CONTENT_PARTNER_ID, videoQuery.includedChannelIds))
+            if (!videoQueryVideo.includedChannelIds.isNullOrEmpty()) {
+                combinedQuery.should(termsQuery(VideoDocument.CONTENT_PARTNER_ID, videoQueryVideo.includedChannelIds))
             }
 
             if (combinedQuery.hasClauses()) {
                 boolQueryBuilder.filter(combinedQuery)
             }
 
-            if (videoQuery.includedVoiceType.isNotEmpty()) {
+            if (videoQueryVideo.includedVoiceType.isNotEmpty()) {
                 val voicedQuery = boolQuery()
-                videoQuery.includedVoiceType.map {
+                videoQueryVideo.includedVoiceType.map {
                     when (it) {
                         VoiceType.WITH -> boolQuery().must(termQuery(VideoDocument.IS_VOICED, true))
                         VoiceType.WITHOUT -> boolQuery().must(termQuery(VideoDocument.IS_VOICED, false))

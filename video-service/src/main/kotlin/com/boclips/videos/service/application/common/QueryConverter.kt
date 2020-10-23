@@ -1,5 +1,6 @@
-package com.boclips.videos.service.application.video.search
+package com.boclips.videos.service.application.common
 
+import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -11,7 +12,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-class SearchQueryConverter {
+class QueryConverter {
     fun convertDuration(duration: String?): Duration? {
         return try {
             duration?.let { if (duration.isNotEmpty()) Duration.parse(it) else null }
@@ -42,13 +43,22 @@ class SearchQueryConverter {
         }
     }
 
-    fun convertType(type: String): VideoType =
+    fun convertTypeToVideoType(type: String): VideoType =
         when (type) {
             "NEWS" -> VideoType.NEWS
             "STOCK" -> VideoType.STOCK
             "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL
             "INSTRUCTIONAL_CLIPS" -> VideoType.INSTRUCTIONAL
-            else -> throw InvalidTypeException(type, VideoType.values())
+            else -> throw InvalidTypeException.videoType(type, VideoType.values())
+        }
+
+    fun convertTypeToContentType(type: String): ContentType =
+        when (type) {
+            "NEWS" -> ContentType.NEWS
+            "STOCK" -> ContentType.STOCK
+            "INSTRUCTIONAL" -> ContentType.INSTRUCTIONAL
+            "INSTRUCTIONAL_CLIPS" -> ContentType.INSTRUCTIONAL
+            else -> throw InvalidTypeException.contentType(type, ContentType.values())
         }
 
     fun convertDurations(

@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -45,7 +45,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
                     userQuery = UserQuery(
                         bestFor = listOf("news")
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -81,7 +81,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     phrase = "Trump",
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -120,7 +120,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
                     userQuery = UserQuery(
                         bestFor = emptyList()
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
 
                 )
             )
@@ -156,7 +156,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(types = setOf(VideoType.NEWS, VideoType.STOCK)),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )

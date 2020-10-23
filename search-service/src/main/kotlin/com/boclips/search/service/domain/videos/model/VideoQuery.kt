@@ -10,7 +10,7 @@ data class VideoQuery(
     override val facetDefinition: FacetDefinition.Video? = null,
     val videoSort: Sort<VideoMetadata>? = null,
     val userQuery: UserQuery = UserQuery(),
-    val accessRuleQuery: AccessRuleQuery
+    val videoAccessRuleQuery: VideoAccessRuleQuery
 ) : SearchQuery<VideoMetadata>(phrase, videoSort?.let { listOf(it) } ?: emptyList(), facetDefinition)
 
 data class UserQuery(
@@ -34,7 +34,7 @@ data class UserQuery(
     val channelIds: Set<String> = emptySet()
 )
 
-data class AccessRuleQuery(
+data class VideoAccessRuleQuery(
     val excludedContentPartnerIds: Set<String> = emptySet(),
     val includedChannelIds: Set<String> = emptySet(),
     val includedTypes: Set<VideoType> = emptySet(),

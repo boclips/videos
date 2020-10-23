@@ -245,6 +245,6 @@ class VideoRequestTest {
             promoted = true
         ).toQuery(VideoAccess.Everything)
 
-        assertThat(searchQuery.accessRuleQuery.permittedVideoIds).isNull()
+        assertThat(searchQuery.videoAccessRuleQuery.permittedVideoIds).isNull()
     }
 }

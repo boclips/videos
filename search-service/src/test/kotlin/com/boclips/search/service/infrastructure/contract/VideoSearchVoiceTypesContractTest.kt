@@ -3,11 +3,9 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
-import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.domain.videos.model.VoiceType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -41,7 +39,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(includedVoiceType = emptySet())
+                    videoAccessRuleQuery = VideoAccessRuleQuery(includedVoiceType = emptySet())
                 )
             )
         )
@@ -75,7 +73,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(
+                    videoAccessRuleQuery = VideoAccessRuleQuery(
                         includedVoiceType = setOf(VoiceType.WITH, VoiceType.UNKNOWN)
                     )
 
@@ -112,7 +110,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         val result = queryService.search(
             PaginatedSearchRequest(
                 query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(
+                    videoAccessRuleQuery = VideoAccessRuleQuery(
                         includedVoiceType = setOf(VoiceType.WITH, VoiceType.WITHOUT)
                     )
                 )

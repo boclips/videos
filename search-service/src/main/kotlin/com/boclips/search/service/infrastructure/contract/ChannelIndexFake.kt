@@ -22,18 +22,48 @@ class ChannelIndexFake :
         val phrase = query.phrase
 
         return index
-            .filter { entry ->
-                query.accessRuleQuery!!.includedChannelIds.isNullOrEmpty() || !query.accessRuleQuery.includedChannelIds.contains(
-                    entry.value.id
-                )
-            }
-            .filter { entry ->
-                entry.value.name.contains(phrase, ignoreCase = true)
-            }.map {
+            .filter { entry -> filterIncludedChannels(query, entry) }
+            .filter { entry -> filterEligibleForStream(query, entry) }
+            .filter { entry -> filterExcludedTypes(query, entry) }
+            .filter { entry -> filterIncludedTypes(query, entry) }
+            .filter { entry -> entry.value.name.contains(phrase, ignoreCase = true) }
+            .map {
                 Suggestion(
                     name = it.value.name,
                     id = it.value.id
                 )
             }
+    }
+
+    private fun filterIncludedChannels(query: SuggestionQuery<ChannelMetadata>,
+                                       entry: Map.Entry<String, ChannelMetadata>
+    ): Boolean {
+        val isEmpty = query.accessRuleQuery!!.includedChannelIds.isNullOrEmpty()
+        val isInIncludedChannels = !query.accessRuleQuery.includedChannelIds.contains(
+            entry.value.id
+        )
+        return isEmpty || isInIncludedChannels
+    }
+
+    private fun filterEligibleForStream(query: SuggestionQuery<ChannelMetadata>,
+                                        entry: Map.Entry<String, ChannelMetadata>
+    ):Boolean = query.accessRuleQuery?.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
+
+    private fun filterExcludedTypes(query: SuggestionQuery<ChannelMetadata>,
+                                    entry: Map.Entry<String, ChannelMetadata>
+    ): Boolean {
+        val isEmpty = query.accessRuleQuery!!.excludedTypes.isNullOrEmpty();
+        val hasNoExcludedTypes = entry.value.contentTypes.none { query.accessRuleQuery.excludedTypes.contains(it) }
+
+        return isEmpty || hasNoExcludedTypes
+    }
+
+    private fun filterIncludedTypes(query: SuggestionQuery<ChannelMetadata>,
+                                    entry: Map.Entry<String, ChannelMetadata>
+    ): Boolean {
+        val isEmpty = query.accessRuleQuery!!.includedTypes.isNullOrEmpty();
+        val hasAnyIncludedType = entry.value.contentTypes.any { query.accessRuleQuery.includedTypes.contains(it) }
+
+        return isEmpty || hasAnyIncludedType
     }
 }

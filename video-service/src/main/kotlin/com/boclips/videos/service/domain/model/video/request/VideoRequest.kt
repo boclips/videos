@@ -88,7 +88,7 @@ class VideoRequest(
                 resourceTypes = facets.attachmentTypes,
                 includeChannelFacets = facets.includeChannelFacets
             ),
-            accessRuleQuery = AccessRuleQueryConverter.fromAccessRules(videoAccess),
+            videoAccessRuleQuery = AccessRuleQueryConverter.toVideoAccessRuleQuery(videoAccess),
             userQuery = UserQuery(
                 ids = ids,
                 bestFor = bestFor,

@@ -11,8 +11,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class VideoAccessRuleConverterTest {
-    val converter = VideoAccessRuleConverter
+class AccessRuleConverterTest {
+    val converter = AccessRuleConverter
 
     @Nested
     inner class ToPermittedIds {

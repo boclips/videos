@@ -10,7 +10,7 @@ class SuggestionsRequest(
     fun <T> toQuery(videoAccess: VideoAccess? = null): SuggestionQuery<T> {
         return SuggestionQuery(
             phrase = text,
-            accessRuleQuery = videoAccess?.let { AccessRuleQueryConverter.fromAccessRules(it) }
+            accessRuleQuery = videoAccess?.let { AccessRuleQueryConverter.toSuggestionAccessRuleQuery(it) }
         )
     }
 }

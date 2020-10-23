@@ -1,8 +1,6 @@
 package com.boclips.videos.service.domain.model.video.request
 
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

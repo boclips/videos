@@ -9,7 +9,7 @@ class VideoIdsRequest(val ids: List<VideoId>) {
     fun toSearchQuery(videoAccess: VideoAccess): VideoQuery {
         return VideoQuery(
             userQuery = UserQuery(ids = ids.map { it.value }.toSet()),
-            accessRuleQuery = AccessRuleQueryConverter.fromAccessRules(videoAccess)
+            videoAccessRuleQuery = AccessRuleQueryConverter.toVideoAccessRuleQuery(videoAccess)
         )
     }
 }

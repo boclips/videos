@@ -1,6 +1,6 @@
 package com.boclips.search.service.testsupport
 
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -30,7 +30,7 @@ class VideoQueryFactory {
                     channelIds = setOf("Achannel-ID11-1111-adc1-0242ac120002", "Achannel-ID22-2222-adc1-0242ac120002"),
                     channelNames = setOf("a channel name")
                 ),
-                accessRuleQuery = AccessRuleQuery(
+                videoAccessRuleQuery = VideoAccessRuleQuery(
                     includedTypes = setOf(VideoType.INSTRUCTIONAL, VideoType.STOCK),
                     excludedTypes = setOf(VideoType.INSTRUCTIONAL)
                 )
@@ -38,7 +38,7 @@ class VideoQueryFactory {
         }
 
         fun empty(): VideoQuery {
-            return VideoQuery(accessRuleQuery = AccessRuleQuery())
+            return VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery())
         }
     }
 }

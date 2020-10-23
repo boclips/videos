@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.LegacyVideoMetadataFactory
@@ -63,7 +63,7 @@ class SolrSearchServiceIntegrationTest {
             solrVideoSearch.search(
                 PaginatedSearchRequest(
                     VideoQuery(
-                        phrase = "phrase", accessRuleQuery = AccessRuleQuery()
+                        phrase = "phrase", videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )
@@ -83,7 +83,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "5"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "5"))
                 )
             )
         )
@@ -99,7 +99,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("10"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("10"))
                 )
             )
         )
@@ -121,7 +121,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "3"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "3"))
                 )
             )
         )
@@ -141,7 +141,7 @@ class SolrSearchServiceIntegrationTest {
         val results = solrVideoSearch.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2"))
                 )
             )
         )

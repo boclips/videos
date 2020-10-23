@@ -12,7 +12,9 @@ class ChannelsDocumentConverter {
     fun convertToDocument(metadata: ChannelMetadata): ChannelDocument {
         return ChannelDocument(
             id = metadata.id,
-            name = metadata.name
+            name = metadata.name,
+            eligibleForStream = metadata.eligibleForStream,
+            types = metadata.contentTypes
         )
     }
 }

@@ -45,7 +45,7 @@ class SuggestionsRetrievalService(
         val channelsResults = channels.elements.map {
             ChannelSuggestion(
                 name = it.name,
-                id = ChannelId(it.id)
+                id = ChannelId(it.id),
             )
         }
 

@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -35,7 +35,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "gentleman",
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -72,7 +72,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "gentleman",
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -101,7 +101,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "boy",
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             ).elements.isEmpty()
@@ -123,7 +123,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedSearchRequest(
                     query = VideoQuery(
                         phrase = "Boy",
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             ).counts.totalHits

@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -50,7 +50,7 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(bestFor = listOf("other", "explainer")),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -91,7 +91,7 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(bestFor = null),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -123,7 +123,7 @@ class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchInte
             PaginatedSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(bestFor = listOf("Other")),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
