@@ -3,9 +3,9 @@ package com.boclips.videos.service.application.channels
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
@@ -41,7 +41,9 @@ internal class RebuildChannelIndexTest {
             sequenceOf(
                 ChannelSuggestion(
                     name = channel1.name,
-                    id = channelId1
+                    id = channelId1,
+                    eligibleForStream = true,
+                    contentTypes = channel1.contentTypes ?: emptyList()
                 )
             )
         )
@@ -56,11 +58,15 @@ internal class RebuildChannelIndexTest {
                     sequenceOf(
                         ChannelSuggestion(
                             name = channel2.name,
-                            id = channelId2
+                            id = channelId2,
+                            eligibleForStream = true,
+                            contentTypes = channel2.contentTypes ?: emptyList()
                         ),
                         ChannelSuggestion(
                             name = channel3.name,
-                            id = channelId3
+                            id = channelId3,
+                            eligibleForStream = true,
+                            contentTypes = channel3.contentTypes ?: emptyList()
                         )
                     )
                 )
@@ -75,7 +81,7 @@ internal class RebuildChannelIndexTest {
             SearchRequestWithoutPagination(
                 SuggestionQuery(
                     phrase = "chan",
-                    accessRuleQuery = AccessRuleQuery()
+                    accessRuleQuery = SuggestionAccessRuleQuery()
                 )
             )
         )

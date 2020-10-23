@@ -7,7 +7,9 @@ object ChannelMetadataConverter {
     fun convert(channelSuggestion: ChannelSuggestion): ChannelMetadata {
         return ChannelMetadata(
             id = channelSuggestion.id.value,
-            name = channelSuggestion.name
+            name = channelSuggestion.name,
+            eligibleForStream = channelSuggestion.eligibleForStream,
+            contentTypes = channelSuggestion.contentTypes
         )
     }
 }

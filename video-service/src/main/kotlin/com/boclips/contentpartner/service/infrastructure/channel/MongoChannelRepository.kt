@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
@@ -117,7 +118,12 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     override fun streamAll(consumer: (Sequence<ChannelSuggestion>) -> Unit) {
         val sequence = Sequence {
             getChannelCollection().find().iterator()
-        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map { ChannelSuggestion(name = it.name, id = it.id) }
+        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map { ChannelSuggestion(
+            name = it.name,
+            id = it.id,
+            eligibleForStream = it.distributionMethods.contains(DistributionMethod.STREAM),
+            contentTypes = it.contentTypes ?: emptyList()
+        )}
 
         consumer(sequence)
     }
