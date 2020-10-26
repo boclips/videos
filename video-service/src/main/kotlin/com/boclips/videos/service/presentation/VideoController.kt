@@ -13,18 +13,7 @@ import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.DeleteVideoThumbnail
-import com.boclips.videos.service.application.video.GetVideoAssets
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.SetVideoThumbnail
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateCaptionContent
-import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
-import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
@@ -80,6 +69,7 @@ class VideoController(
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
     private val getVideoAssets: GetVideoAssets,
+    private val getVideoUrlAssets: GetVideoUrlAssets,
     private val userService: UserService,
     // FIXME - remove when clients no longer use channel names for video filtering
     private val channelRepository: ChannelRepository
@@ -378,8 +368,15 @@ class VideoController(
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
+    @GetMapping("/v1/videos/{id}/assets")
+    fun getAssets(@PathVariable("id") videoId: String): ResponseEntity<Any> {
+        val assets = getVideoUrlAssets(videoId, getCurrentUser())
+
+        return ResponseEntity.ok(assets)
+    }
+
     @PostMapping("/v1/videos/{id}/assets")
-    fun getAssets(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) =
+    fun getAssetsObsolete(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) =
         getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
 
     // FIXME - remove when clients no longer use channel names for video filtering

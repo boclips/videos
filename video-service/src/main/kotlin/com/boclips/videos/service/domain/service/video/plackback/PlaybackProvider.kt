@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata
 import com.boclips.videos.service.domain.model.video.Caption
 import java.io.OutputStream
+import java.net.URI
 import java.util.Locale
 
 interface PlaybackProvider {
@@ -19,4 +20,5 @@ interface PlaybackProvider {
     fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, VideoProviderMetadata>
     fun downloadHighestResolutionVideo(playbackId: PlaybackId, outputStream: OutputStream)
     fun getExtensionForAsset(playbackId: PlaybackId): String
+    fun getDownloadAssetUrl(playbackId: PlaybackId): URI
 }

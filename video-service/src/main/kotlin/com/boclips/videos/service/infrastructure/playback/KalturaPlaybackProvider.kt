@@ -9,6 +9,7 @@ import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.http.KalturaClientApiException
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
@@ -19,7 +20,6 @@ import com.boclips.videos.service.domain.model.video.CaptionFormat
 import com.boclips.videos.service.domain.model.video.UnknownCaptionFormatException
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
-import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
 import mu.KLogging
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -119,7 +119,6 @@ class KalturaPlaybackProvider(
                     else -> throw UnknownCaptionFormatException(playbackId, captions.fileType)
                 }
             )
-
         }
     }
 
@@ -149,16 +148,19 @@ class KalturaPlaybackProvider(
         playbackId: PlaybackId,
         outputStream: OutputStream
     ) {
-        val downloadAssetUrl = getAssetUrl(playbackId)
-        restTemplate.execute<Long>(downloadAssetUrl, HttpMethod.GET, null, { response ->
-            response.body.copyTo(outputStream)
-        })
+        val downloadAssetUrl = getDownloadAssetUrl(playbackId)
+        restTemplate.execute<Long>(
+            downloadAssetUrl, HttpMethod.GET, null,
+            { response ->
+                response.body.copyTo(outputStream)
+            }
+        )
     }
 
     override fun getExtensionForAsset(playbackId: PlaybackId): String =
-        getAssetUrl(playbackId).toString().substringAfterLast('.', "")
+        getDownloadAssetUrl(playbackId).toString().substringAfterLast('.', "")
 
-    private fun getAssetUrl(playbackId: PlaybackId): URI {
+    override fun getDownloadAssetUrl(playbackId: PlaybackId): URI {
         val asset = kalturaClient.getVideoAssets(playbackId.value)
             ?.maxByOrNull { it.height }
             ?: throw VideoPlaybackNotFound(playbackId)
