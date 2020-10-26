@@ -22,7 +22,7 @@ task testWithoutSolr(type: Test) {
 }
 
 ext {
-    jettyVersion = "9.4.32.v20200930"
+    jettyVersion = "9.4.33.v20201020"
 }
 
 dependencies {
