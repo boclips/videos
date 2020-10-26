@@ -91,7 +91,7 @@ class SubjectControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `returns a link for updating subjects as a backoffice user`() {
+    fun `returns a link for updating subjects as a hq user`() {
         val createdSubject = saveSubject("Maths")
 
         mockMvc.perform(get("/v1/subjects").asUserWithRoles(UserRoles.UPDATE_SUBJECTS))

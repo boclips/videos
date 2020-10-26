@@ -26,7 +26,7 @@ class UpdateCollectionIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can promote a collection`() {
-        setSecurityContext("boclipper@boclips.com", UserRoles.BACKOFFICE)
+        setSecurityContext("boclipper@boclips.com", UserRoles.HQ)
 
         val collectionId = saveCollection(owner = "me@me.com", title = "original title")
 

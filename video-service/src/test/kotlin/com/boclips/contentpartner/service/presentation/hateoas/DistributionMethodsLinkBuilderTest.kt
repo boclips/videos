@@ -13,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class DistributionMethodsLinkBuilderTest {
     @Test
     fun `returns link when user can view distribution methods`() {
-        setSecurityContext("backoffice@boclips.com", UserRoles.VIEW_DISTRIBUTION_METHODS)
+        setSecurityContext("hq@boclips.com", UserRoles.VIEW_DISTRIBUTION_METHODS)
 
         val link = builder.distributionMethods()!!
 

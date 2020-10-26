@@ -238,7 +238,7 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     "sombody@world.com",
                     UserRoles.INSERT_CHANNELS,
                     UserRoles.VIEW_CHANNELS,
-                    UserRoles.BACKOFFICE
+                    UserRoles.HQ
                 )
             )
 

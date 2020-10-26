@@ -47,7 +47,7 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
         SecurityMockMvcRequestPostProcessors
             .user(email)
             .roles(
-                UserRoles.BACKOFFICE,
+                UserRoles.HQ,
                 UserRoles.VIEW_VIDEOS,
                 UserRoles.DOWNLOAD_TRANSCRIPT,
                 UserRoles.DOWNLOAD_VIDEO,

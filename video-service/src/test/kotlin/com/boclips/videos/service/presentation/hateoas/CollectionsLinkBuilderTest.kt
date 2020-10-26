@@ -57,7 +57,7 @@ class CollectionsLinkBuilderTest {
 
     @Test
     fun `when searching collections with VIEW_ANY_COLLECTION role`() {
-        setSecurityContext("backofficeuser@boclips.com", UserRoles.VIEW_ANY_COLLECTION)
+        setSecurityContext("hquser@boclips.com", UserRoles.VIEW_ANY_COLLECTION)
 
         val mock = mock<UriComponentsBuilderFactory>()
         whenever(mock.getInstance()).thenReturn(UriComponentsBuilder.fromHttpUrl("https://localhost/v1?q=test"))

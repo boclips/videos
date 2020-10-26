@@ -11,7 +11,7 @@ object UserFactory {
     ): User {
         return User(
             id = UserId(id),
-            isPermittedToAccessBackoffice = isAdministrator,
+            isPermittedToAccessHQ = isAdministrator,
             context = RequestContext(origin = "https://teachers.boclips.com")
         )
     }

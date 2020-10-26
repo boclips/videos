@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.collection
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
-import com.boclips.videos.service.config.security.UserRoles.BACKOFFICE
+import com.boclips.videos.service.config.security.UserRoles.HQ
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
@@ -14,7 +14,7 @@ class UpdateCollection(
 ) {
     operator fun invoke(collectionId: String, updateCollectionRequest: UpdateCollectionRequest?, requester: User) {
         updateCollectionRequest?.promoted?.let {
-            if (!UserExtractor.currentUserHasRole(BACKOFFICE)) {
+            if (!UserExtractor.currentUserHasRole(HQ)) {
                 throw OperationForbiddenException()
             }
         }

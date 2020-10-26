@@ -591,7 +591,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
     }
 
     @Test
-    fun `returns all collection for backoffice user requesting all collections`() {
+    fun `returns all collection for hq user requesting all collections`() {
         createCollection(title = "collection 1", discoverable = true)
         createCollection(title = "collection 2", discoverable = false)
 

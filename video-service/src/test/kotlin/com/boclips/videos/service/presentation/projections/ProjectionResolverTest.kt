@@ -4,8 +4,8 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.service.config.security.UserRoles.API
-import com.boclips.videos.service.config.security.UserRoles.BACKOFFICE
 import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_SERVICE
+import com.boclips.videos.service.config.security.UserRoles.HQ
 import com.boclips.videos.service.config.security.UserRoles.PUBLISHER
 import com.boclips.videos.service.config.security.UserRoles.TEACHER
 import org.assertj.core.api.Assertions.assertThat
@@ -23,8 +23,8 @@ class ProjectionResolverTest {
         val testCases = Stream.of(
             arrayOf(API) to PublicApiProjection::class,
             arrayOf(PUBLISHER) to BoclipsInternalProjection::class,
-            arrayOf(BACKOFFICE) to BoclipsInternalProjection::class,
-            arrayOf(BACKOFFICE, TEACHER) to BoclipsInternalProjection::class,
+            arrayOf(HQ) to BoclipsInternalProjection::class,
+            arrayOf(HQ, TEACHER) to BoclipsInternalProjection::class,
             arrayOf(PUBLISHER, API) to BoclipsInternalProjection::class,
             arrayOf(BOCLIPS_SERVICE) to BoclipsInternalProjection::class,
             emptyArray<String>() to PublicApiProjection::class

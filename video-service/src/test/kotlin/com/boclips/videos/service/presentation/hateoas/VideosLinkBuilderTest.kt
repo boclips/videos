@@ -81,7 +81,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `details projection link`() {
-        setSecurityContext("teacher@boclips.com", UserRoles.BACKOFFICE)
+        setSecurityContext("teacher@boclips.com", UserRoles.HQ)
 
         val link = videosLinkBuilder.videoDetailsProjection(VideoResourceFactory.sample(id = "self-test").id)!!
 
@@ -92,7 +92,7 @@ class VideosLinkBuilderTest {
 
     @Test
     fun `full projection link`() {
-        setSecurityContext("teacher@boclips.com", UserRoles.BACKOFFICE)
+        setSecurityContext("teacher@boclips.com", UserRoles.HQ)
 
         val link = videosLinkBuilder.videoFullProjection(VideoResourceFactory.sample(id = "self-test").id)!!
 
