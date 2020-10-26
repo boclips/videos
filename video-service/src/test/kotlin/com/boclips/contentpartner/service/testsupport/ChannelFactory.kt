@@ -21,6 +21,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDo
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
+import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
@@ -72,6 +73,22 @@ object ChannelFactory {
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation,
             contract = contract
+        )
+    }
+
+    fun createChannelSuggestion(
+        id: ChannelId = ChannelId(
+            ObjectId().toHexString()
+        ),
+        name: String = "TED",
+        eligibleForStream: Boolean = false,
+        contentTypes: List<ContentType> = emptyList()
+    ): ChannelSuggestion {
+        return ChannelSuggestion(
+            id = id,
+            name = name,
+            eligibleForStream = eligibleForStream,
+            contentTypes = contentTypes,
         )
     }
 

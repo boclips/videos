@@ -22,7 +22,7 @@ class EsVideoQuery {
         val quotation = videoQuery.phrase.quotedParts()
         return QueryBuilders.boolQuery()
             .apply {
-                buildAccessRulesFilter(this, videoQuery.accessRuleQuery)
+                buildAccessRulesFilter(this, videoQuery.videoAccessRuleQuery)
             }
             .apply {
                 filter(

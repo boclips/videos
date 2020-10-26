@@ -27,7 +27,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
 
         val result = readService.search(
             PaginatedSearchRequest(query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))
         )
@@ -51,7 +51,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
 
         val result = readService.search(
             PaginatedSearchRequest(query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(deniedVideoIds = setOf("karate")),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))
         )
@@ -75,7 +75,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
 
         val result = readService.search(
             PaginatedSearchRequest(query = VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(deniedVideoIds = setOf("karate")),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))
         )

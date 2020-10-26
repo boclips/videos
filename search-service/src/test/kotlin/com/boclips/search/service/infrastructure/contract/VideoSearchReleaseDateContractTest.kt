@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -56,7 +56,7 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
                             releaseDateFrom = LocalDate.of(1999, 1, 10),
                             releaseDateTo = LocalDate.of(2002, 1, 10)
                         ),
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )
@@ -104,7 +104,7 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
                         userQuery = UserQuery(
                             releaseDateFrom = LocalDate.of(2002, 5, 5)
                         ),
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )
@@ -152,7 +152,7 @@ class VideoSearchReleaseDateContractTest : EmbeddedElasticSearchIntegrationTest(
                         userQuery = UserQuery(
                             releaseDateTo = LocalDate.of(2002, 5, 5)
                         ),
-                        accessRuleQuery = AccessRuleQuery()
+                        videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
                 )
             )

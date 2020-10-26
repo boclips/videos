@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -37,7 +37,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                accessRuleQuery = AccessRuleQuery(),
+                videoAccessRuleQuery = VideoAccessRuleQuery(),
                 userQuery = UserQuery(
                     channelNames = setOf("provider two")
                 )
@@ -72,7 +72,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                accessRuleQuery = AccessRuleQuery(),
+                videoAccessRuleQuery = VideoAccessRuleQuery(),
                 userQuery = UserQuery(
                     channelNames = setOf("p2", "p3")
                 )
@@ -112,7 +112,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 )
             ),
             searchFor = VideoQuery(
-                accessRuleQuery = AccessRuleQuery(),
+                videoAccessRuleQuery = VideoAccessRuleQuery(),
                 userQuery = UserQuery(channelNames = setOf("p1")),
                 phrase = "science"
             ),
@@ -159,7 +159,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 ),
                 searchFor = VideoQuery(
                     userQuery = UserQuery(channelNames = setOf("p1", "p2")),
-                    accessRuleQuery = AccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1"))
                 ),
                 expectIds = listOf("3")
             )
@@ -187,7 +187,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 ),
                 searchFor = VideoQuery(
                     phrase = "science",
-                    accessRuleQuery = AccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1", "cp-id-3"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1", "cp-id-3"))
                 ),
                 expectIds = listOf("2")
             )
@@ -218,7 +218,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 ),
                 searchFor = VideoQuery(
                     phrase = "science",
-                    accessRuleQuery = AccessRuleQuery(includedChannelIds = setOf("cp-id-3", "cp-id-1"))
+                    videoAccessRuleQuery = VideoAccessRuleQuery(includedChannelIds = setOf("cp-id-3", "cp-id-1"))
                 ),
                 expectIds = listOf("1", "3")
             )

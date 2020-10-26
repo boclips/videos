@@ -3,7 +3,7 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -47,7 +47,7 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
                 query = VideoQuery(
                     phrase = "TED",
                     userQuery = UserQuery(subjectsSetManually = true),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -87,7 +87,7 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
                 query = VideoQuery(
                     phrase = "TED",
                     userQuery = UserQuery(subjectsSetManually = false),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -133,7 +133,7 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
                 query = VideoQuery(
                     phrase = "TED",
                     userQuery = UserQuery(subjectIds = setOf("subject-three")),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )
@@ -184,7 +184,7 @@ class VideoSearchSubjectsContractTest : EmbeddedElasticSearchIntegrationTest() {
                 query = VideoQuery(
                     phrase = "TED",
                     userQuery = UserQuery(subjectIds = setOf("subject-one", "subject-two")),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
         )

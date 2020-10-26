@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
@@ -24,7 +25,7 @@ class GetVideosByQuery(
     private val videoRetrievalService: VideoRetrievalService,
     private val eventService: EventService,
     private val userService: UserService,
-    private val searchQueryConverter: SearchQueryConverter
+    private val queryConverter: QueryConverter
 ) {
     companion object : KLogging()
 
@@ -70,10 +71,10 @@ class GetVideosByQuery(
             pageIndex = pageNumber,
             pageSize = pageSize,
             bestFor = bestFor,
-            durationRanges = searchQueryConverter.convertDurations(minDurationString, maxDurationString, duration),
-            source = searchQueryConverter.convertSource(source),
-            releaseDateFrom = searchQueryConverter.convertDate(releasedDateFrom),
-            releaseDateTo = searchQueryConverter.convertDate(releasedDateTo),
+            durationRanges = queryConverter.convertDurations(minDurationString, maxDurationString, duration),
+            source = queryConverter.convertSource(source),
+            releaseDateFrom = queryConverter.convertDate(releasedDateFrom),
+            releaseDateTo = queryConverter.convertDate(releasedDateTo),
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             ageRanges = ageRanges,
@@ -85,7 +86,7 @@ class GetVideosByQuery(
             promoted = promoted,
             channelNames = channelNames,
             channelIds = channelIds,
-            types = type.map { searchQueryConverter.convertType(it) }.toSet(),
+            types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, includeChannelFacets),
             attachmentTypes = resourceTypes
         )

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
 import com.boclips.videos.service.domain.model.video.request.VideoFacets
 import java.time.Duration
@@ -14,7 +15,7 @@ class FacetConverter {
         return VideoFacets()
             .apply {
                 durationFacets.let {
-                    val durationRanges = SearchQueryConverter().convertDurations(
+                    val durationRanges = QueryConverter().convertDurations(
                         durations = durationFacets,
                         minDurationString = null,
                         maxDurationString = null

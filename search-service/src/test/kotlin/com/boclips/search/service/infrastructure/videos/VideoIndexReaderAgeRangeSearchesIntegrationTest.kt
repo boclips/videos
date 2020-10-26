@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -73,7 +73,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filtering across a single bracket`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 11), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 11), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -86,7 +86,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filter across two brackets`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 14), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 14), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -99,7 +99,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filtering across three brackets`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 16), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMin = 7, ageRangeMax = 16), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -113,7 +113,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filtering mid bracket only returns videos within the filter`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMin = 6, ageRangeMax = 16), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMin = 6, ageRangeMax = 16), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -127,7 +127,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filtering with max age range returns only videos in brackets below`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMax = 15), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMax = 15), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -143,7 +143,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `Filtering with lower bound returns only videos in brackets above`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRangeMin = 7), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRangeMin = 7), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -162,7 +162,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
         fun `providing single range with min`() {
             val results = getSearchResults(
                 VideoQuery(
-                    userQuery = UserQuery(ageRanges = listOf(AgeRange(min = 7))), accessRuleQuery = AccessRuleQuery()
+                    userQuery = UserQuery(ageRanges = listOf(AgeRange(min = 7))), videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -181,7 +181,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
             val results = getSearchResults(
                 VideoQuery(
                     userQuery = UserQuery(ageRanges = listOf(AgeRange(min = 7, max = 8))),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -201,7 +201,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                             AgeRange(min = 11, max = 14)
                         )
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -223,7 +223,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                     userQuery = UserQuery(
                         ageRanges = listOf(AgeRange(min = 7, max = 11))
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 
@@ -239,7 +239,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
                     userQuery = UserQuery(
                         ageRanges = listOf(AgeRange(min = 7, max = 11), AgeRange(min = 14, max = 16))
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
 

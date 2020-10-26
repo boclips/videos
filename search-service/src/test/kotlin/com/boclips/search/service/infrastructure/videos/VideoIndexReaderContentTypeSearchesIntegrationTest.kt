@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -40,7 +40,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = setOf(
                             VideoType.STOCK,
@@ -72,7 +72,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = setOf(
                             VideoType.STOCK
@@ -108,7 +108,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.NEWS
                         )
                     ),
-                    accessRuleQuery = AccessRuleQuery()
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
                 ), 0, 10
             )
         )
@@ -131,7 +131,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         val results = videoIndexReader.search(
             PaginatedSearchRequest(
                 VideoQuery(
-                    accessRuleQuery = AccessRuleQuery(),
+                    videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = emptySet()
                     )
@@ -166,7 +166,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.INSTRUCTIONAL
                         )
                     ),
-                    accessRuleQuery = AccessRuleQuery(
+                    videoAccessRuleQuery = VideoAccessRuleQuery(
                         excludedTypes = setOf(
                             VideoType.STOCK
                         )
@@ -196,7 +196,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
             PaginatedSearchRequest(
                 VideoQuery(
                     phrase = "Rhino",
-                    accessRuleQuery = AccessRuleQuery(
+                    videoAccessRuleQuery = VideoAccessRuleQuery(
                         excludedTypes = setOf(
                             VideoType.NEWS
                         )

@@ -5,7 +5,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
@@ -106,7 +106,7 @@ class RebuildVideoIndexTest {
                         videoId3
                     )
                 ),
-                accessRuleQuery = AccessRuleQuery()
+                videoAccessRuleQuery = VideoAccessRuleQuery()
             )
         )
         val results = index.search(searchRequest)
@@ -151,7 +151,7 @@ class RebuildVideoIndexTest {
                         downloadableVideoId
                     )
                 ),
-                accessRuleQuery = AccessRuleQuery()
+                videoAccessRuleQuery = VideoAccessRuleQuery()
             )
         )
 

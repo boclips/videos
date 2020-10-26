@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.channels
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
@@ -18,7 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class RebuildChannelIndexTest {
+internal class RebuildChannelIndexFakeTest {
     lateinit var index: ChannelIndex
 
     @BeforeEach
@@ -33,19 +34,12 @@ internal class RebuildChannelIndexTest {
         val channelId2 = ChannelId(TestFactories.aValidId())
         val channelId3 = ChannelId(TestFactories.aValidId())
 
-        val channel1 = ChannelFactory.createChannel(id = channelId1, name = "channel name 1")
-        val channel2 = ChannelFactory.createChannel(id = channelId2, name = "channel name 2")
-        val channel3 = ChannelFactory.createChannel(id = channelId3, name = "channel name 3")
+        val channel1 = ChannelFactory.createChannelSuggestion(id = channelId1, name = "channel name 1")
+        val channel2 = ChannelFactory.createChannelSuggestion(id = channelId2, name = "channel name 2")
+        val channel3 = ChannelFactory.createChannelSuggestion(id = channelId3, name = "channel name 3")
 
         index.upsert(
-            sequenceOf(
-                ChannelSuggestion(
-                    name = channel1.name,
-                    id = channelId1,
-                    eligibleForStream = true,
-                    contentTypes = channel1.contentTypes ?: emptyList()
-                )
-            )
+            sequenceOf(channel1)
         )
 
         val channelRepository = mock<ChannelRepository> {
@@ -55,20 +49,7 @@ internal class RebuildChannelIndexTest {
                 val consumer = invocations.getArgument(0) as (Sequence<ChannelSuggestion>) -> Unit
 
                 consumer(
-                    sequenceOf(
-                        ChannelSuggestion(
-                            name = channel2.name,
-                            id = channelId2,
-                            eligibleForStream = true,
-                            contentTypes = channel2.contentTypes ?: emptyList()
-                        ),
-                        ChannelSuggestion(
-                            name = channel3.name,
-                            id = channelId3,
-                            eligibleForStream = true,
-                            contentTypes = channel3.contentTypes ?: emptyList()
-                        )
-                    )
+                    sequenceOf(channel2, channel3)
                 )
             }
         }
@@ -87,5 +68,50 @@ internal class RebuildChannelIndexTest {
         )
 
         assertThat(results.elements).hasSize(2)
+    }
+
+    @Test
+    fun `search applies given filters`() {
+        val channelId1 = ChannelId(TestFactories.aValidId())
+        val channelId2 = ChannelId(TestFactories.aValidId())
+        val channelId3 = ChannelId(TestFactories.aValidId())
+
+        val channel1 = ChannelFactory.createChannelSuggestion(
+            id = channelId1,
+            name = "channel name 1",
+            eligibleForStream = false,
+            contentTypes = listOf(ContentType.NEWS, ContentType.STOCK)
+        )
+        val channel2 = ChannelFactory.createChannelSuggestion(
+            id = channelId2,
+            name = "channel name 2",
+            eligibleForStream = true,
+            contentTypes = listOf(ContentType.STOCK)
+        )
+        val channel3 = ChannelFactory.createChannelSuggestion(
+            id = channelId3,
+            name = "channel name 3",
+            eligibleForStream = true,
+            contentTypes = listOf(ContentType.NEWS, ContentType.INSTRUCTIONAL)
+        )
+
+        index.upsert(
+            sequenceOf(channel1, channel2, channel3)
+        )
+
+        val results = index.search(
+            SearchRequestWithoutPagination(
+                SuggestionQuery(
+                    phrase = "chan",
+                    accessRuleQuery = SuggestionAccessRuleQuery(
+                        isEligibleForStream = true,
+                        excludedTypes = setOf(com.boclips.search.service.domain.channels.model.ContentType.STOCK),
+                        includedTypes = setOf(com.boclips.search.service.domain.channels.model.ContentType.NEWS)
+                    )
+                )
+            )
+        )
+
+        assertThat(results.elements).hasSize(1)
     }
 }

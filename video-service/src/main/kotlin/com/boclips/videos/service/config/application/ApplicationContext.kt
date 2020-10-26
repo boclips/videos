@@ -9,7 +9,6 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
-import com.boclips.users.api.httpclient.ContentPackagesClient
 import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
@@ -71,7 +70,7 @@ import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.SearchQueryConverter
+import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.ContentWarningRepository
@@ -148,7 +147,7 @@ class ApplicationContext(
     fun searchVideo(
         getVideoById: GetVideoById,
         getVideosByQuery: GetVideosByQuery,
-        searchQueryConverter: SearchQueryConverter,
+        queryConverter: QueryConverter,
         playbackUpdateService: PlaybackUpdateService
     ) = SearchVideo(
         getVideoById,
@@ -438,8 +437,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun stringToDurationConverter(): SearchQueryConverter {
-        return SearchQueryConverter()
+    fun stringToDurationConverter(): QueryConverter {
+        return QueryConverter()
     }
 
     @Bean
@@ -494,12 +493,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideosByQuery(searchQueryConverter: SearchQueryConverter): GetVideosByQuery {
+    fun getVideosByQuery(queryConverter: QueryConverter): GetVideosByQuery {
         return GetVideosByQuery(
             videoRetrievalService,
             eventService,
             userService,
-            searchQueryConverter
+            queryConverter
         )
     }
 

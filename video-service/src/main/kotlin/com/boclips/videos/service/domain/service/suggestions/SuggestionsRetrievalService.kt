@@ -46,7 +46,6 @@ class SuggestionsRetrievalService(
             ChannelSuggestion(
                 name = it.name,
                 id = ChannelId(it.id),
-
             )
         }
 

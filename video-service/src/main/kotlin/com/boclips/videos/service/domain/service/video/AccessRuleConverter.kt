@@ -1,14 +1,15 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.application.video.search.SearchQueryConverter
+import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 import com.boclips.videos.service.domain.model.video.VoiceType as VideoVoiceType
 
-object VideoAccessRuleConverter {
+object AccessRuleConverter {
     fun mapToPermittedVideoIds(videoAccess: VideoAccess): Set<String>? {
         return when (videoAccess) {
             is VideoAccess.Rules -> videoAccess.accessRules
@@ -36,7 +37,16 @@ object VideoAccessRuleConverter {
             VideoAccess.Everything -> emptySet()
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.ExcludedContentTypes>()
-                .flatMap { accessRule -> accessRule.contentTypes.map { SearchQueryConverter().convertType(it.name) } }
+                .flatMap { accessRule -> accessRule.contentTypes.map { QueryConverter().convertTypeToVideoType(it.name) } }
+                .toSet()
+        }
+
+    fun mapToExcludedContentTypes(videoAccess: VideoAccess): Set<ContentType> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.ExcludedContentTypes>()
+                .flatMap { accessRule -> accessRule.contentTypes.map { QueryConverter().convertTypeToContentType(it.name) } }
                 .toSet()
         }
 
@@ -89,7 +99,16 @@ object VideoAccessRuleConverter {
             VideoAccess.Everything -> emptySet()
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.IncludedContentTypes>()
-                .flatMap { accessRule -> accessRule.contentTypes.map { SearchQueryConverter().convertType(it.name) } }
+                .flatMap { accessRule -> accessRule.contentTypes.map { QueryConverter().convertTypeToVideoType(it.name) } }
+                .toSet()
+        }
+
+    fun mapToIncludedContentTypes(videoAccess: VideoAccess): Set<ContentType> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.IncludedContentTypes>()
+                .flatMap { accessRule -> accessRule.contentTypes.map { QueryConverter().convertTypeToContentType(it.name) } }
                 .toSet()
         }
 }

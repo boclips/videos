@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.videos.model.AccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.AccessRulesFilter.Companion.buildAccessRulesFilter
@@ -13,7 +13,7 @@ class AccessRulesFilterTest {
     fun `creates access rule filters for given query`() {
         val videoQuery = VideoQuery(
             phrase = "apple",
-            accessRuleQuery = AccessRuleQuery(
+            videoAccessRuleQuery = VideoAccessRuleQuery(
                 excludedTypes = setOf(VideoType.STOCK, VideoType.NEWS),
                 includedTypes = setOf(VideoType.INSTRUCTIONAL),
                 excludedContentPartnerIds = setOf("CH1"),
@@ -25,7 +25,7 @@ class AccessRulesFilterTest {
             .readText()
             .trimEnd()
 
-        val generatedQuery = buildAccessRulesFilter(QueryBuilders.boolQuery(), videoQuery.accessRuleQuery).toString()
+        val generatedQuery = buildAccessRulesFilter(QueryBuilders.boolQuery(), videoQuery.videoAccessRuleQuery).toString()
         Assertions.assertThat(generatedQuery).isEqualTo(expectedQuery)
     }
 }
