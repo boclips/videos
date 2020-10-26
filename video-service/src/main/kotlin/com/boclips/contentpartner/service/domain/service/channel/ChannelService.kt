@@ -37,7 +37,7 @@ class ChannelService(
                 ChannelSuggestion(
                     name = channel.name,
                     id = ChannelId(channel.id.value),
-                    eligibleForStream = true,
+                    eligibleForStream = channel.isStreamable(),
                     contentTypes = channel.contentTypes ?: emptyList()
                 )
             )

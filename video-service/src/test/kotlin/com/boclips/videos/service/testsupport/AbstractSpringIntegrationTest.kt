@@ -451,7 +451,8 @@ abstract class AbstractSpringIntegrationTest {
         name: String = "TeD",
         ageRanges: List<String>? = emptyList(),
         distributionMethods: Set<DistributionMethodResource>? = null,
-        currency: String? = null
+        currency: String? = null,
+        contentTypes: List<String>? = emptyList()
     ): Channel {
         val createdChannel = try {
             createChannel(
@@ -459,7 +460,8 @@ abstract class AbstractSpringIntegrationTest {
                     name = name,
                     ageRanges = ageRanges,
                     distributionMethods = distributionMethods,
-                    currency = currency
+                    currency = currency,
+                    contentTypes = contentTypes
                 )
             )
         } catch (e: ChannelConflictException) {

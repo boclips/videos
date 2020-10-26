@@ -68,6 +68,8 @@ internal class RebuildChannelIndexFakeTest {
         )
 
         assertThat(results.elements).hasSize(2)
+        assertThat(results.elements[0].name).isEqualTo("channel name 2")
+        assertThat(results.elements[1].name).isEqualTo("channel name 3")
     }
 
     @Test
@@ -113,5 +115,6 @@ internal class RebuildChannelIndexFakeTest {
         )
 
         assertThat(results.elements).hasSize(1)
+        assertThat(results.elements[0].id).isEqualTo(channelId3.value)
     }
 }

@@ -39,7 +39,7 @@ class ChannelIndexFake :
                                        entry: Map.Entry<String, ChannelMetadata>
     ): Boolean {
         val isEmpty = query.accessRuleQuery!!.includedChannelIds.isNullOrEmpty()
-        val isInIncludedChannels = !query.accessRuleQuery.includedChannelIds.contains(
+        val isInIncludedChannels = query.accessRuleQuery.includedChannelIds.contains(
             entry.value.id
         )
         return isEmpty || isInIncludedChannels
