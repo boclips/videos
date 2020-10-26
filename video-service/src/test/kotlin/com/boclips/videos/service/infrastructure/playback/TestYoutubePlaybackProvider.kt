@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.Yo
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import java.io.OutputStream
+import java.net.URI
 import java.time.Duration
 import java.util.Locale
 
@@ -63,6 +64,14 @@ class TestYoutubePlaybackProvider :
 
     override fun getExtensionForAsset(playbackId: PlaybackId): String {
         throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getDownloadAssetUrl(playbackId: PlaybackId): URI {
+        throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getCaptionsUrl(playbackId: PlaybackId): URI? {
+        throw UnsupportedOperationException("YouTube captions not supported")
     }
 
     fun addVideo(youtubeId: String, thumbnailUrl: String, duration: Duration): TestYoutubePlaybackProvider {

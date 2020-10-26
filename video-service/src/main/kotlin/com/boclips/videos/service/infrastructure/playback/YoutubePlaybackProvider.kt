@@ -13,6 +13,7 @@ import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeRequestInitializer
 import com.google.api.services.youtube.model.Video
 import java.io.OutputStream
+import java.net.URI
 import java.time.Duration
 import java.util.Locale
 
@@ -65,6 +66,14 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
 
     override fun getExtensionForAsset(playbackId: PlaybackId): String {
         throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getDownloadAssetUrl(playbackId: PlaybackId): URI {
+        throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getCaptionsUrl(playbackId: PlaybackId): URI? {
+        throw UnsupportedOperationException("YouTube captions not supported")
     }
 
     override fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubeMetadata> {

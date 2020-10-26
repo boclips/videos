@@ -27,6 +27,7 @@ import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.application.contentwarning.CreateContentWarning
 import com.boclips.videos.service.application.contentwarning.GetAllContentWarnings
 import com.boclips.videos.service.application.contentwarning.GetContentWarning
@@ -48,29 +49,12 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.BroadcastVideos
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.DeleteVideoThumbnail
-import com.boclips.videos.service.application.video.GetVideoAssets
-import com.boclips.videos.service.application.video.GetVideosByContentPackage
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.SetVideoThumbnail
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.UpdateCaptionContent
-import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.UpdateYoutubePlayback
-import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
-import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.ContentWarningRepository
@@ -88,8 +72,8 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
-import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
+import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -509,6 +493,12 @@ class ApplicationContext(
         playbackProvider: KalturaPlaybackProvider
     ) =
         GetVideoAssets(captionService, searchVideo, playbackProvider)
+
+    @Bean
+    fun getVideoUrlAssets(
+        searchVideo: SearchVideo,
+        playbackProvider: KalturaPlaybackProvider
+    ): GetVideoUrlAssets = GetVideoUrlAssets(searchVideo, playbackProvider)
 
     @Bean
     fun getContentWarning() = GetContentWarning(contentWarningRepository)

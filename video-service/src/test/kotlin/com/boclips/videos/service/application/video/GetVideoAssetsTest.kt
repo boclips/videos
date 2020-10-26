@@ -57,16 +57,16 @@ class GetVideoAssetsTest {
     @Test
     fun `returns only video content`() {
         whenever(playbackProvider.downloadHighestResolutionVideo(eq(PlaybackId.from("entry-id", "KALTURA")), any()))
-                .then { invocation -> (invocation.arguments[1] as OutputStream).write("movie time!".toByteArray()) }
+            .then { invocation -> (invocation.arguments[1] as OutputStream).write("movie time!".toByteArray()) }
 
         whenever(playbackProvider.getExtensionForAsset(eq(PlaybackId.from("entry-id", "KALTURA")))).thenReturn("mov")
 
         val baos = ByteArrayOutputStream()
 
         getVideoAssets.writeCompressedContent(
-                outputStream = baos,
-                video = TestFactories.createVideo(title = "a great title 9*", playback = TestFactories.createKalturaPlayback(entryId = "entry-id")),
-                caption = null
+            outputStream = baos,
+            video = TestFactories.createVideo(title = "a great title 9*", playback = TestFactories.createKalturaPlayback(entryId = "entry-id")),
+            caption = null
         )
 
         val zipInputStream = unzipFirstEntry(baos)
