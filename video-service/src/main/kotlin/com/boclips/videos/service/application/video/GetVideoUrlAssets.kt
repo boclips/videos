@@ -6,14 +6,11 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoUrlAsset
-import com.boclips.videos.service.domain.service.video.CaptionService
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import mu.KLogging
-import java.net.URI
 
 class GetVideoUrlAssets(
-    private val captionService: CaptionService,
     private val searchVideo: SearchVideo,
     private val playbackProvider: PlaybackProvider
 ) {
@@ -22,20 +19,22 @@ class GetVideoUrlAssets(
     operator fun invoke(
         videoId: String,
         user: User
-    ): VideoUrlAsset {
+    ): VideoUrlAssetsResource {
         val playbackId = searchVideo.byId(videoId, user).let { video ->
             validateVideoIsDownloadable(video)
             video.playback.id
         }
 
         val videoAssetUrl = playbackProvider.getDownloadAssetUrl(playbackId)
+        val captionUrl = playbackProvider.getCaptionsUrl(playbackId)
 
-        return VideoUrlAsset(downloadVideoUrl = videoAssetUrl.path)
+        return VideoUrlAssetsResource(
+            downloadVideoUrl = videoAssetUrl.toString(),
+            downloadCaptionUrl = captionUrl?.toString()
+        )
     }
 
-    private fun validateVideoIsDownloadable(
-        video: Video
-    ) {
+    private fun validateVideoIsDownloadable(video: Video) {
         if (video.playback is VideoPlayback.StreamPlayback) {
             if (!video.playback.hasOriginalOrFHDResolution()) throw InsufficientVideoResolutionException(video.videoId)
         } else {

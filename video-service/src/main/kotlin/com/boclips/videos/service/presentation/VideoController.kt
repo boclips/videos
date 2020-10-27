@@ -17,6 +17,7 @@ import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -369,7 +370,7 @@ class VideoController(
     }
 
     @GetMapping("/v1/videos/{id}/assets")
-    fun getAssets(@PathVariable("id") videoId: String): ResponseEntity<Any> {
+    fun getAssets(@PathVariable("id") videoId: String): ResponseEntity<VideoUrlAssetsResource> {
         val assets = getVideoUrlAssets(videoId, getCurrentUser())
 
         return ResponseEntity.ok(assets)

@@ -8,14 +8,17 @@ import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import com.boclips.videos.service.testsupport.asOperator
+import com.boclips.videos.service.testsupport.asReporter
 import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
+import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
@@ -33,10 +36,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
+import java.util.*
 import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -804,6 +807,53 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
     }
 
+    @Nested
+    inner class VideoAssets {
+
+        @Test
+        fun `returns video url assets for Kaltura video`() {
+            val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+            val videoId = saveVideo(playbackId = playbackId)
+
+            val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla", )
+            kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
+
+            mockMvc.perform(
+                get("/v1/videos/${videoId.value}/assets").asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.downloadVideoUrl", containsString("/asset-download/1.mp4")))
+                .andExpect(jsonPath("$.downloadCaptionUrl").exists())
+                .andExpect(jsonPath("$.downloadCaptionUrl", containsString("http")))
+        }
+
+        @Test
+        fun `returns video url assets with empty captions url for Kaltura video without captions`() {
+            val videoId = saveVideo()
+
+            mockMvc.perform(
+                get("/v1/videos/${videoId.value}/assets").asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.downloadVideoUrl", containsString("/asset-download/1.mp4")))
+                .andExpect(jsonPath("$.downloadCaptionUrl").doesNotExist())
+        }
+
+        @Test
+        fun `returns 403 when missing DOWNLOAD_VIDEO role`() {
+            val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+            val videoId = saveVideo(playbackId = playbackId)
+
+            val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla", )
+            kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
+
+            mockMvc.perform(
+                get("/v1/videos/${videoId.value}/assets").asReporter()
+            )
+                .andExpect(status().isForbidden)
+        }
+    }
+
     private fun getRatingLink(videoId: String): String {
         val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
@@ -823,13 +873,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     private fun createTag(name: String): String {
         return mockMvc.perform(
             post("/v1/tags").content(
-                    """
+                """
                 {
                   "label": "$name",
                   "UserId": "User-1"
                 }
                 """.trimIndent()
-                )
+            )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()
         ).andReturn().response.getHeader("Location")!!

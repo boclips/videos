@@ -69,7 +69,11 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
     }
 
     override fun getDownloadAssetUrl(playbackId: PlaybackId): URI {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getCaptionsUrl(playbackId: PlaybackId): URI? {
+        throw UnsupportedOperationException("YouTube captions not supported")
     }
 
     override fun retrieveProviderMetadata(playbackIds: List<PlaybackId>): Map<PlaybackId, YoutubeMetadata> {

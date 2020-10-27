@@ -496,10 +496,9 @@ class ApplicationContext(
 
     @Bean
     fun getVideoUrlAssets(
-        captionService: CaptionService,
         searchVideo: SearchVideo,
         playbackProvider: KalturaPlaybackProvider
-    ): GetVideoUrlAssets = GetVideoUrlAssets(captionService, searchVideo, playbackProvider)
+    ): GetVideoUrlAssets = GetVideoUrlAssets(searchVideo, playbackProvider)
 
     @Bean
     fun getContentWarning() = GetContentWarning(contentWarningRepository)

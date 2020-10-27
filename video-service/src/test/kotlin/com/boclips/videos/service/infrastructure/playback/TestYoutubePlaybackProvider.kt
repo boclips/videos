@@ -67,7 +67,11 @@ class TestYoutubePlaybackProvider :
     }
 
     override fun getDownloadAssetUrl(playbackId: PlaybackId): URI {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("YouTube does not support asset downloads")
+    }
+
+    override fun getCaptionsUrl(playbackId: PlaybackId): URI? {
+        throw UnsupportedOperationException("YouTube captions not supported")
     }
 
     fun addVideo(youtubeId: String, thumbnailUrl: String, duration: Duration): TestYoutubePlaybackProvider {
