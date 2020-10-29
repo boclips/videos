@@ -69,7 +69,6 @@ class VideoController(
     private val videosLinkBuilder: VideosLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    private val getVideoAssets: GetVideoAssets,
     private val getVideoUrlAssets: GetVideoUrlAssets,
     private val userService: UserService,
     // FIXME - remove when clients no longer use channel names for video filtering
@@ -375,10 +374,6 @@ class VideoController(
 
         return ResponseEntity.ok(assets)
     }
-
-    @PostMapping("/v1/videos/{id}/assets")
-    fun getAssetsObsolete(@PathVariable("id") videoId: String, @RequestBody @Valid videoAssetRequest: VideoAssetRequest) =
-        getVideoAssets(videoId, getCurrentUser(), videoAssetRequest)
 
     // FIXME - remove when clients no longer use channel names for video filtering
     private fun isFilteringByChannelIdsRequested(channels: Set<String>): Boolean {

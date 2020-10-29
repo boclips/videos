@@ -24,7 +24,7 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
         val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
         val videoId = saveVideo(playbackId = playbackId)
 
-        val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla", )
+        val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla")
         kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
 
         val assetURLs = getVideoUrlAssets(videoId = videoId.value, user = UserFactory.sample())

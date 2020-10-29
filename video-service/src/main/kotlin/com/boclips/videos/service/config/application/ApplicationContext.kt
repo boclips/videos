@@ -487,14 +487,6 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoAssets(
-        captionService: CaptionService,
-        searchVideo: SearchVideo,
-        playbackProvider: KalturaPlaybackProvider
-    ) =
-        GetVideoAssets(captionService, searchVideo, playbackProvider)
-
-    @Bean
     fun getVideoUrlAssets(
         searchVideo: SearchVideo,
         playbackProvider: KalturaPlaybackProvider

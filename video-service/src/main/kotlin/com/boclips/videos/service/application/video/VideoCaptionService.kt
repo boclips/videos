@@ -11,7 +11,8 @@ import mu.KLogging
 
 class VideoCaptionService(
     val kalturaClient: KalturaClient,
-    val captionService: CaptionService) {
+    val captionService: CaptionService
+) {
     companion object : KLogging()
 
     fun withCaptionDetails(video: VideoResource): VideoResource {

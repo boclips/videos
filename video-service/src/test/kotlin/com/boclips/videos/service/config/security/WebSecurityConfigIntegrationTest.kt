@@ -86,8 +86,8 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/${videoId.value}/assets").asTeacher())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(post("/v1/videos/${videoId.value}/assets").asBoclipsEmployee())
-            .andExpect(status().`is`(not401Or403()))
+        mockMvc.perform(get("/v1/videos/${videoId.value}/assets").asBoclipsEmployee())
+            .andExpect(status().is2xxSuccessful)
     }
 
     @Test
