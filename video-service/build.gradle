@@ -137,7 +137,7 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation('org.mockito:mockito-junit-jupiter:2.23.0')
+    testImplementation('org.mockito:mockito-junit-jupiter:3.6.0')
     testImplementation('org.yaml:snakeyaml:1.27')
 
     youtubeContractTestImplementation sourceSets.main.output
