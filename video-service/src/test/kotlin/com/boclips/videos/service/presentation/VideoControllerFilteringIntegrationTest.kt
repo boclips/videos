@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
@@ -7,10 +8,15 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.testsupport.*
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.UserFactory
+import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asTeacher
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
+import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.equalTo
@@ -600,6 +606,31 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         mockMvc.perform(get("/v1/videos?query=whatdohorseseat").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
+    }
+
+    @Test
+    fun `sends 'videoSearched' event when searching for videos`() {
+
+        val channelId = saveChannel(name = "test").id
+        saveVideo(contentProviderId = channelId.value)
+
+        mockMvc.perform(
+            get(
+                "/v1/videos?channel=${channelId.value}&query=dragons&duration=PT2M-PT5M" +
+                    "&duration_facets=PT0S-PT2M,PT2M-PT5M,PT5M-PT10M,PT10M-PT20M,PT20M-PT24H" +
+                    "&age_range=9-11,11-14&age_range_facets=3-5,5-9,9-11,11-14,14-16,16-99&size=10&page=0" +
+                    "&subject=5cb499c9fd5beb428189454c&type=INSTRUCTIONAL&resource_type_facets=Activity,Lesson+Guide"
+            )
+                .asApiUser()
+        )
+            .andExpect(status().isOk)
+
+        val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
+        Assertions.assertThat(event.query).isEqualTo("dragons")
+        Assertions.assertThat(event.queryParams).hasSize(11)
+        Assertions.assertThat(event.queryParams["channel"]).containsExactly(channelId.value)
+        Assertions.assertThat(event.queryParams["duration"]).containsExactly("PT2M-PT5M")
+        Assertions.assertThat(event.queryParams["duration_facets"]).hasSize(5)
     }
 
     private fun getRatingLink(videoId: String): String {

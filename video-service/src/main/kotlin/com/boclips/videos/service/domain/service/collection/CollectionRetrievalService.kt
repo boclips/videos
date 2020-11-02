@@ -25,7 +25,11 @@ class CollectionRetrievalService(
 ) {
     companion object : KLogging()
 
-    fun search(query: CollectionSearchQuery, user: User): ResultsPage<Collection, Nothing> {
+    fun search(
+        query: CollectionSearchQuery,
+        user: User,
+        queryParams: Map<String, List<String>> = emptyMap()
+    ): ResultsPage<Collection, Nothing> {
         val searchQuery = query.toSearchQuery()
 
         val searchRequest = PaginatedSearchRequest(
@@ -50,6 +54,7 @@ class CollectionRetrievalService(
             pageSize = query.pageSize,
             totalResults = collectionIds.size.toLong(),
             pageResourceIds = collectionIds.map { collectionId -> collectionId.value },
+            queryParams = queryParams,
             user = user
         )
 

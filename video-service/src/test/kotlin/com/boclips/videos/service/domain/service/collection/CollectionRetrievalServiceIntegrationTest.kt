@@ -135,11 +135,13 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
 
             collectionRetrievalService.search(
                 query = collectionSearchQuery,
-                user = UserFactory.sample(id = "user-id-34")
+                user = UserFactory.sample(id = "user-id-34"),
+                queryParams = mapOf("age_range" to listOf("4-6"))
             )
 
             val event = fakeEventBus.getEventOfType(ResourcesSearched::class.java)
             assertThat(event.query).isEqualTo("a collection")
+            assertThat(event.queryParams["age_range"]).containsExactly("4-6")
             assertThat(event.resourceType).isEqualTo(ResourceType.COLLECTION)
             assertThat(event.pageIndex).isEqualTo(0)
             assertThat(event.pageSize).isEqualTo(1)

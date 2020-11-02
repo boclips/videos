@@ -56,7 +56,8 @@ class GetVideosByQuery(
         releasedDateFrom: String?,
         resourceTypes: Set<String>,
         resourceTypeFacets: List<String>?,
-        includeChannelFacets: Boolean?
+        includeChannelFacets: Boolean?,
+        queryParams: Map<String, List<String>>
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -101,6 +102,7 @@ class GetVideosByQuery(
                 pageSize = pageSize,
                 totalResults = videoSearchResponse.counts.total,
                 pageVideoIds = videoSearchResponse.videos.map { it.videoId.value },
+                queryParams = queryParams,
                 user = user
             )
         } catch (e: Exception) {

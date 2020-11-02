@@ -63,7 +63,8 @@ class SearchVideo(
         user: User,
         resourceTypes: Set<String> = emptySet(),
         resourceTypeFacets: List<String>? = null,
-        includeChannelFacets: Boolean? = null
+        includeChannelFacets: Boolean? = null,
+        queryParams: Map<String, List<String>>? = null
     ): ResultsPage<Video, VideoCounts> {
         return getVideosByQuery(
             query = query ?: "",
@@ -92,7 +93,8 @@ class SearchVideo(
             user = user,
             resourceTypes = resourceTypes.mapTo(HashSet()) { AttachmentType.valueOf(it).label },
             resourceTypeFacets = resourceTypeFacets,
-            includeChannelFacets = includeChannelFacets
+            includeChannelFacets = includeChannelFacets,
+            queryParams = queryParams ?: emptyMap()
         )
     }
 

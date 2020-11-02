@@ -51,6 +51,10 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             totalResults = 20,
             pageVideoIds = listOf("v123"),
+            queryParams = mapOf(
+                "age_range_min" to arrayListOf("11"),
+                "duration" to arrayListOf("0M-03M", "05M-07M"),
+            ),
             user = UserFactory.sample(
                 id = "user@example.com",
                 context = RequestContext(
@@ -70,6 +74,8 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         assertThat(event.pageVideoIds).containsExactly("v123")
         assertThat(event.url).isEqualTo("https://mysearchpage.com")
         assertThat(event.deviceId).isEqualTo("my-device")
+        assertThat(event.queryParams["age_range_min"]).isEqualTo(arrayListOf("11"))
+        assertThat(event.queryParams["duration"]).isEqualTo(arrayListOf("0M-03M", "05M-07M"))
     }
 
     @Test
@@ -81,13 +87,15 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             totalResults = 400,
             pageResourceIds = listOf("id-1", "id-2", "id-89"),
-            user = UserFactory.sample(id = "waterloo-3")
+            user = UserFactory.sample(id = "waterloo-3"),
+            queryParams = mapOf("age_range" to listOf("4-6"))
         )
 
         val event = fakeEventBus.getEventOfType(ResourcesSearched::class.java)
 
         assertThat(event.resourceType).isEqualTo(ResourceType.COLLECTION)
         assertThat(event.query).isEqualTo("Turtles")
+        assertThat(event.queryParams["age_range"]).containsExactly("4-6")
         assertThat(event.pageIndex).isEqualTo(40)
         assertThat(event.pageSize).isEqualTo(2)
         assertThat(event.totalResults).isEqualTo(400)

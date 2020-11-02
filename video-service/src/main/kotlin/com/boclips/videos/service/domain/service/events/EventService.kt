@@ -41,6 +41,7 @@ class EventService(val eventBus: EventBus) {
         pageSize: Int,
         totalResults: Long,
         pageVideoIds: List<String>,
+        queryParams: Map<String, List<String>>,
         user: User
     ) {
         eventBus.publish(
@@ -50,7 +51,8 @@ class EventService(val eventBus: EventBus) {
                     .pageIndex(pageIndex)
                     .pageSize(pageSize)
                     .totalResults(totalResults)
-                    .pageVideoIds(pageVideoIds),
+                    .pageVideoIds(pageVideoIds)
+                    .queryParams(queryParams),
                 user = user
             )
         )
@@ -63,6 +65,7 @@ class EventService(val eventBus: EventBus) {
         pageSize: Int,
         totalResults: Long,
         pageResourceIds: List<String>,
+        queryParams: Map<String, List<String>>,
         user: User
     ) {
         eventBus.publish(
@@ -70,6 +73,7 @@ class EventService(val eventBus: EventBus) {
                 builder = ResourcesSearched.builder()
                     .resourceType(resourceType)
                     .query(query)
+                    .queryParams(queryParams)
                     .pageIndex(pageIndex)
                     .pageSize(pageSize)
                     .pageResourceIds(pageResourceIds)

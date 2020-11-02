@@ -5,6 +5,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
+import com.boclips.videos.service.presentation.converters.CollectionFilterToQueryParamsConverter
 
 class GetCollections(
     private val collectionRetrievalService: CollectionRetrievalService,
@@ -42,6 +43,10 @@ class GetCollections(
             resourceTypes = collectionFilterRequest.getResourceTypes()
         )
 
-        return collectionRetrievalService.search(assembledQuery, user)
+        return collectionRetrievalService.search(
+            query = assembledQuery,
+            queryParams = CollectionFilterToQueryParamsConverter.convert(collectionFilterRequest),
+            user = user
+        )
     }
 }

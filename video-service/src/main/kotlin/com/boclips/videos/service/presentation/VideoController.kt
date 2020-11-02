@@ -8,22 +8,22 @@ import com.boclips.videos.api.request.video.SetThumbnailRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.request.video.VideoAssetRequest
 import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
-import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.lang.IllegalArgumentException
+import javax.servlet.ServletRequest
 import javax.validation.Valid
 
 @RestController
@@ -107,7 +108,8 @@ class VideoController(
         @RequestParam(name = "id", required = false) ids: Set<String>?,
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
         @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
-        @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?
+        @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?,
+        request: ServletRequest
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
@@ -141,7 +143,8 @@ class VideoController(
             sortBy = sortBy,
             pageSize = pageSize,
             pageNumber = pageNumber,
-            includeChannelFacets = includeChannelFacets
+            includeChannelFacets = includeChannelFacets,
+            queryParams = QueryParamsConverter.toSplitList(request.parameterMap)
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())
