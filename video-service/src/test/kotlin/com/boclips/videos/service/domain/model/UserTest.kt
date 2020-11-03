@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.user.UserNotAuthenticatedException
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -12,7 +13,6 @@ import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
@@ -35,7 +35,9 @@ class UserTest {
     }
 
     @Test
-    fun `lazily evaluates access rules`(@Mock accessRulesSupplier: (user: User) -> AccessRules) {
+    fun `lazily evaluates access rules`() {
+        var accessRulesSupplier: (user: User) -> AccessRules = mock()
+
         val user = UserFactory.sample(accessRulesSupplier = accessRulesSupplier)
 
         verify(accessRulesSupplier, never()).invoke(any())
