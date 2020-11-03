@@ -59,13 +59,13 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         kalturaVideoId2 = saveVideo(
             playbackId = PlaybackId(value = "entry-id-1234", type = PlaybackProviderType.KALTURA),
-            title = "powerful video about elephants 1",
-            description = "test description 5",
+            title = "this is valid",
+            description = "this is valid as well",
             date = "2018-02-12",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            contentProvider = "enabled-cp-2",
             legalRestrictions = "None",
-            ageRangeMin = 5, ageRangeMax = 7
+            ageRangeMin = 12, ageRangeMax = 16
         ).value
 
         youtubeVideoId = saveVideo(
