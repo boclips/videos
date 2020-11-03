@@ -19,7 +19,7 @@ allprojects {
 
     ext {
         junitVersion = "5.7.0"
-        elasticSearchVersion = "7.8.1"
+        elasticSearchVersion = "7.9.3"
         solrVersion = "8.6.3"
     }
     subprojects {
