@@ -7,22 +7,14 @@ import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoResults
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
+import java.util.*
+
 
 class VideoRetrievalService(
     private val videoRepository: VideoRepository,
@@ -37,6 +29,12 @@ class VideoRetrievalService(
             )
         )
     )
+
+    fun <T> difference(first: List<T>?, second: List<T>?): List<T>? {
+        val toReturn: MutableList<T> = ArrayList(first)
+        toReturn.removeAll(second!!)
+        return toReturn
+    }
 
     fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
         /**
@@ -55,6 +53,10 @@ class VideoRetrievalService(
         )
 
         val results = videoIndex.search(searchRequest)
+
+        val compareVideoIds = difference(request.ids.toMutableList(), results.elements)
+
+        logger.info { "This ids are not valid $compareVideoIds" }
 
         val videoIds = results.elements.map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }

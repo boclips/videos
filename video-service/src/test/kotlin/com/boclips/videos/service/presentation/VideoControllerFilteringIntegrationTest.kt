@@ -41,6 +41,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     lateinit var tagVideo: TagVideo
 
     lateinit var kalturaVideoId: String
+    lateinit var kalturaVideoId2: String
     lateinit var youtubeVideoId: String
 
     @BeforeEach
@@ -50,6 +51,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             title = "powerful video about elephants",
             description = "test description 3",
             date = "2018-02-11",
+            duration = Duration.ofMinutes(1),
+            contentProvider = "enabled-cp",
+            legalRestrictions = "None",
+            ageRangeMin = 5, ageRangeMax = 7
+        ).value
+
+        kalturaVideoId2 = saveVideo(
+            playbackId = PlaybackId(value = "entry-id-1234", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants 1",
+            description = "test description 5",
+            date = "2018-02-12",
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
@@ -93,34 +105,34 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `can filter by channel id`() {
 
-        val channelId = saveChannel(name="test").id
+        val channelId = saveChannel(name = "test").id
         val videoId = saveVideo(contentProviderId = channelId.value)
 
         mockMvc.perform(get("/v1/videos?channel=${channelId.value}").asApiUser())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId.value)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId.value)))
     }
 
     @Test
     fun `can filter by channel ids`() {
         val contentProviderName = "enabled-cp2"
         val newVideoId = saveVideo(
-                playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
-                title = "powerful video about elephants",
-                description = "test description 3",
-                date = "2018-02-11",
-                duration = Duration.ofSeconds(23),
-                contentProvider = contentProviderName,
-                legalRestrictions = "None"
+            playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
+            title = "powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            contentProvider = contentProviderName,
+            legalRestrictions = "None"
         ).value
         val channel = getChannel(contentProviderName)
 
         mockMvc.perform(get("/v1/videos?channel=${channel.id.value}").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
-                .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
     }
 
     @Test
@@ -259,6 +271,19 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `returns only valid ids`() {
+        val invalidId = "5fa117dd89d2ce28a5a75df5"
+
+        mockMvc.perform(
+            get("/v1/videos?id=$kalturaVideoId,$kalturaVideoId2,$invalidId").asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(kalturaVideoId2)))
     }
 
     @Test
@@ -439,16 +464,20 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val videoWithActivity = saveVideo()
         val videoWithLessonPlan = saveVideo()
 
-        addVideoAttachment(attachment = AttachmentRequest(
-            linkToResource = "https://www.boclips.com",
-            type = "ACTIVITY",
-            description = "a description"),
+        addVideoAttachment(
+            attachment = AttachmentRequest(
+                linkToResource = "https://www.boclips.com",
+                type = "ACTIVITY",
+                description = "a description"
+            ),
             videoId = videoWithActivity
         )
-        addVideoAttachment(attachment = AttachmentRequest(
-            linkToResource = "https://www.boclips.com",
-            type = "LESSON_PLAN",
-            description = "a description"),
+        addVideoAttachment(
+            attachment = AttachmentRequest(
+                linkToResource = "https://www.boclips.com",
+                type = "LESSON_PLAN",
+                description = "a description"
+            ),
             videoId = videoWithLessonPlan
         )
 
