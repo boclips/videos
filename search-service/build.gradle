@@ -46,7 +46,7 @@ dependencies {
     compile("org.eclipse.jetty.http2:http2-hpack:$jettyVersion")
     compile("org.eclipse.jetty.http2:http2-http-client-transport:$jettyVersion")
 
-    compile("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:3.2.0")
+    compile("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:3.2.2")
     compile("org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE")
     compile("io.opentracing.contrib:opentracing-elasticsearch7-client:0.1.6")
 
