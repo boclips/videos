@@ -15,7 +15,6 @@ import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 import java.util.*
 
-
 class VideoRetrievalService(
     private val videoRepository: VideoRepository,
     private val videoIndex: VideoIndex
@@ -29,12 +28,6 @@ class VideoRetrievalService(
             )
         )
     )
-
-    fun <T> difference(first: List<T>?, second: List<T>?): List<T>? {
-        val toReturn: MutableList<T> = ArrayList(first)
-        toReturn.removeAll(second!!)
-        return toReturn
-    }
 
     fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
         /**
@@ -53,10 +46,6 @@ class VideoRetrievalService(
         )
 
         val results = videoIndex.search(searchRequest)
-
-        val compareVideoIds = difference(request.ids.toMutableList(), results.elements)
-
-        logger.info { "This ids are not valid $compareVideoIds" }
 
         val videoIds = results.elements.map { VideoId(value = it) }
         val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
@@ -158,4 +147,3 @@ class VideoRetrievalService(
         }
     }
 }
-

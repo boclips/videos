@@ -63,17 +63,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             ageRangeMin = 5, ageRangeMax = 7
         ).value
 
-        kalturaVideoId2 = saveVideo(
-            playbackId = PlaybackId(value = "entry-id-1234", type = PlaybackProviderType.KALTURA),
-            title = "this is valid",
-            description = "this is valid as well",
-            date = "2018-02-12",
-            duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp-2",
-            legalRestrictions = "None",
-            ageRangeMin = 12, ageRangeMax = 16
-        ).value
-
         youtubeVideoId = saveVideo(
             playbackId = PlaybackId(value = "yt-id-124", type = PlaybackProviderType.YOUTUBE),
             title = "elephants took out jobs",
@@ -277,19 +266,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
-    }
-
-    @Test
-    fun `returns only valid ids`() {
-        val invalidId = "5fa117dd89d2ce28a5a75df5"
-
-        mockMvc.perform(
-            get("/v1/videos?id=$kalturaVideoId,$kalturaVideoId2,$invalidId").asBoclipsEmployee()
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
-            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(kalturaVideoId2)))
     }
 
     @Test
