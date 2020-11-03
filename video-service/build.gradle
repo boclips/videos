@@ -87,6 +87,7 @@ test.finalizedBy(testYoutubeContract)
 ext["junit-jupiter.version"] = junitVersion
 ext["elasticsearch.version"] = elasticSearchVersion
 ext["solr.version"] = solrVersion
+ext["jetty.version"] = jettyVersion
 
 dependencies {
     implementation project(':video-service-api')
