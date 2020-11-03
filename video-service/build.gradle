@@ -125,7 +125,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-youtube:v3-rev20200618-1.30.9")
     implementation("com.google.oauth-client:google-oauth-client:1.31.0")
     implementation('com.google.cloud:google-cloud-storage:1.103.1')
-    implementation('org.apache.commons:commons-lang3:3.7')
+    implementation('org.apache.commons:commons-lang3:3.11')
     implementation("org.bouncycastle:bcprov-jdk15on:1.60")
     implementation('org.litote.kmongo:kmongo:3.9.2')
     implementation('io.sentry:sentry-logback:3.1.1')
