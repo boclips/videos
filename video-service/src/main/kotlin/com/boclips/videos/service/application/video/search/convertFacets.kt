@@ -10,6 +10,7 @@ class FacetConverter {
         ageRangesFacets: List<FixedAgeRangeFacet>?,
         durationFacets: List<String>?,
         resourcesFacets: List<String>?,
+        videoTypesFacets: List<String>?,
         includeChannelFacets: Boolean?
     ): VideoFacets {
         return VideoFacets()
@@ -35,6 +36,9 @@ class FacetConverter {
                     attachmentTypes = resourcesFacets
                 }
             }
+            .apply { videoTypesFacets?.let { typesFacets ->
+                videoTypes = typesFacets
+            } }
             .apply { includeChannelFacets?.let {
                 this.includeChannelFacets = it
             } }

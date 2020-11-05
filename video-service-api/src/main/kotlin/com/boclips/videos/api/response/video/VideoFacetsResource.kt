@@ -5,6 +5,7 @@ data class VideoFacetsResource(
     val ageRanges: Map<String, VideoFacetResource>,
     val durations: Map<String, VideoFacetResource>,
     val resourceTypes: Map<String, VideoFacetResource>,
+    val videoTypes: Map<String, VideoFacetResource>,
     val channels: Map<String, VideoFacetResource>
 )
 

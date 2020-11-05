@@ -108,6 +108,7 @@ class VideoController(
         @RequestParam(name = "id", required = false) ids: Set<String>?,
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
         @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
+        @RequestParam(name = "video_type_facets", required = false) videoTypeFacets: List<String>?,
         @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?,
         request: ServletRequest
     ): ResponseEntity<VideosResource> {
@@ -135,6 +136,7 @@ class VideoController(
             subjectsSetManually = subjectsSetManually,
             resourceTypes = resourceTypes ?: emptySet(),
             resourceTypeFacets = resourceTypeFacets.orEmpty(),
+            videoTypeFacets = videoTypeFacets.orEmpty(),
             promoted = promoted,
             channelNames = if (filteringByChannelIds) emptySet() else channels,
             channelIds = if (filteringByChannelIds) channels else emptySet(),

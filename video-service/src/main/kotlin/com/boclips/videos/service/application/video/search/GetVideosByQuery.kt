@@ -56,6 +56,7 @@ class GetVideosByQuery(
         releasedDateFrom: String?,
         resourceTypes: Set<String>,
         resourceTypeFacets: List<String>?,
+        videoTypeFacets: List<String>?,
         includeChannelFacets: Boolean?,
         queryParams: Map<String, List<String>>
     ): ResultsPage<Video, VideoCounts> {
@@ -88,7 +89,7 @@ class GetVideosByQuery(
             channelNames = channelNames,
             channelIds = channelIds,
             types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
-            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, includeChannelFacets),
+            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets),
             attachmentTypes = resourceTypes
         )
 

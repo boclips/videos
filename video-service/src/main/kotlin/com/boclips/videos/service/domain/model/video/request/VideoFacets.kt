@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.video.request
 
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
+import com.boclips.videos.service.domain.model.video.ContentType
 import java.time.Duration
 
 data class VideoFacets(
@@ -20,6 +21,7 @@ data class VideoFacets(
         Pair(Duration.ofMinutes(20), Duration.ofHours(24))
     ),
     var attachmentTypes: List<String> = listOf(AttachmentType.values().toString()),
+    var videoTypes: List<String> = listOf(ContentType.values().toString()),
     var includeChannelFacets: Boolean = false
 )
 

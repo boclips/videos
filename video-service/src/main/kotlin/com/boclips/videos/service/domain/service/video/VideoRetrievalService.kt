@@ -60,6 +60,8 @@ class VideoRetrievalService(
             .map { AttachmentTypeFacet(attachmentType = it.id, total = it.hits) }
         val channelCounts = results.counts.getFacetCounts(FacetType.Channels)
             .map { ChannelFacet(channelId = ChannelId(it.id), total = it.hits) }
+        val videoTypeCounts = results.counts.getFacetCounts(FacetType.VideoTypes)
+            .map { VideoTypeFacet(typeId = it.id, total = it.hits) }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
@@ -71,7 +73,8 @@ class VideoRetrievalService(
                 ageRanges = ageRangeCounts,
                 durations = durationCounts,
                 attachmentTypes = attachmentTypeCounts,
-                channels = channelCounts
+                channels = channelCounts,
+                videoTypes = videoTypeCounts
             )
         )
     }

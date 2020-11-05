@@ -10,7 +10,8 @@ class VideoCounts(
     val ageRanges: List<AgeRangeFacet>,
     val durations: List<DurationFacet>,
     val attachmentTypes: List<AttachmentTypeFacet>,
-    val channels: List<ChannelFacet>
+    val channels: List<ChannelFacet>,
+    val videoTypes: List<VideoTypeFacet>
 )
 
 class SubjectFacet(val subjectId: SubjectId, val total: Long)
@@ -18,3 +19,4 @@ class AgeRangeFacet(val ageRangeId: AgeRangeId, val total: Long)
 class DurationFacet(val durationId: String, val total: Long)
 class AttachmentTypeFacet(val attachmentType: String, val total: Long)
 class ChannelFacet(val channelId: ChannelId, val total: Long)
+class VideoTypeFacet(val typeId: String, val total: Long)

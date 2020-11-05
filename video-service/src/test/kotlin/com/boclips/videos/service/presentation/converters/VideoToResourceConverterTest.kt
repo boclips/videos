@@ -16,16 +16,7 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.ContentType
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -296,7 +287,8 @@ class VideoToResourceConverterTest {
                     channels = listOf(
                         ChannelFacet(channelId = ChannelId("channel-id"), total = 7),
                         ChannelFacet(channelId = ChannelId("non-existing-channel-id"), total = 9)
-                    )
+                    ),
+                    videoTypes = listOf(VideoTypeFacet(typeId = "stock", total = 10))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -308,13 +300,20 @@ class VideoToResourceConverterTest {
         )
 
         assertThat(resultResource._embedded.facets?.subjects?.get("id")?.hits).isEqualTo(100)
+
         assertThat(resultResource._embedded.facets?.ageRanges?.get("3-5")?.hits).isEqualTo(3)
         assertThat(resultResource._embedded.facets?.ageRanges?.get("5-11")?.hits).isEqualTo(1)
+
         assertThat(resultResource._embedded.facets?.durations?.get("PT0S-PT1M")?.hits).isEqualTo(10)
+
         assertThat(resultResource._embedded.facets?.resourceTypes?.get("Activity")?.hits).isEqualTo(5)
+
         assertThat(resultResource._embedded.facets?.channels?.size).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.channels?.get("TED")?.hits).isEqualTo(7)
         assertThat(resultResource._embedded.facets?.channels?.get("TED")?.id).isEqualTo("channel-id")
+
+        assertThat(resultResource._embedded.facets?.videoTypes?.size).isEqualTo(1)
+        assertThat(resultResource._embedded.facets?.videoTypes?.get("stock")?.hits).isEqualTo(10)
     }
 
     @Test
