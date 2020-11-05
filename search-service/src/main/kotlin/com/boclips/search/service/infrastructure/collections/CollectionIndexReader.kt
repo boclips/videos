@@ -6,9 +6,11 @@ import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.infrastructure.collections.CollectionFilterCriteria.Companion.allCriteria
+import com.boclips.search.service.infrastructure.common.exceptions.CursorBasedRequestNotSupportedException
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.RequestOptions
@@ -23,7 +25,10 @@ class CollectionIndexReader(val client: RestHighLevelClient) : IndexReader<Colle
 
     private val elasticSearchResultConverter = CollectionDocumentConverter()
 
-    override fun search(searchRequest: PaginatedSearchRequest<CollectionQuery>): SearchResults {
+    override fun search(searchRequest: IndexSearchRequest<CollectionQuery>): SearchResults {
+        searchRequest as? PaginatedIndexSearchRequest
+            ?: throw CursorBasedRequestNotSupportedException
+
         val results = search(searchRequest.query, searchRequest.startIndex, searchRequest.windowSize)
 
         val elements = results

@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -39,7 +39,7 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         sort = listOf(
                             Sort.ByField(
@@ -73,7 +73,7 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         sort = listOf(
                             Sort.ByField(
@@ -107,7 +107,7 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         sort = listOf(
                             Sort.ByField(
@@ -145,7 +145,7 @@ class CollectionIndexReaderSortingIntegrationTest : EmbeddedElasticSearchIntegra
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         sort = listOf(
                             Sort.ByField(

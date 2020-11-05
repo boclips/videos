@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -35,7 +35,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(
                             permittedVideoIds = setOf("1")
@@ -63,7 +63,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(permittedVideoIds = setOf("1", "2")),
                         phrase = "apple",
@@ -85,7 +85,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(
                             permittedVideoIds = null
@@ -108,7 +108,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(
                             permittedVideoIds = emptySet()
@@ -134,7 +134,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("1")),
                         phrase = "apple"
@@ -156,7 +156,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(
                             deniedVideoIds = setOf("1"),
@@ -180,7 +180,7 @@ internal class VideoIndexReaderIdsIntegrationTest : EmbeddedElasticSearchIntegra
             )
 
             val results = videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("100")),
                         phrase = "apple"

@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -32,7 +32,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             queryService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "gentleman",
                         videoAccessRuleQuery = VideoAccessRuleQuery()
@@ -69,7 +69,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             queryService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "gentleman",
                         videoAccessRuleQuery = VideoAccessRuleQuery()
@@ -98,7 +98,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             queryService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "boy",
                         videoAccessRuleQuery = VideoAccessRuleQuery()
@@ -120,7 +120,7 @@ class VideoSearchIndexContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             queryService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "Boy",
                         videoAccessRuleQuery = VideoAccessRuleQuery()

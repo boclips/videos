@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
@@ -70,7 +71,7 @@ class GetVideosByQuery(
             ids = ids,
             text = query,
             sortBy = sortBy,
-            pageIndex = pageNumber,
+            pagingState = VideoRequestPagingState.PageNumber(pageNumber),
             pageSize = pageSize,
             bestFor = bestFor,
             durationRanges = queryConverter.convertDurations(minDurationString, maxDurationString, duration),

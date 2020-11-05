@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -61,7 +61,7 @@ class SolrSearchServiceIntegrationTest {
     fun `does not support searching by phrase`() {
         assertThrows<UnsupportedOperationException> {
             solrVideoSearch.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     VideoQuery(
                         phrase = "phrase", videoAccessRuleQuery = VideoAccessRuleQuery()
                     )
@@ -81,7 +81,7 @@ class SolrSearchServiceIntegrationTest {
         )
 
         val results = solrVideoSearch.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "5"))
                 )
@@ -97,7 +97,7 @@ class SolrSearchServiceIntegrationTest {
         solrVideoSearch.removeFromSearch(itemId = "10")
 
         val results = solrVideoSearch.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("10"))
                 )
@@ -119,7 +119,7 @@ class SolrSearchServiceIntegrationTest {
         solrVideoSearch.bulkRemoveFromSearch(listOf("1", "2", "3"))
 
         val results = solrVideoSearch.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2", "3"))
                 )
@@ -139,7 +139,7 @@ class SolrSearchServiceIntegrationTest {
         solrVideoSearch.bulkRemoveFromSearch(listOf("1", "2"))
 
         val results = solrVideoSearch.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(ids = setOf("1", "2"))
                 )

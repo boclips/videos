@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.AgeRange
@@ -33,7 +33,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     "collectionQuery that matches nothing"
                 )
@@ -61,7 +61,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     phrase = "Gentleman",
                     permittedIds = listOf("1")
@@ -98,7 +98,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery("gentleman"))
+            PaginatedIndexSearchRequest(query = CollectionQuery("gentleman"))
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "3")
@@ -120,7 +120,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(subjectIds = listOf("gentleman", "crispity")))
+            PaginatedIndexSearchRequest(query = CollectionQuery(subjectIds = listOf("gentleman", "crispity")))
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1")
@@ -141,7 +141,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(ageRangeMin = 5, ageRangeMax = 7))
+            PaginatedIndexSearchRequest(query = CollectionQuery(ageRangeMin = 5, ageRangeMax = 7))
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
@@ -162,7 +162,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = CollectionQuery(ageRanges = listOf(AgeRange(5, 7))))
+            PaginatedIndexSearchRequest(query = CollectionQuery(ageRanges = listOf(AgeRange(5, 7))))
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("Lower-Elementary")
@@ -183,7 +183,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(phrase = "")
             )
         )
@@ -207,7 +207,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     permittedIds = listOf("1", "2")
                 )
@@ -256,7 +256,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val results = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     owner = "teacher",
                     bookmarkedBy = "teacher",
@@ -298,7 +298,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
         )
 
         val results = readService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(bookmarkedBy = "teacher")
             )
         )
@@ -327,7 +327,7 @@ class CollectionSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest
 
         assertThat(
             readService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "gentleman"
                     )

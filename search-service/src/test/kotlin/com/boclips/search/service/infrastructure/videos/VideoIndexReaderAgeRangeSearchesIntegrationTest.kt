@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -258,5 +258,5 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
     }
 
     private fun getSearchResults(query: VideoQuery) =
-        videoIndexReader.search(PaginatedSearchRequest(query = query))
+        videoIndexReader.search(PaginatedIndexSearchRequest(query = query))
 }

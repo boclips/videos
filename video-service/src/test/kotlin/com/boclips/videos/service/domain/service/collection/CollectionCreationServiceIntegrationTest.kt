@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.collection.CreateDefaultCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
@@ -87,7 +87,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
         assertThat(result.title).isEqualTo(CreateDefaultCollectionCommand.TITLE)
 
         val indexedCollection = collectionIndexFake.search(
-            searchRequest = PaginatedSearchRequest(query = CollectionQuery(phrase = "Watch later"))
+            searchRequest = PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "Watch later"))
         )
         assertThat(indexedCollection.elements.size).isEqualTo(1)
     }

@@ -12,7 +12,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asOperator
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -224,11 +224,13 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "1")
         val video2 = saveVideo(title = "2")
         val video3 = saveVideo(title = "3")
+        val video4 = saveVideo(title = "4")
+        saveVideo(title = "5")
 
         val accessRules = AccessRuleResource.IncludedVideos(
             id = "some-id",
             name = "included video rule",
-            videoIds = listOf(video3, video2).map { it.value }
+            videoIds = listOf(video2, video3, video4).map { it.value }
         )
 
         val contentPackage = ContentPackageResource(
@@ -240,17 +242,29 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         contentPackagesClient.add(contentPackage)
 
-        mockMvc.perform(
+        val nextPage = mockMvc.perform(
             MockMvcRequestBuilders.get(
-                "/v1/admin/actions/videos_for_content_package/content-package-id?page=0&size=50"
+                "/v1/admin/actions/videos_for_content_package/content-package-id?size=2"
             )
                 .asOperator()
         )
             .andExpect(status().isOk)
             .andExpect(
                 jsonPath(
-                    "videoIds",
-                    containsInAnyOrder(video3.value, video2.value)
+                    "_embedded.videoIds.length()",
+                    `is`(2)
+                )
+            )
+            .andReturnLink("next").expand()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(nextPage).asOperator()
+        )
+            .andExpect(status().isOk)
+            .andExpect(
+                jsonPath(
+                    "_embedded.videoIds.length()",
+                    `is`(1)
                 )
             )
     }

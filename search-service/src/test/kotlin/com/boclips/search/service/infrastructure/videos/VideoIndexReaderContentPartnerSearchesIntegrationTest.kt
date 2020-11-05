@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
@@ -50,7 +50,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
 
         val results =
             videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = contentProvider,
                         userQuery = UserQuery(types = setOf(VideoType.NEWS)),
@@ -82,7 +82,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = contentProvider,
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -114,7 +114,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = VideoQuery(phrase = "Ted-ed", videoAccessRuleQuery = VideoAccessRuleQuery()))
+            PaginatedIndexSearchRequest(query = VideoQuery(phrase = "Ted-ed", videoAccessRuleQuery = VideoAccessRuleQuery()))
         )
 
         assertThat(results.elements).startsWith("3")
@@ -152,7 +152,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -189,7 +189,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -223,7 +223,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -256,7 +256,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -289,7 +289,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),

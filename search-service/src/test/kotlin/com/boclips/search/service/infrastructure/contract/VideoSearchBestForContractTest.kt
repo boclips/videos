@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -39,7 +39,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "Trump",
                     userQuery = UserQuery(
@@ -78,7 +78,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "Trump",
                     videoAccessRuleQuery = VideoAccessRuleQuery()
@@ -114,7 +114,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "Trump",
                     userQuery = UserQuery(
@@ -153,7 +153,7 @@ class VideoSearchBestForContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(types = setOf(VideoType.NEWS, VideoType.STOCK)),
                     videoAccessRuleQuery = VideoAccessRuleQuery()

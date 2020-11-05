@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
@@ -44,7 +44,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -88,7 +88,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -136,7 +136,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -181,7 +181,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "dancing",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -226,7 +226,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     videoSort = Sort.ByRandom()
@@ -258,7 +258,7 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "gentleman",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),

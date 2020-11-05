@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
@@ -127,7 +128,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Everything
             ).counts.total

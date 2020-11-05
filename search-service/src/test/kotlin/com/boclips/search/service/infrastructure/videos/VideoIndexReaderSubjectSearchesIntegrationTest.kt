@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -45,7 +45,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(subjectIds = setOf("subject-two"))
@@ -71,7 +71,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -111,7 +111,7 @@ class VideoIndexReaderSubjectSearchesIntegrationTest : EmbeddedElasticSearchInte
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "ted",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),

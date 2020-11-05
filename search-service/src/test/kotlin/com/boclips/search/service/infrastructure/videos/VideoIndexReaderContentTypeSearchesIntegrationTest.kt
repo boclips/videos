@@ -1,12 +1,11 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -38,8 +37,8 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
-                VideoQuery(
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = setOf(
@@ -47,7 +46,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.INSTRUCTIONAL
                         )
                     )
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 
@@ -70,7 +71,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
@@ -78,7 +79,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.STOCK
                         )
                     )
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 
@@ -100,7 +103,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     phrase = "Rhino",
                     userQuery = UserQuery(
@@ -109,7 +112,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                         )
                     ),
                     videoAccessRuleQuery = VideoAccessRuleQuery()
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 
@@ -129,13 +134,15 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
                         types = emptySet()
                     )
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 
@@ -158,7 +165,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     userQuery = UserQuery(
                         types = setOf(
@@ -171,7 +178,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.STOCK
                         )
                     )
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 
@@ -193,7 +202,7 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoQuery(
                     phrase = "Rhino",
                     videoAccessRuleQuery = VideoAccessRuleQuery(
@@ -201,7 +210,9 @@ class VideoIndexReaderContentTypeSearchesIntegrationTest : EmbeddedElasticSearch
                             VideoType.NEWS
                         )
                     )
-                ), 0, 10
+                ),
+                windowSize = 10,
+                startIndex = 0
             )
         )
 

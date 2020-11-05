@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -36,7 +36,7 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
         )
 
         val results = collectionIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     owner = "juan-123",
                     searchable = null
@@ -58,7 +58,7 @@ class CollectionIndexReaderOwnerIntegrationTest : EmbeddedElasticSearchIntegrati
         )
 
         val results = collectionIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     owner = "jose",
                     searchable = null

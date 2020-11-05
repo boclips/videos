@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -37,7 +37,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(includedVoiceType = emptySet())
                 )
@@ -71,7 +71,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(
                         includedVoiceType = setOf(VoiceType.WITH, VoiceType.UNKNOWN)
@@ -108,7 +108,7 @@ class VideoSearchVoiceTypesContractTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val result = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(
                         includedVoiceType = setOf(VoiceType.WITH, VoiceType.WITHOUT)

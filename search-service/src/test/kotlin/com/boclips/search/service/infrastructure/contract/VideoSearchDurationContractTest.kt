@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -33,7 +33,7 @@ class VideoSearchDurationContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = queryService.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "World war",
                     userQuery = UserQuery(durationRanges = listOf(DurationRange(min = Duration.ofSeconds(10)))),
@@ -63,7 +63,7 @@ class VideoSearchDurationContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         val results =
             queryService.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         "World war",
                         userQuery = UserQuery(

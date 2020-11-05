@@ -1,6 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -53,7 +53,7 @@ class VideoDeletionServiceTest : AbstractSpringIntegrationTest() {
 
         Assertions.assertThat(
             videoIndexFake.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "Some title",
                         videoAccessRuleQuery = VideoAccessRuleQuery()

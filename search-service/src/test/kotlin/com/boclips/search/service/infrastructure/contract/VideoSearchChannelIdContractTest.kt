@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -26,7 +26,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))
@@ -50,7 +50,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))
@@ -74,7 +74,7 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
             ))

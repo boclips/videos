@@ -3,17 +3,32 @@ package com.boclips.videos.service.domain.service.video
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.FacetType
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.PagingCursor
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.DurationFacet
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoIdsWithCursor
+import com.boclips.videos.service.domain.model.video.VideoResults
+import com.boclips.videos.service.domain.model.video.VideoTypeFacet
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoIdsRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
-import java.util.*
+import com.boclips.search.service.domain.common.model.PagingCursor as PagingCursorForSearch
 
 class VideoRetrievalService(
     private val videoRepository: VideoRepository,
@@ -36,12 +51,16 @@ class VideoRetrievalService(
          * I guess it depends if we see this search method serving up just streamable videos.
          */
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
+        val pageIndex = when (request.pagingState) {
+            is VideoRequestPagingState.PageNumber -> request.pagingState.number
+            is VideoRequestPagingState.Cursor -> 0
+        }
 
         logger.info { "Searching for videos with access $videoAccess" }
 
-        val searchRequest = PaginatedSearchRequest(
+        val searchRequest = PaginatedIndexSearchRequest(
             query = request.toQuery(videoAccessWithDefaultRules),
-            startIndex = convertPageToIndex(request.pageSize, request.pageIndex),
+            startIndex = convertPageToIndex(request.pageSize, pageIndex),
             windowSize = request.pageSize
         )
 
@@ -83,7 +102,7 @@ class VideoRetrievalService(
         val orderById = videoIds.withIndex().associate { it.value to it.index }
 
         val results = videoIndex.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 VideoIdsRequest(ids = videoIds).toSearchQuery(videoAccess),
                 windowSize = videoIds.size
             )
@@ -107,7 +126,7 @@ class VideoRetrievalService(
         logger.info { "Getting playable video: $videoId, with access: $videoAccess" }
 
         val results = videoIndex.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoIdsRequest(ids = listOf(videoId)).toSearchQuery(videoAccess),
                 windowSize = 1
             )
@@ -126,21 +145,26 @@ class VideoRetrievalService(
             }
     }
 
-    fun getVideoIds(pageIndex: Int, pageSize: Int, videoAccess: VideoAccess): List<VideoId> {
+    fun getVideoIdsWithCursor(
+        videoAccess: VideoAccess,
+        pageSize: Int,
+        cursor: PagingCursor? = null
+    ): VideoIdsWithCursor {
         val videoRequest = VideoRequest(
             text = "",
-            pageIndex = pageIndex,
+            pagingState = VideoRequestPagingState.Cursor(cursor?.value),
             pageSize = pageSize
         )
-        val searchRequest = PaginatedSearchRequest(
+        val searchRequest = CursorBasedIndexSearchRequest(
             query = videoRequest.toQuery(videoAccess),
-            startIndex = convertPageToIndex(pageSize, pageIndex),
-            windowSize = pageSize
+            windowSize = pageSize,
+            cursor = cursor?.value?.let(::PagingCursorForSearch)
         )
-        return videoIndex
-            .search(searchRequest)
-            .elements
-            .map(::VideoId)
+        val results = videoIndex.search(searchRequest)
+        return VideoIdsWithCursor(
+            videoIds = results.elements.map(::VideoId),
+            cursor = results.cursor?.value?.let(::PagingCursor)
+        )
     }
 
     private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {
@@ -150,3 +174,4 @@ class VideoRetrievalService(
         }
     }
 }
+

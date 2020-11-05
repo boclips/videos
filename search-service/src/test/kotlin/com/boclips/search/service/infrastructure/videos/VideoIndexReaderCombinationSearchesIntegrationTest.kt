@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
@@ -40,7 +40,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results =
-            videoIndexReader.search(PaginatedSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery())))
+            videoIndexReader.search(PaginatedIndexSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery())))
 
         assertThat(results.elements).hasSize(2)
     }
@@ -73,7 +73,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
@@ -109,7 +109,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "Intercom Learning",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -158,7 +158,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -200,7 +200,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "Intercom Learning",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -246,7 +246,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "elephant",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -279,7 +279,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -314,7 +314,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
@@ -344,7 +344,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
 
         val results =
             videoIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "banana",
                         videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -380,7 +380,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     phrase = "matching-query",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
@@ -421,7 +421,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
@@ -461,7 +461,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(

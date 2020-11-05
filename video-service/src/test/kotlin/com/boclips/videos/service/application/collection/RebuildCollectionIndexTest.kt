@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.collection.CollectionId
@@ -56,7 +56,7 @@ class RebuildCollectionIndexTest {
 
         rebuildSearchIndex()
 
-        val results = index.search(PaginatedSearchRequest(CollectionQuery(phrase = "collection")))
+        val results = index.search(PaginatedIndexSearchRequest(CollectionQuery(phrase = "collection")))
 
         assertThat(results.elements).containsExactlyInAnyOrder(
             collectionId2.value,

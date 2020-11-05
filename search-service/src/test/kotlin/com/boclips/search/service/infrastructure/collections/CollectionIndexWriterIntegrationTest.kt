@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +24,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             sequenceOf(SearchableCollectionMetadataFactory.create(id = "1", title = "Beautiful Boy Dancing"))
         )
 
-        val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("Boy")))
+        val results = indexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery("Boy")))
 
         assertThat(results.counts.totalHits).isEqualTo(1)
     }
@@ -41,7 +41,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
             )
         )
 
-        val results = indexReader.search(PaginatedSearchRequest(query = CollectionQuery("verbose")))
+        val results = indexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery("verbose")))
 
         assertThat(results.counts.totalHits).isEqualTo(1)
     }
@@ -65,7 +65,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results = indexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(phrase = "Dancing", resourceTypes = setOf("Lesson Guide"))
             )
         )
@@ -87,7 +87,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         assertThat(
             indexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "boy"
                     )
@@ -99,7 +99,7 @@ class CollectionIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         assertThat(
             indexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "boy"
                     )

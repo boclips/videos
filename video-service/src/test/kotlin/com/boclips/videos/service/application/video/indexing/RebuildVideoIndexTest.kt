@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -97,7 +97,7 @@ class RebuildVideoIndexTest {
 
         rebuildSearchIndex.invoke()
 
-        val searchRequest = PaginatedSearchRequest(
+        val searchRequest = PaginatedIndexSearchRequest(
             VideoQuery(
                 userQuery = UserQuery(
                     ids = setOf(
@@ -143,7 +143,7 @@ class RebuildVideoIndexTest {
 
         rebuildSearchIndex.invoke()
 
-        val searchRequest = PaginatedSearchRequest(
+        val searchRequest = PaginatedIndexSearchRequest(
             VideoQuery(
                 userQuery = UserQuery(
                     ids = setOf(

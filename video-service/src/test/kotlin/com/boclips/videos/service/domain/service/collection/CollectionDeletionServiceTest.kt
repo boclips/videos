@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.service.application.collection.DeleteCollection
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -35,7 +35,7 @@ class CollectionDeletionServiceTest : AbstractSpringIntegrationTest() {
         deleteCollection.invoke(collectionId.value, UserFactory.sample(id = "me@me.com"))
 
         val results =
-            collectionIndexFake.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "An excellent")))
+            collectionIndexFake.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "An excellent")))
 
         assertThat(results.counts.totalHits).isEqualTo(0)
     }

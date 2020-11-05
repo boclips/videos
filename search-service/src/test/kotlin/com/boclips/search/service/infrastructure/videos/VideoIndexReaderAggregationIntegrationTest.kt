@@ -3,9 +3,14 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.FacetDefinition
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.videos.model.*
+import com.boclips.search.service.domain.videos.model.AgeRange
+import com.boclips.search.service.domain.videos.model.DurationRange
+import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
+import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -34,25 +39,25 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                            SubjectMetadata(id = "1", name = "French"),
-                            SubjectMetadata(id = "2", name = "Maths")
-                        )
+                                SubjectMetadata(id = "1", name = "French"),
+                                SubjectMetadata(id = "2", name = "Maths")
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                            SubjectMetadata(id = "2", name = "Maths")
-                        )
+                                SubjectMetadata(id = "2", name = "Maths")
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                            SubjectMetadata(id = "3", name = "Literacy")
-                        )
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            )
                         )
                     )
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple"
                         )
@@ -73,24 +78,24 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                            SubjectMetadata(id = "1", name = "French")
-                        )
+                                SubjectMetadata(id = "1", name = "French")
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                            SubjectMetadata(id = "2", name = "Maths")
-                        )
+                                SubjectMetadata(id = "2", name = "Maths")
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                            SubjectMetadata(id = "3", name = "Literacy")
-                        )
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            )
                         )
                     )
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -115,21 +120,21 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                            SubjectMetadata(id = "1", name = "French"),
-                            SubjectMetadata(id = "2", name = "Maths")
-                        ),
+                                SubjectMetadata(id = "1", name = "French"),
+                                SubjectMetadata(id = "2", name = "Maths")
+                            ),
                             ageRangeMax = 3, ageRangeMin = 1
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                            SubjectMetadata(id = "2", name = "Maths")
-                        ),
+                                SubjectMetadata(id = "2", name = "Maths")
+                            ),
                             ageRangeMin = 13, ageRangeMax = 18
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                            SubjectMetadata(id = "3", name = "Literacy")
-                        ),
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
                             ageRangeMin = 13,
                             ageRangeMax = 17
                         )
@@ -137,7 +142,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             userQuery = UserQuery(subjectIds = setOf("1"), ageRanges = listOf(AgeRange(1, 3))),
@@ -159,27 +164,27 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                            SubjectMetadata(id = "1", name = "French")
-                        ),
+                                SubjectMetadata(id = "1", name = "French")
+                            ),
                             types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                            SubjectMetadata(id = "2", name = "Maths")
-                        ),
+                                SubjectMetadata(id = "2", name = "Maths")
+                            ),
                             types = listOf(VideoType.STOCK)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                            SubjectMetadata(id = "3", name = "Literacy")
-                        ),
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
                             types = listOf(VideoType.INSTRUCTIONAL)
                         )
                     )
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             videoAccessRuleQuery = VideoAccessRuleQuery(
@@ -219,7 +224,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple"
                         )
@@ -252,7 +257,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
                 videoIndexWriter.upsert(videos)
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple"
                         )
@@ -290,7 +295,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
                 videoIndexWriter.upsert(videos)
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -323,7 +328,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple"
                         )
@@ -370,7 +375,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -421,7 +426,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -468,7 +473,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -518,7 +523,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -569,7 +574,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple"
@@ -606,7 +611,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple",
                             facetDefinition = FacetDefinition.Video(
@@ -645,7 +650,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
@@ -711,7 +716,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             userQuery = UserQuery(
@@ -763,7 +768,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             videoAccessRuleQuery = VideoAccessRuleQuery(
@@ -802,7 +807,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             videoAccessRuleQuery = VideoAccessRuleQuery()
@@ -813,7 +818,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.totalHits).isEqualTo(1)
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(0)
             }
-
         }
 
         @Nested
@@ -826,7 +830,9 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             id = "1", title = "Apple banana candy", types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
-                            id = "2", title = "candy banana apple", types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)
+                            id = "2",
+                            title = "candy banana apple",
+                            types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "candy apple", types = listOf(VideoType.NEWS)
@@ -838,7 +844,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple",
                             facetDefinition = FacetDefinition.Video(
@@ -855,7 +861,12 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.totalHits).isEqualTo(4)
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(3)
 
-                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 2))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(
+                    Count(
+                        id = "instructional",
+                        hits = 2
+                    )
+                )
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "stock", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 2))
             }
@@ -900,7 +911,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             userQuery = UserQuery(
@@ -922,7 +933,12 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(3)
 
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 1))
-                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 2))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(
+                    Count(
+                        id = "instructional",
+                        hits = 2
+                    )
+                )
             }
 
             @Test
@@ -948,7 +964,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 )
 
                 val results = videoIndexReader.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
                             videoAccessRuleQuery = VideoAccessRuleQuery(
@@ -969,7 +985,12 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.totalHits).isEqualTo(2)
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(2)
 
-                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(
+                    Count(
+                        id = "instructional",
+                        hits = 1
+                    )
+                )
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 1))
             }
         }

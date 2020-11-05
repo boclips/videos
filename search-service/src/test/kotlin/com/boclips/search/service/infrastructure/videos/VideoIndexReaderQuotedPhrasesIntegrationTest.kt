@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest() {
+class VideoIndexReaderQuotedPhrasesIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
     private lateinit var videoIndexWriter: VideoIndexWriter
 
@@ -39,7 +39,7 @@ class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     phrase = "\"blue cat\""
@@ -71,7 +71,7 @@ class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     phrase = "\"the red cars drive\""
@@ -103,7 +103,7 @@ class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     phrase = "\"blue whales\""
@@ -136,7 +136,7 @@ class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     phrase = "\"gandalf the grey\" \"radagast the brown\" \"sauron\""
@@ -172,7 +172,7 @@ class VideoIndexReaderQuotedPhrasesTest : EmbeddedElasticSearchIntegrationTest()
         )
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     phrase = "\"pecan pie\" blue berry basket"

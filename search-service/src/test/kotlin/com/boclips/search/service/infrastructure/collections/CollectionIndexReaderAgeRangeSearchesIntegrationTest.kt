@@ -2,7 +2,7 @@ package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
@@ -152,5 +152,5 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
     }
 
     private fun getSearchResults(query: CollectionQuery): SearchResults =
-        collectionIndexReader.search(PaginatedSearchRequest(query = query))
+        collectionIndexReader.search(PaginatedIndexSearchRequest(query = query))
 }

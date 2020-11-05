@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.ContentType
@@ -33,7 +33,7 @@ class VideoIndexTest : AbstractSpringIntegrationTest() {
 
         assertThat(
             index.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery("isNews", videoAccessRuleQuery = VideoAccessRuleQuery()),
                     startIndex = 0,
                     windowSize = 10
@@ -42,7 +42,7 @@ class VideoIndexTest : AbstractSpringIntegrationTest() {
         ).isNotEmpty
         assertThat(
             index.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = VideoQuery("stock", videoAccessRuleQuery = VideoAccessRuleQuery()),
                     startIndex = 0,
                     windowSize = 10

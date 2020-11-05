@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions
@@ -37,7 +37,7 @@ class CollectionIndexReaderSearchabilityIntegrationTest : EmbeddedElasticSearchI
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(owner = null, searchable = true)
                 )
             )
@@ -64,7 +64,7 @@ class CollectionIndexReaderSearchabilityIntegrationTest : EmbeddedElasticSearchI
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(searchable = false)
                 )
             )
@@ -90,7 +90,7 @@ class CollectionIndexReaderSearchabilityIntegrationTest : EmbeddedElasticSearchI
         )
 
         val results = collectionIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery()
             )
         )
@@ -111,7 +111,7 @@ class CollectionIndexReaderSearchabilityIntegrationTest : EmbeddedElasticSearchI
         )
 
         val result = collectionIndexReader.search(
-            PaginatedSearchRequest(
+            PaginatedIndexSearchRequest(
                 query = CollectionQuery(
                     phrase = "Gentleman",
                     permittedIds = listOf("1")

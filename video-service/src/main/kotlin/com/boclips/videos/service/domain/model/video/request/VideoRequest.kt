@@ -24,10 +24,15 @@ enum class SortKey {
     RANDOM
 }
 
+sealed class VideoRequestPagingState {
+    data class Cursor(val value: String?) : VideoRequestPagingState()
+    data class PageNumber(val number: Int) : VideoRequestPagingState()
+}
+
 class VideoRequest(
     val text: String,
     val pageSize: Int,
-    val pageIndex: Int,
+    val pagingState: VideoRequestPagingState,
     val ids: Set<String> = emptySet(),
     val sortBy: SortKey? = null,
     val bestFor: List<String>? = null,
@@ -114,6 +119,13 @@ class VideoRequest(
     }
 
     override fun toString(): String {
-        return "Video Request: $text, PageIndex: $pageIndex, PageSize: $pageSize, Sort: $sortBy"
+        val pagingText = when (pagingState) {
+            is VideoRequestPagingState.Cursor -> {
+                val cursorText = pagingState.value ?: "<first request for cursor>"
+                "Cursor ID: $cursorText"
+            }
+            is VideoRequestPagingState.PageNumber -> "PageIndex: ${pagingState.number}"
+        }
+        return "Video Request: $text, $pagingText, PageSize: $pageSize, Sort: $sortBy"
     }
 }

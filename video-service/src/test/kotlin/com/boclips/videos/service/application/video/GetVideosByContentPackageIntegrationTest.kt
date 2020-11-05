@@ -26,9 +26,9 @@ class GetVideosByContentPackageIntegrationTest : AbstractSpringIntegrationTest()
 
         saveContentPackage("package", "included videos", accessRule)
 
-        val videoIds = getVideosByContentPackage("package", pageIndex = 0, pageSize = 50)
+        val result = getVideosByContentPackage("package", pageSize = 50)
 
-        assertThat(videoIds).containsExactlyInAnyOrder(video1, video2)
+        assertThat(result.videoIds).containsExactlyInAnyOrder(video1, video2)
     }
 
     @Test
@@ -40,17 +40,16 @@ class GetVideosByContentPackageIntegrationTest : AbstractSpringIntegrationTest()
 
         val page1 = getVideosByContentPackage(
             "package",
-            pageIndex = 0,
             pageSize = 2
         )
         val page2 = getVideosByContentPackage(
             "package",
-            pageIndex = 1,
-            pageSize = 2
+            pageSize = 2,
+            cursorId = page1.cursor?.value
         )
 
-        assertThat(page1).hasSize(2)
-        assertThat(page2).hasSize(1)
+        assertThat(page1.videoIds).hasSize(2)
+        assertThat(page2.videoIds).hasSize(1)
     }
 
     @Test
@@ -58,7 +57,6 @@ class GetVideosByContentPackageIntegrationTest : AbstractSpringIntegrationTest()
         assertThrows<ContentPackageNotFoundException> {
             getVideosByContentPackage(
                 "some-package",
-                pageIndex = 0,
                 pageSize = 10
             )
         }

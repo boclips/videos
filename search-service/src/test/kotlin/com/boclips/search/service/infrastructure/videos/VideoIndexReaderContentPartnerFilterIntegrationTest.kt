@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
@@ -124,7 +124,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
         videoIndexWriter.upsert(given)
 
         val results = videoIndexReader.search(
-            PaginatedSearchRequest(query = searchFor)
+            PaginatedIndexSearchRequest(query = searchFor)
         )
 
         assertThat(results.elements).containsExactlyInAnyOrder(

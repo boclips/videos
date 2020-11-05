@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.domain.ResourceType
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
@@ -32,7 +32,7 @@ class CollectionRetrievalService(
     ): ResultsPage<Collection, Nothing> {
         val searchQuery = query.toSearchQuery()
 
-        val searchRequest = PaginatedSearchRequest(
+        val searchRequest = PaginatedIndexSearchRequest(
             query = searchQuery,
             startIndex = convertPageToIndex(query.pageSize, query.pageIndex),
             windowSize = query.pageSize

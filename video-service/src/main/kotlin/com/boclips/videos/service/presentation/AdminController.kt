@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.contentpartner.service.application.channel.BroadcastChannels
 import com.boclips.contentpartner.service.application.contract.BroadcastContracts
 import com.boclips.contentpartner.service.application.contract.legalrestrictions.BroadcastContractLegalRestrictions
+import com.boclips.videos.api.response.video.VideoIdsWrapper
 import com.boclips.videos.api.response.video.VideoIdsResource
 import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
@@ -13,6 +14,7 @@ import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.video.VideoDuplicationService
+import com.boclips.videos.service.presentation.hateoas.AdminLinkBuilder
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -36,13 +38,13 @@ class AdminController(
     private val videoDuplicationService: VideoDuplicationService,
     private val broadcastContractLegalRestrictions: BroadcastContractLegalRestrictions,
     private val getVideosByContentPackage: GetVideosByContentPackage,
+    private val adminLinkBuilder: AdminLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10000
         const val MAX_PAGE_SIZE = 500000
-        const val DEFAULT_PAGE_INDEX = 0
     }
 
     @PostMapping("/analyse_video/{videoId}")
@@ -111,25 +113,30 @@ class AdminController(
     fun getVideosForContentPackage(
         @PathVariable("contentPackageId") contentPackageId: String,
         @RequestParam(name = "size", required = false) size: Int?,
-        @RequestParam(name = "page", required = false) page: Int?,
+        @RequestParam(name = "cursor", required = false) cursorId: String?,
     ): ResponseEntity<VideoIdsResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
-        val pageNumber = page ?: DEFAULT_PAGE_INDEX
         validatePageSize(pageSize)
-        validatePageNumber(pageNumber)
-        val videoIds = getVideosByContentPackage(
+        val result = getVideosByContentPackage(
             contentPackageId = contentPackageId,
-            pageIndex = pageNumber,
-            pageSize = pageSize
+            pageSize = pageSize,
+            cursorId = cursorId
         )
         return ResponseEntity(
-            VideoIdsResource(videoIds.map { it.value }),
+            VideoIdsResource(
+                _embedded = VideoIdsWrapper(result.videoIds.map { it.value }),
+                _links = result.cursor?.let { cursor ->
+                    mapOf(
+                        "next" to adminLinkBuilder.nextContentPackage(
+                            contentPackageId = contentPackageId,
+                            cursorId = cursor.value,
+                            size = pageSize
+                        )
+                    )
+                }
+            ),
             HttpStatus.OK
         )
-    }
-
-    private fun validatePageNumber(pageNumber: Int) {
-        if (pageNumber < 0) throw IllegalArgumentException()
     }
 
     private fun validatePageSize(pageSize: Int) {

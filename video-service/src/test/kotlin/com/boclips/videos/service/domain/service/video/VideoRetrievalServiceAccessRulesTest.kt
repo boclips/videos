@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -121,7 +122,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "video",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Everything
             )
 
@@ -138,7 +139,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
                 )
@@ -157,7 +158,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
                 )
@@ -175,7 +176,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo)))
                 )
@@ -198,7 +199,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(accessRule)
                 )
@@ -221,7 +222,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(accessRule)
                 )
@@ -252,7 +253,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(accessRule)
                 )
@@ -283,7 +284,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ), VideoAccess.Rules(
                     listOf(accessRule)
                 )
@@ -318,7 +319,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                 text = "Elephant",
                 types = setOf(VideoType.INSTRUCTIONAL),
                 pageSize = 10,
-                pageIndex = 0
+                pagingState = VideoRequestPagingState.PageNumber(0)
             ),
             VideoAccess.Rules(
                 listOf(accessRule)

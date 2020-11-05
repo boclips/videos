@@ -3,10 +3,12 @@ package com.boclips.search.service.infrastructure.videos.legacy
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.common.exceptions.CursorBasedRequestNotSupportedException
 import mu.KLogging
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient
@@ -38,7 +40,10 @@ class SolrVideoSearchService(host: String, port: Int) : LegacyVideoSearchService
         logger.info { "[Batch $batchIndex] Successfully indexed ${videos.size} video(s) in Solr" }
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): SearchResults {
+    override fun search(searchRequest: IndexSearchRequest<VideoQuery>): SearchResults {
+        searchRequest as? PaginatedIndexSearchRequest
+            ?: throw CursorBasedRequestNotSupportedException
+
         if (searchRequest.query.phrase.isNotEmpty()) {
             throw java.lang.UnsupportedOperationException()
         }

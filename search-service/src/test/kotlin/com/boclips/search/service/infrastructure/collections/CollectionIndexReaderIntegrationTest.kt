@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions
@@ -25,7 +25,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
 
         Assertions.assertThat(results.elements).containsExactly("1")
     }
@@ -43,7 +43,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "taught a dog")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "taught a dog")))
 
         Assertions.assertThat(results.elements).containsExactly("1")
     }
@@ -69,7 +69,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "Beautiful Boy Dancing")))
 
         Assertions.assertThat(results.elements).containsExactly("3", "1")
     }
@@ -84,7 +84,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Boy")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "Boy")))
 
         Assertions.assertThat(results.elements).containsExactly("1")
     }
@@ -99,7 +99,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "ear")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "ear")))
 
         Assertions.assertThat(results.elements).isEmpty()
     }
@@ -111,7 +111,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(phrase = "Boi")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(phrase = "Boi")))
 
         Assertions.assertThat(results.elements).containsExactly("100")
     }
@@ -140,7 +140,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         owner = "teacher",
                         searchable = null,
@@ -176,7 +176,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         phrase = "great gatsby"
                     )
@@ -208,7 +208,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val page1 =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "gentleman"
                     ), startIndex = 0, windowSize = 2
@@ -217,7 +217,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         val page2 =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "gentleman"
                     ), startIndex = 2, windowSize = 2

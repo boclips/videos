@@ -8,8 +8,10 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
+import junit.framework.Assert.assertNotNull
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -37,7 +39,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "kaltura",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Everything
             )
@@ -57,7 +59,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "youtube",
                     pageSize = 10,
-                    pageIndex = 0
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Everything
             )
@@ -116,26 +118,30 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
             val videoId2 = saveVideo(title = "video 2")
             val videoId3 = saveVideo(title = "video 3")
 
-            val videoIds = videoRetrievalService.getVideoIds(
-                pageIndex = 0,
+            val videoIds = videoRetrievalService.getVideoIdsWithCursor(
                 pageSize = 5,
                 videoAccess = VideoAccess.Everything
-            )
+            ).videoIds
 
             assertThat(videoIds).containsExactlyInAnyOrder(videoId1, videoId2, videoId3)
         }
 
         @Test
-        fun `respect page and size parameters in video ids query`() {
+        fun `respect cursor and size parameters in video ids query`() {
             saveVideo(title = "video 1")
             saveVideo(title = "video 2")
             saveVideo(title = "video 3")
 
-            val videoIds = videoRetrievalService.getVideoIds(
-                pageIndex = 1,
+            val result = videoRetrievalService.getVideoIdsWithCursor(
                 pageSize = 2,
                 videoAccess = VideoAccess.Everything
             )
+            assertNotNull(result.cursor)
+            val videoIds = videoRetrievalService.getVideoIdsWithCursor(
+                cursor = result.cursor,
+                pageSize = 2,
+                videoAccess = VideoAccess.Everything
+            ).videoIds
             assertThat(videoIds).hasSize(1)
         }
 
@@ -145,8 +151,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
             saveVideo(title = "2")
             val video3 = saveVideo(title = "3")
 
-            val videoIds = videoRetrievalService.getVideoIds(
-                pageIndex = 0,
+            val videoIds = videoRetrievalService.getVideoIdsWithCursor(
                 pageSize = 5,
                 videoAccess = VideoAccess.Rules(
                     listOf(
@@ -155,7 +160,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                         )
                     )
                 )
-            )
+            ).videoIds
 
             assertThat(videoIds).containsExactlyInAnyOrder(
                 video1, video3

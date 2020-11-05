@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -35,7 +35,7 @@ class CollectionIndexReaderBookmarksIntegrationTest : EmbeddedElasticSearchInteg
         )
 
         val results =
-            collectionIndexReader.search(PaginatedSearchRequest(query = CollectionQuery(bookmarkedBy = "123-4345-12312")))
+            collectionIndexReader.search(PaginatedIndexSearchRequest(query = CollectionQuery(bookmarkedBy = "123-4345-12312")))
 
         assertThat(results.elements).containsExactlyInAnyOrder("2")
     }

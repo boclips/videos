@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.collections
 
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
@@ -30,7 +30,7 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         phrase = "Beautiful",
                         permittedIds = emptyList()
@@ -52,7 +52,7 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         phrase = "Beautiful",
                         permittedIds = listOf("1")
@@ -74,7 +74,7 @@ class CollectionIndexReaderPermissionsIntegrationTest : EmbeddedElasticSearchInt
 
         val results =
             collectionIndexReader.search(
-                PaginatedSearchRequest(
+                PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         phrase = "Beautiful"
                     )

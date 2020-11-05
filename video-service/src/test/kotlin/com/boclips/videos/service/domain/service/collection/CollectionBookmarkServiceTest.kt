@@ -2,7 +2,7 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.events.collection.CollectionBookmarkChanged
 import com.boclips.search.service.domain.collections.model.CollectionQuery
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.service.application.collection.exceptions.CollectionIllegalOperationException
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
@@ -48,7 +48,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
             collectionBookmarkService.bookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
             val results = collectionIndexFake.search(
-                searchRequest = PaginatedSearchRequest(
+                searchRequest = PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         owner = null,
                         searchable = null,
@@ -123,7 +123,7 @@ class CollectionBookmarkServiceTest : AbstractSpringIntegrationTest() {
             collectionBookmarkService.unbookmark(collectionId, UserFactory.sample(id = "me@me.com"))
 
             val results = collectionIndexFake.search(
-                searchRequest = PaginatedSearchRequest(
+                searchRequest = PaginatedIndexSearchRequest(
                     query = CollectionQuery(bookmarkedBy = "me@me.com")
                 )
             )

@@ -6,33 +6,55 @@ import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.PagingCursor
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import java.util.UUID
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
     private var facetCounts: List<FacetCount> = emptyList()
-    private var requests: MutableList<PaginatedSearchRequest<QUERY>> = mutableListOf()
+    private var requests: MutableList<IndexSearchRequest<QUERY>> = mutableListOf()
+    private var cursorPosition: Int = 0
+    private var currentCursor: PagingCursor? = null
 
-    override fun search(searchRequest: PaginatedSearchRequest<QUERY>): SearchResults {
+    override fun search(searchRequest: IndexSearchRequest<QUERY>): SearchResults {
+        val startIndex = (searchRequest as? PaginatedIndexSearchRequest)?.startIndex
+        (searchRequest as? CursorBasedIndexSearchRequest)?.apply {
+            if (cursor != currentCursor || cursor == null) {
+                currentCursor = cursor ?: UUID.randomUUID()
+                    .toString()
+                    .let(::PagingCursor)
+                cursorPosition = 0
+            }
+        }
+        val toDrop: Int = startIndex ?: cursorPosition
+
         requests.add(searchRequest)
 
         val idsMatching = idsMatching(index, searchRequest.query)
 
         val elements = sort(idsMatching, searchRequest.query)
-            .drop(searchRequest.startIndex)
+            .drop(toDrop)
             .take(searchRequest.windowSize)
+
+        if (searchRequest.isCursorBased()) {
+            cursorPosition += searchRequest.windowSize
+        }
 
         return SearchResults(
             elements = elements,
             counts = ResultCounts(
                 totalHits = idsMatching.size.toLong(),
                 facets = facetCounts
-            )
+            ),
+            cursor = currentCursor
         )
     }
 
@@ -43,7 +65,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     }
 
     override fun safeRebuildIndex(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
-        index.clear()
+        clear()
         upsert(items, notifier)
     }
 
@@ -59,6 +81,8 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     }
 
     fun clear() {
+        cursorPosition = 0
+        currentCursor = null
         index.clear()
     }
 
@@ -66,7 +90,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         this.facetCounts = facetCounts
     }
 
-    fun getLastSearchRequest(): PaginatedSearchRequest<QUERY> {
+    fun getLastSearchRequest(): IndexSearchRequest<QUERY> {
         return requests.last()
     }
 

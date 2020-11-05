@@ -17,7 +17,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "some phrase",
             pageSize = 2,
-            pageIndex = 0
+            pagingState = VideoRequestPagingState.PageNumber(0)
         )
             .toQuery(VideoAccess.Everything)
 
@@ -30,7 +30,7 @@ class VideoRequestTest {
             text = "any query",
             ids = setOf("id 1", "id 2"),
             pageSize = 2,
-            pageIndex = 0
+            pagingState = VideoRequestPagingState.PageNumber(0)
         )
             .toQuery(VideoAccess.Everything)
 
@@ -44,7 +44,7 @@ class VideoRequestTest {
                 ids = setOf("id 1", "id 2"),
                 channelIds = setOf("1", "2", "3"),
                 pageSize = 2,
-                pageIndex = 0
+                pagingState = VideoRequestPagingState.PageNumber(0)
         )
                 .toQuery(VideoAccess.Everything)
 
@@ -57,7 +57,7 @@ class VideoRequestTest {
             text = "any query",
             bestFor = listOf("explainer"),
             pageSize = 2,
-            pageIndex = 0
+            pagingState = VideoRequestPagingState.PageNumber(0)
         )
             .toQuery(VideoAccess.Everything)
 
@@ -69,7 +69,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE
         )
             .toQuery(VideoAccess.Everything)
@@ -85,7 +85,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.TITLE_DESC
         )
             .toQuery(VideoAccess.Everything)
@@ -101,7 +101,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.TITLE_ASC
         )
             .toQuery(VideoAccess.Everything)
@@ -117,7 +117,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.INGEST_ASC
         )
             .toQuery(VideoAccess.Everything)
@@ -133,7 +133,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.INGEST_DESC
         )
             .toQuery(VideoAccess.Everything)
@@ -149,7 +149,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RANDOM
         )
             .toQuery(VideoAccess.Everything)
@@ -162,7 +162,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "id:11,12,13",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = null
         )
             .toQuery(VideoAccess.Everything)
@@ -175,7 +175,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
@@ -189,7 +189,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             types = setOf(VideoType.NEWS, VideoType.STOCK)
         )
             .toQuery(VideoAccess.Everything)
@@ -202,7 +202,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "testing",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
@@ -217,7 +217,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             promoted = true
         ).toQuery(VideoAccess.Everything)
 
@@ -229,7 +229,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             attachmentTypes = setOf("Activity")
         ).toQuery(VideoAccess.Everything)
 
@@ -241,7 +241,7 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "",
             pageSize = 2,
-            pageIndex = 0,
+            pagingState = VideoRequestPagingState.PageNumber(0),
             promoted = true
         ).toQuery(VideoAccess.Everything)
 

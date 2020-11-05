@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
@@ -223,7 +223,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
             assertThat(
                 videoIndexFake.search(
-                    PaginatedSearchRequest(
+                    PaginatedIndexSearchRequest(
                         query = VideoQuery(
                             phrase = "transcript",
                             videoAccessRuleQuery = VideoAccessRuleQuery()

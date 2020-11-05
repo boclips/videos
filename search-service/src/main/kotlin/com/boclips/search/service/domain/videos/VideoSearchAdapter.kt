@@ -4,7 +4,7 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 
@@ -22,7 +22,7 @@ abstract class VideoSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: PaginatedSearchRequest<VideoQuery>): SearchResults {
+    override fun search(searchRequest: IndexSearchRequest<VideoQuery>): SearchResults {
         return indexReader.search(searchRequest)
     }
 
