@@ -25,6 +25,7 @@ class VideoFilterCriteria {
         const val ATTACHMENT_TYPES = "attachment-types-filter"
         const val CHANNEL_NAMES_FILTER = "content-provider-filter"
         const val CHANNEL_IDS_FILTER = "content-partner-id-filter"
+        const val VIDEO_TYPES_FILTER = "video-types-filter"
 
         fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()

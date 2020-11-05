@@ -4,13 +4,8 @@ import com.boclips.search.service.domain.common.Count
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.PaginatedSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
-import com.boclips.search.service.domain.videos.model.AgeRange
-import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.videos.model.UserQuery
-import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -39,19 +34,19 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                                SubjectMetadata(id = "1", name = "French"),
-                                SubjectMetadata(id = "2", name = "Maths")
-                            )
+                            SubjectMetadata(id = "1", name = "French"),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                                SubjectMetadata(id = "2", name = "Maths")
-                            )
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                                SubjectMetadata(id = "3", name = "Literacy")
-                            )
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        )
                         )
                     )
                 )
@@ -78,18 +73,18 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                                SubjectMetadata(id = "1", name = "French")
-                            )
+                            SubjectMetadata(id = "1", name = "French")
+                        )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                                SubjectMetadata(id = "2", name = "Maths")
-                            )
+                            SubjectMetadata(id = "2", name = "Maths")
+                        )
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                                SubjectMetadata(id = "3", name = "Literacy")
-                            )
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        )
                         )
                     )
                 )
@@ -120,21 +115,21 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                                SubjectMetadata(id = "1", name = "French"),
-                                SubjectMetadata(id = "2", name = "Maths")
-                            ),
+                            SubjectMetadata(id = "1", name = "French"),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        ),
                             ageRangeMax = 3, ageRangeMin = 1
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                                SubjectMetadata(id = "2", name = "Maths")
-                            ),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        ),
                             ageRangeMin = 13, ageRangeMax = 18
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                                SubjectMetadata(id = "3", name = "Literacy")
-                            ),
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        ),
                             ageRangeMin = 13,
                             ageRangeMax = 17
                         )
@@ -164,20 +159,20 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
                             id = "1", title = "Apple banana candy", subjects = setOf(
-                                SubjectMetadata(id = "1", name = "French")
-                            ),
+                            SubjectMetadata(id = "1", name = "French")
+                        ),
                             types = listOf(VideoType.INSTRUCTIONAL)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "2", title = "candy banana apple", subjects = setOf(
-                                SubjectMetadata(id = "2", name = "Maths")
-                            ),
+                            SubjectMetadata(id = "2", name = "Maths")
+                        ),
                             types = listOf(VideoType.STOCK)
                         ),
                         SearchableVideoMetadataFactory.create(
                             id = "3", title = "banana apple candy", subjects = setOf(
-                                SubjectMetadata(id = "3", name = "Literacy")
-                            ),
+                            SubjectMetadata(id = "3", name = "Literacy")
+                        ),
                             types = listOf(VideoType.INSTRUCTIONAL)
                         )
                     )
@@ -303,7 +298,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 ageRangeBuckets = ageRangeBuckets,
                                 duration = emptyList(),
                                 resourceTypes = emptyList(),
-                                includeChannelFacets = false
+                                includeChannelFacets = false,
+                                videoTypes = emptyList()
                             )
                         )
                     )
@@ -617,7 +613,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 ageRangeBuckets = null,
                                 duration = null,
                                 resourceTypes = emptyList(),
-                                includeChannelFacets = true
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
                             )
                         )
                     )
@@ -659,7 +656,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 ageRangeBuckets = null,
                                 duration = null,
                                 resourceTypes = emptyList(),
-                                includeChannelFacets = true
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
                             )
                         )
                     )
@@ -725,7 +723,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 ageRangeBuckets = null,
                                 duration = null,
                                 resourceTypes = emptyList(),
-                                includeChannelFacets = true
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
                             )
                         )
                     )
@@ -774,7 +773,9 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 ageRangeBuckets = null,
                                 duration = null,
                                 resourceTypes = emptyList(),
-                                includeChannelFacets = true
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+
                             )
                         )
                     )
@@ -786,33 +787,191 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "1", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "3", hits = 1))
             }
+
+            @Test
+            fun `channel facets are not returned when includeChannelFacets is not set to true`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy",
+                            contentProvider = "TED",
+                            contentPartnerId = "1",
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            videoAccessRuleQuery = VideoAccessRuleQuery()
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(0)
+            }
+
         }
 
-
-        @Test
-        fun `channel facets are not returned when includeChannelFacets is not set to true`() {
-            videoIndexWriter.upsert(
-                sequenceOf(
-                    SearchableVideoMetadataFactory.create(
-                        id = "1", title = "Apple banana candy",
-                        contentProvider = "TED",
-                        contentPartnerId = "1",
-                        types = listOf(VideoType.INSTRUCTIONAL)
+        @Nested
+        inner class VideoTypes {
+            @Test
+            fun `returns counts for all video types without filter`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", types = listOf(VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple", types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "candy apple", types = listOf(VideoType.NEWS)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4", title = "banana apple candy", types = listOf(VideoType.STOCK)
+                        )
                     )
                 )
-            )
 
-            val results = videoIndexReader.search(
-                PaginatedSearchRequest(
-                    VideoQuery(
-                        phrase = "apple",
-                        videoAccessRuleQuery = VideoAccessRuleQuery()
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+                            )
+                        )
                     )
                 )
-            )
 
-            assertThat(results.counts.totalHits).isEqualTo(1)
-            assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(0)
+                assertThat(results.counts.totalHits).isEqualTo(4)
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(3)
+
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 2))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "stock", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 2))
+            }
+
+            @Test
+            fun `returns video type facets with filter applied`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            subjects = setOf(
+                                SubjectMetadata(id = "1", name = "Maths")
+                            ),
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "candy banana apple",
+                            subjects = setOf(
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
+                            types = listOf(VideoType.STOCK)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "banana apple candy",
+                            subjects = setOf(
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
+                            types = listOf(VideoType.INSTRUCTIONAL, VideoType.NEWS)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4",
+                            title = "banana apple candy",
+                            subjects = setOf(
+                                SubjectMetadata(id = "3", name = "Literacy")
+                            ),
+                            types = listOf(VideoType.INSTRUCTIONAL, VideoType.STOCK)
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            userQuery = UserQuery(
+                                subjectIds = setOf("3")
+                            ),
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(3)
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(3)
+
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 2))
+            }
+
+            @Test
+            fun `facet count respects access rules`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy",
+                            contentPartnerId = "1",
+                            types = listOf(VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple",
+                            contentPartnerId = "2",
+                            types = listOf(VideoType.STOCK, VideoType.INSTRUCTIONAL)
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "banana apple candy",
+                            contentPartnerId = "3",
+                            types = listOf(VideoType.NEWS)
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedSearchRequest(
+                        VideoQuery(
+                            phrase = "apple",
+                            videoAccessRuleQuery = VideoAccessRuleQuery(
+                                excludedTypes = setOf(VideoType.STOCK)
+                            ),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).hasSize(2)
+
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "instructional", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 1))
+            }
         }
     }
 }
