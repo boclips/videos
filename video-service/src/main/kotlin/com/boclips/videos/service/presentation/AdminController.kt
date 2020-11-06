@@ -44,7 +44,7 @@ class AdminController(
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10000
-        const val MAX_PAGE_SIZE = 500000
+        const val MAX_PAGE_SIZE = 10000
     }
 
     @PostMapping("/analyse_video/{videoId}")
