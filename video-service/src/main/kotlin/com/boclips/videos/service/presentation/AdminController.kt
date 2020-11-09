@@ -3,8 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.contentpartner.service.application.channel.BroadcastChannels
 import com.boclips.contentpartner.service.application.contract.BroadcastContracts
 import com.boclips.contentpartner.service.application.contract.legalrestrictions.BroadcastContractLegalRestrictions
-import com.boclips.videos.api.response.video.VideoIdsWrapper
 import com.boclips.videos.api.response.video.VideoIdsResource
+import com.boclips.videos.api.response.video.VideoIdsWrapper
 import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
@@ -114,7 +114,7 @@ class AdminController(
         @PathVariable("contentPackageId") contentPackageId: String,
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "cursor", required = false) cursorId: String?,
-    ): ResponseEntity<VideoIdsResource> {
+    ): VideoIdsResource {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         validatePageSize(pageSize)
         val result = getVideosByContentPackage(
@@ -122,20 +122,17 @@ class AdminController(
             pageSize = pageSize,
             cursorId = cursorId
         )
-        return ResponseEntity(
-            VideoIdsResource(
-                _embedded = VideoIdsWrapper(result.videoIds.map { it.value }),
-                _links = result.cursor?.let { cursor ->
-                    mapOf(
-                        "next" to adminLinkBuilder.nextContentPackage(
-                            contentPackageId = contentPackageId,
-                            cursorId = cursor.value,
-                            size = pageSize
-                        )
+        return VideoIdsResource(
+            _embedded = VideoIdsWrapper(result.videoIds.map { it.value }),
+            _links = result.cursor?.let { cursor ->
+                mapOf(
+                    "next" to adminLinkBuilder.nextContentPackage(
+                        contentPackageId = contentPackageId,
+                        cursorId = cursor.value,
+                        size = pageSize
                     )
-                }
-            ),
-            HttpStatus.OK
+                )
+            }
         )
     }
 
