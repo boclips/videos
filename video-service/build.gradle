@@ -101,7 +101,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-config:5.3.4.RELEASE")
     implementation("org.springframework.security:spring-security-core:5.4.1")
     implementation("org.springframework.security:spring-security-web:5.4.1")
-    implementation("org.springframework.boot:spring-boot-starter-tomcat:2.3.3.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat:2.3.5.RELEASE")
     implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.39")
     implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
 
