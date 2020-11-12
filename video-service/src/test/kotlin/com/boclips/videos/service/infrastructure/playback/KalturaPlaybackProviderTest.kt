@@ -222,12 +222,27 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             entryId = "entry-id",
             captionContent = "Captions content to retrieve",
+            format = CaptionFormat.SRT
+        )
+
+        val captionsUrl = kalturaPlaybackProvider.getSrtCaptionsUrl(playbackId)
+
+        assertThat(captionsUrl?.path).isNotNull
+    }
+
+    @Test
+    fun `doesn't fetch captions url when no srt format`() {
+        val playbackId = mediaEntryWithCaptionsByEntryId(
+            label = "English (auto-generated)",
+            language = KalturaLanguage.ENGLISH,
+            entryId = "entry-id",
+            captionContent = "Captions content to retrieve",
             format = CaptionFormat.WEBVTT
         )
 
-        val captionsUrl = kalturaPlaybackProvider.getCaptionsUrl(playbackId)
+        val captionsUrl = kalturaPlaybackProvider.getSrtCaptionsUrl(playbackId)
 
-        assertThat(captionsUrl?.path).isNotNull
+        assertThat(captionsUrl?.path).isNull()
     }
 
     @Test

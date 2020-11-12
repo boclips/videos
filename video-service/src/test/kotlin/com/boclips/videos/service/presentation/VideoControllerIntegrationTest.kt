@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -499,9 +500,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("A tag")
 
             mockMvc.perform(
-                    patch(tagVideoUrl).content(tagUrl)
-                        .contentType("text/uri-list").asTeacher()
-                )
+                patch(tagVideoUrl).content(tagUrl)
+                    .contentType("text/uri-list").asTeacher()
+            )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("A tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -520,9 +521,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val tagUrl = createTag("Tag")
 
             mockMvc.perform(
-                    patch(tagVideoUrl).content(tagUrl)
-                        .contentType("text/uri-list").asTeacher()
-                )
+                patch(tagVideoUrl).content(tagUrl)
+                    .contentType("text/uri-list").asTeacher()
+            )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.bestFor[*].label", containsInAnyOrder("Tag")))
                 .andExpect(jsonPath("$._links.tag").doesNotExist())
@@ -639,7 +640,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "playbackProvider": "KALTURA",
                 "language": "ave"
             }
-        """.trimIndent()
+            """.trimIndent()
 
             val createdResourceUrl =
                 mockMvc.perform(
@@ -679,7 +680,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "language": "ave",
                 "isVoiced": true
             }
-        """.trimIndent()
+            """.trimIndent()
 
             val createdResourceUrl =
                 mockMvc.perform(
@@ -704,7 +705,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "providerVideoId": "1",
                 "providerId": "$channelId"
             }
-        """.trimIndent()
+            """.trimIndent()
 
             mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest)
@@ -734,7 +735,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "playbackId": "entry-$123",
                 "playbackProvider": "KALTURA"
             }
-        """.trimIndent()
+            """.trimIndent()
 
             mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isCreated)
@@ -765,7 +766,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "playbackId": "this-playback-does-not-exist",
                 "playbackProvider": "KALTURA"
             }
-        """.trimIndent()
+            """.trimIndent()
 
             mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest)
@@ -815,7 +816,11 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
             val videoId = saveVideo(playbackId = playbackId)
 
-            val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla", )
+            val captions = TestFactories.createCaptions(
+                language = Locale.UK,
+                content = "bla bla bla",
+                format = CaptionsFormat.SRT
+            )
             kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
 
             mockMvc.perform(
@@ -828,9 +833,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `returns video url assets with empty captions url for Kaltura video without captions`() {
-            val videoId = saveVideo()
+        fun `returns video url assets with empty captions url for Kaltura video without srt captions`() {
+            val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+            val videoId = saveVideo(playbackId = playbackId)
 
+            val captions = TestFactories.createCaptions(
+                language = Locale.UK,
+                content = "bla bla bla",
+                format = CaptionsFormat.WEBVTT
+            )
+            kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
             mockMvc.perform(
                 get("/v1/videos/${videoId.value}/assets").asBoclipsEmployee()
             )
@@ -885,4 +897,3 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).andReturn().response.getHeader("Location")!!
     }
 }
-

@@ -21,5 +21,5 @@ interface PlaybackProvider {
     fun downloadHighestResolutionVideo(playbackId: PlaybackId, outputStream: OutputStream)
     fun getExtensionForAsset(playbackId: PlaybackId): String
     fun getDownloadAssetUrl(playbackId: PlaybackId): URI
-    fun getCaptionsUrl(playbackId: PlaybackId): URI?
+    fun getSrtCaptionsUrl(playbackId: PlaybackId): URI?
 }

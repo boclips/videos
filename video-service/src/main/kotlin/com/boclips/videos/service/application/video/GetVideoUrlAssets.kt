@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.api.response.video.VideoUrlAssetsResource
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import mu.KLogging
 
@@ -26,7 +26,7 @@ class GetVideoUrlAssets(
         }
 
         val videoAssetUrl = playbackProvider.getDownloadAssetUrl(playbackId)
-        val captionUrl = playbackProvider.getCaptionsUrl(playbackId)
+        val captionUrl = playbackProvider.getSrtCaptionsUrl(playbackId)
 
         return VideoUrlAssetsResource(
             downloadVideoUrl = videoAssetUrl.toString(),

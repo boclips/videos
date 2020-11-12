@@ -26,7 +26,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
 import java.io.OutputStream
 import java.net.URI
-import java.util.Locale
+import java.util.*
 import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
 
 class KalturaPlaybackProvider(
@@ -168,9 +168,9 @@ class KalturaPlaybackProvider(
         return kalturaClient.getDownloadAssetUrl(asset.id)
     }
 
-    override fun getCaptionsUrl(playbackId: PlaybackId): URI? {
+    override fun getSrtCaptionsUrl(playbackId: PlaybackId): URI? {
         return retrieveCaptionFiles(playbackId)
-            .firstOrNull()
+            .firstOrNull { it.fileType == KalturaCaptionFormat.SRT }
             ?.let { kalturaClient.getCaptionAssetUrl(it.id) }
     }
 
