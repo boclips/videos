@@ -21,7 +21,7 @@ allprojects {
         junitVersion = "5.7.0"
         elasticSearchVersion = "7.9.3"
         solrVersion = "8.6.3"
-        jettyVersion = "9.4.33.v20201020"
+        jettyVersion = "9.4.34.v20201102"
     }
     subprojects {
         task allDeps(type: DependencyReportTask) {}
