@@ -216,7 +216,22 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `fetches captions url by playback id`() {
+    fun `fetches human-generated captions by playback id`() {
+        val playbackId = mediaEntryWithCaptionsByEntryId(
+            label = "English",
+            language = KalturaLanguage.ENGLISH,
+            entryId = "entry-id",
+            captionContent = "Captions content to retrieve",
+            format = CaptionFormat.WEBVTT
+        )
+
+        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaptionUrl(playbackId)
+
+        assertThat(captionsUrl?.path).isNotNull
+    }
+
+    @Test
+    fun `auto-generated captions are ignored`() {
         val playbackId = mediaEntryWithCaptionsByEntryId(
             label = "English (auto-generated)",
             language = KalturaLanguage.ENGLISH,
@@ -225,22 +240,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             format = CaptionFormat.SRT
         )
 
-        val captionsUrl = kalturaPlaybackProvider.getSrtCaptionsUrl(playbackId)
-
-        assertThat(captionsUrl?.path).isNotNull
-    }
-
-    @Test
-    fun `doesn't fetch captions url when no srt format`() {
-        val playbackId = mediaEntryWithCaptionsByEntryId(
-            label = "English (auto-generated)",
-            language = KalturaLanguage.ENGLISH,
-            entryId = "entry-id",
-            captionContent = "Captions content to retrieve",
-            format = CaptionFormat.WEBVTT
-        )
-
-        val captionsUrl = kalturaPlaybackProvider.getSrtCaptionsUrl(playbackId)
+        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaptionUrl(playbackId)
 
         assertThat(captionsUrl?.path).isNull()
     }

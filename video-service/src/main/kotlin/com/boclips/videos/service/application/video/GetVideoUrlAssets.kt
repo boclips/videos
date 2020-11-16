@@ -26,7 +26,7 @@ class GetVideoUrlAssets(
         }
 
         val videoAssetUrl = playbackProvider.getDownloadAssetUrl(playbackId)
-        val captionUrl = playbackProvider.getSrtCaptionsUrl(playbackId)
+        val captionUrl = playbackProvider.getHumanGeneratedCaptionUrl(playbackId)
 
         return VideoUrlAssetsResource(
             downloadVideoUrl = videoAssetUrl.toString(),

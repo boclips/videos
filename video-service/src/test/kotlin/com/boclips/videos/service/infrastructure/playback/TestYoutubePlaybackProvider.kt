@@ -70,7 +70,7 @@ class TestYoutubePlaybackProvider :
         throw UnsupportedOperationException("YouTube does not support asset downloads")
     }
 
-    override fun getSrtCaptionsUrl(playbackId: PlaybackId): URI? {
+    override fun getHumanGeneratedCaptionUrl(playbackId: PlaybackId): URI? {
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 
