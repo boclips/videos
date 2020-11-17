@@ -225,9 +225,9 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             format = CaptionFormat.WEBVTT
         )
 
-        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaptionUrl(playbackId)
+        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaption(playbackId)
 
-        assertThat(captionsUrl?.path).isNotNull
+        assertThat(captionsUrl?.downloadUrl?.path).isNotNull
     }
 
     @Test
@@ -240,9 +240,9 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             format = CaptionFormat.SRT
         )
 
-        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaptionUrl(playbackId)
+        val captionsUrl = kalturaPlaybackProvider.getHumanGeneratedCaption(playbackId)
 
-        assertThat(captionsUrl?.path).isNull()
+        assertThat(captionsUrl?.downloadUrl?.path).isNull()
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.playback.VideoProviderMetadata.YoutubeMetadata
 import com.boclips.videos.service.domain.model.video.Caption
+import com.boclips.videos.service.domain.model.video.DownloadableCaption
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -72,7 +73,7 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
         throw UnsupportedOperationException("YouTube does not support asset downloads")
     }
 
-    override fun getHumanGeneratedCaptionUrl(playbackId: PlaybackId): URI? {
+    override fun getHumanGeneratedCaption(playbackId: PlaybackId): DownloadableCaption? {
         throw UnsupportedOperationException("YouTube captions not supported")
     }
 

@@ -6,5 +6,8 @@ data class VideoUrlAssetsResource(
     val downloadVideoUrl: String,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    val downloadCaptionUrl: String?
+    val downloadCaptionUrl: String?,
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val captionFileExtension: String?
 )

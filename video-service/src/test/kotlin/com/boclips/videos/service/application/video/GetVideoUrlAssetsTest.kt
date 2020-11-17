@@ -32,6 +32,7 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
 
         Assertions.assertThat(assetURLs.downloadVideoUrl).isNotNull
         Assertions.assertThat(assetURLs.downloadCaptionUrl).isNotNull
+        Assertions.assertThat(assetURLs.captionFileExtension).isEqualTo("vtt")
     }
 
     @Test
