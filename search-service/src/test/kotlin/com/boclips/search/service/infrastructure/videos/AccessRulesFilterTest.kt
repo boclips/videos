@@ -18,7 +18,8 @@ class AccessRulesFilterTest {
                 includedTypes = setOf(VideoType.INSTRUCTIONAL),
                 excludedContentPartnerIds = setOf("CH1"),
                 deniedVideoIds = setOf("badvid2"),
-                isEligibleForStream = true
+                isEligibleForStream = true,
+                isEligibleForDownload = true
             )
         )
         val expectedQuery = AccessRulesFilterTest::class.java.classLoader.getResource("AccessRulesFilter.json")!!

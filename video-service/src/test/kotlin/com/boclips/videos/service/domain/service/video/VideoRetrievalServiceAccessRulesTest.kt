@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.video
 
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -67,7 +68,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
 
             val videos = videoRetrievalService.getPlayableVideos(
-                listOf(stockVideoId, newsVideoId, instructionalVideoId), VideoAccess.Rules(
+                listOf(stockVideoId, newsVideoId, instructionalVideoId),
+                VideoAccess.Rules(
                     listOf(accessRule)
                 )
             )
@@ -104,30 +106,36 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Searching {
         @Test
-        fun `always limits search to videos eligible for streaming`() {
-            val streamContentPartner = saveChannel(
-                name = "stream",
-                distributionMethods = setOf(DistributionMethodResource.STREAM)
-            )
-            val downloadContentPartner = saveChannel(
-                name = "download",
+        fun `limits search results to downloadable videos only when such access rule is provided`() {
+            val firstVideoId = saveVideo(
+                title = "access",
+                contentProvider = "download-me",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
-
-            val streamVideo =
-                saveVideo(title = "video", contentProviderId = streamContentPartner.id.value)
-            saveVideo(title = "video", contentProviderId = downloadContentPartner.id.value)
+            val secondVideoId = saveVideo(
+                title = "another access",
+                contentProvider = "i-am-open-for-all",
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM)
+            )
+            saveVideo(
+                title = "no access",
+                contentProvider = "only-streaming",
+                distributionMethods = setOf(DistributionMethodResource.STREAM)
+            )
 
             val searchResults = videoRetrievalService.searchPlayableVideos(
                 VideoRequest(
-                    text = "video",
+                    text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Everything
+                ),
+                VideoAccess.Rules(
+                    listOf(VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.DOWNLOAD)))
+                )
             )
 
-            assertThat(searchResults.videos).hasSize(1)
-            assertThat(searchResults.videos.map { it.videoId }).containsExactly(streamVideo)
+            assertThat(searchResults.videos).hasSize(2)
+            assertThat(searchResults.videos.map { it.videoId }).containsExactlyInAnyOrder(firstVideoId, secondVideoId)
         }
 
         @Test
@@ -140,7 +148,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
                 )
             )
@@ -159,7 +168,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
                 )
             )
@@ -177,7 +187,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo)))
                 )
             )
@@ -200,7 +211,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(accessRule)
                 )
             )
@@ -223,7 +235,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(accessRule)
                 )
             )
@@ -254,7 +267,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(accessRule)
                 )
             )
@@ -285,7 +299,8 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
-                ), VideoAccess.Rules(
+                ),
+                VideoAccess.Rules(
                     listOf(accessRule)
                 )
             )

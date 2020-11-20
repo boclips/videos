@@ -120,6 +120,9 @@ class VideoIndexFake :
             }
             .filter { entry ->
                 query.videoAccessRuleQuery.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
+            }
+            .filter { entry ->
+                query.videoAccessRuleQuery.isEligibleForDownload?.let { entry.value.eligibleForDownload == it } ?: true
             }.filter { entry ->
                 if (query.userQuery.attachmentTypes.isEmpty()) {
                     true

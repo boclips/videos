@@ -71,11 +71,33 @@ object AccessRuleConverter {
     fun isEligibleForStreaming(videoAccess: VideoAccess): Boolean? =
         when (videoAccess) {
             VideoAccess.Everything -> null
+            is VideoAccess.Rules -> {
+                videoAccess.accessRules
+                    .filterIsInstance<VideoAccessRule.IncludedDistributionMethods>()
+                    .takeUnless { it.isEmpty() }
+                    ?.flatMap { accessRule -> accessRule.distributionMethods }
+                    ?.let { distributionMethods: List<DistributionMethod> ->
+                        when {
+                            distributionMethods.contains(DistributionMethod.STREAM) -> true
+                            else -> null
+                        }
+                    }
+            }
+        }
+
+    fun isEligibleForDownload(videoAccess: VideoAccess): Boolean? =
+        when (videoAccess) {
+            VideoAccess.Everything -> null
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.IncludedDistributionMethods>()
                 .takeUnless { it.isEmpty() }
                 ?.flatMap { accessRule -> accessRule.distributionMethods }
-                ?.contains(DistributionMethod.STREAM)
+                ?.let { distributionMethods: List<DistributionMethod> ->
+                    when {
+                        distributionMethods.contains(DistributionMethod.DOWNLOAD) -> true
+                        else -> null
+                    }
+                }
         }
 
     fun mapToIncludedVoiceTypes(videoAccess: VideoAccess): Set<SearchVoiceType> =

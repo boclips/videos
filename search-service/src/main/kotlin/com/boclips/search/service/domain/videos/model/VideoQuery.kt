@@ -42,5 +42,6 @@ data class VideoAccessRuleQuery(
     val permittedVideoIds: Set<String>? = null,
     val deniedVideoIds: Set<String>? = null,
     val isEligibleForStream: Boolean? = null,
+    val isEligibleForDownload: Boolean? = null,
     val includedVoiceType: Set<VoiceType> = emptySet()
 )

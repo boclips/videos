@@ -37,6 +37,10 @@ class AccessRulesFilter {
                 boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, videoQueryVideo.isEligibleForStream))
             }
 
+            if (videoQueryVideo.isEligibleForDownload != null) {
+                boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_DOWNLOAD, videoQueryVideo.isEligibleForDownload))
+            }
+
             val combinedQuery = boolQuery()
             if (!videoQueryVideo.permittedVideoIds.isNullOrEmpty()) {
                 combinedQuery.should(idsQuery().addIds(* (videoQueryVideo.permittedVideoIds.toTypedArray())))
