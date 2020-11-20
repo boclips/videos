@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
-    private val scrollTimeout = TimeValue(5, TimeUnit.MINUTES)
+    private val scrollTimeout = TimeValue(30, TimeUnit.MINUTES)
 
     companion object : KLogging()
 
