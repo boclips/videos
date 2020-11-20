@@ -523,7 +523,7 @@ abstract class AbstractSpringIntegrationTest {
             createContentPackageResource(id, name, accessRules.toList())
         )
 
-    fun addsAccessToStreamingVideos(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
+    fun addDistributionMethodAccessRule(userId: String, vararg includedDistributionMethods: DistributionMethodResource) {
         usersClient.addAccessRules(
             userId,
             AccessRulesResourceFactory.sample(

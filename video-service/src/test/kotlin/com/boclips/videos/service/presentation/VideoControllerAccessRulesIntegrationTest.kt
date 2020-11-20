@@ -49,12 +49,30 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
             saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.id.value)
 
-            addsAccessToStreamingVideos("api-user@gmail.com", DistributionMethodResource.STREAM)
+            addDistributionMethodAccessRule("api-user@gmail.com", DistributionMethodResource.STREAM)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(streamVideo.value)))
+        }
+
+        @Test
+        fun `can retrieve downloadable videos when content package says so`() {
+            val streamContentPartner =
+                saveChannel(name = "stream", distributionMethods = setOf(DistributionMethodResource.STREAM))
+            val downloadContentPartner =
+                saveChannel(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
+
+            saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
+            val downloadVideo = saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.id.value)
+
+            addDistributionMethodAccessRule("something@publisher-boclips.com", DistributionMethodResource.DOWNLOAD)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(downloadVideo.value)))
         }
 
         @Test
@@ -141,10 +159,11 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
         fun `includes the videos of collection access rules`() {
             val videoId = saveVideo(title = "hello")
             saveVideo(title = "hello there")
-            val collectionId = saveCollection(videos = listOf(videoId.value) )
+            val collectionId = saveCollection(videos = listOf(videoId.value))
 
             usersClient.addAccessRules(
-                "api-user@gmail.com", AccessRulesResourceFactory.sample(
+                "api-user@gmail.com",
+                AccessRulesResourceFactory.sample(
                     AccessRuleResource.IncludedCollections(
                         id = "access-rule-id",
                         name = UUID.randomUUID().toString(),

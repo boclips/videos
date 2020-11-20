@@ -36,20 +36,7 @@ class VideoRetrievalService(
 ) {
     companion object : KLogging()
 
-    private val defaultAccessRules = listOf(
-        VideoAccessRule.IncludedDistributionMethods(
-            setOf(
-                DistributionMethod.STREAM
-            )
-        )
-    )
-
     fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
-        /**
-         * Default access rules aren't technically needed anymore as they have been added to the classroom content package.
-         * Though, as it's a legal restriction (can't get non-streamable videos) we might want to enforce it here as well.
-         * I guess it depends if we see this search method serving up just streamable videos.
-         */
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
         val pageIndex = when (request.pagingState) {
             is VideoRequestPagingState.PageNumber -> request.pagingState.number
