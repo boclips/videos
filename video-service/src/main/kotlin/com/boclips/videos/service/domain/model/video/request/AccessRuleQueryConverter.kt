@@ -15,6 +15,7 @@ object AccessRuleQueryConverter {
             excludedContentPartnerIds = AccessRuleConverter.mapToExcludedChannelIds(videoAccess),
             includedChannelIds = AccessRuleConverter.mapToIncludedChannelIds(videoAccess),
             isEligibleForStream = AccessRuleConverter.isEligibleForStreaming(videoAccess),
+            isEligibleForDownload = AccessRuleConverter.isEligibleForDownload(videoAccess),
             includedVoiceType = AccessRuleConverter.mapToIncludedVoiceTypes(videoAccess)
         )
     }

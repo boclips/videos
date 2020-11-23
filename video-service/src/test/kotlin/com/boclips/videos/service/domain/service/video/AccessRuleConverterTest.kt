@@ -277,7 +277,7 @@ class AccessRuleConverterTest {
         }
 
         @Test
-        fun `returns false with no stream access rule`() {
+        fun `returns null with no stream access rule`() {
             val isEligibleForStreaming = converter.isEligibleForStreaming(
                 VideoAccess.Rules(
                     listOf(
@@ -287,7 +287,7 @@ class AccessRuleConverterTest {
                     )
                 )
             )
-            assertThat(isEligibleForStreaming).isFalse()
+            assertThat(isEligibleForStreaming).isNull()
         }
 
         @Test
@@ -295,13 +295,60 @@ class AccessRuleConverterTest {
             val isEligibleForStreaming = converter.isEligibleForStreaming(
                 VideoAccess.Rules(
                     listOf(
-                        VideoAccessRule.IncludedIds(
-                            setOf(TestFactories.createVideoId())
-                        )
+                        VideoAccessRule.IncludedDistributionMethods(setOf())
                     )
                 )
             )
             assertThat(isEligibleForStreaming).isNull()
+        }
+    }
+
+    @Nested
+    inner class ToIsEligibleForDownload {
+        @Test
+        fun `returns nothing when access to everything`() {
+            val isEligibleForDownload = converter.isEligibleForDownload(VideoAccess.Everything)
+            assertThat(isEligibleForDownload).isNull()
+        }
+
+        @Test
+        fun `returns true with download access rule`() {
+            val isEligibleForDownload = converter.isEligibleForDownload(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedDistributionMethods(
+                            setOf(DistributionMethod.DOWNLOAD)
+                        )
+                    )
+                )
+            )
+            assertThat(isEligibleForDownload).isTrue()
+        }
+
+        @Test
+        fun `returns null with no download access rule`() {
+            val isEligibleForDownload = converter.isEligibleForDownload(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedDistributionMethods(
+                            setOf(DistributionMethod.STREAM)
+                        )
+                    )
+                )
+            )
+            assertThat(isEligibleForDownload).isNull()
+        }
+
+        @Test
+        fun `returns nothing when download rule is not specified`() {
+            val isEligibleForDownload = converter.isEligibleForDownload(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.IncludedDistributionMethods(setOf())
+                    )
+                )
+            )
+            assertThat(isEligibleForDownload).isNull()
         }
     }
 }

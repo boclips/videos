@@ -63,16 +63,32 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveChannel(name = "stream", distributionMethods = setOf(DistributionMethodResource.STREAM))
             val downloadContentPartner =
                 saveChannel(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
+            val downloadAndStreamContentPartner =
+                saveChannel(
+                    name = "download",
+                    distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM)
+                )
 
-            saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
-            val downloadVideo = saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.id.value)
+            saveVideo(
+                title = "video no",
+                contentProviderId = streamContentPartner.id.value
+            )
+            val downloadVideo = saveVideo(
+                title = "video si",
+                contentProviderId = downloadContentPartner.id.value
+            )
+            val downloadAndStreamVideo = saveVideo(
+                title = "video si siempre",
+                contentProviderId = downloadAndStreamContentPartner.id.value
+            )
 
             addDistributionMethodAccessRule("something@publisher-boclips.com", DistributionMethodResource.DOWNLOAD)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "something@publisher-boclips.com"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(downloadVideo.value)))
+                .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(downloadAndStreamVideo.value)))
         }
 
         @Test

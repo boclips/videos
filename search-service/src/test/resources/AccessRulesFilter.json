@@ -16,6 +16,14 @@
             "boost" : 1.0
           }
         }
+      },
+      {
+        "term" : {
+          "eligibleForDownload" : {
+            "value" : true,
+            "boost" : 1.0
+          }
+        }
       }
     ],
     "must_not" : [

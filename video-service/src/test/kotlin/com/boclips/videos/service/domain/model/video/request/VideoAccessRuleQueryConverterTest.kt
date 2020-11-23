@@ -48,7 +48,8 @@ class VideoAccessRuleQueryConverterTest {
         assertThat(query.includedTypes).containsExactly(VideoType.INSTRUCTIONAL)
         assertThat(query.excludedContentPartnerIds).containsExactly("HELLO")
         assertThat(query.includedChannelIds).containsExactly("hi")
-        assertThat(query.isEligibleForStream).isFalse()
+        assertThat(query.isEligibleForStream).isNull()
+        assertThat(query.isEligibleForDownload).isTrue
         assertThat(query.includedVoiceType).containsExactly(
             SearchVoiceType.WITH,
             SearchVoiceType.UNKNOWN,
