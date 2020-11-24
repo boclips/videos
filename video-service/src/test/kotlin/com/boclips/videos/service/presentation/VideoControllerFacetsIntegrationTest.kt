@@ -26,11 +26,14 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `contains counts for subjects`() {
+        val subject = saveSubject("Geography")
+        val subjectId = subject.id.value
+
         videoIndexFake.setFacets(
             listOf(
                 FacetCount(
                     type = FacetType.Subjects,
-                    counts = listOf(Count(id = "subject1", hits = 56))
+                    counts = listOf(Count(id = subjectId, hits = 56))
                 )
             )
         )
@@ -39,7 +42,9 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.facets.subjects.*", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.facets.subjects.subject1.hits", equalTo(56)))
+            .andExpect(jsonPath("$._embedded.facets.subjects.$subjectId.hits", equalTo(56)))
+            .andExpect(jsonPath("$._embedded.facets.subjects.$subjectId.id", equalTo(subjectId)))
+            .andExpect(jsonPath("$._embedded.facets.subjects.$subjectId.name", equalTo("Geography")))
     }
 
     @Test

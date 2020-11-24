@@ -46,6 +46,7 @@ class CollectionResourceConverterTest {
             ),
             attachmentToResourceConverter = attachmentToResourceConverter,
             contentWarningToResourceConverter = ContentWarningToResourceConverter(ContentWarningLinkBuilder()),
+            mock(),
             mock()
         )
 

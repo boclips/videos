@@ -7,6 +7,7 @@ import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
@@ -38,6 +39,7 @@ class VideoToResourceConverterTest {
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
     private lateinit var getChannels: GetChannels
+    private lateinit var getSubjects: GetSubjects
 
     private val kalturaVideo = createVideo(
         title = "Do what you love",
@@ -96,6 +98,7 @@ class VideoToResourceConverterTest {
     fun setUp() {
         videosLinkBuilder = mock()
         getChannels = mock()
+        getSubjects = mock()
 
         playbackToResourceConverter =
             PlaybackToResourceConverter(
@@ -108,7 +111,8 @@ class VideoToResourceConverterTest {
                 playbackToResourceConverter,
                 AttachmentToResourceConverter(mock()),
                 ContentWarningToResourceConverter(mock()),
-                getChannels
+                getChannels,
+                getSubjects
             )
     }
 

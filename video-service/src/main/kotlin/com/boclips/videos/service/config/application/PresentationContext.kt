@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
+import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
@@ -88,14 +89,16 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         playbackToResourceConverter: PlaybackToResourceConverter,
         attachmentsLinkBuilder: AttachmentsLinkBuilder,
         contentWarningLinkBuilder: ContentWarningLinkBuilder,
-        getChannels: GetChannels
+        getChannels: GetChannels,
+        getSubjects: GetSubjects
     ): VideoToResourceConverter {
         return VideoToResourceConverter(
             videosLinkBuilder = videosLinkBuilder,
             playbackToResourceConverter = playbackToResourceConverter,
             attachmentToResourceConverter = AttachmentToResourceConverter(attachmentsLinkBuilder),
             contentWarningToResourceConverter = ContentWarningToResourceConverter(contentWarningLinkBuilder),
-            getChannels = getChannels
+            getChannels = getChannels,
+            getSubjects = getSubjects
         )
     }
 
@@ -122,7 +125,8 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         attachmentsToResourceConverter: AttachmentToResourceConverter,
         contentWarningToResourceConverter: ContentWarningToResourceConverter,
         collectionsLinkBuilder: CollectionsLinkBuilder,
-        getChannels: GetChannels
+        getChannels: GetChannels,
+        getSubjects: GetSubjects
     ): CollectionResourceConverter {
         return CollectionResourceConverter(
             VideoToResourceConverter(
@@ -130,7 +134,8 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
                 playbackToResourceConverter,
                 attachmentsToResourceConverter,
                 contentWarningToResourceConverter,
-                getChannels
+                getChannels,
+                getSubjects,
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,

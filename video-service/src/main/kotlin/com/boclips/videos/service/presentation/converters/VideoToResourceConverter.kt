@@ -13,10 +13,12 @@ import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -28,7 +30,8 @@ class VideoToResourceConverter(
     private val playbackToResourceConverter: PlaybackToResourceConverter,
     private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
-    private val getChannels: GetChannels
+    private val getChannels: GetChannels,
+    private val getSubjects: GetSubjects
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
         return videos.map { video -> convert(video, user) }
@@ -102,11 +105,7 @@ class VideoToResourceConverter(
     private fun convertFacets(resultsPage: ResultsPage<Video, VideoCounts>): VideoFacetsResource? {
         return resultsPage.counts?.let { counts ->
             VideoFacetsResource(
-                subjects = counts.subjects.map {
-                    it.subjectId.value to VideoFacetResource(
-                        hits = it.total
-                    )
-                }.toMap(),
+                subjects = toSubjectFacetResource(counts.subjects),
                 ageRanges = counts.ageRanges.map {
                     it.ageRangeId.value to VideoFacetResource(
                         hits = it.total
@@ -124,6 +123,18 @@ class VideoToResourceConverter(
                 }.toMap()
             )
         }
+    }
+
+    private fun toSubjectFacetResource(subjectFacets: List<SubjectFacet>): Map<String, VideoFacetResource> {
+        val subjects = getSubjects().associateBy({ it.id }, { it })
+
+        return subjectFacets.map {
+            it.subjectId.value to VideoFacetResource(
+                id = it.subjectId.value,
+                name = subjects[it.subjectId.value]?.name,
+                hits = it.total
+            )
+        }.toMap()
     }
 
     private fun convertAgeRange(video: Video): AgeRangeResource? {
