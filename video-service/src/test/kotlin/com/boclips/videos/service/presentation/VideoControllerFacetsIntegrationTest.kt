@@ -174,5 +174,27 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             "stock"
         )
     }
+
+    @Test
+    fun `can request channel facets`() {
+        val channel = saveChannel(name = "TED")
+        val id = channel.id.value
+        videoIndexFake.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.Channels,
+                    counts = listOf(Count(id = channel.id.value, hits = 94))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content&include_channel_facets=true").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json"))
+            .andExpect(jsonPath("$._embedded.facets.channels.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.channels.$id.id", equalTo(id)))
+            .andExpect(jsonPath("$._embedded.facets.channels.$id.hits", equalTo(94)))
+            .andExpect(jsonPath("$._embedded.facets.channels.$id.name", equalTo("TED")))
+    }
 }
 

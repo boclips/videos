@@ -137,12 +137,12 @@ class VideoToResourceConverter(
         }
     }
 
-    private fun toChannelFacetResource(channelFacets: List<ChannelFacet>):  Map<String, VideoFacetResource> {
+    private fun toChannelFacetResource(channelFacets: List<ChannelFacet>): Map<String, VideoFacetResource> {
         val channels = getChannels()
         return channelFacets.mapNotNull { channelFacet ->
             channels
                 .find { channel -> channel.id.value == channelFacet.channelId.value }
-                ?.let { it.name to VideoFacetResource(hits = channelFacet.total, id = it.id.value) }
+                ?.let { it.id.value to VideoFacetResource(id = it.id.value, name = it.name, hits = channelFacet.total) }
         }.toMap()
     }
 

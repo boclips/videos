@@ -309,8 +309,9 @@ class VideoToResourceConverterTest {
         assertThat(resultResource._embedded.facets?.resourceTypes?.get("Activity")?.hits).isEqualTo(5)
 
         assertThat(resultResource._embedded.facets?.channels?.size).isEqualTo(1)
-        assertThat(resultResource._embedded.facets?.channels?.get("TED")?.hits).isEqualTo(7)
-        assertThat(resultResource._embedded.facets?.channels?.get("TED")?.id).isEqualTo("channel-id")
+        assertThat(resultResource._embedded.facets?.channels?.get("channel-id")?.hits).isEqualTo(7)
+        assertThat(resultResource._embedded.facets?.channels?.get("channel-id")?.id).isEqualTo("channel-id")
+        assertThat(resultResource._embedded.facets?.channels?.get("channel-id")?.name).isEqualTo("TED")
 
         assertThat(resultResource._embedded.facets?.videoTypes?.size).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.videoTypes?.get("stock")?.hits).isEqualTo(10)
