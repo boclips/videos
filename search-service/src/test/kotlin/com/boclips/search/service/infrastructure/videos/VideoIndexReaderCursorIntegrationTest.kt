@@ -49,4 +49,43 @@ class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTe
         assertThat(secondResult.elements).hasSize(1)
         assertNull(secondResult.cursor)
     }
+
+    @Test
+    fun `can handle many cursor requests`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1"),
+                SearchableVideoMetadataFactory.create(id = "2"),
+                SearchableVideoMetadataFactory.create(id = "3"),
+                SearchableVideoMetadataFactory.create(id = "4"),
+                SearchableVideoMetadataFactory.create(id = "5"),
+                SearchableVideoMetadataFactory.create(id = "6"),
+                SearchableVideoMetadataFactory.create(id = "7"),
+                SearchableVideoMetadataFactory.create(id = "8"),
+                SearchableVideoMetadataFactory.create(id = "9"),
+                SearchableVideoMetadataFactory.create(id = "10")
+            )
+        )
+
+        val firstResult = videoIndexReader.search(
+            CursorBasedIndexSearchRequest(
+                query = VideoQueryFactory.empty(),
+                windowSize = 1,
+                cursor = null
+            )
+        )
+        assertThat(firstResult.elements).hasSize(1)
+        assertNotNull(firstResult.cursor)
+
+        repeat(9) {
+            val result = videoIndexReader.search(
+                CursorBasedIndexSearchRequest(
+                    query = VideoQueryFactory.empty(),
+                    windowSize = 1,
+                    cursor = firstResult.cursor
+                )
+            )
+            assertThat(result.elements).hasSize(1)
+        }
+    }
 }

@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
 class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
-    private val scrollTimeout = TimeValue(30, TimeUnit.MINUTES)
+    private val scrollTimeout = TimeValue(5, TimeUnit.MINUTES)
 
     companion object : KLogging()
 
@@ -59,7 +59,10 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
     private fun performSearch(searchRequest: IndexSearchRequest<VideoQuery>): SearchResponse {
         val isCursorBasedRequest = searchRequest.isCursorBased()
         (searchRequest as? CursorBasedIndexSearchRequest)?.cursor?.let { cursor ->
-            return client.scroll(SearchScrollRequest(cursor.value), RequestOptions.DEFAULT)
+            return client.scroll(
+                SearchScrollRequest(cursor.value).scroll(scrollTimeout),
+                RequestOptions.DEFAULT
+            )
         }
 
         val videoQuery = searchRequest.query
