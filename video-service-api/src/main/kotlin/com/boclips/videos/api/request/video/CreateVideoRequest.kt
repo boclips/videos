@@ -17,7 +17,6 @@ data class CreateVideoRequest(
     @field:NotBlank(message = "A video title is required")
     val title: String? = null,
 
-    @field:NotBlank(message = "A video description is required")
     val description: String? = null,
 
     val additionalDescription: String? = null,

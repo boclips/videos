@@ -49,14 +49,6 @@ class CreateVideoRequestTest {
     }
 
     @Test
-    fun `validate description`() {
-        val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(description = null))
-
-        assertThat(violations).hasSize(1)
-        assertThat(violations.first().message).isEqualTo("A video description is required")
-    }
-
-    @Test
     fun `validate keywords`() {
         val violations = validator.validate(VideoServiceApiFactory.createCreateVideoRequest(keywords = null))
 
