@@ -49,7 +49,8 @@ class EventConverterTest {
             releasedOn = LocalDate.of(1939, 9, 1),
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true),
-            promoted = true
+            promoted = true,
+            keywords = listOf("key", "word")
         )
 
         val videoEvent = converter.toVideoPayload(video)
@@ -70,6 +71,7 @@ class EventConverterTest {
         assertThat(videoEvent.originalDimensions.width).isEqualTo(1920)
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
         assertThat(videoEvent.promoted).isTrue()
+        assertThat(videoEvent.keywords).containsExactly("key", "word")
     }
 
     @Test

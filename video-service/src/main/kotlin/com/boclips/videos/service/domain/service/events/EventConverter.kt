@@ -50,6 +50,7 @@ class EventConverter {
             .releasedOn(video.releasedOn)
             .promoted(video.promoted ?: false)
             .topics(toTopicsPayload(video.topics))
+            .keywords(video.keywords)
             .build()
     }
 
