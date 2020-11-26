@@ -709,7 +709,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", containsString("description is required")))
+                .andExpect(jsonPath("$.message", containsString("A video title is required")))
         }
 
         @Test
