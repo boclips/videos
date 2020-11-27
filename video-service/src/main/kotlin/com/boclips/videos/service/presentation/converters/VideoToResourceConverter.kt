@@ -119,7 +119,7 @@ class VideoToResourceConverter(
                 }.toMap(),
                 channels = toChannelFacetResource(counts.channels),
                 videoTypes = counts.videoTypes.map {
-                    it.typeId to VideoFacetResource(hits = it.total)
+                    it.typeId.toUpperCase() to VideoFacetResource(hits = it.total)
                 }.toMap()
             )
         }

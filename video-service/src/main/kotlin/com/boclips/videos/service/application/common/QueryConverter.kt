@@ -44,7 +44,7 @@ class QueryConverter {
     }
 
     fun convertTypeToVideoType(type: String): VideoType =
-        when (type) {
+        when (type.toUpperCase()) {
             "NEWS" -> VideoType.NEWS
             "STOCK" -> VideoType.STOCK
             "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL
