@@ -165,18 +165,18 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.videoTypes.*", hasSize<Int>(1)))
-            .andExpect(jsonPath("$._embedded.facets.videoTypes.stock.hits", equalTo(94)))
+            .andExpect(jsonPath("$._embedded.facets.videoTypes.STOCK.hits", equalTo(94)))
     }
 
     @Test
     fun `video_type_facets overwrite default video type facets`() {
-        mockMvc.perform(get("/v1/videos?query=content&video_type_facets=stock").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&video_type_facets=STOCK").asTeacher())
             .andExpect(status().isOk)
 
         val lastSearchRequest = videoIndexFake.getLastSearchRequest()
 
         assertThat(lastSearchRequest.query.facetDefinition?.videoTypes).containsExactly(
-            "stock"
+            "STOCK"
         )
     }
 
