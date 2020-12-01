@@ -4,14 +4,13 @@ import com.boclips.contentpartner.service.presentation.legalrestriction.LegalRes
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.server.mvc.ControllerLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 class LegalRestrictionsLinkBuilder {
     fun createLink(): Link? {
         return UserExtractor.getIfHasRole(UserRoles.UPDATE_VIDEOS) {
             WebMvcLinkBuilder.linkTo(
-                ControllerLinkBuilder.methodOn(LegalRestrictionsController::class.java).post(
+                WebMvcLinkBuilder.methodOn(LegalRestrictionsController::class.java).post(
                     null
                 )
             ).withRel("create")
@@ -20,14 +19,14 @@ class LegalRestrictionsLinkBuilder {
 
     fun getAllLink(): Link? {
         return UserExtractor.getIfHasRole(UserRoles.UPDATE_VIDEOS) {
-            WebMvcLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(LegalRestrictionsController::class.java).getAll())
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LegalRestrictionsController::class.java).getAll())
                 .withRel("legalRestrictions")
         }
     }
 
     fun self(id: String): Link {
         return WebMvcLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(LegalRestrictionsController::class.java).getOne(id)
+            WebMvcLinkBuilder.methodOn(LegalRestrictionsController::class.java).getOne(id)
         ).withSelfRel()
     }
 }
