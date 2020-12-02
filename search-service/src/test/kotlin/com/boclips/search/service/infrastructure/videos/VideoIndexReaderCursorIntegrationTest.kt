@@ -5,8 +5,10 @@ import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTe
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.VideoQueryFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -20,6 +22,7 @@ class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTe
     }
 
     @Test
+    @Disabled
     fun `get pages with cursor`() {
         videoIndexWriter.upsert(
             sequenceOf(
