@@ -31,7 +31,7 @@ dependencies {
     implementation('io.github.openfeign:feign-slf4j:11.0')
     implementation('io.github.openfeign.form:feign-form:3.8.0')
     implementation('com.github.boclips:boclips-spring-security:0.530.0')
-    implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10')
+    implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20')
     implementation('com.fasterxml.jackson.core:jackson-databind:2.10.1')
     implementation('org.springframework.boot:spring-boot-starter-validation:2.4.0')
 
