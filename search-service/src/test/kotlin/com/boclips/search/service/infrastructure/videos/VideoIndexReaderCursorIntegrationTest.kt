@@ -22,7 +22,6 @@ class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTe
     }
 
     @Test
-    @Disabled
     fun `get pages with cursor`() {
         videoIndexWriter.upsert(
             sequenceOf(
@@ -50,7 +49,7 @@ class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTe
             )
         )
         assertThat(secondResult.elements).hasSize(1)
-        assertNull(secondResult.cursor)
+        assertThat(secondResult.cursor).isEqualTo(firstResult.cursor)
     }
 
     @Test
