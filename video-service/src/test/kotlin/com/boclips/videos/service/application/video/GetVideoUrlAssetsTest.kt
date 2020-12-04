@@ -5,8 +5,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
+import com.boclips.videos.service.domain.model.video.NoVideoAssetsException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions
@@ -65,7 +66,7 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
     fun `throws exception when no video assets assigned to video`() {
         val videoId = saveVideo(assets = emptySet())
 
-        assertThrows<InsufficientVideoResolutionException> {
+        assertThrows<NoVideoAssetsException> {
             getVideoUrlAssets(videoId = videoId.value, user = UserFactory.sample())
         }
     }
@@ -88,5 +89,16 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
 
         Assertions.assertThat(assetURLs.downloadVideoUrl).isNotNull
         Assertions.assertThat(assetURLs.downloadCaptionUrl).isNull()
+    }
+
+    @Test
+    fun `returns empty video asset url when no HD flavour exists`() {
+        val videoId = saveVideo(
+                assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600)),
+                playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+        )
+
+        val assetURLs = getVideoUrlAssets(videoId = videoId.value, user = UserFactory.sample())
+        Assertions.assertThat(assetURLs.downloadVideoUrl).isNull()
     }
 }

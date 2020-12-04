@@ -5,7 +5,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.InsufficientVideoResolutionException
+import com.boclips.videos.service.domain.model.video.NoVideoAssetsException
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import mu.KLogging
@@ -20,16 +20,19 @@ class GetVideoUrlAssets(
         videoId: String,
         user: User
     ): VideoUrlAssetsResource {
-        val playbackId = searchVideo.byId(videoId, user).let { video ->
+        val videoPlayback = searchVideo.byId(videoId, user).let { video ->
             validateVideoIsDownloadable(video)
-            video.playback.id
+            video.playback as VideoPlayback.StreamPlayback
         }
 
-        val videoAssetUrl = playbackProvider.getDownloadAssetUrl(playbackId)
-        val downloadableCaption = playbackProvider.getHumanGeneratedCaption(playbackId)
+        val videoAssetUrl = videoPlayback
+                .takeIf { it.isHD() }
+                ?.let { playbackProvider.getDownloadAssetUrl(videoPlayback.id) }
+
+        val downloadableCaption = playbackProvider.getHumanGeneratedCaption(videoPlayback.id)
 
         return VideoUrlAssetsResource(
-            downloadVideoUrl = videoAssetUrl.toString(),
+            downloadVideoUrl = videoAssetUrl?.toString(),
             downloadCaptionUrl = downloadableCaption?.downloadUrl?.toString(),
             captionFileExtension = downloadableCaption?.format?.getFileExtension()
         )
@@ -37,7 +40,7 @@ class GetVideoUrlAssets(
 
     private fun validateVideoIsDownloadable(video: Video) {
         if (video.playback is VideoPlayback.StreamPlayback) {
-            if (!video.playback.hasOriginalOrFHDResolution()) throw InsufficientVideoResolutionException(video.videoId)
+            if (video.playback.assets?.isEmpty() != false) throw NoVideoAssetsException(video.videoId)
         } else {
             throw VideoPlaybackNotFound("The requested video cannot be downloaded because it comes from an incompatible source")
         }
