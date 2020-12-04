@@ -101,7 +101,7 @@ class VideoFilterCriteria {
             }
 
             if (videoQuery.types.isNotEmpty()) {
-                query.must(matchVideoTypes(videoQuery))
+                query.must(termsQuery(VideoDocument.TYPES, videoQuery.types).queryName(VIDEO_TYPES_FILTER))
             }
 
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->
@@ -110,9 +110,6 @@ class VideoFilterCriteria {
 
             return query
         }
-
-        private fun matchVideoTypes(videoQuery: UserQuery) =
-            termsQuery(VideoDocument.TYPES, videoQuery.types)
 
         fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
             fun removeFromList(must: MutableList<QueryBuilder>) {

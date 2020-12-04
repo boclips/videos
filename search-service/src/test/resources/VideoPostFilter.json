@@ -87,6 +87,15 @@
           "boost" : 1.0,
           "_name" : "attachment-types-filter"
         }
+      },
+      {
+        "terms" : {
+          "types" : [
+            "INSTRUCTIONAL"
+          ],
+          "boost" : 1.0,
+          "_name" : "video-types-filter"
+        }
       }
     ],
     "filter" : [
