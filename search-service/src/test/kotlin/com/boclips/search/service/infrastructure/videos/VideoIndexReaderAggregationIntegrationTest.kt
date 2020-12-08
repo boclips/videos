@@ -655,7 +655,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
                             userQuery = UserQuery(
-                                channelNames = setOf("TED")
+                                channelIds = setOf("1")
                             ),
                             facetDefinition = FacetDefinition.Video(
                                 ageRangeBuckets = null,
@@ -720,7 +720,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         VideoQuery(
                             phrase = "apple",
                             userQuery = UserQuery(
-                                channelNames = setOf("TED"),
+                                channelIds = setOf("123"),
                                 ageRanges = listOf(AgeRange(1, 3))
                             ),
                             videoAccessRuleQuery = VideoAccessRuleQuery(),

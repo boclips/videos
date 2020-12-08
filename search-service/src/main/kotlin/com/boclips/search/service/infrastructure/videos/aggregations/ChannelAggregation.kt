@@ -20,7 +20,7 @@ class ChannelAggregation {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery.userQuery),
-                    VideoFilterCriteria.CHANNEL_NAMES_FILTER
+                    VideoFilterCriteria.CHANNEL_IDS_FILTER
                 )
             )
         }
