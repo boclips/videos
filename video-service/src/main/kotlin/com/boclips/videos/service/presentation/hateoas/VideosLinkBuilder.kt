@@ -239,6 +239,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         .replacePath("/v1/videos")
 
     fun videoDetailsProjection(id: String?) = getIfHasAnyRole(
+        UserRoles.LEGACY_PUBLISHER,
         UserRoles.PUBLISHER,
         UserRoles.HQ,
         UserRoles.BOCLIPS_SERVICE

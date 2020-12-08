@@ -4,6 +4,7 @@ object UserRoles {
     const val API = "API"
     const val TEACHER = "TEACHER"
     const val PUBLISHER = "PUBLISHER"
+    const val LEGACY_PUBLISHER = "LEGACY_PUBLISHER"
     const val HQ = "HQ"
     const val BOCLIPS_SERVICE = "BOCLIPS_SERVICE"
     const val E2E = "E2E"

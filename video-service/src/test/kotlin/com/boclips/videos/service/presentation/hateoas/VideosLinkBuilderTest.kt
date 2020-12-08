@@ -16,6 +16,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.web.util.UriComponentsBuilder
 
 class VideosLinkBuilderTest {
@@ -79,9 +81,10 @@ class VideosLinkBuilderTest {
         assertThat(link.templated).isFalse()
     }
 
-    @Test
-    fun `details projection link`() {
-        setSecurityContext("teacher@boclips.com", UserRoles.HQ)
+    @ParameterizedTest
+    @ValueSource(strings = [UserRoles.HQ, UserRoles.LEGACY_PUBLISHER, UserRoles.PUBLISHER])
+    fun `details projection link`(compositeRole: String) {
+        setSecurityContext("teacher@boclips.com", compositeRole)
 
         val link = videosLinkBuilder.videoDetailsProjection(VideoResourceFactory.sample(id = "self-test").id)!!
 
