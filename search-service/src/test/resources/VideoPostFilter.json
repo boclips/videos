@@ -10,7 +10,7 @@
                   "from" : 20,
                   "to" : 100,
                   "include_lower" : true,
-                  "include_upper" : true,
+                  "include_upper" : false,
                   "boost" : 1.0
                 }
               }
@@ -21,7 +21,7 @@
                   "from" : 600,
                   "to" : 900,
                   "include_lower" : true,
-                  "include_upper" : true,
+                  "include_upper" : false,
                   "boost" : 1.0
                 }
               }

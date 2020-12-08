@@ -170,7 +170,7 @@ class VideoFilterCriteria {
                         should(
                             QueryBuilders.rangeQuery(VideoDocument.DURATION_SECONDS).apply {
                                 from(durationRange.min.seconds)
-                                durationRange.max?.let { max -> to(max.seconds) }
+                                durationRange.max?.let { max -> to(max.seconds, false) }
                             }
                         )
                     }

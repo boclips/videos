@@ -106,4 +106,34 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
         assertThat(results.counts.totalHits).isEqualTo(2)
         assertThat(results.elements).containsExactlyInAnyOrder("2", "3")
     }
+
+    @Test
+    fun `duration range upper bound is exclusive`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(id = "1", durationSeconds = 120),
+                SearchableVideoMetadataFactory.create(id = "2", durationSeconds = 60),
+                SearchableVideoMetadataFactory.create(id = "3", durationSeconds = 100)
+            )
+        )
+
+        val results =
+            videoIndexReader.search(
+                PaginatedIndexSearchRequest(
+                    query = VideoQuery(
+                        videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(
+                            durationRanges = listOf(
+                                DurationRange(
+                                    min = Duration.ofSeconds(0),
+                                    max = Duration.ofSeconds(120)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+
+        assertThat(results.counts.totalHits).isEqualTo(2)
+        assertThat(results.elements).containsExactlyInAnyOrder("2", "3")
+    }
 }

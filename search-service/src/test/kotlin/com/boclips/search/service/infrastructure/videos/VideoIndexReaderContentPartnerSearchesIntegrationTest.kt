@@ -139,7 +139,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     description = "Second world war",
-                    durationSeconds = 10,
+                    durationSeconds = 9,
                     contentProvider = "TED"
                 ),
                 SearchableVideoMetadataFactory.create(
