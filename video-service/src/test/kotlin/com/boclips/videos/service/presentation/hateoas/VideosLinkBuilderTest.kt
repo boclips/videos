@@ -82,7 +82,7 @@ class VideosLinkBuilderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [UserRoles.HQ, UserRoles.LEGACY_PUBLISHER, UserRoles.PUBLISHER])
+    @ValueSource(strings = [UserRoles.HQ, UserRoles.LEGACY_PUBLISHER])
     fun `details projection link`(compositeRole: String) {
         setSecurityContext("teacher@boclips.com", compositeRole)
 

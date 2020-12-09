@@ -240,7 +240,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
 
     fun videoDetailsProjection(id: String?) = getIfHasAnyRole(
         UserRoles.LEGACY_PUBLISHER,
-        UserRoles.PUBLISHER,
         UserRoles.HQ,
         UserRoles.BOCLIPS_SERVICE
     )
@@ -257,7 +256,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun videoFullProjection(videoId: String?) = getIfHasAnyRole(
-        UserRoles.PUBLISHER,
         UserRoles.HQ,
         UserRoles.BOCLIPS_SERVICE
     )
