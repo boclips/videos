@@ -275,6 +275,26 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(createdVideo.voice.language?.displayLanguage).isEqualTo("Welsh")
     }
 
+    @Test
+    fun `can create a video with a default price`() {
+        createMediaEntry(
+            id = "entry-$123",
+            duration = Duration.ofMinutes(1)
+        )
+
+        val contentPartner = saveChannel()
+
+        val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
+            providerId = contentPartner.id.value,
+            playbackId = "entry-\$123",
+            videoTypes = listOf("NEWS")
+        )
+
+        val createdVideo = createVideo(createRequest, UserFactory.sample())
+
+        assertThat(createdVideo.getPrice()).isNotNull
+    }
+
     private fun createAVideo(title: String) {
         createMediaEntry(
             id = "entry-$123",

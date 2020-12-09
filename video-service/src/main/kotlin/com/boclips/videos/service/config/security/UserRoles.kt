@@ -1,6 +1,7 @@
 package com.boclips.videos.service.config.security
 
 object UserRoles {
+    const val PUBLISHER = "PUBLISHER"
     const val API = "API"
     const val TEACHER = "TEACHER"
     const val LEGACY_PUBLISHER = "LEGACY_PUBLISHER"

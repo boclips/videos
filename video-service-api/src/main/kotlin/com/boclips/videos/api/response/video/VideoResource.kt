@@ -1,6 +1,7 @@
 package com.boclips.videos.api.response.video
 
 import com.boclips.videos.api.BoclipsInternalProjection
+import com.boclips.videos.api.PricingProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.response.HateoasLink
@@ -50,6 +51,9 @@ data class VideoResource(
     val attachments: List<AttachmentResource> = emptyList(),
     @get:JsonView(PublicApiProjection::class)
     val contentWarnings: List<ContentWarningResource>? = emptyList(),
+
+    @get:JsonView(PricingProjection::class)
+    val price: PriceResource? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val channel: String? = null,

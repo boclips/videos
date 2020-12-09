@@ -62,4 +62,6 @@ data class Video(
     fun isVoiced(): Boolean? {
         return voice.isVoiced()
     }
+
+    fun getPrice(): Price? = if (isBoclipsHosted()) Price.getDefault(types) else null
 }

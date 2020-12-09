@@ -17,7 +17,17 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.DurationFacet
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoTypeFacet
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -32,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import java.time.Duration
+import java.util.Currency
 import java.util.Locale
 
 class VideoToResourceConverterTest {
@@ -165,6 +176,9 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.language?.displayName).isEqualTo("Central Khmer")
         assertThat(videoResource.hasTranscripts).isEqualTo(true)
         assertThat(videoResource.isVoiced).isEqualTo(true)
+        assertThat(videoResource.price?.currency).isEqualTo(Currency.getInstance("USD"))
+        assertThat(videoResource.price?.amount?.intValueExact()).isEqualTo(300)
+        assertThat(videoResource.price?.displayValue).isEqualTo("$ 300")
 
         assertThat(videoResource.attachments).hasSize(1)
         assertThat(videoResource.attachments[0].id).isNotNull()
@@ -200,6 +214,7 @@ class VideoToResourceConverterTest {
         )
         assertThat(videoResource.types!!.first().id).isEqualTo(3)
         assertThat(videoResource.types!!.first().name).isEqualTo("Instructional Clips")
+        assertThat(videoResource.price).isNull()
 
         assertThat((videoResource.playback!! as YoutubePlaybackResource).type).isEqualTo("YOUTUBE")
         assertThat((videoResource.playback!! as YoutubePlaybackResource).duration).isEqualTo(Duration.ofSeconds(21))
@@ -263,10 +278,14 @@ class VideoToResourceConverterTest {
 
     @Test
     fun `produces facets if they exist on the search results`() {
-        Mockito.`when`(getChannels.invoke()).thenReturn(listOf(ChannelFactory.createChannel(
-            id = com.boclips.contentpartner.service.domain.model.channel.ChannelId("channel-id"),
-            name = "TED"
-        )))
+        Mockito.`when`(getChannels.invoke()).thenReturn(
+            listOf(
+                ChannelFactory.createChannel(
+                    id = com.boclips.contentpartner.service.domain.model.channel.ChannelId("channel-id"),
+                    name = "TED"
+                )
+            )
+        )
 
         val resultResource = videoToResourceConverter.convert(
             resultsPage = ResultsPage(

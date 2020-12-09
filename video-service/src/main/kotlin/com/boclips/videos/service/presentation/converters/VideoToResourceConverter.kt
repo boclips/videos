@@ -5,6 +5,7 @@ import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.TagResource
 import com.boclips.videos.api.response.video.VideoBadge
 import com.boclips.videos.api.response.video.VideoFacetResource
@@ -82,6 +83,7 @@ class VideoToResourceConverter(
                 true -> emptyList()
                 else -> video.attachments.map { attachmentToResourceConverter.convert(it) }
             },
+            price = video.getPrice()?.let { PriceResource(amount = it.amount, currency = it.currency) },
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             _links = (
                 resourceLinks(video.videoId.value) +
