@@ -123,7 +123,7 @@ object VideoFactory {
         )
     }
 
-    fun createPlaybackDocument(
+    private fun createPlaybackDocument(
         type: String = "KALTURA",
         id: String = "playback-id",
         entryId: String? = null,

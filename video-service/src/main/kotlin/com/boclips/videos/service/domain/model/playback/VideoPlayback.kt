@@ -30,9 +30,7 @@ sealed class VideoPlayback {
             return assets?.any { it.dimensions.isFHD() || it.dimensions.height == originalDimensions?.height } ?: false
         }
 
-        fun isHD(): Boolean {
-            return assets?.any { it.dimensions.isHD() } ?: false
-        }
+        fun hasAnyAssets() = assets == null || assets.isEmpty()
     }
 
     data class FaultyPlayback(

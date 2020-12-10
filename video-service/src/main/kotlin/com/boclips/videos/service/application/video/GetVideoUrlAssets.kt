@@ -20,13 +20,13 @@ class GetVideoUrlAssets(
         videoId: String,
         user: User
     ): VideoUrlAssetsResource {
-        val videoPlayback = searchVideo.byId(videoId, user).let { video ->
+        val videoPlayback = searchVideo.byId(videoId, user).let { video: Video ->
             validateVideoIsDownloadable(video)
             video.playback as VideoPlayback.StreamPlayback
         }
 
         val videoAssetUrl = videoPlayback
-                .takeIf { it.isHD() }
+                .takeIf { it.hasOriginalOrFHDResolution() }
                 ?.let { playbackProvider.getDownloadAssetUrl(videoPlayback.id) }
 
         val downloadableCaption = playbackProvider.getHumanGeneratedCaption(videoPlayback.id)
@@ -40,7 +40,7 @@ class GetVideoUrlAssets(
 
     private fun validateVideoIsDownloadable(video: Video) {
         if (video.playback is VideoPlayback.StreamPlayback) {
-            if (video.playback.assets?.isEmpty() != false) throw NoVideoAssetsException(video.videoId)
+            if (video.playback.hasAnyAssets()) throw NoVideoAssetsException(video.videoId)
         } else {
             throw VideoPlaybackNotFound("The requested video cannot be downloaded because it comes from an incompatible source")
         }
