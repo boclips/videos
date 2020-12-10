@@ -52,7 +52,7 @@ data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
     val contentWarnings: List<ContentWarningResource>? = emptyList(),
 
-    @get:JsonView(PricingProjection::class)
+    @get:JsonView(PricingProjection::class, BoclipsInternalProjection::class)
     val price: PriceResource? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)

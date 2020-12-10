@@ -30,7 +30,19 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `price field unavailable when missing roles`() {
+    fun `user with internal role has access to price`() {
+        val videoId = saveVideo()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
+                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_SERVICE)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.price").exists())
+    }
+
+    @Test
+    fun `user with missing roles does not have access to price`() {
         val videoId = saveVideo()
 
         mockMvc.perform(
