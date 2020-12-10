@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: boclipsconcourse/jdk-with-elasticsearch
+    tag: 0.5.0
+
+inputs:
+- name: source
+
+caches:
+- path: .gradle/
+
+params:
+  ES_PORT: 9200
+
+run:
+  dir: source
+  path: sh
+  args:
+  - -ec
+  - |-
+    /etc/init.d/elasticsearch start
+    ./gradlew search-service:testWithoutSolr

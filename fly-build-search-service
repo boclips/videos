@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+cwd="$(cd "$(dirname "$0")" && pwd)"
+
+dir=$(mktemp -d -t fly-build-search-service.XXXXX)
+tidy () {
+    rm -rf "$dir"
+}
+
+trap tidy EXIT
+
+mkdir "$dir/version"
+echo TEST_VERSION > "$dir/version/tag"
+
+fly --target ci execute \
+    --input source="$cwd" \
+    --config "$cwd/search-service/pipeline/tasks/test.yaml"

@@ -21,9 +21,18 @@ abstract class EmbeddedElasticSearchIntegrationTest {
         val CLIENT: ElasticSearchClient
 
         init {
-            val httpPort = 9200
-            val tcpPort = 9300
-            val container = KGenericContainer("elasticsearch:${org.elasticsearch.Version.CURRENT}")
+            CLIENT = ElasticSearchClient(
+                scheme = "http",
+                host = "localhost",
+                port = System.getenv("ES_PORT")?.toInt() ?: containerisedESPort(),
+                username = "",
+                password = "",
+                tracer = GlobalTracer.get()
+            )
+        }
+
+        private fun containerisedESPort(httpPort: Int = 9200, tcpPort: Int = 9300): Int =
+            KGenericContainer("elasticsearch:${org.elasticsearch.Version.CURRENT}")
                 .withExposedPorts(httpPort, tcpPort)
                 .withEnv("discovery.type", "single-node")
                 .waitingFor(
@@ -33,18 +42,8 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                         .withStartupTimeout(Duration.ofMinutes(2))
                 )
                 .withLogConsumer { frame -> if (frame.bytes != null) logger.info { String(frame.bytes) } }
-
-            container.start()
-
-            CLIENT = ElasticSearchClient(
-                scheme = "http",
-                host = "localhost",
-                port = container.getMappedPort(httpPort),
-                username = "",
-                password = "",
-                tracer = GlobalTracer.get()
-            )
-        }
+                .apply { start() }
+                .run { getMappedPort(httpPort) }
     }
 
     @BeforeEach
