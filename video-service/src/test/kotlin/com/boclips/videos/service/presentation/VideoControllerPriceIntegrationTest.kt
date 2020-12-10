@@ -24,7 +24,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                 .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price.displayValue", equalTo("$ 600")))
+            .andExpect(jsonPath("$.price.displayValue", equalTo("$600")))
             .andExpect(jsonPath("$.price.amount", equalTo(600)))
             .andExpect(jsonPath("$.price.currency", equalTo("USD")))
     }

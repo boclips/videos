@@ -10,5 +10,5 @@ data class PriceResource(
     val currency: Currency
 ) {
     val displayValue: String
-        get() = "${currency.getSymbol(Locale.US)} ${DecimalFormat("0").format(amount)}"
+        get() = "${currency.getSymbol(Locale.US)}${DecimalFormat("0").format(amount)}"
 }
