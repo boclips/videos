@@ -55,6 +55,7 @@ class LinksController(
                 videosLinkBuilder.videoLink(),
                 videosLinkBuilder.getCaptions(),
                 videosLinkBuilder.searchVideosLink(),
+                videosLinkBuilder.getMetadata(),
 
                 videoTypeLinkBuilder.videoTypes(),
 

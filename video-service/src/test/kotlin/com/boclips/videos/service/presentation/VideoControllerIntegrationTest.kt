@@ -7,9 +7,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
+import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
-import com.boclips.videos.service.testsupport.*
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -788,9 +788,9 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
-                    MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")
-                        .asIngestor()
-                )
+                MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")
+                    .asIngestor()
+            )
                 .andExpect(status().isOk)
         }
 
@@ -798,6 +798,30 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `video lookup by provider id returns 404 when video does not exist`() {
             mockMvc.perform(MockMvcRequestBuilders.head("/v1/channels/ted/videos/xyz").asIngestor())
                 .andExpect(status().isNotFound)
+        }
+    }
+
+    @Nested
+    inner class GetCsv {
+        @Test
+        fun `gets a csv with metadata based on provided ids`() {
+            val video1 = saveVideo(title = "test name 1")
+            val video2 = saveVideo(title = "test name 2")
+
+            mockMvc.perform(
+                post("/v1/videos/metadata").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                {
+                    "ids": ["$video1", "$video2"]
+                }
+                    """.trimIndent()
+                ).asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.metadata[0].title", equalTo("test name 1")))
+                .andExpect(jsonPath("$.metadata[0].id", equalTo(video1.value)))
+                .andExpect(jsonPath("$.metadata[1].title", equalTo("test name 2")))
+                .andExpect(jsonPath("$.metadata[1].id", equalTo(video2.value)))
         }
     }
 
@@ -830,10 +854,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns only captionUrl when there's no HD video flavour`() {
             val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
             val videoId = saveVideo(
-                    height = 1920,
-                    width = 1080,
-                    playbackId = playbackId,
-                    assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600))
+                height = 1920,
+                width = 1080,
+                playbackId = playbackId,
+                assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600))
             )
 
             val captions = TestFactories.createCaptions(
@@ -857,10 +881,10 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `returns URL for best resolution asset available when it was the best at ingest`() {
             val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
             val videoId = saveVideo(
-                    height = 400,
-                    width = 600,
-                    playbackId = playbackId,
-                    assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600))
+                height = 400,
+                width = 600,
+                playbackId = playbackId,
+                assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600))
             )
 
             val captions = TestFactories.createCaptions(
@@ -904,7 +928,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
             val videoId = saveVideo(playbackId = playbackId)
 
-            val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla", )
+            val captions = TestFactories.createCaptions(language = Locale.UK, content = "bla bla bla")
             kalturaPlaybackProvider.uploadCaptions(playbackId, captions)
 
             mockMvc.perform(

@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_CAPTIONS
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_METADATA
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
@@ -32,6 +33,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val ADD_ATTACHMENT = "addAttachment"
         const val GET_CAPTIONS = "getCaptions"
         const val UPDATE_CAPTIONS = "updateCaptions"
+        const val GET_METADATA = "getMetadata"
     }
 
     fun self(videoId: String?): HateoasLink {
@@ -55,8 +57,13 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     }
 
     fun videoLink(): HateoasLink {
-        return HateoasLink.of(Link.of(getVideosRootWithoutParams().pathSegment("{id}").build().toUriString()+ "{" +
-            "?referer,shareCode}", VIDEO))
+        return HateoasLink.of(
+            Link.of(
+                getVideosRootWithoutParams().pathSegment("{id}").build().toUriString() + "{" +
+                    "?referer,shareCode}",
+                VIDEO
+            )
+        )
     }
 
     fun createVideoInteractedWithEvent(videoId: String?): HateoasLink {
@@ -68,7 +75,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     .queryParam("logVideoInteraction", true)
                     .queryParam("type", "{type}")
                     .build()
-                    .toUriString(), LOG_VIDEO_INTERACTION
+                    .toUriString(),
+                LOG_VIDEO_INTERACTION
             )
         )
     }
@@ -81,8 +89,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         getVideosRootWithoutParams()
                             .queryParam("query", query)
                             .build()
-                            .toUriString()
-                            + "{" +
+                            .toUriString() +
+                            "{" +
                             "&id," +
                             "sort_by," +
                             "duration,duration_facets,duration_min,duration_max," +
@@ -113,8 +121,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     Link.of(
                         getVideosRootWithoutParams()
                             .build()
-                            .toUriString()
-                            + "{" +
+                            .toUriString() +
+                            "{" +
                             "?query,id," +
                             "sort_by," +
                             "duration,duration_facets,duration_min,duration_max," +
@@ -183,8 +191,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                 getVideosRootWithoutParams()
                     .pathSegment(video.videoId.value)
                     .build()
-                    .toUriString()
-                , UPDATE
+                    .toUriString(),
+                UPDATE
             )
         )
     }
@@ -196,8 +204,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     .pathSegment(video.videoId.value)
                     .pathSegment("captions")
                     .build()
-                    .toUriString()
-                , UPDATE_CAPTIONS
+                    .toUriString(),
+                UPDATE_CAPTIONS
             )
         )
     }
@@ -225,8 +233,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                     .pathSegment(video.videoId.value)
                     .pathSegment("attachments")
                     .build()
-                    .toUriString()
-                , ADD_ATTACHMENT
+                    .toUriString(),
+                ADD_ATTACHMENT
             )
         )
     }
@@ -242,8 +250,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         UserRoles.LEGACY_PUBLISHER,
         UserRoles.HQ,
         UserRoles.BOCLIPS_SERVICE
-    )
-    {
+    ) {
         HateoasLink.of(
             Link.of(
                 getVideosRootWithoutParams().pathSegment(id)
@@ -258,8 +265,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     fun videoFullProjection(videoId: String?) = getIfHasAnyRole(
         UserRoles.HQ,
         UserRoles.BOCLIPS_SERVICE
-    )
-    {
+    ) {
         HateoasLink.of(
             Link.of(
                 getVideosRootWithoutParams().pathSegment(videoId)
@@ -273,8 +279,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
 
     fun assets(video: Video): HateoasLink? =
         takeIf { video.isBoclipsHosted() }?.let {
-            getIfHasAnyRole(UserRoles.DOWNLOAD_VIDEO)
-            {
+            getIfHasAnyRole(UserRoles.DOWNLOAD_VIDEO) {
                 HateoasLink.of(
                     Link.of(
                         getVideosRootWithoutParams()
@@ -288,5 +293,12 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                 )
             }
         }
-}
 
+    fun getMetadata(): Link? {
+        return getIfHasRole(UserRoles.VIEW_VIDEOS) {
+            WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(VideoController::class.java).getMetadata(null)
+            ).withRel(GET_METADATA)
+        }
+    }
+}

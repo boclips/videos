@@ -2,21 +2,14 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.CreateVideoRequest
-import com.boclips.videos.api.request.video.RateVideoRequest
-import com.boclips.videos.api.request.video.SetThumbnailRequest
-import com.boclips.videos.api.request.video.TagVideoRequest
-import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
-import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.response.video.CaptionsResource
-import com.boclips.videos.api.response.video.VideoResource
-import com.boclips.videos.api.response.video.VideoUrlAssetsResource
-import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.api.request.video.*
+import com.boclips.videos.api.response.video.*
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.GetUserIdOverride
@@ -24,6 +17,7 @@ import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
+import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -73,7 +67,8 @@ class VideoController(
     private val getVideoUrlAssets: GetVideoUrlAssets,
     private val userService: UserService,
     // FIXME - remove when clients no longer use channel names for video filtering
-    private val channelRepository: ChannelRepository
+    private val channelRepository: ChannelRepository,
+    private val videosRepository: VideoRepository,
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -378,6 +373,17 @@ class VideoController(
         val assets = getVideoUrlAssets(videoId, getCurrentUser())
 
         return ResponseEntity.ok(assets)
+    }
+
+    // TODO: it's a temporary solution only for christmas time
+    @PostMapping("/v1/videos/metadata")
+    fun getMetadata(@Valid @RequestBody metadataRequest: MetadataRequest?): ResponseEntity<VideoMetadataResponse> {
+        val videoIds = metadataRequest!!.ids.map { VideoId(it) }
+
+        val videos = videosRepository.findAll(videoIds)
+        val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videos)
+        val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     // FIXME - remove when clients no longer use channel names for video filtering
