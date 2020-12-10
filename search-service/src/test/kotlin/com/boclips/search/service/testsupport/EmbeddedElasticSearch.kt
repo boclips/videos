@@ -9,6 +9,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.testcontainers.containers.ContainerLaunchException
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
@@ -23,23 +24,28 @@ abstract class EmbeddedElasticSearchIntegrationTest {
         init {
             val httpPort = 9200
             val tcpPort = 9300
-            val container = KGenericContainer("elasticsearch:${org.elasticsearch.Version.CURRENT}")
-                .withExposedPorts(httpPort, tcpPort)
-                .withEnv("discovery.type", "single-node")
-                .waitingFor(
-                    HttpWaitStrategy()
-                        .forPort(httpPort)
-                        .forStatusCodeMatching { response -> response == HTTP_OK || response == HTTP_UNAUTHORIZED }
-                        .withStartupTimeout(Duration.ofMinutes(2))
-                )
-                .withLogConsumer { frame -> if (frame.bytes != null) logger.info { String(frame.bytes) } }
+            var container: KGenericContainer? = null
+            try {
+                container = KGenericContainer("elasticsearch:${org.elasticsearch.Version.CURRENT}")
+                    .withExposedPorts(httpPort, tcpPort)
+                    .withEnv("discovery.type", "single-node")
+                    .waitingFor(
+                        HttpWaitStrategy()
+                            .forPort(httpPort)
+                            .forStatusCodeMatching { response -> response == HTTP_OK || response == HTTP_UNAUTHORIZED }
+                            .withStartupTimeout(Duration.ofMinutes(2))
+                    )
+                    .withLogConsumer { frame -> if (frame.bytes != null) logger.info { String(frame.bytes) } }
 
-            container.start()
+                container.start()
+            } catch (exception: ContainerLaunchException) {
+                logger.info { "it seems ES is already running as process. No need to set up a docker with it" }
+            }
 
             CLIENT = ElasticSearchClient(
                 scheme = "http",
                 host = "localhost",
-                port = container.getMappedPort(httpPort),
+                port = container?.getMappedPort(httpPort) ?: httpPort,
                 username = "",
                 password = "",
                 tracer = GlobalTracer.get()

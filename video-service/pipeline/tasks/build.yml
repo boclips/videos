@@ -24,6 +24,5 @@ params:
 
 caches:
 - path: .gradle/
-
 run:
   path: source/video-service/pipeline/scripts/build.sh

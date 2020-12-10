@@ -4,8 +4,8 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: openjdk
-    tag: 11.0.2-jdk-stretch
+    repository: boclipsconcourse/jdk-with-elasticsearch
+    tag: 0.3.0
 
 inputs:
   - name: source
@@ -15,4 +15,5 @@ caches:
   - path: source/dependency-check-cache
 
 run:
-  path: source/search-service/pipeline/scripts/asroot.sh
+  path: source/search-service/pipeline/scripts/test.sh
+

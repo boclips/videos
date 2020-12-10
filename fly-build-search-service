@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 cwd="$(cd "$(dirname "$0")" && pwd)"
-dir=$(mktemp -d -t fly-build-video-service.XXXXX)
 
+dir=$(mktemp -d -t fly-build-search-service.XXXXX)
 tidy () {
     rm -rf "$dir"
 }
@@ -28,9 +28,7 @@ export GCS_CONTRACT_SECRET
 export GCS_CONTRACT_BUCKET_NAME
 export KEYCLOAK_REALM
 export KEYCLOAK_URL
-echo $JAVA_HOME
+
 fly --target ci execute \
     --input source="$cwd" \
-    --input version="$dir/version" \
-    --config "$cwd/video-service/pipeline/tasks/build.yml" \
-    --output dist=fly-dist
+    --config "$cwd/search-service/pipeline/tasks/test.yml"
