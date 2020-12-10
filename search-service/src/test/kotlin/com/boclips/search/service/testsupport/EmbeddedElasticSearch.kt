@@ -38,7 +38,8 @@ abstract class EmbeddedElasticSearchIntegrationTest {
                     .withLogConsumer { frame -> if (frame.bytes != null) logger.info { String(frame.bytes) } }
 
                 container.start()
-            } catch (exception: ContainerLaunchException) {
+            } catch (exception: ExceptionInInitializerError) {
+                println( "it seems ES is already running as process. No need to set up a docker with it" )
                 logger.info { "it seems ES is already running as process. No need to set up a docker with it" }
             }
 
