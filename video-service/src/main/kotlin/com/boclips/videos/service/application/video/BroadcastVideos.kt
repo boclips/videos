@@ -13,7 +13,7 @@ class BroadcastVideos(
     companion object : KLogging()
 
     operator fun invoke() {
-        val batchSize = 500
+        val batchSize = 10000
         val eventConverter = EventConverter()
         videoRepository.streamAll { allVideos ->
             allVideos.windowed(size = batchSize, step = batchSize, partialWindows = true)
