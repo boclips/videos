@@ -16,7 +16,7 @@ object VideoMetadataConverter {
                 legalRestrictions = it.legalRestrictions,
                 transcripts = it.hasTranscripts,
                 links = it.playback!!._links,
-                keywords = it.bestFor?.map { it.label }
+                keywords = it.keywords,
             )
         }
     }

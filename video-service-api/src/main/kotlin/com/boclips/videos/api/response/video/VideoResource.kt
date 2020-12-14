@@ -51,6 +51,8 @@ data class VideoResource(
     val attachments: List<AttachmentResource> = emptyList(),
     @get:JsonView(PublicApiProjection::class)
     val contentWarnings: List<ContentWarningResource>? = emptyList(),
+    @get:JsonView(PublicApiProjection::class)
+    val keywords: List<String>? = emptyList(),
 
     @get:JsonView(PricingProjection::class, BoclipsInternalProjection::class)
     val price: PriceResource? = null,

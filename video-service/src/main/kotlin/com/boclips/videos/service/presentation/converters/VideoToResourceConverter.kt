@@ -85,6 +85,7 @@ class VideoToResourceConverter(
             },
             price = video.getPrice()?.let { PriceResource(amount = it.amount, currency = it.currency) },
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
+            keywords = video.keywords,
             _links = (
                 resourceLinks(video.videoId.value) +
                     conditionalResourceLinks(video) +
