@@ -28,6 +28,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .authorizeRequests()
             .mvcMatchers(GET, "/actuator/health").permitAll()
             .mvcMatchers(GET, "/actuator/prometheus").permitAll()
+            .mvcMatchers(GET, "/actuator/httptrace").permitAll()
 
             .antMatchers(OPTIONS, "/v1/**").permitAll()
 
