@@ -1,16 +1,13 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
-import com.boclips.videos.service.testsupport.MvcMatchers
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asTeacher
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -24,7 +21,7 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "VALID")
+                    shareCode = "VALID"
                 )
             )
 
@@ -42,7 +39,7 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "VALID")
+                    shareCode = "VALID"
                 )
             )
 
@@ -64,14 +61,15 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
 
     @Nested
     inner class NonAuthenticatedUser {
+
         @Test
-        fun `providing a valid shareCode and referer`() {
+        fun `providing a valid shareCode and referer returns a collection resource`() {
             val collectionId =
                 createCollection(title = "Some discoverable Collection", discoverable = true, owner = "12345")
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    shareCode = "TEST"
                 )
             )
 
@@ -83,12 +81,12 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
         }
 
         @Test
-        fun `providing an invalid shareCode and referer`() {
+        fun `providing an invalid shareCode and valid referer returns forbidden error code`() {
             val collectionId = createCollection(title = "Some discoverable Collection", discoverable = true)
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    shareCode = "TEST"
                 )
             )
 
@@ -97,12 +95,12 @@ class CollectionControllerShareCodeIntegrationTest : AbstractCollectionsControll
         }
 
         @Test
-        fun `not providing a shareCode or referer returns forbidden`() {
+        fun `not providing neigher shareCode nor referer returns forbidden error code`() {
             val collectionId = createCollection(title = "Some discoverable Collection", discoverable = true)
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "12345",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                    shareCode = "TEST"
                 )
             )
 

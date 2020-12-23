@@ -2,7 +2,6 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -217,7 +216,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "referer-id",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "valid")
+                    shareCode = "valid"
                 )
             )
 
@@ -265,7 +264,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             usersClient.add(
                 UserResourceFactory.sample(
                     id = "referer-id",
-                    teacherPlatformAttributes = TeacherPlatformAttributesResource(shareCode = "valid")
+                    shareCode = "valid"
                 )
             )
 

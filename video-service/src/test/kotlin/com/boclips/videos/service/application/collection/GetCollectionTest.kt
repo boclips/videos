@@ -1,7 +1,6 @@
 package com.boclips.videos.service.application.collection
 
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.users.api.response.user.TeacherPlatformAttributesResource
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.domain.model.collection.CollectionNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -31,7 +30,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("TEST")
+                shareCode = "TEST"
             )
         )
 
@@ -67,7 +66,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+                shareCode = "ABCD"
             )
         )
 
@@ -85,7 +84,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+                shareCode = "ABCD"
             )
         )
 
@@ -104,7 +103,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+                shareCode = "ABCD"
             )
         )
 
@@ -124,7 +123,7 @@ class GetCollectionTest : AbstractSpringIntegrationTest() {
         usersClient.add(
             UserResourceFactory.sample(
                 id = "12345",
-                teacherPlatformAttributes = TeacherPlatformAttributesResource("ABCD")
+                shareCode = "ABCD"
             )
         )
 

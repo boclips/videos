@@ -1,5 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.4.10'
+    ext {
+        kotlin_version = '1.4.10'
+        openFeignVersion = '11.0'
+    }
     repositories {
         mavenCentral()
     }
@@ -117,10 +120,11 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-security:0.530.0')
     implementation("com.github.boclips:event-bus:4.3.4")
     implementation('com.github.boclips:kaltura-client:2.0.4')
-    implementation("com.github.boclips:user-service:v249")
+    implementation("com.github.boclips:user-service:v293")
 
     // Required by user-service client
-    implementation('io.github.openfeign:feign-core:11.0')
+    implementation("io.github.openfeign:feign-core:${openFeignVersion}")
+    implementation("io.github.openfeign:feign-okhttp:${openFeignVersion}")
 
     implementation("io.github.microutils:kotlin-logging:2.0.3")
     implementation("com.google.apis:google-api-services-youtube:v3-rev20200618-1.30.9")

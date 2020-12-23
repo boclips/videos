@@ -75,7 +75,8 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 organisationDetails = OrganisationResourceFactory.sampleDetails(
                     name = "hello",
                     allowsOverridingUserIds = true
-                )
+                ),
+                billing = null
             )
         )
 

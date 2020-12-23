@@ -56,7 +56,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     id = organisationId,
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         allowsOverridingUserIds = true
-                    )
+                    ),
+                    billing = null
                 )
             )
 
@@ -101,7 +102,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     id = organisationId,
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         allowsOverridingUserIds = false
-                    )
+                    ),
+                    billing = null
                 )
             )
             mockMvc.perform(
