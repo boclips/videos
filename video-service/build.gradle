@@ -145,6 +145,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation('org.mockito:mockito-junit-jupiter:3.6.28')
     testImplementation('org.yaml:snakeyaml:1.27')
+    testImplementation('ru.lanwen.wiremock:wiremock-junit5:1.3.1')
+    testImplementation('com.github.tomakehurst:wiremock-jre8:2.25.1')
 
     youtubeContractTestImplementation sourceSets.main.output
     youtubeContractTestImplementation configurations.compile

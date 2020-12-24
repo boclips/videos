@@ -7,7 +7,8 @@ import com.boclips.users.api.httpclient.helper.ServiceAccountCredentials
 import com.boclips.users.api.httpclient.helper.ServiceAccountTokenFactory
 import com.boclips.videos.service.config.properties.UserClientProperties
 import feign.okhttp.OkHttpClient
-import org.springframework.beans.factory.annotation.Qualifier
+import feign.opentracing.TracingClient
+import io.opentracing.Tracer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -17,46 +18,41 @@ import org.springframework.context.annotation.Profile
 class UserServiceContext {
 
     @Bean
-    fun usersFeignClient() = OkHttpClient()
-
-    @Bean
     fun usersClient(
             userClientProperties: UserClientProperties,
-            @Qualifier("usersFeignClient") usersFeignClient: OkHttpClient
-    ) =
-        UsersClient.create(
+            tracer: Tracer
+    ): UsersClient = UsersClient.create(
             apiUrl = userClientProperties.baseUrl,
-            feignClient = usersFeignClient,
+            feignClient = createTracingClient(tracer),
             tokenFactory = userClientProperties.tokenFactory()
-        )
-
-    @Bean
-    fun organisationsFeignClient() = OkHttpClient()
+    )
 
     @Bean
     fun organisationsClient(
             userClientProperties: UserClientProperties,
-            @Qualifier("organisationsFeignClient") organisationsFeignClient: OkHttpClient
+            tracer: Tracer
     ) =
         OrganisationsClient.create(
             apiUrl = userClientProperties.baseUrl,
-            feignClient = organisationsFeignClient,
+            feignClient = createTracingClient(tracer),
             tokenFactory = userClientProperties.tokenFactory()
         )
-
-    @Bean
-    fun contentPackagesFeignClient() = OkHttpClient()
 
     @Bean
     fun contentPackagesClient(
             userClientProperties: UserClientProperties,
-            @Qualifier("contentPackagesFeignClient") contentPackagesFeignClient: OkHttpClient
+            tracer: Tracer
     ) =
         ContentPackagesClient.create(
             apiUrl = userClientProperties.baseUrl,
-            feignClient = contentPackagesFeignClient,
+            feignClient = createTracingClient(tracer),
             tokenFactory = userClientProperties.tokenFactory()
         )
+
+    private fun createTracingClient(tracer: Tracer): TracingClient {
+        val delegate = OkHttpClient()
+        return TracingClient(delegate, tracer)
+    }
 }
 
 fun UserClientProperties.tokenFactory() =
