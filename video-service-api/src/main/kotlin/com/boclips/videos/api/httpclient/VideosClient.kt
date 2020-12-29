@@ -9,16 +9,11 @@ import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.Feign
-import feign.Logger
+import feign.Client
+
 import feign.Param
 import feign.QueryMap
 import feign.RequestLine
-import feign.RequestTemplate
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
-import feign.okhttp.OkHttpClient
-import feign.slf4j.Slf4jLogger
 
 interface VideosClient {
     @RequestLine("GET /v1/videos/{videoId}?projection={projection}")
@@ -62,20 +57,14 @@ interface VideosClient {
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),
-            tokenFactory: TokenFactory? = null
-        ): VideosClient {
-            return Feign.builder()
-                .client(OkHttpClient())
-                .encoder(JacksonEncoder(objectMapper))
-                .decoder(JacksonDecoder(objectMapper))
-                .requestInterceptor { template: RequestTemplate ->
-                    if (tokenFactory != null) {
-                        template.header("Authorization", "Bearer ${tokenFactory.getAccessToken()}")
-                    }
-                }
-                .logLevel(Logger.Level.BASIC)
-                .logger(Slf4jLogger())
-                .target(VideosClient::class.java, apiUrl)
-        }
+            tokenFactory: TokenFactory? = null,
+            feignClient: Client
+        ) = FeignInterserviceClientFactory.create(
+                apiUrl,
+                objectMapper,
+                tokenFactory,
+                feignClient,
+                VideosClient::class.java
+        )
     }
 }

@@ -15,6 +15,7 @@ import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.fasterxml.jackson.databind.ObjectMapper
+import feign.okhttp.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -43,7 +44,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     UserRoles.SHARE_VIDEOS,
                     UserRoles.RATE_VIDEOS,
                     UserRoles.DOWNLOAD_TRANSCRIPT
-                )
+                ),
+                feignClient = OkHttpClient()
             )
 
             val oldAgeRange = saveAgeRange(min = 12, max = 16, id = "12to16", label = "12-16")
@@ -117,7 +119,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     UserRoles.SHARE_VIDEOS,
                     UserRoles.RATE_VIDEOS,
                     UserRoles.DOWNLOAD_TRANSCRIPT
-                )
+                ),
+                feignClient = OkHttpClient()
             )
 
             saveVideo(title = "normal video") // normal video, subjects not set manually
@@ -153,7 +156,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     UserRoles.INSERT_COLLECTIONS,
                     UserRoles.UPDATE_COLLECTIONS,
                     UserRoles.DELETE_COLLECTIONS
-                )
+                ),
+                feignClient = OkHttpClient()
             )
 
             val savedVideoId = saveVideo()
@@ -206,7 +210,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     UserRoles.CREATE_SUBJECTS,
                     UserRoles.DELETE_SUBJECTS,
                     UserRoles.UPDATE_SUBJECTS
-                )
+                ),
+                feignClient = OkHttpClient()
             )
 
             subjectsClient.create(CreateSubjectRequest(name = "Maths"))
@@ -239,7 +244,8 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
                     UserRoles.INSERT_CHANNELS,
                     UserRoles.VIEW_CHANNELS,
                     UserRoles.HQ
-                )
+                ),
+                feignClient = OkHttpClient()
             )
 
             channelsClient.create(

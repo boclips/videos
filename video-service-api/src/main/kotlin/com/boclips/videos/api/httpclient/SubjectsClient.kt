@@ -6,15 +6,9 @@ import com.boclips.videos.api.request.subject.CreateSubjectRequest
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.subject.SubjectsResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.Feign
-import feign.Logger
+import feign.Client
 import feign.Param
 import feign.RequestLine
-import feign.RequestTemplate
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
-import feign.okhttp.OkHttpClient
-import feign.slf4j.Slf4jLogger
 
 interface SubjectsClient {
     @RequestLine("GET /v1/subjects")
@@ -37,20 +31,14 @@ interface SubjectsClient {
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),
-            tokenFactory: TokenFactory? = null
-        ): SubjectsClient {
-            return Feign.builder()
-                .client(OkHttpClient())
-                .encoder(JacksonEncoder(objectMapper))
-                .decoder(JacksonDecoder(objectMapper))
-                .requestInterceptor { template: RequestTemplate ->
-                    if (tokenFactory != null) {
-                        template.header("Authorization", "Bearer ${tokenFactory.getAccessToken()}")
-                    }
-                }
-                .logLevel(Logger.Level.BASIC)
-                .logger(Slf4jLogger())
-                .target(SubjectsClient::class.java, apiUrl)
-        }
+            tokenFactory: TokenFactory? = null,
+            feignClient: Client
+        ) = FeignInterserviceClientFactory.create(
+                apiUrl,
+                objectMapper,
+                tokenFactory,
+                feignClient,
+                SubjectsClient::class.java
+        )
     }
 }

@@ -9,16 +9,10 @@ import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.fasterxml.jackson.databind.ObjectMapper
-import feign.Feign
-import feign.Logger
+import feign.Client
 import feign.Param
 import feign.QueryMap
 import feign.RequestLine
-import feign.RequestTemplate
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
-import feign.okhttp.OkHttpClient
-import feign.slf4j.Slf4jLogger
 
 interface CollectionsClient {
     @RequestLine("GET /v1/collections")
@@ -47,20 +41,14 @@ interface CollectionsClient {
         fun create(
             apiUrl: String,
             objectMapper: ObjectMapper = ObjectMapperDefinition.default(),
-            tokenFactory: TokenFactory? = null
-        ): CollectionsClient {
-            return Feign.builder()
-                .client(OkHttpClient())
-                .encoder(JacksonEncoder(objectMapper))
-                .decoder(JacksonDecoder(objectMapper))
-                .requestInterceptor { template: RequestTemplate ->
-                    if (tokenFactory != null) {
-                        template.header("Authorization", "Bearer ${tokenFactory.getAccessToken()}")
-                    }
-                }
-                .logLevel(Logger.Level.BASIC)
-                .logger(Slf4jLogger())
-                .target(CollectionsClient::class.java, apiUrl)
-        }
+            tokenFactory: TokenFactory? = null,
+            feignClient: Client
+        ) = FeignInterserviceClientFactory.create(
+                apiUrl,
+                objectMapper,
+                tokenFactory,
+                feignClient,
+                CollectionsClient::class.java
+        )
     }
 }
