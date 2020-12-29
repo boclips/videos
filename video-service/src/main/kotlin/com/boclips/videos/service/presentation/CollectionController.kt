@@ -11,7 +11,7 @@ import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.http.HttpStatus
@@ -32,18 +32,18 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/collections")
 class CollectionController(
-    private val getCollection: GetCollection,
-    private val addVideoToCollection: AddVideoToCollection,
-    private val removeVideoFromCollection: RemoveVideoFromCollection,
-    private val updateCollection: UpdateCollection,
-    private val deleteCollection: DeleteCollection,
-    private val bookmarkCollection: BookmarkCollection,
-    private val unbookmarkCollection: UnbookmarkCollection,
-    private val collectionResourceConverter: CollectionResourceConverter,
-    private val videoRetrievalService: VideoRetrievalService,
-    private val withProjection: WithProjection,
-    accessRuleService: AccessRuleService,
-    getUserIdOverride: GetUserIdOverride
+        private val getCollection: GetCollection,
+        private val addVideoToCollection: AddVideoToCollection,
+        private val removeVideoFromCollection: RemoveVideoFromCollection,
+        private val updateCollection: UpdateCollection,
+        private val deleteCollection: DeleteCollection,
+        private val bookmarkCollection: BookmarkCollection,
+        private val unbookmarkCollection: UnbookmarkCollection,
+        private val collectionResourceConverter: CollectionResourceConverter,
+        private val videoRetrievalService: VideoRetrievalService,
+        private val withProjection: WithProjection,
+        accessRuleService: AccessRuleService,
+        getUserIdOverride: GetUserIdOverride
 ) : BaseController(accessRuleService, getUserIdOverride) {
     @PatchMapping("/{id}")
     fun patchCollection(

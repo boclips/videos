@@ -15,7 +15,6 @@ import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
 import mu.KLogging
 import org.springframework.web.context.request.RequestContextHolder
@@ -23,10 +22,10 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
-    private val videoRetrievalService: VideoRetrievalService,
-    private val eventService: EventService,
-    private val userService: UserService,
-    private val queryConverter: QueryConverter
+        private val retrievePlayableVideos: RetrievePlayableVideos,
+        private val eventService: EventService,
+        private val userService: UserService,
+        private val queryConverter: QueryConverter
 ) {
     companion object : KLogging()
 
@@ -94,7 +93,7 @@ class GetVideosByQuery(
             attachmentTypes = resourceTypes
         )
 
-        val videoSearchResponse = videoRetrievalService.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
+        val videoSearchResponse = retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
         try {

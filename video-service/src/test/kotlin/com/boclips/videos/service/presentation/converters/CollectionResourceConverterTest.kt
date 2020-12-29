@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.collection.CollectionResource
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder

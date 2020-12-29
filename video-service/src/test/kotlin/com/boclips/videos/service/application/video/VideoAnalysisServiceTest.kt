@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.eventbus.EventBus
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock

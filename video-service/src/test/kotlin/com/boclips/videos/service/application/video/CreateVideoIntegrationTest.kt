@@ -6,12 +6,12 @@ import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
 import com.boclips.videos.service.domain.model.video.ContentType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import io.micrometer.core.instrument.Counter
@@ -25,6 +25,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRetrievalService: VideoRetrievalService
+    @Autowired
+    lateinit var retrievePlayableVideos: RetrievePlayableVideos
 
     @Autowired
     lateinit var videoCounter: Counter
@@ -124,7 +126,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         assertThat(
-            videoRetrievalService.searchPlayableVideos(
+            retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,

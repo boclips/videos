@@ -83,7 +83,9 @@ import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -97,7 +99,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-    val videoRetrievalService: VideoRetrievalService,
     val suggestionsRetrievalService: SuggestionsRetrievalService,
     val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
@@ -108,9 +109,6 @@ class ApplicationContext(
     val collectionIndex: CollectionIndex,
     val playbackRepository: PlaybackRepository,
     val legacyVideoSearchService: LegacyVideoSearchService,
-    val collectionRetrievalService: CollectionRetrievalService,
-    val collectionUpdateService: CollectionUpdateService,
-    val collectionCreationService: CollectionCreationService,
     val collectionRepository: CollectionRepository,
     val eventService: EventService,
     val eventBus: EventBus,
@@ -190,7 +188,7 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideosByContentPackage(): GetVideosByContentPackage =
+    fun getVideosByContentPackage(videoRetrievalService: VideoRetrievalService): GetVideosByContentPackage =
         GetVideosByContentPackage(videoRetrievalService, contentPackageService)
 
     @Bean
@@ -234,22 +232,28 @@ class ApplicationContext(
     }
 
     @Bean
-    fun createCollection(): CreateCollection {
+    fun createCollection(collectionCreationService: CollectionCreationService): CreateCollection {
         return CreateCollection(collectionCreationService)
     }
 
     @Bean
-    fun createDefaultCollection(): CreateDefaultCollection {
+    fun createDefaultCollection(collectionCreationService: CollectionCreationService): CreateDefaultCollection {
         return CreateDefaultCollection(collectionCreationService)
     }
 
     @Bean
-    fun getCollection(collectionAccessService: CollectionAccessService): GetCollection {
+    fun getCollection(
+        collectionAccessService: CollectionAccessService,
+        collectionRetrievalService: CollectionRetrievalService
+    ): GetCollection {
         return GetCollection(collectionRetrievalService, userService)
     }
 
     @Bean
-    fun getCollections(collectionFilterAssembler: CollectionSearchQueryAssembler): GetCollections {
+    fun getCollections(
+        collectionFilterAssembler: CollectionSearchQueryAssembler,
+        collectionRetrievalService: CollectionRetrievalService
+    ): GetCollections {
         return GetCollections(
             collectionRetrievalService,
             collectionFilterAssembler
@@ -257,7 +261,10 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getCollectionsOfUser(collectionFilterAssembler: CollectionSearchQueryAssembler): GetCollectionsOfUser {
+    fun getCollectionsOfUser(
+        collectionFilterAssembler: CollectionSearchQueryAssembler,
+        collectionRetrievalService: CollectionRetrievalService
+    ): GetCollectionsOfUser {
         return GetCollectionsOfUser(collectionRetrievalService, collectionFilterAssembler)
     }
 
@@ -265,17 +272,20 @@ class ApplicationContext(
     fun assembleCollectionFilter() = CollectionSearchQueryAssembler()
 
     @Bean
-    fun addVideoToCollection(): AddVideoToCollection {
+    fun addVideoToCollection(collectionUpdateService: CollectionUpdateService): AddVideoToCollection {
         return AddVideoToCollection(collectionUpdateService)
     }
 
     @Bean
-    fun removeVideoFromCollection(): RemoveVideoFromCollection {
+    fun removeVideoFromCollection(collectionUpdateService: CollectionUpdateService): RemoveVideoFromCollection {
         return RemoveVideoFromCollection(collectionUpdateService)
     }
 
     @Bean
-    fun updateCollection(collectionUpdatesConverter: CollectionUpdatesConverter): UpdateCollection {
+    fun updateCollection(
+        collectionUpdatesConverter: CollectionUpdatesConverter,
+        collectionUpdateService: CollectionUpdateService
+    ): UpdateCollection {
         return UpdateCollection(
             collectionUpdatesConverter,
             collectionUpdateService
@@ -472,14 +482,17 @@ class ApplicationContext(
     }
 
     @Bean
-    fun getVideoById(): GetVideoById {
+    fun getVideoById(videoRetrievalService: VideoRetrievalService): GetVideoById {
         return GetVideoById(videoRetrievalService)
     }
 
     @Bean
-    fun getVideosByQuery(queryConverter: QueryConverter): GetVideosByQuery {
+    fun getVideosByQuery(
+        queryConverter: QueryConverter,
+        retrievePlayableVideos: RetrievePlayableVideos
+    ): GetVideosByQuery {
         return GetVideosByQuery(
-            videoRetrievalService,
+            retrievePlayableVideos,
             eventService,
             userService,
             queryConverter
@@ -503,4 +516,73 @@ class ApplicationContext(
 
     @Bean
     fun getAttachmentTypes() = GetAttachmentTypes()
+
+    @Bean
+    fun videoRetrievalService(
+        videoRepository: VideoRepository,
+        videoIndex: VideoIndex
+    ): VideoRetrievalService {
+        return VideoRetrievalService(videoRepository, videoIndex)
+    }
+
+    @Bean
+    fun retrievePlayableVideos(
+        videoRepository: VideoRepository,
+        videoIndex: VideoIndex
+    ): RetrievePlayableVideos {
+        return RetrievePlayableVideos(videoRepository, videoIndex)
+    }
+
+    @Bean
+    fun collectionRetrievalService(
+            collectionRepository: CollectionRepository,
+            collectionIndex: CollectionIndex,
+            collectionAccessService: CollectionAccessService,
+            eventService: EventService,
+            videoRetrievalService: VideoRetrievalService
+    ): CollectionRetrievalService {
+        return CollectionRetrievalService(
+                collectionRepository,
+                collectionIndex,
+                collectionAccessService,
+                eventService,
+                videoRetrievalService
+        )
+    }
+
+    @Bean
+    fun collectionCreationService(
+            collectionRepository: CollectionRepository,
+            collectionIndex: CollectionIndex,
+            collectionRetrievalService: CollectionRetrievalService
+    ): CollectionCreationService {
+        return CollectionCreationService(collectionRepository, collectionIndex, collectionRetrievalService)
+    }
+
+    @Bean
+    fun collectionDeletionService(
+            collectionRepository: CollectionRepository,
+            collectionRetrievalService: CollectionRetrievalService,
+            collectionIndex: CollectionIndex
+    ): CollectionDeletionService {
+        return CollectionDeletionService(collectionRepository, collectionIndex, collectionRetrievalService)
+    }
+
+    @Bean
+    fun collectionUpdateService(
+            collectionRepository: CollectionRepository,
+            collectionRetrievalService: CollectionRetrievalService,
+            collectionIndex: CollectionIndex
+    ): CollectionUpdateService {
+        return CollectionUpdateService(collectionRepository, collectionRetrievalService, collectionIndex)
+    }
+
+    @Bean
+    fun collectionBookmarkService(
+            collectionRepository: CollectionRepository,
+            collectionRetrievalService: CollectionRetrievalService,
+            collectionIndex: CollectionIndex
+    ): CollectionBookmarkService {
+        return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
+    }
 }

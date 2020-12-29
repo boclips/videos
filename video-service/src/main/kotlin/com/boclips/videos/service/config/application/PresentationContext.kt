@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictions
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter

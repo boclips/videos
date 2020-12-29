@@ -46,7 +46,6 @@ import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -74,17 +73,6 @@ class DomainContext(
 ) {
 
     @Bean
-    fun videoService(
-        channelRepository: ChannelRepository,
-        videoRepository: VideoRepository,
-        videoIndex: VideoIndex,
-        playbackRepository: PlaybackRepository,
-        batchProcessingConfig: BatchProcessingConfig
-    ): VideoRetrievalService {
-        return VideoRetrievalService(videoRepository, videoIndex)
-    }
-
-    @Bean
     fun videoDuplicationHandler(
         videoRepository: VideoRepository,
         collectionRepository: CollectionRepository,
@@ -104,7 +92,6 @@ class DomainContext(
 
     @Bean
     fun videoDeletionService(
-        channelRepository: ChannelRepository,
         videoRepository: VideoRepository,
         collectionRepository: CollectionRepository,
         videoIndex: VideoIndex,
@@ -122,59 +109,6 @@ class DomainContext(
             channelIndex = channelIndex,
             subjectIndex = subjectIndex
         )
-    }
-
-    @Bean
-    fun collectionRetrievalService(
-        collectionRepository: CollectionRepository,
-        collectionIndex: CollectionIndex,
-        collectionAccessService: CollectionAccessService,
-        eventService: EventService,
-        videoRetrievalService: VideoRetrievalService
-    ): CollectionRetrievalService {
-        return CollectionRetrievalService(
-            collectionRepository,
-            collectionIndex,
-            collectionAccessService,
-            eventService,
-            videoRetrievalService
-        )
-    }
-
-    @Bean
-    fun collectionCreationService(
-        collectionRepository: CollectionRepository,
-        collectionIndex: CollectionIndex,
-        collectionRetrievalService: CollectionRetrievalService
-    ): CollectionCreationService {
-        return CollectionCreationService(collectionRepository, collectionIndex, collectionRetrievalService)
-    }
-
-    @Bean
-    fun collectionDeletionService(
-        collectionRepository: CollectionRepository,
-        collectionRetrievalService: CollectionRetrievalService,
-        collectionIndex: CollectionIndex
-    ): CollectionDeletionService {
-        return CollectionDeletionService(collectionRepository, collectionIndex, collectionRetrievalService)
-    }
-
-    @Bean
-    fun collectionUpdateService(
-        collectionRepository: CollectionRepository,
-        collectionRetrievalService: CollectionRetrievalService,
-        collectionIndex: CollectionIndex
-    ): CollectionUpdateService {
-        return CollectionUpdateService(collectionRepository, collectionRetrievalService, collectionIndex)
-    }
-
-    @Bean
-    fun collectionBookmarkService(
-        collectionRepository: CollectionRepository,
-        collectionRetrievalService: CollectionRetrievalService,
-        collectionIndex: CollectionIndex
-    ): CollectionBookmarkService {
-        return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
     }
 
     @Bean

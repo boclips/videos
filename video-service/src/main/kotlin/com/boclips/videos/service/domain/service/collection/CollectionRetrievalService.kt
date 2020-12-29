@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
-import com.boclips.videos.service.domain.service.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
