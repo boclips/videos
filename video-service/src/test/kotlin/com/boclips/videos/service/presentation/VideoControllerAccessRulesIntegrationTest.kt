@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
@@ -106,10 +106,10 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `excludes certain video ContentTypes from results`() {
-            val stockVideo = saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
-            saveVideo(title = "Some Video 2", types = listOf(ContentType.NEWS))
+            val stockVideo = saveVideo(title = "Some Video", types = listOf(VideoType.STOCK))
+            saveVideo(title = "Some Video 2", types = listOf(VideoType.NEWS))
 
-            removeAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS)
+            removeAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS, VideoType.INSTRUCTIONAL_CLIPS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -119,10 +119,10 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `includes certain video ContentTypes from results`() {
-            saveVideo(title = "Some Video", types = listOf(ContentType.STOCK))
-            val newsVideo = saveVideo(title = "Some Video 2", types = listOf(ContentType.NEWS))
+            saveVideo(title = "Some Video", types = listOf(VideoType.STOCK))
+            val newsVideo = saveVideo(title = "Some Video 2", types = listOf(VideoType.NEWS))
 
-            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS)
+            addAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
 
             mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)
@@ -162,9 +162,9 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
         @Test
         fun `setting query params does not give access if access rules do not permit access to this content`() {
-            saveVideo(title = "instructional", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+            saveVideo(title = "instructional", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
-            addAccessToVideoTypes("api-user@gmail.com", ContentType.NEWS)
+            addAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
 
             mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = "api-user@gmail.com"))
                 .andExpect(status().isOk)

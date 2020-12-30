@@ -1,8 +1,8 @@
 package com.boclips.videos.service.domain.model.video.request
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VoiceType
@@ -29,9 +29,9 @@ class VideoAccessRuleQueryConverterTest {
                         )
                     ),
                     VideoAccessRule.IncludedContentTypes(
-                        contentTypes = setOf(ContentType.INSTRUCTIONAL_CLIPS)
+                        contentTypes = setOf(VideoType.INSTRUCTIONAL_CLIPS)
                     ),
-                    VideoAccessRule.ExcludedContentTypes(contentTypes = setOf(ContentType.NEWS)),
+                    VideoAccessRule.ExcludedContentTypes(contentTypes = setOf(VideoType.NEWS)),
                     VideoAccessRule.IncludedChannelIds(channelIds = setOf(ChannelId("hi"))),
                     VideoAccessRule.ExcludedIds(videoIds = deniedVideoIds),
                     VideoAccessRule.IncludedDistributionMethods(distributionMethods = setOf(DistributionMethod.DOWNLOAD)),
@@ -44,8 +44,8 @@ class VideoAccessRuleQueryConverterTest {
         assertThat(query.permittedVideoIds)
             .containsExactlyInAnyOrder(*allowedVideos.map { it.value }.toTypedArray())
         assertThat(query.deniedVideoIds).containsExactly(*deniedVideoIds.map { it.value }.toTypedArray())
-        assertThat(query.excludedTypes).containsExactly(VideoType.NEWS)
-        assertThat(query.includedTypes).containsExactly(VideoType.INSTRUCTIONAL)
+        assertThat(query.excludedTypes).containsExactly(SearchVideoType.NEWS)
+        assertThat(query.includedTypes).containsExactly(SearchVideoType.INSTRUCTIONAL)
         assertThat(query.excludedContentPartnerIds).containsExactly("HELLO")
         assertThat(query.includedChannelIds).containsExactly("hi")
         assertThat(query.isEligibleForStream).isNull()

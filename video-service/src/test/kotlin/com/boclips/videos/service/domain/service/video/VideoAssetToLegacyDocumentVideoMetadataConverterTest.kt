@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.infrastructure.video.converters.VideoToLegacyVideoMetadataConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
             channelName = "Reuters",
             channelVideoId = "r001",
             playback = TestFactories.createKalturaPlayback(duration = Duration.ofSeconds(10)),
-            types = listOf(ContentType.NEWS),
+            types = listOf(VideoType.NEWS),
             keywords = listOf("keyword"),
             releasedOn = LocalDate.parse("2019-01-17")
         )
@@ -34,6 +35,6 @@ class VideoToLegacyDocumentVideoMetadataConverterTest {
         assertThat(legacyMetadata.contentPartnerName).isEqualTo("Reuters")
         assertThat(legacyMetadata.contentPartnerVideoId).isEqualTo("r001")
         assertThat(legacyMetadata.releaseDate).isEqualTo(LocalDate.parse("2019-01-17"))
-        assertThat(legacyMetadata.videoTypeTitle).isEqualTo(ContentType.NEWS.title)
+        assertThat(legacyMetadata.videoTypeTitle).isEqualTo("News")
     }
 }

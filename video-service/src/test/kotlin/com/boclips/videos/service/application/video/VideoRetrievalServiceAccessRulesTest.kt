@@ -1,7 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -56,11 +56,11 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `has access to everything but excluded content types`() {
-            val stockVideoId = saveVideo(types = listOf(ContentType.STOCK))
-            val newsVideoId = saveVideo(types = listOf(ContentType.NEWS))
-            val instructionalVideoId = saveVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+            val stockVideoId = saveVideo(types = listOf(VideoType.STOCK))
+            val newsVideoId = saveVideo(types = listOf(VideoType.NEWS))
+            val instructionalVideoId = saveVideo(types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
-            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(VideoType.NEWS, VideoType.STOCK))
 
             val videos = videoRetrievalService.getPlayableVideos(
                 listOf(stockVideoId, newsVideoId, instructionalVideoId),
@@ -102,9 +102,9 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
     inner class SingleVideoLookup {
         @Test
         fun `looking up a single video respects access rules`() {
-            val stockVideo = saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
+            val stockVideo = saveVideo(title = "Wild Elephant", types = listOf(VideoType.STOCK))
 
-            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.STOCK))
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(VideoType.STOCK))
 
             assertThrows<VideoNotFoundException> {
                 videoRetrievalService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))

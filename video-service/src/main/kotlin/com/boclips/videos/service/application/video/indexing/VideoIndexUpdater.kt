@@ -9,7 +9,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
-import com.boclips.videos.service.domain.service.video.VideoToLegacyVideoMetadataConverter
+import com.boclips.videos.service.infrastructure.video.converters.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 
 class VideoIndexUpdater(

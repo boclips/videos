@@ -4,7 +4,7 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
@@ -33,7 +33,7 @@ class CreateVideoRequestToVideoConverter {
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
             channel = contentPartner,
             videoReference = createVideoRequest.providerVideoId!!,
-            types = createVideoRequest.videoTypes!!.map { ContentType.valueOf(it) },
+            types = createVideoRequest.videoTypes!!.map { VideoType.valueOf(it) },
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
             ageRange = AgeRange.of(
                 min = createVideoRequest.ageRangeMin,

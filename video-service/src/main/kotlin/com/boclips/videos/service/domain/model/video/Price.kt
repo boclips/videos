@@ -5,12 +5,12 @@ import java.util.Currency
 
 data class Price(val amount: BigDecimal, val currency: Currency = Currency.getInstance("USD")) {
     companion object {
-        fun getDefault(videoTypes: List<ContentType>): Price {
+        fun getDefault(videoTypes: List<VideoType>): Price {
             return videoTypes.map {
                 when (it) {
-                    ContentType.INSTRUCTIONAL_CLIPS -> 600
-                    ContentType.NEWS -> 300
-                    ContentType.STOCK -> 150
+                    VideoType.INSTRUCTIONAL_CLIPS -> 600
+                    VideoType.NEWS -> 300
+                    VideoType.STOCK -> 150
                 }
             }
                 .maxOrNull()

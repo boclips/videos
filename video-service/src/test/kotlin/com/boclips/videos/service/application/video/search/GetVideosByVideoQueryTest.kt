@@ -5,7 +5,7 @@ import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -104,8 +104,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `shows only news when category is news`() {
-        val newsVideoId = saveVideo(title = "banana 1", types = listOf(ContentType.NEWS))
-        saveVideo(title = "banana 2", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+        val newsVideoId = saveVideo(title = "banana 1", types = listOf(VideoType.NEWS))
+        saveVideo(title = "banana 2", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
         val videos = searchVideo.byQuery(
             query = "banana",

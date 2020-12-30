@@ -6,7 +6,7 @@ import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
@@ -132,8 +132,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by content type`() {
-        val stockVideoId = saveVideo(title = "a stock video content", types = listOf(ContentType.STOCK))
-        saveVideo(title = "this is a news video content", types = listOf(ContentType.NEWS))
+        val stockVideoId = saveVideo(title = "a stock video content", types = listOf(VideoType.STOCK))
+        saveVideo(title = "this is a news video content", types = listOf(VideoType.NEWS))
 
         mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
             .andExpect(status().isOk)
@@ -552,17 +552,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val today = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
         val yesterday = saveVideo(
             title = "Yesterday Video",
             date = LocalDate.now().minusDays(1).toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
         val tomorrow = saveVideo(
             title = "Tomorrow Video",
             date = LocalDate.now().plusDays(1).toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
 
         val resultActions = mockMvc.perform(

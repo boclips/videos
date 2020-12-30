@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.domain.model.playback.Dimensions
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.ChannelDocument
@@ -19,27 +19,27 @@ import java.util.Date
 object VideoFactory {
 
     fun createVideoDocument(
-        id: ObjectId = ObjectId.get(),
-        title: String = "title",
-        description: String = "description",
-        source: SourceDocument = createSourceDocument(),
-        playback: PlaybackDocument? = createPlaybackDocument(),
-        contentTypes: List<String> = listOf(ContentType.NEWS.name),
-        keywords: List<String> = emptyList(),
-        subjects: List<SubjectDocument> = emptyList(),
-        releaseDate: Date = Date(),
-        ingestedAt: String? = null,
-        legalRestrictions: String = "legal restrictions",
-        language: String? = null,
-        isVoiced: Boolean? = null,
-        transcript: String? = null,
-        topics: List<TopicDocument>? = null,
-        ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null,
-        rating: List<UserRatingDocument> = emptyList(),
-        tags: List<UserTagDocument> = emptyList(),
-        promoted: Boolean? = null,
-        subjectsWereSetManually: Boolean? = false
+            id: ObjectId = ObjectId.get(),
+            title: String = "title",
+            description: String = "description",
+            source: SourceDocument = createSourceDocument(),
+            playback: PlaybackDocument? = createPlaybackDocument(),
+            contentTypes: List<String> = listOf(VideoType.NEWS.name),
+            keywords: List<String> = emptyList(),
+            subjects: List<SubjectDocument> = emptyList(),
+            releaseDate: Date = Date(),
+            ingestedAt: String? = null,
+            legalRestrictions: String = "legal restrictions",
+            language: String? = null,
+            isVoiced: Boolean? = null,
+            transcript: String? = null,
+            topics: List<TopicDocument>? = null,
+            ageRangeMin: Int? = null,
+            ageRangeMax: Int? = null,
+            rating: List<UserRatingDocument> = emptyList(),
+            tags: List<UserTagDocument> = emptyList(),
+            promoted: Boolean? = null,
+            subjectsWereSetManually: Boolean? = false
     ): VideoDocument {
         return VideoDocument(
             id = id,

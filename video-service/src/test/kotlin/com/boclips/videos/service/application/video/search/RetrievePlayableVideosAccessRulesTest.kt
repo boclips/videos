@@ -1,12 +1,12 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -120,12 +120,12 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `excluded content types are not returned in search results`() {
-            saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
-            saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
+            saveVideo(title = "Wild Elephant", types = listOf(VideoType.STOCK))
+            saveVideo(title = "Wild Elephant", types = listOf(VideoType.NEWS))
             val instructionalVideoId =
-                saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+                saveVideo(title = "Wild Elephant", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
-            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(VideoType.NEWS, VideoType.STOCK))
 
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
@@ -143,17 +143,17 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `excluded content types are not return in search results even when filtering by an excluded type`() {
-            saveVideo(title = "Wild Elephant", types = listOf(ContentType.STOCK))
-            saveVideo(title = "Wild Elephant", types = listOf(ContentType.NEWS))
+            saveVideo(title = "Wild Elephant", types = listOf(VideoType.STOCK))
+            saveVideo(title = "Wild Elephant", types = listOf(VideoType.NEWS))
             val instructionalVideoId =
-                saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+                saveVideo(title = "Wild Elephant", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
-            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS, ContentType.STOCK))
+            val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(VideoType.NEWS, VideoType.STOCK))
 
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
-                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
@@ -185,7 +185,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
-                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
@@ -217,7 +217,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
-                    types = setOf(VideoType.NEWS, VideoType.INSTRUCTIONAL),
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
@@ -232,14 +232,14 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `access rules take precedence over user query`() {
-        saveVideo(title = "Wild Elephant", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+        saveVideo(title = "Wild Elephant", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
-        val accessRule = VideoAccessRule.IncludedContentTypes(setOf(ContentType.NEWS))
+        val accessRule = VideoAccessRule.IncludedContentTypes(setOf(VideoType.NEWS))
 
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
                 text = "Elephant",
-                types = setOf(VideoType.INSTRUCTIONAL),
+                types = setOf(SearchVideoType.INSTRUCTIONAL),
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0)
             ),

@@ -6,7 +6,7 @@ import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -60,7 +60,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             VideoAccessRule.IncludedIds(
                 videoIds = setOf(VideoId(videoId))
             ),
-            VideoAccessRule.IncludedContentTypes(contentTypes = setOf(ContentType.NEWS))
+            VideoAccessRule.IncludedContentTypes(contentTypes = setOf(VideoType.NEWS))
         )
     }
 
@@ -174,7 +174,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = accessRuleService.getRules(user)
 
             val videoAccess = accessRules.videoAccess as VideoAccess.Rules
-            assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS)))
+            assertThat(videoAccess.accessRules).containsOnly(VideoAccessRule.ExcludedContentTypes(setOf(VideoType.NEWS)))
         }
 
         @Test
@@ -195,9 +195,9 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(videoAccess.accessRules).containsOnly(
                 VideoAccessRule.IncludedContentTypes(
                     setOf(
-                        ContentType.NEWS,
-                        ContentType.INSTRUCTIONAL_CLIPS,
-                        ContentType.STOCK
+                        VideoType.NEWS,
+                        VideoType.INSTRUCTIONAL_CLIPS,
+                        VideoType.STOCK
                     )
                 )
             )
@@ -220,7 +220,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val accessRules = accessRuleService.getRules(user)
 
             val videoAccess = accessRules.videoAccess as VideoAccess.Rules
-            assertThat(videoAccess.accessRules).containsExactly(VideoAccessRule.ExcludedContentTypes(setOf(ContentType.NEWS)))
+            assertThat(videoAccess.accessRules).containsExactly(VideoAccessRule.ExcludedContentTypes(setOf(VideoType.NEWS)))
         }
 
         @Test

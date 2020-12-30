@@ -3,7 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -114,7 +114,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
@@ -137,7 +137,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video",
             date = LocalDate.now().toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
 
         mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
@@ -160,7 +160,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
         val videoId = saveVideo(
             title = "Today Video?",
             date = LocalDate.now().toString(),
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         ).value
 
         Assertions.assertNotNull(

@@ -7,7 +7,7 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
@@ -309,7 +309,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
                 title = title,
-                videoTypes = listOf(ContentType.INSTRUCTIONAL_CLIPS.toString()),
+                videoTypes = listOf(VideoType.INSTRUCTIONAL_CLIPS.toString()),
                 playbackId = "entry-\$123"
             )
 

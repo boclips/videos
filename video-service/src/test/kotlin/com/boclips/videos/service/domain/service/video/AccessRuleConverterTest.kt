@@ -1,8 +1,8 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -123,12 +123,12 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.ExcludedContentTypes(
-                            contentTypes = setOf(ContentType.STOCK)
+                            contentTypes = setOf(VideoType.STOCK)
                         )
                     )
                 )
             )
-            assertThat(excludedTypes).containsOnly(VideoType.STOCK)
+            assertThat(excludedTypes).containsOnly(SearchVideoType.STOCK)
         }
     }
 
@@ -161,12 +161,12 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.IncludedContentTypes(
-                            contentTypes = setOf(ContentType.STOCK)
+                            contentTypes = setOf(VideoType.STOCK)
                         )
                     )
                 )
             )
-            assertThat(includedTypes).containsOnly(VideoType.STOCK)
+            assertThat(includedTypes).containsOnly(SearchVideoType.STOCK)
         }
     }
 

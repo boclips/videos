@@ -8,7 +8,7 @@ import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -26,7 +26,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
     inner class PublishingEvents {
         @Test
         fun `publishes events for instructional videos`() {
-            val video = TestFactories.createVideo(title = "the video title", types = listOf(ContentType.INSTRUCTIONAL_CLIPS))
+            val video = TestFactories.createVideo(title = "the video title", types = listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
             subjectClassificationService.classifyVideo(video)
 
@@ -37,7 +37,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `ignores stock videos`() {
-            val video = TestFactories.createVideo(types = listOf(ContentType.STOCK))
+            val video = TestFactories.createVideo(types = listOf(VideoType.STOCK))
 
             subjectClassificationService.classifyVideo(video)
 
@@ -46,7 +46,7 @@ class SubjectClassificationServiceIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `ignores news videos`() {
-            val video = TestFactories.createVideo(types = listOf(ContentType.NEWS))
+            val video = TestFactories.createVideo(types = listOf(VideoType.NEWS))
 
             subjectClassificationService.classifyVideo(video)
 

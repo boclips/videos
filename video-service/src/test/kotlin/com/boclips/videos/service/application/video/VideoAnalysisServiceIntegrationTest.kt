@@ -9,7 +9,7 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
@@ -63,7 +63,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         fun `does not send events for non instructional videos`() {
             val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                types = listOf(ContentType.NEWS)
+                types = listOf(VideoType.NEWS)
             ).value
 
             videoAnalysisService.analysePlayableVideo(videoId, language = null)

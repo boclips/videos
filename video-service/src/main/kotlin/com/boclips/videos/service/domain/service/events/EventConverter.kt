@@ -6,13 +6,13 @@ import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
-import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
@@ -86,15 +86,15 @@ class EventConverter {
         return EventDimensions(dimensions.width, dimensions.height)
     }
 
-    private fun toVideoType(contentType: ContentType): VideoType {
-        return when (contentType) {
-            ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
-            ContentType.NEWS -> VideoType.NEWS
-            ContentType.STOCK -> VideoType.STOCK
+    private fun toVideoType(videoType: VideoType): EventBusVideoType {
+        return when (videoType) {
+            VideoType.INSTRUCTIONAL_CLIPS -> EventBusVideoType.INSTRUCTIONAL
+            VideoType.NEWS -> EventBusVideoType.NEWS
+            VideoType.STOCK -> EventBusVideoType.STOCK
         }
     }
 
-    private fun toVideoTypes(contentTypes: List<ContentType>): List<VideoType> {
+    private fun toVideoTypes(contentTypes: List<VideoType>): List<EventBusVideoType> {
         return contentTypes.map { toVideoType(it) }
     }
 

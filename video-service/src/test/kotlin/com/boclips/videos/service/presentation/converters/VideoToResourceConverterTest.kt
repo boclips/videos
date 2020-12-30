@@ -20,7 +20,7 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.AgeRangeFacet
 import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
 import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -58,7 +58,7 @@ class VideoToResourceConverterTest {
         additionalDescription = "additional description",
         channelName = "WeWork",
         channelVideoId = "111",
-        types = listOf(ContentType.NEWS),
+        types = listOf(VideoType.NEWS),
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
         voice = Voice.WithVoice(language = Locale("khm"), transcript = "Hello there"),
@@ -92,7 +92,7 @@ class VideoToResourceConverterTest {
         channelName = "JacekWork",
         channelVideoId = "222",
         playback = TestFactories.createYoutubePlayback(),
-        types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
+        types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
         subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
         legalRestrictions = "Many",
         tags = listOf(TestFactories.createUserTag("tag-id", "tag-label", "user-id")),
@@ -254,7 +254,7 @@ class VideoToResourceConverterTest {
             channelName = "JacekWork",
             channelVideoId = "222",
             playback = TestFactories.createYoutubePlayback(),
-            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
+            types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
             subjects = setOf(TestFactories.createSubject(id = "biology-subject-id", name = "Biology")),
             legalRestrictions = "Many",
             tags = emptyList()

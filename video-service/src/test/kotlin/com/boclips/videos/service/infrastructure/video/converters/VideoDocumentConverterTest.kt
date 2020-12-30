@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -40,7 +40,7 @@ class VideoDocumentConverterTest {
             ),
             playback = TestFactories.createKalturaPlayback(),
             videoReference = "video-123",
-            types = listOf(ContentType.NEWS, ContentType.INSTRUCTIONAL_CLIPS),
+            types = listOf(VideoType.NEWS, VideoType.INSTRUCTIONAL_CLIPS),
             keywords = listOf("keyword1", "keyword2"),
             subjects = setOf(TestFactories.createSubject(), TestFactories.createSubject()),
             releasedOn = LocalDate.ofYearDay(2018, 10),

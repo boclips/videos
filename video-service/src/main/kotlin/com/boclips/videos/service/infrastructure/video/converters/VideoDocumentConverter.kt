@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
@@ -69,7 +69,7 @@ object VideoDocumentConverter {
             channel = ChannelDocumentConverter.toChannel(document.source.channel),
             videoReference = document.source.videoReference,
             playback = PlaybackConverter.toPlayback(document.playback),
-            types = document.contentTypes.map { ContentType.valueOf(it) },
+            types = document.contentTypes.map { VideoType.valueOf(it) },
             keywords = document.keywords,
             subjects = subjectsFromVideoDocument(document),
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),

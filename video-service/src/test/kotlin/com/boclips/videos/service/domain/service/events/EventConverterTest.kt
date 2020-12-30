@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.events
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
-import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.Dimensions
@@ -11,7 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
@@ -45,7 +45,7 @@ class EventConverterTest {
                 assets = setOf(VideoFactory.createVideoAsset())
             ),
             subjects = setOf(TestFactories.createSubject(name = "physics")),
-            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
+            types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
             releasedOn = LocalDate.of(1939, 9, 1),
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true),
@@ -64,7 +64,7 @@ class EventConverterTest {
         assertThat(videoEvent.ageRange.min).isEqualTo(5)
         assertThat(videoEvent.ageRange.max).isEqualTo(10)
         assertThat(videoEvent.durationSeconds).isEqualTo(120)
-        assertThat(videoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
+        assertThat(videoEvent.type).isEqualTo(EventBusVideoType.INSTRUCTIONAL)
         assertThat(videoEvent.ingestedAt).isEqualTo("2020-11-12T13:14:15.16Z")
         assertThat(videoEvent.releasedOn).isEqualTo("1939-09-01")
         assertThat(videoEvent.assets).hasSize(1)
@@ -106,14 +106,14 @@ class EventConverterTest {
 
     @Test
     fun `sets correct video type`() {
-        val newsVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.NEWS)))
-        val stockVideoEvent = converter.toVideoPayload(createVideo(types = listOf(ContentType.STOCK)))
+        val newsVideoEvent = converter.toVideoPayload(createVideo(types = listOf(VideoType.NEWS)))
+        val stockVideoEvent = converter.toVideoPayload(createVideo(types = listOf(VideoType.STOCK)))
         val instructionalVideoEvent =
-            converter.toVideoPayload(createVideo(types = listOf(ContentType.INSTRUCTIONAL_CLIPS)))
+            converter.toVideoPayload(createVideo(types = listOf(VideoType.INSTRUCTIONAL_CLIPS)))
 
-        assertThat(newsVideoEvent.type).isEqualTo(VideoType.NEWS)
-        assertThat(stockVideoEvent.type).isEqualTo(VideoType.STOCK)
-        assertThat(instructionalVideoEvent.type).isEqualTo(VideoType.INSTRUCTIONAL)
+        assertThat(newsVideoEvent.type).isEqualTo(EventBusVideoType.NEWS)
+        assertThat(stockVideoEvent.type).isEqualTo(EventBusVideoType.STOCK)
+        assertThat(instructionalVideoEvent.type).isEqualTo(EventBusVideoType.INSTRUCTIONAL)
     }
 
     @Test

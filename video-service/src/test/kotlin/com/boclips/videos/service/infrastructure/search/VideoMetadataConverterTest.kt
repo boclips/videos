@@ -4,14 +4,14 @@ import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -43,7 +43,7 @@ class VideoMetadataConverterTest {
             playback = TestFactories.createYoutubePlayback(
                 duration = Duration.ofSeconds(10)
             ),
-            types = listOf(ContentType.INSTRUCTIONAL_CLIPS),
+            types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
             keywords = listOf("k1"),
             releasedOn = LocalDate.of(2019, Month.APRIL, 19),
             voice = Voice.UnknownVoice(language = null, transcript = "a great transcript"),
@@ -90,7 +90,7 @@ class VideoMetadataConverterTest {
                 eligibleForDownload = false,
                 attachmentTypes = setOf("Activity"),
                 deactivated = false,
-                types = listOf(VideoType.INSTRUCTIONAL),
+                types = listOf(SearchVideoType.INSTRUCTIONAL),
                 ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
             )
         )
@@ -99,7 +99,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `tags news video`() {
         val video = TestFactories.createVideo(
-            types = listOf(ContentType.NEWS)
+            types = listOf(VideoType.NEWS)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -112,7 +112,7 @@ class VideoMetadataConverterTest {
         val video = TestFactories.createVideo(
             videoId = TestFactories.aValidId(),
             title = "garbage title",
-            types = listOf(ContentType.STOCK)
+            types = listOf(VideoType.STOCK)
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -165,7 +165,7 @@ class VideoMetadataConverterTest {
     @Test
     fun `keeps tags explicitly set on the video`() {
         val video = TestFactories.createVideo(
-            types = listOf(ContentType.NEWS),
+            types = listOf(VideoType.NEWS),
             tags = listOf(TestFactories.createUserTag(label = "explainer"))
         )
 

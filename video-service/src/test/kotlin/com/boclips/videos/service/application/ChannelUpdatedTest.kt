@@ -2,11 +2,11 @@ package com.boclips.videos.service.application
 
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.*
-import com.boclips.eventbus.domain.video.VideoType
+import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -26,7 +26,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                 channel = channel,
                 legalRestrictions = "some restrictions",
                 ageRange = UnknownAgeRange,
-                types = listOf(ContentType.STOCK)
+                types = listOf(VideoType.STOCK)
             )
         )
 
@@ -89,7 +89,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         val video = videoRepository.create(
             TestFactories.createVideo(
                 channel = channel,
-                types = listOf(ContentType.INSTRUCTIONAL_CLIPS)
+                types = listOf(VideoType.INSTRUCTIONAL_CLIPS)
             )
         )
 
@@ -108,7 +108,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         val videoAfterChannelUpdate = videoRepository.find(videoId = video.videoId)!!
 
         assertThat(videoAfterChannelUpdate.channel.name).isEqualTo("test-888")
-        assertThat(videoAfterChannelUpdate.types).isEqualTo(listOf(ContentType.INSTRUCTIONAL_CLIPS))
+        assertThat(videoAfterChannelUpdate.types).isEqualTo(listOf(VideoType.INSTRUCTIONAL_CLIPS))
     }
 
     @Test

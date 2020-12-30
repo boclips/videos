@@ -6,7 +6,7 @@ import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -125,13 +125,13 @@ class ApiAccessRulesConverter(
         return VideoAccessRule.IncludedIds(videoIds.toSet())
     }
 
-    private fun convertVideoTypes(videoTypes: List<String>): List<ContentType> {
+    private fun convertVideoTypes(videoTypes: List<String>): List<VideoType> {
         return videoTypes
             .mapNotNull { type ->
                 when (type) {
-                    "NEWS" -> ContentType.NEWS
-                    "INSTRUCTIONAL" -> ContentType.INSTRUCTIONAL_CLIPS
-                    "STOCK" -> ContentType.STOCK
+                    "NEWS" -> VideoType.NEWS
+                    "INSTRUCTIONAL" -> VideoType.INSTRUCTIONAL_CLIPS
+                    "STOCK" -> VideoType.STOCK
                     else -> {
                         ApiAccessRuleService.logger.info { "Invalid Content Type: $type" }
                         null

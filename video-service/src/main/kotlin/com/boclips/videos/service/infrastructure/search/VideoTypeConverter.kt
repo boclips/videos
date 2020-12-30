@@ -1,23 +1,23 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.videos.model.VideoType
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
+import com.boclips.videos.service.domain.model.video.VideoType
 
 object VideoTypeConverter {
 
-    fun convert(legacyType: ContentType): VideoType {
-        return when (legacyType) {
-            ContentType.INSTRUCTIONAL_CLIPS -> VideoType.INSTRUCTIONAL
-            ContentType.NEWS -> VideoType.NEWS
-            ContentType.STOCK -> VideoType.STOCK
+    fun convert(videoType: VideoType): SearchVideoType {
+        return when (videoType) {
+            VideoType.INSTRUCTIONAL_CLIPS -> SearchVideoType.INSTRUCTIONAL
+            VideoType.NEWS -> SearchVideoType.NEWS
+            VideoType.STOCK -> SearchVideoType.STOCK
         }
     }
 
-    fun convert(videoType: VideoType): ContentType {
+    fun convert(videoType: SearchVideoType): VideoType {
         return when (videoType) {
-            VideoType.INSTRUCTIONAL -> ContentType.INSTRUCTIONAL_CLIPS
-            VideoType.NEWS -> ContentType.NEWS
-            VideoType.STOCK -> ContentType.STOCK
+            SearchVideoType.INSTRUCTIONAL -> VideoType.INSTRUCTIONAL_CLIPS
+            SearchVideoType.NEWS -> VideoType.NEWS
+            SearchVideoType.STOCK -> VideoType.STOCK
         }
     }
 }

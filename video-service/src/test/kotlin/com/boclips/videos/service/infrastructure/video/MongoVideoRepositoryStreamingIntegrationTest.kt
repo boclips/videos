@@ -2,7 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -44,24 +44,24 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                types = listOf(ContentType.STOCK)
+                types = listOf(VideoType.STOCK)
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                types = listOf(ContentType.INSTRUCTIONAL_CLIPS)
+                types = listOf(VideoType.INSTRUCTIONAL_CLIPS)
             )
         )
         mongoVideoRepository.create(
             TestFactories.createVideo(
                 videoId = TestFactories.aValidId(),
-                types = listOf(ContentType.NEWS)
+                types = listOf(VideoType.NEWS)
             )
         )
 
         var videos: List<Video> = emptyList()
-        mongoVideoRepository.streamAll(VideoFilter.HasContentType(ContentType.INSTRUCTIONAL_CLIPS)) {
+        mongoVideoRepository.streamAll(VideoFilter.HasContentType(VideoType.INSTRUCTIONAL_CLIPS)) {
             videos = it.toList()
         }
 

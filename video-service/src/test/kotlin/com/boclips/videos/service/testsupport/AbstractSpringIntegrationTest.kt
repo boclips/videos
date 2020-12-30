@@ -52,7 +52,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KAL
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.service.user.AccessRuleService
@@ -268,33 +268,33 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun saveVideo(
-        playbackId: PlaybackId = PlaybackId(
+            playbackId: PlaybackId = PlaybackId(
             type = KALTURA,
             value = "id-${UUID.randomUUID()}"
         ),
-        title: String = "Some title!",
-        description: String = "Some description!",
-        additionalDescription: String? = "additional description",
-        date: String = "2018-01-01",
-        duration: Duration = Duration.ofSeconds(120),
-        contentProvider: String = "Reuters",
-        contentProviderId: String? = null,
-        contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
-        keywords: List<String> = emptyList(),
-        types: List<ContentType> = listOf(ContentType.INSTRUCTIONAL_CLIPS),
-        legalRestrictions: String = "",
-        ageRangeMin: Int? = 7,
-        ageRangeMax: Int? = 11,
-        distributionMethods: Set<DistributionMethodResource> = setOf(
+            title: String = "Some title!",
+            description: String = "Some description!",
+            additionalDescription: String? = "additional description",
+            date: String = "2018-01-01",
+            duration: Duration = Duration.ofSeconds(120),
+            contentProvider: String = "Reuters",
+            contentProviderId: String? = null,
+            contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
+            keywords: List<String> = emptyList(),
+            types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
+            legalRestrictions: String = "",
+            ageRangeMin: Int? = 7,
+            ageRangeMax: Int? = 11,
+            distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
         ),
-        subjectIds: Set<String> = setOf(),
-        language: String? = null,
-        width: Int = 1920,
-        height: Int = 1080,
-        assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
-        isVoiced: Boolean? = null
+            subjectIds: Set<String> = setOf(),
+            language: String? = null,
+            width: Int = 1920,
+            height: Int = 1080,
+            assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
+            isVoiced: Boolean? = null
     ): VideoId {
         val retrievedContentPartnerId =
             saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
@@ -549,7 +549,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun removeAccessToVideoTypes(userId: String, vararg excludedVideoType: ContentType) {
+    fun removeAccessToVideoTypes(userId: String, vararg excludedVideoType: VideoType) {
         usersClient.addAccessRules(
             userId,
             AccessRulesResourceFactory.sample(
@@ -562,7 +562,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addAccessToVideoTypes(userId: String, vararg includedVideoType: ContentType) {
+    fun addAccessToVideoTypes(userId: String, vararg includedVideoType: VideoType) {
         usersClient.addAccessRules(
             userId,
             AccessRulesResourceFactory.sample(

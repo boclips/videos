@@ -18,11 +18,7 @@ import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -69,7 +65,7 @@ class VideoToResourceConverter(
             playback = playbackToResourceConverter.convert(video.playback, video.videoId, omitProtectedAttributes),
             subjects = video.subjects.items.map { SubjectResource(id = it.id.value, name = it.name) }.toSet(),
             badges = convertBadges(video),
-            types = video.types.map { VideoTypeResource(id = it.id, name = it.title) },
+            types = video.types.map { VideoTypeResource(id = it.id, name = resolveVideoTypeName(it)) },
             legalRestrictions = video.legalRestrictions,
             hasTranscripts = video.voice.transcript != null,
             ageRange = convertAgeRange(video),
@@ -179,4 +175,10 @@ class VideoToResourceConverter(
         videosLinkBuilder.tagLink(video),
         videosLinkBuilder.transcriptLink(video)
     )
+
+    private fun resolveVideoTypeName(videoType: VideoType) = when (videoType) {
+        VideoType.NEWS -> "News"
+        VideoType.STOCK -> "Stock"
+        VideoType.INSTRUCTIONAL_CLIPS -> "Instructional Clips"
+    }
 }

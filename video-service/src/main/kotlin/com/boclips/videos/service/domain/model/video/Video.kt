@@ -21,7 +21,7 @@ data class Video(
     val keywords: List<String>,
     val releasedOn: LocalDate,
     val ingestedAt: ZonedDateTime,
-    val types: List<ContentType>,
+    val types: List<VideoType>,
     val legalRestrictions: String,
     val subjects: VideoSubjects,
     val topics: Set<Topic>,

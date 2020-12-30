@@ -8,7 +8,7 @@ class PriceTest {
 
     @Test
     fun `get default price for INSTRUCTIONAL_CLIPS`() {
-        val price = Price.getDefault(listOf(ContentType.INSTRUCTIONAL_CLIPS))
+        val price = Price.getDefault(listOf(VideoType.INSTRUCTIONAL_CLIPS))
 
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(price.amount.intValueExact()).isEqualTo(600)
@@ -16,7 +16,7 @@ class PriceTest {
 
     @Test
     fun `get default price for NEWS`() {
-        val price = Price.getDefault(listOf(ContentType.NEWS))
+        val price = Price.getDefault(listOf(VideoType.NEWS))
 
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(price.amount.intValueExact()).isEqualTo(300)
@@ -24,7 +24,7 @@ class PriceTest {
 
     @Test
     fun `get default price for STOCK`() {
-        val price = Price.getDefault(listOf(ContentType.STOCK))
+        val price = Price.getDefault(listOf(VideoType.STOCK))
 
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(price.amount.intValueExact()).isEqualTo(150)
@@ -32,7 +32,7 @@ class PriceTest {
 
     @Test
     fun `gets the most expensive price when multiple content types`() {
-        val price = Price.getDefault(listOf(ContentType.STOCK, ContentType.NEWS))
+        val price = Price.getDefault(listOf(VideoType.STOCK, VideoType.NEWS))
 
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(price.amount.intValueExact()).isEqualTo(300)

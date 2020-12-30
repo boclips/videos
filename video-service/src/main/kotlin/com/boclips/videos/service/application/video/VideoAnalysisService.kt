@@ -11,7 +11,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.ContentType
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -43,7 +43,7 @@ class VideoAnalysisService(
 
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
-        if (!video.types.contains(ContentType.INSTRUCTIONAL_CLIPS)) {
+        if (!video.types.contains(VideoType.INSTRUCTIONAL_CLIPS)) {
             logger.info { "Analysis of video $id NOT requested because its legacy type is ${video.types}" }
             return
         }
