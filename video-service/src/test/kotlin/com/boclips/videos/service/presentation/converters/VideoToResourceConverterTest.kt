@@ -17,17 +17,7 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoTypeFacet
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -41,6 +31,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import java.math.BigDecimal
 import java.time.Duration
 import java.util.Currency
 import java.util.Locale
@@ -147,7 +138,18 @@ class VideoToResourceConverterTest {
 
     @Test
     fun `converts a video from Kaltura`() {
-        val videoResource = videoToResourceConverter.convert(kalturaVideo, UserFactory.sample(id = "user-id"))
+        val price = Price(
+                amount = BigDecimal.valueOf(300),
+                currency = Currency.getInstance("USD")
+        )
+        val pricedVideo = PricedVideo(
+                video = kalturaVideo,
+                price = price
+        )
+        val videoResource = videoToResourceConverter.convert(
+                video = pricedVideo,
+                user = UserFactory.sample(id = "user-id")
+        )
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
         assertThat(videoResource.description).isEqualTo("Best bottle slogan")

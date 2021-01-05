@@ -5,7 +5,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.NoVideoAssetsException
+import com.boclips.videos.service.domain.model.video.PricedVideo
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import mu.KLogging
@@ -20,7 +22,7 @@ class GetVideoUrlAssets(
         videoId: String,
         user: User
     ): VideoUrlAssetsResource {
-        val videoPlayback = searchVideo.byId(videoId, user).let { video: Video ->
+        val videoPlayback = searchVideo.byId(videoId, user).let { video: BaseVideo ->
             validateVideoIsDownloadable(video)
             video.playback as VideoPlayback.StreamPlayback
         }
@@ -38,9 +40,9 @@ class GetVideoUrlAssets(
         )
     }
 
-    private fun validateVideoIsDownloadable(video: Video) {
+    private fun validateVideoIsDownloadable(video: BaseVideo) {
         if (video.playback is VideoPlayback.StreamPlayback) {
-            if (video.playback.hasAnyAssets()) throw NoVideoAssetsException(video.videoId)
+            if ((video.playback as VideoPlayback.StreamPlayback).hasAnyAssets()) throw NoVideoAssetsException(video.videoId)
         } else {
             throw VideoPlaybackNotFound("The requested video cannot be downloaded because it comes from an incompatible source")
         }

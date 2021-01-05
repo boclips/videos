@@ -135,7 +135,8 @@ class ApplicationContext(
         getVideoById,
         getVideosByQuery,
         videoRepository,
-        playbackUpdateService
+        playbackUpdateService,
+        userService
     )
 
     @Bean

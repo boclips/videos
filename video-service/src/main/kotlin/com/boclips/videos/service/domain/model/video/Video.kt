@@ -5,53 +5,54 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
 data class Video(
-    val videoId: VideoId,
-    val playback: VideoPlayback,
-    val channel: Channel,
-    val videoReference: String,
-    val title: String,
-    val description: String,
-    val additionalDescription: String?,
-    val keywords: List<String>,
-    val releasedOn: LocalDate,
-    val ingestedAt: ZonedDateTime,
-    val types: List<VideoType>,
-    val legalRestrictions: String,
-    val subjects: VideoSubjects,
-    val topics: Set<Topic>,
-    val voice: Voice,
-    val ageRange: AgeRange,
-    val ratings: List<UserRating>,
-    val tags: List<UserTag>,
-    val promoted: Boolean?,
-    val attachments: List<Attachment>,
-    val contentWarnings: List<ContentWarning>?,
-    val deactivated: Boolean,
-    val activeVideoId: VideoId?
-) {
-    fun isPlayable(): Boolean {
+    override val videoId: VideoId,
+    override val playback: VideoPlayback,
+    override val channel: Channel,
+    override val videoReference: String,
+    override val title: String,
+    override val description: String,
+    override val additionalDescription: String?,
+    override val keywords: List<String>,
+    override val releasedOn: LocalDate,
+    override val ingestedAt: ZonedDateTime,
+    override val types: List<VideoType>,
+    override val legalRestrictions: String,
+    override val subjects: VideoSubjects,
+    override val topics: Set<Topic>,
+    override val voice: Voice,
+    override val ageRange: AgeRange,
+    override val ratings: List<UserRating>,
+    override val tags: List<UserTag>,
+    override val promoted: Boolean?,
+    override val attachments: List<Attachment>,
+    override val contentWarnings: List<ContentWarning>?,
+    override val deactivated: Boolean,
+    override val activeVideoId: VideoId?
+): BaseVideo {
+    override fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback
     }
 
-    fun isBoclipsHosted(): Boolean {
+    override fun isBoclipsHosted(): Boolean {
         return playback is VideoPlayback.StreamPlayback
     }
 
-    fun getRatingAverage() = when {
+    override fun getRatingAverage() = when {
         this.ratings.isEmpty() -> null
         else -> this.ratings.map { it.rating }.average()
     }
 
-    fun isRatedByUser(user: UserId) =
+    override fun isRatedByUser(user: UserId) =
         ratings.any { it.userId == user }
 
-    fun hasTranscript(): Boolean {
+    override fun hasTranscript(): Boolean {
         return this.voice.transcript != null
     }
 
@@ -59,9 +60,17 @@ data class Video(
         return "Video(videoId=$videoId, title='$title', channelName='${channel.name}', videoReference='$videoReference')"
     }
 
-    fun isVoiced(): Boolean? {
+    override fun isVoiced(): Boolean? {
         return voice.isVoiced()
     }
 
-    fun getPrice(): Price? = if (isBoclipsHosted()) Price.getDefault(types) else null
+    // TODO - cover the logic with unit tests
+    fun getPrice(prices: VideoTypePrices?): Price? {
+        return if (isBoclipsHosted()) {
+            if (types.isEmpty()) throw VideoMissingTypeException(videoId)
+            Price.computePrice(types, prices)
+        } else {
+            null
+        }
+    }
 }

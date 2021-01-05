@@ -2,12 +2,18 @@ package com.boclips.videos.service.infrastructure.user
 
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
+import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.user.Organisation
+import com.boclips.videos.service.domain.model.user.Organisation.Deal
+import com.boclips.videos.service.domain.model.user.Organisation.Deal.Prices
 import com.boclips.videos.service.domain.model.user.OrganisationId
+import com.boclips.videos.service.domain.model.video.VideoType.*
 import com.boclips.videos.service.domain.service.user.UserService
 import feign.FeignException
 import mu.KLogging
 import org.springframework.cache.annotation.Cacheable
+import java.math.BigDecimal
+import java.util.*
 
 open class ApiUserService(
     private val usersClient: UsersClient,
@@ -34,7 +40,19 @@ open class ApiUserService(
                 ?.let {
                     Organisation(
                         organisationId = OrganisationId(it.id),
-                        allowOverridingUserIds = it.organisationDetails.allowsOverridingUserIds ?: false
+                        allowOverridingUserIds = it.organisationDetails.allowsOverridingUserIds ?: false,
+                        deal = Deal(
+                            prices = Prices(
+                                videoTypePrices = it.deal?.prices?.videoTypePrices?.entries?.map { price ->
+                                    when (price.key) {
+                                        "INSTRUCTIONAL" -> INSTRUCTIONAL_CLIPS to buildPrice(price.value)
+                                        "NEWS" -> NEWS to buildPrice(price.value)
+                                        "STOCK" -> STOCK to buildPrice(price.value)
+                                        else -> throw RuntimeException("Unsupported key for videoTypePrices JSON object: ${price.key}")
+                                    }
+                                }?.toMap() ?: emptyMap()
+                            )
+                        )
                     )
                 }
         } catch (ex: FeignException) {
@@ -44,6 +62,9 @@ open class ApiUserService(
             null
         }
     }
+
+    private fun buildPrice(it: DealResource.PriceResource) =
+            Deal.Price(BigDecimal(it.amount), Currency.getInstance(it.currency))
 
     override fun isShareCodeValid(referrerId: String, shareCode: String): Boolean {
         return try {

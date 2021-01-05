@@ -7,6 +7,7 @@ import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
@@ -143,7 +144,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    fun transcriptLink(video: Video): HateoasLink? {
+    fun transcriptLink(video: BaseVideo): HateoasLink? {
         return if (video.hasTranscript()) {
             HateoasLink.of(
                 WebMvcLinkBuilder.linkTo(
@@ -156,7 +157,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    fun rateLink(video: Video): HateoasLink? =
+    fun rateLink(video: BaseVideo): HateoasLink? =
         getIfAuthenticated {
             getIfHasRole(UserRoles.RATE_VIDEOS) {
                 HateoasLink.of(
@@ -171,7 +172,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             }
         }
 
-    fun tagLink(video: Video): HateoasLink? {
+    fun tagLink(video: BaseVideo): HateoasLink? {
         return when {
             !currentUserHasRole(UserRoles.TAG_VIDEOS) -> null
             video.tags.isNotEmpty() -> null
@@ -185,7 +186,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    fun updateLink(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+    fun updateLink(video: BaseVideo): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
         HateoasLink.of(
             Link.of(
                 getVideosRootWithoutParams()
@@ -226,7 +227,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    fun addAttachment(video: Video): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
+    fun addAttachment(video: BaseVideo): HateoasLink? = getIfHasRole(UserRoles.UPDATE_VIDEOS) {
         HateoasLink.of(
             Link.of(
                 getVideosRootWithoutParams()
@@ -277,7 +278,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         )
     }
 
-    fun assets(video: Video): HateoasLink? =
+    fun assets(video: BaseVideo): HateoasLink? =
         takeIf { video.isBoclipsHosted() }?.let {
             getIfHasAnyRole(UserRoles.DOWNLOAD_VIDEO) {
                 HateoasLink.of(

@@ -1,9 +1,13 @@
 package com.boclips.videos.service.domain.model.video
 
+import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices
+import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices.Price
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.util.*
 
 class VideoTest {
 
@@ -70,5 +74,20 @@ class VideoTest {
         )
 
         assertThat(video.isRatedByUser(UserId(value = "teacher"))).isFalse()
+    }
+
+    @Test
+    fun `computes prices based on user's organisation video type prices`() {
+        val video = createVideo(types = listOf(VideoType.NEWS))
+        val price = video.getPrice(
+                prices = VideoTypePrices(
+                        instructional = Price(BigDecimal.TEN, Currency.getInstance("USD")),
+                        news = Price(BigDecimal.ONE, Currency.getInstance("USD")),
+                        stock = Price(BigDecimal.ZERO, Currency.getInstance("USD"))
+                )
+        )
+
+        assertThat(price!!.amount).isEqualTo(BigDecimal.ONE)
+        assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 }

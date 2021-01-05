@@ -6,12 +6,9 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.request.SortKey
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
@@ -22,18 +19,20 @@ class SearchVideo(
     private val getVideoById: GetVideoById,
     private val getVideosByQuery: GetVideosByQuery,
     private val videoRepository: VideoRepository,
-    private val playbackUpdateService: PlaybackUpdateService
+    private val playbackUpdateService: PlaybackUpdateService,
+    private val userService: UserService
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?, user: User, projection: Projection? = null): Video {
+    fun byId(id: String?, user: User, projection: Projection? = null): BaseVideo {
         val videoId = resolveToAssetId(id)!!
         if (projection == Projection.full) {
             playbackUpdateService.updatePlaybacksFor(VideoFilter.HasVideoId(videoId))
         }
-        return getVideoById(videoId, user)
+        val retrievedVideo = getVideoById(videoId, user)
+        return addOrganisationPrice(retrievedVideo, user)
     }
 
     fun byQuery(
@@ -66,8 +65,8 @@ class SearchVideo(
         videoTypeFacets: List<String>? = null,
         includeChannelFacets: Boolean? = null,
         queryParams: Map<String, List<String>>? = null
-    ): ResultsPage<Video, VideoCounts> {
-        return getVideosByQuery(
+    ): ResultsPage<out BaseVideo, VideoCounts> {
+        val retrievedVideos = getVideosByQuery(
             query = query ?: "",
             ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),
             sortBy = sortBy,
@@ -98,6 +97,28 @@ class SearchVideo(
             includeChannelFacets = includeChannelFacets,
             queryParams = queryParams ?: emptyMap()
         )
+        return addOrganisationPrices(retrievedVideos, user)
+    }
+
+    private fun addOrganisationPrices(
+        retrievedVideos: ResultsPage<Video, VideoCounts>,
+        user: User
+    ): ResultsPage<PricedVideo, VideoCounts> {
+        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        val pricedVideos = retrievedVideos.elements.map { PricedVideo(it, it.getPrice(videoTypePrices)) }
+        return ResultsPage(
+                elements = pricedVideos,
+                counts = retrievedVideos.counts,
+                pageInfo = retrievedVideos.pageInfo
+        )
+    }
+
+    private fun addOrganisationPrice(
+        retrievedVideo: Video,
+        user: User
+    ): PricedVideo {
+        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        return PricedVideo(retrievedVideo, retrievedVideo.getPrice(videoTypePrices))
     }
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {

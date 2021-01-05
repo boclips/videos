@@ -34,13 +34,13 @@ class VideoToResourceConverter(
         return videos.map { video -> convert(video, user) }
     }
 
-    fun convert(resultsPage: ResultsPage<Video, VideoCounts>, user: User): VideosResource {
+    fun convert(resultsPage: ResultsPage<out BaseVideo, VideoCounts>, user: User): VideosResource {
         return VideosResource(
             _embedded = VideosWrapperResource(
                 videos = resultsPage
                     .elements.toList()
                     .map { video -> convert(video, user) },
-                facets = convertFacets(resultsPage)
+                facets = convertFacets(resultsPage.counts)
             ),
             page = PagedModel.PageMetadata(
                 resultsPage.pageInfo.pageRequest.size.toLong(),
@@ -51,7 +51,7 @@ class VideoToResourceConverter(
         )
     }
 
-    fun convert(video: Video, user: User, omitProtectedAttributes: Boolean? = false): VideoResource {
+    fun convert(video: BaseVideo, user: User, omitProtectedAttributes: Boolean? = false): VideoResource {
         return VideoResource(
             id = video.videoId.value,
             title = video.title,
@@ -79,7 +79,7 @@ class VideoToResourceConverter(
                 true -> emptyList()
                 else -> video.attachments.map { attachmentToResourceConverter.convert(it) }
             },
-            price = video.getPrice()?.let { PriceResource(amount = it.amount, currency = it.currency) },
+            price = if(video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             keywords = video.keywords,
             _links = (
@@ -101,8 +101,10 @@ class VideoToResourceConverter(
         }
     }
 
-    private fun convertFacets(resultsPage: ResultsPage<Video, VideoCounts>): VideoFacetsResource? {
-        return resultsPage.counts?.let { counts ->
+    private fun Price.toResource() = PriceResource(amount = amount, currency = currency)
+
+    private fun convertFacets(counts: VideoCounts?): VideoFacetsResource? {
+        return counts?.let {
             VideoFacetsResource(
                 subjects = toSubjectFacetResource(counts.subjects),
                 ageRanges = counts.ageRanges.map {
@@ -136,11 +138,11 @@ class VideoToResourceConverter(
         }.toMap()
     }
 
-    private fun convertAgeRange(video: Video): AgeRangeResource? {
+    private fun convertAgeRange(video: BaseVideo): AgeRangeResource? {
         return AgeRangeToResourceConverter.convert(video.ageRange)
     }
 
-    private fun convertBadges(video: Video): Set<String> {
+    private fun convertBadges(video: BaseVideo): Set<String> {
         return when (video.playback) {
             is YoutubePlayback -> setOf(VideoBadge.YOUTUBE.id)
             else -> setOf(VideoBadge.AD_FREE.id)
@@ -164,11 +166,11 @@ class VideoToResourceConverter(
             videosLinkBuilder.videoFullProjection(videoId)
         )
 
-    private fun conditionalResourceLinks(video: Video) = listOfNotNull(
+    private fun conditionalResourceLinks(video: BaseVideo) = listOfNotNull(
         videosLinkBuilder.assets(video)
     )
 
-    private fun actionLinks(video: Video): List<HateoasLink> = listOfNotNull(
+    private fun actionLinks(video: BaseVideo): List<HateoasLink> = listOfNotNull(
         videosLinkBuilder.rateLink(video),
         videosLinkBuilder.updateLink(video),
         videosLinkBuilder.addAttachment(video),

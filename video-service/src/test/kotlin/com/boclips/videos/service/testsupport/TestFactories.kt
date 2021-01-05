@@ -84,9 +84,7 @@ object TestFactories {
             description: String = "description",
             additionalDescription: String = "additional description",
             channelName: String = "Reuters",
-            channelId: ChannelId = ChannelId(
-            value = ObjectId().toHexString()
-        ),
+            channelId: ChannelId = ChannelId(value = ObjectId().toHexString()),
             channelVideoId: String = "cp-id-$videoId",
             playback: VideoPlayback = createKalturaPlayback(),
             types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
