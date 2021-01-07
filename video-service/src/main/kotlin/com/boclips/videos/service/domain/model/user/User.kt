@@ -10,12 +10,16 @@ open class User(
     val isPermittedToViewCollections: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
-    val externalUserIdSupplier: () -> UserId? = { null },
+    val organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation?>? = { null },
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules
 ) {
+    private val organisationAndExternalUserId: Pair<UserId?, Organisation?>? by lazy {
+        organisationAndExternalUserIdSupplier()
+    }
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
-    val externalUserId: UserId? by lazy { externalUserIdSupplier() }
+    val externalUserId: UserId? = organisationAndExternalUserId?.first
+    val organisation: Organisation? = organisationAndExternalUserId?.second
 
     fun idOrThrow(): UserId = id ?: throw UserNotAuthenticatedException()
 

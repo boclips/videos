@@ -11,9 +11,9 @@ import com.boclips.videos.service.application.subject.SubjectClassificationServi
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.GetVideosByContentPackage
 import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.video.VideoDuplicationService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.hateoas.AdminLinkBuilder
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -29,19 +29,19 @@ import java.util.Locale
 @RestController
 @RequestMapping("/v1/admin/actions")
 class AdminController(
-    private val broadcastVideos: BroadcastVideos,
-    private val broadcastCollections: BroadcastCollections,
-    private val broadcastChannels: BroadcastChannels,
-    private val broadcastContracts: BroadcastContracts,
-    private val subjectClassificationService: SubjectClassificationService,
-    private val videoAnalysisService: VideoAnalysisService,
-    private val videoDuplicationService: VideoDuplicationService,
-    private val broadcastContractLegalRestrictions: BroadcastContractLegalRestrictions,
-    private val getVideosByContentPackage: GetVideosByContentPackage,
-    private val adminLinkBuilder: AdminLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val broadcastVideos: BroadcastVideos,
+        private val broadcastCollections: BroadcastCollections,
+        private val broadcastChannels: BroadcastChannels,
+        private val broadcastContracts: BroadcastContracts,
+        private val subjectClassificationService: SubjectClassificationService,
+        private val videoAnalysisService: VideoAnalysisService,
+        private val videoDuplicationService: VideoDuplicationService,
+        private val broadcastContractLegalRestrictions: BroadcastContractLegalRestrictions,
+        private val getVideosByContentPackage: GetVideosByContentPackage,
+        private val adminLinkBuilder: AdminLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10000
         const val MAX_PAGE_SIZE = 10000

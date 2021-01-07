@@ -6,8 +6,8 @@ import com.boclips.videos.api.response.contentwarning.ContentWarningsResource
 import com.boclips.videos.service.application.contentwarning.CreateContentWarning
 import com.boclips.videos.service.application.contentwarning.GetAllContentWarnings
 import com.boclips.videos.service.application.contentwarning.GetContentWarning
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,13 +22,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/content-warnings")
 class ContentWarningController(
-    private val getContentWarning: GetContentWarning,
-    private val getAllContentWarnings: GetAllContentWarnings,
-    private val createContentWarning: CreateContentWarning,
-    private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val getContentWarning: GetContentWarning,
+        private val getAllContentWarnings: GetAllContentWarnings,
+        private val createContentWarning: CreateContentWarning,
+        private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: String): ResponseEntity<ContentWarningResource> {

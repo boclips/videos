@@ -9,8 +9,8 @@ import com.boclips.videos.service.application.disciplines.GetDiscipline
 import com.boclips.videos.service.application.disciplines.GetDisciplines
 import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -28,15 +28,15 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/disciplines")
 class DisciplinesController(
-    private val getDiscipline: GetDiscipline,
-    private val getDisciplines: GetDisciplines,
-    private val createDiscipline: CreateDiscipline,
-    private val updateDiscipline: UpdateDiscipline,
-    private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
-    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val getDiscipline: GetDiscipline,
+        private val getDisciplines: GetDisciplines,
+        private val createDiscipline: CreateDiscipline,
+        private val updateDiscipline: UpdateDiscipline,
+        private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
+        private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @GetMapping("/{id}")
     fun discipline(@PathVariable id: String): DisciplineResource {

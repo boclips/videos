@@ -12,10 +12,10 @@ import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
@@ -46,30 +46,30 @@ import javax.validation.Valid
 
 @RestController
 class VideoController(
-    private val searchVideo: SearchVideo,
-    private val deleteVideo: DeleteVideo,
-    private val createVideo: CreateVideo,
-    private val updateVideo: UpdateVideo,
-    private val rateVideo: RateVideo,
-    private val setVideoThumbnail: SetVideoThumbnail,
-    private val deleteVideoThumbnail: DeleteVideoThumbnail,
-    private val uploadThumbnailImageToVideo: UploadThumbnailImageToVideo,
-    private val videoTranscriptService: VideoTranscriptService,
-    private val videoCaptionService: VideoCaptionService,
-    private val updateCaptionContent: UpdateCaptionContent,
-    private val objectMapper: ObjectMapper,
-    private val tagVideo: TagVideo,
-    private val videoToResourceConverter: VideoToResourceConverter,
-    private val videoRepository: VideoRepository,
-    private val videosLinkBuilder: VideosLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService,
-    private val getVideoUrlAssets: GetVideoUrlAssets,
-    private val userService: UserService,
+        private val searchVideo: SearchVideo,
+        private val deleteVideo: DeleteVideo,
+        private val createVideo: CreateVideo,
+        private val updateVideo: UpdateVideo,
+        private val rateVideo: RateVideo,
+        private val setVideoThumbnail: SetVideoThumbnail,
+        private val deleteVideoThumbnail: DeleteVideoThumbnail,
+        private val uploadThumbnailImageToVideo: UploadThumbnailImageToVideo,
+        private val videoTranscriptService: VideoTranscriptService,
+        private val videoCaptionService: VideoCaptionService,
+        private val updateCaptionContent: UpdateCaptionContent,
+        private val objectMapper: ObjectMapper,
+        private val tagVideo: TagVideo,
+        private val videoToResourceConverter: VideoToResourceConverter,
+        private val videoRepository: VideoRepository,
+        private val videosLinkBuilder: VideosLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService,
+        private val getVideoUrlAssets: GetVideoUrlAssets,
+        private val userService: UserService,
     // FIXME - remove when clients no longer use channel names for video filtering
-    private val channelRepository: ChannelRepository,
-    private val videosRepository: VideoRepository,
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val channelRepository: ChannelRepository,
+        private val videosRepository: VideoRepository,
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500

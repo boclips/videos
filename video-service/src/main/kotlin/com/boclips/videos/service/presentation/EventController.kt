@@ -5,8 +5,8 @@ import com.boclips.videos.service.application.analytics.SavePlaybackEvent
 import com.boclips.videos.service.application.analytics.SavePlayerInteractedWithEvent
 import com.boclips.videos.service.application.analytics.SaveSearchQuerySuggestionsCompletedEvent
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class EventController(
-    private val savePlaybackEvent: SavePlaybackEvent,
-    private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
-    private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
-    private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent,
-    private val saveSearchQuerySuggestionsCompletedEvent: SaveSearchQuerySuggestionsCompletedEvent,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val savePlaybackEvent: SavePlaybackEvent,
+        private val savePlayerInteractedWithEvent: SavePlayerInteractedWithEvent,
+        private val saveVideoInteractedWithEvent: SaveVideoInteractedWithEvent,
+        private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent,
+        private val saveSearchQuerySuggestionsCompletedEvent: SaveSearchQuerySuggestionsCompletedEvent,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @PostMapping("/v1/events/playback")
     fun logPlaybackEvent(

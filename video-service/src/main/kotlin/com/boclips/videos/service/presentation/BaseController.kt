@@ -8,8 +8,8 @@ import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.support.DeviceIdCookieExtractor
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -22,12 +22,12 @@ import java.util.concurrent.TimeUnit
 
 open class BaseController(
     private val accessRuleService: AccessRuleService,
-    private val getUserIdOverride: GetUserIdOverride
+    private val getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId
 ) {
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUser()
-        val externalUserIdSupplier = {
-            userRequest?.let(getUserIdOverride::invoke)
+        val organisationAndExternalUserIdSupplier = {
+            userRequest?.let(getUserOrganisationAndExternalId::invoke)
         }
 
         val id = userRequest?.id?.let { UserId(it) }
@@ -40,7 +40,6 @@ open class BaseController(
             isPermittedToViewCollections = userRequest?.hasRole(UserRoles.VIEW_COLLECTIONS) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
-            externalUserIdSupplier = externalUserIdSupplier,
             context = RequestContext(
                 origin = RefererHeaderExtractor.getReferer(),
                 deviceId = DeviceIdCookieExtractor.getDeviceId()
@@ -51,7 +50,8 @@ open class BaseController(
                 } else {
                     AccessRules.anonymousAccess()
                 }
-            }
+            },
+            organisationAndExternalUserIdSupplier = organisationAndExternalUserIdSupplier
         )
     }
 

@@ -19,6 +19,7 @@ import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.collection.CollectionUpdateCommand
 import com.boclips.videos.service.domain.model.user.RequestContext
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -463,11 +464,11 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun `events use overriding user id when it's present`() {
         val videoId = aValidId()
         val userId = "user@example.com"
-        val externalUserId = "external-user-id"
+        val externalUserId = Pair(UserId("external-user-id"), null)
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(videoId),
             subtype = "testing-overrides",
-            user = UserFactory.sample(id = userId, externalUserIdSupplier = { externalUserId })
+            user = UserFactory.sample(id = userId, organisationAndExternalUserIdSupplier = { externalUserId })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
@@ -482,7 +483,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(aValidId()),
             subtype = "testing-overrides",
-            user = UserFactory.sample(id = userId, externalUserIdSupplier = { null })
+            user = UserFactory.sample(id = userId, organisationAndExternalUserIdSupplier = { null })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)

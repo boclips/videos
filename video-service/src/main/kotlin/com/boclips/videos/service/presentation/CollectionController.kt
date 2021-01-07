@@ -9,9 +9,9 @@ import com.boclips.videos.service.application.collection.GetCollection
 import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
 import com.boclips.videos.service.application.collection.UnbookmarkCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.application.video.VideoRetrievalService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.http.HttpStatus
@@ -43,8 +43,8 @@ class CollectionController(
         private val videoRetrievalService: VideoRetrievalService,
         private val withProjection: WithProjection,
         accessRuleService: AccessRuleService,
-        getUserIdOverride: GetUserIdOverride
-) : BaseController(accessRuleService, getUserIdOverride) {
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
     @PatchMapping("/{id}")
     fun patchCollection(
         @PathVariable("id") id: String,

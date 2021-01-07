@@ -2,8 +2,8 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.api.response.search.SuggestionsResource
 import com.boclips.videos.service.application.search.FindSuggestions
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.SuggestionToResourceConverter
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1")
 class SuggestionsController(
-    private val suggestionToResourceConverter: SuggestionToResourceConverter,
-    private val findSuggestions: FindSuggestions,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val suggestionToResourceConverter: SuggestionToResourceConverter,
+        private val findSuggestions: FindSuggestions,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
     companion object : KLogging()
 
     @GetMapping("/suggestions")

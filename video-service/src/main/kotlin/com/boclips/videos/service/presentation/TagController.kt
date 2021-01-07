@@ -9,8 +9,8 @@ import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -30,15 +30,15 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/tags")
 class TagController(
-    private val getTag: GetTag,
-    private val deleteTag: DeleteTag,
-    private val getTags: GetTags,
-    private val createTag: CreateTag,
-    private val tagsConverter: TagConverter,
-    private val tagsLinkBuilder: TagsLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val getTag: GetTag,
+        private val deleteTag: DeleteTag,
+        private val getTags: GetTags,
+        private val createTag: CreateTag,
+        private val tagsConverter: TagConverter,
+        private val tagsLinkBuilder: TagsLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @GetMapping("/{id}")
     fun tag(@PathVariable id: String): ResponseEntity<TagResource> {

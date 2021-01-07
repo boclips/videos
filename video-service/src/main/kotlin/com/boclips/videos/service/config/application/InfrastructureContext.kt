@@ -22,6 +22,7 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
@@ -78,6 +79,11 @@ class InfrastructureContext(
     @Bean
     fun getUserIdOverride(userService: UserService): GetUserIdOverride {
         return ApiGetUserIdOverride(userService)
+    }
+
+    @Bean
+    fun getUserOrganisationAndOverrideUserId(userService: UserService): GetUserOrganisationAndExternalId {
+        return GetUserOrganisationAndExternalId(userService)
     }
 
     @Bean

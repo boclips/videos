@@ -44,6 +44,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.user.UserId
@@ -542,13 +543,13 @@ object SecurityUserFactory {
 
 object UserFactory {
     fun sample(
-        id: String? = "userio-123",
-        boclipsEmployee: Boolean = false,
-        isPermittedToViewAnyCollection: Boolean = false,
-        externalUserIdSupplier: () -> String? = { null },
-        isAuthenticated: Boolean = true,
-        context: RequestContext = RequestContext(origin = null, deviceId = null),
-        accessRulesSupplier: (user: User) -> AccessRules = {
+            id: String? = "userio-123",
+            boclipsEmployee: Boolean = false,
+            isPermittedToViewAnyCollection: Boolean = false,
+            organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation?>? = { null },
+            isAuthenticated: Boolean = true,
+            context: RequestContext = RequestContext(origin = null, deviceId = null),
+            accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
                 videoAccess = VideoAccess.Everything,
                 collectionAccess = CollectionAccessRule.Everything
@@ -564,7 +565,7 @@ object UserFactory {
             isPermittedToModifyAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
             isPermittedToViewCollections = true,
-            externalUserIdSupplier = { externalUserIdSupplier()?.let(::UserId) },
+            organisationAndExternalUserIdSupplier = { organisationAndExternalUserIdSupplier() },
             accessRulesSupplier = accessRulesSupplier
         )
     }

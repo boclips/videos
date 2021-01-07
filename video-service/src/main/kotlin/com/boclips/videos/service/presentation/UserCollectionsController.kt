@@ -6,8 +6,8 @@ import com.boclips.videos.service.application.exceptions.OperationForbiddenExcep
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.http.HttpStatus
@@ -25,8 +25,8 @@ class UserCollectionsController(
     private val collectionResourceConverter: CollectionResourceConverter,
     private val withProjection: WithProjection,
     accessRuleService: AccessRuleService,
-    getUserIdOverride: GetUserIdOverride
-) : BaseController(accessRuleService, getUserIdOverride) {
+    getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @GetMapping
     fun getMyCollections(

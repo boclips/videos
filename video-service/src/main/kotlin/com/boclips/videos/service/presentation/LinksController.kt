@@ -10,8 +10,8 @@ import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPart
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.hateoas.*
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -24,28 +24,28 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1")
 class LinksController(
-    private val videosLinkBuilder: VideosLinkBuilder,
-    private val collectionsLinkBuilder: CollectionsLinkBuilder,
-    private val subjectsLinkBuilder: SubjectsLinkBuilder,
-    private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
-    private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
-    private val tagsLinkBuilder: TagsLinkBuilder,
-    private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
-    private val suggestionLinkBuilder: SuggestionLinkBuilder,
-    private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
-    private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
-    private val channelLinkBuilder: ChannelLinkBuilder,
-    private val contractsLinkBuilder: ContractsLinkBuilder,
-    private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
-    private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
-    private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
-    private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
-    private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
-    private val eventsLinkBuilder: EventsLinkBuilder,
-    private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val videosLinkBuilder: VideosLinkBuilder,
+        private val collectionsLinkBuilder: CollectionsLinkBuilder,
+        private val subjectsLinkBuilder: SubjectsLinkBuilder,
+        private val ageRangesLinkBuilder: AgeRangeLinkBuilder,
+        private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
+        private val tagsLinkBuilder: TagsLinkBuilder,
+        private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
+        private val suggestionLinkBuilder: SuggestionLinkBuilder,
+        private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
+        private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
+        private val channelLinkBuilder: ChannelLinkBuilder,
+        private val contractsLinkBuilder: ContractsLinkBuilder,
+        private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
+        private val contractLegalRestrictionsLinkBuilder: ContractLegalRestrictionsLinkBuilder,
+        private val legalRestrictionsLinkBuilder: LegalRestrictionsLinkBuilder,
+        private val marketingStatusLinkBuilder: MarketingStatusLinkBuilder,
+        private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
+        private val eventsLinkBuilder: EventsLinkBuilder,
+        private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): LinksResource {
         return LinksResource(

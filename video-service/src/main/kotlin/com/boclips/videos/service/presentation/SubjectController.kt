@@ -11,8 +11,8 @@ import com.boclips.videos.service.application.subject.GetSubject
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.subject.UpdateSubject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
@@ -33,15 +33,15 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/subjects")
 class SubjectController(
-    private val getSubject: GetSubject,
-    private val deleteSubject: DeleteSubject,
-    private val getSubjects: GetSubjects,
-    private val createSubject: CreateSubject,
-    private val updateSubject: UpdateSubject,
-    private val subjectsLinkBuilder: SubjectsLinkBuilder,
-    getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+        private val getSubject: GetSubject,
+        private val deleteSubject: DeleteSubject,
+        private val getSubjects: GetSubjects,
+        private val createSubject: CreateSubject,
+        private val updateSubject: UpdateSubject,
+        private val subjectsLinkBuilder: SubjectsLinkBuilder,
+        getUserOrganisationAndExternalId: GetUserOrganisationAndExternalId,
+        accessRuleService: AccessRuleService
+) : BaseController(accessRuleService, getUserOrganisationAndExternalId) {
 
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): ResponseEntity<ByteArray> = halJsonCachedFor(
