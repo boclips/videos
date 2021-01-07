@@ -104,8 +104,8 @@ class SearchVideo(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
         user: User
     ): ResultsPage<PricedVideo, VideoCounts> {
-        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
-        val pricedVideos = retrievedVideos.elements.map { PricedVideo(it, it.getPrice(videoTypePrices)) }
+        val organisationPrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        val pricedVideos = retrievedVideos.elements.map { PricedVideo(it, it.getPrice(organisationPrices)) }
         return ResultsPage(
                 elements = pricedVideos,
                 counts = retrievedVideos.counts,
@@ -117,8 +117,8 @@ class SearchVideo(
         retrievedVideo: Video,
         user: User
     ): PricedVideo {
-        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
-        return PricedVideo(retrievedVideo, retrievedVideo.getPrice(videoTypePrices))
+        val organisationPrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        return PricedVideo(retrievedVideo, retrievedVideo.getPrice(organisationPrices))
     }
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {

@@ -1,8 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices.Price
 import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.testsupport.PriceFactory
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -79,13 +78,12 @@ class VideoTest {
     @Test
     fun `computes prices based on user's organisation video type prices`() {
         val video = createVideo(types = listOf(VideoType.NEWS))
-        val price = video.getPrice(
-                prices = VideoTypePrices(
-                        instructional = Price(BigDecimal.TEN, Currency.getInstance("USD")),
-                        news = Price(BigDecimal.ONE, Currency.getInstance("USD")),
-                        stock = Price(BigDecimal.ZERO, Currency.getInstance("USD"))
-                )
+        val organisationPrices = PriceFactory.sample(
+                instructional = BigDecimal.valueOf(600),
+                news = BigDecimal.ONE,
+                stock = BigDecimal.ZERO
         )
+        val price = video.getPrice(organisationPrices = organisationPrices)
 
         assertThat(price!!.amount).isEqualTo(BigDecimal.ONE)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))

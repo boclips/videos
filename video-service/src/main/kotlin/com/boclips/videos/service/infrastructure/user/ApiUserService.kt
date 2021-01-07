@@ -4,8 +4,8 @@ import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.user.Organisation
-import com.boclips.videos.service.domain.model.user.Organisation.Deal
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.Prices
+import com.boclips.videos.service.domain.model.user.Deal
+import com.boclips.videos.service.domain.model.user.Deal.Prices
 import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.VideoType.*
 import com.boclips.videos.service.domain.service.user.UserService
@@ -42,16 +42,16 @@ open class ApiUserService(
                         organisationId = OrganisationId(it.id),
                         allowOverridingUserIds = it.organisationDetails.allowsOverridingUserIds ?: false,
                         deal = Deal(
-                            prices = Prices(
-                                videoTypePrices = it.deal?.prices?.videoTypePrices?.entries?.map { price ->
-                                    when (price.key) {
-                                        "INSTRUCTIONAL" -> INSTRUCTIONAL_CLIPS to buildPrice(price.value)
-                                        "NEWS" -> NEWS to buildPrice(price.value)
-                                        "STOCK" -> STOCK to buildPrice(price.value)
-                                        else -> throw RuntimeException("Unsupported key for videoTypePrices JSON object: ${price.key}")
-                                    }
-                                }?.toMap() ?: emptyMap()
-                            )
+                                prices = Prices(
+                                        videoTypePrices = it.deal?.prices?.videoTypePrices?.entries?.map { price ->
+                                            when (price.key) {
+                                                "INSTRUCTIONAL" -> INSTRUCTIONAL_CLIPS to buildPrice(price.value)
+                                                "NEWS" -> NEWS to buildPrice(price.value)
+                                                "STOCK" -> STOCK to buildPrice(price.value)
+                                                else -> throw RuntimeException("Unsupported key for videoTypePrices JSON object: ${price.key}")
+                                            }
+                                        }?.toMap() ?: emptyMap()
+                                )
                         )
                     )
                 }
@@ -64,7 +64,7 @@ open class ApiUserService(
     }
 
     private fun buildPrice(it: DealResource.PriceResource) =
-            Deal.Price(BigDecimal(it.amount), Currency.getInstance(it.currency))
+            Prices.Price(BigDecimal(it.amount), Currency.getInstance(it.currency))
 
     override fun isShareCodeValid(referrerId: String, shareCode: String): Boolean {
         return try {

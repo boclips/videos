@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices.Price as OrganisationPrice
+import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
+import com.boclips.videos.service.domain.model.user.Deal.Prices
 import com.boclips.videos.service.domain.model.video.VideoType.*
 import java.math.BigDecimal
 import java.util.Currency
@@ -16,17 +16,16 @@ data class Price(val amount: BigDecimal, val currency: Currency = Currency.getIn
                 STOCK to Price(amount = BigDecimal(150), currency = USD)
         )
 
-        fun computePrice(videoTypes: List<VideoType>, videoTypesPrices: VideoTypePrices?): Price? {
+        fun computePrice(videoTypes: List<VideoType>, prices: Prices?): Price? {
+            val videoTypePrices = prices?.videoTypePrices ?: emptyMap()
             return videoTypes
-                    .map { priceForVideoType(it, videoTypesPrices) }
+                    .map { priceForVideoType(it, videoTypePrices) }
                     .requireNoNulls()
                     .maxWithOrNull(compareBy { it.amount })
         }
 
-        private fun priceForVideoType(videoType: VideoType, videoTypesPrices: VideoTypePrices?): Price? {
-            return videoTypesPrices
-                    ?.let { buildPrice(it[videoType]) }
-                    ?: DEFAULT_PRICES[videoType]
+        private fun priceForVideoType(videoType: VideoType, videoTypePrices: Map<VideoType, OrganisationPrice>): Price? {
+            return buildPrice(videoTypePrices[videoType]) ?: DEFAULT_PRICES[videoType]
         }
 
         private fun buildPrice(organisationPrice: OrganisationPrice?): Price? {

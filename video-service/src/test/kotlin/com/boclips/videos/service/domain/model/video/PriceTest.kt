@@ -1,12 +1,12 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices
+import com.boclips.videos.service.testsupport.PriceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.*
-import com.boclips.videos.service.domain.model.user.Organisation.Deal.VideoTypePrices.Price as OrganisationPrice
+import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
 
 class PriceTest {
 
@@ -17,12 +17,12 @@ class PriceTest {
 
         @Test
         fun `get organisation price for INSTRUCTIONAL_CLIPS`() {
-            val videoTypesPrices = VideoTypePrices(
-                    instructional = OrganisationPrice(BigDecimal.valueOf(600), USD),
-                    news = OrganisationPrice(BigDecimal.ONE, USD),
-                    stock = OrganisationPrice(BigDecimal.ZERO, USD)
+            val prices = PriceFactory.sample(
+                    instructional = BigDecimal.valueOf(600),
+                    news = BigDecimal.ONE,
+                    stock = BigDecimal.ZERO
             )
-            val price = Price.computePrice(listOf(VideoType.INSTRUCTIONAL_CLIPS), videoTypesPrices = videoTypesPrices)!!
+            val price = Price.computePrice(listOf(VideoType.INSTRUCTIONAL_CLIPS), prices = prices)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(600)
@@ -30,12 +30,12 @@ class PriceTest {
 
         @Test
         fun `get organisation price for NEWS`() {
-            val videoTypesPrices = VideoTypePrices(
-                    instructional = OrganisationPrice(BigDecimal.TEN, USD),
-                    news = OrganisationPrice(BigDecimal.valueOf(300), USD),
-                    stock = OrganisationPrice(BigDecimal.ZERO, USD)
+            val prices = PriceFactory.sample(
+                    instructional = BigDecimal.TEN,
+                    news = BigDecimal.valueOf(300),
+                    stock = BigDecimal.ZERO
             )
-            val price = Price.computePrice(listOf(VideoType.NEWS), videoTypesPrices = videoTypesPrices)!!
+            val price = Price.computePrice(listOf(VideoType.NEWS), prices = prices)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(300)
@@ -43,12 +43,12 @@ class PriceTest {
 
         @Test
         fun `get organisation price for STOCK`() {
-            val videoTypesPrices = VideoTypePrices(
-                    instructional = OrganisationPrice(BigDecimal.TEN, USD),
-                    news = OrganisationPrice(BigDecimal.ONE, USD),
-                    stock = OrganisationPrice(BigDecimal.valueOf(150), USD)
+            val prices = PriceFactory.sample(
+                    instructional = BigDecimal.TEN,
+                    news = BigDecimal.ONE,
+                    stock = BigDecimal.valueOf(150)
             )
-            val price = Price.computePrice(listOf(VideoType.STOCK), videoTypesPrices = videoTypesPrices)!!
+            val price = Price.computePrice(listOf(VideoType.STOCK), prices = prices)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(150)
@@ -56,12 +56,12 @@ class PriceTest {
 
         @Test
         fun `gets the most expensive price from organisation ones when multiple content types`() {
-            val videoTypesPrices = VideoTypePrices(
-                    instructional = OrganisationPrice(BigDecimal.valueOf(7000), USD),
-                    news = OrganisationPrice(BigDecimal.valueOf(300), USD),
-                    stock = OrganisationPrice(BigDecimal.valueOf(150), USD)
+            val prices = PriceFactory.sample(
+                    instructional = BigDecimal.valueOf(7000),
+                    news = BigDecimal.valueOf(300),
+                    stock = BigDecimal.valueOf(150)
             )
-            val price = Price.computePrice(listOf(VideoType.STOCK, VideoType.NEWS), videoTypesPrices = videoTypesPrices)!!
+            val price = Price.computePrice(listOf(VideoType.STOCK, VideoType.NEWS), prices = prices)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(300)
@@ -69,12 +69,12 @@ class PriceTest {
 
         @Test
         fun `returns no price when no video type is given`() {
-            val videoTypesPrices = VideoTypePrices(
-                    instructional = OrganisationPrice(BigDecimal.valueOf(600), USD),
-                    news = OrganisationPrice(BigDecimal.valueOf(300), USD),
-                    stock = OrganisationPrice(BigDecimal.valueOf(1500), USD)
+            val prices = PriceFactory.sample(
+                    instructional = BigDecimal.valueOf(600),
+                    news = BigDecimal.valueOf(300),
+                    stock = BigDecimal.valueOf(1500)
             )
-            val result = Price.computePrice(videoTypes = emptyList(), videoTypesPrices = videoTypesPrices)
+            val result = Price.computePrice(videoTypes = emptyList(), prices = prices)
 
             assertThat(result).isNull()
         }
@@ -85,7 +85,7 @@ class PriceTest {
 
         @Test
         fun `get default price for INSTRUCTIONAL_CLIPS`() {
-            val price = Price.computePrice(listOf(VideoType.INSTRUCTIONAL_CLIPS), videoTypesPrices = null)!!
+            val price = Price.computePrice(listOf(VideoType.INSTRUCTIONAL_CLIPS), prices = null)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(600)
@@ -93,7 +93,7 @@ class PriceTest {
 
         @Test
         fun `get default price for NEWS`() {
-            val price = Price.computePrice(listOf(VideoType.NEWS), videoTypesPrices = null)!!
+            val price = Price.computePrice(listOf(VideoType.NEWS), prices = null)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(300)
@@ -101,7 +101,7 @@ class PriceTest {
 
         @Test
         fun `get default price for STOCK`() {
-            val price = Price.computePrice(listOf(VideoType.STOCK), videoTypesPrices = null)!!
+            val price = Price.computePrice(listOf(VideoType.STOCK), prices = null)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(150)
@@ -109,7 +109,7 @@ class PriceTest {
 
         @Test
         fun `gets the most expensive price when multiple content types`() {
-            val price = Price.computePrice(listOf(VideoType.STOCK, VideoType.NEWS), videoTypesPrices = null)!!
+            val price = Price.computePrice(listOf(VideoType.STOCK, VideoType.NEWS), prices = null)!!
 
             assertThat(price.currency).isEqualTo(USD)
             assertThat(price.amount.intValueExact()).isEqualTo(300)
@@ -117,7 +117,7 @@ class PriceTest {
 
         @Test
         fun `defaults to the most expensive type when no content types specified`() {
-            val price = Price.computePrice(emptyList(), videoTypesPrices = null)
+            val price = Price.computePrice(emptyList(), prices = null)
 
             assertThat(price).isNull()
         }
