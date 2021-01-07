@@ -7,6 +7,7 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.domain.model.video.PricedVideo
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -275,26 +276,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val createdVideo = createVideo(createRequest, UserFactory.sample())
 
         assertThat(createdVideo.voice.language?.displayLanguage).isEqualTo("Welsh")
-    }
-
-    @Test
-    fun `can create a video with a default price`() {
-        createMediaEntry(
-            id = "entry-$123",
-            duration = Duration.ofMinutes(1)
-        )
-
-        val contentPartner = saveChannel()
-
-        val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
-            providerId = contentPartner.id.value,
-            playbackId = "entry-\$123",
-            videoTypes = listOf("NEWS")
-        )
-
-        val createdVideo = createVideo(createRequest, UserFactory.sample())
-
-        assertThat(createdVideo.getPrice()).isNotNull
     }
 
     private fun createAVideo(title: String) {

@@ -132,9 +132,12 @@ fun MockHttpServletRequestBuilder.asSubjectClassifier() =
             )
     )
 
-fun MockHttpServletRequestBuilder.asUserWithRoles(vararg roles: String) =
+fun MockHttpServletRequestBuilder.asUserWithUsernameAndRoles(name: String, vararg roles: String) =
     this.with(
         SecurityMockMvcRequestPostProcessors
-            .user("aRandomUser")
+            .user(name)
             .roles(*roles)
     )
+
+fun MockHttpServletRequestBuilder.asUserWithRoles(vararg roles: String) =
+    this.asUserWithUsernameAndRoles("aRandomUser", *roles)
