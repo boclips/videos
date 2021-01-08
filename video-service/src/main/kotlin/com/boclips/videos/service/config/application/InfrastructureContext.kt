@@ -6,7 +6,6 @@ import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.KeycloakProperties
 import com.boclips.videos.service.config.security.AppKeycloakConfigResolver
 import com.boclips.videos.service.domain.service.DisciplineRepository
-import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -21,7 +20,6 @@ import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepos
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
-import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
 import com.boclips.videos.service.infrastructure.user.GetUserOrganisationAndExternalId
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
@@ -75,11 +73,6 @@ class InfrastructureContext(
         collectionRepository: CollectionRepository
     ): ApiAccessRulesConverter =
         ApiAccessRulesConverter(collectionRepository)
-
-    @Bean
-    fun getUserIdOverride(userService: UserService): GetUserIdOverride {
-        return ApiGetUserIdOverride(userService)
-    }
 
     @Bean
     fun getUserOrganisationAndOverrideUserId(userService: UserService): GetUserOrganisationAndExternalId {

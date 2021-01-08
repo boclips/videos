@@ -21,12 +21,9 @@ import com.boclips.videos.service.domain.model.collection.CollectionUpdateComman
 import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.TestFactories.createCollectionUpdateResult
-import com.boclips.videos.service.testsupport.UserFactory
-import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -464,11 +461,13 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     fun `events use overriding user id when it's present`() {
         val videoId = aValidId()
         val userId = "user@example.com"
-        val externalUserId = Pair(UserId("external-user-id"), null)
+        val externalUserId ="external-user-id"
         eventService.publishVideoInteractedWithEvent(
             videoId = VideoId(videoId),
             subtype = "testing-overrides",
-            user = UserFactory.sample(id = userId, organisationAndExternalUserIdSupplier = { externalUserId })
+            user = UserFactory.sample(id = userId, organisationAndExternalUserIdSupplier = {
+                Pair(UserId(externalUserId), OrganisationFactory.sample())
+            })
         )
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)

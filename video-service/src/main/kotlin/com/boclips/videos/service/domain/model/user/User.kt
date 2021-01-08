@@ -10,11 +10,11 @@ open class User(
     val isPermittedToViewCollections: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
-    val organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation?>? = { null },
+    val organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation>? = { null },
     val context: RequestContext,
     val accessRulesSupplier: (user: User) -> AccessRules
 ) {
-    private val organisationAndExternalUserId: Pair<UserId?, Organisation?>? by lazy {
+    private val organisationAndExternalUserId: Pair<UserId?, Organisation>? by lazy {
         organisationAndExternalUserIdSupplier()
     }
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
@@ -27,4 +27,3 @@ open class User(
 }
 
 data class RequestContext(val origin: String?, val deviceId: String?)
-

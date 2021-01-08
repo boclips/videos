@@ -546,7 +546,7 @@ object UserFactory {
             id: String? = "userio-123",
             boclipsEmployee: Boolean = false,
             isPermittedToViewAnyCollection: Boolean = false,
-            organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation?>? = { null },
+            organisationAndExternalUserIdSupplier: () -> Pair<UserId?, Organisation>? = { null },
             isAuthenticated: Boolean = true,
             context: RequestContext = RequestContext(origin = null, deviceId = null),
             accessRulesSupplier: (user: User) -> AccessRules = {
