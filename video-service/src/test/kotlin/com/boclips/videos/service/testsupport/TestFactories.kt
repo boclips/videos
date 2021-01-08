@@ -47,7 +47,6 @@ import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.RequestContext
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
@@ -55,6 +54,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -79,36 +79,36 @@ object TestFactories {
     fun createVideoId() = VideoId(aValidId())
 
     fun createVideo(
-            videoId: String = createVideoId().value,
-            title: String = "title",
-            description: String = "description",
-            additionalDescription: String = "additional description",
-            channelName: String = "Reuters",
-            channelId: ChannelId = ChannelId(value = ObjectId().toHexString()),
-            channelVideoId: String = "cp-id-$videoId",
-            playback: VideoPlayback = createKalturaPlayback(),
-            types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
-            keywords: List<String> = listOf("keyword"),
-            subjects: Set<Subject> = emptySet(),
-            subjectsSetManually: Boolean? = null,
-            releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
-            ingestedAt: ZonedDateTime = ZonedDateTime.now(),
-            legalRestrictions: String = "",
-            voice: Voice = Voice.UnknownVoice(language = null, transcript = null),
-            topics: Set<Topic> = emptySet(),
-            ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
-            ratings: List<UserRating> = emptyList(),
-            tags: List<UserTag> = emptyList(),
-            channel: Channel = Channel(
+        videoId: String = createVideoId().value,
+        title: String = "title",
+        description: String = "description",
+        additionalDescription: String = "additional description",
+        channelName: String = "Reuters",
+        channelId: ChannelId = ChannelId(value = ObjectId().toHexString()),
+        channelVideoId: String = "cp-id-$videoId",
+        playback: VideoPlayback = createKalturaPlayback(),
+        types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
+        keywords: List<String> = listOf("keyword"),
+        subjects: Set<Subject> = emptySet(),
+        subjectsSetManually: Boolean? = null,
+        releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
+        ingestedAt: ZonedDateTime = ZonedDateTime.now(),
+        legalRestrictions: String = "",
+        voice: Voice = Voice.UnknownVoice(language = null, transcript = null),
+        topics: Set<Topic> = emptySet(),
+        ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
+        ratings: List<UserRating> = emptyList(),
+        tags: List<UserTag> = emptyList(),
+        channel: Channel = Channel(
             channelId = channelId,
             name = channelName
         ),
-            videoReference: String = channelVideoId,
-            promoted: Boolean? = null,
-            attachments: List<Attachment> = emptyList(),
-            contentWarnings: List<ContentWarning> = emptyList(),
-            deactivated: Boolean = false,
-            activeVideoId: VideoId? = null
+        videoReference: String = channelVideoId,
+        promoted: Boolean? = null,
+        attachments: List<Attachment> = emptyList(),
+        contentWarnings: List<ContentWarning> = emptyList(),
+        deactivated: Boolean = false,
+        activeVideoId: VideoId? = null
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),

@@ -3,7 +3,6 @@ package com.boclips.videos.service.domain.service.events
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
-import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.Dimensions
@@ -11,8 +10,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createTopic
@@ -25,6 +24,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.Locale
+import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 
 class EventConverterTest {
     private val converter = EventConverter()
@@ -50,7 +50,8 @@ class EventConverterTest {
             ingestedAt = ZonedDateTime.of(2020, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC),
             ageRange = AgeRange.of(min = 5, max = 10, curatedManually = true),
             promoted = true,
-            keywords = listOf("key", "word")
+            keywords = listOf("key", "word"),
+            videoReference = "video-reference",
         )
 
         val videoEvent = converter.toVideoPayload(video)
@@ -72,6 +73,7 @@ class EventConverterTest {
         assertThat(videoEvent.originalDimensions.height).isEqualTo(1080)
         assertThat(videoEvent.promoted).isTrue()
         assertThat(videoEvent.keywords).containsExactly("key", "word")
+        assertThat(videoEvent.sourceVideoReference).isEqualTo("video-reference")
     }
 
     @Test
