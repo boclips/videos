@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
@@ -17,14 +15,29 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.DurationFacet
+import com.boclips.videos.service.domain.model.video.Price
+import com.boclips.videos.service.domain.model.video.PricedVideo
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.UserRating
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.VideoTypeFacet
+import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.UserFactory
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -40,7 +53,7 @@ class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
     private lateinit var videosLinkBuilder: VideosLinkBuilder
     private lateinit var videoToResourceConverter: VideoToResourceConverter
-    private lateinit var getChannels: GetChannels
+    private lateinit var videoChannelService: VideoChannelService
     private lateinit var getSubjects: GetSubjects
 
     private val kalturaVideo = createVideo(
@@ -99,7 +112,7 @@ class VideoToResourceConverterTest {
     @BeforeEach
     fun setUp() {
         videosLinkBuilder = mock()
-        getChannels = mock()
+        videoChannelService = mock()
         getSubjects = mock()
 
         playbackToResourceConverter =
@@ -113,7 +126,7 @@ class VideoToResourceConverterTest {
                 playbackToResourceConverter,
                 AttachmentToResourceConverter(mock()),
                 ContentWarningToResourceConverter(mock()),
-                getChannels,
+                videoChannelService,
                 getSubjects
             )
     }
@@ -139,16 +152,16 @@ class VideoToResourceConverterTest {
     @Test
     fun `converts a video from Kaltura`() {
         val price = Price(
-                amount = BigDecimal.valueOf(300),
-                currency = Currency.getInstance("USD")
+            amount = BigDecimal.valueOf(300),
+            currency = Currency.getInstance("USD")
         )
         val pricedVideo = PricedVideo(
-                video = kalturaVideo,
-                price = price
+            video = kalturaVideo,
+            price = price
         )
         val videoResource = videoToResourceConverter.convert(
-                video = pricedVideo,
-                user = UserFactory.sample(id = "user-id")
+            video = pricedVideo,
+            user = UserFactory.sample(id = "user-id")
         )
 
         assertThat(videoResource.title).isEqualTo("Do what you love")
@@ -280,12 +293,9 @@ class VideoToResourceConverterTest {
 
     @Test
     fun `produces facets if they exist on the search results`() {
-        Mockito.`when`(getChannels.invoke()).thenReturn(
+        Mockito.`when`(videoChannelService.findAllByIds(any())).thenReturn(
             listOf(
-                ChannelFactory.createChannel(
-                    id = com.boclips.contentpartner.service.domain.model.channel.ChannelId("channel-id"),
-                    name = "TED"
-                )
+                Channel(channelId = ChannelId("channel-id"), name = "TED")
             )
         )
 

@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Test
 class VideoChannelServiceTest {
 
     @Test
-    fun `find content partner availability for all`() {
+    fun `find channel availability for all`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM))
 
-        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
+        val channelService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(
+            channelService.findAvailabilityFor(
                 channelId = ChannelId(
                     value = "test"
                 )
@@ -32,13 +32,13 @@ class VideoChannelServiceTest {
     }
 
     @Test
-    fun `find content partner availability for streaming`() {
+    fun `find channel availability for streaming`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.STREAM))
 
-        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
+        val channelService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(
+            channelService.findAvailabilityFor(
                 channelId = ChannelId(
                     value = "test"
                 )
@@ -48,13 +48,13 @@ class VideoChannelServiceTest {
     }
 
     @Test
-    fun `find content partner availability for download`() {
+    fun `find channel availability for download`() {
         val contentPartnerRepository = mockRepository(setOf(DistributionMethod.DOWNLOAD))
 
-        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
+        val channelService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(
+            channelService.findAvailabilityFor(
                 channelId = ChannelId(
                     value = "test"
                 )
@@ -64,13 +64,13 @@ class VideoChannelServiceTest {
     }
 
     @Test
-    fun `find content partner availability for empty distribution methods`() {
+    fun `find channel availability for empty distribution methods`() {
         val contentPartnerRepository = mockRepository(emptySet())
 
-        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
+        val channelService = VideoChannelService(channelRepository = contentPartnerRepository)
 
         val availability =
-            contentPartnerService.findAvailabilityFor(
+            channelService.findAvailabilityFor(
                 channelId = ChannelId(
                     value = "test"
                 )
@@ -80,29 +80,29 @@ class VideoChannelServiceTest {
     }
 
     @Test
-    fun `memoises content partner look up`() {
+    fun `memoises channel look up`() {
         val contentPartnerRepository = mockRepository(emptySet())
 
-        val contentPartnerService = VideoChannelService(channelRepository = contentPartnerRepository)
+        val channelService = VideoChannelService(channelRepository = contentPartnerRepository)
 
-        contentPartnerService.findAvailabilityFor(
+        channelService.findAvailabilityFor(
             channelId = ChannelId(
                 value = "test"
             )
         )
-        contentPartnerService.findAvailabilityFor(
+        channelService.findAvailabilityFor(
             channelId = ChannelId(
                 value = "test"
             )
         )
-        contentPartnerService.findAvailabilityFor(
+        channelService.findAvailabilityFor(
             channelId = ChannelId(
                 value = "test"
             )
         )
-        contentPartnerService.findAvailabilityFor(
+        channelService.findAvailabilityFor(
             channelId = ChannelId(
-                value = "new content partner"
+                value = "new channel"
             )
         )
 

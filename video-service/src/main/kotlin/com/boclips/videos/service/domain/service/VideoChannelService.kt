@@ -21,6 +21,13 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
             }
     }
 
+    fun findAllByIds(ids: List<ChannelId>): List<Channel> {
+        val contentPartnerServiceChannelIds = ids.map { ContentPartnerServiceChannelId(value = it.value) }
+        return channelRepository.findAllByIds(contentPartnerServiceChannelIds).map {
+            Channel(channelId = ChannelId(it.id.value), name = it.name)
+        }
+    }
+
     fun findAvailabilityFor(channelId: ChannelId): Availability {
         idCache?.let {
             if (it.first == channelId) {

@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -27,6 +26,7 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -35,7 +35,7 @@ class VideoToResourceConverter(
     private val playbackToResourceConverter: PlaybackToResourceConverter,
     private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
-    private val getChannels: GetChannels,
+    private val videoChannelService: VideoChannelService,
     private val getSubjects: GetSubjects
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
@@ -158,11 +158,17 @@ class VideoToResourceConverter(
     }
 
     private fun toChannelFacetResource(channelFacets: List<ChannelFacet>): Map<String, VideoFacetResource> {
-        val channels = getChannels()
+        val channels = videoChannelService.findAllByIds(channelFacets.map { it.channelId })
         return channelFacets.mapNotNull { channelFacet ->
             channels
-                .find { channel -> channel.id.value == channelFacet.channelId.value }
-                ?.let { it.id.value to VideoFacetResource(id = it.id.value, name = it.name, hits = channelFacet.total) }
+                .find { channel -> channel.channelId.value == channelFacet.channelId.value }
+                ?.let {
+                    it.channelId.value to VideoFacetResource(
+                        id = it.channelId.value,
+                        name = it.name,
+                        hits = channelFacet.total
+                    )
+                }
         }.toMap()
     }
 
