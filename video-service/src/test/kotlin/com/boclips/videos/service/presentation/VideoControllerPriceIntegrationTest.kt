@@ -38,7 +38,6 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                 .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price.displayValue", equalTo("$600")))
             .andExpect(jsonPath("$.price.amount", equalTo(600)))
             .andExpect(jsonPath("$.price.currency", equalTo("USD")))
     }
@@ -85,7 +84,6 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                 .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price.displayValue", equalTo("$1000")))
             .andExpect(jsonPath("$.price.amount", equalTo(1000)))
             .andExpect(jsonPath("$.price.currency", equalTo("USD")))
     }
@@ -133,7 +131,6 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andDo(print())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.videos[0].price.displayValue", equalTo("$1000")))
             .andExpect(jsonPath("$._embedded.videos[0].price.amount", equalTo(1000)))
             .andExpect(jsonPath("$._embedded.videos[0].price.currency", equalTo("USD")))
     }

@@ -193,7 +193,6 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.isVoiced).isEqualTo(true)
         assertThat(videoResource.price?.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(videoResource.price?.amount?.intValueExact()).isEqualTo(300)
-        assertThat(videoResource.price?.displayValue).isEqualTo("$300")
 
         assertThat(videoResource.attachments).hasSize(1)
         assertThat(videoResource.attachments[0].id).isNotNull()
