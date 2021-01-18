@@ -105,6 +105,8 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var fakeYoutubePlaybackProvider: TestYoutubePlaybackProvider
 
+
+
     @Autowired
     lateinit var createVideo: CreateVideo
 

@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
@@ -72,5 +73,9 @@ data class Video(
         } else {
             null
         }
+    }
+
+    fun getPrices(organisationsPrices: Map<OrganisationId, OrganisationPrices>): Map<OrganisationId, Price> {
+        return emptyMap()
     }
 }

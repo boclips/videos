@@ -24,13 +24,9 @@ import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
-import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
-import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepositoryEventDecorator
@@ -51,6 +47,7 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateS
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.contentpackage.ApiContentPackageService
+import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationService
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
@@ -227,6 +224,11 @@ class DomainContext(
     @Bean
     fun userService(usersClient: UsersClient, organisationsClient: OrganisationsClient): UserService {
         return ApiUserService(usersClient, organisationsClient)
+    }
+
+    @Bean
+    fun organisationService(organisationsClient: OrganisationsClient): OrganisationService {
+        return ApiOrganisationService(organisationsClient)
     }
 
     @Bean
