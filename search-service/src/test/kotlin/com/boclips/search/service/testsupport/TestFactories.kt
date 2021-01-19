@@ -3,13 +3,14 @@ package com.boclips.search.service.testsupport
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
+import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -39,7 +40,8 @@ object SearchableVideoMetadataFactory {
         deactivated: Boolean = false,
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
-        isVoiced: Boolean? = null
+        isVoiced: Boolean? = null,
+        prices: Map<String, BigDecimal>? = null
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -64,7 +66,8 @@ object SearchableVideoMetadataFactory {
         deactivated = deactivated,
         types = types,
         ingestedAt = ingestedAt,
-        isVoiced = isVoiced
+        isVoiced = isVoiced,
+        prices = prices
     )
 }
 
@@ -105,7 +108,8 @@ object TestFactories {
             deactivated = false,
             types = listOf("NEWS"),
             ingestedAt = ingestDate,
-            isVoiced = null
+            isVoiced = null,
+            prices = null
         )
     }
 }

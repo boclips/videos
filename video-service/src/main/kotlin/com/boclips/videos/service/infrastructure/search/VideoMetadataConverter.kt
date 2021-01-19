@@ -8,10 +8,13 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
+import java.math.BigDecimal
 
 object VideoMetadataConverter {
     fun convert(video: VideoWithPrices, videoAvailability: Availability): VideoMetadata {
@@ -46,8 +49,15 @@ object VideoMetadataConverter {
             eligibleForDownload = videoAvailability.isDownloadable(),
             attachmentTypes = attachmentTypes(video.attachments),
             deactivated = video.deactivated,
-            ingestedAt = video.ingestedAt
+            ingestedAt = video.ingestedAt,
+            prices = convertPrices(video.prices)
         )
+    }
+
+    private fun convertPrices (prices: Map<OrganisationId, Price>?): Map<String, BigDecimal>? {
+        return prices?.map {
+            it.key.value to it.value.amount
+        }?.toMap()
     }
 
     private fun tagsFrom(video: BaseVideo): List<String> {

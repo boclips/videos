@@ -13,6 +13,7 @@ import org.elasticsearch.client.indices.GetIndexRequest
 import org.elasticsearch.rest.RestStatus
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 
 class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
@@ -59,7 +60,7 @@ class VideoIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     fun `calling upsert doesn't delete the index`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy")
+                SearchableVideoMetadataFactory.create(id = "1", title = "Apple banana candy", prices = mapOf("Org-id-1" to BigDecimal.valueOf(99.99), "Org-id-2" to BigDecimal.valueOf(10.99)))
             )
         )
         videoIndexWriter.upsert(

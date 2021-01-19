@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
-import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -81,7 +82,8 @@ class VideoDocumentConverterTest {
                 deactivated = false,
                 types = listOf("NEWS"),
                 ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]"),
-                isVoiced = null
+                isVoiced = null,
+                prices = null
             )
         )
     }
@@ -143,7 +145,12 @@ class VideoDocumentConverterTest {
             deactivated = false,
             types = listOf(VideoType.INSTRUCTIONAL),
             ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-            isVoiced = false
+            isVoiced = false,
+            prices = mapOf(
+                "org-id-1" to BigDecimal.valueOf(15.99),
+                "org-id-2" to BigDecimal.valueOf(0),
+                "org-id-3" to BigDecimal.valueOf(1001000.99),
+            )
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -176,7 +183,12 @@ class VideoDocumentConverterTest {
                 attachmentTypes = emptySet(),
                 deactivated = false,
                 ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-                isVoiced = false
+                isVoiced = false,
+                prices = mapOf(
+                    "org-id-1" to 1599,
+                    "org-id-2" to 0,
+                    "org-id-3" to 100100099,
+                )
             )
         )
     }
@@ -210,7 +222,8 @@ class VideoDocumentConverterTest {
             deactivated = false,
             types = listOf(VideoType.INSTRUCTIONAL),
             ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-            isVoiced = null
+            isVoiced = null,
+            prices = null
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

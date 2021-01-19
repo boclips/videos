@@ -10,6 +10,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.user.OrganisationId
+import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Availability
@@ -20,11 +22,13 @@ import com.boclips.videos.service.testsupport.UserRatingFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.Currency
 import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class VideoMetadataConverterTest {
@@ -60,6 +64,16 @@ class VideoMetadataConverterTest {
                 ratings = emptyList(),
                 attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY)),
                 ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+            ),
+            prices = mapOf(
+                OrganisationId("org-1") to Price(
+                    amount = BigDecimal.valueOf(9.99),
+                    currency = Currency.getInstance("USD")
+                ),
+                OrganisationId("org-2") to Price(
+                    amount = BigDecimal.valueOf(15.99),
+                    currency = Currency.getInstance("USD")
+                ),
             )
         )
 
@@ -93,7 +107,8 @@ class VideoMetadataConverterTest {
                 attachmentTypes = setOf("Activity"),
                 deactivated = false,
                 types = listOf(SearchVideoType.INSTRUCTIONAL),
-                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+                prices = mapOf("org-1" to BigDecimal.valueOf(9.99), "org-2" to BigDecimal.valueOf(15.99))
             )
         )
     }

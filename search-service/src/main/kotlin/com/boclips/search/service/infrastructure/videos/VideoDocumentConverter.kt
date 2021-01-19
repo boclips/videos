@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.infrastructure.ESObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.elasticsearch.search.SearchHit
+import java.math.BigDecimal
 
 object VideoDocumentConverter {
 
@@ -39,7 +40,12 @@ object VideoDocumentConverter {
             attachmentTypes = video.attachmentTypes,
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
-            isVoiced = video.isVoiced
+            isVoiced = video.isVoiced,
+            prices = video.prices
+                ?.map {
+                it.key to (it.value.times(BigDecimal.valueOf(100)).longValueExact())
+            }
+                ?.toMap()
         )
     }
 }

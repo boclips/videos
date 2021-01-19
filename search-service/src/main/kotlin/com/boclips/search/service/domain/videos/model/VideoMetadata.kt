@@ -1,5 +1,6 @@
 package com.boclips.search.service.domain.videos.model
 
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -27,5 +28,6 @@ data class VideoMetadata(
     val attachmentTypes: Set<String>?,
     val deactivated: Boolean,
     val ingestedAt: ZonedDateTime,
-    val isVoiced: Boolean?
+    val isVoiced: Boolean?,
+    val prices: Map<String, BigDecimal>?
 )

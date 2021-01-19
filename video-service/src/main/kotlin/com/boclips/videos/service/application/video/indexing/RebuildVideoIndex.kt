@@ -19,7 +19,7 @@ open class RebuildVideoIndex(
 
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
-        videoRepository.streamAll { videos ->
+            videoRepository.streamAll { videos ->
             val hydratedVideos = videos.map { video ->
                 VideoWithPrices(video = video, prices = video.getPrices(organisationsWithPrices))
             }
