@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.service.video.ContentEnrichers

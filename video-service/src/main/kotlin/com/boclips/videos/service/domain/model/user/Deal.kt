@@ -8,7 +8,6 @@ data class Deal(val prices: Prices) {
     data class Prices(
         val videoTypePrices: Map<VideoType, Price>
     ) {
-
         data class Price(
             val amount: BigDecimal,
             val currency: Currency

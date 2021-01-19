@@ -5,22 +5,22 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
+import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
+import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.doThrow
-import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,6 +56,18 @@ class RebuildVideoIndexTest {
                     downloadContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+            )
+        )
+
+        val organisationsClient = OrganisationsClientFake()
+
+        organisationsClient.add(
+            OrganisationResourceFactory.sample(
+                deal = OrganisationResourceFactory.sampleDeal(
+                    prices = DealResource.PricesResource(
+                        videoTypePrices = mapOf("STOCK" to DealResource.PriceResource("666", "USD"))
+                    )
+                )
             )
         )
 
@@ -126,7 +138,8 @@ class RebuildVideoIndexTest {
                 videoId = streamableVideoId,
                 channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     streamableContentPartnerId
-                )
+                ),
+                types = listOf(VideoType.STOCK)
             ),
             TestFactories.createVideo(
                 videoId = downloadableVideoId,

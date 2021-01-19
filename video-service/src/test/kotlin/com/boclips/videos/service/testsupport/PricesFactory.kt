@@ -7,8 +7,7 @@ import com.boclips.videos.service.domain.model.video.VideoType.STOCK
 import java.math.BigDecimal
 import java.util.Currency
 
-object PriceFactory {
-
+object DealPricesFactory {
     private val USD = Currency.getInstance("USD")
 
     fun sample(

@@ -66,7 +66,8 @@ class VideoIndexUpdater(
     }
 
     private fun bulkUpdateIndex(updatedVideos: List<Video>) {
-        videoIndex.upsert(updatedVideos.asSequence())
+        TODO()
+//        videoIndex.upsert(updatedVideos.asSequence())
         logger.info { "Indexed ${updatedVideos.size} videos " }
     }
 
@@ -85,7 +86,8 @@ class VideoIndexUpdater(
     }
 
     private fun updateIndex(updatedVideo: Video) {
-        videoIndex.upsert(sequenceOf(updatedVideo))
+        TODO()
+//        videoIndex.upsert(sequenceOf(updatedVideo))
         logger.info { "Indexed video ${updatedVideo.videoId} " }
     }
 

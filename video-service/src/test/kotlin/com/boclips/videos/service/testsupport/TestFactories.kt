@@ -44,20 +44,11 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.user.RequestContext
-import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAsset
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.user.*
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.infrastructure.collection.CollectionUpdateResult
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.PlaybackDocument
@@ -138,6 +129,13 @@ object TestFactories {
             deactivated = deactivated,
             activeVideoId = activeVideoId
         )
+    }
+
+    fun createVideoWithPrices(
+        video: Video = createVideo(),
+        prices: Map<OrganisationId, Price> = mapOf(OrganisationId(aValidId()) to DealPricesFactory.sample())
+    ): VideoWithPrices {
+        return VideoWithPrices(video = video, prices = prices)
     }
 
     fun createSubject(id: String = aValidId(), name: String = id): Subject =

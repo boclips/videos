@@ -1,14 +1,16 @@
 package com.boclips.videos.service.domain.model.video
 
+import com.boclips.videos.service.domain.model.user.Deal
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.testsupport.PriceFactory
+import com.boclips.videos.service.testsupport.OrganisationFactory
+import com.boclips.videos.service.testsupport.DealPricesFactory
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
-import java.util.Currency
+import java.util.*
 
 class VideoTest {
 
@@ -80,7 +82,7 @@ class VideoTest {
     @Test
     fun `computes prices based on user's organisation video type prices`() {
         val video = createVideo(types = listOf(VideoType.NEWS))
-        val organisationPrices = PriceFactory.sample(
+        val organisationPrices = DealPricesFactory.sample(
             instructional = BigDecimal.valueOf(600),
             news = BigDecimal.ONE,
             stock = BigDecimal.ZERO
@@ -94,7 +96,7 @@ class VideoTest {
     @Test
     fun `throws when no types are defined on a video when getting price`() {
         val video = createVideo(types = emptyList())
-        val organisationPrices = PriceFactory.sample(
+        val organisationPrices = DealPricesFactory.sample(
             instructional = BigDecimal.valueOf(600),
             news = BigDecimal.ONE,
             stock = BigDecimal.ZERO
@@ -108,7 +110,7 @@ class VideoTest {
     @Test
     fun `does not calculate for non boclips hosted video`() {
         val video = createVideo(playback = createYoutubePlayback(), types = listOf(VideoType.NEWS))
-        val organisationPrices = PriceFactory.sample(
+        val organisationPrices = DealPricesFactory.sample(
             instructional = BigDecimal.valueOf(600),
             news = BigDecimal.ONE,
             stock = BigDecimal.ZERO
@@ -116,5 +118,18 @@ class VideoTest {
 
         val price = video.getPrice(organisationPrices = organisationPrices)
         assertThat(price).isNull()
+    }
+
+    @Test
+    fun `retrieves organisation prices for a video`() {
+        val video = createVideo(types = listOf(VideoType.STOCK))
+
+        val organisation = OrganisationFactory.sample(deal = Deal(prices = DealPricesFactory.sample(stock = BigDecimal.TEN)))
+        val organisation2 = OrganisationFactory.sample(deal = Deal(prices = DealPricesFactory.sample(stock = BigDecimal.ONE)))
+
+        val prices = video.getPrices(listOf(organisation, organisation2))
+
+        assertThat(prices[organisation.organisationId]?.amount).isEqualTo(BigDecimal.TEN)
+        assertThat(prices[organisation2.organisationId]?.amount).isEqualTo(BigDecimal.ONE)
     }
 }

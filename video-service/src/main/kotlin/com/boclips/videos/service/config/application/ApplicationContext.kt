@@ -57,10 +57,6 @@ import com.boclips.videos.service.application.video.search.GetVideoById
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
-import com.boclips.videos.service.domain.service.ContentWarningRepository
-import com.boclips.videos.service.domain.service.DisciplineRepository
-import com.boclips.videos.service.domain.service.TagRepository
-import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
@@ -86,6 +82,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.service.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -123,7 +120,8 @@ class ApplicationContext(
     val videoCreationService: VideoCreationService,
     val subjectService: SubjectService,
     val contentWarningRepository: ContentWarningRepository,
-    val contentPackageService: ContentPackageService
+    val contentPackageService: ContentPackageService,
+    val organisationService: OrganisationService
 ) {
     @Bean
     fun searchVideo(
@@ -312,7 +310,8 @@ class ApplicationContext(
     fun rebuildSearchIndex(): RebuildVideoIndex {
         return RebuildVideoIndex(
             videoRepository,
-            videoIndex
+            videoIndex,
+            organisationService
         )
     }
 
