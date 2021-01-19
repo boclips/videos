@@ -20,7 +20,6 @@ import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
 import com.boclips.videos.service.domain.model.video.ChannelFacet
 import com.boclips.videos.service.domain.model.video.DurationFacet
 import com.boclips.videos.service.domain.model.video.Price
-import com.boclips.videos.service.domain.model.video.PricedVideo
 import com.boclips.videos.service.domain.model.video.SubjectFacet
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoCounts
@@ -30,6 +29,7 @@ import com.boclips.videos.service.domain.model.video.VideoTypeFacet
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder

@@ -1,10 +1,9 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
+import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
 import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -26,39 +25,42 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class VideoMetadataConverterTest {
     @Test
     fun `convert instructional video`() {
         val videoId = TestFactories.aValidId()
 
-        val video = TestFactories.createVideo(
-            videoId = videoId,
-            title = "video title",
-            description = "video description",
-            channelName = "content partner",
-            channelId = ChannelId(
-                "content-partner-id"
-            ),
-            playback = TestFactories.createYoutubePlayback(
-                duration = Duration.ofSeconds(10)
-            ),
-            types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
-            keywords = listOf("k1"),
-            releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-            voice = Voice.UnknownVoice(language = null, transcript = "a great transcript"),
-            ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
-            subjects = setOf(
-                Subject(
-                    id = SubjectId(value = "subject-id"),
-                    name = "subject name"
-                )
-            ),
-            subjectsSetManually = true,
-            promoted = true,
-            ratings = emptyList(),
-            attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY)),
-            ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                videoId = videoId,
+                title = "video title",
+                description = "video description",
+                channelName = "content partner",
+                channelId = ChannelId(
+                    "content-partner-id"
+                ),
+                playback = TestFactories.createYoutubePlayback(
+                    duration = Duration.ofSeconds(10)
+                ),
+                types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
+                keywords = listOf("k1"),
+                releasedOn = LocalDate.of(2019, Month.APRIL, 19),
+                voice = Voice.UnknownVoice(language = null, transcript = "a great transcript"),
+                ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
+                subjects = setOf(
+                    Subject(
+                        id = SubjectId(value = "subject-id"),
+                        name = "subject name"
+                    )
+                ),
+                subjectsSetManually = true,
+                promoted = true,
+                ratings = emptyList(),
+                attachments = listOf(AttachmentFactory.sample(type = AttachmentType.ACTIVITY)),
+                ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC)
+            )
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.NONE)
@@ -98,8 +100,10 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `tags news video`() {
-        val video = TestFactories.createVideo(
-            types = listOf(VideoType.NEWS)
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                types = listOf(VideoType.NEWS)
+            )
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -109,10 +113,12 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `it doesn't tag videos without a match`() {
-        val video = TestFactories.createVideo(
-            videoId = TestFactories.aValidId(),
-            title = "garbage title",
-            types = listOf(VideoType.STOCK)
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                title = "garbage title",
+                types = listOf(VideoType.STOCK)
+            )
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -122,9 +128,11 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `converts youtube playback to youtube source type`() {
-        val video = TestFactories.createVideo(
-            playback = TestFactories.createYoutubePlayback(
-                playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123")
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                playback = TestFactories.createYoutubePlayback(
+                    playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123")
+                )
             )
         )
 
@@ -135,9 +143,11 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `converts kaltura playback to boclips source type`() {
-        val video = TestFactories.createVideo(
-            playback = TestFactories.createKalturaPlayback(
-                referenceId = "123"
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                playback = TestFactories.createKalturaPlayback(
+                    referenceId = "123"
+                )
             )
         )
 
@@ -150,9 +160,9 @@ class VideoMetadataConverterTest {
     fun `aggregates ratings for video when converting`() {
         val ratings = listOf(3, 5, 4, 2, 4)
 
-        val video = TestFactories.createVideo(
+        val video = TestFactories.createVideoWithPrices(TestFactories.createVideo(
             ratings = ratings.map { UserRatingFactory.sample(rating = it) }
-        )
+        ))
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 
@@ -164,9 +174,11 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `keeps tags explicitly set on the video`() {
-        val video = TestFactories.createVideo(
-            types = listOf(VideoType.NEWS),
-            tags = listOf(TestFactories.createUserTag(label = "explainer"))
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                types = listOf(VideoType.NEWS),
+                tags = listOf(TestFactories.createUserTag(label = "explainer"))
+            )
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
@@ -176,7 +188,7 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `videos are eligible for streaming based on their content partner`() {
-        val video = TestFactories.createVideo()
+        val video = TestFactories.createVideoWithPrices(TestFactories.createVideo())
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.STREAMING)
 
@@ -187,7 +199,7 @@ class VideoMetadataConverterTest {
 
     @Test
     fun `videos eligible for all based on their content partner`() {
-        val video = TestFactories.createVideo()
+        val video = TestFactories.createVideoWithPrices(TestFactories.createVideo())
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.ALL)
 

@@ -7,8 +7,6 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.NoVideoAssetsException
-import com.boclips.videos.service.domain.model.video.PricedVideo
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import mu.KLogging
 
@@ -28,8 +26,8 @@ class GetVideoUrlAssets(
         }
 
         val videoAssetUrl = videoPlayback
-                .takeIf { it.hasOriginalOrFHDResolution() }
-                ?.let { playbackProvider.getDownloadAssetUrl(videoPlayback.id) }
+            .takeIf { it.hasOriginalOrFHDResolution() }
+            ?.let { playbackProvider.getDownloadAssetUrl(videoPlayback.id) }
 
         val downloadableCaption = playbackProvider.getHumanGeneratedCaption(videoPlayback.id)
 

@@ -7,10 +7,9 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
-import com.boclips.videos.service.domain.model.video.PricedVideo
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -26,6 +25,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videoRetrievalService: VideoRetrievalService
+
     @Autowired
     lateinit var retrievePlayableVideos: RetrievePlayableVideos
 
@@ -73,7 +73,6 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 ),
                 UserFactory.sample()
             )
-
 
         val activeVideo = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
@@ -190,8 +189,10 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThrows<VideoPlaybackNotFound> {
-            createVideo(createRequest,
-                UserFactory.sample())
+            createVideo(
+                createRequest,
+                UserFactory.sample()
+            )
         }
     }
 

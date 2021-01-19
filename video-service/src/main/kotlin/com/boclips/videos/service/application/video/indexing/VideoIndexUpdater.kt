@@ -6,9 +6,11 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
+import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.video.converters.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 
@@ -16,7 +18,8 @@ class VideoIndexUpdater(
     private val videoRepository: VideoRepository,
     private val videoChannelService: VideoChannelService,
     private val videoIndex: VideoIndex,
-    private val legacyVideoSearchService: LegacyVideoSearchService
+    private val legacyVideoSearchService: LegacyVideoSearchService,
+    private val organisationService: OrganisationService
 ) {
     companion object : KLogging()
 
@@ -66,7 +69,13 @@ class VideoIndexUpdater(
     }
 
     private fun bulkUpdateIndex(updatedVideos: List<Video>) {
-        videoIndex.upsert(updatedVideos.asSequence())
+        val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
+
+        val hydratedVideos = updatedVideos.map { video ->
+            VideoWithPrices(video = video, prices = video.getPrices(organisationsWithPrices))
+        }
+
+        videoIndex.upsert(hydratedVideos.asSequence())
         logger.info { "Indexed ${updatedVideos.size} videos " }
     }
 
@@ -85,7 +94,12 @@ class VideoIndexUpdater(
     }
 
     private fun updateIndex(updatedVideo: Video) {
-        videoIndex.upsert(sequenceOf(updatedVideo))
+        val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
+
+        val videoWithPrices =
+            VideoWithPrices(video = updatedVideo, prices = updatedVideo.getPrices(organisationsWithPrices))
+
+        videoIndex.upsert(sequenceOf(videoWithPrices))
         logger.info { "Indexed video ${updatedVideo.videoId} " }
     }
 

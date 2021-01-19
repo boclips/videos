@@ -11,7 +11,6 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 
 interface BaseVideo {
-
     val videoId: VideoId
     val playback: VideoPlayback
     val channel: Channel

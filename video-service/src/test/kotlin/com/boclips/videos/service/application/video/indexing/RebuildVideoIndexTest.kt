@@ -5,14 +5,20 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
+import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
+import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationService
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
@@ -29,6 +35,7 @@ import org.junit.jupiter.api.assertThrows
 class RebuildVideoIndexTest {
     lateinit var index: VideoIndex
     lateinit var videoChannelService: VideoChannelService
+    lateinit var organisationService: OrganisationService
 
     val streamableContentPartnerId = TestFactories.aValidId()
     val downloadContentPartnerId = TestFactories.aValidId()
@@ -59,12 +66,26 @@ class RebuildVideoIndexTest {
             )
         )
 
+        val organisationsClient = OrganisationsClientFake()
+
+        organisationsClient.add(
+            OrganisationResourceFactory.sample(
+                deal = OrganisationResourceFactory.sampleDeal(
+                    prices = DealResource.PricesResource(
+                        videoTypePrices = mapOf("STOCK" to DealResource.PriceResource("666", "USD"))
+                    )
+                )
+            )
+        )
+
         videoChannelService = VideoChannelService(channelRepository)
         index = DefaultVideoSearch(
             inMemorySearchService,
             inMemorySearchService,
             videoChannelService
         )
+
+        organisationService = ApiOrganisationService(organisationsClient)
     }
 
     @Test
@@ -73,7 +94,7 @@ class RebuildVideoIndexTest {
         val videoId2 = TestFactories.aValidId()
         val videoId3 = TestFactories.aValidId()
 
-        index.upsert(sequenceOf(TestFactories.createVideo(videoId = videoId1)))
+        index.upsert(sequenceOf(TestFactories.createVideoWithPrices(TestFactories.createVideo(videoId = videoId1))))
 
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
@@ -92,7 +113,8 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            index
+            index,
+            organisationService
         )
 
         rebuildSearchIndex.invoke()
@@ -126,7 +148,8 @@ class RebuildVideoIndexTest {
                 videoId = streamableVideoId,
                 channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     streamableContentPartnerId
-                )
+                ),
+                types = listOf(VideoType.STOCK)
             ),
             TestFactories.createVideo(
                 videoId = downloadableVideoId,
@@ -138,7 +161,8 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            index
+            index,
+            organisationService
         )
 
         rebuildSearchIndex.invoke()
@@ -169,7 +193,8 @@ class RebuildVideoIndexTest {
 
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
-            index
+            index,
+            organisationService
         )
 
         assertThrows<MongoClientException> {

@@ -1,12 +1,11 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.testsupport.PriceFactory
+import com.boclips.videos.service.testsupport.DealPricesFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.*
-import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
 
 class PriceTest {
 
@@ -17,7 +16,7 @@ class PriceTest {
 
         @Test
         fun `get organisation price for INSTRUCTIONAL_CLIPS`() {
-            val prices = PriceFactory.sample(
+            val prices = DealPricesFactory.sample(
                     instructional = BigDecimal.valueOf(600),
                     news = BigDecimal.ONE,
                     stock = BigDecimal.ZERO
@@ -30,7 +29,7 @@ class PriceTest {
 
         @Test
         fun `get organisation price for NEWS`() {
-            val prices = PriceFactory.sample(
+            val prices = DealPricesFactory.sample(
                     instructional = BigDecimal.TEN,
                     news = BigDecimal.valueOf(300),
                     stock = BigDecimal.ZERO
@@ -43,7 +42,7 @@ class PriceTest {
 
         @Test
         fun `get organisation price for STOCK`() {
-            val prices = PriceFactory.sample(
+            val prices = DealPricesFactory.sample(
                     instructional = BigDecimal.TEN,
                     news = BigDecimal.ONE,
                     stock = BigDecimal.valueOf(150)
@@ -56,7 +55,7 @@ class PriceTest {
 
         @Test
         fun `gets the most expensive price from organisation ones when multiple content types`() {
-            val prices = PriceFactory.sample(
+            val prices = DealPricesFactory.sample(
                     instructional = BigDecimal.valueOf(7000),
                     news = BigDecimal.valueOf(300),
                     stock = BigDecimal.valueOf(150)
@@ -69,7 +68,7 @@ class PriceTest {
 
         @Test
         fun `returns no price when no video type is given`() {
-            val prices = PriceFactory.sample(
+            val prices = DealPricesFactory.sample(
                     instructional = BigDecimal.valueOf(600),
                     news = BigDecimal.valueOf(300),
                     stock = BigDecimal.valueOf(1500)

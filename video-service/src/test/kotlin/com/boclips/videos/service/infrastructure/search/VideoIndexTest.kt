@@ -18,15 +18,19 @@ class VideoIndexTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `upsert inserts videos`() {
-        val videoNews = TestFactories.createVideo(
-            videoId = TestFactories.aValidId(),
-            title = "isNews",
-            types = listOf(VideoType.NEWS)
+        val videoNews = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                title = "isNews",
+                types = listOf(VideoType.NEWS)
+            )
         )
-        val videoStock = TestFactories.createVideo(
-            videoId = TestFactories.aValidId(),
-            title = "stock",
-            types = listOf(VideoType.STOCK)
+        val videoStock = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                videoId = TestFactories.aValidId(),
+                title = "stock",
+                types = listOf(VideoType.STOCK)
+            )
         )
 
         index.upsert(sequenceOf(videoNews, videoStock))
