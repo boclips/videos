@@ -35,7 +35,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
-                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
+                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.price.amount", equalTo(600)))
@@ -81,7 +81,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
-                .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
+                .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.price.amount", equalTo(1000)))
@@ -127,7 +127,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/v1/videos")
-                .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.PUBLISHER)
+                .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
         )
             .andDo(print())
             .andExpect(status().isOk)

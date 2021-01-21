@@ -9,7 +9,7 @@ import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_SERVICE
 import com.boclips.videos.service.config.security.UserRoles.E2E
 import com.boclips.videos.service.config.security.UserRoles.HQ
 import com.boclips.videos.service.config.security.UserRoles.LEGACY_PUBLISHER
-import com.boclips.videos.service.config.security.UserRoles.PUBLISHER
+import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_WEB_APP
 
 interface ProjectionResolver {
     fun resolveProjection(): Class<out ResourceProjection>
@@ -19,7 +19,7 @@ class RoleBasedProjectionResolver : ProjectionResolver {
     override fun resolveProjection(): Class<out ResourceProjection> {
         return when {
             currentUserHasAnyRole(LEGACY_PUBLISHER, HQ, BOCLIPS_SERVICE, E2E) -> BoclipsInternalProjection::class.java
-            currentUserHasAnyRole(PUBLISHER) -> PricingProjection::class.java
+            currentUserHasAnyRole(BOCLIPS_WEB_APP) -> PricingProjection::class.java
             else -> PublicApiProjection::class.java
         }
     }

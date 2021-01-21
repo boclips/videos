@@ -8,7 +8,7 @@ import com.boclips.videos.service.config.security.UserRoles.API
 import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_SERVICE
 import com.boclips.videos.service.config.security.UserRoles.HQ
 import com.boclips.videos.service.config.security.UserRoles.LEGACY_PUBLISHER
-import com.boclips.videos.service.config.security.UserRoles.PUBLISHER
+import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_WEB_APP
 import com.boclips.videos.service.config.security.UserRoles.TEACHER
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -30,7 +30,7 @@ class ProjectionResolverTest {
             arrayOf(LEGACY_PUBLISHER, API) to BoclipsInternalProjection::class,
             arrayOf(BOCLIPS_SERVICE) to BoclipsInternalProjection::class,
             emptyArray<String>() to PublicApiProjection::class,
-            arrayOf(PUBLISHER) to PricingProjection::class
+            arrayOf(BOCLIPS_WEB_APP) to PricingProjection::class
         )
     }
 
