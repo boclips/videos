@@ -82,6 +82,7 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
@@ -121,7 +122,8 @@ class ApplicationContext(
     val subjectService: SubjectService,
     val contentWarningRepository: ContentWarningRepository,
     val contentPackageService: ContentPackageService,
-    val organisationService: OrganisationService
+    val organisationService: OrganisationService,
+    val priceComputingService: PriceComputingService
 ) {
     @Bean
     fun searchVideo(
@@ -134,7 +136,8 @@ class ApplicationContext(
         getVideosByQuery,
         videoRepository,
         playbackUpdateService,
-        userService
+        userService,
+        priceComputingService
     )
 
     @Bean
@@ -311,7 +314,8 @@ class ApplicationContext(
         return RebuildVideoIndex(
             videoRepository,
             videoIndex,
-            organisationService
+            organisationService,
+            priceComputingService
         )
     }
 
@@ -452,7 +456,8 @@ class ApplicationContext(
             videoChannelService,
             videoIndex,
             legacyVideoSearchService,
-            organisationService
+            organisationService,
+            priceComputingService
         )
     }
 

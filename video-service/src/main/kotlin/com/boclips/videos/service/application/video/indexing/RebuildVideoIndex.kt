@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.video.VideoIndex
@@ -10,7 +11,8 @@ import mu.KLogging
 open class RebuildVideoIndex(
     private val videoRepository: VideoRepository,
     private val videoIndex: VideoIndex,
-    private val organisationService: OrganisationService
+    private val organisationService: OrganisationService,
+    private val priceComputingService: PriceComputingService
 ) {
     companion object : KLogging()
 
@@ -21,7 +23,11 @@ open class RebuildVideoIndex(
 
             videoRepository.streamAll { videos ->
             val hydratedVideos = videos.map { video ->
-                VideoWithPrices(video = video, prices = video.getPrices(organisationsWithPrices))
+                val prices = priceComputingService.computeVideoOrganisationPrices(
+                        video = video,
+                        organisationsPrices = organisationsWithPrices
+                )
+                VideoWithPrices(video = video, prices = prices)
             }
 
             videoIndex.safeRebuildIndex(hydratedVideos, notifier)

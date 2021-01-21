@@ -12,6 +12,7 @@ import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.response.organisation.DealResource
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.OrganisationService
@@ -36,6 +37,7 @@ class RebuildVideoIndexTest {
     lateinit var index: VideoIndex
     lateinit var videoChannelService: VideoChannelService
     lateinit var organisationService: OrganisationService
+    lateinit var priceComputingService: PriceComputingService
 
     val streamableContentPartnerId = TestFactories.aValidId()
     val downloadContentPartnerId = TestFactories.aValidId()
@@ -86,6 +88,8 @@ class RebuildVideoIndexTest {
         )
 
         organisationService = ApiOrganisationService(organisationsClient)
+
+        priceComputingService = PriceComputingService()
     }
 
     @Test
@@ -114,7 +118,8 @@ class RebuildVideoIndexTest {
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
             index,
-            organisationService
+            organisationService,
+            priceComputingService
         )
 
         rebuildSearchIndex.invoke()
@@ -162,7 +167,8 @@ class RebuildVideoIndexTest {
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
             index,
-            organisationService
+            organisationService,
+            priceComputingService
         )
 
         rebuildSearchIndex.invoke()
@@ -194,7 +200,8 @@ class RebuildVideoIndexTest {
         val rebuildSearchIndex = RebuildVideoIndex(
             videoRepository,
             index,
-            organisationService
+            organisationService,
+            priceComputingService
         )
 
         assertThrows<MongoClientException> {

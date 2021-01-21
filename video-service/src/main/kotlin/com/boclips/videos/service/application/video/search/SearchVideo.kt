@@ -6,12 +6,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.BaseVideo
-import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.user.UserService
@@ -26,7 +21,8 @@ class SearchVideo(
     private val getVideosByQuery: GetVideosByQuery,
     private val videoRepository: VideoRepository,
     private val playbackUpdateService: PlaybackUpdateService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val priceComputingService: PriceComputingService
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
@@ -111,7 +107,12 @@ class SearchVideo(
         user: User
     ): ResultsPage<PricedVideo, VideoCounts> {
         val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
-        val pricedVideos = retrievedVideos.elements.map { PricedVideo(it, it.getPrice(videoTypePrices)) }
+        val pricedVideos = retrievedVideos.elements.map {
+            PricedVideo(
+                it,
+                priceComputingService.computeVideoPrice(it, videoTypePrices)
+            )
+        }
         return ResultsPage(
             elements = pricedVideos,
             counts = retrievedVideos.counts,
@@ -124,7 +125,8 @@ class SearchVideo(
         user: User
     ): PricedVideo {
         val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
-        return PricedVideo(retrievedVideo, retrievedVideo.getPrice(videoTypePrices))
+        val videoPrice = priceComputingService.computeVideoPrice(retrievedVideo, videoTypePrices)
+        return PricedVideo(retrievedVideo, videoPrice)
     }
 
     private fun resolveToAssetId(videoIdParam: String?, throwIfDoesNotExist: Boolean = true): VideoId? {

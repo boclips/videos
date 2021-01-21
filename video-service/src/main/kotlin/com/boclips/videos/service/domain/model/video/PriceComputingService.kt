@@ -1,0 +1,69 @@
+package com.boclips.videos.service.domain.model.video
+
+import com.boclips.videos.service.domain.model.user.Deal.Prices
+import com.boclips.videos.service.domain.model.user.Organisation
+import com.boclips.videos.service.domain.model.user.OrganisationId
+import com.boclips.videos.service.domain.model.video.VideoType.INSTRUCTIONAL_CLIPS
+import com.boclips.videos.service.domain.model.video.VideoType.NEWS
+import com.boclips.videos.service.domain.model.video.VideoType.STOCK
+import java.math.BigDecimal
+import java.util.Currency
+import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
+
+class PriceComputingService {
+
+    fun computeVideoPrice(video: Video, organisationPrices: Prices?): Price? {
+        return if (video.isBoclipsHosted()) {
+            if (video.types.isEmpty()) throw VideoMissingTypeException(video.videoId)
+            computePrice(video, organisationPrices)
+        } else {
+            null
+        }
+    }
+
+    fun computeVideoOrganisationPrices(video: Video, organisationsPrices: List<Organisation>): Map<OrganisationId, Price>? {
+        if (!video.isBoclipsHosted()) {
+            return null
+        }
+
+        return organisationsPrices.mapNotNull { organisation ->
+            computeVideoPrice(video, organisation.deal.prices)?.let { price ->
+                organisation.organisationId to price
+            }
+        }.toMap()
+    }
+
+    private fun computePrice(video: Video, prices: Prices?): Price? {
+        val videoTypes = video.types
+        val videoTypePrices = prices?.videoTypePrices ?: emptyMap()
+        return videoTypes
+            .map { priceForVideoType(it, videoTypePrices) }
+            .requireNoNulls()
+            .maxWithOrNull(compareBy { it.amount })
+    }
+
+    private fun priceForVideoType(
+        videoType: VideoType,
+        videoTypePrices: Map<VideoType, OrganisationPrice>
+    ): Price? {
+        return buildPrice(videoTypePrices[videoType]) ?: DEFAULT_PRICES[videoType]
+    }
+
+    private fun buildPrice(organisationPrice: OrganisationPrice?): Price? {
+        return organisationPrice?.let {
+            Price(
+                amount = organisationPrice.amount,
+                currency = organisationPrice.currency
+            )
+        }
+    }
+
+    companion object {
+        private val USD = Currency.getInstance("USD")
+        private val DEFAULT_PRICES = mapOf(
+                INSTRUCTIONAL_CLIPS to Price(amount = BigDecimal(600), currency = USD),
+                NEWS to Price(amount = BigDecimal(300), currency = USD),
+                STOCK to Price(amount = BigDecimal(150), currency = USD)
+        )
+    }
+}

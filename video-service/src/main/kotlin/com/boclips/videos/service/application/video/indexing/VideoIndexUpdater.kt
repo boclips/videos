@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.channel.DistributionMetho
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
@@ -19,7 +20,8 @@ class VideoIndexUpdater(
     private val videoChannelService: VideoChannelService,
     private val videoIndex: VideoIndex,
     private val legacyVideoSearchService: LegacyVideoSearchService,
-    private val organisationService: OrganisationService
+    private val organisationService: OrganisationService,
+    private val priceComputingService: PriceComputingService
 ) {
     companion object : KLogging()
 
@@ -72,7 +74,11 @@ class VideoIndexUpdater(
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
         val hydratedVideos = updatedVideos.map { video ->
-            VideoWithPrices(video = video, prices = video.getPrices(organisationsWithPrices))
+            val prices = priceComputingService.computeVideoOrganisationPrices(
+                    video = video,
+                    organisationsPrices = organisationsWithPrices
+            )
+            VideoWithPrices(video = video, prices = prices)
         }
 
         videoIndex.upsert(hydratedVideos.asSequence())
@@ -96,8 +102,11 @@ class VideoIndexUpdater(
     private fun updateIndex(updatedVideo: Video) {
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
-        val videoWithPrices =
-            VideoWithPrices(video = updatedVideo, prices = updatedVideo.getPrices(organisationsWithPrices))
+        val prices = priceComputingService.computeVideoOrganisationPrices(
+                video = updatedVideo,
+                organisationsPrices = organisationsWithPrices
+        )
+        val videoWithPrices = VideoWithPrices(video = updatedVideo, prices = prices)
 
         videoIndex.upsert(sequenceOf(videoWithPrices))
         logger.info { "Indexed video ${updatedVideo.videoId} " }

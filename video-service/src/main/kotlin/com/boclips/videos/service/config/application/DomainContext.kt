@@ -24,6 +24,7 @@ import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.YoutubeProperties
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
@@ -239,4 +240,7 @@ class DomainContext(
 
     @Bean
     fun eventService(): EventService = EventService(eventBus)
+
+    @Bean
+    fun priceComputingService(): PriceComputingService = PriceComputingService()
 }

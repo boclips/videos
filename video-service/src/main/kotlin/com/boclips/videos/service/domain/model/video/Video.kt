@@ -5,13 +5,10 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
-import com.boclips.videos.service.domain.model.user.Organisation
-import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import com.boclips.videos.service.domain.model.user.Deal.Prices as OrganisationPrices
 
 data class Video(
     override val videoId: VideoId,
@@ -65,26 +62,5 @@ data class Video(
 
     override fun isVoiced(): Boolean? {
         return voice.isVoiced()
-    }
-
-    fun getPrice(organisationPrices: OrganisationPrices?): Price? {
-        return if (isBoclipsHosted()) {
-            if (types.isEmpty()) throw VideoMissingTypeException(videoId)
-            Price.computePrice(types, organisationPrices)
-        } else {
-            null
-        }
-    }
-
-    fun getPrices(organisationsPrices: List<Organisation>): Map<OrganisationId, Price>? {
-        if (!isBoclipsHosted()) {
-            return null
-        }
-
-        return organisationsPrices.mapNotNull { organisation ->
-            getPrice(organisation.deal.prices)?.let { price ->
-                organisation.organisationId to price
-            }
-        }.toMap()
     }
 }
