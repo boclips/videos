@@ -21,13 +21,13 @@ open class RebuildVideoIndex(
 
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
-            videoRepository.streamAll { videos ->
+        videoRepository.streamAll { videos ->
             val hydratedVideos = videos.map { video ->
-                val prices = priceComputingService.computeVideoOrganisationPrices(
-                        video = video,
-                        organisationsPrices = organisationsWithPrices
-                )
-                VideoWithPrices(video = video, prices = prices)
+                priceComputingService.computeVideoOrganisationPrices(
+                    video = video,
+                    organisationsPrices = organisationsWithPrices
+                )?.let { VideoWithPrices(video = video, prices = it) }
+                    ?: video
             }
 
             videoIndex.safeRebuildIndex(hydratedVideos, notifier)

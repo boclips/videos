@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.OrganisationId
+import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
@@ -23,12 +24,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.Duration
-import java.time.LocalDate
-import java.time.Month
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.util.Currency
+import java.time.*
+import java.util.*
 import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class VideoMetadataConverterTest {
@@ -108,7 +105,11 @@ class VideoMetadataConverterTest {
                 deactivated = false,
                 types = listOf(SearchVideoType.INSTRUCTIONAL),
                 ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-                prices = mapOf("org-1" to BigDecimal.valueOf(9.99), "org-2" to BigDecimal.valueOf(15.99))
+                prices = mapOf(
+                    "DEFAULT" to BigDecimal.valueOf(25),
+                    "org-1" to BigDecimal.valueOf(9.99),
+                    "org-2" to BigDecimal.valueOf(15.99)
+                )
             )
         )
     }
@@ -220,5 +221,12 @@ class VideoMetadataConverterTest {
 
         assertThat(videoMetadata.eligibleForStream).isTrue()
         assertThat(videoMetadata.eligibleForDownload).isTrue()
+    }
+
+    @Test
+    fun `can handle null prices`() {
+        val videoWithNoPrices = TestFactories.createVideo()
+        val metadata = VideoMetadataConverter.convert(videoWithNoPrices, Availability.ALL)
+        assertThat(metadata.prices).isNull()
     }
 }

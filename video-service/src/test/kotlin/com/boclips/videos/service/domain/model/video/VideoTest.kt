@@ -1,17 +1,9 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.user.Deal
-import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.testsupport.DealPricesFactory
-import com.boclips.videos.service.testsupport.OrganisationFactory
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
-import com.boclips.videos.service.testsupport.TestFactories.createYoutubePlayback
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.math.BigDecimal
-import java.util.Currency
 
 class VideoTest {
     @Test

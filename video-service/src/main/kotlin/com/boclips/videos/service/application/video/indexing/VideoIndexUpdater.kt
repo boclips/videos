@@ -74,12 +74,13 @@ class VideoIndexUpdater(
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
         val hydratedVideos = updatedVideos.map { video ->
-            val prices = priceComputingService.computeVideoOrganisationPrices(
-                    video = video,
-                    organisationsPrices = organisationsWithPrices
-            )
-            VideoWithPrices(video = video, prices = prices)
+            priceComputingService.computeVideoOrganisationPrices(
+                video = video,
+                organisationsPrices = organisationsWithPrices
+            )?.let { VideoWithPrices(video = video, prices = it) }
+                ?: video
         }
+
 
         videoIndex.upsert(hydratedVideos.asSequence())
         logger.info { "Indexed ${updatedVideos.size} videos " }
@@ -102,13 +103,13 @@ class VideoIndexUpdater(
     private fun updateIndex(updatedVideo: Video) {
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
-        val prices = priceComputingService.computeVideoOrganisationPrices(
-                video = updatedVideo,
-                organisationsPrices = organisationsWithPrices
-        )
-        val videoWithPrices = VideoWithPrices(video = updatedVideo, prices = prices)
+       val video = priceComputingService.computeVideoOrganisationPrices(
+            video = updatedVideo,
+            organisationsPrices = organisationsWithPrices
+        )?.let { VideoWithPrices(video = updatedVideo, prices = it) }
+            ?: updatedVideo
 
-        videoIndex.upsert(sequenceOf(videoWithPrices))
+        videoIndex.upsert(sequenceOf(video))
         logger.info { "Indexed video ${updatedVideo.videoId} " }
     }
 

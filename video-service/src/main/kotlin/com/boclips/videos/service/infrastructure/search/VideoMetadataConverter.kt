@@ -8,16 +8,15 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.domain.model.user.OrganisationId
+import com.boclips.videos.service.domain.model.user.OrganisationsPrices
 import com.boclips.videos.service.domain.model.video.BaseVideo
-import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 import java.math.BigDecimal
 
 object VideoMetadataConverter {
-    fun convert(video: VideoWithPrices, videoAvailability: Availability): VideoMetadata {
+    fun convert(video: BaseVideo, videoAvailability: Availability): VideoMetadata {
         val subjects = video.subjects.items
             .map { SubjectMetadata(id = it.id.value, name = it.name) }
             .toSet()
@@ -50,14 +49,13 @@ object VideoMetadataConverter {
             attachmentTypes = attachmentTypes(video.attachments),
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
-            prices = convertPrices(video.prices)
+            prices = if (video is VideoWithPrices) convertPrices(video.prices) else null
         )
     }
 
-    private fun convertPrices (prices: Map<OrganisationId, Price>?): Map<String, BigDecimal>? {
-        return prices?.map {
-            it.key.value to it.value.amount
-        }?.toMap()
+    private fun convertPrices(prices: OrganisationsPrices): Map<String, BigDecimal> {
+        val default = "DEFAULT" to prices.default.amount
+        return mapOf(default) + (prices.prices?.map { it.key.value to it.value.amount }?.toMap() ?: emptyMap())
     }
 
     private fun tagsFrom(video: BaseVideo): List<String> {

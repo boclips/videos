@@ -151,7 +151,8 @@ object TestFactories {
     ): VideoWithPrices {
         return VideoWithPrices(
             video = video,
-            prices = prices
+            prices = OrganisationsPrices(prices = prices, default = Price(BigDecimal.valueOf(25),
+                Currency.getInstance("USD")))
         )
     }
 

@@ -32,6 +32,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
 
 class RebuildVideoIndexTest {
     lateinit var index: VideoIndex
@@ -72,6 +73,7 @@ class RebuildVideoIndexTest {
 
         organisationsClient.add(
             OrganisationResourceFactory.sample(
+                id = "an-organisation-id",
                 deal = OrganisationResourceFactory.sampleDeal(
                     prices = DealResource.PricesResource(
                         videoTypePrices = mapOf("STOCK" to DealResource.PriceResource("666", "USD"))
