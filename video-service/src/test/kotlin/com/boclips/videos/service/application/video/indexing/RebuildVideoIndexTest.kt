@@ -129,20 +129,16 @@ class RebuildVideoIndexTest {
         val searchRequest = PaginatedIndexSearchRequest(
             VideoQuery(
                 userQuery = UserQuery(
-                    ids = setOf(
-                        videoId1,
-                        videoId2,
-                        videoId3
-                    )
+                    organisationPriceFilter = "an-organisation-id" to setOf(BigDecimal.ONE)
                 ),
                 videoAccessRuleQuery = VideoAccessRuleQuery()
             )
         )
         val results = index.search(searchRequest)
 
-        assertThat(results.elements).doesNotContain(videoId1)
-        assertThat(results.elements).contains(videoId2)
-        assertThat(results.elements).contains(videoId3)
+        assertThat(results.elements).contains(videoId1)
+        assertThat(results.elements).doesNotContain(videoId2)
+        assertThat(results.elements).doesNotContain(videoId3)
     }
 
     @Test

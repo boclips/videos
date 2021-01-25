@@ -17,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.Duration
 
 class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -992,6 +993,51 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     )
                 )
                 assertThat(results.counts.getFacetCounts(FacetType.VideoTypes)).contains(Count(id = "news", hits = 1))
+            }
+        }
+
+        @Nested
+        inner class PricesFacet {
+            @Test
+            fun `returns counts for all prices without filter`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", prices = mapOf("the-org-im-in" to BigDecimal.valueOf(10.99), "DEFAULT" to BigDecimal.valueOf(14.99))
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2", title = "candy banana apple", prices = mapOf("the-other-org-1" to BigDecimal.valueOf(20.99), "DEFAULT" to BigDecimal.valueOf(10.99))
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3", title = "candy apple", prices = mapOf("the-other-org-2" to BigDecimal.valueOf(10.99), "DEFAULT" to BigDecimal.valueOf(14.99))
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "4", title = "banana apple candy", prices = mapOf("the-org-im-in" to BigDecimal.valueOf(19.99), "DEFAULT" to BigDecimal.valueOf(10.99))
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList(),
+                                organisationId = "the-org-im-in"
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(4)
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 2))
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1999", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1499", hits = 1))
             }
         }
     }
