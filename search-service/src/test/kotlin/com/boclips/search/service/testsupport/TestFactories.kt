@@ -41,7 +41,7 @@ object SearchableVideoMetadataFactory {
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
         isVoiced: Boolean? = null,
-        prices: Map<String, BigDecimal>? = null
+        prices: Map<String, BigDecimal>? = mapOf("DEFAULT" to BigDecimal.valueOf(14.99))
     ) = VideoMetadata(
         id = id,
         title = title,

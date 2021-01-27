@@ -1,11 +1,14 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.video.VideosSearched
+import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -76,7 +79,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by query`() {
-        mockMvc.perform(get("/v1/videos?query=jobs").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=jobs").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("elephants took out jobs")))
@@ -103,7 +106,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val channelId = saveChannel(name = "test").id
         val videoId = saveVideo(contentProviderId = channelId.value)
 
-        mockMvc.perform(get("/v1/videos?channel=${channelId.value}").asApiUser())
+        mockMvc.perform(get("/v1/videos?channel=${channelId.value}").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId.value)))
@@ -123,7 +126,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         ).value
         val channel = getChannel(contentProviderName)
 
-        mockMvc.perform(get("/v1/videos?channel=${channel.id.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?channel=${channel.id.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -135,7 +138,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val stockVideoId = saveVideo(title = "a stock video content", types = listOf(VideoType.STOCK))
         saveVideo(title = "this is a news video content", types = listOf(VideoType.NEWS))
 
-        mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&type=STOCK").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
@@ -157,7 +160,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val otherVideo = saveVideo(title = "Video with tags 3")
         tagVideo(TagVideoRequest(videoId = otherVideo.value, tagUrl = otherTagUrl), testUser)
 
-        mockMvc.perform(get("/v1/videos?query=tags&best_for=explainer").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=tags&best_for=explainer").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(
@@ -176,7 +179,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setPromoted(promotedVideoId.value, true)
         setPromoted(unpromotedVideoId.value, false)
 
-        mockMvc.perform(get("/v1/videos?promoted=true").asTeacher())
+        mockMvc.perform(get("/v1/videos?promoted=true").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(promotedVideoId.value)))
@@ -197,7 +200,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
                 .asBoclipsEmployee()
         )
 
-        mockMvc.perform(get("/v1/videos?query=subject&subjects_set_manually=true").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=subject&subjects_set_manually=true").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(editedVideo.value)))
@@ -205,7 +208,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by specified duration lower and upper bound`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&duration_min=PT0M&duration_max=PT2M").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&duration_min=PT0M&duration_max=PT2M").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -213,7 +216,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by multiple durations`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&duration=PT0M-PT2M,PT2M-PT5M").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&duration=PT0M-PT2M,PT2M-PT5M").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -221,7 +224,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by single duration`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&duration=PT7M").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&duration=PT7M").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -229,7 +232,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by single age range`() {
-        mockMvc.perform(get("/v1/videos?age_range=5-7").asTeacher())
+        mockMvc.perform(get("/v1/videos?age_range=5-7").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -237,7 +240,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by multiple age ranges`() {
-        mockMvc.perform(get("/v1/videos?age_range=5-7&age_range=7-10").asTeacher())
+        mockMvc.perform(get("/v1/videos?age_range=5-7&age_range=7-10").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -246,7 +249,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by age range lower and upper bound`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&age_range_min=5&age_range_max=7").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&age_range_min=5&age_range_max=7").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -254,7 +257,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by source`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&source=boclips").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&source=boclips").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -262,7 +265,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by video id`() {
-        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId").asTeacher())
+        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -270,7 +273,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by video ids`() {
-        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId&id=$youtubeVideoId").asTeacher())
+        mockMvc.perform(get("/v1/videos?id=$kalturaVideoId&id=$youtubeVideoId").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -279,7 +282,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by content partner`() {
-        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2").asTeacher())
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -287,7 +290,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by channel`() {
-        mockMvc.perform(get("/v1/videos?channel=enabled-cp2").asTeacher())
+        mockMvc.perform(get("/v1/videos?channel=enabled-cp2").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -305,7 +308,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             legalRestrictions = "None"
         ).value
 
-        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&content_partner=cp3").asTeacher())
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&content_partner=cp3").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -324,7 +327,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             legalRestrictions = "None"
         ).value
 
-        mockMvc.perform(get("/v1/videos?channel=enabled-cp2&channel=cp3").asTeacher())
+        mockMvc.perform(get("/v1/videos?channel=enabled-cp2&channel=cp3").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -347,7 +350,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             legalRestrictions = "None"
         ).value
 
-        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&channel=cp3").asTeacher())
+        mockMvc.perform(get("/v1/videos?content_partner=enabled-cp2&channel=cp3").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
@@ -356,7 +359,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by specified released data`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -377,7 +380,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val subjectId = saveSubject("Maths").id
         setVideoSubjects(videoId, subjectId)
 
-        mockMvc.perform(get("/v1/videos?query=elephants&subject=${subjectId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&subject=${subjectId.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId)))
@@ -398,7 +401,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         val subjectId = saveSubject("Maths").id
         setVideoSubjects(videoId, subjectId)
 
-        mockMvc.perform(get("/v1/videos?subject=${subjectId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?subject=${subjectId.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoId)))
@@ -415,7 +418,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setVideoSubjects(mathsVideoId, mathsId)
         setVideoSubjects(englishVideoId, englishId)
 
-        mockMvc.perform(get("/v1/videos?subject=${mathsId.value}&subject=${englishId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?subject=${mathsId.value}&subject=${englishId.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
@@ -433,7 +436,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setVideoSubjects(mathsVideoId, mathsId)
         setVideoSubjects(englishVideoId, englishId)
 
-        mockMvc.perform(get("/v1/videos?subject=${mathsId.value},${englishId.value}").asTeacher())
+        mockMvc.perform(get("/v1/videos?subject=${mathsId.value},${englishId.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(mathsVideoId)))
@@ -463,7 +466,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             videoId = videoWithLessonPlan
         )
 
-        mockMvc.perform(get("/v1/videos?resource_types=LESSON_PLAN").asTeacher())
+        mockMvc.perform(get("/v1/videos?resource_types=LESSON_PLAN").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithLessonPlan.value)))
@@ -495,14 +498,14 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setRating(thirdVideoId, 3)
 
         // first page
-        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=0").asTeacher())
+        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=0").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(secondTitle)))
             .andExpect(jsonPath("$._embedded.videos[1].title", equalTo(thirdTitle)))
 
         // second page
-        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=1").asTeacher())
+        mockMvc.perform(get("/v1/videos?sort_by=RATING&size=2&page=1").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo(firstTitle)))
@@ -514,7 +517,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         saveVideo(title = "newer ingested video")
         saveVideo(title = "newest ingested video")
 
-        mockMvc.perform(get("/v1/videos?query=ingested&sort_by=INGEST_ASC&size=3").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=ingested&sort_by=INGEST_ASC&size=3").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("oldest ingested video")))
@@ -524,7 +527,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `returns 400 with invalid source`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&source=invalidoops").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
@@ -532,17 +535,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `returns 400 with invalid duration`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&duration_min=invalidoops").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&duration_min=invalidoops").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
     }
 
     @Test
     fun `returns 400 with invalid date filter`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=invalidoops").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=elephants&released_date_to=invalidoops").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isBadRequest)
             .andExpectApiErrorPayload()
     }
@@ -567,7 +570,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         val resultActions = mockMvc.perform(
             get("/v1/videos?query=video&sort_by=RELEASE_DATE")
-                .contentType(MediaType.APPLICATION_JSON).asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value)
         )
 
         resultActions
@@ -579,7 +582,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `returns empty videos array when nothing matches`() {
-        mockMvc.perform(get("/v1/videos?query=whatdohorseseat").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=whatdohorseseat").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
     }
@@ -597,7 +600,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
                     "&age_range=9-11,11-14&age_range_facets=3-5,5-9,9-11,11-14,14-16,16-99&size=10&page=0" +
                     "&subject=5cb499c9fd5beb428189454c&type=INSTRUCTIONAL&resource_type_facets=Activity,Lesson+Guide"
             )
-                .asApiUser()
+                .asApiUser(email = userAssignedToOrganisation().idOrThrow().value)
         )
             .andExpect(status().isOk)
 

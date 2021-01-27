@@ -38,7 +38,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.facets.subjects.*", hasSize<Int>(1)))
@@ -58,7 +58,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.ageRanges.*", hasSize<Int>(1)))
@@ -69,7 +69,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
     fun `does not render if they don't exist`() {
         videoIndexFake.setFacets(emptyList())
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.subjects[*]", hasSize<Int>(0)))
@@ -78,7 +78,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `age_range_facets overwrite default age range facets`() {
-        mockMvc.perform(get("/v1/videos?query=content&age_range_facets=3-7,11-13").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&age_range_facets=3-7,11-13").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
 
         val lastSearchRequest = videoIndexFake.getLastSearchRequest()
@@ -100,7 +100,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.durations.*", hasSize<Int>(1)))
@@ -109,7 +109,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `duration_facets overwrite default duration facets`() {
-        mockMvc.perform(get("/v1/videos?query=content&duration_facets=PT0S-PT5M,PT5M-PT10M").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&duration_facets=PT0S-PT5M,PT5M-PT10M").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
 
         val lastSearchRequest = videoIndexFake.getLastSearchRequest()
@@ -131,7 +131,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.resourceTypes.*", hasSize<Int>(1)))
@@ -140,7 +140,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `resource_type_facets overwrite default resource type facets`() {
-        mockMvc.perform(get("/v1/videos?query=content&resource_type_facets=Activity").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&resource_type_facets=Activity").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
 
         val lastSearchRequest = videoIndexFake.getLastSearchRequest()
@@ -161,7 +161,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.videoTypes.*", hasSize<Int>(1)))
@@ -170,7 +170,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video_type_facets overwrite default video type facets`() {
-        mockMvc.perform(get("/v1/videos?query=content&video_type_facets=STOCK").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&video_type_facets=STOCK").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
 
         val lastSearchRequest = videoIndexFake.getLastSearchRequest()
@@ -193,7 +193,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/videos?query=content&include_channel_facets=true").asTeacher())
+        mockMvc.perform(get("/v1/videos?query=content&include_channel_facets=true").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/hal+json"))
             .andExpect(jsonPath("$._embedded.facets.channels.*", hasSize<Int>(1)))
