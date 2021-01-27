@@ -38,7 +38,6 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(firstContractedVideo.value)))
         }
 
-        /// FIXME - fails
         @Test
         fun `limits search to included distribution methods`() {
             val streamContentPartner =
@@ -52,7 +51,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addDistributionMethodAccessRule("api-user@gmail.com", DistributionMethodResource.STREAM)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("the@teacher.com").idOrThrow().value))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(streamVideo.value)))
