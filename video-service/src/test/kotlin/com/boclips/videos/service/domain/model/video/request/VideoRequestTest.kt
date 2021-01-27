@@ -15,9 +15,9 @@ class VideoRequestTest {
     @Test
     fun `pass phrase query through`() {
         val searchQuery = VideoRequest(
-            text = "some phrase",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+                text = "some phrase",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0)
         )
             .toQuery(VideoAccess.Everything)
 
@@ -27,10 +27,10 @@ class VideoRequestTest {
     @Test
     fun `pass ids through`() {
         val searchQuery = VideoRequest(
-            text = "any query",
-            ids = setOf("id 1", "id 2"),
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+                text = "any query",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                ids = setOf("id 1", "id 2")
         )
             .toQuery(VideoAccess.Everything)
 
@@ -41,10 +41,10 @@ class VideoRequestTest {
     fun `pass channel ids through`() {
         val searchQuery = VideoRequest(
                 text = "any query",
-                ids = setOf("id 1", "id 2"),
-                channelIds = setOf("1", "2", "3"),
                 pageSize = 2,
-                pagingState = VideoRequestPagingState.PageNumber(0)
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                ids = setOf("id 1", "id 2"),
+                channelIds = setOf("1", "2", "3")
         )
                 .toQuery(VideoAccess.Everything)
 
@@ -54,10 +54,10 @@ class VideoRequestTest {
     @Test
     fun `allows filtering by bestFor`() {
         val searchQuery = VideoRequest(
-            text = "any query",
-            bestFor = listOf("explainer"),
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+                text = "any query",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                bestFor = listOf("explainer")
         )
             .toQuery(VideoAccess.Everything)
 
@@ -67,10 +67,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by releaseDate descending`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RELEASE_DATE
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.RELEASE_DATE
         )
             .toQuery(VideoAccess.Everything)
 
@@ -83,10 +83,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by title descending`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.TITLE_DESC
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.TITLE_DESC
         )
             .toQuery(VideoAccess.Everything)
 
@@ -99,10 +99,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by title ascending`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.TITLE_ASC
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.TITLE_ASC
         )
             .toQuery(VideoAccess.Everything)
 
@@ -115,10 +115,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by ingest date ascending`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.INGEST_ASC
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.INGEST_ASC
         )
             .toQuery(VideoAccess.Everything)
 
@@ -131,10 +131,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by ingest date descending`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.INGEST_DESC
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.INGEST_DESC
         )
             .toQuery(VideoAccess.Everything)
 
@@ -147,10 +147,10 @@ class VideoRequestTest {
     @Test
     fun `allows ordering of results by random`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RANDOM
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.RANDOM
         )
             .toQuery(VideoAccess.Everything)
 
@@ -160,10 +160,10 @@ class VideoRequestTest {
     @Test
     fun `does not sort the results without a sortBy`() {
         val searchQuery = VideoRequest(
-            text = "id:11,12,13",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = null
+                text = "id:11,12,13",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = null
         )
             .toQuery(VideoAccess.Everything)
 
@@ -173,11 +173,11 @@ class VideoRequestTest {
     @Test
     fun `allows filtering of source`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RELEASE_DATE,
-            source = SourceType.YOUTUBE
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.RELEASE_DATE,
+                source = SourceType.YOUTUBE
         )
             .toQuery(VideoAccess.Everything)
 
@@ -187,10 +187,10 @@ class VideoRequestTest {
     @Test
     fun `allows filtering of content type`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            types = setOf(VideoType.NEWS, VideoType.STOCK)
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                types = setOf(VideoType.NEWS, VideoType.STOCK)
         )
             .toQuery(VideoAccess.Everything)
 
@@ -200,12 +200,12 @@ class VideoRequestTest {
     @Test
     fun `allows filtering of release date`() {
         val searchQuery = VideoRequest(
-            text = "testing",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RELEASE_DATE,
-            releaseDateFrom = LocalDate.of(2000, 1, 1),
-            releaseDateTo = LocalDate.of(2001, 1, 1)
+                text = "testing",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                sortBy = SortKey.RELEASE_DATE,
+                releaseDateFrom = LocalDate.of(2000, 1, 1),
+                releaseDateTo = LocalDate.of(2001, 1, 1)
         ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.userQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
@@ -215,10 +215,10 @@ class VideoRequestTest {
     @Test
     fun `allows filtering by promoted`() {
         val searchQuery = VideoRequest(
-            text = "",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            promoted = true
+                text = "",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                promoted = true
         ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.userQuery.promoted).isEqualTo(true)
@@ -227,10 +227,10 @@ class VideoRequestTest {
     @Test
     fun `allows filtering by attachment type`() {
         val searchQuery = VideoRequest(
-            text = "",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            attachmentTypes = setOf("Activity")
+                text = "",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                attachmentTypes = setOf("Activity")
         ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.userQuery.attachmentTypes).isEqualTo(setOf("Activity"))
@@ -239,10 +239,10 @@ class VideoRequestTest {
     @Test
     fun `does not limit ids when has access to everything`() {
         val searchQuery = VideoRequest(
-            text = "",
-            pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0),
-            promoted = true
+                text = "",
+                pageSize = 2,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                promoted = true
         ).toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.videoAccessRuleQuery.permittedVideoIds).isNull()

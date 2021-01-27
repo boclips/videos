@@ -1,10 +1,12 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.videos.service.domain.model.user.UserNotAssignedToOrganisationException
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
+import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
@@ -68,6 +70,8 @@ class SearchVideo(
         includeChannelFacets: Boolean? = null,
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
+        val userOrganisation = userService.getOrganisationOfUser(user.idOrThrow().value)
+                ?: throw UserNotAssignedToOrganisationException(user.idOrThrow())
         val retrievedVideos = getVideosByQuery(
             query = query ?: "",
             ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),
@@ -93,20 +97,21 @@ class SearchVideo(
             channelIds = channelIds,
             type = type,
             user = user,
+            userOrganisation = userOrganisation,
             resourceTypes = resourceTypes.mapTo(HashSet()) { AttachmentType.valueOf(it).label },
             resourceTypeFacets = resourceTypeFacets,
             videoTypeFacets = videoTypeFacets,
             includeChannelFacets = includeChannelFacets,
             queryParams = queryParams ?: emptyMap()
         )
-        return addOrganisationPrices(retrievedVideos, user)
+        return addOrganisationPrices(retrievedVideos, userOrganisation)
     }
 
     private fun addOrganisationPrices(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
-        user: User
+        userOrganisation: Organisation?
     ): ResultsPage<PricedVideo, VideoCounts> {
-        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        val videoTypePrices = userOrganisation?.deal?.prices
         val pricedVideos = retrievedVideos.elements.map {
             PricedVideo(
                 it,

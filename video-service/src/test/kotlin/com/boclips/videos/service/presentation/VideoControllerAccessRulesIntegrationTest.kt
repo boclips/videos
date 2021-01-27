@@ -32,12 +32,13 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addAccessToVideoIds("api-user@gmail.com", firstContractedVideo.value, secondContractedVideo.value)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(firstContractedVideo.value)))
         }
 
+        /// FIXME - fails
         @Test
         fun `limits search to included distribution methods`() {
             val streamContentPartner =
@@ -51,7 +52,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addDistributionMethodAccessRule("api-user@gmail.com", DistributionMethodResource.STREAM)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("the@teacher.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(streamVideo.value)))
@@ -84,7 +85,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addDistributionMethodAccessRule("something@publisher-boclips.com", DistributionMethodResource.DOWNLOAD)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "something@publisher-boclips.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("something@publisher-boclips.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(downloadVideo.value)))
@@ -98,7 +99,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             removeAccessToVideo("api-user@gmail.com", excludedVideo.value)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(video.value)))
@@ -111,7 +112,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             removeAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS, VideoType.INSTRUCTIONAL_CLIPS)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(stockVideo.value)))
@@ -124,7 +125,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(newsVideo.value)))
@@ -141,7 +142,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             removeAccessToChannel("api-user@gmail.com", excludedContentPartner.id.value)
 
-            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithAllowedContentPartner.value)))
@@ -154,7 +155,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addAccessToVoiceType("api-user@gmail.com", VoiceType.WITH_VOICE)
 
-            mockMvc.perform(get("/v1/videos?query=voice").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=voice").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(voicedVideo.value)))
@@ -166,7 +167,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
 
-            mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
         }
@@ -188,7 +189,7 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 )
             )
 
-            mockMvc.perform(get("/v1/videos?query=hello").asApiUser(email = "api-user@gmail.com"))
+            mockMvc.perform(get("/v1/videos?query=hello").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("hello")))

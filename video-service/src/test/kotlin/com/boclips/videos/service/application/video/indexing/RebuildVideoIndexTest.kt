@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
@@ -12,9 +13,7 @@ import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.response.organisation.DealResource
-import com.boclips.videos.service.domain.model.video.PriceComputingService
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
@@ -49,19 +48,19 @@ class RebuildVideoIndexTest {
         val inMemorySearchService = VideoIndexFake()
 
         val channelRepository: ChannelRepository = getMockContentPartnerRepo(
-            com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel(
+            createChannel(
                 id = ChannelId(
                     bothContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
             ),
-            com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel(
+            createChannel(
                 id = ChannelId(
                     streamableContentPartnerId
                 ),
                 distributionMethods = setOf(DistributionMethod.STREAM)
             ),
-            com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel(
+            createChannel(
                 id = ChannelId(
                     downloadContentPartnerId
                 ),
@@ -96,24 +95,29 @@ class RebuildVideoIndexTest {
 
     @Test
     fun `execute rebuilds search index`() {
-        val videoId1 = TestFactories.aValidId()
-        val videoId2 = TestFactories.aValidId()
-        val videoId3 = TestFactories.aValidId()
+        val upsertedButNotInDatabaseID = TestFactories.aValidId()
+        val normalVideo1ID = TestFactories.aValidId()
+        val normalVideo2ID = TestFactories.aValidId()
+        val customPricedVideoID = TestFactories.aValidId()
 
-        index.upsert(sequenceOf(TestFactories.createVideoWithPrices(TestFactories.createVideo(videoId = videoId1))))
+        index.upsert(sequenceOf(TestFactories.createVideoWithPrices(TestFactories.createVideo(videoId = upsertedButNotInDatabaseID))))
 
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
-                videoId = videoId2,
+                videoId = normalVideo1ID,
                 channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     bothContentPartnerId
                 )
             ),
             TestFactories.createVideo(
-                videoId = videoId3,
+                videoId = normalVideo2ID,
                 channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
                     bothContentPartnerId
                 )
+            ),
+            TestFactories.createVideo(
+                videoId = customPricedVideoID,
+                types = listOf(VideoType.STOCK)
             )
         )
 
@@ -136,9 +140,10 @@ class RebuildVideoIndexTest {
         )
         val results = index.search(searchRequest)
 
-        assertThat(results.elements).contains(videoId1)
-        assertThat(results.elements).doesNotContain(videoId2)
-        assertThat(results.elements).doesNotContain(videoId3)
+        assertThat(results.elements).doesNotContain(upsertedButNotInDatabaseID)
+        assertThat(results.elements).contains(normalVideo1ID)
+        assertThat(results.elements).contains(normalVideo2ID)
+        assertThat(results.elements).contains(customPricedVideoID)
     }
 
     @Test
@@ -207,12 +212,12 @@ class RebuildVideoIndexTest {
         }
     }
 
-    private fun getMockVideoRepo(vararg videos: Video): VideoRepository {
+    private fun getMockVideoRepo(vararg videos: BaseVideo): VideoRepository {
         return mock<VideoRepository> {
             on {
                 streamAll(any())
             } doAnswer { invocations ->
-                val consumer = invocations.getArgument(0) as (Sequence<Video>) -> Unit
+                val consumer = invocations.getArgument(0) as (Sequence<BaseVideo>) -> Unit
 
                 consumer(videos.asSequence())
             }
