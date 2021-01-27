@@ -415,9 +415,7 @@ object TestFactories {
 object UserRatingFactory {
     fun sample(
         rating: Int = 3,
-        userId: UserId = UserId(        
-            "me"        
-        )
+        userId: UserId = UserId("me")
     ): UserRating =
         UserRating(rating, userId)
 }

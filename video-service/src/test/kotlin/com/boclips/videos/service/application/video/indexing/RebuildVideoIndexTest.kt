@@ -31,7 +31,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.math.BigDecimal
 
 class RebuildVideoIndexTest {
     lateinit var index: VideoIndex
@@ -96,27 +95,13 @@ class RebuildVideoIndexTest {
     @Test
     fun `execute rebuilds search index`() {
         val upsertedButNotInDatabaseID = TestFactories.aValidId()
-        val normalVideo1ID = TestFactories.aValidId()
-        val normalVideo2ID = TestFactories.aValidId()
-        val customPricedVideoID = TestFactories.aValidId()
+        val persistedVideo = TestFactories.aValidId()
 
         index.upsert(sequenceOf(TestFactories.createVideoWithPrices(TestFactories.createVideo(videoId = upsertedButNotInDatabaseID))))
 
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
-                videoId = normalVideo1ID,
-                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
-                    bothContentPartnerId
-                )
-            ),
-            TestFactories.createVideo(
-                videoId = normalVideo2ID,
-                channelId = com.boclips.videos.service.domain.model.video.channel.ChannelId(
-                    bothContentPartnerId
-                )
-            ),
-            TestFactories.createVideo(
-                videoId = customPricedVideoID,
+                videoId = persistedVideo,
                 types = listOf(VideoType.STOCK)
             )
         )
@@ -132,18 +117,13 @@ class RebuildVideoIndexTest {
 
         val searchRequest = PaginatedIndexSearchRequest(
             VideoQuery(
-                userQuery = UserQuery(
-                    organisationPriceFilter = "an-organisation-id" to setOf(BigDecimal.ONE)
-                ),
                 videoAccessRuleQuery = VideoAccessRuleQuery()
             )
         )
         val results = index.search(searchRequest)
 
         assertThat(results.elements).doesNotContain(upsertedButNotInDatabaseID)
-        assertThat(results.elements).contains(normalVideo1ID)
-        assertThat(results.elements).contains(normalVideo2ID)
-        assertThat(results.elements).contains(customPricedVideoID)
+        assertThat(results.elements).contains(persistedVideo)
     }
 
     @Test

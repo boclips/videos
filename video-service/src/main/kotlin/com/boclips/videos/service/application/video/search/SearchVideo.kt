@@ -1,6 +1,5 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.user.UserNotAssignedToOrganisationException
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -8,6 +7,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
+import com.boclips.videos.service.domain.model.user.UserNotAssignedToOrganisationException
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -71,7 +71,7 @@ class SearchVideo(
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
         val userOrganisation = userService.getOrganisationOfUser(user.idOrThrow().value)
-                ?: throw UserNotAssignedToOrganisationException(user.idOrThrow())
+            ?: throw UserNotAssignedToOrganisationException(user.idOrThrow())
         val retrievedVideos = getVideosByQuery(
             query = query ?: "",
             ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),
