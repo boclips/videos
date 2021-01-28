@@ -53,7 +53,7 @@ class GetVideosByQuery(
         channelIds: Set<String>,
         type: Set<String>,
         user: User,
-        userOrganisation: Organisation, // TODO - consider moving the field to a User class
+        userOrganisation: Organisation?, // TODO - consider moving the field to a User class
         subjectsSetManually: Boolean?,
         releasedDateFrom: String?,
         resourceTypes: Set<String>,
@@ -93,7 +93,7 @@ class GetVideosByQuery(
             types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets),
             attachmentTypes = resourceTypes,
-            userOrganisationId = userOrganisation.organisationId
+            userOrganisationId = userOrganisation?.organisationId
         )
 
         val videoSearchResponse = retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)

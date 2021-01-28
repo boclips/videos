@@ -71,7 +71,7 @@ class SearchVideo(
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
         val userOrganisation = userService.getOrganisationOfUser(user.idOrThrow().value)
-            ?: throw UserNotAssignedToOrganisationException(user.idOrThrow())
+
         val retrievedVideos = getVideosByQuery(
             query = query ?: "",
             ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),

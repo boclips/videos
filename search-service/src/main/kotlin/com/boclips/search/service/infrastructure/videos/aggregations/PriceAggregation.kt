@@ -11,10 +11,10 @@ class PriceAggregation {
     companion object {
         private const val PRICE_AGGREGATION_FILTER = "price"
         private const val AGGREGATE_PRICES_USING_DEFAULT = """
-                            if (doc['prices.DEFAULT'].size() == 0) {
-                              0
-                            } else {
+                            if (doc.containsKey('prices.DEFAULT')) {
                               doc['prices.DEFAULT']
+                            } else {
+                              0
                             }
                             """
 
