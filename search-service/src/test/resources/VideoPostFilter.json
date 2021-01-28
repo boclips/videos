@@ -96,6 +96,51 @@
           "boost" : 1.0,
           "_name" : "video-types-filter"
         }
+      },
+      {
+        "bool" : {
+          "should" : [
+            {
+              "match_phrase" : {
+                "prices.Org-id-1" : {
+                  "query" : 30000,
+                  "slop" : 0,
+                  "zero_terms_query" : "NONE",
+                  "boost" : 1.0
+                }
+              }
+            },
+            {
+              "bool" : {
+                "must" : [
+                  {
+                    "match_phrase" : {
+                      "prices.DEFAULT" : {
+                        "query" : 30000,
+                        "slop" : 0,
+                        "zero_terms_query" : "NONE",
+                        "boost" : 1.0
+                      }
+                    }
+                  }
+                ],
+                "must_not" : [
+                  {
+                    "exists" : {
+                      "field" : "prices.Org-id-1",
+                      "boost" : 1.0
+                    }
+                  }
+                ],
+                "adjust_pure_negative" : true,
+                "boost" : 1.0
+              }
+            }
+          ],
+          "adjust_pure_negative" : true,
+          "boost" : 1.0,
+          "_name" : "video-prices-filter"
+        }
       }
     ],
     "filter" : [

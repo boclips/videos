@@ -29,9 +29,9 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
-                text = "kaltura",
-                pageSize = 10,
-                pagingState = VideoRequestPagingState.PageNumber(0)
+                    text = "kaltura",
+                    pageSize = 10,
+                    pagingState = VideoRequestPagingState.PageNumber(0)
             ),
             VideoAccess.Everything
         )
@@ -49,9 +49,9 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
-                text = "youtube",
-                pageSize = 10,
-                pagingState = VideoRequestPagingState.PageNumber(0)
+                    text = "youtube",
+                    pageSize = 10,
+                    pagingState = VideoRequestPagingState.PageNumber(0)
             ),
             VideoAccess.Everything
         )

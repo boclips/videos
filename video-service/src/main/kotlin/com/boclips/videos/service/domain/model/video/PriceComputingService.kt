@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.OrganisationsPrices
 import com.boclips.videos.service.domain.model.video.VideoType.*
 import java.math.BigDecimal
-import java.util.*
+import java.util.Currency
 import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
 
 class PriceComputingService {

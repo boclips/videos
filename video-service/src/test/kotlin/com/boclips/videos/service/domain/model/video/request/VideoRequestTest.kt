@@ -28,9 +28,9 @@ class VideoRequestTest {
     fun `pass ids through`() {
         val searchQuery = VideoRequest(
             text = "any query",
-            ids = setOf("id 1", "id 2"),
             pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+            pagingState = VideoRequestPagingState.PageNumber(0),
+            ids = setOf("id 1", "id 2")
         )
             .toQuery(VideoAccess.Everything)
 
@@ -40,13 +40,13 @@ class VideoRequestTest {
     @Test
     fun `pass channel ids through`() {
         val searchQuery = VideoRequest(
-                text = "any query",
-                ids = setOf("id 1", "id 2"),
-                channelIds = setOf("1", "2", "3"),
-                pageSize = 2,
-                pagingState = VideoRequestPagingState.PageNumber(0)
+            text = "any query",
+            pageSize = 2,
+            pagingState = VideoRequestPagingState.PageNumber(0),
+            ids = setOf("id 1", "id 2"),
+            channelIds = setOf("1", "2", "3")
         )
-                .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything)
 
         assertThat(searchQuery.userQuery.channelIds).isEqualTo(setOf("1", "2", "3"))
     }
@@ -55,9 +55,9 @@ class VideoRequestTest {
     fun `allows filtering by bestFor`() {
         val searchQuery = VideoRequest(
             text = "any query",
-            bestFor = listOf("explainer"),
             pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+            pagingState = VideoRequestPagingState.PageNumber(0),
+            bestFor = listOf("explainer")
         )
             .toQuery(VideoAccess.Everything)
 
