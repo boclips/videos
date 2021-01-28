@@ -1,7 +1,5 @@
 package com.boclips.videos.service
 
-import com.boclips.users.api.factories.OrganisationResourceFactory
-import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.httpclient.ChannelsClient
 import com.boclips.videos.api.httpclient.SubjectsClient
@@ -109,13 +107,6 @@ class VideoServiceClientE2ETest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `search videos with filters`() {
-            val organisation = organisationsClient.add(OrganisationResourceFactory.sample())
-            usersClient.add(
-                UserResourceFactory.sample(
-                    id = "the@owner.com",
-                    organisation = OrganisationResourceFactory.sampleDetails(id = organisation.id)
-                )
-            )
             val videosClient = VideosClient.create(
                 apiUrl = "http://localhost:$randomServerPort",
                 objectMapper = objectMapper,

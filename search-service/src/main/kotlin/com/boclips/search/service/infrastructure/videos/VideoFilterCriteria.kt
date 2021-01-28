@@ -6,9 +6,15 @@ import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRanges
 import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
-import org.elasticsearch.index.query.*
-import org.elasticsearch.index.query.QueryBuilders.*
-import java.math.BigDecimal
+import org.elasticsearch.index.query.BoolQueryBuilder
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.QueryBuilders.boolQuery
+import org.elasticsearch.index.query.QueryBuilders.termQuery
+import org.elasticsearch.index.query.QueryBuilders.termsQuery
+import org.elasticsearch.index.query.RangeQueryBuilder
+import org.elasticsearch.index.query.TermQueryBuilder
+import org.elasticsearch.index.query.TermsQueryBuilder
 import java.time.LocalDate
 
 class VideoFilterCriteria {
@@ -20,7 +26,6 @@ class VideoFilterCriteria {
         const val CHANNEL_NAMES_FILTER = "content-provider-filter"
         const val CHANNEL_IDS_FILTER = "content-partner-id-filter"
         const val VIDEO_TYPES_FILTER = "video-types-filter"
-        const val VIDEO_PRICES_FILTER = "video-prices-filter"
 
         fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()
@@ -97,10 +102,6 @@ class VideoFilterCriteria {
 
             if (videoQuery.types.isNotEmpty()) {
                 query.must(termsQuery(VideoDocument.TYPES, videoQuery.types).queryName(VIDEO_TYPES_FILTER))
-            }
-
-            if (!videoQuery.organisationPriceFilter.first.isNullOrEmpty() && videoQuery.organisationPriceFilter.second.isNotEmpty()) {
-                query.must(matchPrices(videoQuery.organisationPriceFilter))
             }
 
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->
@@ -191,23 +192,6 @@ class VideoFilterCriteria {
                 .fold(boolQuery()) { acc: BoolQueryBuilder, term: String ->
                     acc.must(termQuery(VideoDocument.TAGS, term))
                 }
-        }
-
-        private fun matchPrices(organisationPriceFilter: Pair<String?, Set<BigDecimal>>): BoolQueryBuilder {
-            val priceQueries = boolQuery().queryName(VIDEO_PRICES_FILTER)
-            for (price: BigDecimal in organisationPriceFilter.second) {
-                priceQueries.should(
-                    matchPhraseQuery(
-                        "${VideoDocument.PRICES}.${organisationPriceFilter.first}",
-                        price.movePointRight(2).toLong()
-                    )
-                ).should(
-                    boolQuery()
-                        .must(matchPhraseQuery("${VideoDocument.PRICES}.DEFAULT", price.movePointRight(2).toLong()))
-                        .mustNot(existsQuery("${VideoDocument.PRICES}.${organisationPriceFilter.first}"))
-                )
-            }
-            return priceQueries
         }
     }
 }

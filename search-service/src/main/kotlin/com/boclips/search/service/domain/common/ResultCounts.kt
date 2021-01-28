@@ -17,5 +17,4 @@ sealed class FacetType {
     object AttachmentTypes: FacetType()
     object Channels: FacetType()
     object VideoTypes: FacetType()
-    object Prices: FacetType()
 }

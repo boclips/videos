@@ -448,7 +448,7 @@ class EventServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `events have url when referer header is present`() {
         mockMvc.perform(
-            get("/v1/videos?query=abc").asTeacher(email = userAssignedToOrganisation().idOrThrow().value)
+            get("/v1/videos?query=abc").asTeacher()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Referer", "https://teachers.boclips.com/videos?q=abc")
         )

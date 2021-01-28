@@ -1,10 +1,14 @@
 package com.boclips.videos.service.application.video.search
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.service.application.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
+import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
@@ -12,8 +16,8 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
 
@@ -44,7 +48,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.DOWNLOAD)))
@@ -64,7 +68,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
@@ -84,7 +88,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "access",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
@@ -149,9 +153,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule)
@@ -181,9 +185,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule)
@@ -213,9 +217,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val results = retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
                     text = "Wild",
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule)
@@ -235,9 +239,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
                 text = "Elephant",
+                types = setOf(SearchVideoType.INSTRUCTIONAL),
                 pageSize = 10,
-                pagingState = VideoRequestPagingState.PageNumber(0),
-                types = setOf(SearchVideoType.INSTRUCTIONAL)
+                pagingState = VideoRequestPagingState.PageNumber(0)
             ),
             VideoAccess.Rules(
                 listOf(accessRule)
