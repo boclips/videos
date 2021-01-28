@@ -24,7 +24,7 @@ class PriceAggregation {
                     .script(Script(
                             organisationId?.let {
                                 """
-                                  if (doc['prices.$organisationId'].size() == 0) {
+                                  if (!doc.containsKey('prices.$organisationId') || doc['prices.$organisationId'].size() == 0) {
                                     $AGGREGATE_PRICES_USING_DEFAULT
                                   } else {
                                     doc['prices.$organisationId']

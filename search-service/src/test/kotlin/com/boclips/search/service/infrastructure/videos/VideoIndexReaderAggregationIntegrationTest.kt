@@ -1015,16 +1015,39 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 videoIndexWriter.upsert(
                     sequenceOf(
                         SearchableVideoMetadataFactory.create(
-                            id = "1", title = "Apple banana candy", prices = mapOf("the-org-im-in" to BigDecimal.valueOf(10.99), "DEFAULT" to BigDecimal.valueOf(14.99))
+                            id = "1",
+                            title = "Apple banana candy",
+                            prices = mapOf(
+                                "the-org-im-in" to BigDecimal.valueOf(1.11),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
-                            id = "2", title = "candy banana apple", prices = mapOf("the-other-org-1" to BigDecimal.valueOf(20.99), "DEFAULT" to BigDecimal.valueOf(10.99))
+                            id = "2",
+                            title = "candy banana apple",
+                            prices = mapOf(
+                                "the-other-org-1" to BigDecimal.valueOf(20.99),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
-                            id = "3", title = "candy apple", prices = mapOf("the-other-org-2" to BigDecimal.valueOf(10.99), "DEFAULT" to BigDecimal.valueOf(14.99))
+                            id = "3",
+                            title = "candy apple",
+                            prices = mapOf(
+                                "the-other-org-2" to BigDecimal.valueOf(12.99),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
                         ),
                         SearchableVideoMetadataFactory.create(
-                            id = "4", title = "banana apple candy", prices = mapOf("the-org-im-in" to BigDecimal.valueOf(19.99), "DEFAULT" to BigDecimal.valueOf(10.99))
+                            id = "4",
+                            title = "banana apple candy",
+                            prices = mapOf(
+                                "the-org-im-in" to BigDecimal.valueOf(19.99),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "5", title = "123 apple candy", prices = null
                         )
                     )
                 )
@@ -1046,10 +1069,45 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     )
                 )
 
-                assertThat(results.counts.totalHits).isEqualTo(4)
+
+                assertThat(results.counts.totalHits).isEqualTo(5)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 2))
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1999", hits = 1))
-                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1499", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "111", hits = 1))
+            }
+
+            // We should think a bit harder what to do in this scenario
+            // Ideally these would be ignored, rather than returning a facet of 0 price
+            @Test
+            fun `returns 0 value price facet for results with no prices`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1", title = "Apple banana candy", prices = null
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList(),
+                                organisationId = "the-org-im-in"
+                            )
+                        )
+                    )
+                )
+
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).containsExactly(Count(id = "0", hits = 1))
             }
 
             @Test
