@@ -16,7 +16,6 @@ import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAgg
 import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentTypeAggregation.Companion.aggregateAttachmentTypes
 import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
-import com.boclips.search.service.infrastructure.videos.aggregations.PriceAggregation.Companion.aggregateVideoPrices
 import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
 import com.boclips.search.service.infrastructure.videos.aggregations.VideoTypeAggregation.Companion.aggregateVideoTypes
 import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
@@ -77,7 +76,6 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     aggregation(aggregateDuration(videoQuery))
                     aggregation(aggregateAttachmentTypes(videoQuery))
                     aggregation(aggregateVideoTypes(videoQuery))
-                    aggregation(aggregateVideoPrices(videoQuery.facetDefinition?.organisationId))
                     if (videoQuery.facetDefinition?.includeChannelFacets == true) {
                         aggregation(aggregateChannels(videoQuery))
                     }

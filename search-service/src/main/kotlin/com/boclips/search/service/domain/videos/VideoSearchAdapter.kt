@@ -15,8 +15,7 @@ abstract class VideoSearchAdapter<T>(
     IndexWriter<T> {
 
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
-        val sth = items.map(::convert)
-        indexWriter.safeRebuildIndex(sth, notifier)
+        indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
 
     override fun upsert(items: Sequence<T>, notifier: ProgressNotifier?) {

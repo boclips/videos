@@ -23,11 +23,11 @@ open class RebuildVideoIndex(
 
         videoRepository.streamAll { videos ->
             val hydratedVideos = videos.map { video ->
-                val videoPrices = priceComputingService.computeVideoOrganisationPrices(
+                priceComputingService.computeVideoOrganisationPrices(
                     video = video,
                     organisationsPrices = organisationsWithPrices
-                )
-                videoPrices?.let { VideoWithPrices(video = video, prices = it) } ?: video
+                )?.let { VideoWithPrices(video = video, prices = it) }
+                    ?: video
             }
 
             videoIndex.safeRebuildIndex(hydratedVideos, notifier)

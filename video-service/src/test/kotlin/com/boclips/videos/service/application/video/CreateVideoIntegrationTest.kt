@@ -128,9 +128,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(
             retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
-                        text = "the latest Bloomberg video",
-                        pageSize = 0,
-                        pagingState = VideoRequestPagingState.PageNumber(0)
+                    text = "the latest Bloomberg video",
+                    pageSize = 0,
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Everything
             ).counts.total

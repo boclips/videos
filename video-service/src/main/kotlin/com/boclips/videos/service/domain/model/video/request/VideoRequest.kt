@@ -11,7 +11,6 @@ import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.convertAgeRange
-import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import java.time.LocalDate
 
@@ -51,8 +50,7 @@ class VideoRequest(
     val channelIds: Set<String> = emptySet(),
     val types: Set<VideoType> = emptySet(),
     val facets: VideoFacets = VideoFacets(),
-    val attachmentTypes: Set<String> = emptySet(),
-    val userOrganisationId: OrganisationId? = null
+    val attachmentTypes: Set<String> = emptySet()
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
 
@@ -94,8 +92,7 @@ class VideoRequest(
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
                 resourceTypes = facets.attachmentTypes,
                 includeChannelFacets = facets.includeChannelFacets,
-                videoTypes = facets.videoTypes,
-                organisationId = userOrganisationId?.value
+                videoTypes = facets.videoTypes
             ),
             videoAccessRuleQuery = AccessRuleQueryConverter.toVideoAccessRuleQuery(videoAccess),
             userQuery = UserQuery(

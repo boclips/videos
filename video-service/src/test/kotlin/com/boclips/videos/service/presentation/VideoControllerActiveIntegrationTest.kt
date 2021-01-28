@@ -28,7 +28,7 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
 
         videoDuplicationService.markDuplicate(oldVideoId, newVideoId, UserFactory.sample())
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos?query=dogs").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos?query=dogs").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.videos", Matchers.hasSize<Any>(1)))
     }

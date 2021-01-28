@@ -1,9 +1,6 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.eventbus.events.video.VideosSearched
-import com.boclips.users.api.factories.OrganisationResourceFactory
-import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -33,7 +30,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = null,
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(result.pageInfo.totalElements).isEqualTo(1)
@@ -46,7 +43,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 1000,
                 pageNumber = 0,
-                user = userAssignedToOrganisation()
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -58,7 +55,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 0,
                 pageNumber = 0,
-                user = userAssignedToOrganisation()
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -70,7 +67,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 0,
                 pageNumber = -1,
-                user = userAssignedToOrganisation()
+                user = UserFactory.sample()
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -98,7 +95,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "youtube",
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(result.elements).hasSize(1)
@@ -115,7 +112,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             pageNumber = 0,
             type = setOf("NEWS"),
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(videos.elements).hasSize(1)
@@ -132,7 +129,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "why are camels so tall",
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
@@ -151,7 +148,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             maxDuration = "PT10S",
             pageSize = 20,
             pageNumber = 0,
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(videos.pageInfo.totalElements).isEqualTo(2)
@@ -176,7 +173,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageSize = 20,
             pageNumber = 0,
             source = "youtube",
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)
@@ -218,7 +215,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageSize = 20,
             pageNumber = 0,
             resourceTypes = setOf("ACTIVITY"),
-            user = userAssignedToOrganisation()
+            user = UserFactory.sample()
         )
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)

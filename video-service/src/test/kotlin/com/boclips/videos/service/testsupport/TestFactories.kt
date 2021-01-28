@@ -151,13 +151,8 @@ object TestFactories {
     ): VideoWithPrices {
         return VideoWithPrices(
             video = video,
-            prices = OrganisationsPrices(
-                prices = prices,
-                default = Price(
-                    BigDecimal.valueOf(25),
-                    Currency.getInstance("USD")
-                )
-            )
+            prices = OrganisationsPrices(prices = prices, default = Price(BigDecimal.valueOf(25),
+                Currency.getInstance("USD")))
         )
     }
 
@@ -414,8 +409,9 @@ object TestFactories {
 
 object UserRatingFactory {
     fun sample(
-        rating: Int = 3,
-        userId: UserId = UserId("me")
+        rating: Int = 3, userId: UserId = UserId(
+            "me"
+        )
     ): UserRating =
         UserRating(rating, userId)
 }

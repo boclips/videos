@@ -85,7 +85,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class GetVideo {
         @Test
         fun `returns 200 for valid video as boclips employee`() {
-            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
                 .andExpect(status().isOk)
                 .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
@@ -143,7 +143,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
 
-            mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].channelVideoId").exists())
@@ -285,7 +285,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `returns 200 for valid video as API user`() {
-            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos/$kalturaVideoId").asApiUser())
                 .andExpect(status().isOk)
                 .andExpect(halJson())
                 .andExpect(jsonPath("$.id", equalTo(kalturaVideoId)))
@@ -323,7 +323,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.type").doesNotExist())
                 .andExpect(jsonPath("$.status").doesNotExist())
 
-            mockMvc.perform(get("/v1/videos?query=powerful").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos?query=powerful").asApiUser())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].channelVideoId").doesNotExist())
