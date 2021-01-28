@@ -1,5 +1,7 @@
 package com.boclips.videos.service.config.security
 
+import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -100,7 +102,14 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos?query=test").asReporter())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/videos?query=test").asTeacher())
+        val organisation = organisationsClient.add(OrganisationResourceFactory.sample())
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "the@teacher.com",
+                organisation = OrganisationResourceFactory.sampleDetails(id = organisation.id)
+            )
+        )
+        mockMvc.perform(get("/v1/videos?query=test").asTeacher("the@teacher.com"))
             .andExpect(status().is2xxSuccessful)
     }
 
@@ -112,7 +121,14 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/").asReporter())
             .andExpect(status().isForbidden)
 
-        mockMvc.perform(get("/v1/videos/").asTeacher())
+        val organisation = organisationsClient.add(OrganisationResourceFactory.sample())
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "the@teacher.com",
+                organisation = OrganisationResourceFactory.sampleDetails(id = organisation.id)
+            )
+        )
+        mockMvc.perform(get("/v1/videos/").asTeacher("the@teacher.com"))
             .andExpect(status().is2xxSuccessful)
     }
 

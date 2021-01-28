@@ -11,6 +11,7 @@ fun extractFacetCounts(results: SearchResponse): List<FacetCount> {
         FacetCount(type = FacetType.AgeRanges, counts = AgeRangeAggregation.extractBucketCounts(results)),
         FacetCount(type = FacetType.Duration, counts = DurationAggregation.extractBucketCounts(results)),
         FacetCount(type = FacetType.AttachmentTypes, counts = AttachmentTypeAggregation.extractBucketCounts(results)),
-        FacetCount(type = FacetType.VideoTypes, counts = VideoTypeAggregation.extractBucketCounts(results))
+        FacetCount(type = FacetType.VideoTypes, counts = VideoTypeAggregation.extractBucketCounts(results)),
+        FacetCount(type = FacetType.Prices, counts = PriceAggregation.extractBucketCounts(results))
     )
 }

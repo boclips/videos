@@ -9,7 +9,8 @@ sealed class FacetDefinition {
         val duration: List<DurationRange>?,
         val resourceTypes: List<String>,
         val includeChannelFacets: Boolean,
-        val videoTypes: List<String>
+        val videoTypes: List<String>,
+        val organisationId: String? = null
     ) : FacetDefinition()
 
     object Collection : FacetDefinition()
