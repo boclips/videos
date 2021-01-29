@@ -33,7 +33,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.Subjects,
-                    counts = listOf(Count(id = subjectId, hits = 56))
+                    counts = setOf(Count(id = subjectId, hits = 56))
                 )
             )
         )
@@ -53,7 +53,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.AgeRanges,
-                    counts = listOf(Count(id = "agerange1", hits = 86))
+                    counts = setOf(Count(id = "agerange1", hits = 86))
                 )
             )
         )
@@ -95,7 +95,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.Duration,
-                    counts = listOf(Count(id = "duration1", hits = 94))
+                    counts = setOf(Count(id = "duration1", hits = 94))
                 )
             )
         )
@@ -126,7 +126,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.AttachmentTypes,
-                    counts = listOf(Count(id = "activity", hits = 94))
+                    counts = setOf(Count(id = "activity", hits = 94))
                 )
             )
         )
@@ -156,7 +156,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.VideoTypes,
-                    counts = listOf(Count(id = "stock", hits = 94))
+                    counts = setOf(Count(id = "stock", hits = 94))
                 )
             )
         )
@@ -188,7 +188,7 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             listOf(
                 FacetCount(
                     type = FacetType.Channels,
-                    counts = listOf(Count(id = channel.id.value, hits = 94))
+                    counts = setOf(Count(id = channel.id.value, hits = 94))
                 )
             )
         )
