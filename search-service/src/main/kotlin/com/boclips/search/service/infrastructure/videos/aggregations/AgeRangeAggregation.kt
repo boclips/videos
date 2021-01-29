@@ -35,12 +35,12 @@ class AgeRangeAggregation {
             )
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
             return response
                 .aggregations.get<ParsedFilter>(AGE_RANGE_AGGREGATION_FILTER)
                 .aggregations.get<ParsedRange>(AGE_RANGE_SUB_AGGREGATION)
                 .buckets
-                .let { buckets -> parseBuckets(buckets) }
+                .let { buckets -> parseBuckets(buckets) }.toSet()
         }
 
         private fun aggregate(

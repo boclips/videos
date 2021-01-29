@@ -8,8 +8,6 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder
-import org.elasticsearch.search.aggregations.bucket.filter.ParsedFilter
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 
 class VideoTypeAggregation {
     companion object {
@@ -17,26 +15,28 @@ class VideoTypeAggregation {
         private const val VIDEO_TYPE_SUB_AGGREGATION = "video type names"
 
         fun aggregateVideoTypes(videoQuery: VideoQuery): FilterAggregationBuilder {
-            return aggregate(queryBuilder = VideoFilterCriteria.removeCriteria(
+            return aggregate(
+                queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery = videoQuery.userQuery),
                     VideoFilterCriteria.VIDEO_TYPES_FILTER
-            ))
+                )
+            )
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
-            return response
-                    .aggregations.get<ParsedFilter>(VIDEO_TYPE_AGGREGATION_FILTER)
-                    .aggregations.get<ParsedStringTerms>(VIDEO_TYPE_SUB_AGGREGATION)
-                    .buckets
-                    .let { buckets -> parseBuckets(buckets) }
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
+            return extractStringTermBucketCounts(
+                response = response,
+                filterName = VIDEO_TYPE_AGGREGATION_FILTER,
+                subAggregationName = VIDEO_TYPE_SUB_AGGREGATION
+            )
         }
 
         private fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
             return AggregationBuilders
-                    .filter(VIDEO_TYPE_AGGREGATION_FILTER, queryBuilder)
-                    .subAggregation(
-                            AggregationBuilders.terms(VIDEO_TYPE_SUB_AGGREGATION).field(VideoDocument.TYPES).size(60)
-                    )
+                .filter(VIDEO_TYPE_AGGREGATION_FILTER, queryBuilder)
+                .subAggregation(
+                    AggregationBuilders.terms(VIDEO_TYPE_SUB_AGGREGATION).field(VideoDocument.TYPES).size(60)
+                )
         }
     }
 }

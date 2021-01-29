@@ -25,19 +25,20 @@ class AttachmentTypeAggregation {
             )
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
-            return response
-                .aggregations.get<ParsedFilter>(ATTACHMENT_TYPE_AGGREGATION_FILTER)
-                .aggregations.get<ParsedStringTerms>(ATTACHMENT_TYPE_SUB_AGGREGATION)
-                .buckets
-                .let { buckets -> parseBuckets(buckets) }
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
+            return extractStringTermBucketCounts(
+                response = response,
+                filterName = ATTACHMENT_TYPE_AGGREGATION_FILTER,
+                subAggregationName = ATTACHMENT_TYPE_SUB_AGGREGATION
+            )
         }
 
         private fun aggregateAttachmentTypes(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(ATTACHMENT_TYPE_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(
-                    AggregationBuilders.terms(ATTACHMENT_TYPE_SUB_AGGREGATION).field(VideoDocument.ATTACHMENT_TYPES).size(2)
+                    AggregationBuilders.terms(ATTACHMENT_TYPE_SUB_AGGREGATION).field(VideoDocument.ATTACHMENT_TYPES)
+                        .size(2)
                 )
         }
     }

@@ -14,6 +14,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 class ChannelAggregation {
     companion object {
         private const val CHANNEL_AGGREGATION_FILTER = "channels"
+        private const val SELECTED_CHANNEL_AGGREGATION_FILTER = "selected-channels"
         private const val CHANNEL_SUB_AGGREGATION = "channel ids"
 
         fun aggregateChannels(videoQuery: VideoQuery): FilterAggregationBuilder? {
@@ -21,23 +22,28 @@ class ChannelAggregation {
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.CHANNEL_IDS_FILTER
-                )
+                ),
+                filterName = CHANNEL_AGGREGATION_FILTER
             )
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
-            return if (response.aggregations.asList().any { aggregation -> aggregation.name == CHANNEL_AGGREGATION_FILTER }) {
-                response
-                    .aggregations.get<ParsedFilter>(CHANNEL_AGGREGATION_FILTER)
-                    .aggregations.get<ParsedStringTerms>(CHANNEL_SUB_AGGREGATION)
-                    .buckets
-                    .let { buckets -> parseBuckets(buckets) }
-            } else emptyList()
+        fun aggregateSelectedChannels(videoQuery: VideoQuery): FilterAggregationBuilder? {
+            return aggregate(
+                queryBuilder = VideoFilterCriteria.allCriteria(videoQuery.userQuery),
+                filterName = SELECTED_CHANNEL_AGGREGATION_FILTER
+                )
         }
 
-        private fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
+            val allChannels = extractStringTermBucketCounts(response, CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
+            val selectedChannels = extractStringTermBucketCounts(response, SELECTED_CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
+
+            return allChannels + selectedChannels
+        }
+
+        private fun aggregate(queryBuilder: BoolQueryBuilder?, filterName: String): FilterAggregationBuilder {
             return AggregationBuilders
-                .filter(CHANNEL_AGGREGATION_FILTER, queryBuilder)
+                .filter(filterName, queryBuilder)
                 .subAggregation(
                     AggregationBuilders.terms(CHANNEL_SUB_AGGREGATION).field(VideoDocument.CONTENT_PARTNER_ID)
                 )

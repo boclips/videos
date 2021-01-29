@@ -37,12 +37,12 @@ class DurationAggregation {
             )
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
             return response
                 .aggregations.get<ParsedFilter>(DURATION_AGGREGATION_FILTER)
                 .aggregations.get<ParsedRange>(DURATION_SUB_AGGREGATION)
                 .buckets
-                .let { buckets -> parseBuckets(buckets) }
+                .let { buckets -> parseBuckets(buckets) }.toSet()
         }
 
         private fun aggregate(

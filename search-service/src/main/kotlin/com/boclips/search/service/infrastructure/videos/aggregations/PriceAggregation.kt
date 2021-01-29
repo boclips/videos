@@ -34,11 +34,11 @@ class PriceAggregation {
                     ))
         }
 
-        fun extractBucketCounts(response: SearchResponse): List<Count> {
+        fun extractBucketCounts(response: SearchResponse): Set<Count> {
             return response
                 .aggregations.get<ParsedStringTerms>(PRICE_AGGREGATION_FILTER)
                 .buckets
-                .let { buckets -> parseBuckets(buckets) }
+                .let { buckets -> parseBuckets(buckets) }.toSet()
         }
     }
 }

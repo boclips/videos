@@ -5,12 +5,7 @@ import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.videos.model.AgeRange
-import com.boclips.search.service.domain.videos.model.DurationRange
-import com.boclips.search.service.domain.videos.model.UserQuery
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
-import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -830,6 +825,102 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
                 assertThat(results.counts.totalHits).isEqualTo(1)
                 assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(0)
+            }
+
+            @Test
+            fun `always returns counts for filtered channel ids`() {
+                for (i in 1..10) {
+                    videoIndexWriter.upsert(
+                        sequenceOf(
+                            SearchableVideoMetadataFactory.create(
+                                id = "banana-${i}",
+                                title = "banana candy",
+                                contentPartnerId = "channel-id-${i}",
+                            ),
+                            SearchableVideoMetadataFactory.create(
+                                id = "apple-${i}",
+                                title = "Apple candy",
+                                contentPartnerId = "channel-id-${i}",
+                            )
+                        ),
+                    )
+                }
+
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "filtering video",
+                            title = "cherry candy",
+                            contentPartnerId = "channel-id-filtered",
+                        )
+                    ),
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "candy",
+                            userQuery = UserQuery(
+                                channelIds = setOf("channel-id-filtered")
+                            ),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(11)
+
+                assertThat(results.counts.getFacetCounts(FacetType.Channels).size).isEqualTo(11)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(
+                    Count(
+                        id = "channel-id-filtered",
+                        hits = 1
+                    )
+                )
+            }
+
+            @Test
+            fun `does not duplicate channel facets when channel filter is selected`() {
+                    videoIndexWriter.upsert(
+                        sequenceOf(
+                            SearchableVideoMetadataFactory.create(
+                                id = "banana-1",
+                                title = "banana candy",
+                                contentPartnerId = "channel-id-1",
+                            ),
+                        ),
+                    )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "candy",
+                            userQuery = UserQuery(
+                                channelIds = setOf("channel-id-1")
+                            ),
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList()
+                            )
+                        )
+                    )
+                )
+
+                assertThat(results.counts.totalHits).isEqualTo(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).hasSize(1)
+                assertThat(results.counts.getFacetCounts(FacetType.Channels)).contains(Count(id = "channel-id-1", hits = 1))
             }
         }
 
