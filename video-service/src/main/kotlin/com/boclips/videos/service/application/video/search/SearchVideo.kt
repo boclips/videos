@@ -17,6 +17,7 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateS
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
+import java.math.BigDecimal
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
@@ -68,6 +69,7 @@ class SearchVideo(
         resourceTypeFacets: List<String>? = null,
         videoTypeFacets: List<String>? = null,
         includeChannelFacets: Boolean? = null,
+        prices: Set<BigDecimal> = emptySet(),
         includePriceFacets: Boolean? = false,
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
@@ -104,7 +106,8 @@ class SearchVideo(
             videoTypeFacets = videoTypeFacets,
             includeChannelFacets = includeChannelFacets,
             includePriceFacets = includePriceFacets,
-            queryParams = queryParams ?: emptyMap()
+            queryParams = queryParams ?: emptyMap(),
+            prices = prices
         )
         return addOrganisationPrices(retrievedVideos, userOrganisation)
     }

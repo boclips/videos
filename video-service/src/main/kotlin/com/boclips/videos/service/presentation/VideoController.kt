@@ -18,6 +18,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.presentation.converters.PriceConverter
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.lang.IllegalArgumentException
+import java.math.BigDecimal
 import javax.servlet.ServletRequest
 import javax.validation.Valid
 
@@ -101,12 +103,13 @@ class VideoController(
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
         @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
         @RequestParam(name = "channel", required = false) channelParam: Set<String>?,
+        @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?,
         @RequestParam(name = "type", required = false) type: Set<String>?,
+        @RequestParam(name = "video_type_facets", required = false) videoTypeFacets: List<String>?,
         @RequestParam(name = "id", required = false) ids: Set<String>?,
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
         @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
-        @RequestParam(name = "video_type_facets", required = false) videoTypeFacets: List<String>?,
-        @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?,
+        @RequestParam(name = "prices", required = false) prices: Set<String>?,
         request: ServletRequest
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
@@ -144,7 +147,8 @@ class VideoController(
             pageNumber = pageNumber,
             includeChannelFacets = includeChannelFacets,
             includePriceFacets = UserExtractor.currentUserHasRole(UserRoles.BOCLIPS_WEB_APP),
-            queryParams = QueryParamsConverter.toSplitList(request.parameterMap)
+            queryParams = QueryParamsConverter.toSplitList(request.parameterMap),
+            prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet()
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())

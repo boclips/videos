@@ -20,6 +20,7 @@ import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAG
 import mu.KLogging
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import java.math.BigDecimal
 import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
@@ -61,7 +62,8 @@ class GetVideosByQuery(
         videoTypeFacets: List<String>?,
         includeChannelFacets: Boolean?,
         includePriceFacets: Boolean?,
-        queryParams: Map<String, List<String>>
+        queryParams: Map<String, List<String>>,
+        prices: Set<BigDecimal>
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -94,7 +96,8 @@ class GetVideosByQuery(
             types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
             facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets, includePriceFacets),
             attachmentTypes = resourceTypes,
-            userOrganisationId = userOrganisation?.organisationId
+            userOrganisationId = userOrganisation?.organisationId,
+            prices = prices
         )
 
         val videoSearchResponse = retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)

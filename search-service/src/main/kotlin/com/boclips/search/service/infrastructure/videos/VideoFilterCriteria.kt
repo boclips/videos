@@ -194,19 +194,23 @@ class VideoFilterCriteria {
         }
 
         private fun matchPrices(organisationPriceFilter: Pair<String?, Set<BigDecimal>>): BoolQueryBuilder {
+            val (organisationId, queriedPrices) = organisationPriceFilter
             val priceQueries = boolQuery().queryName(VIDEO_PRICES_FILTER)
-            for (price: BigDecimal in organisationPriceFilter.second) {
-                priceQueries.should(
-                    matchPhraseQuery(
-                        "${VideoDocument.PRICES}.${organisationPriceFilter.first}",
-                        price.movePointRight(2).toLong()
-                    )
-                ).should(
-                    boolQuery()
-                        .must(matchPhraseQuery("${VideoDocument.PRICES}.DEFAULT", price.movePointRight(2).toLong()))
-                        .mustNot(existsQuery("${VideoDocument.PRICES}.${organisationPriceFilter.first}"))
-                )
-            }
+            queriedPrices
+                .map { it.movePointRight(2).toLong() }
+                .forEach { queriedPrice ->
+                    priceQueries
+                        .should(
+                            matchPhraseQuery(
+                                "${VideoDocument.PRICES}.$organisationId",
+                                queriedPrice
+                            )
+                        ).should(
+                            boolQuery()
+                                .must(matchPhraseQuery("${VideoDocument.PRICES}.DEFAULT", queriedPrice))
+                                .mustNot(existsQuery("${VideoDocument.PRICES}.$organisationId"))
+                        )
+                }
             return priceQueries
         }
     }

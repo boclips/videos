@@ -132,10 +132,10 @@ fun MockHttpServletRequestBuilder.asSubjectClassifier() =
             )
     )
 
-fun MockHttpServletRequestBuilder.asBoclipsWebAppUser() =
+fun MockHttpServletRequestBuilder.asBoclipsWebAppUser(email: String? = "user@web-app.com") =
     this.with(
         SecurityMockMvcRequestPostProcessors
-            .user("webAppUser")
+            .user(email)
             .roles(
                 UserRoles.BOCLIPS_WEB_APP,
                 UserRoles.VIEW_VIDEOS

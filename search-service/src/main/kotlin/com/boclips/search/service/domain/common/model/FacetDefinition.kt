@@ -10,8 +10,7 @@ sealed class FacetDefinition {
         val resourceTypes: List<String>,
         val includeChannelFacets: Boolean,
         val includePriceFacets: Boolean = false,
-        val videoTypes: List<String>,
-        val organisationId: String? = null
+        val videoTypes: List<String>
     ) : FacetDefinition()
 
     object Collection : FacetDefinition()

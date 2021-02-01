@@ -122,6 +122,21 @@ class VideoIndexFake :
                 query.videoAccessRuleQuery.isEligibleForStream?.let { entry.value.eligibleForStream == it } ?: true
             }
             .filter { entry ->
+                val (organisationId, queriedPrices) = query.userQuery.organisationPriceFilter
+                if(queriedPrices.isEmpty()) {
+                    true
+                } else {
+                    val priceForOrganisation = entry.value.prices?.get(organisationId)?.movePointLeft(2)
+
+                    val defaultPrice = entry.value.prices?.get("DEFAULT")?.movePointLeft(2)
+                    val defaultPriceMatches = defaultPrice?.let { queriedPrices.contains(it) } ?: false
+
+                    priceForOrganisation
+                        ?.let { queriedPrices.contains(it) }
+                        ?: (priceForOrganisation == null && defaultPriceMatches) ?: false
+                }
+            }
+            .filter { entry ->
                 query.videoAccessRuleQuery.isEligibleForDownload?.let { entry.value.eligibleForDownload == it } ?: true
             }.filter { entry ->
                 if (query.userQuery.attachmentTypes.isEmpty()) {

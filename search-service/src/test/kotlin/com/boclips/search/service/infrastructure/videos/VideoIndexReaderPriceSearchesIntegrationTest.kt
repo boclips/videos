@@ -41,6 +41,11 @@ class VideoIndexReaderPriceSearchesIntegrationTest : EmbeddedElasticSearchIntegr
                     id = "3",
                     title = "TED",
                     prices = mapOf("org-id-1" to BigDecimal.valueOf(11), "org-id-2" to BigDecimal.ONE)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "TED",
+                    prices = mapOf("DEFAULT" to BigDecimal.valueOf(20), "org-id-2" to BigDecimal.valueOf(11))
                 )
             )
         )
@@ -49,7 +54,7 @@ class VideoIndexReaderPriceSearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
-                    userQuery = UserQuery(organisationPriceFilter = "org-id-1" to setOf(BigDecimal.valueOf(11)))
+                    userQuery = UserQuery(organisationPriceFilter = "org-id-1" to setOf(BigDecimal.valueOf(11), BigDecimal.valueOf(20)))
                 )
             )
         )

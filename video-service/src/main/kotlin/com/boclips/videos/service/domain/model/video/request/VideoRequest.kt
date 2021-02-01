@@ -13,6 +13,7 @@ import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.convertAgeRange
 import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.VideoAccess
+import java.math.BigDecimal
 import java.time.LocalDate
 
 enum class SortKey {
@@ -52,7 +53,8 @@ class VideoRequest(
     val types: Set<VideoType> = emptySet(),
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet(),
-    val userOrganisationId: OrganisationId? = null
+    val userOrganisationId: OrganisationId? = null,
+    val prices: Set<BigDecimal> = emptySet()
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
 
@@ -95,8 +97,7 @@ class VideoRequest(
                 resourceTypes = facets.attachmentTypes,
                 includeChannelFacets = facets.includeChannelFacets,
                 includePriceFacets = facets.includePriceFacets,
-                videoTypes = facets.videoTypes,
-                organisationId = userOrganisationId?.value
+                videoTypes = facets.videoTypes
             ),
             videoAccessRuleQuery = AccessRuleQueryConverter.toVideoAccessRuleQuery(videoAccess),
             userQuery = UserQuery(
@@ -117,7 +118,8 @@ class VideoRequest(
                 channelNames = channelNames,
                 channelIds = channelIds,
                 types = types,
-                attachmentTypes = attachmentTypes
+                attachmentTypes = attachmentTypes,
+                organisationPriceFilter = userOrganisationId?.value to prices
             )
         )
     }
