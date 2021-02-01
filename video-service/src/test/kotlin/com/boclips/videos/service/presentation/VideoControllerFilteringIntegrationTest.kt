@@ -473,6 +473,35 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `can filter by video price`() {
+            saveVideo()
+            val videoWithActivity = saveVideo()
+            val videoWithLessonPlan = saveVideo()
+
+            addVideoAttachment(
+                attachment = AttachmentRequest(
+                    linkToResource = "https://www.boclips.com",
+                    type = "ACTIVITY",
+                    description = "a description"
+                ),
+                videoId = videoWithActivity
+            )
+            addVideoAttachment(
+                attachment = AttachmentRequest(
+                    linkToResource = "https://www.boclips.com",
+                    type = "LESSON_PLAN",
+                    description = "a description"
+                ),
+                videoId = videoWithLessonPlan
+            )
+
+            mockMvc.perform(get("/v1/videos?resource_types=LESSON_PLAN").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithLessonPlan.value)))
+    }
+
+    @Test
     fun `sort by rating`() {
         val firstTitle = "low-rated"
         val secondTitle = "high-rated"

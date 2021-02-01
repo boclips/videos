@@ -20,25 +20,25 @@ class PriceAggregation {
 
         fun aggregateVideoPrices(organisationId: String?): TermsAggregationBuilder {
             return AggregationBuilders
-                    .terms(PRICE_AGGREGATION_FILTER)
-                    .script(Script(
-                            organisationId?.let {
-                                """
+                .terms(PRICE_AGGREGATION_FILTER)
+                .script(Script(
+                    organisationId?.let {
+                        """
                                   if (!doc.containsKey('prices.$organisationId') || doc['prices.$organisationId'].size() == 0) {
                                     $AGGREGATE_PRICES_USING_DEFAULT
                                   } else {
                                     doc['prices.$organisationId']
                                   }
                                 """
-                            } ?: AGGREGATE_PRICES_USING_DEFAULT
-                    ))
+                    } ?: AGGREGATE_PRICES_USING_DEFAULT
+                ))
         }
 
         fun extractBucketCounts(response: SearchResponse): Set<Count> {
-            return response
-                .aggregations.get<ParsedStringTerms>(PRICE_AGGREGATION_FILTER)
-                .buckets
-                .let { buckets -> parseBuckets(buckets) }.toSet()
+            return response.aggregations.asList()
+                .find { it.name == PRICE_AGGREGATION_FILTER }
+                ?.let { parseBuckets((it as ParsedStringTerms).buckets).toSet() }
+                ?: emptySet()
         }
     }
 }

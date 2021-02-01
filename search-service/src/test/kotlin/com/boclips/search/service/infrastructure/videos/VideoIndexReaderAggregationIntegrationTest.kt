@@ -1154,7 +1154,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 resourceTypes = emptyList(),
                                 includeChannelFacets = true,
                                 videoTypes = emptyList(),
-                                organisationId = "the-org-im-in"
+                                organisationId = "the-org-im-in",
+                                includePriceFacets = true
                             )
                         )
                     )
@@ -1190,7 +1191,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 resourceTypes = emptyList(),
                                 includeChannelFacets = true,
                                 videoTypes = emptyList(),
-                                organisationId = "the-org-im-in"
+                                organisationId = "the-org-im-in",
+                                includePriceFacets = true
                             )
                         )
                     )
@@ -1251,7 +1253,8 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 resourceTypes = emptyList(),
                                 includeChannelFacets = true,
                                 videoTypes = emptyList(),
-                                organisationId = null
+                                organisationId = null,
+                                includePriceFacets = true
                             )
                         )
                     )
