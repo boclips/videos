@@ -105,7 +105,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                             "channel," +
                             "type," +
                             "resource_types,resource_type_facets," +
-                            "include_channel_facets" +
+                            "include_channel_facets," +
                             "prices" +
                             "}",
                         SEARCH_VIDEOS
@@ -135,7 +135,8 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                             "subject,subjects_set_manually," +
                             "promoted,content_partner,type,channel," +
                             "resource_types,resource_type_facets," +
-                            "include_channel_facets" +
+                            "include_channel_facets," +
+                            "prices" +
                             "}",
                         SEARCH_VIDEOS
                     )
