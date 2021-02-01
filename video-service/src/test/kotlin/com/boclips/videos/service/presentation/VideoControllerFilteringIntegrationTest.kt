@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.eventbus.events.video.VideosSearched
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.application.video.TagVideo
@@ -11,12 +12,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
-import com.boclips.videos.service.testsupport.UserFactory
-import com.boclips.videos.service.testsupport.asApiUser
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asTeacher
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions
@@ -39,6 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
 
@@ -50,7 +48,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     lateinit var tagVideo: TagVideo
 
     lateinit var kalturaVideoId: String
-    lateinit var kalturaVideoId2: String
     lateinit var youtubeVideoId: String
 
     @BeforeEach
@@ -63,7 +60,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             duration = Duration.ofMinutes(1),
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
-            ageRangeMin = 5, ageRangeMax = 7
+            ageRangeMin = 5, ageRangeMax = 7,
+            types = listOf(VideoType.STOCK)
         ).value
 
         youtubeVideoId = saveVideo(
@@ -73,7 +71,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
             contentProvider = "enabled-cp2",
-            ageRangeMin = 7, ageRangeMax = 10
+            ageRangeMin = 7, ageRangeMax = 10,
+            types = listOf(VideoType.NEWS)
         ).value
     }
 
@@ -474,31 +473,25 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by video price`() {
-            saveVideo()
-            val videoWithActivity = saveVideo()
-            val videoWithLessonPlan = saveVideo()
-
-            addVideoAttachment(
-                attachment = AttachmentRequest(
-                    linkToResource = "https://www.boclips.com",
-                    type = "ACTIVITY",
-                    description = "a description"
-                ),
-                videoId = videoWithActivity
+        val user = userAssignedToOrganisation(
+            customPrices = DealResource.PricesResource(
+                videoTypePrices = mapOf(
+                    "STOCK" to DealResource.PriceResource(
+                        amount = "10000",
+                        currency = "USD"
+                    ),
+                    "NEWS" to DealResource.PriceResource(
+                        amount = "15000",
+                        currency = "USD"
+                    )
+                )
             )
-            addVideoAttachment(
-                attachment = AttachmentRequest(
-                    linkToResource = "https://www.boclips.com",
-                    type = "LESSON_PLAN",
-                    description = "a description"
-                ),
-                videoId = videoWithLessonPlan
-            )
+        )
 
-            mockMvc.perform(get("/v1/videos?resource_types=LESSON_PLAN").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos?price=10000").asBoclipsWebAppUser(email = user.idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
-                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoWithLessonPlan.value)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
     }
 
     @Test

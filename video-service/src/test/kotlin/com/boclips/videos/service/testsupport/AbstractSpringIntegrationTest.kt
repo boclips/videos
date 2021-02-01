@@ -25,6 +25,7 @@ import com.boclips.users.api.httpclient.test.fakes.ContentPackagesClientFake
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
+import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
@@ -54,6 +55,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KAL
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.user.Deal
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -610,12 +612,20 @@ abstract class AbstractSpringIntegrationTest {
     fun mongoVideosCollection() =
         mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoVideoRepository.collectionName)
 
-    fun userAssignedToOrganisation(id: String = "the@teacher.com"): User {
-        val organisation = organisationsClient.add(OrganisationResourceFactory.sample())
+    fun userAssignedToOrganisation(id: String = "the@teacher.com", customPrices: DealResource.PricesResource? = null): User {
+        val organisation = organisationsClient.add(OrganisationResourceFactory.sample(
+            deal = DealResource(
+                prices = customPrices,
+                accessExpiresOn = null,
+                billing = null,
+                contentPackageId = null
+            )
+        ))
+
         val userResource = usersClient.add(
             UserResourceFactory.sample(
                 id = id,
-                organisation = OrganisationResourceFactory.sampleDetails(id = organisation.id)
+                organisation = organisation.organisationDetails
             )
         )
         return UserFactory.sample(
