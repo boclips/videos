@@ -68,6 +68,7 @@ class SearchVideo(
         resourceTypeFacets: List<String>? = null,
         videoTypeFacets: List<String>? = null,
         includeChannelFacets: Boolean? = null,
+        includePriceFacets: Boolean? = false,
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
         val userOrganisation = userService.getOrganisationOfUser(user.idOrThrow().value)
@@ -102,6 +103,7 @@ class SearchVideo(
             resourceTypeFacets = resourceTypeFacets,
             videoTypeFacets = videoTypeFacets,
             includeChannelFacets = includeChannelFacets,
+            includePriceFacets = includePriceFacets,
             queryParams = queryParams ?: emptyMap()
         )
         return addOrganisationPrices(retrievedVideos, userOrganisation)

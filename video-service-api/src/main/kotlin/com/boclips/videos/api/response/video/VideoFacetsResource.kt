@@ -6,7 +6,8 @@ data class VideoFacetsResource(
     val durations: Map<String, VideoFacetResource>,
     val resourceTypes: Map<String, VideoFacetResource>,
     val videoTypes: Map<String, VideoFacetResource>,
-    val channels: Map<String, VideoFacetResource>
+    val channels: Map<String, VideoFacetResource>,
+    val prices: Map<String, VideoFacetResource>
 )
 
 data class VideoFacetResource(val hits: Long, val id: String? = null, val name: String? = null)

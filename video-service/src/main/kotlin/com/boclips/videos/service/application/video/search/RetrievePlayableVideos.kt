@@ -5,16 +5,7 @@ import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoResults
-import com.boclips.videos.service.domain.model.video.VideoTypeFacet
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
@@ -60,6 +51,9 @@ class RetrievePlayableVideos(
             .map { ChannelFacet(channelId = ChannelId(it.id), total = it.hits) }
         val videoTypeCounts = results.counts.getFacetCounts(FacetType.VideoTypes)
             .map { VideoTypeFacet(typeId = it.id, total = it.hits) }
+        val priceCounts = results.counts.getFacetCounts(FacetType.Prices).map {
+            PriceFacet(price = it.id, total = it.hits)
+        }
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
@@ -72,7 +66,8 @@ class RetrievePlayableVideos(
                 durations = durationCounts,
                 attachmentTypes = attachmentTypeCounts,
                 channels = channelCounts,
-                videoTypes = videoTypeCounts
+                videoTypes = videoTypeCounts,
+                prices = priceCounts
             )
         )
     }

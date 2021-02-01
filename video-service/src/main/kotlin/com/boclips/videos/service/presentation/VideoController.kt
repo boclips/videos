@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.*
 import com.boclips.videos.api.response.video.*
@@ -8,6 +9,7 @@ import com.boclips.videos.service.application.collection.exceptions.InvalidWebVT
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -141,6 +143,7 @@ class VideoController(
             pageSize = pageSize,
             pageNumber = pageNumber,
             includeChannelFacets = includeChannelFacets,
+            includePriceFacets = UserExtractor.currentUserHasRole(UserRoles.BOCLIPS_WEB_APP),
             queryParams = QueryParamsConverter.toSplitList(request.parameterMap)
         )
 

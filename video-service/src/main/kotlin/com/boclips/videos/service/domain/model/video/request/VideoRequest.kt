@@ -94,6 +94,7 @@ class VideoRequest(
                 duration = facets.durations.map { duration -> DurationRange(duration.first, duration.second) },
                 resourceTypes = facets.attachmentTypes,
                 includeChannelFacets = facets.includeChannelFacets,
+                includePriceFacets = facets.includePriceFacets,
                 videoTypes = facets.videoTypes,
                 organisationId = userOrganisationId?.value
             ),

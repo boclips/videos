@@ -11,7 +11,8 @@ class FacetConverter {
         durationFacets: List<String>?,
         resourcesFacets: List<String>?,
         videoTypesFacets: List<String>?,
-        includeChannelFacets: Boolean?
+        includeChannelFacets: Boolean?,
+        includePriceFacets: Boolean?
     ): VideoFacets {
         return VideoFacets()
             .apply {
@@ -41,6 +42,9 @@ class FacetConverter {
             } }
             .apply { includeChannelFacets?.let {
                 this.includeChannelFacets = it
+            } }
+            .apply { includePriceFacets?.let {
+                this.includePriceFacets = it
             } }
     }
 }

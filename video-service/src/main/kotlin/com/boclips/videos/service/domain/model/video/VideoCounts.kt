@@ -11,7 +11,8 @@ class VideoCounts(
     val durations: List<DurationFacet>,
     val attachmentTypes: List<AttachmentTypeFacet>,
     val channels: List<ChannelFacet>,
-    val videoTypes: List<VideoTypeFacet>
+    val videoTypes: List<VideoTypeFacet>,
+    val prices: List<PriceFacet>
 )
 
 class SubjectFacet(val subjectId: SubjectId, val total: Long)
@@ -20,3 +21,4 @@ class DurationFacet(val durationId: String, val total: Long)
 class AttachmentTypeFacet(val attachmentType: String, val total: Long)
 class ChannelFacet(val channelId: ChannelId, val total: Long)
 class VideoTypeFacet(val typeId: String, val total: Long)
+class PriceFacet(val price: String, val total: Long)

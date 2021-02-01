@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.asBoclipsWebAppUser
 import com.boclips.videos.service.testsupport.asTeacher
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -200,6 +201,47 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.facets.channels.$id.id", equalTo(id)))
             .andExpect(jsonPath("$._embedded.facets.channels.$id.hits", equalTo(94)))
             .andExpect(jsonPath("$._embedded.facets.channels.$id.name", equalTo("TED")))
+    }
+
+    @Test
+    fun `don't show price facets if user does not have ROLE_WEB_APP`() {
+        videoIndexFake.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.Prices,
+                    counts = setOf(Count(id = "2000", hits = 5))
+                ),
+                FacetCount(
+                    type = FacetType.Subjects,
+                    counts = setOf(Count(id = "subject-1", hits = 5))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json"))
+            .andExpect(jsonPath("$._embedded.facets.prices").isEmpty)
+            .andExpect(jsonPath("$._embedded.facets.subjects").isNotEmpty)
+    }
+
+    @Test
+    fun `show price facets if user has role ROLE_WEB_APP`() {
+        videoIndexFake.setFacets(
+            listOf(
+                FacetCount(
+                    type = FacetType.Prices,
+                    counts = setOf(Count(id = "2000", hits = 5))
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=content").asBoclipsWebAppUser())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json"))
+            .andExpect(jsonPath("$._embedded.facets.prices.*", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.facets.prices.2000.name", equalTo("2000")))
+            .andExpect(jsonPath("$._embedded.facets.prices.2000.hits", equalTo(5)))
     }
 }
 

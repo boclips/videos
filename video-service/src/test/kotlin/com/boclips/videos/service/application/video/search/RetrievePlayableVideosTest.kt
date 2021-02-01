@@ -51,7 +51,8 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
             VideoRequest(
                     text = "youtube",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0)
+                    pagingState = VideoRequestPagingState.PageNumber(0),
+
             ),
             VideoAccess.Everything
         )

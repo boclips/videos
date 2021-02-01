@@ -22,7 +22,8 @@ data class VideoFacets(
     ),
         var attachmentTypes: List<String> = listOf(AttachmentType.values().toString()),
         var videoTypes: List<String> = listOf(VideoType.values().toString()),
-        var includeChannelFacets: Boolean = false
+        var includeChannelFacets: Boolean = false,
+        var includePriceFacets: Boolean = false
 )
 
 class FixedAgeRangeFacet(val min: Int, val max: Int)

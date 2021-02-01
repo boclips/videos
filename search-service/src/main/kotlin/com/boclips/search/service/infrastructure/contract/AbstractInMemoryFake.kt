@@ -1,19 +1,8 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.FacetCount
-import com.boclips.search.service.domain.common.IndexReader
-import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.ResultCounts
-import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.IndexSearchRequest
-import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.PagingCursor
-import com.boclips.search.service.domain.common.model.SearchQuery
-import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.model.SortOrder
-import java.util.UUID
+import com.boclips.search.service.domain.common.*
+import com.boclips.search.service.domain.common.model.*
+import java.util.*
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
@@ -36,6 +25,11 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         }
         val toDrop: Int = startIndex ?: cursorPosition
 
+        if (searchRequest.query.facetDefinition is FacetDefinition.Video &&
+            !(searchRequest.query.facetDefinition as FacetDefinition.Video).includePriceFacets) {
+            facetCounts = facetCounts.filterNot { it.type == FacetType.Prices }
+        }
+
         requests.add(searchRequest)
 
         val idsMatching = idsMatching(index, searchRequest.query)
@@ -47,6 +41,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         if (searchRequest.isCursorBased()) {
             cursorPosition += searchRequest.windowSize
         }
+
 
         return SearchResults(
             elements = elements,

@@ -4,17 +4,12 @@ import com.boclips.search.service.common.Do
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.IndexSearchRequest
-import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.PagingCursor
-import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.*
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoFilterCriteria.Companion.allCriteria
 import com.boclips.search.service.infrastructure.videos.aggregations.AgeRangeAggregation.Companion.aggregateAgeRanges
 import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentTypeAggregation.Companion.aggregateAttachmentTypes
-import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation
 import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateSelectedChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
@@ -79,10 +74,13 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     aggregation(aggregateDuration(videoQuery))
                     aggregation(aggregateAttachmentTypes(videoQuery))
                     aggregation(aggregateVideoTypes(videoQuery))
-                    aggregation(aggregateVideoPrices(videoQuery.facetDefinition?.organisationId))
+                    if (videoQuery.facetDefinition?.includePriceFacets == true) {
+                        aggregation(aggregateVideoPrices(videoQuery.facetDefinition?.organisationId))
+                    }
                     if (videoQuery.facetDefinition?.includeChannelFacets == true) {
                         aggregation(aggregateChannels(videoQuery))
-                        aggregation(aggregateSelectedChannels(videoQuery)
+                        aggregation(
+                            aggregateSelectedChannels(videoQuery)
                         )
                     }
                 }

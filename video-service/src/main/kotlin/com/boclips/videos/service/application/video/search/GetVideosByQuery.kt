@@ -53,13 +53,14 @@ class GetVideosByQuery(
         channelIds: Set<String>,
         type: Set<String>,
         user: User,
-        userOrganisation: Organisation?, // TODO - consider moving the field to a User class
+        userOrganisation: Organisation?,
         subjectsSetManually: Boolean?,
         releasedDateFrom: String?,
         resourceTypes: Set<String>,
         resourceTypeFacets: List<String>?,
         videoTypeFacets: List<String>?,
         includeChannelFacets: Boolean?,
+        includePriceFacets: Boolean?,
         queryParams: Map<String, List<String>>
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
@@ -91,7 +92,7 @@ class GetVideosByQuery(
             channelNames = channelNames,
             channelIds = channelIds,
             types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
-            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets),
+            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets, includePriceFacets),
             attachmentTypes = resourceTypes,
             userOrganisationId = userOrganisation?.organisationId
         )

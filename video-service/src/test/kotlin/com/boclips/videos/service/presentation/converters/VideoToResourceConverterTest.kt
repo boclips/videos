@@ -15,18 +15,7 @@ import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.AgeRangeFacet
-import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
-import com.boclips.videos.service.domain.model.video.ChannelFacet
-import com.boclips.videos.service.domain.model.video.DurationFacet
-import com.boclips.videos.service.domain.model.video.Price
-import com.boclips.videos.service.domain.model.video.SubjectFacet
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.VideoTypeFacet
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
@@ -322,7 +311,8 @@ class VideoToResourceConverterTest {
                         ChannelFacet(channelId = ChannelId("channel-id"), total = 7),
                         ChannelFacet(channelId = ChannelId("non-existing-channel-id"), total = 9)
                     ),
-                    videoTypes = listOf(VideoTypeFacet(typeId = "stock", total = 10))
+                    videoTypes = listOf(VideoTypeFacet(typeId = "stock", total = 10)),
+                    prices = listOf(PriceFacet(price = "20000", total =10))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,
@@ -349,6 +339,9 @@ class VideoToResourceConverterTest {
 
         assertThat(resultResource._embedded.facets?.videoTypes?.size).isEqualTo(1)
         assertThat(resultResource._embedded.facets?.videoTypes?.get("STOCK")?.hits).isEqualTo(10)
+
+        assertThat(resultResource._embedded.facets?.prices?.size).isEqualTo(1)
+        assertThat(resultResource._embedded.facets?.prices?.get("20000")?.hits).isEqualTo(10)
     }
 
     @Test
