@@ -9,7 +9,6 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
-import junit.framework.Assert.assertNotNull
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -90,7 +89,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             videoAccess = VideoAccess.Everything
         )
-        assertNotNull(result.cursor)
+        assertThat(result.cursor).isNotNull
         val videoIds = videoRetrievalService.getVideoIdsWithCursor(
             cursor = result.cursor,
             pageSize = 2,
