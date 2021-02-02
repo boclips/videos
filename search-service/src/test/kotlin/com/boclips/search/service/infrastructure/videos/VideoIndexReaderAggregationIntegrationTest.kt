@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.*
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
+import com.boclips.search.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -1167,6 +1168,125 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                 assertThat(results.counts.totalHits).isEqualTo(5)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 2))
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1999", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "111", hits = 1))
+            }
+
+            @Test
+            fun `returns counts for prices when price filter applied`() {
+                val userOrganisationId = "my-org-id"
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            prices = mapOf(
+                                userOrganisationId to BigDecimal.valueOf(50),
+                                "DEFAULT" to BigDecimal.valueOf(99.99)
+                            )
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "candy banana apple",
+                            prices = mapOf(
+                                "the-other-org-1" to BigDecimal.valueOf(20.99),
+                                "DEFAULT" to BigDecimal.valueOf(99.99)
+                            )
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "candy apple",
+                            prices = mapOf(
+                                userOrganisationId to BigDecimal.valueOf(50),
+                                "DEFAULT" to BigDecimal.valueOf(99.99)
+                            )
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList(),
+                                includePriceFacets = true
+                            ),
+                            userQuery = UserQuery(
+                                organisationPriceFilter = PricesFilter(userOrganisationId, setOf(BigDecimal.valueOf(50))),
+                            )
+                        )
+                    )
+                )
+
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "9999", hits = 1))
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "5000", hits = 2))
+            }
+
+            @Test
+            fun `returns counts for prices when another filter applied`() {
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "1",
+                            title = "Apple banana candy",
+                            subjects = setOf(TestFactories.createSubjectMetadata("subject-1")),
+                            prices = mapOf(
+                                "the-org-im-in" to BigDecimal.valueOf(1.11),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "2",
+                            title = "candy banana apple",
+                            subjects = setOf(TestFactories.createSubjectMetadata("subject-1")),
+                            prices = mapOf(
+                                "the-other-org-1" to BigDecimal.valueOf(20.99),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
+                        ),
+                        SearchableVideoMetadataFactory.create(
+                            id = "3",
+                            title = "candy apple",
+                            subjects = setOf(TestFactories.createSubjectMetadata("subject-2")),
+                            prices = mapOf(
+                                "the-other-org-2" to BigDecimal.valueOf(12.99),
+                                "DEFAULT" to BigDecimal.valueOf(10.99)
+                            )
+                        )
+                    )
+                )
+
+                val results = videoIndexReader.search(
+                    PaginatedIndexSearchRequest(
+                        query = VideoQuery(
+                            videoAccessRuleQuery = VideoAccessRuleQuery(),
+                            phrase = "apple",
+                            facetDefinition = FacetDefinition.Video(
+                                ageRangeBuckets = null,
+                                duration = null,
+                                resourceTypes = emptyList(),
+                                includeChannelFacets = true,
+                                videoTypes = emptyList(),
+                                includePriceFacets = true
+                            ),
+                            userQuery = UserQuery(
+                                organisationPriceFilter = PricesFilter("the-org-im-in", emptySet()),
+                                subjectIds = setOf("subject-1")
+                            )
+                        )
+                    )
+                )
+
+
+                assertThat(results.counts.totalHits).isEqualTo(2)
+                assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "111", hits = 1))
             }
 

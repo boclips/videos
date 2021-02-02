@@ -75,7 +75,7 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
                     aggregation(aggregateAttachmentTypes(videoQuery))
                     aggregation(aggregateVideoTypes(videoQuery))
                     if (videoQuery.facetDefinition?.includePriceFacets == true) {
-                        aggregation(aggregateVideoPrices(videoQuery.userQuery.organisationPriceFilter.userOrganisationId))
+                        aggregation(aggregateVideoPrices(videoQuery))
                     }
                     if (videoQuery.facetDefinition?.includeChannelFacets == true) {
                         aggregation(aggregateChannels(videoQuery))
