@@ -3,7 +3,6 @@ package com.boclips.search.service.domain.videos.model
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
-import java.math.BigDecimal
 import java.time.LocalDate
 
 data class VideoQuery(
@@ -33,7 +32,7 @@ data class UserQuery(
     val attachmentTypes: Set<String> = emptySet(),
     val channelNames: Set<String> = emptySet(),
     val channelIds: Set<String> = emptySet(),
-    val organisationPriceFilter: Pair<String?, Set<BigDecimal>> = null to emptySet(),
+    val organisationPriceFilter: PricesFilter = PricesFilter(),
 )
 
 data class VideoAccessRuleQuery(

@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.videos.model.PricesFilter
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -54,7 +55,12 @@ class VideoIndexReaderPriceSearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
-                    userQuery = UserQuery(organisationPriceFilter = "org-id-1" to setOf(BigDecimal.valueOf(11), BigDecimal.valueOf(20)))
+                    userQuery = UserQuery(
+                        organisationPriceFilter = PricesFilter(
+                            userOrganisationId = "org-id-1",
+                            queriedPrices = setOf(BigDecimal.valueOf(11), BigDecimal.valueOf(20))
+                        )
+                    )
                 )
             )
         )
@@ -87,7 +93,11 @@ class VideoIndexReaderPriceSearchesIntegrationTest : EmbeddedElasticSearchIntegr
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
-                    userQuery = UserQuery(organisationPriceFilter = "an-org-id" to setOf(BigDecimal.valueOf(123)))
+                    userQuery = UserQuery(
+                        organisationPriceFilter = PricesFilter(
+                            "an-org-id", setOf(BigDecimal.valueOf(123))
+                        )
+                    )
                 )
             )
         )

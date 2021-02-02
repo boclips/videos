@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.videos.model.DurationRange
+import com.boclips.search.service.domain.videos.model.PricesFilter
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
@@ -8,7 +9,6 @@ import com.boclips.search.service.infrastructure.common.filters.beWithinAgeRange
 import com.boclips.search.service.infrastructure.common.filters.matchAttachmentTypes
 import org.elasticsearch.index.query.*
 import org.elasticsearch.index.query.QueryBuilders.*
-import java.math.BigDecimal
 import java.time.LocalDate
 
 class VideoFilterCriteria {
@@ -99,7 +99,7 @@ class VideoFilterCriteria {
                 query.must(termsQuery(VideoDocument.TYPES, videoQuery.types).queryName(VIDEO_TYPES_FILTER))
             }
 
-            if (!videoQuery.organisationPriceFilter.first.isNullOrEmpty() && videoQuery.organisationPriceFilter.second.isNotEmpty()) {
+            if (videoQuery.organisationPriceFilter.shouldFilter()) {
                 query.must(matchPrices(videoQuery.organisationPriceFilter))
             }
 
@@ -111,18 +111,11 @@ class VideoFilterCriteria {
         }
 
         fun removeCriteria(queryBuilder: BoolQueryBuilder, filterName: String): BoolQueryBuilder {
-            fun removeFromList(must: MutableList<QueryBuilder>) {
-                val filter = must.find { it.queryName() === filterName }
-                filter?.let { must.remove(it) }
-            }
-
-            queryBuilder
-                .apply {
-                    removeFromList(this.must() ?: mutableListOf())
-                    removeFromList(this.should() ?: mutableListOf())
-                    removeFromList(this.filter() ?: mutableListOf())
-                }
-
+            listOfNotNull(
+                queryBuilder.must(),
+                queryBuilder.should(),
+                queryBuilder.filter()
+            ).forEach { clauses -> clauses.removeIf { it.queryName() === filterName }}
             return queryBuilder
         }
 
@@ -193,7 +186,7 @@ class VideoFilterCriteria {
                 }
         }
 
-        private fun matchPrices(organisationPriceFilter: Pair<String?, Set<BigDecimal>>): BoolQueryBuilder {
+        private fun matchPrices(organisationPriceFilter: PricesFilter): BoolQueryBuilder {
             val (organisationId, queriedPrices) = organisationPriceFilter
             val priceQueries = boolQuery().queryName(VIDEO_PRICES_FILTER)
             queriedPrices

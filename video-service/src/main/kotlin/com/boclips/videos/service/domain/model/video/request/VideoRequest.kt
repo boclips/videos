@@ -3,12 +3,7 @@ package com.boclips.videos.service.domain.model.video.request
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
-import com.boclips.search.service.domain.videos.model.DurationRange
-import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.UserQuery
-import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.domain.videos.model.VideoQuery
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.*
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.convertAgeRange
 import com.boclips.videos.service.domain.model.user.OrganisationId
@@ -119,7 +114,7 @@ class VideoRequest(
                 channelIds = channelIds,
                 types = types,
                 attachmentTypes = attachmentTypes,
-                organisationPriceFilter = userOrganisationId?.value to prices
+                organisationPriceFilter = PricesFilter(userOrganisationId?.value, prices)
             )
         )
     }

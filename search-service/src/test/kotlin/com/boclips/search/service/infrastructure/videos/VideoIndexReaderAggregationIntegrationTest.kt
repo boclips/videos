@@ -1157,7 +1157,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 includePriceFacets = true
                             ),
                             userQuery = UserQuery(
-                                organisationPriceFilter = "the-org-im-in" to emptySet()
+                                organisationPriceFilter = PricesFilter("the-org-im-in", emptySet())
                             )
                         )
                     )
@@ -1196,7 +1196,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 includePriceFacets = true
                             ),
                             userQuery = UserQuery(
-                                organisationPriceFilter = "the-org-im-in" to emptySet()
+                                organisationPriceFilter = PricesFilter("the-org-im-in", emptySet())
                             )
                         )
                     )
@@ -1260,7 +1260,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                                 includePriceFacets = true
                             ),
                             userQuery = UserQuery(
-                                organisationPriceFilter = null to emptySet()
+                                organisationPriceFilter = PricesFilter(null, emptySet())
                             )
                         )
                     )
