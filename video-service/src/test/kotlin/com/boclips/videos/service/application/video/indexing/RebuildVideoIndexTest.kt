@@ -74,7 +74,8 @@ class RebuildVideoIndexTest {
                 id = "an-organisation-id",
                 deal = OrganisationResourceFactory.sampleDeal(
                     prices = DealResource.PricesResource(
-                        videoTypePrices = mapOf("STOCK" to DealResource.PriceResource("666", "USD"))
+                        videoTypePrices = mapOf("STOCK" to DealResource.PriceResource("666", "USD")),
+                        channelPrices = mapOf("TED-ED" to DealResource.PriceResource(amount = "400", "USD"))
                     )
                 )
             )

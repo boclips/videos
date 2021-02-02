@@ -65,6 +65,12 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
                         amount = "15000",
                         currency = "USD"
                     )
+                ),
+                channelPrices = mapOf(
+                    "channel-TED" to DealResource.PriceResource(
+                        "400",
+                        "USD"
+                    )
                 )
             )
         ).id
@@ -693,7 +699,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             deal = DealResource(
                 prices = customPrices,
                 accessExpiresOn = null,
-                billing = null,
+                billing = false,
                 contentPackageId = null
             )
         ))

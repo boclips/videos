@@ -76,7 +76,7 @@ class ApiUserServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     name = "hello",
                     allowsOverridingUserIds = true
                 ),
-                billing = null
+                billing = false
             )
         )
 

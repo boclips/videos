@@ -120,7 +120,7 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-security:0.530.0')
     implementation("com.github.boclips:event-bus:4.4.3")
     implementation('com.github.boclips:kaltura-client:2.0.4')
-    implementation("com.github.boclips:user-service:v302")
+    implementation("com.github.boclips:user-service:v305")
 
     // Required by user-service client
     implementation("io.github.openfeign:feign-core:${openFeignVersion}")

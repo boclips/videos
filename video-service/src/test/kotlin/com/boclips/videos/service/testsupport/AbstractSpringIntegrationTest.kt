@@ -617,7 +617,7 @@ abstract class AbstractSpringIntegrationTest {
             deal = DealResource(
                 prices = customPrices,
                 accessExpiresOn = null,
-                billing = null,
+                billing = false,
                 contentPackageId = null
             )
         ))

@@ -39,7 +39,7 @@ class ApiGetUserIdOverrideIntegrationTest : AbstractSpringIntegrationTest() {
                 organisationDetails = OrganisationResourceFactory.sampleDetails(
                     allowsOverridingUserIds = null
                 ),
-                billing = null
+                billing = false
             )
         )
 

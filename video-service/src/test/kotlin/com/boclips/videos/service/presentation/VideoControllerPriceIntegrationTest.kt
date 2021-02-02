@@ -54,6 +54,12 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     prices = DealResource.PricesResource(
                         videoTypePrices = mapOf(
                             "INSTRUCTIONAL" to DealResource.PriceResource("1000", "USD")
+                        ),
+                        channelPrices = mapOf(
+                            "channel-TED" to DealResource.PriceResource(
+                                "400",
+                                "USD"
+                            )
                         )
                     ),
                     accessExpiresOn = null,
@@ -100,6 +106,12 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     prices = DealResource.PricesResource(
                         videoTypePrices = mapOf(
                             "INSTRUCTIONAL" to DealResource.PriceResource("1000", "USD")
+                        ),
+                        channelPrices = mapOf(
+                            "channel-TED" to DealResource.PriceResource(
+                                "400",
+                                "USD"
+                            )
                         )
                     ),
                     accessExpiresOn = null,
