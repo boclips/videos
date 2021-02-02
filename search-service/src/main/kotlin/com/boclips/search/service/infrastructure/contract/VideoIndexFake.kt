@@ -133,7 +133,7 @@ class VideoIndexFake :
 
                     priceForOrganisation
                         ?.let { queriedPrices.contains(it) }
-                        ?: (priceForOrganisation == null && defaultPriceMatches) ?: false
+                        ?: defaultPriceMatches
                 }
             }
             .filter { entry ->

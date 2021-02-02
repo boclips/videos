@@ -25,8 +25,7 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         }
         val toDrop: Int = startIndex ?: cursorPosition
 
-        if (searchRequest.query.facetDefinition is FacetDefinition.Video &&
-            !(searchRequest.query.facetDefinition as FacetDefinition.Video).includePriceFacets) {
+        if ((searchRequest.query.facetDefinition as? FacetDefinition.Video)?.includePriceFacets != true) {
             facetCounts = facetCounts.filterNot { it.type == FacetType.Prices }
         }
 
