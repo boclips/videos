@@ -95,8 +95,9 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can see user's organisation based prices when searching for videos`() {
-        saveVideo()
+    fun `can see user's organisation channel custom prices when searching for videos`() {
+        val channelWithCustomPrices =  saveChannel(name = "TeD")
+        saveVideo(contentProviderId = channelWithCustomPrices.id.value)
 
         organisationsClientFake.add(
             OrganisationResourceFactory.sample(
@@ -108,11 +109,59 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                             "INSTRUCTIONAL" to DealResource.PriceResource("1000", "USD")
                         ),
                         channelPrices = mapOf(
-                            "channel-TED" to DealResource.PriceResource(
-                                "400",
+                            channelWithCustomPrices.id.value to DealResource.PriceResource(
+                                "4000",
                                 "USD"
                             )
                         )
+                    ),
+                    accessExpiresOn = null,
+                    billing = false,
+                    contentPackageId = null
+                ),
+            )
+        )
+
+        usersClientFake.add(
+            UserResourceFactory.sample(
+                id = "a-pearson-user",
+                organisation = OrganisationDetailsResource(
+                    id = "pearson-org",
+                    name = "Pearson",
+                    domain = null,
+                    type = null,
+                    state = null,
+                    country = null,
+                    allowsOverridingUserIds = null,
+                    features = null
+                )
+            )
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/videos")
+                .asUserWithUsernameAndRoles("a-pearson-user", UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos[0].price.amount", equalTo(4000)))
+            .andExpect(jsonPath("$._embedded.videos[0].price.currency", equalTo("USD")))
+    }
+
+    @Test
+    fun `can see user's organisation custom type prices when searching for videos`() {
+        saveVideo()
+
+        organisationsClientFake.add(
+            OrganisationResourceFactory.sample(
+                id = "pearson-org",
+                billing = true,
+                deal = DealResource(
+                    prices = DealResource.PricesResource(
+                        videoTypePrices = mapOf(
+                            "INSTRUCTIONAL" to DealResource.PriceResource("1000", "USD")
+                        ),
+                        channelPrices = emptyMap()
                     ),
                     accessExpiresOn = null,
                     billing = false,

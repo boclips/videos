@@ -4,20 +4,24 @@ import com.boclips.videos.service.domain.model.user.Deal.Prices
 import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.OrganisationsPrices
 import com.boclips.videos.service.domain.model.video.VideoType.*
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import java.math.BigDecimal
-import java.util.Currency
+import java.util.*
 import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as OrganisationPrice
 
 class PriceComputingService {
 
     fun computeVideoPrice(video: Video, organisationPrices: Prices?): Price? {
         return if (video.isBoclipsHosted()) {
-            if (video.types.isEmpty())
+            if (video.types.isEmpty()) {
                 throw VideoMissingTypeException(video.videoId)
-            computeVideoTypePrice(
-                video.types,
-                zipPricesWithDefaultPrices(customPrices = organisationPrices?.videoTypePrices)
-            )
+            }
+
+            computeVideoChannelPrice(video.channel.channelId, organisationPrices?.channelPrices)
+                ?: computeVideoTypePrice(
+                    video.types,
+                    zipPricesWithDefaultPrices(customPrices = organisationPrices?.videoTypePrices)
+                )
         } else {
             null
         }
@@ -66,6 +70,17 @@ class PriceComputingService {
         videoTypePrices: Map<VideoType, OrganisationPrice>
     ): Price? {
         return buildPrice(videoTypePrices[videoType])
+    }
+
+    private fun computeVideoChannelPrice(
+        channel: ChannelId,
+        channelPrices: Map<ChannelId, OrganisationPrice>?
+    ): Price? {
+        if (channelPrices == null) {
+            return null
+        }
+
+        return buildPrice(channelPrices[channel])
     }
 
     private fun buildPrice(organisationPrice: OrganisationPrice?): Price? {
