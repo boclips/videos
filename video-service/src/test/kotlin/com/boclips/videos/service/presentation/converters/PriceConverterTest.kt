@@ -17,6 +17,15 @@ internal class PriceConverterTest {
     }
 
     @Test
+    fun `it can handle larger numbers`() {
+        val priceString = "10000999"
+        val price = PriceConverter.toPrice(priceString)
+
+        assertThat(price.toPlainString()).isEqualTo("100009.99")
+        assertThat(price).isEqualTo(BigDecimal.valueOf(100009.99))
+    }
+
+    @Test
     fun `it throws when an invalid value is provided`() {
         assertThrows<NumberFormatException>{
             PriceConverter.toPrice("not a number")

@@ -5,6 +5,6 @@ import java.math.MathContext
 
 object PriceConverter {
     fun toPrice(price: String): BigDecimal {
-        return BigDecimal(price, MathContext(6)).movePointLeft(2)
+        return BigDecimal(price).movePointLeft(2)
     }
 }
