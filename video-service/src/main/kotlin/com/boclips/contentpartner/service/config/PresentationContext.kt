@@ -2,16 +2,13 @@ package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.presentation.converters.ChannelToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
-import com.boclips.contentpartner.service.presentation.converters.LegacyContentPartnerToResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
-import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.videos.service.presentation.converters.SuggestionToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.SuggestionLinkBuilder
-import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -19,10 +16,6 @@ import org.springframework.context.annotation.Configuration
 class PresentationContext(
     private val uriComponentsBuilderFactory: UriComponentsBuilderFactory
 ) {
-
-    @Bean
-    fun contentPartnersLinkBuilder() =
-        LegacyContentPartnerLinkBuilder(uriComponentsBuilderFactory = uriComponentsBuilderFactory)
 
     @Bean
     fun channelLinkBuilder() =
@@ -41,18 +34,6 @@ class PresentationContext(
     ): ChannelToResourceConverter {
         return ChannelToResourceConverter(
             channelLinkBuilder = channelLinkBuilder(),
-            ingestDetailsToResourceConverter = ingestDetailsToResourceConverter,
-            legalRestrictionsToResourceConverter = legalRestrictionsToResourceConverter
-        )
-    }
-
-    @Bean
-    fun getLegacyContentPartnerToResourceConverter(
-        legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter,
-        ingestDetailsToResourceConverter: IngestDetailsResourceConverter
-    ): LegacyContentPartnerToResourceConverter {
-        return LegacyContentPartnerToResourceConverter(
-            legacyContentPartnerLinkBuilder = contentPartnersLinkBuilder(),
             ingestDetailsToResourceConverter = ingestDetailsToResourceConverter,
             legalRestrictionsToResourceConverter = legalRestrictionsToResourceConverter
         )
