@@ -163,9 +163,6 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1").asBoclipsEmployee())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.distributionMethods.href", endsWith("/distribution-methods")))
-            .andExpect(jsonPath("$._links.contentPartners.href", containsString("/content-partners")))
-            .andExpect(jsonPath("$._links.contentPartner.href", containsString("/content-partners/{id}")))
-            .andExpect(jsonPath("$._links.contentPartner.templated", equalTo(true)))
             .andExpect(jsonPath("$._links.channels.href", containsString("/channels")))
             .andExpect(
                 jsonPath(
