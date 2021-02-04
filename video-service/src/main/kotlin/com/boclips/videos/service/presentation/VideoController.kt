@@ -101,7 +101,6 @@ class VideoController(
         @RequestParam(name = "subject", required = false) subjects: Set<String>?,
         @RequestParam(name = "subjects_set_manually", required = false) subjectsSetManually: Boolean?,
         @RequestParam(name = "promoted", required = false) promoted: Boolean?,
-        @RequestParam(name = "content_partner", required = false) contentPartners: Set<String>?,
         @RequestParam(name = "channel", required = false) channelParam: Set<String>?,
         @RequestParam(name = "include_channel_facets", required = false) includeChannelFacets: Boolean?,
         @RequestParam(name = "type", required = false) type: Set<String>?,
@@ -115,8 +114,6 @@ class VideoController(
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
 
-        val channels = (contentPartners ?: emptySet()) + (channelParam ?: emptySet())
-        val filteringByChannelIds = isFilteringByChannelIdsRequested(channels)
         val results = searchVideo.byQuery(
             query = query,
             ids = ids ?: emptySet(),
@@ -138,8 +135,7 @@ class VideoController(
             resourceTypeFacets = resourceTypeFacets.orEmpty(),
             videoTypeFacets = videoTypeFacets.orEmpty(),
             promoted = promoted,
-            channelNames = if (filteringByChannelIds) emptySet() else channels,
-            channelIds = if (filteringByChannelIds) channels else emptySet(),
+            channelIds = channelParam ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
             user = getCurrentUser(),
             sortBy = sortBy,
@@ -392,19 +388,5 @@ class VideoController(
         val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videoResource)
         val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
         return ResponseEntity(response, HttpStatus.OK)
-    }
-
-    // FIXME - remove when clients no longer use channel names for video filtering
-    private fun isFilteringByChannelIdsRequested(channels: Set<String>): Boolean {
-        return try {
-            channelRepository
-                .findAllByIds(
-                    channels.map { com.boclips.contentpartner.service.domain.model.channel.ChannelId(it) }
-                )
-                .iterator()
-                .hasNext()
-        } catch (e: IllegalArgumentException) {
-            false
-        }
     }
 }

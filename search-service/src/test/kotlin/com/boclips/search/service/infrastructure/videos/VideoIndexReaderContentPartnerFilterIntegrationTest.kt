@@ -29,17 +29,17 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
             given = sequenceOf(
                 SearchableVideoMetadataFactory.create(
                     id = "1",
-                    contentProvider = "provider one"
+                    contentPartnerId = "provider one"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
-                    contentProvider = "provider two"
+                    contentPartnerId = "provider two"
                 )
             ),
             searchFor = VideoQuery(
                 videoAccessRuleQuery = VideoAccessRuleQuery(),
                 userQuery = UserQuery(
-                    channelNames = setOf("provider two")
+                    channelIds = setOf("provider two")
                 )
             ),
             expectIds = listOf("2")
@@ -52,29 +52,29 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
             given = sequenceOf(
                 SearchableVideoMetadataFactory.create(
                     id = "1",
-                    contentProvider = "p1"
+                    contentPartnerId = "p1"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
-                    contentProvider = "p1"
+                    contentPartnerId = "p1"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
-                    contentProvider = "p2"
+                    contentPartnerId = "p2"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "4",
-                    contentProvider = "p2"
+                    contentPartnerId = "p2"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "5",
-                    contentProvider = "p3"
+                    contentPartnerId = "p3"
                 )
             ),
             searchFor = VideoQuery(
                 videoAccessRuleQuery = VideoAccessRuleQuery(),
                 userQuery = UserQuery(
-                    channelNames = setOf("p2", "p3")
+                    channelIds = setOf("p2", "p3")
                 )
             ),
             expectIds = listOf("3", "4", "5")
@@ -88,32 +88,32 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "math",
-                    contentProvider = "p1"
+                    contentPartnerId = "p1"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
                     title = "science",
-                    contentProvider = "p1"
+                    contentPartnerId = "p1"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "3",
                     title = "math",
-                    contentProvider = "p2"
+                    contentPartnerId = "p2"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "4",
                     title = "science",
-                    contentProvider = "p2"
+                    contentPartnerId = "p2"
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "5",
                     title = "science",
-                    contentProvider = "p3"
+                    contentPartnerId = "p3"
                 )
             ),
             searchFor = VideoQuery(
                 videoAccessRuleQuery = VideoAccessRuleQuery(),
-                userQuery = UserQuery(channelNames = setOf("p1")),
+                userQuery = UserQuery(channelIds = setOf("p1")),
                 phrase = "science"
             ),
             expectIds = listOf("2")
@@ -158,7 +158,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                     )
                 ),
                 searchFor = VideoQuery(
-                    userQuery = UserQuery(channelNames = setOf("p1", "p2")),
+                    userQuery = UserQuery(channelIds = setOf("p1", "p2")),
                     videoAccessRuleQuery = VideoAccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1"))
                 ),
                 expectIds = listOf("3")

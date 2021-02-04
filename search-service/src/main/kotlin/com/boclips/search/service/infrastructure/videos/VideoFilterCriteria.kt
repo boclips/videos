@@ -17,23 +17,12 @@ class VideoFilterCriteria {
         const val AGE_RANGES = "age-ranges-filter"
         const val DURATION_RANGES = "duration-ranges-filter"
         const val ATTACHMENT_TYPES = "attachment-types-filter"
-        const val CHANNEL_NAMES_FILTER = "content-provider-filter"
         const val CHANNEL_IDS_FILTER = "content-partner-id-filter"
         const val VIDEO_TYPES_FILTER = "video-types-filter"
         const val VIDEO_PRICES_FILTER = "video-prices-filter"
 
         fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()
-            if (videoQuery.channelNames.isNotEmpty()) {
-                query.filter(
-                    boolQuery().queryName(CHANNEL_NAMES_FILTER).must(
-                        termsQuery(
-                            VideoDocument.CONTENT_PROVIDER,
-                            videoQuery.channelNames
-                        )
-                    )
-                )
-            }
 
             if (videoQuery.channelIds.isNotEmpty()) {
                 query.filter(

@@ -109,11 +109,6 @@ class VideoIndexFake :
                 query.userQuery.active?.let { entry.value.deactivated != it } ?: true
             }
             .filter { entry ->
-                if (query.userQuery.channelNames.isNotEmpty())
-                    query.userQuery.channelNames.contains(entry.value.contentProvider)
-                else true
-            }
-            .filter { entry ->
                 if (query.userQuery.channelIds.isNotEmpty())
                     query.userQuery.channelIds.contains(entry.value.contentPartnerId)
                 else true

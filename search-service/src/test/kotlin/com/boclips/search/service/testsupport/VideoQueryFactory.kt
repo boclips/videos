@@ -24,7 +24,6 @@ class VideoQueryFactory {
                     promoted = true,
                     attachmentTypes = setOf("ACTIVITY"),
                     channelIds = setOf("Achannel-ID11-1111-adc1-0242ac120002", "Achannel-ID22-2222-adc1-0242ac120002"),
-                    channelNames = setOf("a channel name"),
                     types = setOf(VideoType.INSTRUCTIONAL),
                     organisationPriceFilter = PricesFilter("Org-id-1", setOf(BigDecimal.valueOf(300)))
                 ),

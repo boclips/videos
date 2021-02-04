@@ -30,7 +30,6 @@ data class UserQuery(
     val active: Boolean? = null,
     val types: Set<VideoType> = emptySet(),
     val attachmentTypes: Set<String> = emptySet(),
-    val channelNames: Set<String> = emptySet(),
     val channelIds: Set<String> = emptySet(),
     val organisationPriceFilter: PricesFilter = PricesFilter(),
 )
