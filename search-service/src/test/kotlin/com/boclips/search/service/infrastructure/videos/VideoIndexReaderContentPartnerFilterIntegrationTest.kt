@@ -158,7 +158,7 @@ class VideoIndexReaderContentPartnerFilterIntegrationTest : EmbeddedElasticSearc
                     )
                 ),
                 searchFor = VideoQuery(
-                    userQuery = UserQuery(channelIds = setOf("p1", "p2")),
+                    userQuery = UserQuery(channelIds = setOf("cp-id-1", "cp-id-2")),
                     videoAccessRuleQuery = VideoAccessRuleQuery(excludedContentPartnerIds = setOf("cp-id-1"))
                 ),
                 expectIds = listOf("3")
