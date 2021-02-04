@@ -6,6 +6,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContentCategories
 import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.DistributionMethodsLinkBuilder
+import com.boclips.contentpartner.service.presentation.hateoas.LegacyContentPartnerLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLinkBuilder
 import com.boclips.videos.api.response.HateoasLink
@@ -32,6 +33,7 @@ class LinksController(
     private val contentWarningLinkBuilder: ContentWarningLinkBuilder,
     private val suggestionLinkBuilder: SuggestionLinkBuilder,
     private val videoTypeLinkBuilder: VideoTypeLinkBuilder,
+    private val legacyContentPartnerLinkBuilder: LegacyContentPartnerLinkBuilder,
     private val channelLinkBuilder: ChannelLinkBuilder,
     private val contractsLinkBuilder: ContractsLinkBuilder,
     private val contentCategoriesLinkBuilder: ContentCategoriesLinkBuilder,
@@ -80,6 +82,8 @@ class LinksController(
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),
+                legacyContentPartnerLinkBuilder.contentPartnerLink(null),
+                legacyContentPartnerLinkBuilder.contentPartnersLink(),
                 channelLinkBuilder.channelLink(null),
                 channelLinkBuilder.channelsLink(),
                 channelLinkBuilder.channelsSignedUploadLink(),

@@ -295,6 +295,67 @@ class WebSecurityConfigIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `probe video existence requires a special role`() {
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asOperator())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(head("/v1/content-partners/ted/videos/666").asIngestor())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
+    fun `probe video existence posting requires a special role`() {
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asReporter())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asOperator())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/ted/videos/search").asIngestor())
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
+    fun `content partner signed url can only be created with special role`() {
+        mockMvc.perform(post("/v1/content-partners/signed-upload-link"))
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(post("/v1/content-partners/signed-upload-link").asTeacher())
+            .andExpect(status().isForbidden)
+
+        mockMvc.perform(
+            post("/v1/content-partners/signed-upload-link").with(
+                user("user")
+                    .roles(UserRoles.INSERT_CONTENT_PARTNERS)
+            )
+        )
+            .andExpect(status().`is`(not401Or403()))
+
+        mockMvc.perform(
+            post("/v1/content-partners/signed-upload-link").with(
+                user("user")
+                    .roles(UserRoles.UPDATE_CONTENT_PARTNERS)
+            )
+        )
+            .andExpect(status().`is`(not401Or403()))
+    }
+
+    @Test
     fun `everybody can access subjects without permissions`() {
         mockMvc.perform(get("/v1/subjects"))
             .andExpect(status().`is`(HttpStatus.OK.value()))
