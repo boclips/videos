@@ -133,7 +133,7 @@ dependencies {
     implementation('org.apache.commons:commons-lang3:3.11')
     implementation("org.bouncycastle:bcprov-jdk15on:1.60")
     implementation('org.litote.kmongo:kmongo:3.9.2')
-    implementation('io.sentry:sentry-logback:3.1.3')
+    implementation('io.sentry:sentry-logback:4.1.0')
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:3.2.2")
     implementation("io.opentracing.contrib:opentracing-mongo-driver:0.1.5")
     implementation("org.apache.commons:commons-collections4:4.4")
