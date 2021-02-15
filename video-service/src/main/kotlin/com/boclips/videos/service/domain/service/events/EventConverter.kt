@@ -52,6 +52,7 @@ class EventConverter {
             .topics(toTopicsPayload(video.topics))
             .keywords(video.keywords)
             .sourceVideoReference(video.videoReference)
+            .deactivated(video.deactivated)
             .build()
     }
 

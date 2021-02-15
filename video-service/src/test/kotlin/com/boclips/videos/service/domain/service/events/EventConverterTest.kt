@@ -52,6 +52,7 @@ class EventConverterTest {
             promoted = true,
             keywords = listOf("key", "word"),
             videoReference = "video-reference",
+            deactivated = true,
         )
 
         val videoEvent = converter.toVideoPayload(video)
@@ -74,6 +75,7 @@ class EventConverterTest {
         assertThat(videoEvent.promoted).isTrue()
         assertThat(videoEvent.keywords).containsExactly("key", "word")
         assertThat(videoEvent.sourceVideoReference).isEqualTo("video-reference")
+        assertThat(videoEvent.deactivated).isEqualTo(true)
     }
 
     @Test
