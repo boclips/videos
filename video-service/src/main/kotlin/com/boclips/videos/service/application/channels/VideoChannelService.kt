@@ -1,4 +1,4 @@
-package com.boclips.videos.service.domain.service
+package com.boclips.videos.service.application.channels
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.videos.service.domain.model.video.channel.Availability
@@ -35,20 +35,13 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
             }
         }
 
-        return (
-            channelRepository.findById(
-                channelId = ContentPartnerServiceChannelId(
-                    value = channelId.value
-                )
-            )?.let {
-                when {
-                    it.isDownloadable() && it.isStreamable() -> Availability.ALL
-                    it.isDownloadable() -> Availability.DOWNLOAD
-                    it.isStreamable() -> Availability.STREAMING
-                    else -> Availability.NONE
-                }
-            } ?: Availability.NONE
+        val channel = channelRepository.findById(
+            channelId = ContentPartnerServiceChannelId(
+                value = channelId.value
             )
+        )
+
+        return (channel?.availability() ?: Availability.NONE)
             .also {
                 idCache = channelId to it
             }

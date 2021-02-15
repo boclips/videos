@@ -19,7 +19,7 @@ import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory

@@ -15,7 +15,7 @@ import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.OrganisationService
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationService

@@ -6,7 +6,7 @@ import com.boclips.search.service.domain.videos.VideoSearchAdapter
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.video.BaseVideo
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 
 class DefaultVideoSearch(

@@ -3,7 +3,7 @@ package com.boclips.videos.service.application.video.indexing
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.infrastructure.video.converters.VideoToLegacyVideoMetadataConverter
 import mu.KLogging
 

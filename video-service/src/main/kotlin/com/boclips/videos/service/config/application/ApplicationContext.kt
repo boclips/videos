@@ -1,5 +1,6 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
@@ -81,7 +82,6 @@ import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
-import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService

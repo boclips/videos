@@ -5,7 +5,7 @@ import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
 import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex

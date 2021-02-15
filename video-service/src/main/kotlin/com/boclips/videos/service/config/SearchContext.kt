@@ -15,7 +15,7 @@ import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchSe
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.ReindexProperties
 import com.boclips.videos.service.config.properties.SolrProperties
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex

@@ -1,12 +1,11 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.contentpartner.service.application.channel.GetChannels
 import com.boclips.contentpartner.service.presentation.converters.LegalRestrictionsToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.LegalRestrictionsLinkBuilder
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.VideoRetrievalService
-import com.boclips.videos.service.domain.service.VideoChannelService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
