@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.presentation.converters.ChannelToResourceConverter
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
+import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.SignedLinkRequest
 import com.boclips.videos.api.request.channel.ChannelFilterRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
@@ -80,7 +81,7 @@ class ChannelController(
         )
 
         val resources = channels.map {
-            channelToResourceConverter.convert(it)
+            channelToResourceConverter.convert(it, channelFilterRequest.projection!!)
         }
 
         return ChannelsResource(_embedded = ChannelWrapperResource(channels = resources))
@@ -89,7 +90,7 @@ class ChannelController(
     @GetMapping("/{id}")
     fun getChannel(@PathVariable("id") @NotBlank channelId: String?): ResponseEntity<ChannelResource> {
         val channelResource = fetchChannel(channelId!!)
-            .let { channelToResourceConverter.convert(it) }
+            .let { channelToResourceConverter.convert(it, Projection.details) }
             .copy(_links = listOf(channelLinkBuilder.self(channelId)).map { it.rel to it }.toMap())
 
         return ResponseEntity(channelResource, HttpStatus.OK)

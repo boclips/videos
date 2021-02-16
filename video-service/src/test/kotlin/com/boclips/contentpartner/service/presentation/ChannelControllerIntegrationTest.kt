@@ -333,6 +333,85 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns only ID and name for every channel when list projection is requested`() {
+        createAgeRange(
+            AgeRangeRequest(
+                id = "early",
+                min = 3,
+                max = 5,
+                label = "3-5"
+            )
+        )
+        createAgeRange(
+            AgeRangeRequest(
+                id = "not-so-early",
+                min = 5,
+                max = 7,
+                label = "3-7"
+            )
+        )
+
+        val content = """
+            {
+                "searchable": false,
+                "name": "TED",
+                "description": "This is a description",
+                "awards": "award",
+                "notes": "note one",
+                "hubspotId": "123456789",
+                "contractId": "${contractId}",
+                "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
+                "language": "spa",
+                "contentTypes": ["NEWS","INSTRUCTIONAL"],
+                "ageRanges": ["early", "not-so-early"],
+                "isTranscriptProvided": true,
+                "educationalResources": "This is a resource",
+                "curriculumAligned": "This is a curriculum",
+                "bestForTags": ["123", "345"],
+                "subjects": ["subject 1", "subject 2"],
+                "oneLineDescription": "My one-line description",
+                "ingest": {
+                    "type": "MRSS",
+                    "urls": ["http://mrss.feed", "http://mrss2.feed"]
+                },
+                "deliveryFrequency": "P6M",
+                "marketingInformation": {
+                    "status": "PROMOTED",
+                    "logos": ["http://sample1.com", "http://sample2.com"],
+                    "showreel": "http://sample3.com",
+                    "sampleVideos": ["http://sample4.com", "http://sample5.com"]
+                }
+            }
+        """
+
+        mockMvc.perform(
+            post("/v1/channels").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+            .andExpect(status().isCreated)
+            .andExpect(header().exists("Location"))
+
+        mockMvc.perform(
+            get("/v1/channels?name=TED&projection=list").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.channels[0].id").exists())
+            .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("TED")))
+            .andExpect(jsonPath("$._embedded.channels[0].currency").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].description").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].awards").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].notes").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].oneLineDescription").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].ingest").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].deliveryFrequency").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].marketingInformation").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].contentTypes").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].contentCategories").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].language").doesNotExist())
+            .andExpect(jsonPath("$._embedded.channels[0].pedagogyInformation").doesNotExist())
+    }
+
+    @Test
     fun `can filter channels by name`() {
         saveChannel(name = "hello")
         saveChannel(name = "goodbye")
