@@ -139,7 +139,7 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:4.4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test:5.3.4.RELEASE")
+    testImplementation("org.springframework.security:spring-security-test:5.4.4")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
