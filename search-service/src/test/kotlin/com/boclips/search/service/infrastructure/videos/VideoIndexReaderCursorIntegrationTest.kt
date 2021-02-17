@@ -1,7 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
-import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.VideoQueryFactory
@@ -18,7 +17,7 @@ class VideoIndexReaderCursorIntegrationTest : EmbeddedElasticSearchIntegrationTe
 
     @BeforeEach
     fun setUp() {
-        videoIndexReader = VideoIndexReader(esClient, ElasticSearchAggregationProperties())
+        videoIndexReader = VideoIndexReader(esClient)
         videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, 20)
     }
 

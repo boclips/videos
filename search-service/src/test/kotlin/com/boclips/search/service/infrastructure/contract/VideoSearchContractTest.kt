@@ -11,7 +11,6 @@ import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
-import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadata
@@ -26,9 +25,7 @@ import java.util.stream.Stream
 class SearchServiceProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         val inMemorySearchService = VideoIndexFake()
-        val elasticSearchService = VideoIndexReader(
-            EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient(), ElasticSearchAggregationProperties()
-        )
+        val elasticSearchService = VideoIndexReader(EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient())
         val elasticSearchServiceAdmin =
             VideoIndexWriter.createTestInstance(
                 EmbeddedElasticSearchIntegrationTest.CLIENT.buildClient(),

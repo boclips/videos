@@ -9,14 +9,14 @@ class SubjectAggregationTest {
     @Test
     fun `filters by`() {
         val filter = VideoFilterCriteria.allCriteria(VideoQueryFactory.empty().userQuery)
-        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty(), 10)
+        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty())
 
         assertThat(aggregateSubjects.filter).isEqualTo(filter)
     }
 
     @Test
     fun `aggregates up to 60 subjects`() {
-        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty(), 60)
+        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty())
 
         assertThat(aggregateSubjects.subAggregations?.toString())
             .contains("""[{"subject ids":{"terms":{"field":"subjectIds","size":60,""")

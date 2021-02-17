@@ -11,7 +11,6 @@ import com.boclips.search.service.infrastructure.subjects.SubjectsIndexReader
 import com.boclips.search.service.infrastructure.subjects.SubjectsIndexWriter
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
-import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.ReindexProperties
@@ -45,11 +44,10 @@ class SearchContext(
     fun videoSearchService(
         elasticSearchClient: ElasticSearchClient,
         videoChannelService: VideoChannelService,
-        reindexProperties: ReindexProperties,
-        elasticSearchAggregationProperties: ElasticSearchAggregationProperties
+        reindexProperties: ReindexProperties
     ): VideoIndex {
         return DefaultVideoSearch(
-            VideoIndexReader(elasticSearchClient.buildClient(), elasticSearchAggregationProperties),
+            VideoIndexReader(elasticSearchClient.buildClient()),
             VideoIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),

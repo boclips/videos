@@ -14,13 +14,12 @@ class VideoTypeAggregation {
         private const val VIDEO_TYPE_AGGREGATION_FILTER = "video-types"
         private const val VIDEO_TYPE_SUB_AGGREGATION = "video type names"
 
-        fun aggregateVideoTypes(videoQuery: VideoQuery, limit: Int): FilterAggregationBuilder {
+        fun aggregateVideoTypes(videoQuery: VideoQuery): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery = videoQuery.userQuery),
                     VideoFilterCriteria.VIDEO_TYPES_FILTER
-                ),
-                limit = limit
+                )
             )
         }
 
@@ -32,12 +31,13 @@ class VideoTypeAggregation {
             )
         }
 
-        private fun aggregate(queryBuilder: BoolQueryBuilder?, limit: Int): FilterAggregationBuilder {
+        private fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(VIDEO_TYPE_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(
-                    AggregationBuilders.terms(VIDEO_TYPE_SUB_AGGREGATION).field(VideoDocument.TYPES).size(limit)
+                    AggregationBuilders.terms(VIDEO_TYPE_SUB_AGGREGATION).field(VideoDocument.TYPES).size(60)
                 )
         }
     }
 }
+
