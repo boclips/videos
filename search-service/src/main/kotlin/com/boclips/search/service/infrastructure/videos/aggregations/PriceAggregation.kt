@@ -23,23 +23,25 @@ class PriceAggregation {
                             }
                             """
 
-        fun aggregateVideoPrices(videoQuery: VideoQuery): FilterAggregationBuilder {
+        fun aggregateVideoPrices(videoQuery: VideoQuery, limit: Int): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.VIDEO_PRICES_FILTER
                 ),
-                organisationId = videoQuery.userQuery.organisationPriceFilter.userOrganisationId
+                organisationId = videoQuery.userQuery.organisationPriceFilter.userOrganisationId,
+                limit = limit
             )
 
         }
 
-        private fun aggregate(queryBuilder: BoolQueryBuilder?, organisationId: String?): FilterAggregationBuilder {
+        private fun aggregate(queryBuilder: BoolQueryBuilder?, organisationId: String?, limit: Int): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(PRICE_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(
                     AggregationBuilders
                         .terms(PRICE_SUB_AGGREGATION_FILTER)
+                        .size(limit)
                         .script(Script(
                             organisationId?.let {
                                 """

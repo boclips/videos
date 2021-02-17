@@ -5,6 +5,7 @@ import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
+import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +19,7 @@ class VideoIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSearchInt
 
     @BeforeEach
     fun setUp() {
-        videoIndexReader = VideoIndexReader(esClient)
+        videoIndexReader = VideoIndexReader(esClient, ElasticSearchAggregationProperties())
         videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, 20)
 
         videoIndexWriter.upsert(

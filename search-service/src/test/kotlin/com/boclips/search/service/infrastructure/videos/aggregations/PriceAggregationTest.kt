@@ -5,20 +5,20 @@ import com.boclips.search.service.testsupport.VideoQueryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class SubjectAggregationTest {
+class PriceAggregationTest {
     @Test
     fun `filters by`() {
         val filter = VideoFilterCriteria.allCriteria(VideoQueryFactory.empty().userQuery)
-        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty(), 10)
+        val aggregateSubjects = PriceAggregation.aggregateVideoPrices(VideoQueryFactory.empty(), 10)
 
         assertThat(aggregateSubjects.filter).isEqualTo(filter)
     }
 
     @Test
     fun `aggregates up to 60 subjects`() {
-        val aggregateSubjects = SubjectAggregation.aggregateSubjects(VideoQueryFactory.empty(), 60)
+        val aggregateSubjects = PriceAggregation.aggregateVideoPrices(VideoQueryFactory.empty(), 1000)
 
         assertThat(aggregateSubjects.subAggregations?.toString())
-            .contains("""[{"subject ids":{"terms":{"field":"subjectIds","size":60,""")
+            .contains("""size":1000,""".trimIndent())
     }
 }

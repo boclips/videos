@@ -14,12 +14,13 @@ class SubjectAggregation {
         private const val SUBJECT_AGGREGATION_FILTER = "subjects"
         private const val SUBJECT_SUB_AGGREGATION = "subject ids"
 
-        fun aggregateSubjects(videoQuery: VideoQuery): FilterAggregationBuilder {
+        fun aggregateSubjects(videoQuery: VideoQuery, limit: Int): FilterAggregationBuilder {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.SUBJECTS
-                )
+                ),
+                limit = limit
             )
         }
 
@@ -31,11 +32,11 @@ class SubjectAggregation {
             )
         }
 
-        private fun aggregate(queryBuilder: BoolQueryBuilder?): FilterAggregationBuilder {
+        private fun aggregate(queryBuilder: BoolQueryBuilder?, limit: Int): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(SUBJECT_AGGREGATION_FILTER, queryBuilder)
                 .subAggregation(
-                    AggregationBuilders.terms(SUBJECT_SUB_AGGREGATION).field(VideoDocument.SUBJECT_IDS).size(60)
+                    AggregationBuilders.terms(SUBJECT_SUB_AGGREGATION).field(VideoDocument.SUBJECT_IDS).size(limit)
                 )
         }
     }

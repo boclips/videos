@@ -9,14 +9,14 @@ class AttachmentTypesAggregationTest {
     @Test
     fun `filters by`() {
         val filter = boolQuery()
-        val aggregateTypes = AttachmentTypeAggregation.aggregateAttachmentTypes(VideoQueryFactory.empty())
+        val aggregateTypes = AttachmentTypeAggregation.aggregateAttachmentTypes(VideoQueryFactory.empty(), 10)
 
         assertThat(aggregateTypes.filter).isEqualTo(filter)
     }
 
     @Test
     fun `aggregates up to 2 attachment types`() {
-        val aggregateTypes = AttachmentTypeAggregation.aggregateAttachmentTypes(VideoQueryFactory.empty())
+        val aggregateTypes = AttachmentTypeAggregation.aggregateAttachmentTypes(VideoQueryFactory.empty(), 2)
 
         assertThat(aggregateTypes.subAggregations?.toString())
             .contains("""[{"attachment type names":{"terms":{"field":"attachmentTypes","size":2,""")

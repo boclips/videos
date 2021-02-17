@@ -13,6 +13,7 @@ import com.boclips.search.service.infrastructure.videos.aggregations.AttachmentT
 import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.ChannelAggregation.Companion.aggregateSelectedChannels
 import com.boclips.search.service.infrastructure.videos.aggregations.DurationAggregation.Companion.aggregateDuration
+import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.infrastructure.videos.aggregations.PriceAggregation.Companion.aggregateVideoPrices
 import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggregation.Companion.aggregateSubjects
 import com.boclips.search.service.infrastructure.videos.aggregations.VideoTypeAggregation.Companion.aggregateVideoTypes
@@ -31,7 +32,10 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
 import java.util.concurrent.TimeUnit
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
-class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetadata, VideoQuery> {
+class VideoIndexReader(
+    val client: RestHighLevelClient,
+    private val aggregationLimits: ElasticSearchAggregationProperties
+) : IndexReader<VideoMetadata, VideoQuery> {
     private val scrollTimeout = TimeValue(5, TimeUnit.MINUTES)
 
     companion object : KLogging()
@@ -69,18 +73,18 @@ class VideoIndexReader(val client: RestHighLevelClient) : IndexReader<VideoMetad
             .apply {
                 query(EsVideoQuery().buildQuery(videoQuery))
                 if (!isCursorBasedRequest) { // aggregations cause trouble with the scroll API
-                    aggregation(aggregateSubjects(videoQuery))
+                    aggregation(aggregateSubjects(videoQuery, limit = aggregationLimits.subjects))
                     aggregation(aggregateAgeRanges(videoQuery))
                     aggregation(aggregateDuration(videoQuery))
-                    aggregation(aggregateAttachmentTypes(videoQuery))
-                    aggregation(aggregateVideoTypes(videoQuery))
+                    aggregation(aggregateAttachmentTypes(videoQuery, limit = aggregationLimits.attachmentTypes))
+                    aggregation(aggregateVideoTypes(videoQuery, limit = aggregationLimits.videoTypes))
                     if (videoQuery.facetDefinition?.includePriceFacets == true) {
-                        aggregation(aggregateVideoPrices(videoQuery))
+                        aggregation(aggregateVideoPrices(videoQuery, limit = aggregationLimits.videoPrices))
                     }
                     if (videoQuery.facetDefinition?.includeChannelFacets == true) {
-                        aggregation(aggregateChannels(videoQuery))
+                        aggregation(aggregateChannels(videoQuery, limit = aggregationLimits.channels))
                         aggregation(
-                            aggregateSelectedChannels(videoQuery)
+                            aggregateSelectedChannels(videoQuery, limit = aggregationLimits.channels)
                         )
                     }
                 }
