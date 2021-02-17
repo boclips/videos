@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.*
+import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import com.boclips.search.service.testsupport.TestFactories
@@ -22,7 +23,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
     @BeforeEach
     fun setUp() {
-        videoIndexReader = VideoIndexReader(esClient)
+        videoIndexReader = VideoIndexReader(esClient, ElasticSearchAggregationProperties())
         videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, 20)
     }
 

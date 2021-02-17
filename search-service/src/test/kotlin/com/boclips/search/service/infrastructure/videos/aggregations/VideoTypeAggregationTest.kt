@@ -9,14 +9,14 @@ class VideoTypeAggregationTest {
     @Test
     fun `filters by`() {
         val filter = boolQuery()
-        val aggregateTypes = VideoTypeAggregation.aggregateVideoTypes(VideoQueryFactory.empty())
+        val aggregateTypes = VideoTypeAggregation.aggregateVideoTypes(VideoQueryFactory.empty(), 10)
 
         assertThat(aggregateTypes.filter).isEqualTo(filter)
     }
 
     @Test
-    fun `aggregates up to 2 video types`() {
-        val aggregateTypes = VideoTypeAggregation.aggregateVideoTypes(VideoQueryFactory.empty())
+    fun `aggregates up to 60 video types`() {
+        val aggregateTypes = VideoTypeAggregation.aggregateVideoTypes(VideoQueryFactory.empty(), 60)
 
         assertThat(aggregateTypes.subAggregations?.toString())
                 .contains("""[{"video type names":{"terms":{"field":"types","size":60,""")

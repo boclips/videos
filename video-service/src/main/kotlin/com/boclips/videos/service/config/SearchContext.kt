@@ -11,6 +11,7 @@ import com.boclips.search.service.infrastructure.subjects.SubjectsIndexReader
 import com.boclips.search.service.infrastructure.subjects.SubjectsIndexWriter
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
 import com.boclips.search.service.infrastructure.videos.VideoIndexWriter
+import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.infrastructure.videos.legacy.SolrVideoSearchService
 import com.boclips.videos.service.config.properties.ElasticSearchProperties
 import com.boclips.videos.service.config.properties.ReindexProperties
@@ -26,10 +27,12 @@ import com.boclips.videos.service.infrastructure.search.DefaultSubjectSearch
 import com.boclips.videos.service.infrastructure.search.DefaultVideoSearch
 import io.opentracing.Tracer
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
+@ComponentScan(basePackageClasses = [ElasticSearchAggregationProperties::class])
 class SearchContext(
     private val tracer: Tracer
 ) {
@@ -44,10 +47,11 @@ class SearchContext(
     fun videoSearchService(
         elasticSearchClient: ElasticSearchClient,
         videoChannelService: VideoChannelService,
-        reindexProperties: ReindexProperties
+        reindexProperties: ReindexProperties,
+        elasticSearchAggregationProperties: ElasticSearchAggregationProperties
     ): VideoIndex {
         return DefaultVideoSearch(
-            VideoIndexReader(elasticSearchClient.buildClient()),
+            VideoIndexReader(elasticSearchClient.buildClient(), elasticSearchAggregationProperties),
             VideoIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),

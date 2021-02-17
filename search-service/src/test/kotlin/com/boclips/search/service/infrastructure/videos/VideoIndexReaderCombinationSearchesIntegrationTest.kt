@@ -7,6 +7,7 @@ import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
@@ -22,7 +23,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
 
     @BeforeEach
     fun setUp() {
-        videoIndexReader = VideoIndexReader(esClient)
+        videoIndexReader = VideoIndexReader(esClient, ElasticSearchAggregationProperties())
         videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, 20)
     }
 

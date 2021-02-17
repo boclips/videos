@@ -15,20 +15,22 @@ class ChannelAggregation {
         private const val SELECTED_CHANNEL_AGGREGATION_FILTER = "selected-channels"
         private const val CHANNEL_SUB_AGGREGATION = "channel ids"
 
-        fun aggregateChannels(videoQuery: VideoQuery): FilterAggregationBuilder? {
+        fun aggregateChannels(videoQuery: VideoQuery, limit: Int): FilterAggregationBuilder? {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.removeCriteria(
                     VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                     VideoFilterCriteria.CHANNEL_IDS_FILTER
                 ),
-                filterName = CHANNEL_AGGREGATION_FILTER
+                filterName = CHANNEL_AGGREGATION_FILTER,
+                limit = limit
             )
         }
 
-        fun aggregateSelectedChannels(videoQuery: VideoQuery): FilterAggregationBuilder? {
+        fun aggregateSelectedChannels(videoQuery: VideoQuery, limit: Int): FilterAggregationBuilder? {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.allCriteria(videoQuery.userQuery),
-                filterName = SELECTED_CHANNEL_AGGREGATION_FILTER
+                filterName = SELECTED_CHANNEL_AGGREGATION_FILTER,
+                limit = limit
             )
         }
 
@@ -41,12 +43,14 @@ class ChannelAggregation {
             return allChannels + selectedChannels
         }
 
-        private fun aggregate(queryBuilder: BoolQueryBuilder?, filterName: String): FilterAggregationBuilder {
+        private fun aggregate(
+            queryBuilder: BoolQueryBuilder?, filterName: String, limit: Int
+        ): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(filterName, queryBuilder)
                 .subAggregation(
                     AggregationBuilders.terms(CHANNEL_SUB_AGGREGATION).field(VideoDocument.CONTENT_PARTNER_ID)
-                        .size(1000)
+                        .size(limit)
                 )
         }
     }
