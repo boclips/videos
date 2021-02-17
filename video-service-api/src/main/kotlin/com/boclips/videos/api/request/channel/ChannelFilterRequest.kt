@@ -9,5 +9,5 @@ data class ChannelFilterRequest(
     val name: String? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val ingestType: List<IngestType>? = null,
-    val projection: Projection? = Projection.details
+    val projection: Projection? = null
 )

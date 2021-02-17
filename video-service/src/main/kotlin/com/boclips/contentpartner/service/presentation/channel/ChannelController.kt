@@ -81,7 +81,7 @@ class ChannelController(
         )
 
         val resources = channels.map {
-            channelToResourceConverter.convert(it, channelFilterRequest.projection!!)
+            channelToResourceConverter.convert(it, channelFilterRequest.projection)
         }
 
         return ChannelsResource(_embedded = ChannelWrapperResource(channels = resources))

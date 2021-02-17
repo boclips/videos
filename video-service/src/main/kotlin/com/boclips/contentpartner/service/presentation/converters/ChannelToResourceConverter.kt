@@ -15,7 +15,7 @@ class ChannelToResourceConverter(
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
-    fun convert(channel: Channel, projection: Projection): ChannelResource {
+    fun convert(channel: Channel, projection: Projection? = Projection.full): ChannelResource {
         return when (projection) {
             Projection.list -> ChannelResource(
                 id = channel.id.value,
