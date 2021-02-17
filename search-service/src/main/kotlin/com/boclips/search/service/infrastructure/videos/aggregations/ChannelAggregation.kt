@@ -8,8 +8,6 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder
-import org.elasticsearch.search.aggregations.bucket.filter.ParsedFilter
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms
 
 class ChannelAggregation {
     companion object {
@@ -31,12 +29,14 @@ class ChannelAggregation {
             return aggregate(
                 queryBuilder = VideoFilterCriteria.allCriteria(videoQuery.userQuery),
                 filterName = SELECTED_CHANNEL_AGGREGATION_FILTER
-                )
+            )
         }
 
         fun extractBucketCounts(response: SearchResponse): Set<Count> {
-            val allChannels = extractStringTermBucketCounts(response, CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
-            val selectedChannels = extractStringTermBucketCounts(response, SELECTED_CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
+            val allChannels =
+                extractStringTermBucketCounts(response, CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
+            val selectedChannels =
+                extractStringTermBucketCounts(response, SELECTED_CHANNEL_AGGREGATION_FILTER, CHANNEL_SUB_AGGREGATION)
 
             return allChannels + selectedChannels
         }
@@ -46,8 +46,8 @@ class ChannelAggregation {
                 .filter(filterName, queryBuilder)
                 .subAggregation(
                     AggregationBuilders.terms(CHANNEL_SUB_AGGREGATION).field(VideoDocument.CONTENT_PARTNER_ID)
+                        .size(1000)
                 )
         }
     }
 }
-
