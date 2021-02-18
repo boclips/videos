@@ -218,4 +218,49 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.price").doesNotExist())
     }
+
+    @Test
+    fun `can get the custom price of a video for a given user`() {
+        val videoId = saveVideo()
+        organisationsClientFake.add(
+            OrganisationResourceFactory.sample(
+                id = "pearson-org",
+                billing = true,
+                deal = DealResource(
+                    prices = DealResource.PricesResource(
+                        videoTypePrices = mapOf(
+                            "INSTRUCTIONAL" to DealResource.PriceResource("1000", "USD")
+                        ),
+                        channelPrices = emptyMap()
+                    ),
+                    accessExpiresOn = null,
+                    billing = false,
+                    contentPackageId = null
+                ),
+            )
+        )
+
+        usersClientFake.add(
+            UserResourceFactory.sample(
+                id = "a-pearson-user",
+                organisation = OrganisationDetailsResource(
+                    id = "pearson-org",
+                    name = "Pearson",
+                    domain = null,
+                    type = null,
+                    state = null,
+                    country = null,
+                    allowsOverridingUserIds = null,
+                    features = null
+                )
+            )
+        )
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}?userId=a-pearson-user")
+                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.price.amount", equalTo(1000)))
+            .andExpect(jsonPath("$.price.currency", equalTo("USD")))
+    }
 }

@@ -158,9 +158,10 @@ class VideoController(
         @PathVariable("id") id: String?,
         @RequestParam(required = false) projection: Projection? = null,
         @RequestParam(required = false) referer: String? = null,
-        @RequestParam(required = false) shareCode: String? = null
+        @RequestParam(required = false) shareCode: String? = null,
+        @RequestParam(required = false) userId: String? = null
     ): ResponseEntity<VideoResource> {
-        val video = searchVideo.byId(id, getCurrentUser(), projection)
+        val video = searchVideo.byId(id, getCurrentUser(), projection, userId)
 
         val canAccessProtectedAttributes = when {
             getCurrentUser().isAuthenticated -> true

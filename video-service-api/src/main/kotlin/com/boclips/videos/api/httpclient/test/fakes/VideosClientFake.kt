@@ -23,7 +23,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
 
     override fun getVideo(
         videoId: String,
-        projection: Projection
+        projection: Projection,
+        userId: String?
     ): VideoResource {
         return database[videoId] ?: throw FakeClient.notFoundException("Video not found")
     }

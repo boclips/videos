@@ -16,10 +16,11 @@ import feign.QueryMap
 import feign.RequestLine
 
 interface VideosClient {
-    @RequestLine("GET /v1/videos/{videoId}?projection={projection}")
+    @RequestLine("GET /v1/videos/{videoId}?projection={projection}&userId={userId}")
     fun getVideo(
         @Param("videoId") videoId: String,
-        @Param("projection") projection: Projection = Projection.details
+        @Param("projection") projection: Projection = Projection.details,
+        @Param("userId") userId: String? = null
     ): VideoResource
 
     @RequestLine("HEAD /v1/channels/{channelId}/videos/{channelVideoId}")

@@ -31,13 +31,13 @@ class SearchVideo(
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?, user: User, projection: Projection? = null): BaseVideo {
+    fun byId(id: String?, user: User, projection: Projection? = null, userId: String? = null): BaseVideo {
         val videoId = resolveToAssetId(id)!!
         if (projection == Projection.full) {
             playbackUpdateService.updatePlaybacksFor(VideoFilter.HasVideoId(videoId))
         }
         val retrievedVideo = getVideoById(videoId, user)
-        return addOrganisationPrice(retrievedVideo, user)
+        return addOrganisationPrice(retrievedVideo, userId ?: user.id?.value)
     }
 
     fun byQuery(
@@ -130,9 +130,9 @@ class SearchVideo(
 
     private fun addOrganisationPrice(
         retrievedVideo: Video,
-        user: User
+        userId: String?
     ): PricedVideo {
-        val videoTypePrices = user.id?.let { userService.getOrganisationOfUser(it.value)?.deal?.prices }
+        val videoTypePrices = userId?.let { userService.getOrganisationOfUser(it)?.deal?.prices }
         val videoPrice = priceComputingService.computeVideoPrice(retrievedVideo, videoTypePrices)
         return PricedVideo(retrievedVideo, videoPrice)
     }
