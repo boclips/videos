@@ -1,6 +1,5 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.*
@@ -8,9 +7,11 @@ import com.boclips.videos.api.response.video.*
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
 import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
+import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -43,8 +44,6 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.lang.IllegalArgumentException
-import java.math.BigDecimal
 import javax.servlet.ServletRequest
 import javax.validation.Valid
 
@@ -70,9 +69,8 @@ class VideoController(
     accessRuleService: AccessRuleService,
     private val getVideoUrlAssets: GetVideoUrlAssets,
     private val userService: UserService,
-    // FIXME - remove when clients no longer use channel names for video filtering
-    private val channelRepository: ChannelRepository,
     private val videosRepository: VideoRepository,
+    private val getVideoPrice: GetVideoPrice
 ) : BaseController(accessRuleService, getUserIdOverride) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -389,5 +387,13 @@ class VideoController(
         val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videoResource)
         val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
         return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @GetMapping("/v1/videos/{videoId}/price", params = ["userId"])
+    fun getPrice(  @PathVariable("videoId") videoId: String, @RequestParam userId: String?): ResponseEntity<PriceResource> {
+        val video = searchVideo.byId(videoId, getCurrentUser())
+        val price = getVideoPrice(video, userId)?.let { PriceResource(amount = it.amount, currency = it.currency) }
+
+        return ResponseEntity(price, HttpStatus.OK )
     }
 }

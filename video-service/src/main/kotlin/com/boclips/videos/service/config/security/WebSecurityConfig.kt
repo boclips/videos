@@ -95,6 +95,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(GET, "/v1/videos/*/assets").hasRole(ROLE.DOWNLOAD_VIDEO)
             .mvcMatchers(PATCH, "/v1/videos/*/tags").hasRole(ROLE.TAG_VIDEOS)
             .mvcMatchers(POST, "/v1/videos/*/events").hasRole(ROLE.VIEW_VIDEOS)
+            .mvcMatchers(GET, "/v1/videos/*/price").hasRole(ROLE.BOCLIPS_SERVICE)
             .mvcMatchers(GET, "/v1/videos/*/match").permitAll()
             .mvcMatchers(GET, "/v1/videos/*").permitAll()
 

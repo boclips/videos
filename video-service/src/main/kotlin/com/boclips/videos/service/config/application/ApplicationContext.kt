@@ -54,9 +54,6 @@ import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
-import com.boclips.videos.service.application.video.search.GetVideoById
-import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
@@ -81,7 +78,7 @@ import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.application.video.VideoRetrievalService
-import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.application.video.search.*
 import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
@@ -130,14 +127,16 @@ class ApplicationContext(
         getVideoById: GetVideoById,
         getVideosByQuery: GetVideosByQuery,
         queryConverter: QueryConverter,
-        playbackUpdateService: PlaybackUpdateService
+        playbackUpdateService: PlaybackUpdateService,
+        getVideoPrice: GetVideoPrice
     ) = SearchVideo(
         getVideoById,
         getVideosByQuery,
         videoRepository,
         playbackUpdateService,
         userService,
-        priceComputingService
+        priceComputingService,
+        getVideoPrice
     )
 
     @Bean
@@ -490,6 +489,11 @@ class ApplicationContext(
     @Bean
     fun getVideoById(videoRetrievalService: VideoRetrievalService): GetVideoById {
         return GetVideoById(videoRetrievalService)
+    }
+
+    @Bean
+    fun getVideoPrice(userService: UserService, priceComputingService: PriceComputingService): GetVideoPrice {
+        return GetVideoPrice(userService, priceComputingService)
     }
 
     @Bean

@@ -28,7 +28,13 @@ class PriceComputingServiceTest {
                     stock = BigDecimal.ZERO
                 )
             )
-            val price = priceComputingService.computeVideoPrice(video, organisationPrices)
+            val price = priceComputingService.computeVideoPrice(
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+                organisationPrices = organisationPrices
+            )
 
             assertThat(price!!.amount).isEqualTo(BigDecimal.ONE)
             assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
@@ -46,7 +52,13 @@ class PriceComputingServiceTest {
             )
 
             assertThrows<VideoMissingTypeException> {
-                priceComputingService.computeVideoPrice(video, organisationPrices)
+                priceComputingService.computeVideoPrice(
+                    videoId = video.videoId,
+                    videoTypes = video.types,
+                    playback = video.playback,
+                    channel = video.channel.channelId,
+                    organisationPrices = organisationPrices
+                )
             }
         }
 
@@ -65,7 +77,13 @@ class PriceComputingServiceTest {
                 )
             )
 
-            val price = priceComputingService.computeVideoPrice(video, organisationPrices)
+            val price = priceComputingService.computeVideoPrice(
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+                organisationPrices = organisationPrices
+            )
             assertThat(price).isNull()
         }
 
@@ -84,7 +102,13 @@ class PriceComputingServiceTest {
                 )
             )
 
-            val price = priceComputingService.computeVideoPrice(video, organisationPrices)!!
+            val price = priceComputingService.computeVideoPrice(
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+                organisationPrices = organisationPrices
+            )!!
             assertThat(price.amount).isEqualTo(BigDecimal.valueOf(150))
         }
 
@@ -111,7 +135,13 @@ class PriceComputingServiceTest {
                 )
             )
 
-            val prices = priceComputingService.computeVideoOrganisationPrices(video, listOf(organisation))
+            val prices = priceComputingService.computeVideoOrganisationPrices(
+                organisationsPrices = listOf(organisation),
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+            )
             assertThat(prices).isNull()
         }
 
@@ -155,8 +185,12 @@ class PriceComputingServiceTest {
             )
 
             val prices = priceComputingService.computeVideoOrganisationPrices(
-                video,
-                listOf(organisation, organisation2, organisation3)
+                organisationsPrices = listOf(organisation, organisation2, organisation3),
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+
             )!!
 
             assertThat(prices.prices).hasSize(3)
@@ -191,9 +225,13 @@ class PriceComputingServiceTest {
                 )
             )
 
-            val prices =
-                priceComputingService.computeVideoOrganisationPrices(video, listOf(organisation, organisation2))!!
-
+            val prices = priceComputingService.computeVideoOrganisationPrices(
+                organisationsPrices = listOf(organisation, organisation2),
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+            )!!
             assertThat(prices.prices).hasSize(2)
             assertThat(prices.prices?.get(organisation.organisationId)?.amount).isEqualTo(BigDecimal.TEN)
             assertThat(prices.prices?.get(organisation2.organisationId)?.amount).isEqualTo(BigDecimal.ONE)
@@ -238,9 +276,14 @@ class PriceComputingServiceTest {
                 )
             )
 
-            val prices =
-                priceComputingService.computeVideoOrganisationPrices(video, listOf(organisation, organisation2))!!
 
+            val prices = priceComputingService.computeVideoOrganisationPrices(
+                organisationsPrices = listOf(organisation, organisation2),
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
+            )!!
             assertThat(prices.prices).hasSize(2)
             assertThat(prices.prices?.get(organisation.organisationId)?.amount).isEqualTo(BigDecimal.valueOf(1500))
             assertThat(prices.prices?.get(organisation2.organisationId)?.amount).isEqualTo(BigDecimal.valueOf(2000))

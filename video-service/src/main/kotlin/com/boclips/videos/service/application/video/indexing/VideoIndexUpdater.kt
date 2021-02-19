@@ -3,13 +3,13 @@ package com.boclips.videos.service.application.video.indexing
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.domain.service.OrganisationService
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.video.converters.VideoToLegacyVideoMetadataConverter
@@ -75,7 +75,10 @@ class VideoIndexUpdater(
 
         val hydratedVideos = updatedVideos.map { video ->
             priceComputingService.computeVideoOrganisationPrices(
-                video = video,
+                videoId = video.videoId,
+                videoTypes = video.types,
+                playback = video.playback,
+                channel = video.channel.channelId,
                 organisationsPrices = organisationsWithPrices
             )?.let { VideoWithPrices(video = video, prices = it) }
                 ?: video
@@ -103,8 +106,11 @@ class VideoIndexUpdater(
     private fun updateIndex(updatedVideo: Video) {
         val organisationsWithPrices = organisationService.getOrganisationsWithCustomPrices()
 
-       val video = priceComputingService.computeVideoOrganisationPrices(
-            video = updatedVideo,
+        val video = priceComputingService.computeVideoOrganisationPrices(
+            videoId = updatedVideo.videoId,
+            videoTypes = updatedVideo.types,
+            playback = updatedVideo.playback,
+            channel = updatedVideo.channel.channelId,
             organisationsPrices = organisationsWithPrices
         )?.let { VideoWithPrices(video = updatedVideo, prices = it) }
             ?: updatedVideo

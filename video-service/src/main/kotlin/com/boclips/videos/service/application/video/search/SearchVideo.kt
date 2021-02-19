@@ -7,7 +7,6 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.user.UserNotAssignedToOrganisationException
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -25,7 +24,8 @@ class SearchVideo(
     private val videoRepository: VideoRepository,
     private val playbackUpdateService: PlaybackUpdateService,
     private val userService: UserService,
-    private val priceComputingService: PriceComputingService
+    private val priceComputingService: PriceComputingService,
+    private val getVideoPrice: GetVideoPrice
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
@@ -118,7 +118,13 @@ class SearchVideo(
         val pricedVideos = retrievedVideos.elements.map {
             PricedVideo(
                 it,
-                priceComputingService.computeVideoPrice(it, videoTypePrices)
+                priceComputingService.computeVideoPrice(
+                    videoId = it.videoId,
+                    videoTypes = it.types,
+                    playback = it.playback,
+                    channel = it.channel.channelId,
+                    organisationPrices = videoTypePrices
+                )
             )
         }
         return ResultsPage(
@@ -132,8 +138,14 @@ class SearchVideo(
         retrievedVideo: Video,
         userId: String?
     ): PricedVideo {
-        val videoTypePrices = userId?.let { userService.getOrganisationOfUser(it)?.deal?.prices }
-        val videoPrice = priceComputingService.computeVideoPrice(retrievedVideo, videoTypePrices)
+        val organisationPrices = userId?.let { userService.getOrganisationOfUser(it)?.deal?.prices }
+        val videoPrice = priceComputingService.computeVideoPrice(
+            organisationPrices = organisationPrices,
+            channel = retrievedVideo.channel.channelId,
+            playback = retrievedVideo.playback,
+            videoTypes = retrievedVideo.types,
+            videoId = retrievedVideo.videoId
+            )
         return PricedVideo(retrievedVideo, videoPrice)
     }
 

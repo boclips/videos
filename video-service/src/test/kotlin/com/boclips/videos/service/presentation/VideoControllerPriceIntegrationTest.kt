@@ -220,6 +220,17 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `requests for custom prices are rejected for non service accounts`() {
+        val videoId = saveVideo()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}/price?userId=a-pearson-user")
+                .asUserWithRoles()
+        )
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
     fun `can get the custom price of a video for a given user`() {
         val videoId = saveVideo()
         organisationsClientFake.add(
@@ -256,11 +267,11 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}?userId=a-pearson-user")
-                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
+            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}/price?userId=a-pearson-user")
+                .asUserWithRoles(UserRoles.BOCLIPS_SERVICE)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price.amount", equalTo(1000)))
-            .andExpect(jsonPath("$.price.currency", equalTo("USD")))
+            .andExpect(jsonPath("$.amount", equalTo(1000)))
+            .andExpect(jsonPath("$.currency", equalTo("USD")))
     }
 }

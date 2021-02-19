@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.video
 
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.user.Deal.Prices
 import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.OrganisationsPrices
@@ -11,15 +12,20 @@ import com.boclips.videos.service.domain.model.user.Deal.Prices.Price as Organis
 
 class PriceComputingService {
 
-    fun computeVideoPrice(video: Video, organisationPrices: Prices?): Price? {
-        return if (video.isBoclipsHosted()) {
-            if (video.types.isEmpty()) {
-                throw VideoMissingTypeException(video.videoId)
-            }
-
-            computeVideoChannelPrice(video.channel.channelId, organisationPrices?.channelPrices)
+    fun computeVideoPrice(
+        videoId: VideoId,
+        organisationPrices: Prices?,
+        playback: VideoPlayback,
+        channel: ChannelId,
+        videoTypes: List<VideoType>
+    ): Price? {
+        if (videoTypes.isEmpty()) {
+            throw VideoMissingTypeException(videoId)
+        }
+        return if (playback is VideoPlayback.StreamPlayback) {
+            computeVideoChannelPrice(channel, organisationPrices?.channelPrices)
                 ?: computeVideoTypePrice(
-                    video.types,
+                    videoTypes,
                     zipPricesWithDefaultPrices(customPrices = organisationPrices?.videoTypePrices)
                 )
         } else {
@@ -27,20 +33,32 @@ class PriceComputingService {
         }
     }
 
-    fun computeVideoOrganisationPrices(video: Video, organisationsPrices: List<Organisation>): OrganisationsPrices? {
-        if (!video.isBoclipsHosted()) {
+    fun computeVideoOrganisationPrices(
+        videoId: VideoId,
+        organisationsPrices: List<Organisation>,
+        playback: VideoPlayback,
+        channel: ChannelId,
+        videoTypes: List<VideoType>
+    ): OrganisationsPrices? {
+        if (playback is VideoPlayback.YoutubePlayback) {
             return null
         }
 
         val videoPrices = organisationsPrices.mapNotNull { organisation ->
-            computeVideoPrice(video, organisation.deal.prices)?.let { price ->
+            computeVideoPrice(
+                videoId = videoId,
+                organisationPrices = organisation.deal.prices,
+                channel = channel,
+                playback = playback,
+                videoTypes = videoTypes
+            )?.let { price ->
                 organisation.organisationId to price
             }
         }.toMap()
 
         return OrganisationsPrices(
             prices = videoPrices,
-            default = computeVideoTypePrice(video.types, DEFAULT_VIDEO_TYPE_PRICES)!!
+            default = computeVideoTypePrice(videoTypes, DEFAULT_VIDEO_TYPE_PRICES)!!
         )
     }
 

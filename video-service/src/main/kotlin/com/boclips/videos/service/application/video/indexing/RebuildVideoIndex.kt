@@ -24,7 +24,10 @@ open class RebuildVideoIndex(
         videoRepository.streamAll { videos ->
             val hydratedVideos = videos.map { video ->
                 val videoPrices = priceComputingService.computeVideoOrganisationPrices(
-                    video = video,
+                    channel = video.channel.channelId,
+                    playback = video.playback,
+                    videoTypes = video.types,
+                    videoId = video.videoId,
                     organisationsPrices = organisationsWithPrices
                 )
                 videoPrices?.let { VideoWithPrices(video = video, prices = it) } ?: video
