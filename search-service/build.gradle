@@ -46,7 +46,7 @@ dependencies {
     }
 
     compile("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:3.2.2")
-    compile("org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE")
+    compile("org.springframework.boot:spring-boot-autoconfigure:2.4.3")
     compile("io.opentracing.contrib:opentracing-elasticsearch7-client:0.1.6")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.4.2")
