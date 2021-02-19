@@ -19,6 +19,16 @@ class VideosClientFakeTest {
     }
 
     @Nested
+    inner class GetVideoPrice {
+        @Test
+        fun `throws a Feign NotFound exception when video is not found`() {
+            val fake = VideosClientFake()
+            assertThatThrownBy { fake.getVideoPrice("this does not exist", "a-user-id") }
+                .isInstanceOf(FeignException.NotFound::class.java)
+        }
+    }
+
+    @Nested
     inner class ProbeVideoReference {
         @Test
         fun `throws a Feign NotFound exception when video is not found`() {

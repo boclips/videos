@@ -6,6 +6,7 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.SearchVideosRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -22,6 +23,12 @@ interface VideosClient {
         @Param("projection") projection: Projection = Projection.details,
         @Param("userId") userId: String? = null
     ): VideoResource
+
+    @RequestLine("GET /v1/videos/{videoId}/price?userid={userId}")
+    fun getVideoPrice(
+        @Param("videoId") videoId: String,
+        @Param("userId") userId: String
+    ): PriceResource
 
     @RequestLine("HEAD /v1/channels/{channelId}/videos/{channelVideoId}")
     fun probeVideoReference(
