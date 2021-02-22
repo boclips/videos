@@ -13,6 +13,7 @@ import com.boclips.videos.service.presentation.VideoController
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.ADD_ATTACHMENT
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_CAPTIONS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_METADATA
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.GET_VIDEO_PRICE
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.SEARCH_VIDEOS
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder.Rels.UPDATE
@@ -35,6 +36,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val GET_CAPTIONS = "getCaptions"
         const val UPDATE_CAPTIONS = "updateCaptions"
         const val GET_METADATA = "getMetadata"
+        const val GET_VIDEO_PRICE = "getVideoPrice"
     }
 
     fun self(videoId: String?): HateoasLink {
@@ -302,6 +304,14 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(VideoController::class.java).getMetadata(null)
             ).withRel(GET_METADATA)
+        }
+    }
+
+    fun getVideoPrice(): Link? {
+        return getIfHasRole(UserRoles.BOCLIPS_SERVICE) {
+            WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(VideoController::class.java).getPrice(null, null)
+            ).withRel(GET_VIDEO_PRICE)
         }
     }
 }

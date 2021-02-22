@@ -1,9 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.asApiUser
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asTeacher
+import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.testsupport.*
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
@@ -65,6 +63,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.channels").doesNotExist())
             .andExpect(jsonPath("$._links.channel").doesNotExist())
             .andExpect(jsonPath("$._links.searchQueryCompletionsSuggestedEvent").doesNotExist())
+            .andExpect(jsonPath("$._links.getVideoPrice").doesNotExist())
     }
 
     @Test
@@ -150,6 +149,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.createContractsSignedUploadLink").doesNotExist())
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.attachmentTypes").doesNotExist())
+            .andExpect(jsonPath("$._links.getVideoPrice").doesNotExist())
     }
 
     @Test
@@ -205,9 +205,9 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `return videoTypes link when called as API user`() {
-        mockMvc.perform(get("/v1").asApiUser()).andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.videoTypes.href", endsWith("/video-types")))
+    fun `return getVideoPrice link when called as Boclips service user`() {
+        mockMvc.perform(get("/v1").asUserWithRoles(UserRoles.BOCLIPS_SERVICE)).andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.getVideoPrice.href", endsWith("{?userId}")))
     }
 
     @Test

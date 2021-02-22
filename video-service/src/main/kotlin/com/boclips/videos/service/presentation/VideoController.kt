@@ -389,11 +389,14 @@ class VideoController(
         return ResponseEntity(response, HttpStatus.OK)
     }
 
-    @GetMapping("/v1/videos/{videoId}/price", params = ["userId"])
-    fun getPrice(  @PathVariable("videoId") videoId: String, @RequestParam userId: String?): ResponseEntity<PriceResource> {
+    @GetMapping("/v1/videos/{videoId}/price")
+    fun getPrice(
+        @PathVariable("videoId") videoId: String?,
+        @RequestParam("userId") userId: String?
+    ): ResponseEntity<PriceResource> {
         val video = searchVideo.byId(videoId, getCurrentUser())
         val price = getVideoPrice(video, userId)?.let { PriceResource(amount = it.amount, currency = it.currency) }
 
-        return ResponseEntity(price, HttpStatus.OK )
+        return ResponseEntity(price, HttpStatus.OK)
     }
 }
