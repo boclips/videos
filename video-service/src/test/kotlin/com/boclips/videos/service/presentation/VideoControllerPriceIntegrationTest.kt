@@ -268,7 +268,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         )
         mockMvc.perform(
             MockMvcRequestBuilders.get("/v1/videos/${videoId.value}/price?userId=a-pearson-user")
-                .asUserWithRoles(UserRoles.BOCLIPS_SERVICE)
+                .asUserWithRoles(UserRoles.VIEW_VIDEOS)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.amount", equalTo(1000)))
