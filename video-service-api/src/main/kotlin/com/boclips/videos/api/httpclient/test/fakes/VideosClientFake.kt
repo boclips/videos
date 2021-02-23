@@ -2,20 +2,18 @@ package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.CreateVideoRequest
-import com.boclips.videos.api.request.video.SearchVideosRequest
-import com.boclips.videos.api.request.video.StreamPlaybackResource
-import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.api.request.video.YoutubePlaybackResource
+import com.boclips.videos.api.request.video.*
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.*
 import org.springframework.hateoas.PagedModel
+import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.math.ceil
 
 class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     private val database: MutableMap<String, VideoResource> = LinkedHashMap()
+    private val customPrices: MutableMap<String, PriceResource> = LinkedHashMap()
     private var id = 0
 
     override fun getVideo(
@@ -30,7 +28,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         videoId: String,
         userId: String
     ): PriceResource {
-        return database[videoId]?.price ?: throw FakeClient.notFoundException("Video price not found")
+        return customPrices[videoId] ?: database[videoId]?.price
+        ?: throw FakeClient.notFoundException("Video price not found")
     }
 
     override fun probeVideoReference(channelId: String, channelVideoId: String) {
@@ -145,5 +144,10 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
     fun updateCaptionStatus(videoId: String, captionStatus: CaptionStatus) {
         database[videoId] = database[videoId]?.copy(captionStatus = captionStatus)
             ?: VideoResource(id = videoId, captionStatus = captionStatus, _links = emptyMap())
+    }
+
+    fun addCustomVideoPrice(videoId: String, price: PriceResource): PriceResource {
+        customPrices[videoId] = price
+        return price
     }
 }

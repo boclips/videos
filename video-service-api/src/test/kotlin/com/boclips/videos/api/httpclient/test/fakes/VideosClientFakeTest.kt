@@ -2,10 +2,13 @@ package com.boclips.videos.api.httpclient.test.fakes
 
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.PriceResource
 import feign.FeignException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
+import java.util.*
 
 class VideosClientFakeTest {
     @Nested
@@ -23,6 +26,7 @@ class VideosClientFakeTest {
         @Test
         fun `throws a Feign NotFound exception when video is not found`() {
             val fake = VideosClientFake()
+            fake.addCustomVideoPrice("video-id", PriceResource(amount = BigDecimal.TEN, currency = Currency.getInstance("USD")))
             assertThatThrownBy { fake.getVideoPrice("this does not exist", "a-user-id") }
                 .isInstanceOf(FeignException.NotFound::class.java)
         }

@@ -24,7 +24,7 @@ interface VideosClient {
         @Param("userId") userId: String? = null
     ): VideoResource
 
-    @RequestLine("GET /v1/videos/{videoId}/price?userid={userId}")
+    @RequestLine("GET /v1/videos/{videoId}/price?userId={userId}")
     fun getVideoPrice(
         @Param("videoId") videoId: String,
         @Param("userId") userId: String
