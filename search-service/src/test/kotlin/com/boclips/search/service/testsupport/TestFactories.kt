@@ -13,6 +13,7 @@ import com.boclips.search.service.infrastructure.videos.VideoDocument
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 object SearchableVideoMetadataFactory {
@@ -39,7 +40,7 @@ object SearchableVideoMetadataFactory {
         attachmentTypes: Set<String> = emptySet(),
         deactivated: Boolean = false,
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
-        ingestedAt: ZonedDateTime = ZonedDateTime.now(),
+        ingestedAt: ZonedDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
         isVoiced: Boolean? = null,
         prices: Map<String, BigDecimal>? = null
     ) = VideoMetadata(
@@ -128,7 +129,7 @@ object SearchableCollectionMetadataFactory {
         promoted: Boolean? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
-        lastModified: ZonedDateTime = ZonedDateTime.now(),
+        lastModified: ZonedDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
         attachmentTypes: Set<String> = emptySet(),
         default: Boolean = false
     ) = CollectionMetadata(
