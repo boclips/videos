@@ -29,6 +29,7 @@ import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import org.elasticsearch.search.sort.ScoreSortBuilder
 import java.util.concurrent.TimeUnit
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
@@ -89,11 +90,16 @@ class VideoIndexReader(
                     }
                 }
                 postFilter(allCriteria(videoQuery.userQuery))
-                if (videoQuery.sort.isNotEmpty()) {
-                    videoQuery.sort.forEach {
-                        applySort(it)
-                    }
+                videoQuery.sort.forEach {
+                    applySort(it)
                 }
+                sort(ScoreSortBuilder())
+                applySort(
+                    Sort.ByField(
+                        fieldName = VideoMetadata::ingestedAt,
+                        order = SortOrder.DESC
+                    )
+                )
             }
 
         val request = SearchRequest(

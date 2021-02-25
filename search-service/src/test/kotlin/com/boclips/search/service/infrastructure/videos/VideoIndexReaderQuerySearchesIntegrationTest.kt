@@ -12,6 +12,8 @@ import com.boclips.search.service.testsupport.TestFactories.createSubjectMetadat
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
@@ -197,6 +199,35 @@ class VideoIndexReaderQuerySearchesIntegrationTest : EmbeddedElasticSearchIntegr
 
         assertThat(results.elements).hasSize(3)
         assertThat(results.elements).startsWith("2")
+    }
+
+    @Test
+    fun `orders results by ingest date descending, when all else is the same`() {
+        videoIndexWriter.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "hi",
+                    ingestedAt = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "hi",
+                    ingestedAt = ZonedDateTime.of(2000, 1, 3, 0, 0, 0, 0, ZoneOffset.UTC)
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "3",
+                    title = "hi",
+                    ingestedAt = ZonedDateTime.of(2000, 1, 2, 0, 0, 0, 0, ZoneOffset.UTC)
+                )
+            )
+        )
+
+        val results = videoIndexReader.search(
+            PaginatedIndexSearchRequest(query = VideoQuery(videoAccessRuleQuery = VideoAccessRuleQuery(), phrase = "hi"))
+        )
+
+        assertThat(results.elements).containsExactly("2", "3", "1")
     }
 
     @Test
