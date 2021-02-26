@@ -211,6 +211,23 @@ class VideoController(
         return ResponseEntity(videoTranscript, headers, HttpStatus.OK)
     }
 
+    @RequestMapping(
+        path = ["/v1/content-partners/{contentPartnerId}/videos/{contentPartnerVideoId}"],
+        method = [RequestMethod.HEAD]
+    )
+    fun getVideoByProviderId(
+        @PathVariable("contentPartnerId") contentPartnerId: String,
+        @PathVariable("contentPartnerVideoId") contentPartnerVideoId: String
+    ): ResponseEntity<Void> {
+        val exists = videoRepository.existsVideoFromChannelId(
+            ChannelId(value = contentPartnerId),
+            contentPartnerVideoId
+        )
+
+        val status = if (exists) HttpStatus.OK else HttpStatus.NOT_FOUND
+        return ResponseEntity(status)
+    }
+
     @DeleteMapping("/v1/videos/{id}")
     fun removeVideo(@PathVariable("id") id: String?) {
         deleteVideo(id, getCurrentUser())
