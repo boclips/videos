@@ -111,18 +111,6 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .mvcMatchers(GET, "/v1/suggestions*").hasAnyRole(ROLE.VIEW_VIDEOS, ROLE.VIEW_COLLECTIONS)
 
-            .mvcMatchers(HEAD, "/v1/content-partners/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
-            .mvcMatchers(POST, "/v1/content-partners/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
-            .mvcMatchers(POST, "/v1/content-partners").hasRole(ROLE.INSERT_CONTENT_PARTNERS)
-            .mvcMatchers(GET, "/v1/content-partners").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
-            .mvcMatchers(POST, "/v1/content-partners/signed-upload-link").run {
-                hasAnyRole(ROLE.INSERT_CONTENT_PARTNERS, ROLE.UPDATE_CONTENT_PARTNERS)
-            }
-            .mvcMatchers(PATCH, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
-            .mvcMatchers(PUT, "/v1/content-partners/*").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
-            .mvcMatchers(GET, "/v1/content-partners/*").hasRole(ROLE.VIEW_CONTENT_PARTNERS)
-            .mvcMatchers(PUT, "/v1/content-partners/*/legal-restrictions").hasRole(ROLE.UPDATE_CONTENT_PARTNERS)
-
             .mvcMatchers(HEAD, "/v1/channels/*/videos/*").hasRole(ROLE.INSERT_VIDEOS)
             .mvcMatchers(POST, "/v1/channels/*/videos/search").hasRole(ROLE.INSERT_VIDEOS)
             .mvcMatchers(POST, "/v1/channels").hasRole(ROLE.INSERT_CHANNELS)
