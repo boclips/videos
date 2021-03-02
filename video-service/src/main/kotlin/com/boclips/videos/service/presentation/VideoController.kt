@@ -2,16 +2,37 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.*
-import com.boclips.videos.api.response.video.*
+import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.MetadataRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.SetThumbnailRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.video.CaptionsResource
+import com.boclips.videos.api.response.video.PriceResource
+import com.boclips.videos.api.response.video.VideoMetadataResponse
+import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
+import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DeleteVideoThumbnail
+import com.boclips.videos.service.application.video.GetVideoUrlAssets
+import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.SetVideoThumbnail
+import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.UpdateCaptionContent
+import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
+import com.boclips.videos.service.application.video.VideoCaptionService
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
-import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -23,6 +44,7 @@ import com.boclips.videos.service.presentation.converters.PriceConverter
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
@@ -76,6 +98,7 @@ class VideoController(
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
         const val DEFAULT_PAGE_INDEX = 0
+        const val MAXIMUM_SEARCH_RESULT_WINDOW_SIZE = 10000
     }
 
     @GetMapping("/v1/videos")
@@ -111,6 +134,13 @@ class VideoController(
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_INDEX
+
+        val requestedSearchWindow = pageSize * (pageNumber + 1)
+        if (requestedSearchWindow > MAXIMUM_SEARCH_RESULT_WINDOW_SIZE) {
+            throw InvalidVideoPaginationException(
+                message = "Requested page is too deep. Maximum supported window is 10000 but was $requestedSearchWindow"
+            )
+        }
 
         val results = searchVideo.byQuery(
             query = query,

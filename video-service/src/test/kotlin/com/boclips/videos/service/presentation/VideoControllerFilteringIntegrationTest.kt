@@ -603,6 +603,17 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         Assertions.assertThat(event.queryParams["duration_facets"]).hasSize(5)
     }
 
+    @Test
+    fun `returns bad request when the pagination is too deep`() {
+        mockMvc.perform(get("/v1/videos?query=jobs&page=1000&size=10").asApiUser())
+            .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
+
+        mockMvc.perform(get("/v1/videos?query=jobs&page=99&size=101").asApiUser())
+            .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
+    }
+
     private fun getRatingLink(videoId: String): String {
         val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
