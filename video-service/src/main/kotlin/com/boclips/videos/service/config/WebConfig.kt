@@ -1,5 +1,7 @@
 package com.boclips.videos.service.config
 
+import com.boclips.videos.service.config.tracing.MdcTraceIdAddingInterceptor
+import com.boclips.videos.service.config.tracing.TracingTaskDecorator
 import com.boclips.web.EnableBoclipsApiErrors
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.Version
@@ -7,9 +9,13 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
+import io.opentracing.Tracer
 import mu.KLogging
+import org.slf4j.MDC
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.task.TaskDecorator
 import org.springframework.hateoas.MediaTypes.HAL_JSON
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -18,6 +24,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.async.TimeoutCallableProcessingInterceptor
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.time.Duration
 import java.util.concurrent.Callable
@@ -25,6 +32,13 @@ import java.util.concurrent.Callable
 @Configuration
 @EnableBoclipsApiErrors
 class WebConfig : WebMvcConfigurer {
+
+    @Autowired
+    private lateinit var tracingTaskDecorator: TracingTaskDecorator
+
+    @Autowired
+    private lateinit var mdcTraceIdAddingInterceptor: MdcTraceIdAddingInterceptor
+
     companion object : KLogging()
     /*
         This snippet configures Spring MVC message converters that deal with JSON serialization (using jackson).
@@ -66,13 +80,18 @@ class WebConfig : WebMvcConfigurer {
             })
     }
 
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(mdcTraceIdAddingInterceptor)
+        super.addInterceptors(registry)
+    }
+
     @Bean
     fun asyncTaskExecutor() = ThreadPoolTaskExecutor().apply {
             corePoolSize = 5
             maxPoolSize = 10
             setQueueCapacity(25)
+            setTaskDecorator(tracingTaskDecorator)
         }
-
 }
 
 object DurationSerializer : JsonSerializer<Duration>() {

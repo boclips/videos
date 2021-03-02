@@ -1,7 +1,7 @@
 <configuration>
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{jaeger_trace_id},%X{jaeger_span_id}] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
