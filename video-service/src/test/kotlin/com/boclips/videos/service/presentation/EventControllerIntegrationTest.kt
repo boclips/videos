@@ -309,13 +309,13 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val videoInteractedWithLink = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)
             .andReturnLink(VideosLinkBuilder.Rels.LOG_VIDEO_INTERACTION)
-            .expand(mapOf("type" to "COPY_SHARE_LINK"))
+            .expand(mapOf("type" to "VIDEO_LINK_COPIED"))
 
         mockMvc.perform(post(videoInteractedWithLink).asTeacher(email = "john@teacher.com"))
             .andExpect(status().isOk)
 
         val event = fakeEventBus.getEventOfType(VideoInteractedWith::class.java)
-        assertThat(event.subtype).isEqualTo("COPY_SHARE_LINK")
+        assertThat(event.subtype).isEqualTo("VIDEO_LINK_COPIED")
         assertThat(event.videoId).isEqualTo(videoId.value)
         assertThat(event.userId).isEqualTo("john@teacher.com")
     }
