@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.security.testing.setSecurityContextWithClientId
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -19,17 +20,19 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
     inner class CurrentUser {
         @Test
         fun `access rules are retrieved from user service`() {
-            setSecurityContext("a valid user")
+            setSecurityContextWithClientId(userId = "a valid user", clientId = "teachers")
 
-            val video = saveVideo(title = "A video")
-            addAccessToVideoIds("a valid user", video.value)
+            val teachersVideo = saveVideo(title = "A video")
+            val hqVideo = saveVideo(title = "A different video")
+            addAccessToVideoIds("a valid user", teachersVideo.value, client = "teachers")
+            addAccessToVideoIds("a valid user", hqVideo.value, client = "hq")
 
             val user = controller.getCurrentUser()
             val accessRules = user.accessRules
 
-            assertThat((accessRules.videoAccess as VideoAccess.Rules).accessRules).containsExactly(
+            assertThat((accessRules.videoAccess as? VideoAccess.Rules)?.accessRules).containsExactly(
                 VideoAccessRule.IncludedIds(
-                    videoIds = setOf(video)
+                    videoIds = setOf(teachersVideo)
                 )
             )
         }

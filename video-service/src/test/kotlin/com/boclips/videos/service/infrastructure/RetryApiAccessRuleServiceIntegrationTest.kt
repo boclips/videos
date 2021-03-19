@@ -5,14 +5,12 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
@@ -29,7 +27,7 @@ class RetryApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest()
             collectionIds = listOf("test-collection-id")
         )
 
-        whenever(usersClient.getAccessRulesOfUser(ArgumentMatchers.anyString()))
+        whenever(usersClient.getAccessRulesOfUser(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenReturn(
@@ -44,7 +42,7 @@ class RetryApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest()
 
     @Test
     fun `when rules cannot be obtained, revert to public access`() {
-        whenever(usersClient.getAccessRulesOfUser(ArgumentMatchers.anyString()))
+        whenever(usersClient.getAccessRulesOfUser(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))

@@ -1,5 +1,7 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.security.utils.Client
+import com.boclips.security.utils.ClientExtractor
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.AccessRules
@@ -47,7 +49,8 @@ open class BaseController(
             ),
             accessRulesSupplier = { user ->
                 if (user.isAuthenticated) {
-                    accessRuleService.getRules(user)
+                    val clientName = ClientExtractor.extractClient().let { Client.getNameByClient(it) }
+                    accessRuleService.getRules(user, clientName)
                 } else {
                     AccessRules.anonymousAccess()
                 }

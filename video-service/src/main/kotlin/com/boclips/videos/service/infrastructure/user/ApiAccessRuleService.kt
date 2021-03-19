@@ -25,12 +25,12 @@ open class ApiAccessRuleService(
         maxAttempts = 3,
         backoff = Backoff(multiplier = 1.5)
     )
-    override fun getRules(user: User): AccessRules {
+    override fun getRules(user: User, client: String?): AccessRules {
         user.id ?: return AccessRules.anonymousAccess()
 
         val retrievedAccessRules: List<AccessRuleResource> =
             try {
-                usersClient.getAccessRulesOfUser(user.id.value)._embedded.accessRules
+                usersClient.getAccessRulesOfUser(user.id.value, client)._embedded.accessRules
             } catch (ex: FeignException) {
                 when (ex.status()) {
                     404 -> emptyList()

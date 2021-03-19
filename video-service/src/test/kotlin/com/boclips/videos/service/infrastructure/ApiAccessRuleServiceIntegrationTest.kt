@@ -1,15 +1,15 @@
 package com.boclips.videos.service.infrastructure
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.users.api.factories.AccessRuleResourceFactory
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
-import com.boclips.videos.service.domain.model.collection.CollectionId
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -21,10 +21,11 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
-    fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>) {
+    fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>, client: String? = null) {
         usersClient.addAccessRules(
             userId,
-            AccessRulesResourceFactory.sample(*rules.toTypedArray())
+            AccessRulesResourceFactory.sample(*rules.toTypedArray()),
+            client
         )
     }
 
@@ -71,6 +72,29 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.everything())
 
         assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
+    }
+
+    @Test
+    fun `returns client based access rules`() {
+        val hqVideoId = ObjectId().toHexString()
+        val teachersVideoId = ObjectId().toHexString()
+        createAccessRulesResource(
+            "test-user",
+            listOf(AccessRuleResourceFactory.sampleExcludedVideos(name = "video rule", videoIds = listOf(hqVideoId))),
+            "hq"
+        )
+
+        createAccessRulesResource(
+            "test-user",
+            listOf(AccessRuleResourceFactory.sampleExcludedVideos(name = "rule 2", videoIds = listOf(teachersVideoId))),
+            "teachers"
+        )
+
+        val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"), "hq")
+
+        val videoAccessRules = accessRules.videoAccess as? VideoAccess.Rules
+        val firstRule = videoAccessRules?.accessRules?.first() as? VideoAccessRule.ExcludedIds
+        assertThat(firstRule?.videoIds?.first()).isEqualTo(VideoId(hqVideoId))
     }
 
     @Nested

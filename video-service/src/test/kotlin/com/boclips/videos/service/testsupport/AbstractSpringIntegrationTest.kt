@@ -506,7 +506,7 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun addAccessToVideoIds(userId: String, vararg contractedVideoIds: String) {
+    fun addAccessToVideoIds(userId: String, vararg contractedVideoIds: String, client: String? = null) {
         usersClient.addAccessRules(
             userId,
             AccessRulesResourceFactory.sample(
@@ -515,7 +515,8 @@ abstract class AbstractSpringIntegrationTest {
                     name = UUID.randomUUID().toString(),
                     videoIds = contractedVideoIds.toList()
                 )
-            )
+            ),
+            client
         )
     }
 
