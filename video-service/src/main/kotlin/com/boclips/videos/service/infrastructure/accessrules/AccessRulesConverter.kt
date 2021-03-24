@@ -14,6 +14,7 @@ import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
+import java.util.Locale
 
 class ApiAccessRulesConverter(
     private val collectionRepository: CollectionRepository
@@ -61,6 +62,9 @@ class ApiAccessRulesConverter(
                             }
                         }
                     }.toSet()
+                )
+                is AccessRuleResource.ExcludedLanguages -> VideoAccessRule.ExcludedLanguages(
+                    it.languages.map { languageTag -> Locale.forLanguageTag(languageTag) }.toSet()
                 )
             }
         }

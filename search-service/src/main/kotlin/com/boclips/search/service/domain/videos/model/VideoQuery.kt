@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import java.time.LocalDate
+import java.util.Locale
 
 data class VideoQuery(
     override val phrase: String = "",
@@ -43,5 +44,7 @@ data class VideoAccessRuleQuery(
     val deniedVideoIds: Set<String>? = null,
     val isEligibleForStream: Boolean? = null,
     val isEligibleForDownload: Boolean? = null,
-    val includedVoiceType: Set<VoiceType> = emptySet()
+    val includedVoiceType: Set<VoiceType> = emptySet(),
+    val excludedLanguages: Set<Locale> = emptySet()
+
 )

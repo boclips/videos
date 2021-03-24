@@ -1,15 +1,16 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.Locale
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class AccessRuleConverterTest {
     val converter = AccessRuleConverter
@@ -349,6 +350,44 @@ class AccessRuleConverterTest {
                 )
             )
             assertThat(isEligibleForDownload).isNull()
+        }
+    }
+
+    @Nested
+    inner class ToExcludedLanguages {
+        @Test
+        fun `returns empty when access to everything`() {
+            val excludedTypes = converter.mapToExcludedLanguages(VideoAccess.Everything)
+            assertThat(excludedTypes).isEmpty()
+        }
+
+        @Test
+        fun `returns empty when no ExcludedLanguages is specified in rules`() {
+            val videoId = TestFactories.createVideoId()
+            val excludedLanguages = converter.mapToExcludedLanguages(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedIds(
+                            videoIds = setOf(videoId)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedLanguages).isEmpty()
+        }
+
+        @Test
+        fun `returns excluded Locales when specified`() {
+            val excludedLanguages = converter.mapToExcludedLanguages(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedLanguages(
+                            languages = setOf(Locale.ENGLISH, Locale.FRENCH)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedLanguages).containsExactly(Locale.ENGLISH, Locale.FRENCH)
         }
     }
 }

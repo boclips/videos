@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import java.util.Locale
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 import com.boclips.videos.service.domain.model.video.VoiceType as VideoVoiceType
 
@@ -131,6 +132,15 @@ object AccessRuleConverter {
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.IncludedContentTypes>()
                 .flatMap { accessRule -> accessRule.contentTypes.map { QueryConverter().convertTypeToContentType(it.name) } }
+                .toSet()
+        }
+
+    fun mapToExcludedLanguages(videoAccess: VideoAccess): Set<Locale> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.ExcludedLanguages>()
+                .flatMap { accessRule -> accessRule.languages }
                 .toSet()
         }
 }

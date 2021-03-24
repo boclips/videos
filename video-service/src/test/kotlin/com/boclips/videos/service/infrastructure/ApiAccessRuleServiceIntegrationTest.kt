@@ -19,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.Locale
 
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>, client: String? = null) {
@@ -399,6 +400,33 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                         VoiceType.WITH_VOICE,
                         VoiceType.WITHOUT_VOICE,
                         VoiceType.UNKNOWN
+                    )
+                )
+            )
+        }
+
+        @Test
+        fun `can convert excluded languages to domain`() {
+            createAccessRulesResource(
+                "test-user",
+                listOf(
+                    AccessRuleResource.ExcludedLanguages(
+                        id = "access-rule-id",
+                        name = "voices",
+                        languages = setOf(Locale.ENGLISH.toLanguageTag(), Locale.FRENCH.toLanguageTag())
+                    )
+                )
+            )
+
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsExactly(
+                VideoAccessRule.ExcludedLanguages(
+                    setOf(
+                        Locale.ENGLISH,
+                        Locale.FRENCH
                     )
                 )
             )

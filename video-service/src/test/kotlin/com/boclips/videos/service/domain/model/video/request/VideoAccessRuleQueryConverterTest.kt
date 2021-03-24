@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.util.Locale
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 
 class VideoAccessRuleQueryConverterTest {
@@ -35,8 +36,8 @@ class VideoAccessRuleQueryConverterTest {
                     VideoAccessRule.IncludedChannelIds(channelIds = setOf(ChannelId("hi"))),
                     VideoAccessRule.ExcludedIds(videoIds = deniedVideoIds),
                     VideoAccessRule.IncludedDistributionMethods(distributionMethods = setOf(DistributionMethod.DOWNLOAD)),
-                    VideoAccessRule.ExcludedChannelIds(channelIds = setOf(ChannelId("HELLO")))
-
+                    VideoAccessRule.ExcludedChannelIds(channelIds = setOf(ChannelId("HELLO"))),
+                    VideoAccessRule.ExcludedLanguages(languages = setOf(Locale.FRENCH, Locale.KOREAN))
                 )
             )
         )
@@ -55,5 +56,6 @@ class VideoAccessRuleQueryConverterTest {
             SearchVoiceType.UNKNOWN,
             SearchVoiceType.WITHOUT
         )
+        assertThat(query.excludedLanguages).containsExactly(Locale.FRENCH, Locale.KOREAN)
     }
 }
