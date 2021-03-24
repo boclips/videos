@@ -15,6 +15,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.Locale
 
 object SearchableVideoMetadataFactory {
     fun create(
@@ -42,6 +43,7 @@ object SearchableVideoMetadataFactory {
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL),
         ingestedAt: ZonedDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
         isVoiced: Boolean? = null,
+        language: Locale? = null,
         prices: Map<String, BigDecimal>? = null
     ) = VideoMetadata(
         id = id,
@@ -68,6 +70,7 @@ object SearchableVideoMetadataFactory {
         types = types,
         ingestedAt = ingestedAt,
         isVoiced = isVoiced,
+        language = language,
         prices = prices
     )
 }
@@ -110,6 +113,7 @@ object TestFactories {
             types = listOf("NEWS"),
             ingestedAt = ingestDate,
             isVoiced = null,
+            language = null,
             prices = null
         )
     }

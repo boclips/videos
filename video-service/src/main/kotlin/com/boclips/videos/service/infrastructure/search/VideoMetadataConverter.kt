@@ -35,6 +35,7 @@ object VideoMetadataConverter {
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
             transcript = video.voice.transcript,
             isVoiced = video.isVoiced(),
+            language = video.voice.language,
             ageRangeMin = video.ageRange.min(),
             ageRangeMax = video.ageRange.max(),
             types = video.types.map { VideoTypeConverter.convert(it) },

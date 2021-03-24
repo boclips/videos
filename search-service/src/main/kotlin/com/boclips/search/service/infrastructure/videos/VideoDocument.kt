@@ -3,7 +3,6 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -35,6 +34,7 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(DEACTIVATED) val deactivated: Boolean,
     @param:JsonProperty(INGESTED_AT) val ingestedAt: ZonedDateTime?,
     @param:JsonProperty(IS_VOICED) val isVoiced: Boolean?,
+    @param:JsonProperty(LANGUAGE) val language: String?,
     @param:JsonProperty(PRICES) val prices: Map<String, Long>?
 ) : HasAgeRange {
     companion object {
@@ -62,6 +62,7 @@ data class VideoDocument @JsonCreator constructor(
         const val DEACTIVATED = "deactivated"
         const val INGESTED_AT = "ingestedAt"
         const val IS_VOICED = "isVoiced"
+        const val LANGUAGE = "language"
         const val PRICES = "prices"
     }
 }

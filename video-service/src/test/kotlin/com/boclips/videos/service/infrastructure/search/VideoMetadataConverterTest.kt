@@ -11,7 +11,6 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.OrganisationId
-import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
@@ -48,7 +47,7 @@ class VideoMetadataConverterTest {
                 types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
                 keywords = listOf("k1"),
                 releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-                voice = Voice.UnknownVoice(language = null, transcript = "a great transcript"),
+                voice = Voice.WithVoice(language = Locale.JAPANESE, transcript = "a great transcript"),
                 ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
                 subjects = setOf(
                     Subject(
@@ -90,7 +89,8 @@ class VideoMetadataConverterTest {
                 durationSeconds = 10,
                 source = SourceType.YOUTUBE,
                 transcript = "a great transcript",
-                isVoiced = null,
+                isVoiced = true,
+                language = Locale.JAPANESE,
                 ageRangeMin = 5,
                 ageRangeMax = 11,
                 subjects = SubjectsMetadata(

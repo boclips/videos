@@ -13,6 +13,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.Locale
 
 class VideoDocumentConverterTest {
 
@@ -45,6 +46,7 @@ class VideoDocumentConverterTest {
                 "eligibleForStream": true,
                 "eligibleForDownload": true,
                 "attachmentTypes": ["ACTIVITY"],
+                "language": "spa",
                 "deactivated": false,
                 "ingestedAt": "2017-04-24T09:30Z[UTC]"
             }
@@ -83,6 +85,7 @@ class VideoDocumentConverterTest {
                 types = listOf("NEWS"),
                 ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]"),
                 isVoiced = null,
+                language = "spa",
                 prices = null
             )
         )
@@ -145,7 +148,8 @@ class VideoDocumentConverterTest {
             deactivated = false,
             types = listOf(VideoType.INSTRUCTIONAL),
             ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-            isVoiced = false,
+            isVoiced = true,
+            language = Locale.FRENCH,
             prices = mapOf(
                 "org-id-1" to BigDecimal.valueOf(15.99),
                 "org-id-2" to BigDecimal.valueOf(0),
@@ -183,7 +187,8 @@ class VideoDocumentConverterTest {
                 attachmentTypes = emptySet(),
                 deactivated = false,
                 ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
-                isVoiced = false,
+                isVoiced = true,
+                language = Locale.FRENCH.toLanguageTag(),
                 prices = mapOf(
                     "org-id-1" to 1599,
                     "org-id-2" to 0,
@@ -223,6 +228,7 @@ class VideoDocumentConverterTest {
             types = listOf(VideoType.INSTRUCTIONAL),
             ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
             isVoiced = null,
+            language = null,
             prices = null
         )
 

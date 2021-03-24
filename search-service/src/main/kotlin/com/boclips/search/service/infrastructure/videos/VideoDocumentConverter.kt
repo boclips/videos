@@ -41,6 +41,7 @@ object VideoDocumentConverter {
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
             isVoiced = video.isVoiced,
+            language = video.language?.toLanguageTag(),
             prices = video.prices
                 ?.map {
                 it.key to (it.value.times(BigDecimal.valueOf(100)).longValueExact())

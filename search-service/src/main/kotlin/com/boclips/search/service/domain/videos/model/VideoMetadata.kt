@@ -3,6 +3,7 @@ package com.boclips.search.service.domain.videos.model
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import java.util.Locale
 
 data class VideoMetadata(
     val id: String,
@@ -29,5 +30,6 @@ data class VideoMetadata(
     val deactivated: Boolean,
     val ingestedAt: ZonedDateTime,
     val isVoiced: Boolean?,
+    val language: Locale?,
     val prices: Map<String, BigDecimal>?
 )
