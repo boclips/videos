@@ -51,10 +51,18 @@ class ChannelUpdated(private val videoRepository: VideoRepository) {
                     )
                 }
 
+                val updateLanguage = contentPartner.details?.language?.let {
+                    VideoUpdateCommand.ReplaceLanguage(
+                        videoId = video.videoId,
+                        language = it
+                    )
+                }
+
                 listOfNotNull(
                     updateContentPartner,
                     updateAgeRanges,
-                    updateLegalRestrictions
+                    updateLegalRestrictions,
+                    updateLanguage
                 )
             }
         }

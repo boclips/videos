@@ -2,8 +2,6 @@ package com.boclips.videos.service.application
 
 import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.*
-import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
-import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
 import com.boclips.videos.service.domain.model.video.VideoType
@@ -13,13 +11,14 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.Locale
 
 class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoRepository: VideoRepository
 
     @Test
-    fun `updates name, legal restrictions and age ranges`() {
+    fun `updates name, legal restrictions, age ranges and language`() {
         val channel = TestFactories.createChannel(name = "test-999")
         val video = videoRepository.create(
             TestFactories.createVideo(
@@ -39,7 +38,8 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
-                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL")).build())
+                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL")).language(
+                            Locale.JAPANESE).build())
                         .build()
                 )
                 .build()
@@ -50,6 +50,7 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.channel.name).isEqualTo("test-888")
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
+        assertThat(updatedVideo.voice.language).isEqualTo(Locale.JAPANESE)
     }
 
     @Test
