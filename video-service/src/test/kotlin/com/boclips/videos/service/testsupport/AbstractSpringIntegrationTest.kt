@@ -16,8 +16,8 @@ import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
-import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
+import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
@@ -26,7 +26,6 @@ import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.users.api.response.organisation.DealResource
-import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
@@ -57,8 +56,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOU
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -90,6 +89,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.Collections
+import java.util.Locale
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -610,18 +610,36 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
+    fun removeAccessToLanguage(userId: String, vararg excludedLanguages: Locale) {
+        usersClient.addAccessRules(
+            userId,
+            AccessRulesResourceFactory.sample(
+                AccessRuleResource.ExcludedLanguages(
+                    id = "rule",
+                    name = "no languanges",
+                    languages = excludedLanguages.map { it.toLanguageTag() }.toSet()
+                )
+            )
+        )
+    }
+
     fun mongoVideosCollection() =
         mongoClient.getDatabase(DATABASE_NAME).getCollection(MongoVideoRepository.collectionName)
 
-    fun userAssignedToOrganisation(id: String = "the@teacher.com", customPrices: DealResource.PricesResource? = null): User {
-        val organisation = organisationsClient.add(OrganisationResourceFactory.sample(
-            deal = DealResource(
-                prices = customPrices,
-                accessExpiresOn = null,
-                billing = false,
-                contentPackageId = null
+    fun userAssignedToOrganisation(
+        id: String = "the@teacher.com",
+        customPrices: DealResource.PricesResource? = null
+    ): User {
+        val organisation = organisationsClient.add(
+            OrganisationResourceFactory.sample(
+                deal = DealResource(
+                    prices = customPrices,
+                    accessExpiresOn = null,
+                    billing = false,
+                    contentPackageId = null
+                )
             )
-        ))
+        )
 
         val userResource = usersClient.add(
             UserResourceFactory.sample(

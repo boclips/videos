@@ -29,6 +29,10 @@ class AccessRulesFilter {
                 boolQueryBuilder.mustNot(termsQuery(VideoDocument.TYPES, videoQueryVideo.excludedTypes))
             }
 
+            if (videoQueryVideo.excludedLanguages.isNotEmpty()) {
+                boolQueryBuilder.mustNot(termsQuery(VideoDocument.LANGUAGE, videoQueryVideo.excludedLanguages))
+            }
+
             if (!videoQueryVideo.deniedVideoIds.isNullOrEmpty()) {
                 boolQueryBuilder.mustNot(termsQuery(VideoDocument.ID, videoQueryVideo.deniedVideoIds))
             }

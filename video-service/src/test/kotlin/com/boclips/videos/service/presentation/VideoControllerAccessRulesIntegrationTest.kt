@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.Locale
 import java.util.UUID
 
 class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest() {
@@ -166,9 +167,29 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             addAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
 
-            mockMvc.perform(get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+            mockMvc.perform(
+                get("/v1/videos?query=instructional&type=INSTRUCTIONAL").asApiUser(
+                    email = userAssignedToOrganisation(
+                        "api-user@gmail.com"
+                    ).idOrThrow().value
+                )
+            )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(0)))
+        }
+
+        @Test
+        fun `excludes video with certain languages`() {
+            val french =
+                saveVideo(title = "How did Wales lost the 6 nations?", language = Locale.FRENCH.toLanguageTag())
+            saveVideo(title = "English finish 5th in the 6 nations", language = Locale.ENGLISH.toLanguageTag())
+
+            removeAccessToLanguage("api-user@gmail.com", Locale.ENGLISH)
+
+            mockMvc.perform(get("/v1/videos?query=nations").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(french.value)))
         }
 
         @Test

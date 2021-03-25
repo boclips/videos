@@ -118,7 +118,7 @@ class VideoIndexFake :
             }
             .filter { entry ->
                 val (organisationId, queriedPrices) = query.userQuery.organisationPriceFilter
-                if(queriedPrices.isEmpty()) {
+                if (queriedPrices.isEmpty()) {
                     true
                 } else {
                     val priceForOrganisation = entry.value.prices?.get(organisationId)?.movePointLeft(2)
@@ -157,6 +157,7 @@ class VideoIndexFake :
                     }
                 }
             }
+            .filter { entry -> !query.videoAccessRuleQuery.excludedLanguages.contains(entry.value.language) }
             .map { video -> video.key }
     }
 
