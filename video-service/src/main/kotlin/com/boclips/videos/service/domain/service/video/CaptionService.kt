@@ -7,7 +7,10 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.google.api.gax.core.FixedCredentialsProvider
+import com.google.auth.oauth2.ServiceAccountCredentials
+import com.google.cloud.translate.v3.*
+import java.io.FileInputStream
 
 class CaptionService(
     private val videoRepository: VideoRepository,
@@ -54,5 +57,49 @@ class CaptionService(
                 UpdateCaptions.logger.info { "Updated captions for ${video.videoId}" }
             }
         }
+    }
+
+    fun translateToSpanish(text: String, sourceSrt: String): String {
+        val projectId = "boclips-prod"
+        val targetLanguage = "es"
+//        val credentials = ServiceAccountCredentials.fromStream(FileInputStream("boclips-prod-6bba4368a748.json"))
+//        val settings =
+//            TranslationServiceSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+//                .build()
+
+        val client: TranslationServiceClient = TranslationServiceClient.create()
+        val parent: LocationName = LocationName.of(projectId, "global")
+
+        // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
+        val request: TranslateTextRequest =
+            TranslateTextRequest.newBuilder()
+                .setParent(parent.toString())
+                .setMimeType("text/plain")
+                .setTargetLanguageCode(targetLanguage)
+                .addContents(text)
+                .build()
+
+        val response: TranslateTextResponse = client.translateText(request);
+
+        val translatedText = response.getTranslations(0).translatedText.lines()
+        val timestampPattern = Regex("[0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3} --> [0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}")
+        val lineIndexPattern = Regex("^[-,0-9]+\$")
+        var lineToReplace = 0
+
+        val translatedSRT = sourceSrt.lines().map { line ->
+            if (
+                line.isEmpty() ||
+                line.matches(timestampPattern) ||
+                line.matches(lineIndexPattern)
+            ) {
+                return@map line
+            } else {
+                val newLine = translatedText[lineToReplace]
+                lineToReplace++;
+                return@map newLine
+            }
+        }.joinToString(separator = "\n")
+
+        return translatedSRT
     }
 }

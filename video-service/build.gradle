@@ -128,6 +128,9 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging:2.0.3")
     implementation("com.google.apis:google-api-services-youtube:v3-rev20200618-1.30.9")
+    implementation platform('com.google.cloud:libraries-bom:19.0.0')
+
+    implementation('com.google.cloud:google-cloud-translate')
     implementation("com.google.oauth-client:google-oauth-client:1.31.0")
     implementation('com.google.cloud:google-cloud-storage:1.113.4')
     implementation('org.apache.commons:commons-lang3:3.11')

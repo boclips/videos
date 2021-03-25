@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -17,6 +16,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import java.io.File
+import java.io.FileInputStream
 import com.boclips.kalturaclient.captionasset.CaptionFormat as KalturaCaptionFormat
 
 class CaptionServiceTest : AbstractSpringIntegrationTest() {
@@ -169,5 +170,122 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
     fun `throws when attempting to request captions for a non boclips hosted video`() {
         val videoId = saveVideo(playbackId = TestFactories.createYoutubePlayback().id)
         assertThrows<UnsupportedCaptionsException> { captionService.requestCaption(videoId) }
+    }
+
+    @Test
+    fun `translates english srt and text to spanish srt`() {
+        val sourceSRT = """
+            1
+            00:00:09,800 --> 00:00:15,000
+             10 apple pie it's kind of ironic that The Benchmark
+            
+            2
+            00:00:15,000 --> 00:00:16,200
+             for being American.
+            
+            3
+            00:00:16,200 --> 00:00:21,000
+             Standard but it's truth apple pie isn't as American
+            
+            4
+            00:00:21,000 --> 00:00:24,100
+             as apple pie historically speaking the first known
+            
+            5
+            00:00:24,100 --> 00:00:27,300
+             reference to the pastry treat then cold tatra sandopolis
+            
+            6
+            00:00:27,300 --> 00:00:29,700
+             comes from 14th century England,
+            
+            7
+            00:00:29,700 --> 00:00:32,700
+             but both pie starkly different from the ones we know/
+            
+            8
+            00:00:32,700 --> 00:00:33,000
+             today.
+            
+            9
+            00:00:33,000 --> 00:00:36,700
+             They didn't have crust because sugar was around $23
+            
+            10
+            00:00:36,700 --> 00:00:38,400
+             per kilogram and adjusted figures.
+        """.trimIndent()
+
+        val sourceTXT = """
+            10 apple pie it's kind of ironic that The Benchmark
+            for being American.
+            Standard but it's truth apple pie isn't as American
+            as apple pie historically speaking the first known
+            reference to the pastry treat then cold tatra sandopolis
+            comes from 14th century England,
+            but both pie starkly different from the ones we know
+            today.
+            They didn't have crust because sugar was around $23
+            per kilogram and adjusted figures.
+        """.trimIndent()
+
+        val outputSRT = captionService.translateToSpanish(text = sourceTXT, sourceSrt = sourceSRT)
+        val expectedSRT = """
+            1
+            00:00:09,800 --> 00:00:15,000
+            10 tarta de manzana es un poco irónico que The Benchmark
+            
+            2
+            00:00:15,000 --> 00:00:16,200
+            por ser estadounidense.
+            
+            3
+            00:00:16,200 --> 00:00:21,000
+            Estándar, pero es verdad, la tarta de manzana no es tan estadounidense
+            
+            4
+            00:00:21,000 --> 00:00:24,100
+            como tarta de manzana, históricamente hablando, la primera conocida
+            
+            5
+            00:00:24,100 --> 00:00:27,300
+            referencia a la golosina de repostería luego fría tatra sandopolis
+            
+            6
+            00:00:27,300 --> 00:00:29,700
+            proviene de la Inglaterra del siglo XIV,
+            
+            7
+            00:00:29,700 --> 00:00:32,700
+            pero ambos son completamente diferentes a los que conocemos
+            
+            8
+            00:00:32,700 --> 00:00:33,000
+            hoy dia.
+            
+            9
+            00:00:33,000 --> 00:00:36,700
+            No tenían corteza porque el azúcar costaba alrededor de $ 23
+            
+            10
+            00:00:36,700 --> 00:00:38,400
+            por kilogramo y cifras ajustadas.
+        """.trimIndent()
+
+        assertThat(outputSRT).isEqualTo(expectedSRT)
+    }
+
+    @Test
+    fun `it translates files`() {
+        print("reading files")
+        File("/Users/pancake/workspace/videos/video-service/mp3s/").walk().filter { it.name.endsWith(".txt") }.forEach {
+            println(it.absolutePath)
+            val inputTxt = FileInputStream(it.absolutePath).readBytes().decodeToString()
+            val inputSrt = FileInputStream(it.absolutePath.replace(".txt", ".srt")).readBytes().decodeToString()
+            val spanishSRT = captionService.translateToSpanish(text = inputTxt, sourceSrt = inputSrt)
+            File(it.absolutePath.replace(".txt", "-SPA.srt")).writeText(spanishSRT)
+        }
+
+
     }
 }
