@@ -4,11 +4,10 @@ import com.boclips.videos.service.domain.model.taxonomy.Taxonomy
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class MongoTaxonomyRepositoryIntegrationTest: AbstractSpringIntegrationTest() {
+class MongoTaxonomyRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mongoTaxonomyRepository: TaxonomyRepository
 

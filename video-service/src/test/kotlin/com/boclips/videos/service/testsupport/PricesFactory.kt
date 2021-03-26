@@ -31,7 +31,7 @@ object DealPricesFactory {
     )
 
     fun sampleChannelPrices(vararg priceMapping: Pair<ChannelId, Deal.Prices.Price>): Map<ChannelId, Deal.Prices.Price> =
-        if(priceMapping.isNotEmpty()) {
+        if (priceMapping.isNotEmpty()) {
             mapOf(*priceMapping)
         } else {
             mapOf(ChannelId("ted-ed") to Deal.Prices.Price(BigDecimal.valueOf(150), USD))
