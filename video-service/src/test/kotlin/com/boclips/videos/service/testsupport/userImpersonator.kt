@@ -86,7 +86,8 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.CREATE_CONTENT_WARNINGS,
                 UserRoles.VIEW_CONTRACTS,
                 UserRoles.INSERT_CONTRACTS,
-                UserRoles.UPDATE_CONTRACTS
+                UserRoles.UPDATE_CONTRACTS,
+                UserRoles.VIEW_TAXONOMIES
             )
     )
 

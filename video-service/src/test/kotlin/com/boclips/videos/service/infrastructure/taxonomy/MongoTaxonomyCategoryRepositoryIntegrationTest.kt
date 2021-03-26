@@ -1,20 +1,19 @@
 package com.boclips.videos.service.infrastructure.taxonomy
 
-import com.boclips.videos.service.domain.model.taxonomy.Taxonomy
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class MongoTaxonomyRepositoryIntegrationTest: AbstractSpringIntegrationTest() {
+class MongoTaxonomyCategoryRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mongoTaxonomyRepository: TaxonomyRepository
 
     @Test
     fun `can create a taxonomy`() {
-        val bigTax = Taxonomy(codeValue = "AB", description = "The big parent tax")
+        val bigTax = TaxonomyCategory(codeValue = "AB", description = "The big parent tax")
 
         val createdTax = mongoTaxonomyRepository.create(bigTax)
 
@@ -23,8 +22,8 @@ class MongoTaxonomyRepositoryIntegrationTest: AbstractSpringIntegrationTest() {
 
     @Test
     fun `can retrieve taxonomies`() {
-        val smallTax = Taxonomy(codeValue = "ABC", description = "The lil chhild tax", parentCode = "AB")
-        val bigTax = Taxonomy(codeValue = "AB", description = "The big parent tax")
+        val smallTax = TaxonomyCategory(codeValue = "ABC", description = "The lil chhild tax", parentCode = "AB")
+        val bigTax = TaxonomyCategory(codeValue = "AB", description = "The big parent tax")
         mongoTaxonomyRepository.create(bigTax)
         mongoTaxonomyRepository.create(smallTax)
 
