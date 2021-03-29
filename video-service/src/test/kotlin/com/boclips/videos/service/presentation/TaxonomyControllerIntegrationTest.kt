@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TaxonomyFactory
@@ -18,7 +19,7 @@ internal class TaxonomyControllerIntegrationTest : AbstractSpringIntegrationTest
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var taxonomyRepository: TaxonomyRepository
+    lateinit var taxonomyService: TaxonomyService
 
     @Test
     fun `returns all taxonomy categories as boclips employee`() {
@@ -35,9 +36,9 @@ internal class TaxonomyControllerIntegrationTest : AbstractSpringIntegrationTest
             parentCode = childTaxonomy.codeValue
         )
 
-        taxonomyRepository.create(parentTaxonomy)
-        taxonomyRepository.create(childTaxonomy)
-        taxonomyRepository.create(grandChildTaxonomy)
+        taxonomyService.addTaxonomy(parentTaxonomy)
+        taxonomyService.addTaxonomy(childTaxonomy)
+        taxonomyService.addTaxonomy(grandChildTaxonomy)
 
         mockMvc.perform(get("/v1/taxonomies").asBoclipsEmployee())
             .andExpect(status().isOk)

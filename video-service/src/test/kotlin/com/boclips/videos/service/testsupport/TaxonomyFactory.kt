@@ -15,5 +15,5 @@ object TaxonomyFactory {
         parentCode = parentCode
     )
 
-    fun sampleTree() = TaxonomyTree
+    fun sampleTree() = TaxonomyTree(description = "test", code="A", children = emptyMap())
 }

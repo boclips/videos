@@ -71,20 +71,17 @@ import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrieva
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.CaptionService
-import com.boclips.videos.service.domain.service.video.CaptionValidator
-import com.boclips.videos.service.domain.service.video.VideoCreationService
-import com.boclips.videos.service.domain.service.video.VideoDeletionService
-import com.boclips.videos.service.domain.service.video.VideoIndex
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.application.video.search.*
 import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.*
+import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
+import com.boclips.videos.service.domain.service.video.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
+import com.boclips.videos.service.infrastructure.taxonomy.MongoTaxonomyRepository
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -120,7 +117,8 @@ class ApplicationContext(
     val contentWarningRepository: ContentWarningRepository,
     val contentPackageService: ContentPackageService,
     val organisationService: OrganisationService,
-    val priceComputingService: PriceComputingService
+    val priceComputingService: PriceComputingService,
+    val taxonomyRepository: TaxonomyRepository
 ) {
     @Bean
     fun searchVideo(
@@ -594,5 +592,10 @@ class ApplicationContext(
             collectionIndex: CollectionIndex
     ): CollectionBookmarkService {
         return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
+    }
+
+    @Bean
+    fun taxonomyService(): TaxonomyService {
+        return TaxonomyService(taxonomyRepository)
     }
 }
