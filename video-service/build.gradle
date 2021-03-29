@@ -106,7 +106,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-web:5.4.1")
     implementation("org.springframework.boot:spring-boot-starter-tomcat:2.4.4")
     implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.39")
-    implementation("org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
+    implementation("org.apache.tomcat.embed:tomcat-embed-websocket:10.0.4")
 
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation('org.springframework.retry:spring-retry')
