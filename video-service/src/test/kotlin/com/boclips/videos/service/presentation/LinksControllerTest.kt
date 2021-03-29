@@ -64,6 +64,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.channel").doesNotExist())
             .andExpect(jsonPath("$._links.searchQueryCompletionsSuggestedEvent").doesNotExist())
             .andExpect(jsonPath("$._links.getVideoPrice").doesNotExist())
+            .andExpect(jsonPath("$._links.taxonomies").doesNotExist())
     }
 
     @Test
@@ -150,6 +151,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.legalRestrictions").doesNotExist())
             .andExpect(jsonPath("$._links.attachmentTypes").doesNotExist())
             .andExpect(jsonPath("$._links.getVideoPrice").doesNotExist())
+            .andExpect(jsonPath("$._links.taxonomies").doesNotExist())
     }
 
     @Test
@@ -202,6 +204,7 @@ class LinksControllerTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.contentWarnings.href", endsWith("/content-warnings")))
             .andExpect(jsonPath("$._links.contentWarnings.templated", equalTo(false)))
             .andExpect(jsonPath("$._links.attachmentTypes.href", endsWith("/attachment-types")))
+            .andExpect(jsonPath("$._links.taxonomies.href", endsWith("/taxonomies")))
     }
 
     @Test

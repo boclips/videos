@@ -41,6 +41,7 @@ class LinksController(
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
+    private val taxonomyLinkBuilder: TaxonomyLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService
 ) : BaseController(accessRuleService, getUserIdOverride) {
@@ -90,7 +91,9 @@ class LinksController(
                 contractsLinkBuilder.createSignedUploadLink(),
                 contractLegalRestrictionsLinkBuilder.contractLegalRestrictions(),
                 marketingStatusLinkBuilder.marketingStatuses(),
-                contentCategoriesLinkBuilder.contentCategories()
+                contentCategoriesLinkBuilder.contentCategories(),
+
+                taxonomyLinkBuilder.taxonomies()
             )
         )
     }
