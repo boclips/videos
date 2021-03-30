@@ -18,7 +18,7 @@ allprojects {
     apply plugin: 'com.github.ben-manes.versions'
 
     ext {
-        junitVersion = "5.7.0"
+        junitVersion = "5.7.1"
         elasticSearchVersion = "7.9.3"
         solrVersion = "8.7.0"
         jettyVersion = "9.4.35.v20201120"
