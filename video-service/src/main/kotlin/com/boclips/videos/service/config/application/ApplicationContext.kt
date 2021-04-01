@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.legalrestriction.FindLegal
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
+import com.boclips.contentpartner.service.infrastructure.events.EventsBroadcastProperties
 import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
@@ -81,7 +82,7 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateS
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
-import com.boclips.videos.service.infrastructure.taxonomy.MongoTaxonomyRepository
+
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -118,6 +119,7 @@ class ApplicationContext(
     val contentPackageService: ContentPackageService,
     val organisationService: OrganisationService,
     val priceComputingService: PriceComputingService,
+    val eventsBroadcastProperties: EventsBroadcastProperties,
     val taxonomyRepository: TaxonomyRepository
 ) {
     @Bean
@@ -438,12 +440,12 @@ class ApplicationContext(
 
     @Bean
     fun broadcastVideos(): BroadcastVideos {
-        return BroadcastVideos(videoRepository, eventBus)
+        return BroadcastVideos(eventsBroadcastProperties, videoRepository, eventBus)
     }
 
     @Bean
     fun broadcastCollections(): BroadcastCollections {
-        return BroadcastCollections(collectionRepository, eventBus)
+        return BroadcastCollections(eventsBroadcastProperties, collectionRepository, eventBus)
     }
 
     @Bean
