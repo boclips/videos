@@ -224,36 +224,6 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creates command for updating content partner transcript value`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                isTranscriptProvided = true
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceIsTranscriptProvided } as ChannelUpdateCommand.ReplaceIsTranscriptProvided
-
-        assertThat(command.isTranscriptProvided).isTrue()
-    }
-
-    @Test
-    fun `creates command for updating content partner educational resources`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                educationalResources = "This is a resource"
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceEducationalResources } as ChannelUpdateCommand.ReplaceEducationalResources
-
-        assertThat(command.educationalResources).contains("This is a resource")
-    }
-
-    @Test
     fun `creates command for updating content partner best for tags`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,
@@ -266,21 +236,6 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
             commands.find { it is ChannelUpdateCommand.ReplaceBestForTags } as ChannelUpdateCommand.ReplaceBestForTags
 
         assertThat(command.bestForTags).containsExactlyInAnyOrder("123", "456")
-    }
-
-    @Test
-    fun `creates command for updating content partner curriculum`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                curriculumAligned = "curriculum"
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceCurriculumAligned } as ChannelUpdateCommand.ReplaceCurriculumAligned
-
-        assertThat(command.curriculumAligned).contains("curriculum")
     }
 
     @Test

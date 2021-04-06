@@ -216,18 +216,6 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::marketingInformation / MarketingInformationDocument::oneLineDescription,
                 updateCommand.oneLineDescription
             )
-            is ChannelUpdateCommand.ReplaceIsTranscriptProvided -> set(
-                ChannelDocument::isTranscriptProvided,
-                updateCommand.isTranscriptProvided
-            )
-            is ChannelUpdateCommand.ReplaceEducationalResources -> set(
-                ChannelDocument::educationalResources,
-                updateCommand.educationalResources
-            )
-            is ChannelUpdateCommand.ReplaceCurriculumAligned -> set(
-                ChannelDocument::curriculumAligned,
-                updateCommand.curriculumAligned
-            )
             is ChannelUpdateCommand.ReplaceBestForTags -> set(
                 ChannelDocument::bestForTags,
                 updateCommand.bestForTags

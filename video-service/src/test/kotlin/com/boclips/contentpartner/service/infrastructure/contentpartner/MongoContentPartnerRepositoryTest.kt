@@ -245,60 +245,6 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `replace curriculumAligned`() {
-        val channel = mongoChannelRepository.create(createChannel())
-        val curriculumAligned = "this is a curriculum"
-
-        mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceCurriculumAligned(
-                    channel.id,
-                    curriculumAligned
-                )
-            )
-        )
-
-        val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.pedagogyInformation?.curriculumAligned).isEqualTo(curriculumAligned)
-    }
-
-    @Test
-    fun `replace isTranscriptProvided`() {
-        val channel = mongoChannelRepository.create(createChannel())
-        val isTranscriptProvided = true
-
-        mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceIsTranscriptProvided(
-                    channel.id,
-                    isTranscriptProvided
-                )
-            )
-        )
-
-        val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.pedagogyInformation?.isTranscriptProvided).isEqualTo(isTranscriptProvided)
-    }
-
-    @Test
-    fun `replace educational resources`() {
-        val channel = mongoChannelRepository.create(createChannel())
-        val educationalResources = "this is a educational resource"
-
-        mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceEducationalResources(
-                    channel.id,
-                    educationalResources
-                )
-            )
-        )
-
-        val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.pedagogyInformation?.educationalResources).isEqualTo(educationalResources)
-    }
-
-    @Test
     fun `replace best for tags`() {
         val channel = mongoChannelRepository.create(createChannel())
         val bestForTags = listOf("123", "456")
@@ -464,27 +410,6 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UpdatingChannels {
-        @Test
-        fun `replaces educational resources`() {
-            val channel = mongoChannelRepository.create(
-                createChannel(
-                    pedagogyInformation = PedagogyInformation(
-                        educationalResources = "this is a resource"
-                    )
-                )
-            )
-
-            mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceEducationalResources(
-                        channel.id, "New Resource"
-                    )
-                )
-            )
-
-            val updatedAsset = mongoChannelRepository.findById(channel.id)!!
-            assertThat(updatedAsset.pedagogyInformation?.educationalResources).isEqualTo("New Resource")
-        }
 
         @Test
         fun `replaces best for tags`() {

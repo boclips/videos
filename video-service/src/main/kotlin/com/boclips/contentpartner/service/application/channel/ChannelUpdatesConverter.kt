@@ -53,9 +53,6 @@ class ChannelUpdatesConverter(
                 commandCreator.updateMarketingLogos(),
                 commandCreator.updateMarketingShowreel(),
                 commandCreator.updateMarketingSampleVideos(),
-                commandCreator.updateIsTranscriptProvided(),
-                commandCreator.updateEducationalResources(),
-                commandCreator.updateCurriculumAligned(),
                 commandCreator.updateBestForTags(),
                 commandCreator.updateSubjects(),
                 commandCreator.updateIngestDetails(),
@@ -181,21 +178,6 @@ class ChannelUpdateCommandCreator(
     fun updateMarketingSampleVideos(): ChannelUpdateCommand.ReplaceMarketingSampleVideos? =
         channelRequest.marketingInformation?.sampleVideos?.let {
             ChannelUpdateCommand.ReplaceMarketingSampleVideos(id, it.map(UrlConverter::convert))
-        }
-
-    fun updateIsTranscriptProvided(): ChannelUpdateCommand.ReplaceIsTranscriptProvided? =
-        channelRequest.isTranscriptProvided?.let {
-            ChannelUpdateCommand.ReplaceIsTranscriptProvided(id, it)
-        }
-
-    fun updateEducationalResources(): ChannelUpdateCommand.ReplaceEducationalResources? =
-        channelRequest.educationalResources?.let {
-            ChannelUpdateCommand.ReplaceEducationalResources(id, it)
-        }
-
-    fun updateCurriculumAligned(): ChannelUpdateCommand.ReplaceCurriculumAligned? =
-        channelRequest.curriculumAligned?.let {
-            ChannelUpdateCommand.ReplaceCurriculumAligned(id, it)
         }
 
     fun updateBestForTags(): ChannelUpdateCommand.ReplaceBestForTags? =

@@ -146,9 +146,9 @@ object ChannelDocumentConverter : KLogging() {
                 )
             },
             pedagogyInformation = PedagogyInformation(
-                isTranscriptProvided = document.isTranscriptProvided,
-                educationalResources = document.educationalResources,
-                curriculumAligned = document.curriculumAligned,
+                isTranscriptProvided = false,
+                educationalResources = "",
+                curriculumAligned = "",
                 bestForTags = document.bestForTags,
                 subjects = document.subjects,
                 ageRangeBuckets = AgeRangeBuckets(

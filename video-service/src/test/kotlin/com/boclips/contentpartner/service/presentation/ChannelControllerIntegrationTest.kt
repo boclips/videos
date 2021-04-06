@@ -596,24 +596,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(
                 jsonPath(
-                    "$.pedagogyInformation.isTranscriptProvided",
-                    equalTo(true)
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$.pedagogyInformation.educationalResources",
-                    equalTo("This is a resource 3")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$.pedagogyInformation.curriculumAligned",
-                    equalTo("This is a curriculum 3")
-                )
-            )
-            .andExpect(
-                jsonPath(
                     "$.pedagogyInformation.bestForTags",
                     containsInAnyOrder("123", "345")
                 )

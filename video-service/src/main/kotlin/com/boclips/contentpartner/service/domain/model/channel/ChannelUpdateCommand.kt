@@ -61,15 +61,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceOneLineDescription(channelId: ChannelId, val oneLineDescription: String) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceIsTranscriptProvided(channelId: ChannelId, val isTranscriptProvided: Boolean) :
-        ChannelUpdateCommand(channelId)
-
-    class ReplaceEducationalResources(channelId: ChannelId, val educationalResources: String) :
-        ChannelUpdateCommand(channelId)
-
-    class ReplaceCurriculumAligned(channelId: ChannelId, val curriculumAligned: String) :
-        ChannelUpdateCommand(channelId)
-
     class ReplaceBestForTags(channelId: ChannelId, val bestForTags: List<String>) :
         ChannelUpdateCommand(channelId)
 
