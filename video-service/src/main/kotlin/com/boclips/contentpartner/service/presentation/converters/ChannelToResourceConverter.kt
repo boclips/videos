@@ -53,9 +53,6 @@ class ChannelToResourceConverter(
                 ),
                 pedagogyInformation = PedagogyInformationToResourceConverter.from(
                     pedagogyInformation = PedagogyInformation(
-                        isTranscriptProvided = channel.pedagogyInformation?.isTranscriptProvided,
-                        educationalResources = channel.pedagogyInformation?.educationalResources,
-                        curriculumAligned = channel.pedagogyInformation?.curriculumAligned,
                         bestForTags = channel.pedagogyInformation?.bestForTags,
                         subjects = channel.pedagogyInformation?.subjects,
                         ageRangeBuckets = channel.pedagogyInformation?.ageRangeBuckets

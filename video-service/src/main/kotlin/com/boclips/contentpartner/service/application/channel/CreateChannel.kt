@@ -81,9 +81,6 @@ class CreateChannel(
                 ?: ManualIngest,
             deliveryFrequency = upsertRequest.deliveryFrequency,
             pedagogyInformation = PedagogyInformation(
-                isTranscriptProvided = upsertRequest.isTranscriptProvided,
-                educationalResources = upsertRequest.educationalResources,
-                curriculumAligned = upsertRequest.curriculumAligned,
                 bestForTags = upsertRequest.bestForTags,
                 subjects = upsertRequest.subjects,
                 ageRangeBuckets = AgeRangeBuckets(

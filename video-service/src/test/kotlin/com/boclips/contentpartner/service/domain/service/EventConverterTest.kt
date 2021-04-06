@@ -90,9 +90,6 @@ class EventConverterTest {
                 subjects = listOf("subject-1", "subject-2"),
                 ageRangeBuckets = ageRangeBuckets,
                 bestForTags = listOf("best-for-tag-1", "best-for-tag-2"),
-                curriculumAligned = "my cool curriculum",
-                educationalResources = "my cool educational resource",
-                isTranscriptProvided = true
             )
         )
 
@@ -109,9 +106,6 @@ class EventConverterTest {
         assertThat(pedagogy.ageRange.min).isEqualTo(6)
         assertThat(pedagogy.ageRange.max).isEqualTo(16)
         assertThat(pedagogy.bestForTags).containsExactly("best-for-tag-1", "best-for-tag-2")
-        assertThat(pedagogy.curriculumAligned).isEqualTo("my cool curriculum")
-        assertThat(pedagogy.educationalResources).isEqualTo("my cool educational resource")
-        assertThat(pedagogy.transcriptProvided).isTrue()
         assertThat(pedagogy.subjects.map { it.id.value }).containsExactly("subject-1", "subject-2")
     }
 

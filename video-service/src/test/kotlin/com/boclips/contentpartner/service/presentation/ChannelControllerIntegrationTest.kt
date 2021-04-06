@@ -302,24 +302,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
             .andExpect(
                 jsonPath(
-                    "$._embedded.channels[0].pedagogyInformation.isTranscriptProvided",
-                    equalTo(true)
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$._embedded.channels[0].pedagogyInformation.educationalResources",
-                    equalTo("This is a resource")
-                )
-            )
-            .andExpect(
-                jsonPath(
-                    "$._embedded.channels[0].pedagogyInformation.curriculumAligned",
-                    equalTo("This is a curriculum")
-                )
-            )
-            .andExpect(
-                jsonPath(
                     "$._embedded.channels[0].pedagogyInformation.bestForTags",
                     containsInAnyOrder("123", "345")
                 )
@@ -768,9 +750,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     sampleVideos = listOf("http://server.com/sample.mov")
                 ),
                 deliveryFrequency = Period.ofMonths(6),
-                isTranscriptProvided = true,
-                educationalResources = "this is a resource",
-                curriculumAligned = "this is a curriculum",
                 bestForTags = listOf("123", "456"),
                 subjects = listOf("subject 1", "subject 2")
             )
@@ -792,8 +771,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.marketingInformation").exists())
                 .andExpect(jsonPath("$.ingest").exists())
                 .andExpect(jsonPath("$.deliveryFrequency").exists())
-                .andExpect(jsonPath("$.pedagogyInformation.educationalResources").exists())
-                .andExpect(jsonPath("$.pedagogyInformation.curriculumAligned").exists())
                 .andExpect(jsonPath("$.pedagogyInformation.bestForTags").exists())
                 .andExpect(jsonPath("$.pedagogyInformation.subjects").exists())
 
@@ -814,8 +791,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.channels[0].marketingInformation").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].ingest").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].deliveryFrequency").exists())
-                .andExpect(jsonPath("$._embedded.channels[0].pedagogyInformation.educationalResources").exists())
-                .andExpect(jsonPath("$._embedded.channels[0].pedagogyInformation.curriculumAligned").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].pedagogyInformation.bestForTags").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].pedagogyInformation.subjects").exists())
         }

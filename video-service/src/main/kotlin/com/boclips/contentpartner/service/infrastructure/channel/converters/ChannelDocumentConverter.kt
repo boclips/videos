@@ -79,9 +79,6 @@ object ChannelDocumentConverter : KLogging() {
                     sampleVideos = it.sampleVideos?.map { sampleVideoUrl -> sampleVideoUrl.toString() }
                 )
             },
-            isTranscriptProvided = channel.pedagogyInformation?.isTranscriptProvided,
-            educationalResources = channel.pedagogyInformation?.educationalResources,
-            curriculumAligned = channel.pedagogyInformation?.curriculumAligned,
             bestForTags = channel.pedagogyInformation?.bestForTags,
             subjects = channel.pedagogyInformation?.subjects,
             contract = channel.contract?.let { contract ->
@@ -146,9 +143,6 @@ object ChannelDocumentConverter : KLogging() {
                 )
             },
             pedagogyInformation = PedagogyInformation(
-                isTranscriptProvided = false,
-                educationalResources = "",
-                curriculumAligned = "",
                 bestForTags = document.bestForTags,
                 subjects = document.subjects,
                 ageRangeBuckets = AgeRangeBuckets(

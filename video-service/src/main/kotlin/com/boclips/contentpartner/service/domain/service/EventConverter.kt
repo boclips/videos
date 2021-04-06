@@ -88,9 +88,6 @@ class EventConverter {
                     .build()
             )
             .bestForTags(pedagogyInformation?.bestForTags)
-            .curriculumAligned(pedagogyInformation?.curriculumAligned)
-            .educationalResources(pedagogyInformation?.educationalResources)
-            .transcriptProvided(pedagogyInformation?.isTranscriptProvided)
             .build()
     }
 

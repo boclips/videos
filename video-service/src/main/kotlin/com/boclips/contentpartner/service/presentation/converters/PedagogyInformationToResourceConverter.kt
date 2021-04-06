@@ -8,11 +8,8 @@ object PedagogyInformationToResourceConverter {
     fun from(pedagogyInformation: PedagogyInformation?) =
         pedagogyInformation?.let {
             PedagogyResource(
-                isTranscriptProvided = pedagogyInformation.isTranscriptProvided,
-                curriculumAligned = pedagogyInformation.curriculumAligned,
                 bestForTags = pedagogyInformation.bestForTags,
                 subjects = pedagogyInformation.subjects,
-                educationalResources = pedagogyInformation.educationalResources,
                 ageRanges = pedagogyInformation.ageRangeBuckets?.let { AgeRangeToResourceConverter.convert(it) }
             )
         }

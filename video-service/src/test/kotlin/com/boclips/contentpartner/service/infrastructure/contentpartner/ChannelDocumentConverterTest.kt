@@ -58,9 +58,6 @@ class ChannelDocumentConverterTest {
                 sampleVideos = listOf(URL("http://www.server.com/3.png"))
             ),
             pedagogyInformation = PedagogyInformation(
-                isTranscriptProvided = true,
-                educationalResources = "this is an edu resource",
-                curriculumAligned = "this is a curriculum",
                 bestForTags = listOf("123", "345"),
                 subjects = listOf("subject 1", "subjects 2"),
                 ageRangeBuckets = AgeRangeBuckets(

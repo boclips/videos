@@ -153,51 +153,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a channel with provided transcript `() {
-        val isTranscriptProvided = true
-
-        val channelWithTranscript = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                isTranscriptProvided = isTranscriptProvided
-            )
-        )
-
-        assertThat(channelWithTranscript.pedagogyInformation?.isTranscriptProvided).isEqualTo(
-            isTranscriptProvided
-        )
-    }
-
-    @Test
-    fun `can create a channel with educational resources`() {
-        val educationalResources = "This is an educational resource"
-
-        val channelWithEducationalResources = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                educationalResources = educationalResources
-            )
-        )
-
-        assertThat(channelWithEducationalResources.pedagogyInformation?.educationalResources).isEqualTo(
-            educationalResources
-        )
-    }
-
-    @Test
-    fun `can create a channel with curriculum aligned`() {
-        val curriculumAligned = "This is a curriculum"
-
-        val channelWithCurriculumAligned = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                curriculumAligned = curriculumAligned
-            )
-        )
-
-        assertThat(channelWithCurriculumAligned.pedagogyInformation?.curriculumAligned).isEqualTo(
-            curriculumAligned
-        )
-    }
-
-    @Test
     fun `can create a channel with best for tags`() {
         val bestForTags = listOf("123", "345")
 
