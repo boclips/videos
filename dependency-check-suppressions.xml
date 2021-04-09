@@ -125,7 +125,8 @@
         <notes><![CDATA[
    file name: opentracing-elasticsearch7-client-0.1.6.jar
    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch7\-client@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch7\-client@.*$
+        </packageUrl>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
     </suppress>
     <suppress>
@@ -139,14 +140,16 @@
         <notes><![CDATA[
    file name: opentracing-elasticsearch-client-common-0.1.6.jar
    ]]></notes>
-        <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch\-client\-common@.*$</packageUrl>
+        <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing\-elasticsearch\-client\-common@.*$
+        </packageUrl>
         <cpe>cpe:/a:elasticsearch:elasticsearch</cpe>
     </suppress>
     <suppress until="2020-09-25">
         <notes><![CDATA[
    file name: google-oauth-client-1.30.5.jar
    ]]>
-        needs an update from google-api-services-youtube:v3-rev222-1.25.0</notes>
+            needs an update from google-api-services-youtube:v3-rev222-1.25.0
+        </notes>
         <packageUrl regex="true">^pkg:maven/com\.google\.oauth\-client/google\-oauth\-client@.*$</packageUrl>
         <cve>CVE-2020-7692</cve>
     </suppress>
@@ -154,21 +157,56 @@
         <notes><![CDATA[
    file name: keycloak-spring-security-adapter-11.0.0.jar
     ]]>
-        not a real vulnerability
-  </notes>
+            not a real vulnerability
+        </notes>
         <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-spring\-security\-adapter@.*$</packageUrl>
         <cve>CVE-2020-1728</cve>
     </suppress>
-	<suppress until="2021-05-01">
-		<notes>
+    <suppress until="2021-05-01">
+        <notes>
             Matching 1.4.0 even though fixed in 1.4.0.
-		</notes>
-		<packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-.+$</packageUrl>
-		<cve>CVE-2020-15824</cve>
-	</suppress>
-	<suppress until="2020-12-01">
-		<notes>We upgraded to 1.26, and this still matches.</notes>
-		<packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
-		<cve>CVE-2017-18640</cve>
-	</suppress>
+        </notes>
+        <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin\-.+$</packageUrl>
+        <cve>CVE-2020-15824</cve>
+    </suppress>
+    <suppress until="2020-12-01">
+        <notes>We upgraded to 1.26, and this still matches.</notes>
+        <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+        <cve>CVE-2017-18640</cve>
+    </suppress>
+    <suppress until="2021-05-01">
+        <notes><![CDATA[
+   file name: keycloak-core-12.0.3.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-core@.*$</packageUrl>
+        <cve>CVE-2020-14359</cve>
+    </suppress>
+    <suppress until="2021-05-01">
+        <notes><![CDATA[
+   file name: keycloak-adapter-spi-12.0.3.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-adapter\-spi@.*$</packageUrl>
+        <cve>CVE-2020-14359</cve>
+    </suppress>
+    <suppress until="2021-05-01">
+        <notes><![CDATA[
+   file name: keycloak-common-12.0.3.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-common@.*$</packageUrl>
+        <cve>CVE-2020-14359</cve>
+    </suppress>
+    <suppress until="2021-05-01">
+        <notes><![CDATA[
+   file name: keycloak-spring-security-adapter-12.0.3.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-spring\-security\-adapter@.*$</packageUrl>
+        <cve>CVE-2020-14359</cve>
+    </suppress>
+    <suppress until="2021-05-01">
+        <notes><![CDATA[
+   file name: keycloak-adapter-core-12.0.3.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-adapter\-core@.*$</packageUrl>
+        <cve>CVE-2020-14359</cve>
+    </suppress>
 </suppressions>
