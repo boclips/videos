@@ -8,6 +8,9 @@ import com.boclips.videos.service.application.video.UpdateYoutubePlayback
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import mu.KLogging
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.SpringApplication
+import org.springframework.context.ApplicationContext
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
@@ -25,32 +28,35 @@ class CommandLine(
 ) {
     companion object : KLogging()
 
+    @Autowired
+    lateinit var app: ApplicationContext
+
     @PostConstruct
     fun onBoot() {
         when (env.getProperty("mode")) {
             "reindex-collections" -> {
                 collectionIndex.invoke(ConsoleProgressNotifier())
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
             "reindex-videos" -> {
                 videoIndex.invoke(ConsoleProgressNotifier())
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
             "reindex-channels" -> {
                 channelIndex.invoke(ConsoleProgressNotifier())
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
             "reindex-subjects" -> {
                 subjectIndex.invoke(ConsoleProgressNotifier())
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
             "reindex-legacy" -> {
                 rebuildLegacySearchIndex.invoke(ConsoleProgressNotifier())
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
             "synchronise-youtube-playback" -> {
                 updateYoutubePlayback.invoke()
-                exitProcess(0)
+                System.exit(SpringApplication.exit(app))
             }
         }
     }
