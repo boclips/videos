@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.owasp:dependency-check-gradle:6.0.3'
+        classpath 'org.owasp:dependency-check-gradle:6.1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.34.0'
     }
 }
@@ -21,7 +21,7 @@ allprojects {
         junitVersion = "5.7.0"
         elasticSearchVersion = "7.9.3"
         solrVersion = "8.7.0"
-        jettyVersion = "9.4.35.v20201120"
+        jettyVersion = "9.4.39.v20210325"
     }
     subprojects {
         task allDeps(type: DependencyReportTask) {}
