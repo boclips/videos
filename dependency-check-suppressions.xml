@@ -14,6 +14,13 @@
    file name: libthrift-0.13.0.jar
    ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libthrift@.*$</packageUrl>
+        <cve>CVE-2020-13949</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: libthrift-0.13.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libthrift@.*$</packageUrl>
         <vulnerabilityName>CVE-2019-0210</vulnerabilityName>
     </suppress>
     <suppress>
