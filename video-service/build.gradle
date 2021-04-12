@@ -139,6 +139,10 @@ dependencies {
     implementation("io.opentracing.contrib:opentracing-mongo-driver:0.1.5")
     implementation("org.apache.commons:commons-collections4:4.4")
 
+    implementation(platform('com.github.cloudyrock.mongock:mongock-bom:4.2.6.BETA'))
+    implementation('com.github.cloudyrock.mongock:mongock-spring-v5:4.2.6.BETA')
+    implementation('com.github.cloudyrock.mongock:mongodb-v3-driver:4.2.6.BETA')
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test:5.4.5")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")

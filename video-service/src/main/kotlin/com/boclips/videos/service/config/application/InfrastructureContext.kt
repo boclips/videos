@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
+import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.accessrules.ApiAccessRulesConverter
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
@@ -24,14 +25,18 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
+import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
+import io.changock.runner.spring.v5.ChangockSpring5
+import io.changock.runner.spring.v5.SpringInitializingBeanRunner
 import io.opentracing.Tracer
 import io.opentracing.contrib.mongo.common.TracingCommandListener
 import org.keycloak.adapters.KeycloakConfigResolver
 import org.litote.kmongo.KMongo
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -157,5 +162,18 @@ class InfrastructureContext(
     @Profile("!test")
     fun keycloakConfigResolver(keycloakProperties: KeycloakProperties): KeycloakConfigResolver {
         return AppKeycloakConfigResolver(keycloakProperties)
+    }
+
+    @Profile("!test")
+    @Bean
+    fun mongockInitializingBeanRunner(
+        springContext: ApplicationContext,
+        mongoClient: com.mongodb.client.MongoClient
+    ): SpringInitializingBeanRunner? {
+        return ChangockSpring5.builder()
+            .setDriver(MongoCore3Driver.withDefaultLock(mongoClient, DATABASE_NAME))
+            .addChangeLogsScanPackage("com.boclips.videos.service.infrastructure")
+            .setSpringContext(springContext)
+            .buildInitializingBeanRunner()
     }
 }
