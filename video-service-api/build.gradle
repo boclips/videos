@@ -28,7 +28,7 @@ dependencies {
     implementation('org.springframework.hateoas:spring-hateoas:1.2.1')
     implementation('io.github.openfeign:feign-jackson:11.0')
     implementation('io.github.openfeign:feign-okhttp:11.0')
-    implementation('io.github.openfeign:feign-slf4j:11.0')
+    implementation('io.github.openfeign:feign-slf4j:11.1')
     implementation('io.github.openfeign.form:feign-form:3.8.0')
     implementation('com.github.boclips:boclips-spring-security:0.632.0')
     implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.32')
