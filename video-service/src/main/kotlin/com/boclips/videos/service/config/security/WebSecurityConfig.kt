@@ -161,8 +161,6 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(POST, "/v1/videos/metadata").hasRole(ROLE.VIEW_VIDEOS)
 
             .mvcMatchers(GET, "/v1/categories").hasRole(ROLE.VIEW_TAXONOMIES)
-             // TODO - [#177566333] - remove support for this endpoint when boclips-api-client uses /v1/categories
-            .mvcMatchers(GET, "/v1/taxonomies").hasRole(ROLE.VIEW_TAXONOMIES)
 
             .anyRequest().denyAll()
     }

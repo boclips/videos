@@ -17,18 +17,10 @@ class TaxonomyController {
     @Autowired
     lateinit var getAllCategories: GetAllCategories
 
-    // TODO - [#177566333] - remove this endpoint when boclips-api-client uses the /v1/categories one
-    @GetMapping("/taxonomies")
-    fun getTaxonomies(): ResponseEntity<TaxonomyResource> {
-        val taxonomies = getAllCategories()
-        val taxonomyResource = TaxonomyResourceConverter.toResource(taxonomies)
-        return ResponseEntity(taxonomyResource, HttpStatus.OK)
-    }
-
     @GetMapping("/categories")
     fun getCategories(): ResponseEntity<TaxonomyResource> {
-        val taxonomies = getAllCategories()
-        val taxonomyResource = TaxonomyResourceConverter.toResource(taxonomies)
+        val categories = getAllCategories()
+        val taxonomyResource = TaxonomyResourceConverter.toResource(categories)
         return ResponseEntity(taxonomyResource, HttpStatus.OK)
     }
 }

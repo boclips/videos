@@ -93,7 +93,6 @@ class LinksController(
                 marketingStatusLinkBuilder.marketingStatuses(),
                 contentCategoriesLinkBuilder.contentCategories(),
 
-                taxonomyLinkBuilder.taxonomies(),
                 taxonomyLinkBuilder.categories()
             )
         )

@@ -9,12 +9,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class TaxonomyLinkBuilder {
-    fun taxonomies(): Link? = getIfHasRole(UserRoles.VIEW_TAXONOMIES) {
-        WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(TaxonomyController::class.java).getTaxonomies()
-        ).withRel("taxonomies")
-    }
-
     fun categories(): Link? = getIfHasRole(UserRoles.VIEW_TAXONOMIES) {
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(TaxonomyController::class.java).getCategories()
