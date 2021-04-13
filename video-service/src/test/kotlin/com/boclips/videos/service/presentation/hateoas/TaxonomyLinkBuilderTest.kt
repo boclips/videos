@@ -15,6 +15,13 @@ class TaxonomyLinkBuilderTest {
     }
 
     @Test
+    fun `get categories link when permitted`() {
+        setSecurityContext("evergreen", UserRoles.VIEW_TAXONOMIES)
+        Assertions.assertThat(taxonomyLinkBuilder.categories()?.rel?.value()).isEqualTo("categories")
+        Assertions.assertThat(taxonomyLinkBuilder.categories()?.href).isEqualTo("/v1/categories")
+    }
+
+    @Test
     fun `get taxonomies link when permitted`() {
         setSecurityContext("evergreen", UserRoles.VIEW_TAXONOMIES)
         Assertions.assertThat(taxonomyLinkBuilder.taxonomies()?.rel?.value()).isEqualTo("taxonomies")

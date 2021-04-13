@@ -1,29 +1,28 @@
 package com.boclips.videos.service.domain.service.taxonomy
 
-import com.boclips.videos.service.domain.model.taxonomy.Taxonomy
+import com.boclips.videos.service.domain.model.taxonomy.Categories
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyTree
+import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
-import org.springframework.stereotype.Service
 
 class TaxonomyService(
     private val taxonomyRepository: TaxonomyRepository
 ) {
 
-    fun getTaxonomyTree(): Taxonomy {
-        val taxonomyCategories = taxonomyRepository.findAll()
-        val roots = taxonomyCategories.filter { it.parentCode == null }
+    fun getCategories(): Categories {
+        val categories = taxonomyRepository.findAll()
+        val roots = categories.filter { it.parentCode == null }
 
         return roots.map { root ->
-            root.codeValue to buildTree(filterRelevant(taxonomyCategories, root.codeValue), root)
+            root.codeValue to buildTree(filterRelevant(categories, root.codeValue), root)
         }.toMap()
     }
 
-    private fun buildTree(taxonomyCategories: List<TaxonomyCategory>, current: TaxonomyCategory): TaxonomyTree {
+    private fun buildTree(taxonomyCategories: List<TaxonomyCategory>, current: TaxonomyCategory): Category {
         val children = taxonomyCategories.filter { it.parentCode == current.codeValue }
 
         if (children.isNotEmpty()) {
-            return TaxonomyTree(
+            return Category(
                 description = current.description,
                 code = current.codeValue,
                 children = children.map { child ->
@@ -35,9 +34,10 @@ class TaxonomyService(
             )
         }
 
-        return TaxonomyTree(description = current.description, code = current.codeValue, children = emptyMap())
+        return Category(description = current.description, code = current.codeValue, children = emptyMap())
     }
 
+    // FIXME - do we need this? (the operation is only used in tests - it's a dead code)
     fun addTaxonomy(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
         return taxonomyRepository.create(taxonomyCategory = taxonomyCategory)
     }

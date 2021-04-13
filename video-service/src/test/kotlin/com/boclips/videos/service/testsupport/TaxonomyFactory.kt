@@ -1,7 +1,7 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyTree
+import com.boclips.videos.service.domain.model.taxonomy.Category
 
 object TaxonomyFactory {
 
@@ -15,5 +15,5 @@ object TaxonomyFactory {
         parentCode = parentCode
     )
 
-    fun sampleTree() = TaxonomyTree(description = "test", code="A", children = emptyMap())
+    fun sampleTree() = Category(description = "test", code="A", children = emptyMap())
 }

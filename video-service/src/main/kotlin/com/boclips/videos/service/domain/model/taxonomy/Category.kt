@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.taxonomy
 
-data class TaxonomyTree(
+data class Category(
     val description: String,
     val code: String?,
-    val children: Map<String, TaxonomyTree> = emptyMap()
+    val children: Map<String, Category> = emptyMap()
 )

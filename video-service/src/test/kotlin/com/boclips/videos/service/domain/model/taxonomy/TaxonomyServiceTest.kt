@@ -40,7 +40,7 @@ class TaxonomyServiceTest : AbstractSpringIntegrationTest() {
 
         taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "B"))
 
-        val tree = taxonomyService.getTaxonomyTree()
+        val tree = taxonomyService.getCategories()
 
         assertThat(tree["A"]?.code).isEqualTo("A")
         assertThat(tree["A"]?.description).isEqualTo("Hello from the root")
