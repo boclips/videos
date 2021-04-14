@@ -127,7 +127,7 @@ dependencies {
     implementation("io.github.openfeign:feign-okhttp:${openFeignVersion}")
 
     implementation("io.github.microutils:kotlin-logging:2.0.6")
-    implementation("com.google.apis:google-api-services-youtube:v3-rev20200618-1.30.9")
+    implementation("com.google.apis:google-api-services-youtube:v3-rev20210410-1.31.0")
     implementation("com.google.oauth-client:google-oauth-client:1.31.0")
     implementation('com.google.cloud:google-cloud-storage:1.113.4')
     implementation('org.apache.commons:commons-lang3:3.12.0')
