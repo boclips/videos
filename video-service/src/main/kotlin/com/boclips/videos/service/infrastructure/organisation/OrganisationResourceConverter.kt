@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.organisation
 
+import com.boclips.users.api.response.feature.FeatureKeyResource
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.domain.model.user.Deal
@@ -26,7 +27,7 @@ class OrganisationResourceConverter {
                         )
                     } ?: NO_CUSTOM_PRICES
                 ),
-                features = it.organisationDetails.features ?: emptyMap()
+                hasAccessToPrices = it.organisationDetails.features?.get(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES) ?: true
             )
         }
 

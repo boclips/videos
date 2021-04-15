@@ -110,12 +110,12 @@ class SearchVideo(
             queryParams = queryParams ?: emptyMap(),
             prices = prices
         )
-        return addOrganisationPrices(retrievedVideos, userOrganisation) ?: retrievedVideos
+        return userOrganisation?.let { addOrganisationPrices(retrievedVideos, userOrganisation) } ?: retrievedVideos
     }
 
     private fun addOrganisationPrices(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
-        userOrganisation: Organisation?
+        userOrganisation: Organisation
     ): ResultsPage<BaseVideo, VideoCounts>? {
         val pricedVideos = retrievedVideos.elements.map {
             addOrganisationPrice(it, userOrganisation) ?: it
@@ -130,13 +130,14 @@ class SearchVideo(
 
     private fun addOrganisationPrice(
         retrievedVideo: Video,
-        userOrganisation: Organisation?
+        userOrganisation: Organisation
     ): PricedVideo? {
-        if (userOrganisation?.features?.get("BO_WEB_APP_HIDE_PRICES") == true) {
+        if (!userOrganisation.hasAccessToPrices) {
             return null
         }
+
         val videoPrice = priceComputingService.computeVideoPrice(
-            organisationPrices = userOrganisation?.deal?.prices,
+            organisationPrices = userOrganisation.deal.prices,
             channel = retrievedVideo.channel.channelId,
             playback = retrievedVideo.playback,
             videoTypes = retrievedVideo.types,
