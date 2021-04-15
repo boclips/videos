@@ -9,8 +9,14 @@ object OrganisationFactory {
     fun sample(
         organisationId: OrganisationId = OrganisationId("org-id"),
         deal: Deal = Deal(prices = DealPricesFactory.sample()),
-        allowOverridingUserIds: Boolean = false
+        allowOverridingUserIds: Boolean = false,
+        features: Map<String, Boolean> = emptyMap()
     ): Organisation {
-        return Organisation(organisationId = organisationId,allowOverridingUserIds = allowOverridingUserIds, deal = deal )
+        return Organisation(
+            organisationId = organisationId,
+            allowOverridingUserIds = allowOverridingUserIds,
+            deal = deal,
+            features = features
+        )
     }
 }
