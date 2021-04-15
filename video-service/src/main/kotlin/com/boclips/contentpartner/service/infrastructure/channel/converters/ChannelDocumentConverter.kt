@@ -19,6 +19,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.MarketingInform
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
+import com.boclips.videos.service.infrastructure.video.converters.TaxonomyDocumentConverter
 import mu.KLogging
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
@@ -84,7 +85,9 @@ object ChannelDocumentConverter : KLogging() {
             contract = channel.contract?.let { contract ->
                 ContractDocumentConverter().toDocument(contract)
             },
-            categories = channel.categories
+            categories = channel.categories?.map { it ->
+                TaxonomyDocumentConverter.toTaxonomyDocument(it)
+            }
         )
     }
 
@@ -116,8 +119,10 @@ object ChannelDocumentConverter : KLogging() {
                     "STOCK" -> ContentType.STOCK
                     else -> {
                         logger.warn {
-                            "$it is not a valid type. Valid types are ${ContentType.values()
-                                .joinToString(prefix = "[", postfix = "]") { value -> value.name }}"
+                            "$it is not a valid type. Valid types are ${
+                                ContentType.values()
+                                    .joinToString(prefix = "[", postfix = "]") { value -> value.name }
+                            }"
                         }
                         null
                     }
@@ -155,7 +160,7 @@ object ChannelDocumentConverter : KLogging() {
             contract = document.contract?.let {
                 ContractDocumentConverter().toContract(it)
             },
-            categories = document.categories
+            categories = document.categories?.map { it -> TaxonomyDocumentConverter.toTaxonomy(it) }
         )
     }
 

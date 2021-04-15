@@ -16,6 +16,7 @@ import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
+import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -410,9 +411,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UpdatingChannels {
-
         @Test
-        fun `replaces category`(){
+        fun `replaces category`() {
             val channel = mongoChannelRepository.create(
                 createChannel(
                     categories = emptyList()
@@ -422,13 +422,19 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 listOf(
                     ChannelUpdateCommand.ReplaceCategories(
                         channelId = channel.id,
-                        categories = listOf("ABC", "BC")
+                        categories = listOf(
+                            TaxonomyFactory.sample(codeValue = "A", description = "Law"),
+                            TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
+                        )
                     )
                 )
             )
 
             val updatedChannel = mongoChannelRepository.findById(channel.id)!!
-            assertThat(updatedChannel.categories).containsExactlyInAnyOrder("ABC", "BC")
+            assertThat(updatedChannel.categories).containsExactlyInAnyOrder(
+                TaxonomyFactory.sample(codeValue = "A", description = "Law"),
+                TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
+            )
         }
 
         @Test

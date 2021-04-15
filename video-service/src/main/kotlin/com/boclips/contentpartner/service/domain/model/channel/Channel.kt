@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.domain.model.channel
 
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import java.time.Period
 import java.util.Locale
@@ -24,7 +25,7 @@ data class Channel(
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
     val contract: Contract?,
-    val categories:List<String>? = emptyList()
+    val categories:List<TaxonomyCategory>? = emptyList()
 ) {
     val currency = contract?.remittanceCurrency ?: remittance?.currency
 

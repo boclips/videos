@@ -53,7 +53,7 @@ data class ChannelResource(
     val contractName: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
-    val categories: List<String>? = null,
+    val categories: List<TaxonomyCategoryResource>? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null

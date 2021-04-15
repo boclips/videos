@@ -17,15 +17,19 @@ class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRe
     }
 
     override fun create(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
-        val taxonomyDocument: TaxonomyDocument = TaxonomyDocumentConverter.toTaxonomyDocument(taxonomyCategory)
-        getTaxonomyCollection().insertOne(taxonomyDocument)
+        val taxonomyCategoryDocument: TaxonomyCategoryDocument = TaxonomyDocumentConverter.toTaxonomyDocument(taxonomyCategory)
+        getTaxonomyCollection().insertOne(taxonomyCategoryDocument)
         return taxonomyCategory
     }
     override fun findAll(): List<TaxonomyCategory> {
         return getTaxonomyCollection().find().map { TaxonomyDocumentConverter.toTaxonomy(it) }.toList()
     }
 
-    private fun getTaxonomyCollection(): MongoCollection<TaxonomyDocument> {
-        return mongoClient.getDatabase(DATABASE_NAME).getCollection<TaxonomyDocument>(collectionName)
+    override fun findByCode(codeValue: String): TaxonomyCategory {
+        TODO("Not yet implemented")
+    }
+
+    private fun getTaxonomyCollection(): MongoCollection<TaxonomyCategoryDocument> {
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection<TaxonomyCategoryDocument>(collectionName)
     }
 }

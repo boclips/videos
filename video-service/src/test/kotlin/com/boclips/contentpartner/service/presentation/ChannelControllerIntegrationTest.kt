@@ -8,6 +8,8 @@ import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
+import com.boclips.videos.service.testsupport.TaxonomyFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
@@ -20,6 +22,7 @@ import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -35,6 +38,9 @@ import java.time.Period
 class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     lateinit var contractId: String
+
+    @Autowired
+    lateinit var taxonomyService: TaxonomyService
 
     @BeforeEach
     fun setUp() {
@@ -609,11 +615,14 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can update categories in channel`() {
+        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "A", description = "Law"))
+        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design"))
+
         val channelId = saveChannel(name = "Test channel").id.value
         val channelUpdateRequest = """
             {
             "name": "Test channel",
-            "categories": ["ABC", "BC"]
+            "categories": ["A", "BC"]
             }
         """
 
@@ -628,7 +637,9 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             get("/v1/channels/${channelId}")
                 .asBoclipsEmployee()
         )
-            .andExpect(jsonPath("$.categories", equalTo(listOf("ABC", "BC"))))
+            .andExpect(jsonPath("$.categories", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.categories[*].codeValue", containsInAnyOrder("A", "BC")))
+            .andExpect(jsonPath("$.categories[*].description", containsInAnyOrder("Law", "Interior Design")))
     }
 
     @Test

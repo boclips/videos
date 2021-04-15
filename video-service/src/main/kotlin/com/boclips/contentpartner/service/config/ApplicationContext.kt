@@ -43,6 +43,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuil
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.eventbus.EventBus
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -53,6 +54,7 @@ class ApplicationContext(
     val channelService: ChannelService,
     val ageRangeRepository: AgeRangeRepository,
     val contractRepository: ContractRepository,
+    val taxonomyRepository: TaxonomyRepository,
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
     val subjectRepository: SubjectRepository,
     val eventConverter: EventConverter,
@@ -200,7 +202,8 @@ class ApplicationContext(
             legalRestrictionsRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contractRepository
+            contractRepository,
+            taxonomyRepository
         )
     }
 

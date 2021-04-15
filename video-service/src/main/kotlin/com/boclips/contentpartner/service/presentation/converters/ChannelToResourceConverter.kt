@@ -8,6 +8,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilde
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ContentTypeResource
+import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.channel.toLanguageResource
 
 class ChannelToResourceConverter(
@@ -60,7 +61,12 @@ class ChannelToResourceConverter(
                 ),
                 contractId = channel.contract?.id?.value,
                 contractName = channel.contract?.contentPartnerName,
-                categories = channel.categories,
+                categories = channel.categories?.map { category ->
+                    TaxonomyCategoryResource(
+                        codeValue = category.codeValue,
+                        description = category.description
+                    )
+                },
                 _links = listOf(channelLinkBuilder.self(channel.id.value))
                     .map { it.rel to it }
                     .toMap()

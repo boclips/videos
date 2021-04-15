@@ -18,13 +18,16 @@ import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import java.util.Currency
 
 class ChannelUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsResourceConverter: IngestDetailsResourceConverter,
-    private val contractRepository: ContractRepository
+    private val contractRepository: ContractRepository,
+    private val taxonomyRepository: TaxonomyRepository
 ) {
     fun convert(
         id: ChannelId,
@@ -58,7 +61,7 @@ class ChannelUpdatesConverter(
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
-                commandCreator.updateCategories()
+                commandCreator.updateCategories(taxonomyRepository)
             )
         }
 }
@@ -211,8 +214,15 @@ class ChannelUpdateCommandCreator(
             ChannelUpdateCommand.ReplaceContract(id, contract)
         }
 
-    fun updateCategories(): ChannelUpdateCommand.ReplaceCategories? =
-        channelRequest.categories?.let {
-            ChannelUpdateCommand.ReplaceCategories(id, it)
+    fun updateCategories(taxonomyRepository: TaxonomyRepository): ChannelUpdateCommand.ReplaceCategories? {
+        val categories = channelRequest.categories?.map { it ->
+            TaxonomyCategory(
+                codeValue = it,
+                description = taxonomyRepository.findByCode(it).description,
+                parentCode = taxonomyRepository.findByCode(it).parentCode,
+            )
         }
+
+        return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }
+    }
 }

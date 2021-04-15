@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.infrastructure.channel
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
+import com.boclips.videos.service.infrastructure.taxonomy.TaxonomyCategoryDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -33,5 +34,5 @@ data class ChannelDocument(
     val bestForTags: List<String>? = null,
     val subjects: List<String>? = null,
     val contract: ContractDocument?,
-    val categories: List<String>? = null
+    val categories: List<TaxonomyCategoryDocument>? = null
 )

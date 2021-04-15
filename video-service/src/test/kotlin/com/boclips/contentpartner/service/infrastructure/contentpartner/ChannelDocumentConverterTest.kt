@@ -15,7 +15,9 @@ import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
+import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
@@ -65,7 +67,12 @@ class ChannelDocumentConverterTest {
                 )
             ),
             contract = ContentPartnerContractFactory.sample(),
-            categories = listOf("A", "B")
+            categories = listOf(
+                TaxonomyFactory.sample(
+                    codeValue = "A",
+                    description = "A lovely description"
+                )
+            )
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)
