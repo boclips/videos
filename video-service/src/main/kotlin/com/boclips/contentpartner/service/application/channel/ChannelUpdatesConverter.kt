@@ -57,7 +57,8 @@ class ChannelUpdatesConverter(
                 commandCreator.updateSubjects(),
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
-                commandCreator.updateContract(contractRepository)
+                commandCreator.updateContract(contractRepository),
+                commandCreator.updateCategories()
             )
         }
 }
@@ -208,5 +209,10 @@ class ChannelUpdateCommandCreator(
                 ?: throw InvalidContractException(contractId)
 
             ChannelUpdateCommand.ReplaceContract(id, contract)
+        }
+
+    fun updateCategories(): ChannelUpdateCommand.ReplaceCategories? =
+        channelRequest.categories?.let {
+            ChannelUpdateCommand.ReplaceCategories(id, it)
         }
 }

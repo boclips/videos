@@ -412,6 +412,26 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     inner class UpdatingChannels {
 
         @Test
+        fun `replaces category`(){
+            val channel = mongoChannelRepository.create(
+                createChannel(
+                    categories = emptyList()
+                )
+            )
+            mongoChannelRepository.update(
+                listOf(
+                    ChannelUpdateCommand.ReplaceCategories(
+                        channelId = channel.id,
+                        categories = listOf("ABC", "BC")
+                    )
+                )
+            )
+
+            val updatedChannel = mongoChannelRepository.findById(channel.id)!!
+            assertThat(updatedChannel.categories).containsExactlyInAnyOrder("ABC", "BC")
+        }
+
+        @Test
         fun `replaces best for tags`() {
             val channel = mongoChannelRepository.create(
                 createChannel(

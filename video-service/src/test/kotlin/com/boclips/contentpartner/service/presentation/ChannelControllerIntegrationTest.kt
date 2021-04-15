@@ -448,7 +448,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.channels[0].currency").doesNotExist())
     }
 
-
     @Test
     fun `create channel accredited to youtube`() {
         val oneLineDescription = "My one-line description"
@@ -606,6 +605,30 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.contractId", equalTo(secondContractId.value)))
             .andExpect(jsonPath("$.contractName", equalTo("second contract")))
             .andExpect(jsonPath("$._links.self.href", equalTo(cpUrl)))
+    }
+
+    @Test
+    fun `can update categories in channel`() {
+        val channelId = saveChannel(name = "Test channel").id.value
+        val channelUpdateRequest = """
+            {
+            "name": "Test channel",
+            "categories": ["ABC", "BC"]
+            }
+        """
+
+        mockMvc.perform(
+            patch("/v1/channels/${channelId}")
+                .asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            get("/v1/channels/${channelId}")
+                .asBoclipsEmployee()
+        )
+            .andExpect(jsonPath("$.categories", equalTo(listOf("ABC", "BC"))))
     }
 
     @Test

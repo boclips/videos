@@ -23,7 +23,8 @@ data class Channel(
     val deliveryFrequency: Period?,
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
-    val contract: Contract?
+    val contract: Contract?,
+    val categories:List<String>? = emptyList()
 ) {
     val currency = contract?.remittanceCurrency ?: remittance?.currency
 

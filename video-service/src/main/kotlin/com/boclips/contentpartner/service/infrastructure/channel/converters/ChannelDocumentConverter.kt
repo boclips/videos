@@ -83,7 +83,8 @@ object ChannelDocumentConverter : KLogging() {
             subjects = channel.pedagogyInformation?.subjects,
             contract = channel.contract?.let { contract ->
                 ContractDocumentConverter().toDocument(contract)
-            }
+            },
+            categories = channel.categories
         )
     }
 
@@ -153,7 +154,8 @@ object ChannelDocumentConverter : KLogging() {
             ),
             contract = document.contract?.let {
                 ContractDocumentConverter().toContract(it)
-            }
+            },
+            categories = document.categories
         )
     }
 

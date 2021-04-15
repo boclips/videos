@@ -45,8 +45,8 @@ class ChannelToResourceConverterTest {
     }
 
     @Test
-    fun `convert content partner to resource`() {
-        val contentPartner = createChannel(
+    fun `convert channel to resource`() {
+        val channel = createChannel(
             legalRestriction = ChannelFactory.createLegalRestrictions(text = "Forbidden in the EU"),
             distributionMethods = setOf(DistributionMethod.STREAM),
             remittance = Remittance(
@@ -63,38 +63,41 @@ class ChannelToResourceConverterTest {
             ),
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
-            contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED")
+            contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
+            categories = listOf("ABC","BC")
+
         )
 
-        val contentPartnerResource = channelToResourceConverter.convert(contentPartner, Projection.details)
+        val channelResource = channelToResourceConverter.convert(channel, Projection.details)
 
-        assertThat(contentPartnerResource.id).isNotEmpty()
-        assertThat(contentPartnerResource.name).isNotEmpty()
-        assertThat(contentPartnerResource.legalRestriction).isNotNull
-        assertThat(contentPartnerResource.legalRestriction?.text).isEqualTo("Forbidden in the EU")
-        assertThat(contentPartnerResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
-        assertThat(contentPartnerResource.currency).isEqualTo("GBP")
-        assertThat(contentPartnerResource.description).isEqualTo("this is a description")
-        assertThat(contentPartnerResource.contentCategories?.first()?.key).isEqualTo("ANIMATION")
-        assertThat(contentPartnerResource.hubspotId).isEqualTo("12345678d")
-        assertThat(contentPartnerResource.awards).isEqualTo("first award")
-        assertThat(contentPartnerResource.notes).isEqualTo("first note")
-        assertThat(contentPartnerResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
-        assertThat(contentPartnerResource.language?.name).isEqualTo("Spanish")
-        assertThat(contentPartnerResource.contentTypes).hasSize(2)
-        assertThat(contentPartnerResource.contentTypes).containsExactlyInAnyOrder(
+        assertThat(channelResource.id).isNotEmpty()
+        assertThat(channelResource.name).isNotEmpty()
+        assertThat(channelResource.legalRestriction).isNotNull
+        assertThat(channelResource.legalRestriction?.text).isEqualTo("Forbidden in the EU")
+        assertThat(channelResource.distributionMethods).isEqualTo(setOf(DistributionMethodResource.STREAM))
+        assertThat(channelResource.currency).isEqualTo("GBP")
+        assertThat(channelResource.description).isEqualTo("this is a description")
+        assertThat(channelResource.contentCategories?.first()?.key).isEqualTo("ANIMATION")
+        assertThat(channelResource.hubspotId).isEqualTo("12345678d")
+        assertThat(channelResource.awards).isEqualTo("first award")
+        assertThat(channelResource.notes).isEqualTo("first note")
+        assertThat(channelResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
+        assertThat(channelResource.language?.name).isEqualTo("Spanish")
+        assertThat(channelResource.contentTypes).hasSize(2)
+        assertThat(channelResource.contentTypes).containsExactlyInAnyOrder(
             ContentTypeResource.INSTRUCTIONAL,
             ContentTypeResource.STOCK
         )
-        assertThat(contentPartnerResource.ingest).isEqualTo(
+        assertThat(channelResource.ingest).isEqualTo(
             IngestDetailsResource(
                 type = IngestType.MRSS,
                 urls = listOf("https://feed.mrss")
             )
         )
-        assertThat(contentPartnerResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
-        assertThat(contentPartnerResource.contractId).isEqualTo("id")
-        assertThat(contentPartnerResource.contractName).isEqualTo("TED")
+        assertThat(channelResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
+        assertThat(channelResource.contractId).isEqualTo("id")
+        assertThat(channelResource.contractName).isEqualTo("TED")
+        assertThat(channelResource.categories).containsExactlyInAnyOrder("ABC", "BC")
     }
 
     @Test

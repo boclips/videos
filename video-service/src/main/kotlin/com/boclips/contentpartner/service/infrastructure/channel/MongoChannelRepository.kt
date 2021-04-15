@@ -236,6 +236,10 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::contract,
                 ContractDocumentConverter().toDocument(updateCommand.contract)
             )
+            is ChannelUpdateCommand.ReplaceCategories -> set(
+                ChannelDocument::categories,
+                updateCommand.categories
+            )
         }
 
         return combine(update, set(ChannelDocument::lastModified, Instant.now()))

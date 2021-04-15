@@ -302,4 +302,18 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
         assertThat(command.contract).isEqualTo(newContract)
     }
+
+    @Test
+    fun `creates command for updating categories`() {
+        val commands = channelUpdatesConverter.convert(
+            originalChannel.id, ChannelRequest(
+                categories = listOf("ABC", "BC")
+            )
+        )
+
+        val command =
+            commands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
+
+        assertThat(command.categories).containsExactlyInAnyOrder("ABC", "BC")
+    }
 }

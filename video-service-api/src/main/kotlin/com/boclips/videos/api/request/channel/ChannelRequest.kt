@@ -1,7 +1,6 @@
 package com.boclips.videos.api.request.channel
 
 import com.boclips.videos.api.request.validators.Language
-import com.boclips.videos.api.response.channel.ContentCategoryResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.fasterxml.jackson.annotation.JsonSetter
@@ -39,7 +38,8 @@ data class ChannelRequest(
     val bestForTags: List<String>? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val subjects: List<String>? = null,
-    val contractId: String? = null
+    val contractId: String? = null,
+    val categories: List<String>? = null
 )
 
 

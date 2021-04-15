@@ -75,4 +75,7 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
 
     class ReplaceContract(channelId: ChannelId, val contract: Contract) :
         ChannelUpdateCommand(channelId)
+
+    class ReplaceCategories(channelId: ChannelId, val categories: List<String>) :
+        ChannelUpdateCommand(channelId)
 }

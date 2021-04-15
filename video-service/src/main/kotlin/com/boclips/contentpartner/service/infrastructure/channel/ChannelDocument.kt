@@ -32,5 +32,6 @@ data class ChannelDocument(
     val curriculumAligned: String? = null,
     val bestForTags: List<String>? = null,
     val subjects: List<String>? = null,
-    val contract: ContractDocument?
+    val contract: ContractDocument?,
+    val categories: List<String>? = null
 )

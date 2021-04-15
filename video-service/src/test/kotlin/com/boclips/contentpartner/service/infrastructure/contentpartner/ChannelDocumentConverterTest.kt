@@ -28,7 +28,7 @@ import java.util.Locale
 class ChannelDocumentConverterTest {
 
     @Test
-    fun `round-trips a content partner conversion via document`() {
+    fun `round-trips a channel conversion via document`() {
         val original = Channel(
             id = ChannelId(
                 value = ObjectId().toHexString()
@@ -64,7 +64,8 @@ class ChannelDocumentConverterTest {
                     listOf(ChannelFactory.createAgeRange())
                 )
             ),
-            contract = ContentPartnerContractFactory.sample()
+            contract = ContentPartnerContractFactory.sample(),
+            categories = listOf("A", "B")
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

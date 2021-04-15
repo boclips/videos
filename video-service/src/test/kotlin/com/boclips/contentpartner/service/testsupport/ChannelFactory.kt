@@ -53,7 +53,8 @@ object ChannelFactory {
         deliveryFrequency: Period? = null,
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
-        contract: Contract? = null
+        contract: Contract? = null,
+        categories: List<String>? = null
     ): Channel {
         return Channel(
             id = id,
@@ -72,7 +73,8 @@ object ChannelFactory {
             deliveryFrequency = deliveryFrequency,
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation,
-            contract = contract
+            contract = contract,
+            categories = categories
         )
     }
 

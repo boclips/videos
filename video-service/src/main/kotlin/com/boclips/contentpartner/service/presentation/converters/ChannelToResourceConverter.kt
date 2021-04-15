@@ -60,6 +60,7 @@ class ChannelToResourceConverter(
                 ),
                 contractId = channel.contract?.id?.value,
                 contractName = channel.contract?.contentPartnerName,
+                categories = channel.categories,
                 _links = listOf(channelLinkBuilder.self(channel.id.value))
                     .map { it.rel to it }
                     .toMap()
