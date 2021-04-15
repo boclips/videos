@@ -5,12 +5,12 @@ import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.organisation.DealResource
-import com.boclips.users.api.response.organisation.OrganisationDetailsResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asUserWithRoles
 import com.boclips.videos.service.testsupport.asUserWithUsernameAndRoles
 import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
@@ -72,7 +72,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClientFake.add(
             UserResourceFactory.sample(
                 id = "a-pearson-user",
-                organisation = OrganisationDetailsResource(
+                organisation = OrganisationResourceFactory.sampleDetails(
                     id = "pearson-org",
                     name = "Pearson",
                     domain = null,
@@ -80,7 +80,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     state = null,
                     country = null,
                     allowsOverridingUserIds = null,
-                    features = null
+                    features = emptyMap()
                 )
             )
         )
@@ -96,7 +96,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can see user's organisation channel custom prices when searching for videos`() {
-        val channelWithCustomPrices =  saveChannel(name = "TeD")
+        val channelWithCustomPrices = saveChannel(name = "TeD")
         saveVideo(contentProviderId = channelWithCustomPrices.id.value)
 
         organisationsClientFake.add(
@@ -125,7 +125,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClientFake.add(
             UserResourceFactory.sample(
                 id = "a-pearson-user",
-                organisation = OrganisationDetailsResource(
+                organisation = OrganisationResourceFactory.sampleDetails(
                     id = "pearson-org",
                     name = "Pearson",
                     domain = null,
@@ -133,7 +133,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     state = null,
                     country = null,
                     allowsOverridingUserIds = null,
-                    features = null
+                    features = emptyMap()
                 )
             )
         )
@@ -173,7 +173,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClientFake.add(
             UserResourceFactory.sample(
                 id = "a-pearson-user",
-                organisation = OrganisationDetailsResource(
+                organisation = OrganisationResourceFactory.sampleDetails(
                     id = "pearson-org",
                     name = "Pearson",
                     domain = null,
@@ -181,7 +181,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     state = null,
                     country = null,
                     allowsOverridingUserIds = null,
-                    features = null
+                    features = emptyMap()
                 )
             )
         )
@@ -196,28 +196,61 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].price.currency", equalTo("USD")))
     }
 
-    @Test
-    fun `user with internal role has access to price`() {
-        val videoId = saveVideo()
 
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
-                .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_SERVICE)
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price").exists())
+    @Nested
+    inner class Access {
+        @Test
+        fun `user with internal role has access to price`() {
+            val videoId = saveVideo()
+
+            mockMvc.perform(
+                MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
+                    .asUserWithRoles(UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_SERVICE)
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.price").exists())
+        }
+
+        @Test
+        fun `user with missing roles does not have access to price`() {
+            val videoId = saveVideo()
+
+            mockMvc.perform(
+                MockMvcRequestBuilders.get("/v1/videos/${videoId.value}").asUserWithRoles(UserRoles.VIEW_VIDEOS)
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.price").doesNotExist())
+        }
+
+        @Test
+        fun `user with hidden prices config option does not receive prices`() {
+            val videoId = saveVideo()
+            organisationsClientFake.add(
+                OrganisationResourceFactory.sample(
+                    id = "pearson-org",
+                    organisationDetails = OrganisationResourceFactory.sampleDetails(
+                        id = "pearson-org",
+                        features = mapOf("BO_WEB_APP_HIDE_PRICES" to true)
+                    )
+                )
+            )
+            usersClientFake.add(
+                UserResourceFactory.sample(
+                    id = "a-no-price-user",
+                    organisation = OrganisationResourceFactory.sampleDetails(
+                        id = "pearson-org",
+                    )
+                )
+            )
+            mockMvc.perform(
+                MockMvcRequestBuilders.get("/v1/videos/${videoId.value}")
+                    .asUserWithUsernameAndRoles("a-no-price-user", UserRoles.VIEW_VIDEOS, UserRoles.BOCLIPS_WEB_APP)
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.price").doesNotExist())
+        }
+
     }
 
-    @Test
-    fun `user with missing roles does not have access to price`() {
-        val videoId = saveVideo()
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/v1/videos/${videoId.value}").asUserWithRoles(UserRoles.VIEW_VIDEOS)
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.price").doesNotExist())
-    }
 
     @Test
     fun `requests for custom prices are rejected for non service accounts`() {
@@ -254,7 +287,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
         usersClientFake.add(
             UserResourceFactory.sample(
                 id = "a-pearson-user",
-                organisation = OrganisationDetailsResource(
+                organisation = OrganisationResourceFactory.sampleDetails(
                     id = "pearson-org",
                     name = "Pearson",
                     domain = null,
@@ -262,7 +295,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     state = null,
                     country = null,
                     allowsOverridingUserIds = null,
-                    features = null
+                    features = emptyMap()
                 )
             )
         )
