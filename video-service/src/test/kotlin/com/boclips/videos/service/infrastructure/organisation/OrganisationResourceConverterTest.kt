@@ -62,4 +62,19 @@ class OrganisationResourceConverterTest {
         assertThat(convertedOrg.deal.prices.videoTypePrices).isEmpty()
         assertThat(convertedOrg.deal.prices.channelPrices).isEmpty()
     }
+
+    @Test
+    fun `converts organisation features from a resource`() {
+        val orgResource = OrganisationResourceFactory.sample(
+            id = "my-org-id",
+            organisationDetails = OrganisationResourceFactory.sampleDetails(
+                features = mapOf("BO_WEB_APP_HIDE_PRICES" to true)
+            ),
+        )
+
+        val convertedOrg = OrganisationResourceConverter.convertOrganisation(orgResource)
+
+        assertThat(convertedOrg.features.size).isEqualTo(1)
+        assertThat(convertedOrg.features.getValue("BO_WEB_APP_HIDE_PRICES")).isEqualTo(true)
+    }
 }

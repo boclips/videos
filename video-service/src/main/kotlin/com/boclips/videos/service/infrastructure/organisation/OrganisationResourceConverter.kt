@@ -25,7 +25,8 @@ class OrganisationResourceConverter {
                             channelPrices = convertToChannelPrices(prices)
                         )
                     } ?: NO_CUSTOM_PRICES
-                )
+                ),
+                features = it.organisationDetails.features ?: emptyMap()
             )
         }
 
