@@ -36,8 +36,11 @@ class SearchVideo(
         if (projection == Projection.full) {
             playbackUpdateService.updatePlaybacksFor(VideoFilter.HasVideoId(videoId))
         }
+
         val retrievedVideo = getVideoById(videoId, user)
-        return addOrganisationPrice(retrievedVideo, userId ?: user.id?.value)
+        val userOrganisation = user.id?.let { userService.getOrganisationOfUser(it.value) }
+
+        return addOrganisationPrice(retrievedVideo, userOrganisation) ?: retrievedVideo
     }
 
     fun byQuery(
@@ -107,26 +110,17 @@ class SearchVideo(
             queryParams = queryParams ?: emptyMap(),
             prices = prices
         )
-        return addOrganisationPrices(retrievedVideos, userOrganisation)
+        return addOrganisationPrices(retrievedVideos, userOrganisation) ?: retrievedVideos
     }
 
     private fun addOrganisationPrices(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
         userOrganisation: Organisation?
-    ): ResultsPage<PricedVideo, VideoCounts> {
-        val videoTypePrices = userOrganisation?.deal?.prices
+    ): ResultsPage<BaseVideo, VideoCounts>? {
         val pricedVideos = retrievedVideos.elements.map {
-            PricedVideo(
-                it,
-                priceComputingService.computeVideoPrice(
-                    videoId = it.videoId,
-                    videoTypes = it.types,
-                    playback = it.playback,
-                    channel = it.channel.channelId,
-                    organisationPrices = videoTypePrices
-                )
-            )
+            addOrganisationPrice(it, userOrganisation) ?: it
         }
+
         return ResultsPage(
             elements = pricedVideos,
             counts = retrievedVideos.counts,
@@ -136,16 +130,18 @@ class SearchVideo(
 
     private fun addOrganisationPrice(
         retrievedVideo: Video,
-        userId: String?
-    ): PricedVideo {
-        val organisationPrices = userId?.let { userService.getOrganisationOfUser(it)?.deal?.prices }
+        userOrganisation: Organisation?
+    ): PricedVideo? {
+        if (userOrganisation?.features?.get("BO_WEB_APP_HIDE_PRICES") == true) {
+            return null
+        }
         val videoPrice = priceComputingService.computeVideoPrice(
-            organisationPrices = organisationPrices,
+            organisationPrices = userOrganisation?.deal?.prices,
             channel = retrievedVideo.channel.channelId,
             playback = retrievedVideo.playback,
             videoTypes = retrievedVideo.types,
             videoId = retrievedVideo.videoId
-            )
+        )
         return PricedVideo(retrievedVideo, videoPrice)
     }
 
