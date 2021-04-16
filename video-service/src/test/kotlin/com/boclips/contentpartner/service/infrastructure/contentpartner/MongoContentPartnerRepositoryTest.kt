@@ -1,20 +1,14 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -40,7 +34,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun find() {
         val originalChannel = mongoChannelRepository.create(
-            createChannel()
+                createChannel()
         )
 
         val retrievedAsset = mongoChannelRepository.findById(originalChannel.id)
@@ -51,9 +45,9 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `findById does not throw for invalid object id`() {
         val retrievedAsset = mongoChannelRepository.findById(
-            ChannelId(
-                "invalid-hex-string"
-            )
+                ChannelId(
+                        "invalid-hex-string"
+                )
         )
 
         assertThat(retrievedAsset).isNull()
@@ -62,20 +56,20 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `find all by name filter`() {
         val channelIds = listOf(
-            mongoChannelRepository.create(
-                createChannel(name = "hello")
-            ).id,
-            mongoChannelRepository.create(
-                createChannel(name = "hello")
-            ).id
+                mongoChannelRepository.create(
+                        createChannel(name = "hello")
+                ).id,
+                mongoChannelRepository.create(
+                        createChannel(name = "hello")
+                ).id
         )
 
         mongoChannelRepository.create(
-            createChannel(name = "good day")
+                createChannel(name = "good day")
         )
 
         val retrievedChannel =
-            mongoChannelRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
+                mongoChannelRepository.findAll(listOf(ChannelFilter.NameFilter(name = "hello")))
 
         assertThat(retrievedChannel.map { it.id }).isEqualTo(channelIds)
     }
@@ -83,11 +77,11 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `stream all`() {
         mongoChannelRepository.create(
-            createChannel(name = "good day")
+                createChannel(name = "good day")
         )
 
         mongoChannelRepository.create(
-            createChannel(name = "good great day")
+                createChannel(name = "good great day")
         )
 
         var channels: List<ChannelSuggestion> = emptyList()
@@ -100,24 +94,24 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `find all with multiple filters`() {
         val toBeFoundChannelId = mongoChannelRepository.create(
-            createChannel(hubspotId = "123", name = "hello")
+                createChannel(hubspotId = "123", name = "hello")
         ).id
 
         mongoChannelRepository.create(
-            createChannel(hubspotId = "456", name = "shwmae")
+                createChannel(hubspotId = "456", name = "shwmae")
         ).id
 
         mongoChannelRepository.create(
-            createChannel(name = "hello")
+                createChannel(name = "hello")
         ).id
 
         val retrievedChannels =
-            mongoChannelRepository.findAll(
-                listOf(
-                    ChannelFilter.HubspotIdFilter(hubspotId = "123"),
-                    ChannelFilter.NameFilter(name = "hello")
+                mongoChannelRepository.findAll(
+                        listOf(
+                                ChannelFilter.HubspotIdFilter(hubspotId = "123"),
+                                ChannelFilter.NameFilter(name = "hello")
+                        )
                 )
-            )
 
         assertThat(retrievedChannels.map { it.id }).containsExactly(toBeFoundChannelId)
     }
@@ -125,7 +119,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `find all channel`() {
         mongoChannelRepository.create(
-            createChannel(name = "my bloody valentine")
+                createChannel(name = "my bloody valentine")
         )
 
         val retrievedAsset = mongoChannelRepository.findAll()
@@ -177,16 +171,16 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `replaces name`() {
         val channel = mongoChannelRepository.create(
-            createChannel(name = "my bloody valentine")
+                createChannel(name = "my bloody valentine")
         )
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceName(
-                    channelId = channel.id,
-                    name = "new name"
+                listOf(
+                        ChannelUpdateCommand.ReplaceName(
+                                channelId = channel.id,
+                                name = "new name"
+                        )
                 )
-            )
         )
 
         val updatedAsset = mongoChannelRepository.findById(channel.id)
@@ -196,24 +190,24 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `replaces age range`() {
         val channel = mongoChannelRepository.create(
-            createChannel(
-                pedagogyInformation = PedagogyInformation(
-                    ageRangeBuckets = AgeRangeBuckets(
-                        emptyList()
-                    )
+                createChannel(
+                        pedagogyInformation = PedagogyInformation(
+                                ageRangeBuckets = AgeRangeBuckets(
+                                        emptyList()
+                                )
+                        )
                 )
-            )
         )
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceAgeRanges(
-                    channelId = channel.id,
-                    ageRangeBuckets = AgeRangeBuckets(
-                        listOf(ChannelFactory.createAgeRange(min = 10, max = 20))
-                    )
+                listOf(
+                        ChannelUpdateCommand.ReplaceAgeRanges(
+                                channelId = channel.id,
+                                ageRangeBuckets = AgeRangeBuckets(
+                                        listOf(ChannelFactory.createAgeRange(min = 10, max = 20))
+                                )
+                        )
                 )
-            )
         )
 
         val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -225,20 +219,20 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `replace legal restrictions`() {
         val channel = mongoChannelRepository.create(createChannel())
         val legalRestrictions =
-            LegalRestriction(
-                id = LegalRestrictionsId(
-                    ChannelFactory.aValidId()
-                ),
-                text = "New restrictions"
-            )
+                LegalRestriction(
+                        id = LegalRestrictionsId(
+                                ChannelFactory.aValidId()
+                        ),
+                        text = "New restrictions"
+                )
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceLegalRestrictions(
-                    channel.id,
-                    legalRestrictions
+                listOf(
+                        ChannelUpdateCommand.ReplaceLegalRestrictions(
+                                channel.id,
+                                legalRestrictions
+                        )
                 )
-            )
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
@@ -251,12 +245,12 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val bestForTags = listOf("123", "456")
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceBestForTags(
-                    channel.id,
-                    bestForTags
+                listOf(
+                        ChannelUpdateCommand.ReplaceBestForTags(
+                                channel.id,
+                                bestForTags
+                        )
                 )
-            )
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
@@ -269,12 +263,12 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val subjects = listOf("subject 1", "subject 2")
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceSubjects(
-                    channel.id,
-                    subjects
+                listOf(
+                        ChannelUpdateCommand.ReplaceSubjects(
+                                channel.id,
+                                subjects
+                        )
                 )
-            )
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
@@ -286,40 +280,66 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val channel = mongoChannelRepository.create(createChannel(ingest = ManualIngest))
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceIngestDetails(
-                    channel.id,
-                    YoutubeScrapeIngest(
-                        listOf("http://youtube.com/channel")
-                    )
+                listOf(
+                        ChannelUpdateCommand.ReplaceIngestDetails(
+                                channel.id,
+                                YoutubeScrapeIngest(
+                                        listOf("http://youtube.com/channel")
+                                )
+                        )
                 )
-            )
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
         assertThat(updatedChannel?.ingest).isEqualTo(
-            YoutubeScrapeIngest(
-                listOf("http://youtube.com/channel")
-            )
+                YoutubeScrapeIngest(
+                        listOf("http://youtube.com/channel")
+                )
         )
     }
 
     @Test
     fun `replace delivery frequency`() {
         val channel =
-            mongoChannelRepository.create(createChannel(deliveryFrequency = Period.ofMonths(1)))
+                mongoChannelRepository.create(createChannel(deliveryFrequency = Period.ofMonths(1)))
 
         mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceDeliveryFrequency(
-                    channel.id,
-                    Period.ofYears(1)
+                listOf(
+                        ChannelUpdateCommand.ReplaceDeliveryFrequency(
+                                channel.id,
+                                Period.ofYears(1)
+                        )
                 )
-            )
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
         assertThat(updatedChannel?.deliveryFrequency).isEqualTo(Period.ofYears(1))
+    }
+
+    @Test
+    fun `replace categories`() {
+        val channel =
+                mongoChannelRepository.create(createChannel(categories = null))
+
+        mongoChannelRepository.update(
+                listOf(
+                        ChannelUpdateCommand.ReplaceCategories(
+                                channel.id,
+                                listOf(
+                                        TaxonomyCategory(
+                                                codeValue = "ABC",
+                                                description = "what a wonderful description",
+                                                parentCode = "A"
+                                        )
+                                )
+                        )
+                )
+        )
+
+                val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.categories!![0].codeValue).isEqualTo("ABC")
+        assertThat(updatedChannel?.categories!![0].description).isEqualTo("what a wonderful description")
+        assertThat(updatedChannel?.categories!![0].codeValue).isEqualTo("A")
     }
 
     @Nested
@@ -327,18 +347,18 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces with stream`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    distributionMethods = emptySet()
-                )
+                    createChannel(
+                            distributionMethods = emptySet()
+                    )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = channel.id,
-                        distributionMethods = setOf(DistributionMethod.STREAM)
+                    listOf(
+                            ChannelUpdateCommand.ReplaceDistributionMethods(
+                                    channelId = channel.id,
+                                    distributionMethods = setOf(DistributionMethod.STREAM)
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -348,18 +368,18 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces with download`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    distributionMethods = emptySet()
-                )
+                    createChannel(
+                            distributionMethods = emptySet()
+                    )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = channel.id,
-                        distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+                    listOf(
+                            ChannelUpdateCommand.ReplaceDistributionMethods(
+                                    channelId = channel.id,
+                                    distributionMethods = setOf(DistributionMethod.DOWNLOAD)
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -369,18 +389,18 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces with all`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    distributionMethods = emptySet()
-                )
+                    createChannel(
+                            distributionMethods = emptySet()
+                    )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = channel.id,
-                        distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
+                    listOf(
+                            ChannelUpdateCommand.ReplaceDistributionMethods(
+                                    channelId = channel.id,
+                                    distributionMethods = setOf(DistributionMethod.STREAM, DistributionMethod.DOWNLOAD)
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -390,18 +410,18 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces with empty`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    distributionMethods = emptySet()
-                )
+                    createChannel(
+                            distributionMethods = emptySet()
+                    )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceDistributionMethods(
-                        channelId = channel.id,
-                        distributionMethods = emptySet()
+                    listOf(
+                            ChannelUpdateCommand.ReplaceDistributionMethods(
+                                    channelId = channel.id,
+                                    distributionMethods = emptySet()
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -414,45 +434,45 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces category`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    categories = emptyList()
-                )
+                    createChannel(
+                            categories = emptyList()
+                    )
             )
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceCategories(
-                        channelId = channel.id,
-                        categories = listOf(
-                            TaxonomyFactory.sample(codeValue = "A", description = "Law"),
-                            TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
-                        )
+                    listOf(
+                            ChannelUpdateCommand.ReplaceCategories(
+                                    channelId = channel.id,
+                                    categories = listOf(
+                                            TaxonomyFactory.sample(codeValue = "A", description = "Law"),
+                                            TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
+                                    )
+                            )
                     )
-                )
             )
 
             val updatedChannel = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedChannel.categories).containsExactlyInAnyOrder(
-                TaxonomyFactory.sample(codeValue = "A", description = "Law"),
-                TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
+                    TaxonomyFactory.sample(codeValue = "A", description = "Law"),
+                    TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
             )
         }
 
         @Test
         fun `replaces best for tags`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    pedagogyInformation = PedagogyInformation(
-                        bestForTags = listOf("123", "345")
+                    createChannel(
+                            pedagogyInformation = PedagogyInformation(
+                                    bestForTags = listOf("123", "345")
+                            )
                     )
-                )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceBestForTags(
-                        channel.id, listOf("555", "666")
+                    listOf(
+                            ChannelUpdateCommand.ReplaceBestForTags(
+                                    channel.id, listOf("555", "666")
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -462,19 +482,19 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `replaces subjects`() {
             val channel = mongoChannelRepository.create(
-                createChannel(
-                    pedagogyInformation = PedagogyInformation(
-                        subjects = listOf("subject 1", "subject 2")
+                    createChannel(
+                            pedagogyInformation = PedagogyInformation(
+                                    subjects = listOf("subject 1", "subject 2")
+                            )
                     )
-                )
             )
 
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceSubjects(
-                        channel.id, listOf("subject 3", "subject 4")
+                    listOf(
+                            ChannelUpdateCommand.ReplaceSubjects(
+                                    channel.id, listOf("subject 3", "subject 4")
+                            )
                     )
-                )
             )
 
             val updatedAsset = mongoChannelRepository.findById(channel.id)!!
@@ -488,12 +508,12 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
             val newContract = ContentPartnerContractFactory.sample(contentPartnerName = "new")
             mongoChannelRepository.update(
-                listOf(
-                    ChannelUpdateCommand.ReplaceContract(
-                        channelId = channel.id,
-                        contract = newContract
+                    listOf(
+                            ChannelUpdateCommand.ReplaceContract(
+                                    channelId = channel.id,
+                                    contract = newContract
+                            )
                     )
-                )
             )
 
             val updated = mongoChannelRepository.findById(channel.id)!!
@@ -506,9 +526,9 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             fun `can find one by contract id`() {
                 val contract = ContentPartnerContractFactory.sample()
                 val channel = mongoChannelRepository.create(
-                    createChannel(
-                        contract = contract
-                    )
+                        createChannel(
+                                contract = contract
+                        )
                 )
 
                 val retrievedChannels = mongoChannelRepository.findByContractId(contractId = contract.id)
@@ -520,28 +540,28 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             fun `can multiple by contract id`() {
                 val contract = ContentPartnerContractFactory.sample()
                 val firstChannel = mongoChannelRepository.create(
-                    createChannel(
-                        contract = contract
-                    )
+                        createChannel(
+                                contract = contract
+                        )
                 )
 
                 val secondChannel = mongoChannelRepository.create(
-                    createChannel(
-                        contract = contract
-                    )
+                        createChannel(
+                                contract = contract
+                        )
                 )
 
                 mongoChannelRepository.create(
-                    createChannel(
-                        contract = null
-                    )
+                        createChannel(
+                                contract = null
+                        )
                 )
 
                 val retrievedChannels = mongoChannelRepository.findByContractId(contractId = contract.id)
 
                 assertThat(retrievedChannels).containsExactlyInAnyOrder(
-                    firstChannel,
-                    secondChannel
+                        firstChannel,
+                        secondChannel
                 )
             }
         }

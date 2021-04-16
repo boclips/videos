@@ -19,6 +19,7 @@ import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import java.util.Currency
 
@@ -216,11 +217,13 @@ class ChannelUpdateCommandCreator(
 
     fun updateCategories(taxonomyRepository: TaxonomyRepository): ChannelUpdateCommand.ReplaceCategories? {
         val categories = channelRequest.categories?.map { it ->
-            TaxonomyCategory(
-                codeValue = it,
-                description = taxonomyRepository.findByCode(it).description,
-                parentCode = taxonomyRepository.findByCode(it).parentCode,
-            )
+            taxonomyRepository.findByCode(it)?.description?.let { taxonomy ->
+                TaxonomyCategoryWithAncestors(
+                    codeValue = taxonomy,
+                    description = taxonomy,
+                    ancestors = emptySet(),
+                )
+            }
         }
 
         return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }

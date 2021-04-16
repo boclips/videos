@@ -3,10 +3,13 @@ package com.boclips.videos.service.infrastructure.taxonomy
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.converters.TaxonomyDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 
@@ -25,8 +28,9 @@ class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRe
         return getTaxonomyCollection().find().map { TaxonomyDocumentConverter.toTaxonomy(it) }.toList()
     }
 
-    override fun findByCode(codeValue: String): TaxonomyCategory {
-        TODO("Not yet implemented")
+    override fun findByCode(codeValue: String): TaxonomyCategory? {
+        val taxonomy = getTaxonomyCollection().findOne(TaxonomyCategoryDocument::codeValue eq codeValue)
+        return taxonomy?.let { TaxonomyDocumentConverter.toTaxonomy(it) }
     }
 
     private fun getTaxonomyCollection(): MongoCollection<TaxonomyCategoryDocument> {
