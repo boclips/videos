@@ -48,7 +48,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-autoconfigure:2.4.3")
     compile("io.opentracing.contrib:opentracing-elasticsearch7-client:0.1.6")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.4.2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.4.5")
     testImplementation("org.springframework.security:spring-security-test:5.4.5")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
