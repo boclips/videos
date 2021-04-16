@@ -18,7 +18,7 @@ import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.ChannelRequest
-import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
+import com.boclips.videos.service.application.GetTaxonomyCategoryWithAncestors
 import java.util.*
 
 class ChannelUpdatesConverter(
@@ -26,7 +26,7 @@ class ChannelUpdatesConverter(
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsResourceConverter: IngestDetailsResourceConverter,
     private val contractRepository: ContractRepository,
-    private val taxonomyService: TaxonomyService,
+    private val getTaxonomyCategoryWithAncestors: GetTaxonomyCategoryWithAncestors,
 ) {
     fun convert(
         id: ChannelId,
@@ -60,7 +60,7 @@ class ChannelUpdatesConverter(
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
-                commandCreator.updateCategories(taxonomyService)
+                commandCreator.updateCategories(getTaxonomyCategoryWithAncestors)
             )
         }
 }
@@ -213,9 +213,9 @@ class ChannelUpdateCommandCreator(
             ChannelUpdateCommand.ReplaceContract(id, contract)
         }
 
-    fun updateCategories(taxonomyService: TaxonomyService): ChannelUpdateCommand.ReplaceCategories? {
+    fun updateCategories(getTaxonomyCategoryWithAncestors: GetTaxonomyCategoryWithAncestors): ChannelUpdateCommand.ReplaceCategories? {
         val categories = channelRequest.categories?.map { categoryCode ->
-            taxonomyService.getTaxonomyCategoryWithAncestors(categoryCode)
+            getTaxonomyCategoryWithAncestors(categoryCode)
         }?.toSet()
 
         return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }

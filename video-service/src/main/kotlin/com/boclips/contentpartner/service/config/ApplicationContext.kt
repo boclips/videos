@@ -42,6 +42,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContractLegalRest
 import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.eventbus.EventBus
+import com.boclips.videos.service.application.GetTaxonomyCategoryWithAncestors
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
@@ -198,13 +199,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun channelUpdatesConverter(taxonomyService: TaxonomyService): ChannelUpdatesConverter {
+    fun channelUpdatesConverter(getTaxonomyCategoryWithAncestors: GetTaxonomyCategoryWithAncestors): ChannelUpdatesConverter {
         return ChannelUpdatesConverter(
             legalRestrictionsRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
             contractRepository,
-            taxonomyService
+            getTaxonomyCategoryWithAncestors
         )
     }
 

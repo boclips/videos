@@ -16,6 +16,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.converters.Chan
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -68,9 +69,10 @@ class ChannelDocumentConverterTest {
             ),
             contract = ContentPartnerContractFactory.sample(),
             categories = listOf(
-                TaxonomyFactory.sample(
-                    codeValue = "A",
-                    description = "A lovely description"
+                TaxonomyCategoryWithAncestors(
+                    codeValue = "AB",
+                    description = "A lovely lovely description",
+                    ancestors = setOf("A")
                 )
             )
         )

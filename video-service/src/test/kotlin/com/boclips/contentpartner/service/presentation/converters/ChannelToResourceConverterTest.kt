@@ -15,6 +15,7 @@ import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import com.nhaarman.mockitokotlin2.mock
@@ -67,8 +68,9 @@ class ChannelToResourceConverterTest {
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
             categories = listOf(
-                TaxonomyFactory.sample(codeValue = "ABC", description = "A description"), TaxonomyFactory.sample(codeValue = "BC", description = "B description"))
-
+                TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "A description"),
+                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "B description")
+            )
         )
 
         val channelResource = channelToResourceConverter.convert(channel, Projection.details)
