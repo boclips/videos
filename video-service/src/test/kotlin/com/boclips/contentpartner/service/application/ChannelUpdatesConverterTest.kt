@@ -15,6 +15,8 @@ import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
+import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -292,7 +294,8 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val newContract = saveContract(name = "new name")
 
         val commands = channelUpdatesConverter.convert(
-            originalChannel.id, ChannelRequest(
+            originalChannel.id,
+            ChannelRequest(
                 contractId = newContract.id.value
             )
         )
@@ -305,15 +308,24 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating categories`() {
-        val commands = channelUpdatesConverter.convert(
-            originalChannel.id, ChannelRequest(
-                categories = listOf("ABC", "BC")
-            )
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "ABC", description = "ABC description", parentCode = "AB"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "AB", description = "AB description", parentCode = "A"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "A", description = "A description"))
+
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "BC", description = "BC description", parentCode = "B"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "B", description = "B description"))
+
+        val updateCommands = channelUpdatesConverter.convert(
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(categories = listOf("ABC", "BC"))
         )
 
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
+        val replaceCategoriesCommand =
+            updateCommands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
 
-        assertThat(command.categories).containsExactlyInAnyOrder("ABC", "BC")
+        assertThat(replaceCategoriesCommand.categories).containsOnly(
+            TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "ABC description", ancestors = setOf("A", "AB")),
+            TaxonomyCategoryWithAncestors(codeValue = "BC", description = "BC description", ancestors = setOf("B"))
+        )
     }
 }

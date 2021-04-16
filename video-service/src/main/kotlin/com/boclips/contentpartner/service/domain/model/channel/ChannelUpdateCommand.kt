@@ -3,6 +3,7 @@ package com.boclips.contentpartner.service.domain.model.channel
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import java.net.URL
 import java.time.Period
 import java.util.Currency
@@ -76,6 +77,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceContract(channelId: ChannelId, val contract: Contract) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceCategories(channelId: ChannelId, val categories: List<String>) :
+    class ReplaceCategories(channelId: ChannelId, val categories: Set<TaxonomyCategoryWithAncestors>) :
         ChannelUpdateCommand(channelId)
 }

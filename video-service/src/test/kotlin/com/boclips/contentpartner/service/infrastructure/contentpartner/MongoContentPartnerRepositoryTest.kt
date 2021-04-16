@@ -15,6 +15,7 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
@@ -321,6 +322,32 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedChannel?.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
+    @Test
+    fun `replace categories`() {
+        val channel =
+            mongoChannelRepository.create(createChannel(categories = null))
+
+        mongoChannelRepository.update(
+            listOf(
+                ChannelUpdateCommand.ReplaceCategories(
+                    channel.id,
+                    setOf(
+                        TaxonomyCategoryWithAncestors(
+                            codeValue = "ABC",
+                            description = "what a wonderful description",
+                            ancestors = setOf("A")
+                        )
+                    )
+                )
+            )
+        )
+
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.categories!!.first().codeValue).isEqualTo("ABC")
+        assertThat(updatedChannel.categories!!.first().description).isEqualTo("what a wonderful description")
+        assertThat(updatedChannel.categories!!.first().ancestors).isEqualTo(setOf("A"))
+    }
+
     @Nested
     inner class OverridingDistributionMethods {
         @Test
@@ -410,9 +437,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UpdatingChannels {
-
         @Test
-        fun `replaces category`(){
+        fun `replaces category`() {
             val channel = mongoChannelRepository.create(
                 createChannel(
                     categories = emptyList()
@@ -422,13 +448,19 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 listOf(
                     ChannelUpdateCommand.ReplaceCategories(
                         channelId = channel.id,
-                        categories = listOf("ABC", "BC")
+                        categories = setOf(
+                            TaxonomyCategoryWithAncestors(codeValue = "A", description = "Law", ancestors = emptySet()),
+                            TaxonomyCategoryWithAncestors(codeValue = "BC", description = "Interior Design", ancestors = emptySet())
+                        )
                     )
                 )
             )
 
             val updatedChannel = mongoChannelRepository.findById(channel.id)!!
-            assertThat(updatedChannel.categories).containsExactlyInAnyOrder("ABC", "BC")
+            assertThat(updatedChannel.categories).containsExactlyInAnyOrder(
+                TaxonomyCategoryWithAncestors(codeValue = "A", description = "Law"),
+                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "Interior Design")
+            )
         }
 
         @Test

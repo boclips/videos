@@ -1,8 +1,8 @@
 package com.boclips.videos.service.domain.service.taxonomy
 
 import com.boclips.videos.service.domain.model.taxonomy.Categories
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.model.taxonomy.Category
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 
 class TaxonomyService(
@@ -37,12 +37,6 @@ class TaxonomyService(
         return Category(description = current.description, code = current.codeValue, children = emptyMap())
     }
 
-    // FIXME - do we need this? (the operation is only used in tests - it's a dead code)
-    fun addTaxonomy(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
-        return taxonomyRepository.create(taxonomyCategory = taxonomyCategory)
-    }
-
     private fun filterRelevant(taxonomyCategories: List<TaxonomyCategory>, relevantCode: String) =
         taxonomyCategories.filter { it.codeValue.startsWith(relevantCode) }
-
 }

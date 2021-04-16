@@ -14,6 +14,8 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
+import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -64,8 +66,10 @@ class ChannelToResourceConverterTest {
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
-            categories = listOf("ABC","BC")
-
+            categories = listOf(
+                TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "A description"),
+                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "B description")
+            )
         )
 
         val channelResource = channelToResourceConverter.convert(channel, Projection.details)
@@ -97,7 +101,10 @@ class ChannelToResourceConverterTest {
         assertThat(channelResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
         assertThat(channelResource.contractId).isEqualTo("id")
         assertThat(channelResource.contractName).isEqualTo("TED")
-        assertThat(channelResource.categories).containsExactlyInAnyOrder("ABC", "BC")
+        assertThat(channelResource.categories).containsExactlyInAnyOrder(
+            TaxonomyCategoryResource(codeValue = "ABC", "A description"),
+            TaxonomyCategoryResource(codeValue = "BC", "B description")
+        )
     }
 
     @Test

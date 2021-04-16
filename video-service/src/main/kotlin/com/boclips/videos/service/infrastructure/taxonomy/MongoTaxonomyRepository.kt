@@ -7,8 +7,9 @@ import com.boclips.videos.service.infrastructure.video.converters.TaxonomyDocume
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-
 
 class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRepository {
 
@@ -17,15 +18,21 @@ class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRe
     }
 
     override fun create(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
-        val taxonomyDocument: TaxonomyDocument = TaxonomyDocumentConverter.toTaxonomyDocument(taxonomyCategory)
-        getTaxonomyCollection().insertOne(taxonomyDocument)
+        val taxonomyCategoryDocument: TaxonomyCategoryDocument = TaxonomyDocumentConverter.toTaxonomyDocument(taxonomyCategory)
+        getTaxonomyCollection().insertOne(taxonomyCategoryDocument)
         return taxonomyCategory
     }
+
     override fun findAll(): List<TaxonomyCategory> {
         return getTaxonomyCollection().find().map { TaxonomyDocumentConverter.toTaxonomy(it) }.toList()
     }
 
-    private fun getTaxonomyCollection(): MongoCollection<TaxonomyDocument> {
-        return mongoClient.getDatabase(DATABASE_NAME).getCollection<TaxonomyDocument>(collectionName)
+    override fun findByCode(codeValue: String): TaxonomyCategory? {
+        val taxonomy = getTaxonomyCollection().findOne(TaxonomyCategoryDocument::codeValue eq codeValue)
+        return taxonomy?.let { TaxonomyDocumentConverter.toTaxonomy(it) }
+    }
+
+    private fun getTaxonomyCollection(): MongoCollection<TaxonomyCategoryDocument> {
+        return mongoClient.getDatabase(DATABASE_NAME).getCollection<TaxonomyCategoryDocument>(collectionName)
     }
 }

@@ -14,7 +14,7 @@ class TaxonomyServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can add a taxonomy`() {
-        val newTaxonomy = taxonomyService.addTaxonomy(
+        val newTaxonomy = addTaxonomy(
             TaxonomyFactory.sample(
                 codeValue = "ABC",
                 description = "My new taxonomy",
@@ -28,9 +28,9 @@ class TaxonomyServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates a taxonomy tree from a list of taxonomies`() {
-        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "A", description = "Hello from the root"))
-        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "AB", parentCode = "A"))
-        taxonomyService.addTaxonomy(
+        addTaxonomy(TaxonomyFactory.sample(codeValue = "A", description = "Hello from the root"))
+        addTaxonomy(TaxonomyFactory.sample(codeValue = "AB", parentCode = "A"))
+        addTaxonomy(
             TaxonomyFactory.sample(
                 codeValue = "ABC",
                 parentCode = "AB",
@@ -38,7 +38,7 @@ class TaxonomyServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "B"))
+        addTaxonomy(TaxonomyFactory.sample(codeValue = "B"))
 
         val tree = taxonomyService.getCategories()
 

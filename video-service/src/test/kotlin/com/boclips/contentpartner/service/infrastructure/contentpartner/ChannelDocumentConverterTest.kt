@@ -15,6 +15,7 @@ import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -65,7 +66,13 @@ class ChannelDocumentConverterTest {
                 )
             ),
             contract = ContentPartnerContractFactory.sample(),
-            categories = listOf("A", "B")
+            categories = listOf(
+                TaxonomyCategoryWithAncestors(
+                    codeValue = "AB",
+                    description = "A lovely lovely description",
+                    ancestors = setOf("A")
+                )
+            )
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

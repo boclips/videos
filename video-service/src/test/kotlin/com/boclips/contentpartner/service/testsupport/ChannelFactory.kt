@@ -22,11 +22,12 @@ import com.boclips.contentpartner.service.infrastructure.contract.ContractDocume
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
 import java.time.Period
-import java.util.Locale
+import java.util.*
 
 object ChannelFactory {
 
@@ -54,7 +55,7 @@ object ChannelFactory {
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
         contract: Contract? = null,
-        categories: List<String>? = null
+        categories: List<TaxonomyCategoryWithAncestors>? = null
     ): Channel {
         return Channel(
             id = id,
