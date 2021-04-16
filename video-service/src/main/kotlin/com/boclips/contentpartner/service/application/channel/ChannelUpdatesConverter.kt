@@ -18,17 +18,15 @@ import com.boclips.contentpartner.service.presentation.converters.UrlConverter
 import com.boclips.videos.api.common.ExplicitlyNull
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.ChannelRequest
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
-import com.boclips.videos.service.domain.service.video.TaxonomyRepository
-import java.util.Currency
+import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
+import java.util.*
 
 class ChannelUpdatesConverter(
     private val legalRestrictionsRepository: LegalRestrictionsRepository,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsResourceConverter: IngestDetailsResourceConverter,
     private val contractRepository: ContractRepository,
-    private val taxonomyRepository: TaxonomyRepository
+    private val taxonomyService: TaxonomyService,
 ) {
     fun convert(
         id: ChannelId,
@@ -62,7 +60,7 @@ class ChannelUpdatesConverter(
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
-                commandCreator.updateCategories(taxonomyRepository)
+                commandCreator.updateCategories(taxonomyService)
             )
         }
 }
@@ -215,16 +213,10 @@ class ChannelUpdateCommandCreator(
             ChannelUpdateCommand.ReplaceContract(id, contract)
         }
 
-    fun updateCategories(taxonomyRepository: TaxonomyRepository): ChannelUpdateCommand.ReplaceCategories? {
-        val categories = channelRequest.categories?.map { it ->
-            taxonomyRepository.findByCode(it)?.description?.let { taxonomy ->
-                TaxonomyCategoryWithAncestors(
-                    codeValue = taxonomy,
-                    description = taxonomy,
-                    ancestors = emptySet(),
-                )
-            }
-        }
+    fun updateCategories(taxonomyService: TaxonomyService): ChannelUpdateCommand.ReplaceCategories? {
+        val categories = channelRequest.categories?.map { categoryCode ->
+            taxonomyService.getTaxonomyCategoryWithAncestors(categoryCode)
+        }?.toSet()
 
         return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }
     }

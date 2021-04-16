@@ -1,7 +1,11 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.channel.ChannelUpdatesConverter
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsRepository
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.VideoServiceApiFactory
@@ -12,7 +16,6 @@ import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
-import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -28,31 +31,28 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var legalRestrictionsRepository: LegalRestrictionsRepository
 
-    @Autowired
-    lateinit var taxonomyRepository: TaxonomyRepository
-
     lateinit var originalChannel: Channel
 
     @BeforeEach
     fun setUp() {
         originalChannel = createChannel(
-                VideoServiceApiFactory.createChannelRequest(
-                        name = "My content partner"
-                )
+            VideoServiceApiFactory.createChannelRequest(
+                name = "My content partner"
+            )
         )
     }
 
     @Test
     fun `creates command for updating distribution methods`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        name = "Hello",
-                        distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                name = "Hello",
+                distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
+            )
         )
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceDistributionMethods } as ChannelUpdateCommand.ReplaceDistributionMethods
+            commands.find { it is ChannelUpdateCommand.ReplaceDistributionMethods } as ChannelUpdateCommand.ReplaceDistributionMethods
 
         assertThat(command.distributionMethods).isEqualTo(setOf(DistributionMethod.DOWNLOAD))
     }
@@ -60,14 +60,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating the name`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        name = "Hello"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                name = "Hello"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceName } as ChannelUpdateCommand.ReplaceName
+            commands.find { it is ChannelUpdateCommand.ReplaceName } as ChannelUpdateCommand.ReplaceName
 
         assertThat(command.name).isEqualTo("Hello")
         assertThat(command.channelId.value).isEqualTo(originalChannel.id.value)
@@ -76,24 +76,24 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating the age range`() {
         createAgeRange(
-                AgeRangeRequest(
-                        id = "early-years",
-                        label = "label",
-                        min = 1,
-                        max = 3
-                )
+            AgeRangeRequest(
+                id = "early-years",
+                label = "label",
+                min = 1,
+                max = 3
+            )
         )
 
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        ageRanges = listOf("early-years"),
-                        name = null
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                ageRanges = listOf("early-years"),
+                name = null
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceAgeRanges } as ChannelUpdateCommand.ReplaceAgeRanges
+            commands.find { it is ChannelUpdateCommand.ReplaceAgeRanges } as ChannelUpdateCommand.ReplaceAgeRanges
 
         assertThat(command.ageRangeBuckets.max).isEqualTo(3)
         assertThat(command.ageRangeBuckets.min).isEqualTo(1)
@@ -104,12 +104,12 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val legalRestrictions = legalRestrictionsRepository.create("No restrictions")
 
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        legalRestrictions = LegalRestrictionsRequest(
-                                id = legalRestrictions.id.value
-                        )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                legalRestrictions = LegalRestrictionsRequest(
+                    id = legalRestrictions.id.value
                 )
+            )
         )
 
         assertThat(commands).hasSize(1)
@@ -123,14 +123,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner types`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        contentTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                contentTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceContentTypes } as ChannelUpdateCommand.ReplaceContentTypes
+            commands.find { it is ChannelUpdateCommand.ReplaceContentTypes } as ChannelUpdateCommand.ReplaceContentTypes
 
         assertThat(command.contentType).containsExactlyInAnyOrder("NEWS", "STOCK", "INSTRUCTIONAL")
     }
@@ -138,14 +138,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner categories`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        contentCategories = listOf(ContentCategoryRequest.DOCUMENTARY_SHORTS, ContentCategoryRequest.ANIMATION)
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                contentCategories = listOf(ContentCategoryRequest.DOCUMENTARY_SHORTS, ContentCategoryRequest.ANIMATION)
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceContentCategories } as ChannelUpdateCommand.ReplaceContentCategories
+            commands.find { it is ChannelUpdateCommand.ReplaceContentCategories } as ChannelUpdateCommand.ReplaceContentCategories
 
         assertThat(command.contentCategories).containsExactlyInAnyOrder(ContentCategory.DOCUMENTARY_SHORTS, ContentCategory.ANIMATION)
     }
@@ -153,14 +153,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner language`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        language = "spa"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                language = "spa"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceLanguage } as ChannelUpdateCommand.ReplaceLanguage
+            commands.find { it is ChannelUpdateCommand.ReplaceLanguage } as ChannelUpdateCommand.ReplaceLanguage
 
         assertThat(command.language).contains("spa")
     }
@@ -168,14 +168,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner description`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        description = "This is a new description"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                description = "This is a new description"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceDescription } as ChannelUpdateCommand.ReplaceDescription
+            commands.find { it is ChannelUpdateCommand.ReplaceDescription } as ChannelUpdateCommand.ReplaceDescription
 
         assertThat(command.description).contains("This is a new description")
     }
@@ -183,14 +183,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner awards`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        awards = "This is a new award"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                awards = "This is a new award"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceAwards } as ChannelUpdateCommand.ReplaceAwards
+            commands.find { it is ChannelUpdateCommand.ReplaceAwards } as ChannelUpdateCommand.ReplaceAwards
 
         assertThat(command.awards).contains("This is a new award")
     }
@@ -198,14 +198,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner hubspot id`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        hubspotId = "1a2s3d4f5g6h7j8k9l"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                hubspotId = "1a2s3d4f5g6h7j8k9l"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceHubspotId } as ChannelUpdateCommand.ReplaceHubspotId
+            commands.find { it is ChannelUpdateCommand.ReplaceHubspotId } as ChannelUpdateCommand.ReplaceHubspotId
 
         assertThat(command.hubspotId).contains("1a2s3d4f5g6h7j8k9l")
     }
@@ -213,14 +213,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner notes`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        notes = "this is a note"
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                notes = "this is a note"
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceNotes } as ChannelUpdateCommand.ReplaceNotes
+            commands.find { it is ChannelUpdateCommand.ReplaceNotes } as ChannelUpdateCommand.ReplaceNotes
 
         assertThat(command.notes).contains("this is a note")
     }
@@ -228,14 +228,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner best for tags`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        bestForTags = listOf("123", "456")
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                bestForTags = listOf("123", "456")
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceBestForTags } as ChannelUpdateCommand.ReplaceBestForTags
+            commands.find { it is ChannelUpdateCommand.ReplaceBestForTags } as ChannelUpdateCommand.ReplaceBestForTags
 
         assertThat(command.bestForTags).containsExactlyInAnyOrder("123", "456")
     }
@@ -243,14 +243,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating content partner subjects`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        subjects = listOf("subject 1", "subject 2")
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                subjects = listOf("subject 1", "subject 2")
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceSubjects } as ChannelUpdateCommand.ReplaceSubjects
+            commands.find { it is ChannelUpdateCommand.ReplaceSubjects } as ChannelUpdateCommand.ReplaceSubjects
 
         assertThat(command.subjects).containsExactlyInAnyOrder("subject 1", "subject 2")
     }
@@ -258,33 +258,33 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates a command for updating ingest details`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        ingest = IngestDetailsResource.mrss("https://mrss.feed")
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                ingest = IngestDetailsResource.mrss("https://mrss.feed")
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceIngestDetails } as ChannelUpdateCommand.ReplaceIngestDetails
+            commands.find { it is ChannelUpdateCommand.ReplaceIngestDetails } as ChannelUpdateCommand.ReplaceIngestDetails
 
         assertThat(command.ingest).isEqualTo(
-                MrssFeedIngest(
-                        listOf("https://mrss.feed")
-                )
+            MrssFeedIngest(
+                listOf("https://mrss.feed")
+            )
         )
     }
 
     @Test
     fun `creates a command for updating delivery frequency`() {
         val commands = channelUpdatesConverter.convert(
-                id = originalChannel.id,
-                upsertChannelRequest = ChannelRequest(
-                        deliveryFrequency = Period.ofMonths(3)
-                )
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                deliveryFrequency = Period.ofMonths(3)
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceDeliveryFrequency } as ChannelUpdateCommand.ReplaceDeliveryFrequency
+            commands.find { it is ChannelUpdateCommand.ReplaceDeliveryFrequency } as ChannelUpdateCommand.ReplaceDeliveryFrequency
 
         assertThat(command.deliveryFrequency).isEqualTo(Period.ofMonths(3))
     }
@@ -294,13 +294,14 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
         val newContract = saveContract(name = "new name")
 
         val commands = channelUpdatesConverter.convert(
-                originalChannel.id, ChannelRequest(
+            originalChannel.id,
+            ChannelRequest(
                 contractId = newContract.id.value
-        )
+            )
         )
 
         val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceContract } as ChannelUpdateCommand.ReplaceContract
+            commands.find { it is ChannelUpdateCommand.ReplaceContract } as ChannelUpdateCommand.ReplaceContract
 
         assertThat(command.contract).isEqualTo(newContract)
     }
@@ -308,20 +309,23 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     @Test
     fun `creates command for updating categories`() {
         taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "ABC", description = "ABC description", parentCode = "AB"))
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "AB", description = "BC description", parentCode = "B"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "AB", description = "AB description", parentCode = "A"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "A", description = "A description"))
 
-        val commands = channelUpdatesConverter.convert(
-                originalChannel.id, ChannelRequest(
-                categories = listOf("ABC", "BC")
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "BC", description = "BC description", parentCode = "B"))
+        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "B", description = "B description"))
+
+        val updateCommands = channelUpdatesConverter.convert(
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(categories = listOf("ABC", "BC"))
         )
-        )
 
-        val command =
-                commands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
+        val replaceCategoriesCommand =
+            updateCommands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
 
-        assertThat(command.categories).containsExactlyInAnyOrder(
-                TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "ABC description", ancestors = setOf("AB")),
-                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "BC description", ancestors = setOf("B"))
+        assertThat(replaceCategoriesCommand.categories).containsOnly(
+            TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "ABC description", ancestors = setOf("A", "AB")),
+            TaxonomyCategoryWithAncestors(codeValue = "BC", description = "BC description", ancestors = setOf("B"))
         )
     }
 }

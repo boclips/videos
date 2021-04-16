@@ -35,9 +35,9 @@ internal class TaxonomyControllerIntegrationTest : AbstractSpringIntegrationTest
             parentCode = childTaxonomy.codeValue
         )
 
-        taxonomyService.addTaxonomy(parentTaxonomy)
-        taxonomyService.addTaxonomy(childTaxonomy)
-        taxonomyService.addTaxonomy(grandChildTaxonomy)
+        addTaxonomy(parentTaxonomy)
+        addTaxonomy(childTaxonomy)
+        addTaxonomy(grandChildTaxonomy)
 
         mockMvc.perform(get("/v1/categories").asBoclipsEmployee())
             .andExpect(status().isOk)

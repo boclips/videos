@@ -3,7 +3,6 @@ package com.boclips.videos.service.infrastructure.taxonomy
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
-import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.video.converters.TaxonomyDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -11,7 +10,6 @@ import mu.KLogging
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
-
 
 class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRepository {
 
@@ -24,6 +22,7 @@ class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRe
         getTaxonomyCollection().insertOne(taxonomyCategoryDocument)
         return taxonomyCategory
     }
+
     override fun findAll(): List<TaxonomyCategory> {
         return getTaxonomyCollection().find().map { TaxonomyDocumentConverter.toTaxonomy(it) }.toList()
     }

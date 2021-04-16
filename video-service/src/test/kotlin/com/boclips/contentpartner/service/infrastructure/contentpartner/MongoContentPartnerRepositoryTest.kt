@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -325,11 +326,11 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 listOf(
                         ChannelUpdateCommand.ReplaceCategories(
                                 channel.id,
-                                listOf(
-                                        TaxonomyCategory(
+                                setOf(
+                                        TaxonomyCategoryWithAncestors(
                                                 codeValue = "ABC",
                                                 description = "what a wonderful description",
-                                                parentCode = "A"
+                                                ancestors = setOf("A")
                                         )
                                 )
                         )
@@ -338,8 +339,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
                 val updatedChannel = mongoChannelRepository.findById(channel.id)
         assertThat(updatedChannel?.categories!![0].codeValue).isEqualTo("ABC")
-        assertThat(updatedChannel?.categories!![0].description).isEqualTo("what a wonderful description")
-        assertThat(updatedChannel?.categories!![0].codeValue).isEqualTo("A")
+        assertThat(updatedChannel.categories!![0].description).isEqualTo("what a wonderful description")
+        assertThat(updatedChannel.categories!![0].codeValue).isEqualTo("A")
     }
 
     @Nested
@@ -442,9 +443,9 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                     listOf(
                             ChannelUpdateCommand.ReplaceCategories(
                                     channelId = channel.id,
-                                    categories = listOf(
-                                            TaxonomyFactory.sample(codeValue = "A", description = "Law"),
-                                            TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design")
+                                    categories = setOf(
+                                            TaxonomyCategoryWithAncestors(codeValue = "A", description = "Law", ancestors = emptySet()),
+                                        TaxonomyCategoryWithAncestors(codeValue = "BC", description = "Interior Design", ancestors = emptySet())
                                     )
                             )
                     )

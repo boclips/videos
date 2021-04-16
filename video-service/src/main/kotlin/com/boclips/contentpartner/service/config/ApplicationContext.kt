@@ -43,6 +43,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.ContractsLinkBuil
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.eventbus.EventBus
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -197,13 +198,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun channelUpdatesConverter(): ChannelUpdatesConverter {
+    fun channelUpdatesConverter(taxonomyService: TaxonomyService): ChannelUpdatesConverter {
         return ChannelUpdatesConverter(
             legalRestrictionsRepository,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
             contractRepository,
-            taxonomyRepository
+            taxonomyService
         )
     }
 

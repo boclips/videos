@@ -78,6 +78,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceContract(channelId: ChannelId, val contract: Contract) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceCategories(channelId: ChannelId, val categories: List<TaxonomyCategoryWithAncestors>) :
+    class ReplaceCategories(channelId: ChannelId, val categories: Set<TaxonomyCategoryWithAncestors>) :
         ChannelUpdateCommand(channelId)
 }

@@ -8,7 +8,6 @@ import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
-import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import com.boclips.videos.service.testsupport.TaxonomyFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -22,7 +21,6 @@ import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -38,9 +36,6 @@ import java.time.Period
 class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     lateinit var contractId: String
-
-    @Autowired
-    lateinit var taxonomyService: TaxonomyService
 
     @BeforeEach
     fun setUp() {
@@ -133,7 +128,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 "name": "random name",
                                 "$fieldName": [null]
                             }
-                            """.trimIndent()
+                        """.trimIndent()
                     )
             )
                 .andExpect(status().isBadRequest)
@@ -141,7 +136,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         listFieldNames.map { makeInvalidRequest(it) }
 
-        //nested fields
+        // nested fields
 
         mockMvc.perform(
             post("/v1/channels")
@@ -205,7 +200,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "awards": "award",
                 "notes": "note one",
                 "hubspotId": "123456789",
-                "contractId": "${contractId}",
+                "contractId": "$contractId",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
                 "contentTypes": ["NEWS","INSTRUCTIONAL"],
@@ -347,7 +342,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "awards": "award",
                 "notes": "note one",
                 "hubspotId": "123456789",
-                "contractId": "${contractId}",
+                "contractId": "$contractId",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
                 "contentTypes": ["NEWS","INSTRUCTIONAL"],
@@ -615,8 +610,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can update categories in channel`() {
-        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "A", description = "Law"))
-        taxonomyService.addTaxonomy(TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design"))
+        addTaxonomy(TaxonomyFactory.sample(codeValue = "A", description = "Law"))
+        addTaxonomy(TaxonomyFactory.sample(codeValue = "BC", description = "Interior Design"))
 
         val channelId = saveChannel(name = "Test channel").id.value
         val channelUpdateRequest = """
@@ -627,14 +622,14 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         """
 
         mockMvc.perform(
-            patch("/v1/channels/${channelId}")
+            patch("/v1/channels/$channelId")
                 .asBoclipsEmployee()
                 .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
         )
             .andExpect(status().isNoContent)
 
         mockMvc.perform(
-            get("/v1/channels/${channelId}")
+            get("/v1/channels/$channelId")
                 .asBoclipsEmployee()
         )
             .andExpect(jsonPath("$.categories", hasSize<Int>(2)))
@@ -847,7 +842,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 bestForTags = listOf("123"),
                 subjects = listOf("subject 1")
             )
-
 
             mockMvc.perform(
                 get(
