@@ -134,7 +134,6 @@ class ApplicationContext(
         getVideosByQuery,
         videoRepository,
         playbackUpdateService,
-        userService,
         priceComputingService
     )
 

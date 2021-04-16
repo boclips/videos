@@ -4,6 +4,7 @@ import com.boclips.videos.api.response.attachment.AttachmentTypesResource
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.AttachmentTypeToResourceConverter
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,8 +18,9 @@ class AttachmentTypeController(
     private val getAttachmentTypes: GetAttachmentTypes,
     private val attachmentTypeConverter: AttachmentTypeToResourceConverter,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
 
     @GetMapping
     fun attachmentTypes(): ResponseEntity<AttachmentTypesResource> {

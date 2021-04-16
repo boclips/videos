@@ -12,6 +12,7 @@ import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.support.DeviceIdCookieExtractor
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -24,7 +25,8 @@ import java.util.concurrent.TimeUnit
 
 open class BaseController(
     private val accessRuleService: AccessRuleService,
-    private val getUserIdOverride: GetUserIdOverride
+    private val getUserIdOverride: GetUserIdOverride,
+    private val userService: UserService
 ) {
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUser()
@@ -39,7 +41,6 @@ open class BaseController(
             isBoclipsEmployee = userRequest?.boclipsEmployee ?: false,
             isAuthenticated = !userRequest?.id.isNullOrBlank(),
             isPermittedToModifyAnyCollection = userRequest?.hasRole(UserRoles.VIEW_ANY_COLLECTION) ?: false,
-            isPermittedToViewCollections = userRequest?.hasRole(UserRoles.VIEW_COLLECTIONS) ?: false,
             isPermittedToRateVideos = userRequest?.hasRole(UserRoles.RATE_VIDEOS) ?: false,
             isPermittedToUpdateVideo = userRequest?.hasRole(UserRoles.UPDATE_VIDEOS) ?: false,
             externalUserIdSupplier = externalUserIdSupplier,
@@ -47,6 +48,7 @@ open class BaseController(
                 origin = RefererHeaderExtractor.getReferer(),
                 deviceId = DeviceIdCookieExtractor.getDeviceId()
             ),
+            organisationSupplier = { user -> user.id?.let { userService.getOrganisationOfUser(it.value) } },
             accessRulesSupplier = { user ->
                 if (user.isAuthenticated) {
                     val clientName = ClientExtractor.extractClient().let { Client.getNameByClient(it) }
@@ -79,9 +81,9 @@ object Administrator : User(
     isAuthenticated = false,
     isPermittedToRateVideos = true,
     isPermittedToModifyAnyCollection = true,
-    isPermittedToViewCollections = true,
     isPermittedToUpdateVideo = true,
     context = RequestContext(origin = null, deviceId = null),
+    organisationSupplier = { null },
     accessRulesSupplier = {
         AccessRules(
             collectionAccess = CollectionAccessRule.Everything,

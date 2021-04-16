@@ -7,15 +7,19 @@ open class User(
     val isBoclipsEmployee: Boolean,
     val isAuthenticated: Boolean,
     val isPermittedToModifyAnyCollection: Boolean,
-    val isPermittedToViewCollections: Boolean,
     val isPermittedToRateVideos: Boolean,
     val isPermittedToUpdateVideo: Boolean,
-    val externalUserIdSupplier: () -> UserId? = { null },
     val context: RequestContext,
-    val accessRulesSupplier: (user: User) -> AccessRules
+    private val externalUserIdSupplier: () -> UserId? = { null },
+    private val accessRulesSupplier: (user: User) -> AccessRules,
+    private val organisationSupplier: (user: User) -> Organisation?
 ) {
+    val isPermittedToViewPrices: Boolean by lazy { this.organisation?.hasAccessToPrices ?: true }
+    val prices: Deal.Prices? by lazy { this.organisation?.deal?.prices }
+
     val accessRules: AccessRules by lazy { accessRulesSupplier(this) }
     val externalUserId: UserId? by lazy { externalUserIdSupplier() }
+    val organisation: Organisation? by lazy { organisationSupplier(this) }
 
     fun idOrThrow(): UserId = id ?: throw UserNotAuthenticatedException()
 

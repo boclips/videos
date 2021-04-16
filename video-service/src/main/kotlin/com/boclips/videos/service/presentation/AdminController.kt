@@ -13,6 +13,7 @@ import com.boclips.videos.service.application.video.GetVideosByContentPackage
 import com.boclips.videos.service.application.video.VideoAnalysisService
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.presentation.hateoas.AdminLinkBuilder
 import mu.KLogging
@@ -40,8 +41,9 @@ class AdminController(
     private val getVideosByContentPackage: GetVideosByContentPackage,
     private val adminLinkBuilder: AdminLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10000
         const val MAX_PAGE_SIZE = 10000

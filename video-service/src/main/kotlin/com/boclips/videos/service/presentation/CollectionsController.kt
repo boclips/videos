@@ -10,6 +10,7 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.projections.WithProjection
@@ -34,8 +35,9 @@ class CollectionsController(
     private val collectionResourceConverter: CollectionResourceConverter,
     private val withProjection: WithProjection,
     accessRuleService: AccessRuleService,
-    getUserIdOverride: GetUserIdOverride
-) : BaseController(accessRuleService, getUserIdOverride) {
+    getUserIdOverride: GetUserIdOverride,
+    userService: UserService,
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val COLLECTIONS_PAGE_SIZE = 30
     }

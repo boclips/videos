@@ -11,6 +11,7 @@ import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubje
 import com.boclips.videos.service.application.disciplines.UpdateDiscipline
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -35,8 +36,9 @@ class DisciplinesController(
     private val replaceDisciplineSubjects: ReplaceDisciplineSubjects,
     private val disciplinesLinkBuilder: DisciplinesLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
 
     @GetMapping("/{id}")
     fun discipline(@PathVariable id: String): DisciplineResource {

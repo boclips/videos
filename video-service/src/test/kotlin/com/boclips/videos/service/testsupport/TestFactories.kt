@@ -583,9 +583,9 @@ object UserFactory {
             isPermittedToUpdateVideo = true,
             isPermittedToModifyAnyCollection = isPermittedToViewAnyCollection,
             isPermittedToRateVideos = true,
-            isPermittedToViewCollections = true,
             externalUserIdSupplier = { externalUserIdSupplier()?.let(::UserId) },
-            accessRulesSupplier = accessRulesSupplier
+            accessRulesSupplier = accessRulesSupplier,
+            organisationSupplier = { null }
         )
     }
 }

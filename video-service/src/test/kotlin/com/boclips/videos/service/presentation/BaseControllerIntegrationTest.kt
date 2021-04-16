@@ -2,6 +2,9 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.security.testing.setSecurityContext
 import com.boclips.security.testing.setSecurityContextWithClientId
+import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.feature.FeatureKeyResource
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -35,6 +38,22 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     videoIds = setOf(teachersVideo)
                 )
             )
+        }
+
+        @Test
+        fun `user's features are retrieved from user service`() {
+            setSecurityContext("hello")
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "hello",
+                    organisation = OrganisationResourceFactory.sampleDetails(
+                        features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES to true)
+                    )
+                )
+            )
+
+            val user = controller.getCurrentUser()
+            assertThat(user.isPermittedToViewPrices).isTrue()
         }
 
         @Test

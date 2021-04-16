@@ -4,9 +4,5 @@ data class Organisation(
     val organisationId: OrganisationId,
     val allowOverridingUserIds: Boolean,
     val deal: Deal,
-    val hasAccessToPrices : Boolean
-) {
-    fun doesNotHaveAccessToPrices(): Boolean {
-        return !hasAccessToPrices
-    }
-}
+    val hasAccessToPrices: Boolean
+)

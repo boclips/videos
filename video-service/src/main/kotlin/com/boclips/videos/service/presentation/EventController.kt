@@ -7,6 +7,7 @@ import com.boclips.videos.service.application.analytics.SaveSearchQuerySuggestio
 import com.boclips.videos.service.application.analytics.SaveVideoInteractedWithEvent
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.event.CollectionInteractedWithEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlaybackEventCommand
 import com.boclips.videos.service.presentation.event.CreatePlayerInteractedWithEvent
@@ -27,8 +28,9 @@ class EventController(
     private val saveCollectionInteractedWithEvent: SaveCollectionInteractedWithEvent,
     private val saveSearchQuerySuggestionsCompletedEvent: SaveSearchQuerySuggestionsCompletedEvent,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
 
     @PostMapping("/v1/events/playback")
     fun logPlaybackEvent(

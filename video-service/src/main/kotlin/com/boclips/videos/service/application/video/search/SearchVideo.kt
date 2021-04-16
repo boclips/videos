@@ -5,7 +5,6 @@ import com.boclips.videos.service.application.video.exceptions.SearchRequestVali
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
-import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
@@ -16,7 +15,6 @@ import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.model.video.request.SortKey
-import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
@@ -29,7 +27,6 @@ class SearchVideo(
     private val getVideosByQuery: GetVideosByQuery,
     private val videoRepository: VideoRepository,
     private val playbackUpdateService: PlaybackUpdateService,
-    private val userService: UserService,
     private val priceComputingService: PriceComputingService
 ) {
     companion object {
@@ -43,9 +40,8 @@ class SearchVideo(
         }
 
         val retrievedVideo = getVideoById(videoId, user)
-        val userOrganisation = user.id?.let { userService.getOrganisationOfUser(it.value) }
 
-        return addOrganisationPrice(retrievedVideo, userOrganisation) ?: retrievedVideo
+        return addPrice(retrievedVideo, user)
     }
 
     fun byQuery(
@@ -80,8 +76,6 @@ class SearchVideo(
         includePriceFacets: Boolean? = false,
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
-        val userOrganisation = userService.getOrganisationOfUser(user.idOrThrow().value)
-
         val retrievedVideos = getVideosByQuery(
             query = query ?: "",
             ids = ids.mapNotNull { resolveToAssetId(it, false)?.value }.toSet(),
@@ -106,7 +100,7 @@ class SearchVideo(
             channelIds = channelIds,
             type = type,
             user = user,
-            userOrganisation = userOrganisation,
+            userOrganisation = user.organisation,
             resourceTypes = resourceTypes.mapTo(HashSet()) { AttachmentType.valueOf(it).label },
             resourceTypeFacets = resourceTypeFacets,
             videoTypeFacets = videoTypeFacets,
@@ -115,15 +109,16 @@ class SearchVideo(
             queryParams = queryParams ?: emptyMap(),
             prices = prices
         )
-        return userOrganisation?.let { addOrganisationPrices(retrievedVideos, userOrganisation) } ?: retrievedVideos
+
+        return addPrices(retrievedVideos, user)
     }
 
-    private fun addOrganisationPrices(
+    private fun addPrices(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
-        userOrganisation: Organisation
+        user: User
     ): ResultsPage<BaseVideo, VideoCounts> {
         val pricedVideos = retrievedVideos.elements.map {
-            addOrganisationPrice(it, userOrganisation) ?: it
+            addPrice(it, user) ?: it
         }
 
         return ResultsPage(
@@ -133,18 +128,16 @@ class SearchVideo(
         )
     }
 
-    private fun addOrganisationPrice(
+    private fun addPrice(
         retrievedVideo: Video,
-        userOrganisation: Organisation?
-    ): PricedVideo? {
-        val hasAccessToPrices = userOrganisation?.hasAccessToPrices ?: true
-
-        if (!hasAccessToPrices) {
-            return null
+        user: User
+    ): BaseVideo {
+        if (!user.isPermittedToViewPrices) {
+            return retrievedVideo
         }
 
         val videoPrice = priceComputingService.computeVideoPrice(
-            organisationPrices = userOrganisation?.deal?.prices,
+            organisationPrices = user.prices,
             channel = retrievedVideo.channel.channelId,
             playback = retrievedVideo.playback,
             videoTypes = retrievedVideo.types,

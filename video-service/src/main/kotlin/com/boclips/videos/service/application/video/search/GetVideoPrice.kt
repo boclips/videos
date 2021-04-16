@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.Price
+import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.user.UserService
 import mu.KLogging
 
@@ -8,13 +10,12 @@ class GetVideoPrice(
     private val userService: UserService,
     private val priceComputingService: PriceComputingService
 ) {
-
     companion object : KLogging()
 
     operator fun invoke(video: BaseVideo, userId: String?): Price? {
         val videoPrices = userId?.let { userService.getOrganisationOfUser(it)?.deal?.prices }
 
-        val price =  priceComputingService.computeVideoPrice(
+        val price = priceComputingService.computeVideoPrice(
             videoId = video.videoId,
             organisationPrices = videoPrices,
             channel = video.channel.channelId,

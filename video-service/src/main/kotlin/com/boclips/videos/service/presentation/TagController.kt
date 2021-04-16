@@ -11,6 +11,7 @@ import com.boclips.videos.service.application.tag.GetTags
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.TagConverter
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -37,8 +38,9 @@ class TagController(
     private val tagsConverter: TagConverter,
     private val tagsLinkBuilder: TagsLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
 
     @GetMapping("/{id}")
     fun tag(@PathVariable id: String): ResponseEntity<TagResource> {

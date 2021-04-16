@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.contentwarning.GetAllContentWarnin
 import com.boclips.videos.service.application.contentwarning.GetContentWarning
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,8 +28,9 @@ class ContentWarningController(
     private val createContentWarning: CreateContentWarning,
     private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: String): ResponseEntity<ContentWarningResource> {

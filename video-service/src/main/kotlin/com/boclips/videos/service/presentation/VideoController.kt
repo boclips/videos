@@ -87,13 +87,13 @@ class VideoController(
     private val videoToResourceConverter: VideoToResourceConverter,
     private val videoRepository: VideoRepository,
     private val videosLinkBuilder: VideosLinkBuilder,
+    private val getVideoUrlAssets: GetVideoUrlAssets,
+    private val videosRepository: VideoRepository,
+    private val getVideoPrice: GetVideoPrice,
+    val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    private val getVideoUrlAssets: GetVideoUrlAssets,
-    private val userService: UserService,
-    private val videosRepository: VideoRepository,
-    private val getVideoPrice: GetVideoPrice
-) : BaseController(accessRuleService, getUserIdOverride) {
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
         const val MAX_PAGE_SIZE = 500
@@ -142,6 +142,7 @@ class VideoController(
             )
         }
 
+        val user = getCurrentUser()
         val results = searchVideo.byQuery(
             query = query,
             ids = ids ?: emptySet(),
@@ -165,7 +166,7 @@ class VideoController(
             promoted = promoted,
             channelIds = channelParam ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
-            user = getCurrentUser(),
+            user = user,
             sortBy = sortBy,
             pageSize = pageSize,
             pageNumber = pageNumber,
@@ -175,7 +176,7 @@ class VideoController(
             prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet()
         )
 
-        val videosResource = videoToResourceConverter.convert(resultsPage = results, user = getCurrentUser())
+        val videosResource = videoToResourceConverter.convert(resultsPage = results, user = user)
 
         return ResponseEntity(videosResource, HttpStatus.OK)
     }
@@ -266,8 +267,10 @@ class VideoController(
     @PostMapping("/v1/videos")
     fun postCreateVideo(@RequestBody @Valid createVideoRequest: CreateVideoRequest): ResponseEntity<VideoResource> {
         val resource: VideoResource = try {
-            createVideo(createVideoRequest, getCurrentUser())
-                .let { videoToResourceConverter.convert(it, getCurrentUser()) }
+            val user = getCurrentUser()
+
+            createVideo(createVideoRequest, user)
+                .let { videoToResourceConverter.convert(it, user) }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(
                 ExceptionDetails(

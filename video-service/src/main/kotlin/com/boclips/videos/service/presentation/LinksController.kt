@@ -11,6 +11,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.MarketingStatusLi
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.hateoas.*
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -43,8 +44,9 @@ class LinksController(
     private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
     private val taxonomyLinkBuilder: TaxonomyLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
-    accessRuleService: AccessRuleService
-) : BaseController(accessRuleService, getUserIdOverride) {
+    accessRuleService: AccessRuleService,
+    userService: UserService
+) : BaseController(accessRuleService, getUserIdOverride, userService) {
     @GetMapping
     fun get(request: SecurityContextHolderAwareRequestWrapper): LinksResource {
         return LinksResource(
