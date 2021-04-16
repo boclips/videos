@@ -27,8 +27,7 @@ class OrganisationResourceConverter {
                         )
                     } ?: NO_CUSTOM_PRICES
                 ),
-                hasAccessToPrices = it.organisationDetails.features?.get(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES)
-                    ?.let { hidePrices -> !hidePrices } ?: true
+                hasAccessToPrices = it.organisationDetails.features?.get(FeatureKeyResource.BO_WEB_APP_PRICES) ?: true
             )
         }
 

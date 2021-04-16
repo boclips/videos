@@ -231,7 +231,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     id = "pearson-org",
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         id = "pearson-org",
-                        features = mapOf(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES to true)
+                        features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES to false)
                     )
                 )
             )
