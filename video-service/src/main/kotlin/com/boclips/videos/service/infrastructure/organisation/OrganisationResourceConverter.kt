@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.organisation
 
+import com.boclips.users.api.response.feature.FeatureKeyResource
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.service.domain.model.user.Deal
@@ -8,7 +9,7 @@ import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import java.math.BigDecimal
-import java.util.*
+import java.util.Currency
 
 class OrganisationResourceConverter {
     companion object {
@@ -26,7 +27,8 @@ class OrganisationResourceConverter {
                         )
                     } ?: NO_CUSTOM_PRICES
                 ),
-                features = it.organisationDetails.features ?: emptyMap()
+                hasAccessToPrices = it.organisationDetails.features?.get(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES)
+                    ?.let { hidePrices -> !hidePrices } ?: true
             )
         }
 

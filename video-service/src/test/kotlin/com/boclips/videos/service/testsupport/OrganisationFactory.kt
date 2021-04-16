@@ -10,13 +10,13 @@ object OrganisationFactory {
         organisationId: OrganisationId = OrganisationId("org-id"),
         deal: Deal = Deal(prices = DealPricesFactory.sample()),
         allowOverridingUserIds: Boolean = false,
-        features: Map<String, Boolean> = emptyMap()
+        hasAccessToPrices: Boolean = true
     ): Organisation {
         return Organisation(
             organisationId = organisationId,
             allowOverridingUserIds = allowOverridingUserIds,
             deal = deal,
-            features = features
+            hasAccessToPrices = hasAccessToPrices
         )
     }
 }

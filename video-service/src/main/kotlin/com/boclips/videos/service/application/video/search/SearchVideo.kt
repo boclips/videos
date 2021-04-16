@@ -7,7 +7,13 @@ import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.IllegalVideoIdentifierException
+import com.boclips.videos.service.domain.model.video.PriceComputingService
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
 import com.boclips.videos.service.domain.model.video.request.SortKey
 import com.boclips.videos.service.domain.service.user.UserService
@@ -24,14 +30,13 @@ class SearchVideo(
     private val videoRepository: VideoRepository,
     private val playbackUpdateService: PlaybackUpdateService,
     private val userService: UserService,
-    private val priceComputingService: PriceComputingService,
-    private val getVideoPrice: GetVideoPrice
+    private val priceComputingService: PriceComputingService
 ) {
     companion object {
         fun isAlias(potentialAlias: String): Boolean = Regex("\\d+").matches(potentialAlias)
     }
 
-    fun byId(id: String?, user: User, projection: Projection? = null, userId: String? = null): BaseVideo {
+    fun byId(id: String?, user: User, projection: Projection? = null): BaseVideo {
         val videoId = resolveToAssetId(id)!!
         if (projection == Projection.full) {
             playbackUpdateService.updatePlaybacksFor(VideoFilter.HasVideoId(videoId))
@@ -110,13 +115,13 @@ class SearchVideo(
             queryParams = queryParams ?: emptyMap(),
             prices = prices
         )
-        return addOrganisationPrices(retrievedVideos, userOrganisation) ?: retrievedVideos
+        return userOrganisation?.let { addOrganisationPrices(retrievedVideos, userOrganisation) } ?: retrievedVideos
     }
 
     private fun addOrganisationPrices(
         retrievedVideos: ResultsPage<Video, VideoCounts>,
-        userOrganisation: Organisation?
-    ): ResultsPage<BaseVideo, VideoCounts>? {
+        userOrganisation: Organisation
+    ): ResultsPage<BaseVideo, VideoCounts> {
         val pricedVideos = retrievedVideos.elements.map {
             addOrganisationPrice(it, userOrganisation) ?: it
         }
@@ -132,9 +137,12 @@ class SearchVideo(
         retrievedVideo: Video,
         userOrganisation: Organisation?
     ): PricedVideo? {
-        if (userOrganisation?.features?.get("BO_WEB_APP_HIDE_PRICES") == true) {
+        val hasAccessToPrices = userOrganisation?.hasAccessToPrices ?: true
+
+        if (!hasAccessToPrices) {
             return null
         }
+
         val videoPrice = priceComputingService.computeVideoPrice(
             organisationPrices = userOrganisation?.deal?.prices,
             channel = retrievedVideo.channel.channelId,

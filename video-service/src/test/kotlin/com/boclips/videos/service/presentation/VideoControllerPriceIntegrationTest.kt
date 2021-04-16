@@ -4,6 +4,7 @@ import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
+import com.boclips.users.api.response.feature.FeatureKeyResource
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -230,7 +231,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
                     id = "pearson-org",
                     organisationDetails = OrganisationResourceFactory.sampleDetails(
                         id = "pearson-org",
-                        features = mapOf("BO_WEB_APP_HIDE_PRICES" to true)
+                        features = mapOf(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES to true)
                     )
                 )
             )

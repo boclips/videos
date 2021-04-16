@@ -1,6 +1,7 @@
 package com.boclips.videos.service.infrastructure.organisation
 
 import com.boclips.users.api.factories.OrganisationResourceFactory
+import com.boclips.users.api.response.feature.FeatureKeyResource
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -64,17 +65,30 @@ class OrganisationResourceConverterTest {
     }
 
     @Test
-    fun `converts organisation features from a resource`() {
+    fun `converts organisation access to prices from feature resource`() {
         val orgResource = OrganisationResourceFactory.sample(
             id = "my-org-id",
             organisationDetails = OrganisationResourceFactory.sampleDetails(
-                features = mapOf("BO_WEB_APP_HIDE_PRICES" to true)
+                features = mapOf(FeatureKeyResource.BO_WEB_APP_HIDE_PRICES to true)
             ),
         )
 
         val convertedOrg = OrganisationResourceConverter.convertOrganisation(orgResource)
 
-        assertThat(convertedOrg.features.size).isEqualTo(1)
-        assertThat(convertedOrg.features.getValue("BO_WEB_APP_HIDE_PRICES")).isEqualTo(true)
+        assertThat(convertedOrg.hasAccessToPrices).isFalse()
+    }
+
+    @Test
+    fun `allows access to prices by default if feature is missing`() {
+        val orgResource = OrganisationResourceFactory.sample(
+            id = "my-org-id",
+            organisationDetails = OrganisationResourceFactory.sampleDetails(
+                features = emptyMap()
+            ),
+        )
+
+        val convertedOrg = OrganisationResourceConverter.convertOrganisation(orgResource)
+
+        assertThat(convertedOrg.hasAccessToPrices).isTrue()
     }
 }

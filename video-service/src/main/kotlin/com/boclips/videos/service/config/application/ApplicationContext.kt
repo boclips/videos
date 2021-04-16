@@ -135,8 +135,7 @@ class ApplicationContext(
         videoRepository,
         playbackUpdateService,
         userService,
-        priceComputingService,
-        getVideoPrice
+        priceComputingService
     )
 
     @Bean
