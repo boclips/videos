@@ -1,6 +1,5 @@
 package com.boclips.videos.service.config.application
 
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindAllLegalRestrictions
 import com.boclips.contentpartner.service.application.legalrestriction.FindLegalRestrictions
@@ -14,6 +13,7 @@ import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ChannelUpdated
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.collection.AddVideoToCollection
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.BroadcastCollections
@@ -51,11 +51,38 @@ import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.BroadcastVideos
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DeleteVideoThumbnail
+import com.boclips.videos.service.application.video.GetVideoUrlAssets
+import com.boclips.videos.service.application.video.GetVideosByContentPackage
+import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.SetVideoThumbnail
+import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.UpdateCaptionContent
+import com.boclips.videos.service.application.video.UpdateCaptions
+import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.UpdateYoutubePlayback
+import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
+import com.boclips.videos.service.application.video.VideoAnalysisService
+import com.boclips.videos.service.application.video.VideoCaptionService
+import com.boclips.videos.service.application.video.VideoRetrievalService
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
+import com.boclips.videos.service.application.video.search.GetVideoById
+import com.boclips.videos.service.application.video.search.GetVideoPrice
+import com.boclips.videos.service.application.video.search.GetVideosByQuery
+import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
+import com.boclips.videos.service.domain.model.video.PriceComputingService
+import com.boclips.videos.service.domain.service.ContentWarningRepository
+import com.boclips.videos.service.domain.service.DisciplineRepository
+import com.boclips.videos.service.domain.service.OrganisationService
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.collection.CollectionAccessService
 import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
 import com.boclips.videos.service.domain.service.collection.CollectionCreationService
@@ -72,17 +99,16 @@ import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrieva
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.application.video.VideoRetrievalService
-import com.boclips.videos.service.application.video.search.*
-import com.boclips.videos.service.domain.model.video.PriceComputingService
-import com.boclips.videos.service.domain.service.*
-import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
-import com.boclips.videos.service.domain.service.video.*
+import com.boclips.videos.service.domain.service.video.CaptionService
+import com.boclips.videos.service.domain.service.video.CaptionValidator
+import com.boclips.videos.service.domain.service.video.VideoCreationService
+import com.boclips.videos.service.domain.service.video.VideoDeletionService
+import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
-
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -120,7 +146,6 @@ class ApplicationContext(
     val organisationService: OrganisationService,
     val priceComputingService: PriceComputingService,
     val eventsBroadcastProperties: EventsBroadcastProperties,
-    val taxonomyRepository: TaxonomyRepository
 ) {
     @Bean
     fun searchVideo(
@@ -543,59 +568,54 @@ class ApplicationContext(
 
     @Bean
     fun collectionRetrievalService(
-            collectionRepository: CollectionRepository,
-            collectionIndex: CollectionIndex,
-            collectionAccessService: CollectionAccessService,
-            eventService: EventService,
-            videoRetrievalService: VideoRetrievalService
+        collectionRepository: CollectionRepository,
+        collectionIndex: CollectionIndex,
+        collectionAccessService: CollectionAccessService,
+        eventService: EventService,
+        videoRetrievalService: VideoRetrievalService
     ): CollectionRetrievalService {
         return CollectionRetrievalService(
-                collectionRepository,
-                collectionIndex,
-                collectionAccessService,
-                eventService,
-                videoRetrievalService
+            collectionRepository,
+            collectionIndex,
+            collectionAccessService,
+            eventService,
+            videoRetrievalService
         )
     }
 
     @Bean
     fun collectionCreationService(
-            collectionRepository: CollectionRepository,
-            collectionIndex: CollectionIndex,
-            collectionRetrievalService: CollectionRetrievalService
+        collectionRepository: CollectionRepository,
+        collectionIndex: CollectionIndex,
+        collectionRetrievalService: CollectionRetrievalService
     ): CollectionCreationService {
         return CollectionCreationService(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
     fun collectionDeletionService(
-            collectionRepository: CollectionRepository,
-            collectionRetrievalService: CollectionRetrievalService,
-            collectionIndex: CollectionIndex
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
     ): CollectionDeletionService {
         return CollectionDeletionService(collectionRepository, collectionIndex, collectionRetrievalService)
     }
 
     @Bean
     fun collectionUpdateService(
-            collectionRepository: CollectionRepository,
-            collectionRetrievalService: CollectionRetrievalService,
-            collectionIndex: CollectionIndex
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
     ): CollectionUpdateService {
         return CollectionUpdateService(collectionRepository, collectionRetrievalService, collectionIndex)
     }
 
     @Bean
     fun collectionBookmarkService(
-            collectionRepository: CollectionRepository,
-            collectionRetrievalService: CollectionRetrievalService,
-            collectionIndex: CollectionIndex
+        collectionRepository: CollectionRepository,
+        collectionRetrievalService: CollectionRetrievalService,
+        collectionIndex: CollectionIndex
     ): CollectionBookmarkService {
         return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
-    }
-
-    @Bean
-    fun taxonomyService(): TaxonomyService {
-        return TaxonomyService(taxonomyRepository)
     }
 }

@@ -1,7 +1,7 @@
 package com.boclips.videos.service.domain.model.taxonomy
 
-data class TaxonomyCategoryWithAncestors(
+data class CategoryWithAncestors(
     val codeValue: CategoryCode,
     val description: String,
-    val ancestors: List<CategoryCode> = emptyList()
+    val ancestors: Set<CategoryCode> = emptySet()
 )

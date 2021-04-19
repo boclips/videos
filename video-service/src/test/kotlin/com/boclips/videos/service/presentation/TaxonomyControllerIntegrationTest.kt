@@ -1,8 +1,7 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.TaxonomyFactory
+import com.boclips.videos.service.testsupport.CategoryFactory
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -17,22 +16,19 @@ internal class TaxonomyControllerIntegrationTest : AbstractSpringIntegrationTest
     @Autowired
     lateinit var mockMvc: MockMvc
 
-    @Autowired
-    lateinit var taxonomyService: TaxonomyService
-
     @Test
     fun `returns all taxonomy categories as boclips employee`() {
 
-        val parentTaxonomy = TaxonomyFactory.sample(codeValue = "A", description = "the parent taxonomy")
-        val childTaxonomy = TaxonomyFactory.sample(
-            codeValue = "AB",
+        val parentTaxonomy = CategoryFactory.sample(code = "A", description = "the parent taxonomy")
+        val childTaxonomy = CategoryFactory.sample(
+            code = "AB",
             description = "the child taxonomy",
-            parentCode = parentTaxonomy.codeValue
+            parentCode = parentTaxonomy.code.value
         )
-        val grandChildTaxonomy = TaxonomyFactory.sample(
-            codeValue = "ABC",
+        val grandChildTaxonomy = CategoryFactory.sample(
+            code = "ABC",
             description = "the grandchild taxonomy",
-            parentCode = childTaxonomy.codeValue
+            parentCode = childTaxonomy.code.value
         )
 
         addTaxonomy(parentTaxonomy)

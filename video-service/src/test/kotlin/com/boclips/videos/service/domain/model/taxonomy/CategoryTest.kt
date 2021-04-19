@@ -13,6 +13,24 @@ class CategoryTest {
             description = "Just a funny description"
         )
 
-        assertThat(category.resolveParentsCodes()).isEqualTo(listOf("A", "AB", "ABC", "ABCD"))
+        assertThat(category.resolveAncestorsCodes()).isEqualTo(
+            setOf(
+                CategoryCode("A"),
+                CategoryCode("AB"),
+                CategoryCode("ABC"),
+                CategoryCode("ABCD")
+            )
+        )
+    }
+
+    @Test
+    fun `returns empty array when no parent code`() {
+        val category = Category(
+            code = CategoryCode("A"),
+            parentCode = null,
+            description = "Just a funny description"
+        )
+
+        assertThat(category.resolveAncestorsCodes()).isEmpty()
     }
 }

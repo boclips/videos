@@ -34,12 +34,12 @@ import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
-import com.boclips.videos.service.domain.service.video.TaxonomyRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.testsupport.TestMongoProcess
@@ -141,7 +141,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var createLegalRestrictions: CreateLegalRestrictions
 
     @Autowired
-    lateinit var taxonomyRepository: TaxonomyRepository
+    lateinit var taxonomyRepository: CategoryRepository
 
     @Autowired
     lateinit var createContract: CreateContract
@@ -388,7 +388,7 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun addTaxonomy(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
-        return taxonomyRepository.create(taxonomyCategory = taxonomyCategory)
+    fun addTaxonomy(category: Category): Category {
+        return taxonomyRepository.create(category = category)
     }
 }

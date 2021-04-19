@@ -55,13 +55,13 @@ import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KAL
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.service.user.AccessRuleService
-import com.boclips.videos.service.domain.service.video.TaxonomyRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -90,9 +90,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Collections
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -200,7 +198,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var cacheManager: CacheManager
 
     @Autowired
-    lateinit var taxonomyRepository: TaxonomyRepository
+    lateinit var taxonomyRepository: CategoryRepository
 
     @LocalServerPort
     var randomServerPort: Int = 0
@@ -628,8 +626,8 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addTaxonomy(taxonomyCategory: TaxonomyCategory): TaxonomyCategory {
-        return taxonomyRepository.create(taxonomyCategory = taxonomyCategory)
+    fun addTaxonomy(category: Category): Category {
+        return taxonomyRepository.create(category = category)
     }
 
     fun mongoVideosCollection() =

@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.api.response.taxonomy.TaxonomyResource
 import com.boclips.videos.api.response.taxonomy.TaxonomyTreeResource
 import com.boclips.videos.service.domain.model.taxonomy.Category
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 
 object TaxonomyResourceConverter {
 
@@ -10,20 +11,29 @@ object TaxonomyResourceConverter {
         return TaxonomyResource(
             _embedded = categories.map { parentTaxonomy ->
                 parentTaxonomy.code.value to
-                    convertTaxonomyTree(parentTaxonomy)
+                    buildTree(categories, parentTaxonomy)
             }.toMap()
         )
     }
 
-    private fun convertTaxonomyTree(tree: Category): TaxonomyTreeResource {
-        if (tree.children.isNotEmpty()) {
+    private fun buildTree(taxonomyCategories: List<Category>, current: Category): TaxonomyTreeResource {
+        val children = taxonomyCategories.filter { it.parentCode == current.code }
+
+        if (children.isNotEmpty()) {
             return TaxonomyTreeResource(
-                children = tree.children.map { child ->
-                    child.key.value to convertTaxonomyTree(child.value)
-                }.toMap(),
-                description = tree.description
+                description = current.description,
+                children = children.map { child ->
+                    child.code.value to buildTree(
+                        taxonomyCategories = filterRelevant(taxonomyCategories, child.code),
+                        current = child
+                    )
+                }.toMap()
             )
         }
-        return TaxonomyTreeResource(description = tree.description, children = emptyMap())
+
+        return TaxonomyTreeResource(description = current.description, children = emptyMap())
     }
+
+    private fun filterRelevant(taxonomyCategories: List<Category>, relevantCode: CategoryCode) =
+        taxonomyCategories.filter { it.code.value.startsWith(relevantCode.value) }
 }

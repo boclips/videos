@@ -16,6 +16,7 @@ import com.boclips.contentpartner.service.infrastructure.contract.ContractDocume
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoIterable
@@ -238,7 +239,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             )
             is ChannelUpdateCommand.ReplaceCategories -> set(
                 ChannelDocument::categories,
-                updateCommand.categories
+                updateCommand.categories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }
             )
         }
 

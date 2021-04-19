@@ -15,8 +15,9 @@ import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.LegalRestrictionsRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
-import com.boclips.videos.service.testsupport.TaxonomyFactory
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
+import com.boclips.videos.service.testsupport.CategoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -308,12 +309,12 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates command for updating categories`() {
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "ABC", description = "ABC description", parentCode = "AB"))
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "AB", description = "AB description", parentCode = "A"))
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "A", description = "A description"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "ABC", description = "ABC description", parentCode = "AB"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "AB", description = "AB description", parentCode = "A"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "A", description = "A description"))
 
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "BC", description = "BC description", parentCode = "B"))
-        taxonomyRepository.create(TaxonomyFactory.sample(codeValue = "B", description = "B description"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "BC", description = "BC description", parentCode = "B"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "B", description = "B description"))
 
         val updateCommands = channelUpdatesConverter.convert(
             id = originalChannel.id,
@@ -324,8 +325,16 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
             updateCommands.find { it is ChannelUpdateCommand.ReplaceCategories } as ChannelUpdateCommand.ReplaceCategories
 
         assertThat(replaceCategoriesCommand.categories).containsOnly(
-            TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "ABC description", ancestors = setOf("A", "AB")),
-            TaxonomyCategoryWithAncestors(codeValue = "BC", description = "BC description", ancestors = setOf("B"))
+            CategoryWithAncestors(
+                codeValue = CategoryCode("ABC"),
+                description = "ABC description",
+                ancestors = setOf(CategoryCode("A"), CategoryCode("AB"))
+            ),
+            CategoryWithAncestors(
+                codeValue = CategoryCode("BC"),
+                description = "BC description",
+                ancestors = setOf(CategoryCode("B"))
+            )
         )
     }
 }

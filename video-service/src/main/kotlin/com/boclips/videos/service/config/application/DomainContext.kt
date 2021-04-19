@@ -35,10 +35,15 @@ import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
-import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
+import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.*
+import com.boclips.videos.service.domain.service.video.VideoCreationService
+import com.boclips.videos.service.domain.service.video.VideoDeletionService
+import com.boclips.videos.service.domain.service.video.VideoDuplicationService
+import com.boclips.videos.service.domain.service.video.VideoIndex
+import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -48,7 +53,7 @@ import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationSer
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.YoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
-import com.boclips.videos.service.infrastructure.taxonomy.MongoTaxonomyRepository
+import com.boclips.videos.service.infrastructure.taxonomy.MongoCategoryRepository
 import com.boclips.videos.service.infrastructure.user.ApiUserService
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
 import com.mongodb.MongoClient
@@ -123,8 +128,8 @@ class DomainContext(
     }
 
     @Bean
-    fun taxonomyRepository(): TaxonomyRepository {
-        return MongoTaxonomyRepository(mongoClient)
+    fun taxonomyRepository(): CategoryRepository {
+        return MongoCategoryRepository(mongoClient)
     }
 
     @Primary
