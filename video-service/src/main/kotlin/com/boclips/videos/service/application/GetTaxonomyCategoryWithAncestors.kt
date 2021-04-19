@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application
 
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
 import com.boclips.videos.service.domain.service.video.TaxonomyRepository
 import org.springframework.stereotype.Component
@@ -11,17 +11,15 @@ class GetTaxonomyCategoryWithAncestors(
     val taxonomyRepository: TaxonomyRepository
 ) {
 
-    operator fun invoke(code: String): TaxonomyCategoryWithAncestors =
-        taxonomyRepository.findByCode(code)?.let { taxonomyCategory ->
+    operator fun invoke(rawCode: String): TaxonomyCategoryWithAncestors {
+        val code = CategoryCode(rawCode)
+        val category = taxonomyRepository.findByCode(code)
+        return category?.let {
             TaxonomyCategoryWithAncestors(
-                codeValue = code,
-                description = taxonomyCategory.description,
-                ancestors = getAncestorCodes(taxonomyCategory)
+                codeValue = it.code,
+                description = it.description,
+                ancestors = it.resolveParentsCodes()
             )
         } ?: throw RuntimeException()
-
-    private fun getAncestorCodes(taxonomyCategory: TaxonomyCategory): Set<String> {
-        val parent = taxonomyCategory.parentCode?.let { taxonomyRepository.findByCode(it) }
-        return parent?.let { getAncestorCodes(parent).plus(parent.codeValue) } ?: mutableSetOf()
     }
 }

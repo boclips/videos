@@ -11,7 +11,7 @@ class TaxonomyCategoryDocumentConverterTest {
         val originalTaxonomy = TaxonomyCategory(codeValue = "ABC", description = "FRENCH")
 
         val doc = TaxonomyDocumentConverter.toDocument(originalTaxonomy)
-        val newTax = TaxonomyDocumentConverter.toTaxonomy(doc)
+        val newTax = TaxonomyDocumentConverter.toCategory(doc)
 
         assertThat(newTax).isEqualTo(originalTaxonomy)
     }
@@ -25,7 +25,7 @@ class TaxonomyCategoryDocumentConverterTest {
         )
 
         val doc = TaxonomyDocumentConverter.toDocument(originalTaxonomy)
-        val newTax = TaxonomyDocumentConverter.toTaxonomy(doc)
+        val newTax = TaxonomyDocumentConverter.toCategory(doc)
 
         assertThat(newTax).isEqualTo(originalTaxonomy)
     }

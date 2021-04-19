@@ -29,8 +29,8 @@ class MongoTaxonomyRepository(private val mongoClient: MongoClient) : TaxonomyRe
     }
 
     override fun findByCode(code: CategoryCode): Category? {
-        val taxonomy = getTaxonomyCollection().findOne(TaxonomyCategoryDocument::codeValue eq code.value)
-        return taxonomy?.let { TaxonomyDocumentConverter.toTaxonomy(it) }
+        val taxonomy = getTaxonomyCollection().findOne(CategoryNodeDocument::codeValue eq code.value)
+        return taxonomy?.let { TaxonomyDocumentConverter.toCategory(it) }
     }
 
     private fun getTaxonomyCollection(): MongoCollection<TaxonomyNodeDocument> {

@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.infrastructure.channel
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
-import com.boclips.videos.service.infrastructure.taxonomy.TaxonomyCategoryDocument
 import com.boclips.videos.service.infrastructure.taxonomy.TaxonomyCategoryWithAncestorsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import org.bson.codecs.pojo.annotations.BsonId

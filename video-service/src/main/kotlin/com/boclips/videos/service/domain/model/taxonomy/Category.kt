@@ -5,6 +5,12 @@ data class CategoryCode(val value: String)
 data class Category(
     val parentCode: CategoryCode?,
     val description: String,
-    val code: CategoryCode,
-    val children: Map<CategoryCode, Category> = emptyMap()
-)
+    val code: CategoryCode
+) {
+
+    fun resolveParentsCodes(): List<CategoryCode> {
+        return code.value.toCharArray().map {
+            CategoryCode(it.toString())
+        }
+    }
+}

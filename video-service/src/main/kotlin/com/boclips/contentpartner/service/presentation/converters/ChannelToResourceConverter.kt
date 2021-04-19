@@ -63,7 +63,7 @@ class ChannelToResourceConverter(
                 contractName = channel.contract?.contentPartnerName,
                 categories = channel.categories?.map { category ->
                     TaxonomyCategoryResource(
-                        codeValue = category.codeValue,
+                        codeValue = category.codeValue.value,
                         description = category.description
                     )
                 },

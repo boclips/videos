@@ -2,13 +2,11 @@ package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
 import com.boclips.videos.service.infrastructure.taxonomy.TaxonomyNodeDocument
 import org.bson.types.ObjectId
 
 object TaxonomyDocumentConverter {
     fun toDocument(category: Category): TaxonomyNodeDocument {
-
         return TaxonomyNodeDocument(
             id = ObjectId(),
             codeValue = category.code.value,
@@ -17,13 +15,11 @@ object TaxonomyDocumentConverter {
         )
     }
 
-
-    // TODO - to remove?
-    fun toTaxonomy(nodeDocument: TaxonomyNodeDocument): TaxonomyCategory {
-        return TaxonomyCategory(
-            codeValue = nodeDocument.codeValue,
+    fun toCategory(nodeDocument: TaxonomyNodeDocument): Category {
+        return Category(
+            code = CategoryCode(nodeDocument.codeValue),
             description = nodeDocument.codeDescription,
-            parentCode = nodeDocument.codeParent
+            parentCode = nodeDocument.codeParent?.let { CategoryCode(it) }
         )
     }
 
@@ -39,12 +35,12 @@ object TaxonomyDocumentConverter {
             return Category(
                 description = current.codeDescription,
                 code = CategoryCode(current.codeValue),
-                children = children.map { child ->
+                /*children = children.map { child ->
                     CategoryCode(child.codeValue) to buildTree(
                         nodeDocuments = filterRelevant(nodeDocuments, child.codeValue),
                         current = child
                     )
-                }.toMap(),
+                }.toMap(),*/
                 parentCode = current.codeParent?.let { CategoryCode(it) }
             )
         }
@@ -52,7 +48,7 @@ object TaxonomyDocumentConverter {
         return Category(
             description = current.codeDescription,
             code = CategoryCode(current.codeValue),
-            children = emptyMap(),
+            //children = emptyMap(),
             parentCode = current.codeParent?.let { CategoryCode(it) }
         )
     }
