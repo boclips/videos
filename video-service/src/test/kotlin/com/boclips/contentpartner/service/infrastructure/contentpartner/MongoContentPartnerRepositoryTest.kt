@@ -15,7 +15,8 @@ import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationT
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
@@ -332,10 +333,10 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                 ChannelUpdateCommand.ReplaceCategories(
                     channel.id,
                     setOf(
-                        TaxonomyCategoryWithAncestors(
-                            codeValue = "ABC",
+                        CategoryWithAncestors(
+                            codeValue = CategoryCode("ABC"),
                             description = "what a wonderful description",
-                            ancestors = setOf("A")
+                            ancestors = setOf(CategoryCode("A"))
                         )
                     )
                 )
@@ -343,9 +344,9 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.categories!!.first().codeValue).isEqualTo("ABC")
+        assertThat(updatedChannel?.categories!!.first().codeValue).isEqualTo(CategoryCode("ABC"))
         assertThat(updatedChannel.categories!!.first().description).isEqualTo("what a wonderful description")
-        assertThat(updatedChannel.categories!!.first().ancestors).isEqualTo(setOf("A"))
+        assertThat(updatedChannel.categories!!.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
     }
 
     @Nested
@@ -449,8 +450,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                     ChannelUpdateCommand.ReplaceCategories(
                         channelId = channel.id,
                         categories = setOf(
-                            TaxonomyCategoryWithAncestors(codeValue = "A", description = "Law", ancestors = emptySet()),
-                            TaxonomyCategoryWithAncestors(codeValue = "BC", description = "Interior Design", ancestors = emptySet())
+                            CategoryWithAncestors(codeValue = CategoryCode("A"), description = "Law", ancestors = emptySet()),
+                            CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "Interior Design", ancestors = emptySet())
                         )
                     )
                 )
@@ -458,8 +459,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
             val updatedChannel = mongoChannelRepository.findById(channel.id)!!
             assertThat(updatedChannel.categories).containsExactlyInAnyOrder(
-                TaxonomyCategoryWithAncestors(codeValue = "A", description = "Law"),
-                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "Interior Design")
+                CategoryWithAncestors(codeValue = CategoryCode("A"), description = "Law"),
+                CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "Interior Design")
             )
         }
 

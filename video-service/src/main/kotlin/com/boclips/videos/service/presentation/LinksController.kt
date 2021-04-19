@@ -42,7 +42,7 @@ class LinksController(
     private val distributionMethodsLinkBuilder: DistributionMethodsLinkBuilder,
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
-    private val taxonomyLinkBuilder: TaxonomyLinkBuilder,
+    private val categoryLinkBuilder: CategoryLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
     userService: UserService
@@ -95,7 +95,7 @@ class LinksController(
                 marketingStatusLinkBuilder.marketingStatuses(),
                 contentCategoriesLinkBuilder.contentCategories(),
 
-                taxonomyLinkBuilder.categories()
+                categoryLinkBuilder.categories()
             )
         )
     }

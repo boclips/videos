@@ -15,7 +15,8 @@ import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -67,8 +68,8 @@ class ChannelToResourceConverterTest {
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
             categories = listOf(
-                TaxonomyCategoryWithAncestors(codeValue = "ABC", description = "A description"),
-                TaxonomyCategoryWithAncestors(codeValue = "BC", description = "B description")
+                CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "A description"),
+                CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description")
             )
         )
 

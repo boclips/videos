@@ -3,19 +3,20 @@ package com.boclips.contentpartner.service.infrastructure.contentpartner
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
 import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
 import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.domain.model.channel.Remittance
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategoryWithAncestors
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -67,10 +68,10 @@ class ChannelDocumentConverterTest {
             ),
             contract = ContentPartnerContractFactory.sample(),
             categories = listOf(
-                TaxonomyCategoryWithAncestors(
-                    codeValue = "AB",
+                CategoryWithAncestors(
+                    codeValue = CategoryCode("AB"),
                     description = "A lovely lovely description",
-                    ancestors = setOf("A")
+                    ancestors = setOf(CategoryCode("A"))
                 )
             )
         )

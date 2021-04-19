@@ -18,8 +18,8 @@ import com.boclips.contentpartner.service.infrastructure.channel.ContentPartnerS
 import com.boclips.contentpartner.service.infrastructure.channel.MarketingInformationDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
-import com.boclips.videos.service.infrastructure.video.converters.TaxonomyCategoryWithAncestorsDocumentConverter
 import mu.KLogging
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
@@ -86,7 +86,7 @@ object ChannelDocumentConverter : KLogging() {
                 ContractDocumentConverter().toDocument(contract)
             },
             categories = channel.categories?.map { it ->
-                TaxonomyCategoryWithAncestorsDocumentConverter.toTaxonomyDocument(it)
+                CategoryWithAncestorsDocumentConverter.toDocument(it)
             }
         )
     }
@@ -160,7 +160,7 @@ object ChannelDocumentConverter : KLogging() {
             contract = document.contract?.let {
                 ContractDocumentConverter().toContract(it)
             },
-            categories = document.categories?.map { it -> TaxonomyCategoryWithAncestorsDocumentConverter.toTaxonomy(it) }
+            categories = document.categories?.map { it -> CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) }
         )
     }
 
