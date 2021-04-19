@@ -1,10 +1,11 @@
 package com.boclips.videos.service.domain.service.video
 
-import com.boclips.videos.service.domain.model.taxonomy.TaxonomyCategory
+import com.boclips.videos.service.domain.model.taxonomy.Category
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 
 interface TaxonomyRepository {
-    fun findAll(): List<TaxonomyCategory>
-    fun findByCode(codeValue: String): TaxonomyCategory?
-    fun create(taxonomyCategory: TaxonomyCategory): TaxonomyCategory
+    fun findAll(): List<Category>
+    fun findByCode(codeValue: CategoryCode): Category?
+    fun findByCode(codeValue: List<CategoryCode>): Category?
+    fun create(taxonomyCategory: Category): Category
 }
-

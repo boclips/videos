@@ -2,16 +2,15 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.response.taxonomy.TaxonomyResource
 import com.boclips.videos.api.response.taxonomy.TaxonomyTreeResource
-import com.boclips.videos.service.domain.model.taxonomy.Categories
 import com.boclips.videos.service.domain.model.taxonomy.Category
 
 object TaxonomyResourceConverter {
 
-    fun toResource(categories: Categories): TaxonomyResource {
+    fun toResource(categories: List<Category>): TaxonomyResource {
         return TaxonomyResource(
             _embedded = categories.map { parentTaxonomy ->
-                parentTaxonomy.key to
-                    convertTaxonomyTree(parentTaxonomy.value)
+                parentTaxonomy.code.value to
+                    convertTaxonomyTree(parentTaxonomy)
             }.toMap()
         )
     }
@@ -20,7 +19,7 @@ object TaxonomyResourceConverter {
         if (tree.children.isNotEmpty()) {
             return TaxonomyTreeResource(
                 children = tree.children.map { child ->
-                    child.key to convertTaxonomyTree(child.value)
+                    child.key.value to convertTaxonomyTree(child.value)
                 }.toMap(),
                 description = tree.description
             )

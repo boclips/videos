@@ -1,6 +1,6 @@
 package com.boclips.videos.service.application
 
-import com.boclips.videos.service.domain.model.taxonomy.Categories
+import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.service.taxonomy.TaxonomyService
 import org.springframework.stereotype.Component
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class GetAllCategories(
     private val taxonomyService: TaxonomyService
 ) {
-    operator fun invoke(): Categories {
+    operator fun invoke(): List<Category> {
         return taxonomyService.getCategories()
     }
 }
