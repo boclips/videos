@@ -27,10 +27,13 @@ class CategoryResourceConverterTest {
 
         val resource = CategoryResourceConverter.toResource(categories)
 
+        assertThat(resource._embedded).hasSize(2)
         assertThat(resource._embedded["A"]?.children).isEmpty()
         assertThat(resource._embedded["A"]?.description).isEqualTo("single BLAH")
         assertThat(resource._embedded["B"]?.description).isEqualTo("parent BLAH")
+        assertThat(resource._embedded["B"]?.children).hasSize(1)
         assertThat(resource._embedded["B"]!!.children["BA"]?.description).isEqualTo("child BLAH")
+        assertThat(resource._embedded["B"]!!.children["BA"]!!.children["BAA"]?.children).isEmpty()
         assertThat(resource._embedded["B"]!!.children["BA"]!!.children["BAA"]?.description).isEqualTo("grandchild BLAH")
     }
 }

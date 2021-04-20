@@ -9,7 +9,10 @@ object CategoryResourceConverter {
 
     fun toResource(categories: List<Category>): CategoryResource {
         return CategoryResource(
-            _embedded = categories.map { it.code.value to buildTree(categories, it) }.toMap()
+            _embedded = categories
+                .filter { it.isRootCategory() }
+                .map { it.code.value to buildTree(categories, it) }
+                .toMap()
         )
     }
 

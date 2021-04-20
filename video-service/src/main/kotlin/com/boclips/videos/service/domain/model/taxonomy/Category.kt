@@ -8,6 +8,8 @@ data class Category(
     val code: CategoryCode
 ) {
 
+    fun isRootCategory() = parentCode == null
+
     fun resolveAncestorsCodes(): Set<CategoryCode> =
         IntRange(1, code.value.length - 1).asSequence()
             .map { code.value.take(it) }
