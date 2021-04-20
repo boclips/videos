@@ -33,7 +33,7 @@ dependencies {
     implementation('com.github.boclips:boclips-spring-security:0.632.0')
     implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.32')
     implementation('com.fasterxml.jackson.core:jackson-databind:2.10.1')
-    implementation('org.springframework.boot:spring-boot-starter-validation:2.4.0')
+    implementation('org.springframework.boot:spring-boot-starter-validation:2.4.5')
 
 
     testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
