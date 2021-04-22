@@ -148,7 +148,7 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0')
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation('org.mockito:mockito-junit-jupiter:3.6.28')
+    testImplementation('org.mockito:mockito-junit-jupiter:3.9.0')
     testImplementation('org.yaml:snakeyaml:1.28')
     testImplementation('ru.lanwen.wiremock:wiremock-junit5:1.3.1')
     testImplementation('com.github.tomakehurst:wiremock-jre8:2.25.1')
