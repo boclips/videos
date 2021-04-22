@@ -62,7 +62,8 @@ class CreateVideoRequestToVideoConverter {
             attachments = emptyList(),
             contentWarnings = emptyList(),
             deactivated = false,
-            activeVideoId = null
+            activeVideoId = null,
+            categories = emptyMap()
         )
     }
 

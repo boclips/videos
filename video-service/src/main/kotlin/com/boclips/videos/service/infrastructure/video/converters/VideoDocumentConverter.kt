@@ -1,14 +1,17 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
 import com.boclips.videos.service.domain.model.AgeRange
-import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
 import com.boclips.videos.service.infrastructure.video.SourceDocument
+import com.boclips.videos.service.infrastructure.video.VideoCategoriesDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
@@ -56,7 +59,10 @@ object VideoDocumentConverter {
             attachments = video.attachments.map { AttachmentDocumentConverter.convert(it) },
             contentWarnings = video.contentWarnings?.map { ContentWarningDocumentConverter.toDocument(it) },
             deactivated = video.deactivated,
-            activeVideoId = video.activeVideoId?.let { it.value }
+            activeVideoId = video.activeVideoId?.let { it.value },
+            categories = VideoCategoriesDocument(
+                channel = video.channelCategories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }.toSet()
+            )
         )
     }
 
@@ -107,7 +113,8 @@ object VideoDocumentConverter {
             attachments = document.attachments.map { AttachmentDocumentConverter.convert(it) },
             contentWarnings = document.contentWarnings?.map { ContentWarningDocumentConverter.toContentWarning(it) },
             deactivated = document.deactivated ?: false,
-            activeVideoId = document.activeVideoId?.let { VideoId(it) }
+            activeVideoId = document.activeVideoId?.let { VideoId(it) },
+            categories = mapCategories(document.categories)
         )
     }
 
@@ -116,4 +123,11 @@ object VideoDocumentConverter {
             setManually = document.subjectsWereSetManually,
             items = document.subjects.map(SubjectDocumentConverter::toSubject).toSet()
         )
+
+    private fun mapCategories(categories: VideoCategoriesDocument?) =
+        categories?.let { categoriesDocument ->
+            mapOf(
+                CategorySource.CHANNEL to categoriesDocument.channel.map { CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) }.toSet()
+            )
+        } ?: emptyMap()
 }

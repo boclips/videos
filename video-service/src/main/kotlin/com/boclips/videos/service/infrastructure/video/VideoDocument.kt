@@ -4,7 +4,7 @@ import com.boclips.videos.service.infrastructure.attachment.AttachmentDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
-import java.util.Date
+import java.util.*
 
 data class VideoDocument(
     @BsonId val id: ObjectId,
@@ -33,6 +33,7 @@ data class VideoDocument(
     val subjectsWereSetManually: Boolean? = false,
     val contentWarnings: List<ContentWarningDocument>? = emptyList(),
     val deactivated: Boolean? = false,
-    val activeVideoId: String? = null
+    val activeVideoId: String? = null,
+    val categories: VideoCategoriesDocument? = null,
 )
 

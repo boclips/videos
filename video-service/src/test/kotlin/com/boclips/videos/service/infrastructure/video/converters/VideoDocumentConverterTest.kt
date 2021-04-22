@@ -3,15 +3,17 @@ package com.boclips.videos.service.infrastructure.video.converters
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AttachmentFactory
+import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory.createVideoDocument
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +23,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Locale
+import java.util.*
 
 class VideoDocumentConverterTest {
     @Test
@@ -73,7 +75,8 @@ class VideoDocumentConverterTest {
             promoted = true,
             contentWarnings = listOf(ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Warning 1")),
             deactivated = true,
-            activeVideoId = TestFactories.createVideoId()
+            activeVideoId = TestFactories.createVideoId(),
+            categories = mapOf(CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()))
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalVideo)

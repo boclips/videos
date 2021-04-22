@@ -3,10 +3,13 @@ package com.boclips.videos.service.application
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.model.AgeRange
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
 
@@ -58,11 +61,26 @@ class ChannelUpdated(private val videoRepository: VideoRepository) {
                     )
                 }
 
+                val updateCategories = contentPartner.categories?.let { categoriesWithAncestors ->
+                    VideoUpdateCommand.ReplaceCategories(
+                        videoId = video.videoId,
+                        source = CategorySource.CHANNEL,
+                        categories = categoriesWithAncestors.map {
+                            CategoryWithAncestors(
+                                codeValue = CategoryCode(it.code),
+                                description = it.description,
+                                ancestors = it.ancestors.map { ancestor -> CategoryCode(ancestor) }.toSet()
+                            )
+                        }.toSet()
+                    )
+                }
+
                 listOfNotNull(
                     updateContentPartner,
                     updateAgeRanges,
                     updateLegalRestrictions,
-                    updateLanguage
+                    updateLanguage,
+                    updateCategories
                 )
             }
         }

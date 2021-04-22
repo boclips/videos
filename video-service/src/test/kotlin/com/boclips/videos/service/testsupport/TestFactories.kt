@@ -44,6 +44,8 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.Tag
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.*
 import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.Topic
@@ -108,7 +110,8 @@ object TestFactories {
         attachments: List<Attachment> = emptyList(),
         contentWarnings: List<ContentWarning> = emptyList(),
         deactivated: Boolean = false,
-        activeVideoId: VideoId? = null
+        activeVideoId: VideoId? = null,
+        categories: Map<CategorySource, Set<CategoryWithAncestors>> = emptyMap()
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),
@@ -136,7 +139,8 @@ object TestFactories {
             attachments = attachments,
             contentWarnings = contentWarnings,
             deactivated = deactivated,
-            activeVideoId = activeVideoId
+            activeVideoId = activeVideoId,
+            categories = categories
         )
     }
 

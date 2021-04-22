@@ -4,6 +4,9 @@ import com.boclips.eventbus.domain.AgeRange
 import com.boclips.eventbus.domain.contentpartner.*
 import com.boclips.videos.service.domain.model.FixedAgeRange
 import com.boclips.videos.service.domain.model.UnknownAgeRange
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -12,6 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.Locale
+import com.boclips.eventbus.domain.category.CategoryWithAncestors as EventCategoryWithAncestors
 
 class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -38,8 +42,11 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
                         .legalRestrictions("some better restrictions")
                         .pedagogy(ChannelPedagogyDetails.builder().ageRange(AgeRange.builder().min(10).max(15).build()).build())
                         .ingest(ChannelIngestDetails.builder().type("MANUAL").build())
-                        .details(ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL")).language(
-                            Locale.JAPANESE).build())
+                        .details(
+                            ChannelTopLevelDetails.builder().contentTypes(listOf("NEWS", "INSTRUCTIONAL")).language(
+                                Locale.JAPANESE
+                            ).build()
+                        )
                         .build()
                 )
                 .build()
@@ -51,6 +58,37 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         assertThat(updatedVideo.legalRestrictions).isEqualTo("some better restrictions")
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(10, 15, curatedManually = false))
         assertThat(updatedVideo.voice.language).isEqualTo(Locale.JAPANESE)
+    }
+
+    @Test
+    fun `updates channel categories on videos`() {
+        val channel = TestFactories.createChannel(name = "test-999")
+        val video = videoRepository.create(TestFactories.createVideo(channel = channel))
+        val otherVideo = videoRepository.create(TestFactories.createVideo(channel = channel))
+
+        val musicCategory = EventCategoryWithAncestors.builder().code("M").description("Music").build()
+        fakeEventBus.publish(
+            com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
+                .contentPartner(
+                    Channel.builder()
+                        .id(ChannelId(channel.channelId.value))
+                        .categories(setOf(musicCategory))
+                        .name(channel.name)
+                        .build()
+                )
+                .build()
+        )
+
+        val updatedVideo = videoRepository.find(video.videoId)!!
+        val otherUpdatedVideo = videoRepository.find(otherVideo.videoId)!!
+        val expectedCategory = CategoryWithAncestors(
+            codeValue = CategoryCode(musicCategory.code),
+            description = musicCategory.description,
+            ancestors = emptySet()
+        )
+
+        assertThat(updatedVideo.categories!![CategorySource.CHANNEL]).containsOnly(expectedCategory)
+        assertThat(otherUpdatedVideo.categories!![CategorySource.CHANNEL]).containsOnly(expectedCategory)
     }
 
     @Test
@@ -82,7 +120,6 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedVideo.ageRange).isEqualTo(FixedAgeRange(min = 3, max = 5, curatedManually = true))
     }
-
 
     @Test
     fun `does not cascade down content type changes to videos`() {

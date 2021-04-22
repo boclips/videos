@@ -4,11 +4,14 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -139,6 +142,24 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
 
         assertThat(updatedAsset.title).isEqualTo("new title")
+    }
+
+    @Test
+    fun `update categories`() {
+        val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
+
+        val updatedAsset =
+            mongoVideoRepository.update(
+                VideoUpdateCommand.ReplaceCategories(
+                    videoId = originalAsset.videoId,
+                    categories = setOf(CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")),
+                    source = CategorySource.CHANNEL
+                )
+            )
+
+        assertThat(updatedAsset.channelCategories).containsOnly(
+            CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")
+        )
     }
 
     @Test
@@ -578,11 +599,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `check if video exists by title and content partner name`() {
         val video = mongoVideoRepository.create(
-                createVideo(
-                    title = "Video 1",
-                    channelName = "TestCP"
-                )
+            createVideo(
+                title = "Video 1",
+                channelName = "TestCP"
             )
+        )
 
         val matchedVideo = mongoVideoRepository.findVideoByTitleFromChannelName(
             channelName = "TestCP",
@@ -629,9 +650,11 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("title", "Mah Video")
                         .append("description", "Ain't no video like this one")
                         .append(
-                            "source", Document()
+                            "source",
+                            Document()
                                 .append(
-                                    "channel", Document()
+                                    "channel",
+                                    Document()
                                         .append("name", "cp-name")
                                         .append("_id", ObjectId())
                                 )
@@ -665,16 +688,19 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("title", "Mah Video")
                         .append("description", "Ain't no video like this one")
                         .append(
-                            "source", Document()
+                            "source",
+                            Document()
                                 .append(
-                                    "channel", Document()
+                                    "channel",
+                                    Document()
                                         .append("name", "cp-name")
                                         .append("_id", ObjectId())
                                 )
                                 .append("videoReference", "ref")
                         )
                         .append(
-                            "playback", Document()
+                            "playback",
+                            Document()
                                 .append("id", "some-id")
                                 .append("type", "KALTURA")
                                 .append("thumbnailUrl", listOf("thumbnail"))

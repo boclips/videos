@@ -5,6 +5,8 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.LocalDate
@@ -33,8 +35,8 @@ data class Video(
     override val attachments: List<Attachment>,
     override val contentWarnings: List<ContentWarning>?,
     override val deactivated: Boolean,
-    override val activeVideoId: VideoId?
-
+    override val activeVideoId: VideoId?,
+    override val categories: Map<CategorySource, Set<CategoryWithAncestors>>
 ) : BaseVideo {
     override fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback
@@ -63,4 +65,7 @@ data class Video(
     override fun isVoiced(): Boolean? {
         return voice.isVoiced()
     }
+
+    val channelCategories
+        get() = this.categories?.let { it[CategorySource.CHANNEL] } ?: emptySet()
 }

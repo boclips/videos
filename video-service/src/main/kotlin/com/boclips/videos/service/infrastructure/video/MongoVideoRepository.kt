@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoId
@@ -13,6 +14,7 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -245,11 +247,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::subjects,
                 updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)
             )
-            is VideoUpdateCommand.ReplaceContentTypes -> set(
+            is ReplaceContentTypes -> set(
                 VideoDocument::contentTypes,
                 updateCommand.types.map { it.name }
             )
-            is VideoUpdateCommand.RemoveSubject -> pullByFilter(
+            is RemoveSubject -> pullByFilter(
                 VideoDocument::subjects,
                 SubjectDocument::id eq ObjectId(updateCommand.subjectId.value)
             )
@@ -297,28 +299,34 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::subjectsWereSetManually,
                 updateCommand.subjectsWereSetManually
             )
-            is VideoUpdateCommand.ReplaceAttachments -> set(
+            is ReplaceAttachments -> set(
                 VideoDocument::attachments,
                 updateCommand.attachments.map(AttachmentDocumentConverter::convert)
             )
-            is VideoUpdateCommand.RemoveAttachments -> set(
+            is RemoveAttachments -> set(
                 VideoDocument::attachments, emptyList()
             )
-            is VideoUpdateCommand.ReplaceThumbnailSecond -> set(
+            is ReplaceThumbnailSecond -> set(
                 VideoDocument::playback / PlaybackDocument::thumbnailSecond,
                 updateCommand.thumbnailSecond
             )
-            is VideoUpdateCommand.ReplaceCustomThumbnail -> set(
+            is ReplaceCustomThumbnail -> set(
                 VideoDocument::playback / PlaybackDocument::customThumbnail,
                 updateCommand.customThumbnail
             )
-            is VideoUpdateCommand.ReplaceContentWarnings -> set(
+            is ReplaceContentWarnings -> set(
                 VideoDocument::contentWarnings,
                 updateCommand.contentWarnings.map { ContentWarningDocumentConverter.toDocument(it) }
             )
-            is VideoUpdateCommand.MarkAsDuplicate -> set(
+            is MarkAsDuplicate -> set(
                 SetTo(VideoDocument::activeVideoId, ObjectId(updateCommand.activeVideoId.value)),
                 SetTo(VideoDocument::deactivated, true)
+            )
+            is ReplaceCategories -> set((
+                VideoDocument::categories / when (updateCommand.source) {
+                    CategorySource.CHANNEL -> VideoCategoriesDocument::channel
+                }),
+                updateCommand.categories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }
             )
         }
     }
