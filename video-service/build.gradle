@@ -111,7 +111,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation('org.springframework.retry:spring-retry')
 
-    implementation("org.mongodb:mongo-java-driver:3.12.7")
+    implementation("org.mongodb:mongo-java-driver:3.12.8")
 
     implementation("io.micrometer:micrometer-core")
     implementation("io.micrometer:micrometer-registry-prometheus")
