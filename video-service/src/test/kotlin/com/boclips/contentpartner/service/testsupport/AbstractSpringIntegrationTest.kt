@@ -388,7 +388,7 @@ abstract class AbstractSpringIntegrationTest {
         return UriTemplate.fromTemplate(link)
     }
 
-    fun addTaxonomy(category: Category): Category {
+    fun addCategory(category: Category): Category {
         return taxonomyRepository.create(category = category)
     }
 }

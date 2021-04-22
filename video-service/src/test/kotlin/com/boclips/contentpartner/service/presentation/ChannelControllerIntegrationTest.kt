@@ -2,6 +2,7 @@ package com.boclips.contentpartner.service.presentation
 
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
+import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.channel.AgeRangeRequest
@@ -608,8 +609,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can update categories in channel`() {
-        addTaxonomy(CategoryFactory.sample(code = "A", description = "Law"))
-        addTaxonomy(CategoryFactory.sample(code = "BC", description = "Interior Design"))
+        addCategory(CategoryFactory.sample(code = "A", description = "Law"))
+        addCategory(CategoryFactory.sample(code = "BC", description = "Interior Design"))
 
         val channelId = saveChannel(name = "Test channel").id.value
         val channelUpdateRequest = """
