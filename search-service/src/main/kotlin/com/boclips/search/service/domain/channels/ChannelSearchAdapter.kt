@@ -37,4 +37,5 @@ abstract class ChannelSearchAdapter<T>(
     }
 
     abstract fun convert(document: T): ChannelMetadata
+
 }
