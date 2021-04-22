@@ -53,6 +53,7 @@ class EventConverter {
             .keywords(video.keywords)
             .sourceVideoReference(video.videoReference)
             .deactivated(video.deactivated)
+            .hasTranscript(video.hasTranscript())
             .build()
     }
 
