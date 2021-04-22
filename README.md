@@ -18,7 +18,7 @@ The video search query is owned by the search service. It's goal is to return re
 > To serve the ones that need it.
 
 If you are looking to integrate with the video-service, but you don't want to handle the HTTP requests yourselves,
-the video-service client HTTP  wrapper for the video service.
+the video-service client HTTP wrapper for the video service.
 
 The client is publicly distributed using [JitPack](https://jitpack.io/#boclips/videos).
 
@@ -27,7 +27,7 @@ The client is publicly distributed using [JitPack](https://jitpack.io/#boclips/v
 A new client is cut whenever CI tags the comment, which happens before any form of validation. 
 This means we can cut potentially broken versions of the client. We should change that. 
 
-# Development
+# Development 
 
 Download dependencies for development:
 ```
