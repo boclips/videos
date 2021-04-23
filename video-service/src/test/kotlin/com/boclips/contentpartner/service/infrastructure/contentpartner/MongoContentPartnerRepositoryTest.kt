@@ -326,7 +326,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `replace categories`() {
         val channel =
-            mongoChannelRepository.create(createChannel(categories = null))
+            mongoChannelRepository.create(createChannel(categories = emptyList()))
 
         mongoChannelRepository.update(
             listOf(
@@ -345,8 +345,8 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
         assertThat(updatedChannel?.categories!!.first().codeValue).isEqualTo(CategoryCode("ABC"))
-        assertThat(updatedChannel.categories!!.first().description).isEqualTo("what a wonderful description")
-        assertThat(updatedChannel.categories!!.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
+        assertThat(updatedChannel.categories.first().description).isEqualTo("what a wonderful description")
+        assertThat(updatedChannel.categories.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
     }
 
     @Nested

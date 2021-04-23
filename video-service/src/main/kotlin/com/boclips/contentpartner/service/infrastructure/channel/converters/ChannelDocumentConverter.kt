@@ -160,7 +160,7 @@ object ChannelDocumentConverter : KLogging() {
             contract = document.contract?.let {
                 ContractDocumentConverter().toContract(it)
             },
-            categories = document.categories?.map { it -> CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) }
+            categories = document.categories?.map { it -> CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) } ?: emptyList()
         )
     }
 

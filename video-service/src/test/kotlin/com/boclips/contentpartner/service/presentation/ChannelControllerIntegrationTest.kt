@@ -637,6 +637,40 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updating categories in channel triggers ChannelUpdated event`() {
+        addCategory(CategoryFactory.sample(code = "A", description = "Law"))
+        addCategory(CategoryFactory.sample(code = "BC", description = "Interior Design"))
+
+        val channelId = saveChannel(name = "Test channel").id.value
+        val channelUpdateRequest = """
+            {
+            "name": "Test channel",
+            "categories": ["A", "BC"]
+            }
+        """
+
+        mockMvc.perform(
+            patch("/v1/channels/$channelId")
+                .asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
+        )
+            .andExpect(status().isNoContent)
+
+        assertThat(fakeEventBus.getEventsOfType(ContentPartnerUpdated::class.java)).hasSize(1)
+        assertThat(fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.name).isEqualTo("Test channel")
+        val categoriesFromEvent = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
+        assertThat(categoriesFromEvent).hasSize(2)
+        val categoryA = categoriesFromEvent.first { it.code == "A" }
+        val categoryBC = categoriesFromEvent.first { it.code == "BC" }
+        assertThat(categoryA.code).isEqualTo("A")
+        assertThat(categoryA.description).isEqualTo("Law")
+        assertThat(categoryA.ancestors).isEmpty()
+        assertThat(categoryBC.code).isEqualTo("BC")
+        assertThat(categoryBC.description).isEqualTo("Interior Design")
+        assertThat(categoryBC.ancestors).containsOnly("B")
+    }
+
+    @Test
     fun `bad request when updating to a non-existent contract`() {
         val updatedContent = """
             {

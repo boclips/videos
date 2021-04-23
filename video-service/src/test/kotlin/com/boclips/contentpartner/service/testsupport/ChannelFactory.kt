@@ -55,7 +55,7 @@ object ChannelFactory {
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
         contract: Contract? = null,
-        categories: List<CategoryWithAncestors>? = null
+        categories: List<CategoryWithAncestors> = emptyList()
     ): Channel {
         return Channel(
             id = id,

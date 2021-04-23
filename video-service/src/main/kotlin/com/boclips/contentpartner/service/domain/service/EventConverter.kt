@@ -14,6 +14,7 @@ import com.boclips.contentpartner.service.domain.model.contract.ContractDates
 import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
 import com.boclips.eventbus.domain.AgeRange
+import com.boclips.eventbus.domain.category.CategoryWithAncestors
 import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.contentpartner.ChannelMarketingDetails
 import com.boclips.eventbus.domain.contentpartner.ChannelPedagogyDetails
@@ -25,8 +26,8 @@ import mu.KLogging
 import com.boclips.eventbus.domain.Subject as EventBusSubject
 import com.boclips.eventbus.domain.SubjectId as EventBusSubjectId
 import com.boclips.eventbus.domain.contentpartner.Channel as EventBusChannel
-import com.boclips.eventbus.domain.contentpartner.DistributionMethod as EventBusDistributionMethod
 import com.boclips.eventbus.domain.contentpartner.ChannelIngestDetails as EventBusIngestDetails
+import com.boclips.eventbus.domain.contentpartner.DistributionMethod as EventBusDistributionMethod
 import com.boclips.eventbus.domain.contract.Contract as EventBusContract
 import com.boclips.eventbus.domain.contract.ContractCosts as EventBusContractCosts
 import com.boclips.eventbus.domain.contract.ContractDates as EventBusContractDates
@@ -37,7 +38,8 @@ class EventConverter {
     companion object : KLogging()
 
     fun toContentPartnerPayload(
-        channel: Channel, allSubjects: List<Subject> = listOf()
+        channel: Channel,
+        allSubjects: List<Subject> = listOf()
     ): EventBusChannel {
         val subjects = channel.pedagogyInformation?.subjects?.mapNotNull {
             allSubjects.find { subject -> subject.id.value == it }
@@ -50,6 +52,15 @@ class EventConverter {
             .pedagogy(convertPedagogyDetails(channel.pedagogyInformation, subjects))
             .marketing(convertMarketingDetails(channel.marketingInformation))
             .ingest(toIngestDetailsPayload(channel))
+            .categories(
+                channel.categories.map { category ->
+                    CategoryWithAncestors.builder()
+                        .code(category.codeValue.value)
+                        .description(category.description)
+                        .ancestors(category.ancestors.map { it.value }.toSet())
+                        .build()
+                }.toSet()
+            )
             .build()
     }
 

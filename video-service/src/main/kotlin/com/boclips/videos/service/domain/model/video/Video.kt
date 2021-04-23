@@ -67,5 +67,5 @@ data class Video(
     }
 
     val channelCategories
-        get() = this.categories?.let { it[CategorySource.CHANNEL] } ?: emptySet()
+        get() = this.categories.let { it[CategorySource.CHANNEL] } ?: emptySet()
 }

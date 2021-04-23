@@ -66,7 +66,12 @@ class ChannelUpdatedTest : AbstractSpringIntegrationTest() {
         val video = videoRepository.create(TestFactories.createVideo(channel = channel))
         val otherVideo = videoRepository.create(TestFactories.createVideo(channel = channel))
 
-        val musicCategory = EventCategoryWithAncestors.builder().code("M").description("Music").build()
+        val musicCategory = EventCategoryWithAncestors.builder()
+            .code("M")
+            .description("Music")
+            .ancestors(emptySet())
+            .build()
+
         fakeEventBus.publish(
             com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated.builder()
                 .contentPartner(
