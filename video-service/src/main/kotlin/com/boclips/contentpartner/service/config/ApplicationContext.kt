@@ -57,8 +57,10 @@ class ApplicationContext(
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
     val subjectRepository: SubjectRepository,
     val eventConverter: EventConverter,
-    val eventBus: EventBus
-) {
+    val eventBus: EventBus,
+    val getCategoryWithAncestors: GetCategoryWithAncestors,
+
+    ) {
     @Bean
     fun getChannel(): GetChannel {
         return GetChannel(
@@ -79,7 +81,8 @@ class ApplicationContext(
             channelService,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contractRepository
+            contractRepository,
+            getCategoryWithAncestors
         )
     }
 

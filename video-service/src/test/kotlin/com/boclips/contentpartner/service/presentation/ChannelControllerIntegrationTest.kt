@@ -9,6 +9,7 @@ import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocument
 import com.boclips.videos.service.testsupport.CategoryFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -22,6 +23,8 @@ import org.hamcrest.Matchers.oneOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
+import org.litote.kmongo.json
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -636,6 +639,31 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.categories[*].description", containsInAnyOrder("Law", "Interior Design")))
     }
 
+    @Test
+    fun `can update videoLevelTagging`(){
+        addTaxonomy(CategoryFactory.sample(code = "ABC", description = "Law"))
+        val channelId = saveChannel(name = "Test channel", categories = listOf("ABC")).id.value
+        val channelUpdateRequest = """
+            {
+            "name": "Test channel",
+            "videoLevelTagging": true,
+            }
+        """
+
+        mockMvc.perform(
+                patch("/v1/channels/$channelId")
+                        .asBoclipsEmployee()
+                        .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
+        )
+                .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+                get("/v1/channels/$channelId")
+                        .asBoclipsEmployee()
+        )
+                .andExpect(jsonPath("$.categories", hasSize<Int>(2)))
+                .andExpect(jsonPath("$.videoLevelTagging", equalTo(true)))
+    }
     @Test
     fun `updating categories in channel triggers ChannelUpdated event`() {
         addCategory(CategoryFactory.sample(code = "A", description = "Law"))

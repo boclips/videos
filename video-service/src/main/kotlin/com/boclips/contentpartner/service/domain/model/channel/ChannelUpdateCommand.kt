@@ -79,4 +79,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
 
     class ReplaceCategories(channelId: ChannelId, val categories: Set<CategoryWithAncestors>) :
         ChannelUpdateCommand(channelId)
+
+
 }

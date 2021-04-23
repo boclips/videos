@@ -23,6 +23,9 @@ import com.boclips.contentpartner.service.presentation.converters.ContentPartner
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.service.application.GetCategoryWithAncestors
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
+import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
 import org.bson.types.ObjectId
 import java.util.Currency
 import java.util.Locale
@@ -31,8 +34,9 @@ class CreateChannel(
     private val channelService: ChannelService,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
-    private val contractRepository: ContractRepository
-) {
+    private val contractRepository: ContractRepository,
+    private val getCategoryWithAncestors: GetCategoryWithAncestors,
+    ) {
     operator fun invoke(upsertRequest: ChannelRequest): Channel {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
             AgeRangeId(rawAgeRangeId).let { ageRangeId ->
@@ -88,7 +92,8 @@ class CreateChannel(
                 )
             ),
             marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest),
-            contract = contract
+            contract = contract,
+            categories = upsertRequest.categories?.map{ it -> getCategoryWithAncestors(it) }
         )
 
         val createdChannelResult = channelService.create(channel)
