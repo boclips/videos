@@ -349,6 +349,28 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(updatedChannel.categories.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
     }
 
+    @Test
+    fun `replaces videoLevelTagging`(){
+        val channel = mongoChannelRepository.create(createChannel(videoLevelTagging=false,
+            categories = listOf(CategoryWithAncestors(
+                codeValue = CategoryCode("ABC"),
+                description = "i am a description",
+                ancestors = setOf(CategoryCode("BC"), CategoryCode("AB"))
+            ))
+        ))
+
+        mongoChannelRepository.update(
+            listOf(
+                ChannelUpdateCommand.ReplaceVideoLevelTagging(
+                    channel.id,
+                    true
+            )
+        ))
+
+        val updatedChannel = mongoChannelRepository.findById(channel.id)
+        assertThat(updatedChannel?.videoLevelTagging).isEqualTo(true)
+    }
+
     @Nested
     inner class OverridingDistributionMethods {
         @Test

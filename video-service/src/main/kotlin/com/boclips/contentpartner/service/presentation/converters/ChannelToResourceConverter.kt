@@ -67,6 +67,7 @@ class ChannelToResourceConverter(
                         description = category.description
                     )
                 },
+                videoLevelTagging = channel.videoLevelTagging,
                 _links = listOf(channelLinkBuilder.self(channel.id.value))
                     .map { it.rel to it }
                     .toMap()

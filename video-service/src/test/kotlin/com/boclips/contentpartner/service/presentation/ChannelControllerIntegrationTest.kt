@@ -637,6 +637,68 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can update videoLevelTagging`(){
+        addCategory(CategoryFactory.sample(code = "ABC", description = "Law"))
+        val channel = saveChannel(
+            name = "Test channel",
+            categories = listOf("ABC"),
+            videoLevelTagging = false
+        )
+        val channelId = channel.id.value
+
+        val channelUpdateRequest = """
+            {
+            "name": "Test channel",
+            "videoLevelTagging": true
+            }
+        """
+
+        mockMvc.perform(
+            patch("/v1/channels/$channelId")
+                .asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
+        )
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(
+            get("/v1/channels/$channelId")
+                .asBoclipsEmployee()
+        )
+            .andExpect(jsonPath("$.categories", hasSize<Int>(0)))
+            .andExpect(jsonPath("$.videoLevelTagging", equalTo(true)))
+    }
+
+    @Test
+    fun `updating videoLevelTagging in channel triggers ChannelUpdated event`(){
+        addCategory(CategoryFactory.sample(code = "ABC", description = "Law"))
+        val channel = saveChannel(
+            name = "Test channel",
+            categories = listOf("ABC"),
+            videoLevelTagging = false
+        )
+        val channelId = channel.id.value
+
+        val channelUpdateRequest = """
+            {
+            "name": "Test channel",
+            "videoLevelTagging": true
+            }
+        """
+
+        mockMvc.perform(
+            patch("/v1/channels/$channelId")
+                .asBoclipsEmployee()
+                .contentType(MediaType.APPLICATION_JSON).content(channelUpdateRequest)
+        )
+            .andExpect(status().isNoContent)
+
+        assertThat(fakeEventBus.getEventsOfType(ContentPartnerUpdated::class.java)).hasSize(1)
+        assertThat(fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.name).isEqualTo("Test channel")
+        val categoriesFromEvent = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
+        assertThat(categoriesFromEvent).hasSize(0)
+    }
+
+    @Test
     fun `updating categories in channel triggers ChannelUpdated event`() {
         addCategory(CategoryFactory.sample(code = "A", description = "Law"))
         addCategory(CategoryFactory.sample(code = "BC", description = "Interior Design"))

@@ -293,7 +293,9 @@ abstract class AbstractSpringIntegrationTest {
         curriculumAligned: String? = null,
         bestForTags: List<String>? = null,
         subjects: List<String>? = null,
-        contractId: String? = null
+        contractId: String? = null,
+        categories: List<String>? = null,
+        videoLevelTagging: Boolean? = null
     ): Channel {
         val contract = contractId ?: saveContract(name = UUID.randomUUID().toString()).id.value
         val createdContentPartner = createChannel(
@@ -317,7 +319,9 @@ abstract class AbstractSpringIntegrationTest {
                 curriculumAligned = curriculumAligned,
                 bestForTags = bestForTags,
                 subjects = subjects,
-                contractId = contract
+                contractId = contract,
+                categories = categories,
+                videoLevelTagging = videoLevelTagging
             )
         )
 

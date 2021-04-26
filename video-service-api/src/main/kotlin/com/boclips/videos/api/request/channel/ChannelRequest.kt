@@ -39,7 +39,8 @@ data class ChannelRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val subjects: List<String>? = null,
     val contractId: String? = null,
-    val categories: List<String>? = null
+    val categories: List<String>? = null,
+    val videoLevelTagging: Boolean? = null,
 )
 
 

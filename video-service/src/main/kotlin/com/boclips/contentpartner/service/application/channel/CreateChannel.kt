@@ -88,7 +88,8 @@ class CreateChannel(
                 )
             ),
             marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest),
-            contract = contract
+            contract = contract,
+            videoLevelTagging = upsertRequest.videoLevelTagging
         )
 
         val createdChannelResult = channelService.create(channel)

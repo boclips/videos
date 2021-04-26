@@ -60,7 +60,8 @@ class ChannelUpdatesConverter(
                 commandCreator.updateIngestDetails(),
                 commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
-                commandCreator.updateCategories(getCategoryWithAncestors)
+                commandCreator.updateCategories(getCategoryWithAncestors),
+                commandCreator.updateVideoLevelTagging(),
             )
         }
 }
@@ -214,10 +215,19 @@ class ChannelUpdateCommandCreator(
         }
 
     fun updateCategories(getCategoryWithAncestors: GetCategoryWithAncestors): ChannelUpdateCommand.ReplaceCategories? {
+        if(channelRequest.videoLevelTagging == true) {
+            return ChannelUpdateCommand.ReplaceCategories(id, emptySet())
+        }
+
         val categories = channelRequest.categories?.map { categoryCode ->
             getCategoryWithAncestors(categoryCode)
         }?.toSet()
 
         return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }
     }
+
+    fun updateVideoLevelTagging(): ChannelUpdateCommand.ReplaceVideoLevelTagging? =
+        channelRequest.videoLevelTagging?.let {
+            ChannelUpdateCommand.ReplaceVideoLevelTagging(id, it)
+        }
 }

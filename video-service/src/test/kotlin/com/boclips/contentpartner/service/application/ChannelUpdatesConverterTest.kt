@@ -337,4 +337,18 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
             )
         )
     }
+    @Test
+    fun `creates command for updating videoLevelTagging`() {
+        val commands = channelUpdatesConverter.convert(
+            id = originalChannel.id,
+            upsertChannelRequest = ChannelRequest(
+                videoLevelTagging = true
+            )
+        )
+
+        val command =
+            commands.find { it is ChannelUpdateCommand.ReplaceVideoLevelTagging } as ChannelUpdateCommand.ReplaceVideoLevelTagging
+
+        assertThat(command.videoLevelTagging).isEqualTo(true)
+    }
 }

@@ -55,6 +55,9 @@ data class ChannelResource(
     @get:JsonView(BoclipsInternalProjection::class)
     val categories: List<TaxonomyCategoryResource>? = null,
 
+    @get:JsonView(BoclipsInternalProjection::class)
+    val videoLevelTagging: Boolean? = null,
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null
 )

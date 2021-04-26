@@ -25,7 +25,8 @@ data class Channel(
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
     val contract: Contract?,
-    val categories: List<CategoryWithAncestors> = emptyList()
+    val categories: List<CategoryWithAncestors> = emptyList(),
+    val videoLevelTagging: Boolean?
 ) {
     val currency = contract?.remittanceCurrency ?: remittance?.currency
 

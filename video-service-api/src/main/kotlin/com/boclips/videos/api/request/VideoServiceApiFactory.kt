@@ -121,7 +121,9 @@ class VideoServiceApiFactory {
             bestForTags: List<String>? = null,
             subjects: List<String>? = null,
             contentTypes: List<String>? = null,
-            contractId: String? = null
+            contractId: String? = null,
+            categories: List<String>? = null,
+            videoLevelTagging: Boolean? = null
         ): ChannelRequest {
             return ChannelRequest(
                 name = name,
@@ -145,7 +147,9 @@ class VideoServiceApiFactory {
                 bestForTags = bestForTags,
                 subjects = subjects,
                 contentTypes = contentTypes,
-                contractId = contractId
+                contractId = contractId,
+                categories = categories,
+                videoLevelTagging = videoLevelTagging
             )
         }
 

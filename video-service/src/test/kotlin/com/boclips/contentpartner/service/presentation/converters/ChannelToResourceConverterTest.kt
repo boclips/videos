@@ -70,7 +70,8 @@ class ChannelToResourceConverterTest {
             categories = listOf(
                 CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "A description"),
                 CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description")
-            )
+            ),
+            videoLevelTagging = false
         )
 
         val channelResource = channelToResourceConverter.convert(channel, Projection.details)
@@ -106,6 +107,7 @@ class ChannelToResourceConverterTest {
             TaxonomyCategoryResource(codeValue = "ABC", "A description"),
             TaxonomyCategoryResource(codeValue = "BC", "B description")
         )
+        assertThat(channelResource.videoLevelTagging).isFalse()
     }
 
     @Test

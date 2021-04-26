@@ -73,7 +73,8 @@ class ChannelDocumentConverterTest {
                     description = "A lovely lovely description",
                     ancestors = setOf(CategoryCode("A"))
                 )
-            )
+            ),
+            videoLevelTagging = false
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

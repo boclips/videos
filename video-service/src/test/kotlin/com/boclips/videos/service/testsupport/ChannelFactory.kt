@@ -23,7 +23,8 @@ class ChannelFactory {
                 deliveryFrequency = null,
                 pedagogyInformation = null,
                 marketingInformation = null,
-                contract = null
+                contract = null,
+                videoLevelTagging = null
             )
         }
 

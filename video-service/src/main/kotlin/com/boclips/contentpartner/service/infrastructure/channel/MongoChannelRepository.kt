@@ -241,6 +241,11 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::categories,
                 updateCommand.categories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }
             )
+            is ChannelUpdateCommand.ReplaceVideoLevelTagging ->
+                set(
+                        ChannelDocument::videoLevelTagging,
+                        updateCommand.videoLevelTagging
+            )
         }
 
         return combine(update, set(ChannelDocument::lastModified, Instant.now()))

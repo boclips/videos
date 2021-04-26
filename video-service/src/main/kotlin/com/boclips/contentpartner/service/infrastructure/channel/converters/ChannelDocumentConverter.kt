@@ -87,7 +87,8 @@ object ChannelDocumentConverter : KLogging() {
             },
             categories = channel.categories?.map { it ->
                 CategoryWithAncestorsDocumentConverter.toDocument(it)
-            }
+            },
+            videoLevelTagging = channel.videoLevelTagging
         )
     }
 
@@ -160,7 +161,8 @@ object ChannelDocumentConverter : KLogging() {
             contract = document.contract?.let {
                 ContractDocumentConverter().toContract(it)
             },
-            categories = document.categories?.map { it -> CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) } ?: emptyList()
+            categories = document.categories?.map { it -> CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) } ?: emptyList(),
+            videoLevelTagging = document.videoLevelTagging
         )
     }
 
