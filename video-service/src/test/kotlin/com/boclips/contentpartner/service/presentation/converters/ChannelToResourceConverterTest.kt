@@ -1,10 +1,6 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
-import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.channel.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
@@ -67,11 +63,10 @@ class ChannelToResourceConverterTest {
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
-            categories = listOf(
+            taxonomy = Taxonomy.ChannelLevelTagging(categories = setOf(
                 CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "A description"),
-                CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description")
+                CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description"))
             ),
-            videoLevelTagging = false
         )
 
         val channelResource = channelToResourceConverter.convert(channel, Projection.details)

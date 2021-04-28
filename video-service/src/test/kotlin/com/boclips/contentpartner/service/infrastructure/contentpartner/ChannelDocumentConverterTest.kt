@@ -1,17 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelStatus
-import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
-import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
-import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannelDocument
@@ -24,8 +14,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URL
 import java.time.Period
-import java.util.Currency
-import java.util.Locale
+import java.util.*
 
 class ChannelDocumentConverterTest {
 
@@ -67,14 +56,15 @@ class ChannelDocumentConverterTest {
                 )
             ),
             contract = ContentPartnerContractFactory.sample(),
-            categories = listOf(
-                CategoryWithAncestors(
-                    codeValue = CategoryCode("AB"),
-                    description = "A lovely lovely description",
-                    ancestors = setOf(CategoryCode("A"))
+            taxonomy = Taxonomy.ChannelLevelTagging(
+                categories = setOf(
+                    CategoryWithAncestors(
+                        codeValue = CategoryCode("AB"),
+                        description = "A lovely lovely description",
+                        ancestors = setOf(CategoryCode("A"))
+                    )
                 )
-            ),
-            videoLevelTagging = false
+            )
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

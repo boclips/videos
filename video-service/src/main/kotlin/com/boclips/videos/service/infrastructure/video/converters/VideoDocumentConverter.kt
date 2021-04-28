@@ -1,23 +1,19 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
+import com.boclips.contentpartner.service.infrastructure.channel.ChannelCategoriesDocumentConverter
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
+import com.boclips.videos.service.infrastructure.taxonomy.VideoCategoriesDocumentConverter
 import com.boclips.videos.service.infrastructure.video.SourceDocument
 import com.boclips.videos.service.infrastructure.video.VideoCategoriesDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 object VideoDocumentConverter {
     fun toVideoDocument(video: Video): VideoDocument {
@@ -61,7 +57,7 @@ object VideoDocumentConverter {
             deactivated = video.deactivated,
             activeVideoId = video.activeVideoId?.let { it.value },
             categories = VideoCategoriesDocument(
-                channel = video.channelCategories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }.toSet()
+                channel = video.channelCategories.map { ChannelCategoriesDocumentConverter.toDocument(it) }.toSet()
             )
         )
     }
@@ -127,7 +123,11 @@ object VideoDocumentConverter {
     private fun mapCategories(categories: VideoCategoriesDocument?) =
         categories?.let { categoriesDocument ->
             mapOf(
-                CategorySource.CHANNEL to categoriesDocument.channel.map { CategoryWithAncestorsDocumentConverter.toCategoryWithAncestors(it) }.toSet()
+                CategorySource.CHANNEL to categoriesDocument.channel.map {
+                    VideoCategoriesDocumentConverter.fromDocument(
+                        it
+                    )
+                }.toSet()
             )
         } ?: emptyMap()
 }

@@ -4,12 +4,14 @@ import com.boclips.contentpartner.service.application.channel.ContentCategoryCon
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.channel.toLanguageResource
+import com.boclips.videos.service.domain.model.taxonomy.Category
 
 class ChannelToResourceConverter(
     private val channelLinkBuilder: ChannelLinkBuilder,
@@ -61,13 +63,17 @@ class ChannelToResourceConverter(
                 ),
                 contractId = channel.contract?.id?.value,
                 contractName = channel.contract?.contentPartnerName,
-                categories = channel.categories?.map { category ->
-                    TaxonomyCategoryResource(
-                        codeValue = category.codeValue.value,
-                        description = category.description
-                    )
-                },
-                videoLevelTagging = channel.videoLevelTagging,
+                categories = channel.taxonomy?.let{
+                    when(it) {
+                        is Taxonomy.ChannelLevelTagging -> it.categories?.map { category ->
+                            TaxonomyCategoryResource(
+                                codeValue = category.codeValue.value,
+                                description = category.description
+                            )
+                    }
+                        is Taxonomy.VideoLevelTagging -> emptyList()
+                }},
+                videoLevelTagging = channel.taxonomy is Taxonomy.VideoLevelTagging,
                 _links = listOf(channelLinkBuilder.self(channel.id.value))
                     .map { it.rel to it }
                     .toMap()

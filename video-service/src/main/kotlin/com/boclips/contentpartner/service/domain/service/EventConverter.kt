@@ -1,13 +1,6 @@
 package com.boclips.contentpartner.service.domain.service
 
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
-import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contract.ContractDates
@@ -53,13 +46,13 @@ class EventConverter {
             .marketing(convertMarketingDetails(channel.marketingInformation))
             .ingest(toIngestDetailsPayload(channel))
             .categories(
-                channel.categories.map { category ->
+                (channel.taxonomy as? Taxonomy.ChannelLevelTagging)?.categories?.map { category ->
                     CategoryWithAncestors.builder()
                         .code(category.codeValue.value)
                         .description(category.description)
                         .ancestors(category.ancestors.map { it.value }.toSet())
                         .build()
-                }.toSet()
+                }?.toSet() ?: emptySet()
             )
             .build()
     }
