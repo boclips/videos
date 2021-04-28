@@ -1,14 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -343,32 +336,38 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.categories!!.first().codeValue).isEqualTo(CategoryCode("ABC"))
-        assertThat(updatedChannel.categories.first().description).isEqualTo("what a wonderful description")
-        assertThat(updatedChannel.categories.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
+        val taxonomy = mongoChannelRepository.findById(channel.id)!!.taxonomy as Taxonomy.ChannelLevelTagging
+        assertThat(taxonomy.categories.first().codeValue).isEqualTo(CategoryCode("ABC"))
+        assertThat(taxonomy.categories.first().description).isEqualTo("what a wonderful description")
+        assertThat(taxonomy.categories.first().ancestors).isEqualTo(setOf(CategoryCode("A")))
     }
 
     @Test
-    fun `replaces videoLevelTagging`(){
-        val channel = mongoChannelRepository.create(createChannel(videoLevelTagging=false,
-            categories = listOf(CategoryWithAncestors(
-                codeValue = CategoryCode("ABC"),
-                description = "i am a description",
-                ancestors = setOf(CategoryCode("BC"), CategoryCode("AB"))
-            ))
-        ))
+    fun `replaces videoLevelTagging`() {
+        val channel = mongoChannelRepository.create(
+            createChannel(
+                videoLevelTagging = false,
+                categories = listOf(
+                    CategoryWithAncestors(
+                        codeValue = CategoryCode("ABC"),
+                        description = "i am a description",
+                        ancestors = setOf(CategoryCode("BC"), CategoryCode("AB"))
+                    )
+                )
+            )
+        )
 
         mongoChannelRepository.update(
             listOf(
                 ChannelUpdateCommand.ReplaceVideoLevelTagging(
                     channel.id,
                     true
+                )
             )
-        ))
+        )
 
         val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.videoLevelTagging).isEqualTo(true)
+        assertThat(updatedChannel?.taxonomy).isInstanceOf(Taxonomy.VideoLevelTagging::class.java)
     }
 
     @Nested
@@ -472,15 +471,24 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                     ChannelUpdateCommand.ReplaceCategories(
                         channelId = channel.id,
                         categories = setOf(
-                            CategoryWithAncestors(codeValue = CategoryCode("A"), description = "Law", ancestors = emptySet()),
-                            CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "Interior Design", ancestors = emptySet())
+                            CategoryWithAncestors(
+                                codeValue = CategoryCode("A"),
+                                description = "Law",
+                                ancestors = emptySet()
+                            ),
+                            CategoryWithAncestors(
+                                codeValue = CategoryCode("BC"),
+                                description = "Interior Design",
+                                ancestors = emptySet()
+                            )
                         )
                     )
                 )
             )
 
-            val updatedChannel = mongoChannelRepository.findById(channel.id)!!
-            assertThat(updatedChannel.categories).containsExactlyInAnyOrder(
+            val taxonomy = mongoChannelRepository.findById(channel.id)!!.taxonomy as Taxonomy.ChannelLevelTagging
+
+            assertThat(taxonomy.categories).containsExactlyInAnyOrder(
                 CategoryWithAncestors(codeValue = CategoryCode("A"), description = "Law"),
                 CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "Interior Design")
             )

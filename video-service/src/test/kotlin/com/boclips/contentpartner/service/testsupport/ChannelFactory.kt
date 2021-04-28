@@ -9,6 +9,7 @@ import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRes
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
+import com.boclips.contentpartner.service.infrastructure.channel.TaxonomyDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
@@ -46,8 +47,7 @@ object ChannelFactory {
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
         contract: Contract? = null,
-        categories: List<CategoryWithAncestors> = emptyList(),
-        videoLevelTagging: Boolean? = null
+        taxonomy: Taxonomy? = null
     ): Channel {
         return Channel(
             id = id,
@@ -67,8 +67,7 @@ object ChannelFactory {
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation,
             contract = contract,
-            categories = categories,
-            videoLevelTagging = videoLevelTagging
+            taxonomy = taxonomy
         )
     }
 
@@ -101,7 +100,8 @@ object ChannelFactory {
         ingest: IngestDetailsDocument? = null,
         isTranscriptProvided: Boolean? = null,
         ageRanges: List<AgeRangeDocument>? = emptyList(),
-        contract: ContractDocument? = null
+        contract: ContractDocument? = null,
+        taxonomy: TaxonomyDocument? = null
     ) = ChannelDocument(
         id = objectId,
         name = name,
@@ -115,7 +115,8 @@ object ChannelFactory {
         ingest = ingest,
         ageRanges = ageRanges,
         isTranscriptProvided = isTranscriptProvided,
-        contract = contract
+        contract = contract,
+        taxonomy = taxonomy
     )
 
     fun createIngestDetailsResource(

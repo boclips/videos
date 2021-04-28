@@ -74,12 +74,13 @@ class ApplicationContext(
     }
 
     @Bean
-    fun createChannel(): CreateChannel {
+    fun createChannel(getCategoryWithAncestors: GetCategoryWithAncestors): CreateChannel {
         return CreateChannel(
             channelService,
             ageRangeRepository,
             ingestDetailsToResourceConverter(),
-            contractRepository
+            contractRepository,
+            getCategoryWithAncestors
         )
     }
 

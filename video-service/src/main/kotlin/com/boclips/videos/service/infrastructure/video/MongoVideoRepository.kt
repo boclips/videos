@@ -14,7 +14,7 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.channel.ChannelCategoriesDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -326,7 +326,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::categories / when (updateCommand.source) {
                     CategorySource.CHANNEL -> VideoCategoriesDocument::channel
                 }),
-                updateCommand.categories.map { CategoryWithAncestorsDocumentConverter.toDocument(it) }
+                updateCommand.categories.map { ChannelCategoriesDocumentConverter.toDocument(it) }
             )
         }
     }

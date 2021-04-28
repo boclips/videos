@@ -1,21 +1,10 @@
 package com.boclips.contentpartner.service.application.channel
 
-import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
-import com.boclips.contentpartner.service.application.exceptions.ChannelHubspotIdException
-import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
-import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
-import com.boclips.contentpartner.service.application.exceptions.MissingContractException
+import com.boclips.contentpartner.service.application.exceptions.*
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.service.channel.ChannelService
@@ -23,15 +12,16 @@ import com.boclips.contentpartner.service.presentation.converters.ContentPartner
 import com.boclips.contentpartner.service.presentation.converters.DistributionMethodResourceConverter
 import com.boclips.contentpartner.service.presentation.converters.IngestDetailsResourceConverter
 import com.boclips.videos.api.request.channel.ChannelRequest
+import com.boclips.videos.service.application.GetCategoryWithAncestors
 import org.bson.types.ObjectId
-import java.util.Currency
-import java.util.Locale
+import java.util.*
 
 class CreateChannel(
     private val channelService: ChannelService,
     private val ageRangeRepository: AgeRangeRepository,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
-    private val contractRepository: ContractRepository
+    private val contractRepository: ContractRepository,
+    private val getCategoryWithAncestors: GetCategoryWithAncestors
 ) {
     operator fun invoke(upsertRequest: ChannelRequest): Channel {
         val ageRanges = upsertRequest.ageRanges.orEmpty().map { rawAgeRangeId ->
@@ -89,12 +79,16 @@ class CreateChannel(
             ),
             marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest),
             contract = contract,
-            videoLevelTagging = upsertRequest.videoLevelTagging
+            taxonomy = if (upsertRequest.videoLevelTagging == true) {
+                Taxonomy.VideoLevelTagging
+            } else {
+                Taxonomy.ChannelLevelTagging(categories = upsertRequest.categories?.map { categoryCode ->
+                    getCategoryWithAncestors(categoryCode)
+                }?.toSet() ?: emptySet())
+            },
         )
 
-        val createdChannelResult = channelService.create(channel)
-
-        return when (createdChannelResult) {
+        return when (val createdChannelResult = channelService.create(channel)) {
             is CreateChannelResult.Success -> createdChannelResult.channel
             is CreateChannelResult.NameConflict -> throw ChannelConflictException(createdChannelResult.name)
             is CreateChannelResult.HubSpotIdConflict -> throw ChannelHubspotIdException(createdChannelResult.hubSpotId)
