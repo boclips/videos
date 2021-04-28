@@ -24,7 +24,7 @@ class ChannelFactory {
                 pedagogyInformation = null,
                 marketingInformation = null,
                 contract = null,
-                videoLevelTagging = null
+                taxonomy = null
             )
         }
 

@@ -319,7 +319,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `replace categories`() {
         val channel =
-            mongoChannelRepository.create(createChannel(categories = emptyList()))
+            mongoChannelRepository.create(createChannel(taxonomy = Taxonomy.ChannelLevelTagging(categories = emptySet())))
 
         mongoChannelRepository.update(
             listOf(
@@ -346,12 +346,13 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `replaces videoLevelTagging`() {
         val channel = mongoChannelRepository.create(
             createChannel(
-                videoLevelTagging = false,
-                categories = listOf(
-                    CategoryWithAncestors(
-                        codeValue = CategoryCode("ABC"),
-                        description = "i am a description",
-                        ancestors = setOf(CategoryCode("BC"), CategoryCode("AB"))
+                taxonomy = Taxonomy.ChannelLevelTagging(
+                    categories = setOf(
+                        CategoryWithAncestors(
+                            codeValue = CategoryCode("ABC"),
+                            description = "i am a description",
+                            ancestors = setOf(CategoryCode("BC"), CategoryCode("AB"))
+                        )
                     )
                 )
             )
@@ -463,7 +464,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         fun `replaces category`() {
             val channel = mongoChannelRepository.create(
                 createChannel(
-                    categories = emptyList()
+                    taxonomy = Taxonomy.ChannelLevelTagging(categories = emptySet())
                 )
             )
             mongoChannelRepository.update(
