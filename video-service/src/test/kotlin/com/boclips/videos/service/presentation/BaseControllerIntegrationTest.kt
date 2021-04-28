@@ -47,7 +47,7 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 UserResourceFactory.sample(
                     id = "hello",
                     organisation = OrganisationResourceFactory.sampleDetails(
-                        features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES to true)
+                        features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES.toString() to true)
                     )
                 )
             )

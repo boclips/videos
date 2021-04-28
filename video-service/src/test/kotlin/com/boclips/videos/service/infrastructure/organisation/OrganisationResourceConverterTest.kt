@@ -69,7 +69,7 @@ class OrganisationResourceConverterTest {
         val orgResource = OrganisationResourceFactory.sample(
             id = "my-org-id",
             organisationDetails = OrganisationResourceFactory.sampleDetails(
-                features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES to false)
+                features = mapOf(FeatureKeyResource.BO_WEB_APP_PRICES.toString() to false)
             ),
         )
 
