@@ -79,7 +79,7 @@ class CreateChannel(
             ),
             marketingInformation = ContentPartnerMarketingInformationConverter.convert(upsertRequest),
             contract = contract,
-            taxonomy = if (upsertRequest.videoLevelTagging == true) {
+            taxonomy = if (upsertRequest.requiresVideoLevelTagging == true) {
                 Taxonomy.VideoLevelTagging
             } else {
                 Taxonomy.ChannelLevelTagging(categories = upsertRequest.categories?.map { categoryCode ->

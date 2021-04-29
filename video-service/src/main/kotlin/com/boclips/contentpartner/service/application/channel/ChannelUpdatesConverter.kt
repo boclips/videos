@@ -61,7 +61,7 @@ class ChannelUpdatesConverter(
                 commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
                 commandCreator.updateCategories(getCategoryWithAncestors),
-                commandCreator.updateVideoLevelTagging(),
+                commandCreator.updateRequiresVideoLevelTagging(),
             )
         }
 }
@@ -215,7 +215,7 @@ class ChannelUpdateCommandCreator(
         }
 
     fun updateCategories(getCategoryWithAncestors: GetCategoryWithAncestors): ChannelUpdateCommand.ReplaceCategories? {
-        if(channelRequest.videoLevelTagging == true) {
+        if(channelRequest.requiresVideoLevelTagging == true) {
             return ChannelUpdateCommand.ReplaceCategories(id, emptySet())
         }
 
@@ -226,8 +226,8 @@ class ChannelUpdateCommandCreator(
         return categories?.let { ChannelUpdateCommand.ReplaceCategories(id, it) }
     }
 
-    fun updateVideoLevelTagging(): ChannelUpdateCommand.ReplaceVideoLevelTagging? =
-        channelRequest.videoLevelTagging?.let {
-            ChannelUpdateCommand.ReplaceVideoLevelTagging(id, it)
+    fun updateRequiresVideoLevelTagging(): ChannelUpdateCommand.ReplaceRequiresVideoLevelTagging? =
+        channelRequest.requiresVideoLevelTagging?.let {
+            ChannelUpdateCommand.ReplaceRequiresVideoLevelTagging(id, it)
         }
 }

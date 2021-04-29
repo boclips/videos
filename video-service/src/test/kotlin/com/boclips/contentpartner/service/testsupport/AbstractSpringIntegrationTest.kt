@@ -321,7 +321,7 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjects,
                 contractId = contract,
                 categories = categories,
-                videoLevelTagging = videoLevelTagging
+                requiresVideoLevelTagging = videoLevelTagging
             )
         )
 

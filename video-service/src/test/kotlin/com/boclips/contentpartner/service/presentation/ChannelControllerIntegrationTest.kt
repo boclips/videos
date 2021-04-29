@@ -631,9 +631,9 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             get("/v1/channels/$channelId")
                 .asBoclipsEmployee()
         )
-            .andExpect(jsonPath("$.categories", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.categories[*].codeValue", containsInAnyOrder("A", "BC")))
-            .andExpect(jsonPath("$.categories[*].description", containsInAnyOrder("Law", "Interior Design")))
+            .andExpect(jsonPath("$.taxonomy.categories", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.taxonomy.categories[*].codeValue", containsInAnyOrder("A", "BC")))
+            .andExpect(jsonPath("$.taxonomy.categories[*].description", containsInAnyOrder("Law", "Interior Design")))
     }
 
     @Test
@@ -649,7 +649,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val channelUpdateRequest = """
             {
             "name": "Test channel",
-            "videoLevelTagging": true
+            "requiresVideoLevelTagging": true
             }
         """
 
@@ -664,8 +664,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             get("/v1/channels/$channelId")
                 .asBoclipsEmployee()
         )
-            .andExpect(jsonPath("$.categories", hasSize<Int>(0)))
-            .andExpect(jsonPath("$.videoLevelTagging", equalTo(true)))
+            .andExpect(jsonPath("$.taxonomy.categories", equalTo(null)))
+            .andExpect(jsonPath("$.taxonomy.requiresVideoLevelTagging", equalTo(true)))
     }
 
     @Test
@@ -681,7 +681,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val channelUpdateRequest = """
             {
             "name": "Test channel",
-            "videoLevelTagging": true
+            "requiresVideoLevelTagging": true
             }
         """
 

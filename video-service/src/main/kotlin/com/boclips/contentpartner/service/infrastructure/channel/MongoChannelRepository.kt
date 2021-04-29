@@ -240,10 +240,10 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::taxonomy / TaxonomyDocument::categories,
                 updateCommand.categories.map { ChannelCategoriesDocumentConverter.toDocument(it) }
             )
-            is ChannelUpdateCommand.ReplaceVideoLevelTagging ->
+            is ChannelUpdateCommand.ReplaceRequiresVideoLevelTagging ->
                 set(
                         ChannelDocument::taxonomy / TaxonomyDocument::requiresVideoLevelTagging,
-                        updateCommand.videoLevelTagging
+                        updateCommand.requiresVideoLevelTagging
             )
         }
 

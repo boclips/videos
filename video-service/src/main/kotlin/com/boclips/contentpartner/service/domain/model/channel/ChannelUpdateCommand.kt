@@ -80,6 +80,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceCategories(channelId: ChannelId, val categories: Set<CategoryWithAncestors>) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceVideoLevelTagging(channelId: ChannelId, val videoLevelTagging: Boolean) :
+    class ReplaceRequiresVideoLevelTagging(channelId: ChannelId, val requiresVideoLevelTagging: Boolean) :
         ChannelUpdateCommand(channelId)
 }

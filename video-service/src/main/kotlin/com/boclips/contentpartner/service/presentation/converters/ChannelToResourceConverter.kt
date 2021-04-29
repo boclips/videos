@@ -63,17 +63,7 @@ class ChannelToResourceConverter(
                 ),
                 contractId = channel.contract?.id?.value,
                 contractName = channel.contract?.contentPartnerName,
-                categories = channel.taxonomy?.let{
-                    when(it) {
-                        is Taxonomy.ChannelLevelTagging -> it.categories?.map { category ->
-                            TaxonomyCategoryResource(
-                                codeValue = category.codeValue.value,
-                                description = category.description
-                            )
-                    }
-                        is Taxonomy.VideoLevelTagging -> emptyList()
-                }},
-                videoLevelTagging = channel.taxonomy is Taxonomy.VideoLevelTagging,
+                taxonomy = TaxonomyResourceConverter.toResource(channel.taxonomy),
                 _links = listOf(channelLinkBuilder.self(channel.id.value))
                     .map { it.rel to it }
                     .toMap()

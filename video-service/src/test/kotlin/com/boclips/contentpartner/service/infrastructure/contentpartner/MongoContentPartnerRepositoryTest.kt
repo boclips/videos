@@ -360,7 +360,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
         mongoChannelRepository.update(
             listOf(
-                ChannelUpdateCommand.ReplaceVideoLevelTagging(
+                ChannelUpdateCommand.ReplaceRequiresVideoLevelTagging(
                     channel.id,
                     true
                 )
