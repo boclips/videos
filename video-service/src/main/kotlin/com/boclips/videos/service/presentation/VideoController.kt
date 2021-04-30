@@ -181,7 +181,7 @@ class VideoController(
         return ResponseEntity(videosResource, HttpStatus.OK)
     }
 
-    @CrossOrigin(allowCredentials = "true")
+    @CrossOrigin(originPatterns = ["*"], allowCredentials = "true")
     @GetMapping("/v1/videos/{id}")
     fun getVideo(
         @PathVariable("id") id: String?,

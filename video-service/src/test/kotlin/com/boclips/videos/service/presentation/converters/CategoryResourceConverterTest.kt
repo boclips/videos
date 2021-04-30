@@ -2,7 +2,7 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.testsupport.CategoryFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CategoryResourceConverterTest {
 

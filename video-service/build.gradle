@@ -11,7 +11,7 @@ buildscript {
     }
 }
 plugins {
-    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'org.springframework.boot' version '2.4.5'
     id 'org.jetbrains.kotlin.jvm' version '1.4.32'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.4.32'
     id 'com.adarshr.test-logger' version '3.0.0'
@@ -96,15 +96,15 @@ dependencies {
     implementation project(':video-service-api')
     implementation project(':search-service')
 
-    implementation('org.springframework.boot:spring-boot-starter-validation:2.4.5')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.springframework.boot:spring-boot-starter-security:2.4.3")
-    implementation("org.springframework.security:spring-security-config:5.4.4")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security:spring-security-config:5.4.5")
     implementation("org.springframework.security:spring-security-core:5.4.5")
     implementation("org.springframework.security:spring-security-web:5.4.5")
-    implementation("org.springframework.boot:spring-boot-starter-tomcat:2.4.4")
+    implementation("org.springframework.boot:spring-boot-starter-tomcat")
     implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.45")
     implementation("org.apache.tomcat.embed:tomcat-embed-websocket:10.0.4")
 

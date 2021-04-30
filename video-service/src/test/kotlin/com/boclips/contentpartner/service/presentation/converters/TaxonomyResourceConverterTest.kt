@@ -4,7 +4,7 @@ import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 internal class TaxonomyResourceConverterTest {
     @Test
