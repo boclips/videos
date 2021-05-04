@@ -150,7 +150,7 @@
         <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-spring\-security\-adapter@.*$</packageUrl>
         <cve>CVE-2020-1728</cve>
     </suppress>
-    <suppress until="2021-05-01">
+    <suppress>
         <notes>
             Matching 1.4.0 even though fixed in 1.4.0.
         </notes>
