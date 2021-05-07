@@ -105,6 +105,7 @@ import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoDeletionService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -121,6 +122,7 @@ class ApplicationContext(
     val suggestionsRetrievalService: SuggestionsRetrievalService,
     val channelIndex: ChannelIndex,
     val videoRepository: VideoRepository,
+    val videoUpdateService: VideoUpdateService,
     val videoIndex: VideoIndex,
     val subjectIndex: SubjectIndex,
     val channelRepository: ChannelRepository,
@@ -208,7 +210,7 @@ class ApplicationContext(
 
     @Bean
     fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoRepository, subjectRepository, tagRepository, contentWarningRepository)
+        return UpdateVideo(videoUpdateService, videoRepository, subjectRepository, tagRepository, contentWarningRepository)
     }
 
     @Bean
@@ -472,7 +474,7 @@ class ApplicationContext(
     }
 
     @Bean
-    fun videoUpdateService(): VideoIndexUpdater {
+    fun videoIndexUpdater(): VideoIndexUpdater {
         return VideoIndexUpdater(
             videoRepository,
             videoChannelService,

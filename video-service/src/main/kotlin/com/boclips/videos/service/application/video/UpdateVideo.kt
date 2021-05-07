@@ -2,6 +2,7 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
+import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.tag.TagId
 import com.boclips.videos.service.domain.service.TagRepository
@@ -12,11 +13,13 @@ import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.video.VideoUpdateService
 import mu.KLogging
 import org.springframework.validation.annotation.Validated
 
 @Validated
 class UpdateVideo(
+    private val videoUpdateService: VideoUpdateService,
     private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository,
     private val tagRepository: TagRepository,
@@ -27,6 +30,7 @@ class UpdateVideo(
     operator fun invoke(id: String, updateRequest: UpdateVideoRequest, user: User) {
         if (user.isPermittedToUpdateVideo.not()) throw OperationForbiddenException()
         val videoId = VideoId(id)
+        val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
         val updateTitle = updateRequest.title
             ?.let { VideoUpdateCommand.ReplaceTitle(videoId, it) }
@@ -61,7 +65,8 @@ class UpdateVideo(
             }
         }
 
-        videoRepository.bulkUpdate(
+        videoUpdateService.update(
+            video,
             listOfNotNull(
                 updateTitle,
                 updateDescription,

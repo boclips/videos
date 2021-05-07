@@ -403,5 +403,35 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.playback._links.thumbnail.href", matchesPattern(".*/vid_slices/3/vid_slice/1")))
     }
+
+    @Test
+    fun `does not allow editing YT videos' title`() {
+        mockMvc.perform(
+            patch("/v1/videos/$youtubeVideoId")
+                .content("""{ "title": "New title" }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().is4xxClientError)
+
+        mockMvc.perform(get("/v1/videos/$youtubeVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.title", equalTo("elephants took out jobs")))
+    }
+
+    @Test
+    fun `does not allow editing YT videos' description`() {
+        mockMvc.perform(
+            patch("/v1/videos/$youtubeVideoId")
+                .content("""{ "description": "New description" }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().is4xxClientError)
+
+        mockMvc.perform(get("/v1/videos/$youtubeVideoId").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
+    }
 }
 

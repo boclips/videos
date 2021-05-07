@@ -33,6 +33,7 @@ import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.boclips.videos.service.domain.model.video.UnsupportedVideoUpdateException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.SortKey
@@ -319,7 +320,17 @@ class VideoController(
         @PathVariable id: String,
         @RequestBody updateRequest: UpdateVideoRequest
     ): ResponseEntity<VideoResource> {
-        return updateVideo(id, updateRequest, getCurrentUser()).let { this.getVideo(id) }
+        try {
+            return updateVideo(id, updateRequest, getCurrentUser()).let { this.getVideo(id) }
+        } catch (e: UnsupportedVideoUpdateException) {
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Error updating video",
+                    e.message ?: "Cannot update video with ID \"${id}\" ",
+                    HttpStatus.BAD_REQUEST
+                )
+            )
+        }
     }
 
     @PatchMapping(path = ["/v1/videos/{id}/playback"], params = ["thumbnailSecond"])

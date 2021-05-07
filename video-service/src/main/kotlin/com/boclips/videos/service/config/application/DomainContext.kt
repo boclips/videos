@@ -44,6 +44,7 @@ import com.boclips.videos.service.domain.service.video.VideoDuplicationService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoRepositoryEventDecorator
+import com.boclips.videos.service.domain.service.video.VideoUpdateService
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
@@ -98,6 +99,13 @@ class DomainContext(
         playbackRepository: PlaybackRepository
     ): VideoDeletionService {
         return VideoDeletionService(videoRepository, collectionRepository, videoIndex, playbackRepository)
+    }
+
+    @Bean
+    fun videoUpdateService(
+        videoRepository: VideoRepository
+    ): VideoUpdateService {
+        return VideoUpdateService(videoRepository)
     }
 
     @Bean
