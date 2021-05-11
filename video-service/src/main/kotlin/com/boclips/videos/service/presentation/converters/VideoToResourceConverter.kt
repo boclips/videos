@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
+import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
 import com.boclips.videos.api.response.video.PriceResource
@@ -89,6 +90,7 @@ class VideoToResourceConverter(
             },
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
+            categories = video.categories.map { TaxonomyCategoryResource(codeValue = it,.) },
             keywords = video.keywords,
             _links = (
                 resourceLinks(video.videoId.value) +
