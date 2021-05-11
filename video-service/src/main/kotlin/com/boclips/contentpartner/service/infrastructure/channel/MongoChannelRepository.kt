@@ -122,7 +122,8 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             name = it.name,
             id = it.id,
             eligibleForStream = it.distributionMethods.contains(DistributionMethod.STREAM),
-            contentTypes = it.contentTypes ?: emptyList()
+            contentTypes = it.contentTypes ?: emptyList(),
+            taxonomy = it.taxonomy
         )}
 
         consumer(sequence)

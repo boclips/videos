@@ -2,6 +2,7 @@ package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
@@ -160,12 +161,14 @@ object SearchableChannelMetadataFactory {
         id: String = "id1",
         name: String = "",
         eligibleForStream: Boolean = false,
-        contentTypes: List<ContentType> = emptyList()
+        contentTypes: List<ContentType> = emptyList(),
+        taxonomy: Taxonomy = Taxonomy(videoLevelTagging = true)
     ) = ChannelMetadata(
         id = id,
         name = name,
         eligibleForStream = eligibleForStream,
-        contentTypes = contentTypes
+        contentTypes = contentTypes,
+        taxonomy = taxonomy
     )
 }
 

@@ -4,5 +4,6 @@ data class ChannelMetadata(
     val id: String,
     val name: String,
     val eligibleForStream: Boolean,
-    val contentTypes: List<ContentType>
+    val contentTypes: List<ContentType>,
+    val taxonomy: Taxonomy
 )

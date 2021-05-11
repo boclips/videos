@@ -38,7 +38,8 @@ class ChannelService(
                     name = channel.name,
                     id = ChannelId(channel.id.value),
                     eligibleForStream = channel.isStreamable(),
-                    contentTypes = channel.contentTypes ?: emptyList()
+                    contentTypes = channel.contentTypes ?: emptyList(),
+                    taxonomy = channel.taxonomy
                 )
             )
         )
