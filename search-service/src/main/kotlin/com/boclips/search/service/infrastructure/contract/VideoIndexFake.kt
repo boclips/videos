@@ -6,6 +6,7 @@ import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
+import com.sun.org.apache.xpath.internal.operations.Bool
 import java.time.LocalDate
 
 class VideoIndexFake :
@@ -92,15 +93,7 @@ class VideoIndexFake :
             }.filter { entry ->
                 (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
             }.filter { entry ->
-                if (query.userQuery.subjectIds.isEmpty()) {
-                    true
-                } else {
-                    query.userQuery.subjectIds.any { querySubject ->
-                        entry.value.subjects.items.any { videoSubject ->
-                            videoSubject.id.contains(querySubject)
-                        }
-                    }
-                }
+                checkFilterValues(query.userQuery.subjectIds, entry.value.subjects.items.map { it.id }.toSet())
             }.filter { entry ->
                 query.userQuery.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
             }.filter { entry ->
@@ -134,15 +127,7 @@ class VideoIndexFake :
             .filter { entry ->
                 query.videoAccessRuleQuery.isEligibleForDownload?.let { entry.value.eligibleForDownload == it } ?: true
             }.filter { entry ->
-                if (query.userQuery.attachmentTypes.isEmpty()) {
-                    true
-                } else {
-                    query.userQuery.attachmentTypes.any { queryAttachmentType ->
-                        entry.value.attachmentTypes?.any { videoAttachments ->
-                            videoAttachments.contains(queryAttachmentType)
-                        } ?: true
-                    }
-                }
+                checkFilterValues(query.userQuery.attachmentTypes, entry.value.attachmentTypes)
             }
             .filter { entry ->
                 if (query.videoAccessRuleQuery.includedVoiceType.isEmpty()) {
@@ -158,7 +143,22 @@ class VideoIndexFake :
                 }
             }
             .filter { entry -> !query.videoAccessRuleQuery.excludedLanguages.contains(entry.value.language) }
+            .filter { entry ->
+                checkFilterValues(query.userQuery.categoryCodes, entry.value.categoryCodes)
+            }
             .map { video -> video.key }
+    }
+
+    private fun <T> checkFilterValues(filters: Set<T>, values: Set<T>?): Boolean {
+        return when {
+            filters.isEmpty() -> true
+            values.isNullOrEmpty() -> false
+            else -> matchesAnyFilterValue(filters, values)
+        }
+    }
+
+    private fun <T> matchesAnyFilterValue(filterValues: Iterable<T>, entryValues: Iterable<T>): Boolean {
+        return (filterValues intersect entryValues).isNotEmpty()
     }
 
     private fun filterByIncludedType(

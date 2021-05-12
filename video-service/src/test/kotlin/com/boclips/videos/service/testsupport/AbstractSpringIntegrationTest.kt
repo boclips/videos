@@ -3,6 +3,7 @@ package com.boclips.videos.service.testsupport
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.channel.CreateChannel
 import com.boclips.contentpartner.service.application.channel.GetChannels
+import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
@@ -31,6 +32,7 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.api.request.channel.AgeRangeRequest
+import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.request.collection.UpdateCollectionRequest
 import com.boclips.videos.api.request.contentwarning.CreateContentWarningRequest
 import com.boclips.videos.api.request.subject.CreateSubjectRequest
@@ -61,6 +63,7 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -203,6 +206,9 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var taxonomyRepository: CategoryRepository
 
+    @Autowired
+    lateinit var updateChannel: UpdateChannel
+
     @LocalServerPort
     var randomServerPort: Int = 0
 
@@ -288,8 +294,8 @@ abstract class AbstractSpringIntegrationTest {
         additionalDescription: String? = "additional description",
         date: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(120),
-        contentProvider: String = "Reuters",
-        contentProviderId: String? = null,
+        newChannelName: String = "Reuters",
+        existingChannelId: String? = null,
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
         keywords: List<String> = emptyList(),
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
@@ -309,7 +315,7 @@ abstract class AbstractSpringIntegrationTest {
         categories: List<TaxonomyCategoryResource>? = null,
     ): VideoId {
         val retrievedContentPartnerId =
-            saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
+            saveChannel(name = newChannelName, distributionMethods = distributionMethods).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -332,7 +338,7 @@ abstract class AbstractSpringIntegrationTest {
 
         val video = createVideo(
             CreateVideoRequest(
-                providerId = contentProviderId ?: retrievedContentPartnerId,
+                providerId = existingChannelId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
@@ -357,6 +363,12 @@ abstract class AbstractSpringIntegrationTest {
         fakeEventBus.clearState()
 
         return video.videoId
+    }
+
+
+    fun tagChannelWithCategory(category: Category, channelId: ChannelId) : Channel {
+        val updateRequest =  ChannelRequest(categories = listOf(category.code.value))
+        return updateChannel(channelId = channelId.value, upsertRequest = updateRequest)
     }
 
     fun saveSubject(name: String): Subject {
@@ -631,7 +643,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addTaxonomy(category: Category): Category {
+    fun addCategory(category: Category): Category {
         return taxonomyRepository.create(category = category)
     }
 

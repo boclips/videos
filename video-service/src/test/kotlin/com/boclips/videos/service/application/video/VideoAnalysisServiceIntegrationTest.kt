@@ -86,9 +86,9 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
         @Test
         fun `it should only send analyse messages for Ted`() {
-            saveVideo(contentProvider = "Ted")
-            saveVideo(contentProvider = "Ted")
-            saveVideo(contentProvider = "Bob")
+            saveVideo(newChannelName = "Ted")
+            saveVideo(newChannelName = "Ted")
+            saveVideo(newChannelName = "Bob")
 
             videoAnalysisService.analyseVideosOfContentPartner("Ted", language = null)
 

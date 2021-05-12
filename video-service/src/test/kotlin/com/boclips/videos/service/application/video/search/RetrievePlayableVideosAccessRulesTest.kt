@@ -26,17 +26,17 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
         fun `limits search results to downloadable videos only when such access rule is provided`() {
             val firstVideoId = saveVideo(
                 title = "access",
-                contentProvider = "download-me",
+                newChannelName = "download-me",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD)
             )
             val secondVideoId = saveVideo(
                 title = "another access",
-                contentProvider = "i-am-open-for-all",
+                newChannelName = "i-am-open-for-all",
                 distributionMethods = setOf(DistributionMethodResource.DOWNLOAD, DistributionMethodResource.STREAM)
             )
             saveVideo(
                 title = "no access",
-                contentProvider = "only-streaming",
+                newChannelName = "only-streaming",
                 distributionMethods = setOf(DistributionMethodResource.STREAM)
             )
 
@@ -166,9 +166,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val allowedContentPartnerId = saveChannel(name = "Tuner").id.value
             val excludedContentPartnerId = saveChannel(name = "Tina").id.value
 
-            val allowedVideoId = saveVideo(title = "Wild Elephant", contentProviderId = allowedContentPartnerId)
-            saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
-            saveVideo(title = "Wild Elephant", contentProviderId = excludedContentPartnerId)
+            val allowedVideoId = saveVideo(title = "Wild Elephant", existingChannelId = allowedContentPartnerId)
+            saveVideo(title = "Wild Elephant", existingChannelId = excludedContentPartnerId)
+            saveVideo(title = "Wild Elephant", existingChannelId = excludedContentPartnerId)
 
             val accessRule = VideoAccessRule.ExcludedChannelIds(
                 channelIds = setOf(
@@ -198,9 +198,9 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
             val allowedChannelId = saveChannel(name = "Tuner").id.value
             val excludedChannelId = saveChannel(name = "Tina").id.value
 
-            val allowedVideoId = saveVideo(title = "Wild Elephant1", contentProviderId = allowedChannelId)
-            saveVideo(title = "Wild Elephant2", contentProviderId = excludedChannelId)
-            saveVideo(title = "Wild Elephant3", contentProviderId = excludedChannelId)
+            val allowedVideoId = saveVideo(title = "Wild Elephant1", existingChannelId = allowedChannelId)
+            saveVideo(title = "Wild Elephant2", existingChannelId = excludedChannelId)
+            saveVideo(title = "Wild Elephant3", existingChannelId = excludedChannelId)
 
             val accessRule = VideoAccessRule.IncludedChannelIds(
                 channelIds = setOf(

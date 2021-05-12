@@ -47,8 +47,8 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 saveChannel(name = "download", distributionMethods = setOf(DistributionMethodResource.DOWNLOAD))
 
             val streamVideo =
-                saveVideo(title = "video included", contentProviderId = streamContentPartner.id.value)
-            saveVideo(title = "video ignored", contentProviderId = downloadContentPartner.id.value)
+                saveVideo(title = "video included", existingChannelId = streamContentPartner.id.value)
+            saveVideo(title = "video ignored", existingChannelId = downloadContentPartner.id.value)
 
             addDistributionMethodAccessRule("api-user@gmail.com", DistributionMethodResource.STREAM)
 
@@ -72,15 +72,15 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
 
             saveVideo(
                 title = "video no",
-                contentProviderId = streamContentPartner.id.value
+                existingChannelId = streamContentPartner.id.value
             )
             val downloadVideo = saveVideo(
                 title = "video si",
-                contentProviderId = downloadContentPartner.id.value
+                existingChannelId = downloadContentPartner.id.value
             )
             val downloadAndStreamVideo = saveVideo(
                 title = "video si siempre",
-                contentProviderId = downloadAndStreamContentPartner.id.value
+                existingChannelId = downloadAndStreamContentPartner.id.value
             )
 
             addDistributionMethodAccessRule("something@publisher-boclips.com", DistributionMethodResource.DOWNLOAD)
@@ -137,8 +137,8 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             val excludedContentPartner = saveChannel(name = "Tiner")
 
             val videoWithAllowedContentPartner =
-                saveVideo(title = "Some Video", contentProviderId = allowedContentPartner.id.value)
-            saveVideo(title = "Some Video", contentProviderId = excludedContentPartner.id.value)
+                saveVideo(title = "Some Video", existingChannelId = allowedContentPartner.id.value)
+            saveVideo(title = "Some Video", existingChannelId = excludedContentPartner.id.value)
 
             removeAccessToChannel("api-user@gmail.com", excludedContentPartner.id.value)
 

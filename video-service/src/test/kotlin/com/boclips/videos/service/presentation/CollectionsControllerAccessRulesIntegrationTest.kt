@@ -41,7 +41,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
     @Test
     fun `returns collections with shallow video information by default`() {
         val collectionId = createCollection(title = "A Collection", discoverable = false)
-        addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
+        addVideo(collectionId, saveVideo(title = "a video title", newChannelName = "A content provider").value)
 
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
@@ -66,7 +66,7 @@ class CollectionsControllerAccessRulesIntegrationTest : AbstractCollectionsContr
     @Test
     fun `returns collections with deep video information when details projection is used`() {
         val collectionId = createCollection(title = "A Collection", discoverable = false)
-        addVideo(collectionId, saveVideo(title = "a video title", contentProvider = "A content provider").value)
+        addVideo(collectionId, saveVideo(title = "a video title", newChannelName = "A content provider").value)
         createIncludedCollectionsAccessRules("api-user@gmail.com", collectionId)
 
         mockMvc.perform(get("/v1/collections?projection=details").asApiUser(email = "api-user@gmail.com"))

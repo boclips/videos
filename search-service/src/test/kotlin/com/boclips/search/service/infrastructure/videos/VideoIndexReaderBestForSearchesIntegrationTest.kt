@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class VideoIndexReaderbestForSearchesIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
+class VideoIndexReaderBestForSearchesIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
     private lateinit var videoIndexWriter: VideoIndexWriter
 

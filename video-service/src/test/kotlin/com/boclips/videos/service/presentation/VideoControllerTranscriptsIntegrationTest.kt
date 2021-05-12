@@ -1,12 +1,9 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.KalturaFactories
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
@@ -41,7 +37,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
             ageRangeMax = 7
@@ -53,7 +49,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
-            contentProvider = "enabled-cp2",
+            newChannelName = "enabled-cp2",
             ageRangeMin = 7,
             ageRangeMax = 10
         ).value
@@ -64,7 +60,7 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
-            contentProvider = "disabled-cp",
+            newChannelName = "disabled-cp",
             ageRangeMin = null,
             ageRangeMax = null,
             distributionMethods = emptySet()

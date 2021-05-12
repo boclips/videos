@@ -9,11 +9,7 @@ import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
-import com.boclips.videos.service.domain.model.video.request.SortKey
-import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
-import com.boclips.videos.service.domain.model.video.request.VideoRequest
-import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
+import com.boclips.videos.service.domain.model.video.request.*
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
@@ -24,10 +20,10 @@ import java.math.BigDecimal
 import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
-        private val retrievePlayableVideos: RetrievePlayableVideos,
-        private val eventService: EventService,
-        private val userService: UserService,
-        private val queryConverter: QueryConverter
+    private val retrievePlayableVideos: RetrievePlayableVideos,
+    private val eventService: EventService,
+    private val userService: UserService,
+    private val queryConverter: QueryConverter
 ) {
     companion object : KLogging()
 
@@ -62,7 +58,8 @@ class GetVideosByQuery(
         includeChannelFacets: Boolean?,
         includePriceFacets: Boolean?,
         queryParams: Map<String, List<String>>,
-        prices: Set<BigDecimal>
+        prices: Set<BigDecimal>,
+        categoryCodes: Set<String>
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -92,13 +89,22 @@ class GetVideosByQuery(
             promoted = promoted,
             channelIds = channelIds,
             types = type.map { queryConverter.convertTypeToVideoType(it) }.toSet(),
-            facets = FacetConverter().invoke(ageRangesFacets, durationFacets, resourceTypeFacets, videoTypeFacets, includeChannelFacets, includePriceFacets),
+            facets = FacetConverter().invoke(
+                ageRangesFacets,
+                durationFacets,
+                resourceTypeFacets,
+                videoTypeFacets,
+                includeChannelFacets,
+                includePriceFacets
+            ),
             attachmentTypes = resourceTypes,
             userOrganisationId = userOrganisation?.organisationId,
-            prices = prices
+            prices = prices,
+            categoryCodes = categoryCodes
         )
 
-        val videoSearchResponse = retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
+        val videoSearchResponse =
+            retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
         try {
@@ -131,7 +137,8 @@ class GetVideosByQuery(
     }
 
     private fun requestToString(request: HttpServletRequest): String {
-        val headers = request.headerNames.toList().map { headerName -> "$headerName ${request.getHeader(headerName)}" }.joinToString()
+        val headers = request.headerNames.toList().map { headerName -> "$headerName ${request.getHeader(headerName)}" }
+            .joinToString()
         return "${request.method} ${request.requestURI} [ headers: $headers ]"
     }
 

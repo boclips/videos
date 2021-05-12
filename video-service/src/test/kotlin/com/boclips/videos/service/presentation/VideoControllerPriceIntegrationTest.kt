@@ -98,7 +98,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can see user's organisation channel custom prices when searching for videos`() {
         val channelWithCustomPrices = saveChannel(name = "TeD")
-        saveVideo(contentProviderId = channelWithCustomPrices.id.value)
+        saveVideo(existingChannelId = channelWithCustomPrices.id.value)
 
         organisationsClientFake.add(
             OrganisationResourceFactory.sample(

@@ -45,7 +45,8 @@ object SearchableVideoMetadataFactory {
         ingestedAt: ZonedDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
         isVoiced: Boolean? = null,
         language: Locale? = null,
-        prices: Map<String, BigDecimal>? = null
+        prices: Map<String, BigDecimal>? = null,
+        categoryCodes: Set<String>? = emptySet()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -72,7 +73,8 @@ object SearchableVideoMetadataFactory {
         ingestedAt = ingestedAt,
         isVoiced = isVoiced,
         language = language,
-        prices = prices
+        prices = prices,
+        categoryCodes = categoryCodes
     )
 }
 
@@ -115,7 +117,8 @@ object TestFactories {
             ingestedAt = ingestDate,
             isVoiced = null,
             language = null,
-            prices = null
+            prices = null,
+            categoryCodes = emptySet()
         )
     }
 }

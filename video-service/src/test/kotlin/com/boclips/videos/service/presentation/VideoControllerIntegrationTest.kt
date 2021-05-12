@@ -59,7 +59,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
             ageRangeMax = 7,
@@ -77,7 +77,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
-            contentProvider = "enabled-cp2",
+            newChannelName = "enabled-cp2",
             ageRangeMin = 7,
             ageRangeMax = 10
         ).value
@@ -88,7 +88,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
-            contentProvider = "disabled-cp",
+            newChannelName = "disabled-cp",
             ageRangeMin = null,
             ageRangeMax = null,
             distributionMethods = emptySet()
@@ -800,7 +800,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `video lookup by provider id returns 200 when video exists`() {
             val channel = saveChannel(name = "ted")
-            saveVideo(contentProvider = "ted", contentProviderVideoId = "abc")
+            saveVideo(newChannelName = "ted", contentProviderVideoId = "abc")
 
             mockMvc.perform(
                 MockMvcRequestBuilders.head("/v1/channels/${channel.id.value}/videos/abc")

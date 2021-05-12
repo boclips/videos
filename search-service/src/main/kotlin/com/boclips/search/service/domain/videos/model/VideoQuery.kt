@@ -27,6 +27,7 @@ data class UserQuery(
     val userSubjectIds: Set<String> = emptySet(),
     val subjectIds: Set<String> = emptySet(),
     val subjectsSetManually: Boolean? = null,
+    val categoryCodes: Set<String> = emptySet(),
     val promoted: Boolean? = null,
     val active: Boolean? = null,
     val types: Set<VideoType> = emptySet(),

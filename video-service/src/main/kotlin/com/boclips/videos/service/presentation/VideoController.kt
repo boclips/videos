@@ -131,6 +131,7 @@ class VideoController(
         @RequestParam(name = "resource_types", required = false) resourceTypes: Set<String>?,
         @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
         @RequestParam(name = "prices", required = false) prices: Set<String>?,
+        @RequestParam(name = "category_code", required = false) categoryCode: Set<String>?,
         request: ServletRequest
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
@@ -174,7 +175,8 @@ class VideoController(
             includeChannelFacets = includeChannelFacets,
             includePriceFacets = UserExtractor.currentUserHasRole(UserRoles.BOCLIPS_WEB_APP),
             queryParams = QueryParamsConverter.toSplitList(request.parameterMap),
-            prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet()
+            prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet(),
+            categoryCodes = categoryCode.orEmpty()
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = user)

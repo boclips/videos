@@ -11,32 +11,24 @@ import com.boclips.videos.service.application.video.TagVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItem
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
 
@@ -80,7 +72,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5, ageRangeMax = 7,
             types = listOf(VideoType.STOCK)
@@ -92,7 +84,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
-            contentProvider = "enabled-cp2",
+            newChannelName = "enabled-cp2",
             ageRangeMin = 7, ageRangeMax = 10,
             types = listOf(VideoType.NEWS)
         ).value
@@ -125,7 +117,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     fun `can filter by channel id`() {
 
         val channelId = saveChannel(name = "test").id
-        val videoId = saveVideo(contentProviderId = channelId.value)
+        val videoId = saveVideo(existingChannelId = channelId.value)
 
         mockMvc.perform(get("/v1/videos?channel=${channelId.value}").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
@@ -142,7 +134,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = contentProviderName,
+            newChannelName = contentProviderName,
             legalRestrictions = "None"
         ).value
         val channel = getChannel(contentProviderName)
@@ -321,7 +313,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "cp3",
+            newChannelName = "cp3",
             legalRestrictions = "None"
         ).value
 
@@ -338,7 +330,11 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by specified released data`() {
-        mockMvc.perform(get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
+        mockMvc.perform(
+            get("/v1/videos?query=elephants&released_date_from=2018-01-11&released_date_to=2018-03-11").asTeacher(
+                email = userAssignedToOrganisation().idOrThrow().value
+            )
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
@@ -352,7 +348,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None"
         ).value
 
@@ -373,7 +369,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None"
         ).value
 
@@ -461,6 +457,79 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(kalturaVideoId)))
+    }
+
+    @Test
+    fun `can filter by category if video's channel was tagged`() {
+        val includedCategory =
+            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
+        val excludedCategory =
+            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+        val abChannel = saveChannel(name = "AB channel")
+        val xyChannel = saveChannel(name = "XY channel")
+        val video = saveVideo(existingChannelId = abChannel.id.value)
+
+        saveVideo(existingChannelId = xyChannel.id.value)
+        tagChannelWithCategory(category = includedCategory, channelId = ChannelId(abChannel.id.value))
+        tagChannelWithCategory(category = excludedCategory, channelId = ChannelId(xyChannel.id.value))
+
+        mockMvc.perform(get("/v1/videos?category_code=AB").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(video.value)))
+
+    }
+
+    @Test
+    fun `filtering by category returns videos tagged with a ancestor categories `() {
+        val includedCategory =
+            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
+        val includedAncestorCategory =
+            addCategory(CategoryFactory.sample(code = "A", description = "French", parentCode = null))
+        val excludedCategory =
+            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+        val abChannel = saveChannel(name = "AB channel")
+        val aChannel = saveChannel(name = "A channel")
+        val xyChannel = saveChannel(name = "XY channel")
+        val video = saveVideo(existingChannelId = abChannel.id.value)
+        val videoWithAncestor = saveVideo(existingChannelId = aChannel.id.value)
+
+        saveVideo(existingChannelId = xyChannel.id.value)
+        tagChannelWithCategory(category = includedCategory, channelId = ChannelId(abChannel.id.value))
+        tagChannelWithCategory(category = includedAncestorCategory, channelId = ChannelId(aChannel.id.value))
+        tagChannelWithCategory(category = excludedCategory, channelId = ChannelId(xyChannel.id.value))
+
+        mockMvc.perform(get("/v1/videos?category_code=A").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(video.value)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(videoWithAncestor.value)))
+    }
+
+    @Test
+    fun `can filter by mulitple categories`() {
+        val includedCategory =
+            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "H"))
+        val includedOtherCategory =
+            addCategory(CategoryFactory.sample(code = "AC", description = "French", parentCode = "AC"))
+        val excludedCategory =
+            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+        val abChannel = saveChannel(name = "AB channel")
+        val aChannel = saveChannel(name = "A channel")
+        val xyChannel = saveChannel(name = "XY channel")
+        val video = saveVideo(existingChannelId = abChannel.id.value)
+        val videoWithAncestor = saveVideo(existingChannelId = aChannel.id.value)
+
+        saveVideo(existingChannelId = xyChannel.id.value)
+        tagChannelWithCategory(category = includedCategory, channelId = ChannelId(abChannel.id.value))
+        tagChannelWithCategory(category = includedOtherCategory, channelId = ChannelId(aChannel.id.value))
+        tagChannelWithCategory(category = excludedCategory, channelId = ChannelId(xyChannel.id.value))
+
+        mockMvc.perform(get("/v1/videos?category_code=A,AC").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(video.value)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(videoWithAncestor.value)))
     }
 
     @Test
@@ -561,7 +630,8 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         val resultActions = mockMvc.perform(
             get("/v1/videos?query=video&sort_by=RELEASE_DATE")
-                .contentType(MediaType.APPLICATION_JSON).asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value)
         )
 
         resultActions
@@ -582,7 +652,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     fun `sends 'videoSearched' event when searching for videos`() {
 
         val channelId = saveChannel(name = "test").id
-        saveVideo(contentProviderId = channelId.value)
+        saveVideo(existingChannelId = channelId.value)
 
         mockMvc.perform(
             get(
@@ -663,14 +733,16 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     private fun organisationWithCustomPrices(customPrices: DealResource.PricesResource? = null): OrganisationResource {
-        return organisationsClient.add(OrganisationResourceFactory.sample(
-            deal = DealResource(
-                prices = customPrices,
-                accessExpiresOn = null,
-                billing = false,
-                contentPackageId = null
+        return organisationsClient.add(
+            OrganisationResourceFactory.sample(
+                deal = DealResource(
+                    prices = customPrices,
+                    accessExpiresOn = null,
+                    billing = false,
+                    contentPackageId = null
+                )
             )
-        ))
+        )
     }
 
     private fun userAssignedToOrganisation(organisationId: String, id: String = "the@teacher.com"): User {

@@ -48,7 +48,8 @@ class VideoRequest(
     val facets: VideoFacets = VideoFacets(),
     val attachmentTypes: Set<String> = emptySet(),
     val userOrganisationId: OrganisationId? = null,
-    val prices: Set<BigDecimal> = emptySet()
+    val prices: Set<BigDecimal> = emptySet(),
+    val categoryCodes: Set<String> = emptySet()
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
 
@@ -107,6 +108,7 @@ class VideoRequest(
                 userSubjectIds = userSubjectIds,
                 subjectIds = subjectsRequest.ids,
                 subjectsSetManually = subjectsRequest.setManually,
+                categoryCodes = categoryCodes,
                 promoted = promoted,
                 active = true,
                 channelIds = channelIds,

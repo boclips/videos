@@ -48,7 +48,8 @@ class VideoDocumentConverterTest {
                 "attachmentTypes": ["ACTIVITY"],
                 "language": "spa",
                 "deactivated": false,
-                "ingestedAt": "2017-04-24T09:30Z[UTC]"
+                "ingestedAt": "2017-04-24T09:30Z[UTC]",
+                "categoryCodes": ["A","AB","ABC"]
             }
         """.trimIndent()
             )
@@ -86,7 +87,8 @@ class VideoDocumentConverterTest {
                 ingestedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]"),
                 isVoiced = null,
                 language = "spa",
-                prices = null
+                prices = null,
+                categoryCodes = setOf("A","AB","ABC")
             )
         )
     }
@@ -154,7 +156,8 @@ class VideoDocumentConverterTest {
                 "org-id-1" to BigDecimal.valueOf(15.99),
                 "org-id-2" to BigDecimal.valueOf(0),
                 "org-id-3" to BigDecimal.valueOf(1001000.99),
-            )
+            ),
+            categoryCodes = setOf("A")
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -193,7 +196,8 @@ class VideoDocumentConverterTest {
                     "org-id-1" to 1599,
                     "org-id-2" to 0,
                     "org-id-3" to 100100099,
-                )
+                ),
+                categoryCodes = setOf("A")
             )
         )
     }
@@ -229,7 +233,8 @@ class VideoDocumentConverterTest {
             ingestedAt = ZonedDateTime.of(2018, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
             isVoiced = null,
             language = null,
-            prices = null
+            prices = null,
+            categoryCodes = null
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

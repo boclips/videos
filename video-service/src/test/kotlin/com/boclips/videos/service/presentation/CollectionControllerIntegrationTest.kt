@@ -178,7 +178,7 @@ class CollectionControllerIntegrationTest : AbstractCollectionsControllerIntegra
     @Test
     fun `fetching a specific collection using details projection returns deep details`() {
         val collectionId = createCollection("collection 1")
-        val videoId = saveVideo(title = "a video title", contentProvider = "A content provider").value
+        val videoId = saveVideo(title = "a video title", newChannelName = "A content provider").value
         addVideo(collectionId, videoId)
 
         mockMvc.perform(get("/v1/collections/$collectionId?projection=details").asTeacher())

@@ -74,6 +74,7 @@ class SearchVideo(
         includeChannelFacets: Boolean? = null,
         prices: Set<BigDecimal> = emptySet(),
         includePriceFacets: Boolean? = false,
+        categoryCodes: Set<String> = emptySet(),
         queryParams: Map<String, List<String>>? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
         val retrievedVideos = getVideosByQuery(
@@ -107,7 +108,8 @@ class SearchVideo(
             includeChannelFacets = includeChannelFacets,
             includePriceFacets = includePriceFacets,
             queryParams = queryParams ?: emptyMap(),
-            prices = prices
+            prices = prices,
+            categoryCodes = categoryCodes
         )
 
         return addPrices(retrievedVideos, user)

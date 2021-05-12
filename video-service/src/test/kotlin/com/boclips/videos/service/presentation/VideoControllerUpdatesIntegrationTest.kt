@@ -42,7 +42,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
             ageRangeMax = 7
@@ -54,7 +54,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             description = "it's a video from youtube",
             date = "2017-02-11",
             duration = Duration.ofMinutes(8),
-            contentProvider = "enabled-cp2",
+            newChannelName = "enabled-cp2",
             ageRangeMin = 7,
             ageRangeMax = 10
         ).value
@@ -65,7 +65,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             description = "this video got disabled because it offended Jose Carlos Valero Sanchez",
             date = "2018-05-10",
             duration = Duration.ofMinutes(5),
-            contentProvider = "disabled-cp",
+            newChannelName = "disabled-cp",
             ageRangeMin = null,
             ageRangeMax = null,
             distributionMethods = emptySet()
@@ -115,7 +115,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             date = "2019-01-01",
             subjectIds = setOf(sampleSubject1.id.value, sampleSubject2.id.value),
             duration = Duration.ofSeconds(6),
-            contentProvider = "max",
+            newChannelName = "max",
             ageRangeMin = null,
             ageRangeMax = null
         ).value

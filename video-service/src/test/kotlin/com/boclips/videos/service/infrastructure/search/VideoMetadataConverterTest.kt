@@ -10,6 +10,9 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.Price
 import com.boclips.videos.service.domain.model.video.VideoType
@@ -49,6 +52,7 @@ class VideoMetadataConverterTest {
                 releasedOn = LocalDate.of(2019, Month.APRIL, 19),
                 voice = Voice.WithVoice(language = Locale.JAPANESE, transcript = "a great transcript"),
                 ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
+                categories = mapOf(CategorySource.CHANNEL to setOf(CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "Test", ancestors = setOf(CategoryCode("A"), CategoryCode("AB"))))),
                 subjects = setOf(
                     Subject(
                         id = SubjectId(value = "subject-id"),
@@ -70,7 +74,7 @@ class VideoMetadataConverterTest {
                     amount = BigDecimal.valueOf(15.99),
                     currency = Currency.getInstance("USD")
                 ),
-            )
+            ),
         )
 
         val videoMetadata = VideoMetadataConverter.convert(video, Availability.NONE)
@@ -109,7 +113,8 @@ class VideoMetadataConverterTest {
                     "DEFAULT" to BigDecimal.valueOf(25),
                     "org-1" to BigDecimal.valueOf(9.99),
                     "org-2" to BigDecimal.valueOf(15.99)
-                )
+                ),
+                categoryCodes = setOf("A", "AB", "ABC")
             )
         )
     }

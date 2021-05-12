@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video.search
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.search.service.domain.common.FacetType
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId

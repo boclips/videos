@@ -147,7 +147,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `analyse content partner videos publishes events`() {
-        saveVideo(contentProvider = "Ted")
+        saveVideo(newChannelName = "Ted")
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES")
                 .asOperator()
@@ -163,7 +163,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `analyse content partner videos returns 400 for YouTube channels`() {
         saveVideo(
             playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "id"),
-            contentProvider = "TheYoutuber"
+            newChannelName = "TheYoutuber"
         )
 
         mockMvc.perform(
@@ -184,7 +184,7 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `classify content partner videos publishes events`() {
-        saveVideo(contentProvider = "AContentPartner")
+        saveVideo(newChannelName = "AContentPartner")
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/admin/actions/classify_videos?contentPartner=AContentPartner").asOperator()
@@ -204,8 +204,8 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `clean deactivated videos publishes events for deactivated videos`() {
-        val oldVideoId = saveVideo(contentProvider = "TED", title = "Duplicate video")
-        saveVideo(contentProvider = "TED", title = "Duplicate video")
+        val oldVideoId = saveVideo(newChannelName = "TED", title = "Duplicate video")
+        saveVideo(newChannelName = "TED", title = "Duplicate video")
 
         mockMvc.perform(
             MockMvcRequestBuilders

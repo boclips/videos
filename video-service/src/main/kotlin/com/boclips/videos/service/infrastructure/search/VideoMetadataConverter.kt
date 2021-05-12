@@ -8,6 +8,8 @@ import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.OrganisationsPrices
 import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.channel.Availability
@@ -50,8 +52,17 @@ object VideoMetadataConverter {
             attachmentTypes = attachmentTypes(video.attachments),
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
-            prices = if (video is VideoWithPrices) convertPrices(video.prices) else null
+            prices = if (video is VideoWithPrices) convertPrices(video.prices) else null,
+            categoryCodes = convertCategories(video.categories)
         )
+    }
+
+    private fun convertCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): Set<String> {
+        return categories.flatMap { source ->
+            source.value.map { category ->
+                return setOf(category.codeValue.value) + category.ancestors.map { it.value }
+            }
+        }.toSet()
     }
 
     private fun convertPrices(prices: OrganisationsPrices): Map<String, BigDecimal> {

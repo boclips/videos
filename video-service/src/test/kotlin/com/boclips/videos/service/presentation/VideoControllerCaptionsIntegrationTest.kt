@@ -38,7 +38,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofMinutes(1),
-            contentProvider = "enabled-cp",
+            newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
             ageRangeMax = 7

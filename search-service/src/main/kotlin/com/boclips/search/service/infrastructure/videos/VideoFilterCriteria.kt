@@ -14,6 +14,7 @@ import java.time.LocalDate
 class VideoFilterCriteria {
     companion object {
         const val SUBJECTS = "subjects-filter"
+        const val CATEGORY_CODES = "category-codes-filter"
         const val AGE_RANGES = "age-ranges-filter"
         const val DURATION_RANGES = "duration-ranges-filter"
         const val ATTACHMENT_TYPES = "attachment-types-filter"
@@ -92,6 +93,10 @@ class VideoFilterCriteria {
                 query.must(matchPrices(videoQuery.organisationPriceFilter))
             }
 
+            if(videoQuery.categoryCodes.isNotEmpty()) {
+                query.must(matchCategoryCodes(videoQuery.categoryCodes))
+            }
+
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->
                 query.must(matchSubjectsSetManually(subjectsSetManually))
             }
@@ -117,7 +122,15 @@ class VideoFilterCriteria {
         private fun matchSubjects(subjects: Set<String>): BoolQueryBuilder? {
             val queries = boolQuery().queryName(SUBJECTS)
             for (s: String in subjects) {
-                queries.should(QueryBuilders.matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
+                queries.should(matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
+            }
+            return queries
+        }
+
+        private fun matchCategoryCodes(categoryCodes: Set<String>): BoolQueryBuilder? {
+            val queries = boolQuery().queryName(CATEGORY_CODES)
+            for (code: String in categoryCodes) {
+                queries.should(matchPhraseQuery(VideoDocument.CATEGORY_CODES, code))
             }
             return queries
         }
