@@ -5,13 +5,13 @@ import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
+import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat.WEBVTT
-import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
@@ -24,7 +24,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.request
 import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import java.io.ByteArrayOutputStream
 import java.time.Duration
-import java.util.Locale
+import java.util.*
 
 class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
@@ -291,22 +291,22 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws when human generated captions are already requested`() {
-        fakeKalturaClient.createEntry("playback-id")
-        fakeKalturaClient.tag("playback-id", listOf("caption48"))
+        createMediaEntry("new-playback-id")
+        fakeKalturaClient.requestCaption("new-playback-id")
 
 
         assertThrows<CaptionConflictException> {
-            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "playback-id"))
+            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "new-playback-id"))
         }
     }
 
     @Test
     fun `throws when human generated captions are already processing`() {
-        fakeKalturaClient.createEntry("playback-id")
-        fakeKalturaClient.tag("playback-id", listOf("processing"))
+        createMediaEntry("new-playback-id")
+        fakeKalturaClient.tag("new-playback-id", listOf("processing"))
 
         assertThrows<CaptionConflictException> {
-            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "playback-id"))
+            kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "new-playback-id"))
         }
     }
 
@@ -353,7 +353,10 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     @Test
     fun `download asset throws if entry not found`() {
         assertThrows<VideoPlaybackNotFound> {
-            kalturaPlaybackProvider.downloadHighestResolutionVideo(PlaybackId.from("something-dude", "KALTURA"), ByteArrayOutputStream())
+            kalturaPlaybackProvider.downloadHighestResolutionVideo(
+                PlaybackId.from("something-dude", "KALTURA"),
+                ByteArrayOutputStream()
+            )
         }
     }
 
@@ -364,7 +367,10 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         )
 
         assertThrows<VideoPlaybackNotFound> {
-            kalturaPlaybackProvider.downloadHighestResolutionVideo(PlaybackId.from("2", "KALTURA"), ByteArrayOutputStream())
+            kalturaPlaybackProvider.downloadHighestResolutionVideo(
+                PlaybackId.from("2", "KALTURA"),
+                ByteArrayOutputStream()
+            )
         }
     }
 
