@@ -53,6 +53,7 @@ fun MockHttpServletRequestBuilder.asBoclipsEmployee(email: String = "employee@bo
                 UserRoles.DOWNLOAD_VIDEO,
                 UserRoles.VIEW_DISABLED_VIDEOS,
                 UserRoles.INSERT_EVENTS,
+                UserRoles.INSERT_VIDEOS,
                 UserRoles.UPDATE_VIDEOS,
                 UserRoles.VIEW_COLLECTIONS,
                 UserRoles.UPDATE_COLLECTIONS,

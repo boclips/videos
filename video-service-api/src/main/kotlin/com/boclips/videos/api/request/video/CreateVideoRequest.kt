@@ -43,5 +43,6 @@ data class CreateVideoRequest(
     val subjects: Set<String>? = null,
     @field:Language
     val language: String? = null,
-    val isVoiced: Boolean? = null
+    val isVoiced: Boolean? = null,
+    val categories: List<String>? = null,
 )

@@ -4,4 +4,5 @@ import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsD
 
 data class VideoCategoriesDocument(
     val channel: Set<CategoryWithAncestorsDocument>,
+    val video: Set<CategoryWithAncestorsDocument>,
 )

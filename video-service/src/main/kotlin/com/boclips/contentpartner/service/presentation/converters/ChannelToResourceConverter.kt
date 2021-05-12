@@ -4,14 +4,11 @@ import com.boclips.contentpartner.service.application.channel.ContentCategoryCon
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ContentTypeResource
-import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.channel.toLanguageResource
-import com.boclips.videos.service.domain.model.taxonomy.Category
 
 class ChannelToResourceConverter(
     private val channelLinkBuilder: ChannelLinkBuilder,

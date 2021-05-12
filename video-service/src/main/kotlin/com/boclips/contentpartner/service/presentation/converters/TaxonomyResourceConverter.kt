@@ -10,7 +10,7 @@ object TaxonomyResourceConverter {
             TaxonomyResource(
                 requiresVideoLevelTagging = true
             )
-        is Taxonomy.ChannelLevelTagging ->  TaxonomyResource(
+        is Taxonomy.ChannelLevelTagging -> TaxonomyResource(
             categories = taxonomy.categories.map { category ->
                 TaxonomyCategoryResource(codeValue = category.codeValue.value, description = category.description)
             }

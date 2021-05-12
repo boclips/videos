@@ -1,6 +1,8 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.service.application.GetCategoryWithAncestors
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
@@ -9,10 +11,10 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.channel.Channel
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
@@ -28,7 +30,8 @@ class CreateVideo(
     private val playbackRepository: PlaybackRepository,
     private val videoCounter: Counter,
     private val videoAnalysisService: VideoAnalysisService,
-    private val subjectClassificationService: SubjectClassificationService
+    private val subjectClassificationService: SubjectClassificationService,
+    private val getCategoryWithAncestors: GetCategoryWithAncestors,
 ) {
     companion object : KLogging()
 
@@ -44,6 +47,8 @@ class CreateVideo(
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
+        val categories = createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet() ?: emptySet()
+
         logger.info { "Obtained video playback and subjects for video ${createRequest.providerId}" }
 
         val videoToBeCreated =
@@ -51,7 +56,8 @@ class CreateVideo(
                 createVideoRequest = createRequest,
                 videoPlayback = videoPlayback,
                 contentPartner = channel,
-                subjects = subjects
+                subjects = subjects,
+                categories = mapOf(CategorySource.MANUAL to categories)
             )
 
         val createdVideo = try {

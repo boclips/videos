@@ -4,10 +4,12 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import org.bson.types.ObjectId
@@ -20,7 +22,8 @@ class CreateVideoRequestToVideoConverter {
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
         contentPartner: Channel,
-        subjects: List<Subject>
+        subjects: List<Subject>,
+        categories: Map<CategorySource, Set<CategoryWithAncestors>>
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
@@ -63,7 +66,7 @@ class CreateVideoRequestToVideoConverter {
             contentWarnings = emptyList(),
             deactivated = false,
             activeVideoId = null,
-            categories = emptyMap()
+            categories = categories,
         )
     }
 

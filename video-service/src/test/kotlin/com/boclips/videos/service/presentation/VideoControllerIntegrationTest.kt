@@ -648,6 +648,47 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `create new video with a category`() {
+            taxonomyRepository.create(CategoryFactory.sample(code = "A", description = "A description"))
+
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
+
+            val channelId = saveChannel().id.value
+
+            val content = """
+            {
+                "providerVideoId": "1",
+                "providerId": "$channelId",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
+                "playbackId": "entry-$123",
+                "playbackProvider": "KALTURA",
+                "categories": ["A"]
+            }
+            """.trimIndent()
+
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asBoclipsEmployee().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
+
+            mockMvc.perform(get(createdResourceUrl!!).asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("A")))
+                .andExpect(jsonPath("$.taxonomy.channel.categories", hasSize<Int>(0)))
+        }
+
+        @Test
         fun `create new video that is voiced`() {
             val channelId = saveChannel().id.value
 

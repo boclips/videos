@@ -9,7 +9,11 @@ import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.service.events.EventConverter
 
-class VideoRepositoryEventDecorator(private val videoRepository: VideoRepository, private val eventBus: EventBus, val batchProcessingConfig: BatchProcessingConfig) :
+class VideoRepositoryEventDecorator(
+    private val videoRepository: VideoRepository,
+    private val eventBus: EventBus,
+    val batchProcessingConfig: BatchProcessingConfig
+) :
     VideoRepository by videoRepository {
 
     override fun update(command: VideoUpdateCommand): Video {
@@ -36,7 +40,10 @@ class VideoRepositoryEventDecorator(private val videoRepository: VideoRepository
         return videoCreated
     }
 
-    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>): Sequence<Video> {
+    override fun streamUpdate(
+        filter: VideoFilter,
+        consumer: (List<Video>) -> List<VideoUpdateCommand>
+    ): Sequence<Video> {
         val videos = videoRepository.streamUpdate(filter) { videos ->
             consumer(videos)
         }
@@ -51,15 +58,22 @@ class VideoRepositoryEventDecorator(private val videoRepository: VideoRepository
     }
 
     private fun publishVideoUpdated(video: Video) {
-        eventBus.publish(VideoUpdated.of(
-            EventConverter().toVideoPayload(video)))
+        eventBus.publish(
+            VideoUpdated.of(
+                EventConverter().toVideoPayload(video)
+            )
+        )
     }
 
     private fun publishVideosUpdated(videos: List<Video>) {
-        eventBus.publish(VideosUpdated.builder().videos(videos.map {
-            EventConverter()
-                .toVideoPayload(it)
-        }).build())
+        eventBus.publish(
+            VideosUpdated.builder().videos(
+                videos.map {
+                    EventConverter()
+                        .toVideoPayload(it)
+                }
+            ).build()
+        )
     }
 
     private fun publishVideoCreated(video: Video) {

@@ -6,19 +6,19 @@ import com.boclips.eventbus.domain.contentpartner.ChannelId
 import com.boclips.eventbus.domain.user.UserId
 import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.eventbus.domain.video.VideoId
-import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
 import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
 import com.boclips.eventbus.domain.video.VideoTopic as EventVideoTopic
+import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {

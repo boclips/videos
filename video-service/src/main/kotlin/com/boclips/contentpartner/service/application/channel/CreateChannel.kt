@@ -82,9 +82,11 @@ class CreateChannel(
             taxonomy = if (upsertRequest.requiresVideoLevelTagging == true) {
                 Taxonomy.VideoLevelTagging
             } else {
-                Taxonomy.ChannelLevelTagging(categories = upsertRequest.categories?.map { categoryCode ->
-                    getCategoryWithAncestors(categoryCode)
-                }?.toSet() ?: emptySet())
+                Taxonomy.ChannelLevelTagging(
+                    categories = upsertRequest.categories?.map { categoryCode ->
+                        getCategoryWithAncestors(categoryCode)
+                    }?.toSet() ?: emptySet()
+                )
             },
         )
 

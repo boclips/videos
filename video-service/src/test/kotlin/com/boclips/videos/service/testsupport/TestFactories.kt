@@ -111,7 +111,10 @@ object TestFactories {
         contentWarnings: List<ContentWarning> = emptyList(),
         deactivated: Boolean = false,
         activeVideoId: VideoId? = null,
-        categories: Map<CategorySource, Set<CategoryWithAncestors>> = mapOf(CategorySource.CHANNEL to emptySet())
+        categories: Map<CategorySource, Set<CategoryWithAncestors>> = mapOf(
+            CategorySource.CHANNEL to emptySet(),
+            CategorySource.MANUAL to emptySet()
+        )
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId(videoId).toHexString()),

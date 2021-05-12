@@ -66,6 +66,7 @@ data class Video(
         return voice.isVoiced()
     }
 
-    val channelCategories
-        get() = this.categories.let { it[CategorySource.CHANNEL] } ?: emptySet()
+    val channelCategories = this.categories.let { it[CategorySource.CHANNEL] } ?: emptySet()
+
+    val videoCategories = this.categories.let { it[CategorySource.MANUAL] } ?: emptySet()
 }

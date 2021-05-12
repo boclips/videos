@@ -8,8 +8,8 @@ class VideoUpdateService(private val videoRepository: VideoRepository) {
         if (!video.isBoclipsHosted()) {
             updateCommands.forEach {
                 when (it) {
-                    is VideoUpdateCommand.ReplaceTitle ->  throw UnsupportedVideoUpdateException(message = "Cannot update title of a Youtube video")
-                    is VideoUpdateCommand.ReplaceDescription ->  throw UnsupportedVideoUpdateException(message = "Cannot update description of a Youtube video")
+                    is VideoUpdateCommand.ReplaceTitle -> throw UnsupportedVideoUpdateException(message = "Cannot update title of a Youtube video")
+                    is VideoUpdateCommand.ReplaceDescription -> throw UnsupportedVideoUpdateException(message = "Cannot update description of a Youtube video")
                 }
             }
         }

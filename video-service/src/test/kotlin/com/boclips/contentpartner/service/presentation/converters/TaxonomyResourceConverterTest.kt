@@ -24,7 +24,8 @@ internal class TaxonomyResourceConverterTest {
                 CategoryWithAncestors(
                     ancestors = setOf(
                         CategoryCode("AB"), CategoryCode("A")
-                    ), codeValue = CategoryCode("ABC"), description = "My category"
+                    ),
+                    codeValue = CategoryCode("ABC"), description = "My category"
                 )
             )
         )

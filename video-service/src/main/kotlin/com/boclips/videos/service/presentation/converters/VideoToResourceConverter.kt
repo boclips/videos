@@ -1,7 +1,10 @@
 package com.boclips.videos.service.presentation.converters
 
+import TaxonomyResource
+import TaxonomyResourceWrapper
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
+import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.LanguageResource
 import com.boclips.videos.api.response.video.PriceResource
@@ -13,9 +16,11 @@ import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.BaseVideo
 import com.boclips.videos.service.domain.model.video.ChannelFacet
@@ -26,7 +31,6 @@ import com.boclips.videos.service.domain.model.video.VideoCounts
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -90,6 +94,18 @@ class VideoToResourceConverter(
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             keywords = video.keywords,
+            taxonomy = TaxonomyResourceWrapper(
+                channel = TaxonomyResource(
+                    categories = video.categories[CategorySource.CHANNEL]?.map {
+                        TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
+                    }
+                ),
+                manual = TaxonomyResource(
+                    categories = video.categories[CategorySource.MANUAL]?.map {
+                        TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
+                    }
+                )
+            ),
             _links = (
                 resourceLinks(video.videoId.value) +
                     conditionalResourceLinks(video) +
