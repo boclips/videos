@@ -2,13 +2,21 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asIngestor
+import com.boclips.videos.service.testsupport.asOperator
+import com.boclips.videos.service.testsupport.asReporter
+import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -32,7 +40,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
-import java.util.*
+import java.util.Locale
 import javax.servlet.http.Cookie
 
 class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -54,7 +62,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             contentProvider = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
-            ageRangeMax = 7
+            ageRangeMax = 7,
+            categories = listOf(
+                TaxonomyCategoryResource(
+                    codeValue = "ABC",
+                    description = "Agriculture, building and cheerleading"
+                )
+            )
         ).value
 
         youtubeVideoId = saveVideo(
@@ -142,6 +156,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.assets.href", containsString("/videos/$kalturaVideoId/assets")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+                .andExpect(jsonPath("$.categories[0].codeValue", equalTo("ABC")))
+                .andExpect(jsonPath("$.categories[0].description", equalTo("Agriculture, building and cheerleading")))
 
             mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
                 .andExpect(status().isOk)
