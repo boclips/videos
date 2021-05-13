@@ -1,19 +1,13 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.domain.channels.model.CategoryCode
-import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.channels.model.Taxonomy
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.common.model.SuggestionsSearchRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -33,7 +27,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "super",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
@@ -58,7 +52,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "1",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
@@ -83,7 +77,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "chan",
                     SuggestionAccessRuleQuery(
@@ -110,7 +104,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "annel",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
@@ -139,7 +133,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "1 Minute",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -169,7 +163,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "ted",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -200,7 +194,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "crash co",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -232,7 +226,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "Crash",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -262,7 +256,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "crash",
                     SuggestionAccessRuleQuery(
@@ -295,7 +289,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "ering",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -325,7 +319,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "3",
                     SuggestionAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
@@ -347,7 +341,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "super",
                     SuggestionAccessRuleQuery(isEligibleForStream = true)
@@ -377,7 +371,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "super",
                     SuggestionAccessRuleQuery(excludedTypes = setOf(ContentType.STOCK))
@@ -407,7 +401,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery(
                     "super",
                     SuggestionAccessRuleQuery(includedTypes = setOf(ContentType.STOCK))
@@ -431,7 +425,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery("Boy", SuggestionAccessRuleQuery(includedChannelIds = setOf("1")))
             )
         )
@@ -453,7 +447,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         assertThat(
             indexReader.search(
-                SearchRequestWithoutPagination(
+                SuggestionsSearchRequest(
                     query = SuggestionQuery(
                         "boy",
                         SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
@@ -466,7 +460,7 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         assertThat(
             indexReader.search(
-                SearchRequestWithoutPagination(
+                SuggestionsSearchRequest(
                     query = SuggestionQuery(
                         "boy",
                         SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
@@ -475,113 +469,4 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             ).elements.isEmpty()
         )
     }
-
-    @Nested
-    inner class Sorting {
-
-        @Test
-        fun `returns channels sorted by taxonomy categories ASC`() {
-            indexWriter.safeRebuildIndex(
-                sequenceOf(
-                    SearchableChannelMetadataFactory.create(
-                        id = "1", name = "untagged, needs video level tagging",
-                        taxonomy = Taxonomy(videoLevelTagging = true, categories = null)
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "2",
-                        name = "untagged, does not need video level tagging",
-                        taxonomy = Taxonomy(videoLevelTagging = false, categories = emptySet())
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "3", name = "tagged, first category is C",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(CategoryCode("G"), CategoryCode("DEF"), CategoryCode("C"))
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "4", name = "tagged, first category is ABC",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("Z"), CategoryCode("DEF"), CategoryCode("ABC")
-                            )
-                        )
-                    ),
-                )
-            )
-
-            val results = indexReader.search(
-                SearchRequestWithoutPagination(
-                    query = SuggestionQuery(
-                        accessRuleQuery = SuggestionAccessRuleQuery(),
-                        sort = listOf(Sort.ByField(fieldName = ChannelMetadata::taxonomy, order = SortOrder.ASC))
-                    )
-                )
-            )
-
-            assertThat(results.elements.size).isEqualTo(4)
-            assertThat(results.elements[0].id).isEqualTo("2")
-            assertThat(results.elements[0].name).isEqualTo("untagged, does not need video level tagging")
-            assertThat(results.elements[1].id).isEqualTo("1")
-            assertThat(results.elements[1].name).isEqualTo("untagged, needs video level tagging")
-            assertThat(results.elements[2].id).isEqualTo("4")
-            assertThat(results.elements[2].name).isEqualTo("tagged, first category is ABC")
-            assertThat(results.elements[3].id).isEqualTo("3")
-            assertThat(results.elements[3].name).isEqualTo("tagged, first category is C")
-        }
-
-        @Test
-        fun `returns channels sorted by taxonomy categories DESC`() {
-            indexWriter.safeRebuildIndex(
-                sequenceOf(
-                    SearchableChannelMetadataFactory.create(
-                        id = "1", name = "untagged, needs video level tagging",
-                        taxonomy = Taxonomy(videoLevelTagging = true, categories = null)
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "2",
-                        name = "untagged, does not need video level tagging",
-                        taxonomy = Taxonomy(videoLevelTagging = false, categories = emptySet())
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "3", name = "tagged, first category is C",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(CategoryCode("G"), CategoryCode("DEF"), CategoryCode("C"))
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "4", name = "tagged, first category is ABC",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("Z"), CategoryCode("DEF"), CategoryCode("ABC")
-                            )
-                        )
-                    ),
-                )
-            )
-
-            val results = indexReader.search(
-                SearchRequestWithoutPagination(
-                    query = SuggestionQuery(
-                        accessRuleQuery = SuggestionAccessRuleQuery(),
-                        sort = listOf(Sort.ByField(fieldName = ChannelMetadata::taxonomy, order = SortOrder.DESC))
-                    )
-                )
-            )
-
-            assertThat(results.elements.size).isEqualTo(4)
-            assertThat(results.elements[0].id).isEqualTo("3")
-            assertThat(results.elements[0].name).isEqualTo("tagged, first category is C")
-            assertThat(results.elements[1].id).isEqualTo("4")
-            assertThat(results.elements[1].name).isEqualTo("tagged, first category is ABC")
-            assertThat(results.elements[2].id).isEqualTo("1")
-            assertThat(results.elements[2].name).isEqualTo("untagged, needs video level tagging")
-            assertThat(results.elements[3].id).isEqualTo("2")
-            assertThat(results.elements[3].name).isEqualTo("untagged, does not need video level tagging")
-        }
-    }
-
 }

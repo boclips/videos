@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.model.SuggestionsSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
@@ -64,7 +64,7 @@ internal class RebuildChannelIndexFakeTest {
         rebuildSearchIndex()
 
         val results = index.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 SuggestionQuery(
                     phrase = "chan",
                     accessRuleQuery = SuggestionAccessRuleQuery()
@@ -107,7 +107,7 @@ internal class RebuildChannelIndexFakeTest {
         )
 
         val results = index.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 SuggestionQuery(
                     phrase = "chan",
                     accessRuleQuery = SuggestionAccessRuleQuery(
@@ -156,7 +156,7 @@ internal class RebuildChannelIndexFakeTest {
         )
 
         val results = index.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 SuggestionQuery(
                     phrase = "",
                     accessRuleQuery = SuggestionAccessRuleQuery(),

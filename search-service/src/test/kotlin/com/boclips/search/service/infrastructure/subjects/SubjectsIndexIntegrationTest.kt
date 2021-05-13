@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.subjects
 
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.model.SuggestionsSearchRequest
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableSubjectMetadataFactory
@@ -26,7 +26,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "super"
                 )
@@ -50,7 +50,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "1"
                 )
@@ -74,7 +74,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "upe"
                 )
@@ -97,7 +97,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "subje"
                 )
@@ -125,7 +125,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "1 Minute"
                 )
@@ -154,7 +154,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "ted"
                 )
@@ -184,7 +184,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "Crash"
                 )
@@ -213,7 +213,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "ering"
                 )
@@ -242,7 +242,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>(
                     "3"
                 )
@@ -265,7 +265,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         val results = indexReader.search(
-            SearchRequestWithoutPagination(
+            SuggestionsSearchRequest(
                 query = SuggestionQuery<SubjectMetadata>("Boy")
             )
         )
@@ -287,7 +287,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             indexReader.search(
-                SearchRequestWithoutPagination(
+                SuggestionsSearchRequest(
                     query = SuggestionQuery<SubjectMetadata>(
                         "boy"
                     )
@@ -299,7 +299,7 @@ class SubjectsIndexIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(
             indexReader.search(
-                SearchRequestWithoutPagination(
+                SuggestionsSearchRequest(
                     query = SuggestionQuery<SubjectMetadata>(
                         "boy"
                     )

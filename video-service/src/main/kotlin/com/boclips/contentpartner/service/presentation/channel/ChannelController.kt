@@ -68,13 +68,19 @@ class ChannelController(
     }
 
     @GetMapping
-    fun getChannels(channelFilterRequest: ChannelFilterRequest): ChannelsResource {
+    fun getChannels(
+        @RequestParam(name = "size", required = false) size: Int?,
+        @RequestParam(name = "page", required = false) page: Int?,
+        channelFilterRequest: ChannelFilterRequest
+    ): ChannelsResource {
 
-        val channels = fetchChannels(
+        val channels = fetchChannels.invoke(
             name = channelFilterRequest.name,
             ingestTypes = channelFilterRequest.ingestType?.map {
                 IngestTypeConverter.convertType(it)
-            }
+            },
+            pageSize = size,
+            pageNumber = page
         )
 
         val resources = channels.map {

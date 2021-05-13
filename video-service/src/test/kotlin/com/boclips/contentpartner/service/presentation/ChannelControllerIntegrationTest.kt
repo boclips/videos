@@ -14,11 +14,7 @@ import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asIngestor
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.oneOf
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -851,6 +847,45 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contractId", equalTo(contractId.value)))
             .andExpect(jsonPath("$.contractName", equalTo("a contract")))
+    }
+
+    @Nested
+    inner class GetChannels {
+        @Test
+        fun `can handle paginated requests`() {
+            saveChannel(name = "Channel 1")
+            saveChannel(name = "Channel 2")
+            saveChannel(name = "Channel 3")
+            saveChannel(name = "Channel 4")
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels?page=2&size=2"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(2)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 3")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 4")))
+        }
+
+        @Test
+        fun `returns all records when no pagination is specified`() {
+            saveChannel(name = "Channel 1")
+            saveChannel(name = "Channel 2")
+            saveChannel(name = "Channel 3")
+            saveChannel(name = "Channel 4")
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 1")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 2")))
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("Channel 3")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Channel 4")))
+        }
     }
 
     @Nested

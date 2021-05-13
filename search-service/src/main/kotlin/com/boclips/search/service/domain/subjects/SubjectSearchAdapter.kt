@@ -3,7 +3,7 @@ package com.boclips.search.service.domain.subjects
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.model.SuggestionsSearchRequest
 import com.boclips.search.service.domain.common.suggestions.IndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
@@ -20,7 +20,7 @@ abstract class SubjectSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
+    override fun search(searchRequest: SuggestionsSearchRequest<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
         return indexReader.search(searchRequest)
     }
 
