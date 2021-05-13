@@ -445,4 +445,12 @@ class VideoController(
 
         return ResponseEntity(price, HttpStatus.OK)
     }
+
+    @PostMapping(consumes = ["multipart/form-data"])
+    fun tagVideos(
+        @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<Any> {
+        convertToCategoryMappings(file)
+
+    }
 }

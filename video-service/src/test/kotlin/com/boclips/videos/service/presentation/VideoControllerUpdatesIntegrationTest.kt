@@ -7,14 +7,13 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
@@ -26,6 +25,12 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var disabledVideoId: String
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
+
+    @Value("classpath:valid-categories.csv")
+    lateinit var validCategoryCsv: Resource
+
+    @Value("classpath:invalid-categories.csv")
+    lateinit var invalidCategoryCsv: Resource
 
     @BeforeEach
     fun setUp() {
@@ -452,5 +457,39 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$youtubeVideoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
+    }
+
+    @Test
+    fun `can validate a csv of video to category tags`() {
+        addCategory(CategoryFactory.sample(code = "A"))
+        addCategory(CategoryFactory.sample(code = "AB"))
+        addCategory(CategoryFactory.sample(code = "ABC"))
+
+        val channelId = saveChannel(name = "Animal videos").id.value
+        saveVideo(title = "A video about sharks", categories = emptyList(), existingChannelId = channelId)
+        saveVideo(title = "A video about whales", categories = emptyList(), existingChannelId = channelId)
+        saveVideo(title = "A video about dogs", categories = emptyList(), existingChannelId = channelId)
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", validCategoryCsv.file.readBytes())
+        ).andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `can validate a csv of video to category tags`() {
+        addCategory(CategoryFactory.sample(code = "A"))
+        addCategory(CategoryFactory.sample(code = "AB"))
+        addCategory(CategoryFactory.sample(code = "ABC"))
+
+        val channelId = saveChannel(name = "Animal videos").id.value
+        saveVideo(title = "A video about sharks", categories = emptyList(), existingChannelId = channelId)
+        saveVideo(title = "A video about whales", categories = emptyList(), existingChannelId = channelId)
+        saveVideo(title = "A video about dogs", categories = emptyList(), existingChannelId = channelId)
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", validCategoryCsv.file.readBytes())
+        ).andExpect(status().isCreated)
     }
 }
