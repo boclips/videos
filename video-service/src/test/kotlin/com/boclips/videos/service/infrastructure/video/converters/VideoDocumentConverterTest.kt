@@ -94,6 +94,49 @@ class VideoDocumentConverterTest {
     }
 
     @Test
+    fun `converts a video with only CHANNEL source`() {
+        val originalVideo: Video = TestFactories.createVideo(
+            categories = mapOf(
+                CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()),
+            )
+        )
+
+        val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+        val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+        assertThat(recoveredVideo.categories[CategorySource.CHANNEL]).isEqualTo(originalVideo.categories[CategorySource.CHANNEL])
+        assertThat(recoveredVideo.categories[CategorySource.MANUAL]).isEmpty()
+    }
+
+    @Test
+    fun `converts a video with only MANUAL source`() {
+        val originalVideo: Video = TestFactories.createVideo(
+            categories = mapOf(
+                CategorySource.MANUAL to setOf(CategoryWithAncestorsFactory.sample()),
+            )
+        )
+
+        val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+        val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+        assertThat(recoveredVideo.categories[CategorySource.MANUAL]).isEqualTo(originalVideo.categories[CategorySource.MANUAL])
+        assertThat(recoveredVideo.categories[CategorySource.CHANNEL]).isEmpty()
+    }
+
+    @Test
+    fun `converts a video with no sources`() {
+        val originalVideo: Video = TestFactories.createVideo(
+            categories = emptyMap()
+        )
+
+        val document = VideoDocumentConverter.toVideoDocument(originalVideo)
+        val recoveredVideo = VideoDocumentConverter.toVideo(document)
+
+        assertThat(recoveredVideo.categories[CategorySource.CHANNEL]).isEmpty()
+        assertThat(recoveredVideo.categories[CategorySource.MANUAL]).isEmpty()
+    }
+
+    @Test
     fun `can convert attachments`() {
         val originalVideo: Video = TestFactories.createVideo(
             attachments = listOf(AttachmentFactory.sample())

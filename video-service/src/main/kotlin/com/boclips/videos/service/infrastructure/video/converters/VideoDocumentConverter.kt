@@ -122,18 +122,22 @@ object VideoDocumentConverter {
         )
 
     private fun mapCategories(categories: VideoCategoriesDocument?) =
-        categories?.let { categoriesDocument ->
+        categories.let { categoriesDocument ->
             mapOf(
-                CategorySource.CHANNEL to categoriesDocument.channel.map {
-                    VideoCategoriesDocumentConverter.fromDocument(
-                        it
+                CategorySource.CHANNEL to (
+                    categoriesDocument?.channel?.map {
+                        VideoCategoriesDocumentConverter.fromDocument(
+                            it
+                        )
+                    }?.toSet() ?: emptySet()
+                    ),
+                CategorySource.MANUAL to (
+                    categoriesDocument?.manual?.map {
+                        VideoCategoriesDocumentConverter.fromDocument(
+                            it
+                        )
+                    }?.toSet() ?: emptySet()
                     )
-                }.toSet(),
-                CategorySource.MANUAL to categoriesDocument.manual.map {
-                    VideoCategoriesDocumentConverter.fromDocument(
-                        it
-                    )
-                }.toSet()
             )
-        } ?: emptyMap()
+        }
 }
