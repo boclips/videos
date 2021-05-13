@@ -333,6 +333,8 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
+        categories?.map { addCategory(CategoryFactory.sample(it)) }
+
         val video = createVideo(
             CreateVideoRequest(
                 providerId = existingChannelId ?: retrievedContentPartnerId,

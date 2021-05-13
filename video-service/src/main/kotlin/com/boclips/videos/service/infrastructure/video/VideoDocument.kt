@@ -36,4 +36,3 @@ data class VideoDocument(
     val activeVideoId: String? = null,
     val categories: VideoCategoriesDocument? = null,
 )
-

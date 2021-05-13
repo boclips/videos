@@ -54,7 +54,8 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
-            ageRangeMax = 7
+            ageRangeMax = 7,
+            categories = listOf("A")
         ).value
 
         youtubeVideoId = saveVideo(
@@ -142,6 +143,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._links.assets.href", containsString("/videos/$kalturaVideoId/assets")))
                 .andExpect(jsonPath("$.ageRange.min", equalTo(5)))
                 .andExpect(jsonPath("$.ageRange.max", equalTo(7)))
+                .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("A")))
 
             mockMvc.perform(get("/v1/videos?query=powerful").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
                 .andExpect(status().isOk)

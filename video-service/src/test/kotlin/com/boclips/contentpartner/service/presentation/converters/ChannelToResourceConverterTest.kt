@@ -98,11 +98,11 @@ class ChannelToResourceConverterTest {
         assertThat(channelResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
         assertThat(channelResource.contractId).isEqualTo("id")
         assertThat(channelResource.contractName).isEqualTo("TED")
-        assertThat(channelResource.taxonomy?.categories).containsExactlyInAnyOrder(
+        assertThat(channelResource.channelTaxonomy?.categories).containsExactlyInAnyOrder(
             TaxonomyCategoryResource(codeValue = "ABC", "A description"),
             TaxonomyCategoryResource(codeValue = "BC", "B description")
         )
-        assertThat(channelResource.taxonomy?.requiresVideoLevelTagging).isNull()
+        assertThat(channelResource.channelTaxonomy?.requiresVideoLevelTagging).isNull()
     }
 
     @Test

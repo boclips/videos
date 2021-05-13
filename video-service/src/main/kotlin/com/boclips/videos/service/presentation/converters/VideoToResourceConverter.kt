@@ -1,21 +1,10 @@
 package com.boclips.videos.service.presentation.converters
 
-import TaxonomyResource
-import TaxonomyResourceWrapper
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.video.LanguageResource
-import com.boclips.videos.api.response.video.PriceResource
-import com.boclips.videos.api.response.video.TagResource
-import com.boclips.videos.api.response.video.VideoBadge
-import com.boclips.videos.api.response.video.VideoFacetResource
-import com.boclips.videos.api.response.video.VideoFacetsResource
-import com.boclips.videos.api.response.video.VideoResource
-import com.boclips.videos.api.response.video.VideoTypeResource
-import com.boclips.videos.api.response.video.VideosResource
-import com.boclips.videos.api.response.video.VideosWrapperResource
+import com.boclips.videos.api.response.video.*
 import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
@@ -94,13 +83,13 @@ class VideoToResourceConverter(
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             keywords = video.keywords,
-            taxonomy = TaxonomyResourceWrapper(
-                channel = TaxonomyResource(
+            taxonomy = VideoTaxonomyResourceWrapper(
+                channel = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.CHANNEL]?.map {
                         TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
                     }
                 ),
-                manual = TaxonomyResource(
+                manual = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.MANUAL]?.map {
                         TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
                     }

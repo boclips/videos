@@ -5,6 +5,7 @@ import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -14,12 +15,14 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -58,7 +61,8 @@ class VideoToResourceConverterTest {
         ageRange = AgeRange.of(min = 5, max = 11, curatedManually = false),
         ratings = listOf(
             UserRating(
-                rating = 3, userId = UserId(
+                rating = 3,
+                userId = UserId(
                     "user-id"
                 )
             )
@@ -75,7 +79,21 @@ class VideoToResourceConverterTest {
         contentWarnings = listOf(
             ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Warning"),
             ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Other disclaimer")
-        )
+        ),
+        categories = mapOf(
+            CategorySource.CHANNEL to setOf(
+                CategoryWithAncestors(
+                    codeValue = CategoryCode("A"), description = "Test",
+
+                )
+            ),
+            CategorySource.MANUAL to setOf(
+                CategoryWithAncestors(
+                    codeValue = CategoryCode("B"), description = "Test",
+
+                )
+            )
+        ),
     )
 
     private val youtubeVideo = createVideo(
@@ -197,6 +215,8 @@ class VideoToResourceConverterTest {
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(playbackResource.id).isEqualTo("entry-id")
         assertThat(playbackResource.referenceId).isEqualTo("555")
+        assertThat(videoResource.taxonomy?.channel?.categories!![0].codeValue).isEqualTo("A")
+        assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).contains("B")
     }
 
     @Test
@@ -297,12 +317,14 @@ class VideoToResourceConverterTest {
                         AgeRangeFacet(
                             ageRangeId = AgeRangeId(
                                 "3-5"
-                            ), total = 3
+                            ),
+                            total = 3
                         ),
                         AgeRangeFacet(
                             ageRangeId = AgeRangeId(
                                 "5-11"
-                            ), total = 1
+                            ),
+                            total = 1
                         )
                     ),
                     durations = listOf(DurationFacet(durationId = "PT0S-PT1M", total = 10)),
@@ -312,7 +334,7 @@ class VideoToResourceConverterTest {
                         ChannelFacet(channelId = ChannelId("non-existing-channel-id"), total = 9)
                     ),
                     videoTypes = listOf(VideoTypeFacet(typeId = "stock", total = 10)),
-                    prices = listOf(PriceFacet(price = "20000", total =10))
+                    prices = listOf(PriceFacet(price = "20000", total = 10))
                 ),
                 pageInfo = PageInfo(
                     hasMoreElements = false,

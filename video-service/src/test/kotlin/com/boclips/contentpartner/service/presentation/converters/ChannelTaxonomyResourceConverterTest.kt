@@ -6,7 +6,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class TaxonomyResourceConverterTest {
+internal class ChannelTaxonomyResourceConverterTest {
     @Test
     fun `converts a videoLevelTagging taxonomy`() {
         val taxonomy = Taxonomy.VideoLevelTagging

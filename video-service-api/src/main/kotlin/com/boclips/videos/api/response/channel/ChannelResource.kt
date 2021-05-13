@@ -1,6 +1,6 @@
 package com.boclips.videos.api.response.channel
 
-import TaxonomyResource
+import ChannelTaxonomyResource
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.response.HateoasLink
@@ -54,7 +54,7 @@ data class ChannelResource(
     val contractName: String? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
-    val taxonomy: TaxonomyResource? = null,
+    val channelTaxonomy: ChannelTaxonomyResource? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>? = null
