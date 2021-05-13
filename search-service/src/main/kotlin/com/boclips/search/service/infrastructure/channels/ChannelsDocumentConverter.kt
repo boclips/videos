@@ -16,7 +16,7 @@ class ChannelsDocumentConverter {
             eligibleForStream = metadata.eligibleForStream,
             types = metadata.contentTypes,
             taxonomyVideoLevelTagging = metadata.taxonomy.videoLevelTagging,
-            taxonomyCategories = metadata.taxonomy.categories?.map { it.value }?.toSet()
+            taxonomyCategories = metadata.taxonomy.categories?.map { it.value }?.sorted()
         )
     }
 }

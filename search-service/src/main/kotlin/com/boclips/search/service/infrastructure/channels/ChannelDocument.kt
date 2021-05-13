@@ -10,7 +10,7 @@ data class ChannelDocument @JsonCreator constructor(
     @param:JsonProperty(TYPES) val types: List<ContentType>,
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
     @param:JsonProperty(TAXONOMY_VIDEO_LEVEL_TAGGING) val taxonomyVideoLevelTagging: Boolean,
-    @param:JsonProperty(TAXONOMY_CATEGORIES) val taxonomyCategories: Set<String>?,
+    @param:JsonProperty(TAXONOMY_CATEGORIES) val taxonomyCategories: List<String>?,
 ) {
     companion object {
         const val ID = "id"

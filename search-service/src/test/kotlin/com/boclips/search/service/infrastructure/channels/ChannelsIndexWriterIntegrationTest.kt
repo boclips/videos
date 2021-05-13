@@ -484,23 +484,23 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             indexWriter.safeRebuildIndex(
                 sequenceOf(
                     SearchableChannelMetadataFactory.create(
-                        id = "1", name = "this should be second",
+                        id = "1", name = "untagged, needs video level tagging",
                         taxonomy = Taxonomy(videoLevelTagging = true, categories = null)
                     ),
                     SearchableChannelMetadataFactory.create(
                         id = "2",
-                        name = "this should be first",
+                        name = "untagged, does not need video level tagging",
                         taxonomy = Taxonomy(videoLevelTagging = false, categories = emptySet())
                     ),
                     SearchableChannelMetadataFactory.create(
-                        id = "3", name = "this should go last",
+                        id = "3", name = "tagged, first category is C",
                         taxonomy = Taxonomy(
                             videoLevelTagging = false,
                             categories = setOf(CategoryCode("G"), CategoryCode("DEF"), CategoryCode("C"))
                         )
                     ),
                     SearchableChannelMetadataFactory.create(
-                        id = "4", name = "this should go third",
+                        id = "4", name = "tagged, first category is ABC",
                         taxonomy = Taxonomy(
                             videoLevelTagging = false,
                             categories = setOf(
@@ -521,14 +521,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
 
             assertThat(results.elements.size).isEqualTo(4)
-            assertThat(results.elements.first().id).isEqualTo("2")
-            assertThat(results.elements.first().name).isEqualTo("this should be first")
+            assertThat(results.elements[0].id).isEqualTo("2")
+            assertThat(results.elements[0].name).isEqualTo("untagged, does not need video level tagging")
             assertThat(results.elements[1].id).isEqualTo("1")
-            assertThat(results.elements[1].name).isEqualTo("this should be second")
+            assertThat(results.elements[1].name).isEqualTo("untagged, needs video level tagging")
             assertThat(results.elements[2].id).isEqualTo("4")
-            assertThat(results.elements[2].name).isEqualTo("this should go third")
-            assertThat(results.elements.last().id).isEqualTo("3")
-            assertThat(results.elements.last().name).isEqualTo("this should go last")
+            assertThat(results.elements[2].name).isEqualTo("tagged, first category is ABC")
+            assertThat(results.elements[3].id).isEqualTo("3")
+            assertThat(results.elements[3].name).isEqualTo("tagged, first category is C")
         }
 
         @Test
@@ -536,23 +536,23 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             indexWriter.safeRebuildIndex(
                 sequenceOf(
                     SearchableChannelMetadataFactory.create(
-                        id = "1", name = "this should be second",
+                        id = "1", name = "untagged, needs video level tagging",
                         taxonomy = Taxonomy(videoLevelTagging = true, categories = null)
                     ),
                     SearchableChannelMetadataFactory.create(
                         id = "2",
-                        name = "this should be first",
+                        name = "untagged, does not need video level tagging",
                         taxonomy = Taxonomy(videoLevelTagging = false, categories = emptySet())
                     ),
                     SearchableChannelMetadataFactory.create(
-                        id = "3", name = "this should go last",
+                        id = "3", name = "tagged, first category is C",
                         taxonomy = Taxonomy(
                             videoLevelTagging = false,
                             categories = setOf(CategoryCode("G"), CategoryCode("DEF"), CategoryCode("C"))
                         )
                     ),
                     SearchableChannelMetadataFactory.create(
-                        id = "4", name = "this should go third",
+                        id = "4", name = "tagged, first category is ABC",
                         taxonomy = Taxonomy(
                             videoLevelTagging = false,
                             categories = setOf(
@@ -573,14 +573,14 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
             )
 
             assertThat(results.elements.size).isEqualTo(4)
-            assertThat(results.elements.last().id).isEqualTo("2")
-            assertThat(results.elements.last().name).isEqualTo("this should be first")
-            assertThat(results.elements[2].id).isEqualTo("1")
-            assertThat(results.elements[2].name).isEqualTo("this should be second")
+            assertThat(results.elements[0].id).isEqualTo("3")
+            assertThat(results.elements[0].name).isEqualTo("tagged, first category is C")
             assertThat(results.elements[1].id).isEqualTo("4")
-            assertThat(results.elements[1].name).isEqualTo("this should go third")
-            assertThat(results.elements.first().id).isEqualTo("3")
-            assertThat(results.elements.first().name).isEqualTo("this should go last")
+            assertThat(results.elements[1].name).isEqualTo("tagged, first category is ABC")
+            assertThat(results.elements[2].id).isEqualTo("1")
+            assertThat(results.elements[2].name).isEqualTo("untagged, needs video level tagging")
+            assertThat(results.elements[3].id).isEqualTo("2")
+            assertThat(results.elements[3].name).isEqualTo("untagged, does not need video level tagging")
         }
     }
 

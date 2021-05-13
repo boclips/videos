@@ -26,11 +26,11 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         private val sortByTaxonomyScript = Script(
             """
                          if(doc['taxonomyVideoLevelTagging'].value) {
-                             return '1';
+                             return '01 needs video tagging';
                          } else if (!doc.containsKey('taxonomyCategories') || doc['taxonomyCategories'].size() == 0) {
-                             return '0'; // untagged - highest priority
+                             return '00 untagged';
                          } else {
-                             return doc['taxonomyCategories'].stream().sorted().findFirst().get();
+                             return doc['taxonomyCategories'][0];
                          }
                     """
         )
