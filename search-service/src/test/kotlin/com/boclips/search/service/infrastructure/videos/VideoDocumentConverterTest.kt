@@ -51,7 +51,7 @@ class VideoDocumentConverterTest {
                 "ingestedAt": "2017-04-24T09:30Z[UTC]",
                 "categoryCodes": ["A","AB","ABC"]
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 
@@ -88,7 +88,7 @@ class VideoDocumentConverterTest {
                 isVoiced = null,
                 language = "spa",
                 prices = null,
-                categoryCodes = setOf("A","AB","ABC")
+                categoryCodes = setOf("A", "AB", "ABC")
             )
         )
     }
@@ -112,7 +112,7 @@ class VideoDocumentConverterTest {
                 "durationSeconds": 10,
                 "source": "Boclips"
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 
@@ -260,7 +260,7 @@ class VideoDocumentConverterTest {
                 "durationSeconds": 10,
                 "source": "Boclips"
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 

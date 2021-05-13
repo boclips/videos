@@ -73,10 +73,18 @@ class VideoDocumentConverterTest {
             ),
             ageRange = AgeRange.of(min = 11, max = 16, curatedManually = true),
             promoted = true,
-            contentWarnings = listOf(ContentWarning(id = ContentWarningId(ObjectId().toHexString()), label = "Warning 1")),
+            contentWarnings = listOf(
+                ContentWarning(
+                    id = ContentWarningId(ObjectId().toHexString()),
+                    label = "Warning 1"
+                )
+            ),
             deactivated = true,
             activeVideoId = TestFactories.createVideoId(),
-            categories = mapOf(CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()))
+            categories = mapOf(
+
+                CategorySource.MANUAL to setOf(CategoryWithAncestorsFactory.sample())
+            )
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalVideo)
