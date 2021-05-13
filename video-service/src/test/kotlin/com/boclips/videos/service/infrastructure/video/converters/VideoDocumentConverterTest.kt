@@ -82,7 +82,7 @@ class VideoDocumentConverterTest {
             deactivated = true,
             activeVideoId = TestFactories.createVideoId(),
             categories = mapOf(
-
+                CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()),
                 CategorySource.MANUAL to setOf(CategoryWithAncestorsFactory.sample())
             )
         )
