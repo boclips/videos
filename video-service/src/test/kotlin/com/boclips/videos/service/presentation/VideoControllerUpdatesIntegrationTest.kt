@@ -2,15 +2,8 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
-import com.boclips.videos.service.testsupport.asTeacher
-import com.boclips.videos.service.testsupport.loadFile
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.matchesPattern
+import com.boclips.videos.service.testsupport.*
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -202,6 +195,28 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updates the category of a video`() {
+        addTaxonomy(CategoryFactory.sample(code = "A", description = "AAA"))
+        addTaxonomy(CategoryFactory.sample(code = "B", description = "BBB"))
+        addTaxonomy(CategoryFactory.sample(code = "C", description = "CCC"))
+
+        val videoToUpdate = saveVideo(categories = listOf("A", "B")).value
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "categories": ["C"] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/v1/videos/$videoToUpdate").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("C")))
+            .andExpect(jsonPath("$.taxonomy.manual.categories[*]", hasSize<Int>(1)))
+    }
+
+    @Test
     fun `updates and replaces the best for tag of a video`() {
         val videoToUpdate = saveVideo().value
         val tagId = saveTag("Brain break")
@@ -338,8 +353,10 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.playback._links.setCustomThumbnail").exists())
             .andExpect(jsonPath("$.playback._links.deleteThumbnail").doesNotExist())
 
-        val file = MockMultipartFile("thumbnailImage", "thumbnailImage.jpeg",
-            "image/jpeg", loadFile("thumbnailImage.jpeg"))
+        val file = MockMultipartFile(
+            "thumbnailImage", "thumbnailImage.jpeg",
+            "image/jpeg", loadFile("thumbnailImage.jpeg")
+        )
 
         mockMvc.perform(
             MockMvcRequestBuilders.multipart("/v1/videos/$kalturaVideoId/playback")
@@ -380,14 +397,17 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can remove the custom thumbnail image`() {
-        val file = MockMultipartFile("thumbnailImage", "thumbnailImage.jpeg",
-            "image/jpeg", loadFile("thumbnailImage.jpeg"))
+        val file = MockMultipartFile(
+            "thumbnailImage", "thumbnailImage.jpeg",
+            "image/jpeg", loadFile("thumbnailImage.jpeg")
+        )
 
         mockMvc.perform(
             MockMvcRequestBuilders.multipart("/v1/videos/$kalturaVideoId/playback")
                 .file(file)
                 .param("playbackId", "entry-id-123")
-                .asBoclipsEmployee())
+                .asBoclipsEmployee()
+        )
             .andExpect(status().isOk)
 
         mockMvc.perform(get("/v1/videos/$kalturaVideoId").asBoclipsEmployee())
@@ -434,4 +454,3 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
     }
 }
-

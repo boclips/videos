@@ -81,7 +81,8 @@ class VideoServiceApiFactory {
             subjectIds: List<String>? = null,
             ageRangeMin: Int? = null,
             ageRangeMax: Int? = null,
-            rating: Int? = null
+            rating: Int? = null,
+            categories: List<String>? = emptyList(),
         ): UpdateVideoRequest {
             return UpdateVideoRequest(
                 title = title,
@@ -91,7 +92,8 @@ class VideoServiceApiFactory {
                 subjectIds = subjectIds,
                 ageRangeMin = ageRangeMin,
                 ageRangeMax = ageRangeMax,
-                rating = rating
+                rating = rating,
+                categories = categories
             )
         }
 

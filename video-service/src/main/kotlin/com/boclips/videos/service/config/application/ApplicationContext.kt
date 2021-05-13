@@ -11,6 +11,7 @@ import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ChannelUpdated
+import com.boclips.videos.service.application.GetCategoryWithAncestors
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
 import com.boclips.videos.service.application.channels.VideoChannelService
@@ -148,6 +149,7 @@ class ApplicationContext(
     val organisationService: OrganisationService,
     val priceComputingService: PriceComputingService,
     val eventsBroadcastProperties: EventsBroadcastProperties,
+    val getCategoryWithAncestors: GetCategoryWithAncestors,
 ) {
     @Bean
     fun searchVideo(
@@ -174,7 +176,8 @@ class ApplicationContext(
     fun createVideo(
         videoCounter: Counter,
         videoAnalysisService: VideoAnalysisService,
-        subjectClassificationService: SubjectClassificationService
+        subjectClassificationService: SubjectClassificationService,
+        getCategoryWithAncestors: GetCategoryWithAncestors
     ): CreateVideo {
         return CreateVideo(
             videoCreationService,
@@ -184,7 +187,8 @@ class ApplicationContext(
             playbackRepository,
             videoCounter,
             videoAnalysisService,
-            subjectClassificationService
+            subjectClassificationService,
+            getCategoryWithAncestors
         )
     }
 
@@ -199,7 +203,10 @@ class ApplicationContext(
     }
 
     @Bean
-    fun uploadThumbnailImageToVideo(kalturaClient: KalturaClient, setVideoThumbnail: SetVideoThumbnail): UploadThumbnailImageToVideo {
+    fun uploadThumbnailImageToVideo(
+        kalturaClient: KalturaClient,
+        setVideoThumbnail: SetVideoThumbnail
+    ): UploadThumbnailImageToVideo {
         return UploadThumbnailImageToVideo(kalturaClient, setVideoThumbnail)
     }
 
@@ -210,7 +217,14 @@ class ApplicationContext(
 
     @Bean
     fun updateVideo(): UpdateVideo {
-        return UpdateVideo(videoUpdateService, videoRepository, subjectRepository, tagRepository, contentWarningRepository)
+        return UpdateVideo(
+            videoUpdateService,
+            videoRepository,
+            subjectRepository,
+            tagRepository,
+            contentWarningRepository,
+            getCategoryWithAncestors
+        )
     }
 
     @Bean

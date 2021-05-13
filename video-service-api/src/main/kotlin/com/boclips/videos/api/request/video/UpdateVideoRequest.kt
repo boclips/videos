@@ -20,5 +20,6 @@ data class UpdateVideoRequest(
     val tagId: String? = null,
     val attachments: Specifiable<List<AttachmentRequest>>? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
-    val contentWarningIds: List<String>? = null
+    val contentWarningIds: List<String>? = null,
+    val categories: List<String>? = null
 )

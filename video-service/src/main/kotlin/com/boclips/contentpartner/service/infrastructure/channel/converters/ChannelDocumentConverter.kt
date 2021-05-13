@@ -4,13 +4,13 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.channel.CategoriesDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.ContentPartnerStatusDocument
 import com.boclips.contentpartner.service.infrastructure.channel.MarketingInformationDocument
 import com.boclips.contentpartner.service.infrastructure.channel.TaxonomyDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
-import com.boclips.contentpartner.service.infrastructure.channel.ChannelCategoriesDocumentConverter
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import mu.KLogging
 import org.bson.types.ObjectId
@@ -83,7 +83,7 @@ object ChannelDocumentConverter : KLogging() {
     private fun toCategoriesDocument(taxonomy: Taxonomy) = when (taxonomy) {
         is Taxonomy.ChannelLevelTagging -> TaxonomyDocument(
             categories = taxonomy.categories.map {
-                ChannelCategoriesDocumentConverter.toDocument(it)
+                CategoriesDocumentConverter.toDocument(it)
             }.toSet()
         )
         is Taxonomy.VideoLevelTagging -> TaxonomyDocument(
@@ -120,8 +120,8 @@ object ChannelDocumentConverter : KLogging() {
                     else -> {
                         logger.warn {
                             "$it is not a valid type. Valid types are ${
-                                ContentType.values()
-                                    .joinToString(prefix = "[", postfix = "]") { value -> value.name }
+                            ContentType.values()
+                                .joinToString(prefix = "[", postfix = "]") { value -> value.name }
                             }"
                         }
                         null
@@ -162,13 +162,14 @@ object ChannelDocumentConverter : KLogging() {
             },
             taxonomy = document.taxonomy?.let {
                 convertTaxonomyDocument(it)
-            })
+            }
+        )
     }
 
     private fun convertTaxonomyDocument(taxonomy: TaxonomyDocument) =
         if (taxonomy.requiresVideoLevelTagging == true) Taxonomy.VideoLevelTagging
         else Taxonomy.ChannelLevelTagging(
-            categories = ChannelCategoriesDocumentConverter.fromDocument(taxonomy.categories)
+            categories = CategoriesDocumentConverter.fromDocument(taxonomy.categories)
         )
 
     private fun reconstructDistributionMethods(document: ChannelDocument): Set<DistributionMethod> {

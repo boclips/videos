@@ -3,6 +3,9 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCreateVideoRequest
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
@@ -19,6 +22,7 @@ class CreateVideoRequestToVideoConverterTest {
     lateinit var videoPlayback: VideoPlayback
     lateinit var contentPartner: Channel
     lateinit var subjects: List<Subject>
+    lateinit var categories: Map<CategorySource, Set<CategoryWithAncestors>>
 
     @BeforeEach
     fun setUp() {
@@ -27,11 +31,19 @@ class CreateVideoRequestToVideoConverterTest {
         videoPlayback = createKalturaPlayback()
         contentPartner = TestFactories.createChannel()
         subjects = listOf(TestFactories.createSubject())
+        categories = mapOf(
+            CategorySource.MANUAL to setOf(
+                CategoryWithAncestors(
+                    codeValue = CategoryCode("A"),
+                    description = "this is description"
+                )
+            )
+        )
     }
 
     @Test
     fun `sets ingestion timestamp`() {
-        val video = converter.convert(createCreateVideoRequest(), createKalturaPlayback(), contentPartner, subjects)
+        val video = converter.convert(createCreateVideoRequest(), createKalturaPlayback(), contentPartner, subjects, categories)
 
         assertThat(video.ingestedAt).isAfter(LocalDate.now().minusDays(1).atStartOfDay(ZoneOffset.UTC))
         assertThat(video.ingestedAt).isBefore(LocalDate.now().plusDays(2).atStartOfDay(ZoneOffset.UTC))
@@ -41,7 +53,7 @@ class CreateVideoRequestToVideoConverterTest {
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = createKalturaPlayback(duration = expectedDuration)
-        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects)
+        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects, categories)
 
         assertThat(video.playback.duration).isEqualTo(expectedDuration)
     }
@@ -49,7 +61,7 @@ class CreateVideoRequestToVideoConverterTest {
     @Test
     fun `uses the playback`() {
         val playback = createKalturaPlayback()
-        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects)
+        val video = converter.convert(createCreateVideoRequest(), playback, contentPartner, subjects, categories)
 
         assertThat(video.playback).isEqualTo(playback)
     }
@@ -62,7 +74,8 @@ class CreateVideoRequestToVideoConverterTest {
             createCreateVideoRequest(),
             playback,
             contentPartner,
-            subjects
+            subjects,
+            categories
         )
 
         assertThat(video.subjects.items).hasSize(1)
@@ -78,7 +91,8 @@ class CreateVideoRequestToVideoConverterTest {
             createCreateVideoRequest(),
             playback,
             contentPartner,
-            listOf()
+            listOf(),
+            categories
         )
 
         assertThat(video.subjects.setManually).isFalse()
@@ -91,7 +105,8 @@ class CreateVideoRequestToVideoConverterTest {
                 createCreateVideoRequest(legalRestrictions = null),
                 videoPlayback,
                 contentPartner,
-                subjects
+                subjects,
+                categories
             ).legalRestrictions
         ).isEmpty()
     }
@@ -102,7 +117,8 @@ class CreateVideoRequestToVideoConverterTest {
             createCreateVideoRequest(isVoiced = true),
             videoPlayback,
             contentPartner,
-            subjects
+            subjects,
+            categories
         )
 
         assertThat(video.isVoiced()).isTrue()
@@ -114,7 +130,8 @@ class CreateVideoRequestToVideoConverterTest {
             createCreateVideoRequest(isVoiced = false),
             videoPlayback,
             contentPartner,
-            subjects
+            subjects,
+            categories
         )
 
         assertThat(video.isVoiced()).isFalse()
@@ -126,7 +143,8 @@ class CreateVideoRequestToVideoConverterTest {
             createCreateVideoRequest(isVoiced = null),
             videoPlayback,
             contentPartner,
-            subjects
+            subjects,
+            categories
         )
 
         assertThat(video.isVoiced()).isNull()

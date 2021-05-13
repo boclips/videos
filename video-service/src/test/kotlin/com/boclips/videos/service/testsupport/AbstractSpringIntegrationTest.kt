@@ -62,7 +62,6 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
-import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
@@ -293,8 +292,8 @@ abstract class AbstractSpringIntegrationTest {
         additionalDescription: String? = "additional description",
         date: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(120),
-        newChannelName: String = "Reuters",
-        existingChannelId: String? = null,
+        contentProvider: String = "Reuters",
+        contentProviderId: String? = null,
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
         keywords: List<String> = emptyList(),
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
@@ -313,7 +312,7 @@ abstract class AbstractSpringIntegrationTest {
         isVoiced: Boolean? = null
     ): VideoId {
         val retrievedContentPartnerId =
-            saveChannel(name = newChannelName, distributionMethods = distributionMethods).id.value
+            saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -336,7 +335,7 @@ abstract class AbstractSpringIntegrationTest {
 
         val video = createVideo(
             CreateVideoRequest(
-                providerId = existingChannelId ?: retrievedContentPartnerId,
+                providerId = contentProviderId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
@@ -352,7 +351,8 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMax = ageRangeMax,
                 subjects = subjectIds,
                 language = language,
-                isVoiced = isVoiced
+                isVoiced = isVoiced,
+                categories = categories
             ),
             UserFactory.sample()
         )

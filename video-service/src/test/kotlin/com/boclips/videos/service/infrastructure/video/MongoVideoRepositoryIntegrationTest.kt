@@ -145,7 +145,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `update categories`() {
+    fun `update categories with channel source`() {
         val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
 
         val updatedAsset =
@@ -158,6 +158,24 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
         assertThat(updatedAsset.channelCategories).containsOnly(
+            CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")
+        )
+    }
+
+    @Test
+    fun `update categories with video source`() {
+        val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
+
+        val updatedAsset =
+            mongoVideoRepository.update(
+                VideoUpdateCommand.ReplaceCategories(
+                    videoId = originalAsset.videoId,
+                    categories = setOf(CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")),
+                    source = CategorySource.MANUAL
+                )
+            )
+
+        assertThat(updatedAsset.manualCategories).containsOnly(
             CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")
         )
     }
@@ -450,7 +468,14 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces language`() {
-        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = Locale.TAIWAN, transcript = null)))
+        val video = mongoVideoRepository.create(
+            createVideo(
+                voice = Voice.UnknownVoice(
+                    language = Locale.TAIWAN,
+                    transcript = null
+                )
+            )
+        )
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceLanguage(video.videoId, Locale.GERMAN))
 
@@ -461,7 +486,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces transcript`() {
-        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
+        val video =
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla"))
 
@@ -472,7 +498,8 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `replaces topics`() {
-        val video = mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
+        val video =
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,

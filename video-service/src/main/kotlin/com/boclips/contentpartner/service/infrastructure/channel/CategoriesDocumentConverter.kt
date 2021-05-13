@@ -4,7 +4,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.infrastructure.taxonomy.CategoryWithAncestorsDocument
 
-object ChannelCategoriesDocumentConverter {
+object CategoriesDocumentConverter {
     fun toDocument(category: CategoryWithAncestors): CategoryWithAncestorsDocument =
         CategoryWithAncestorsDocument(
             codeValue = category.codeValue.value,

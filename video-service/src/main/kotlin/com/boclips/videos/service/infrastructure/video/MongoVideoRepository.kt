@@ -1,5 +1,6 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.contentpartner.service.infrastructure.channel.CategoriesDocumentConverter
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
@@ -14,7 +15,6 @@ import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.channel.ChannelCategoriesDocumentConverter
 import com.boclips.videos.service.infrastructure.video.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -169,7 +169,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return findAll(commands.map { it.videoId })
     }
 
-    override fun streamUpdate(filter: VideoFilter, consumer: (List<Video>) -> List<VideoUpdateCommand>): Sequence<Video> {
+    override fun streamUpdate(
+        filter: VideoFilter,
+        consumer: (List<Video>) -> List<VideoUpdateCommand>
+    ): Sequence<Video> {
         return streamAll(filter).windowed(
             size = batchProcessingConfig.videoBatchSize,
             step = batchProcessingConfig.videoBatchSize,
@@ -292,7 +295,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             }
             is ReplaceTitle -> set(VideoDocument::title, updateCommand.title)
             is ReplaceDescription -> set(VideoDocument::description, updateCommand.description)
-            is ReplaceAdditionalDescription -> set(VideoDocument::additionalDescription, updateCommand.additionalDescription)
+            is ReplaceAdditionalDescription -> set(
+                VideoDocument::additionalDescription,
+                updateCommand.additionalDescription
+            )
             is ReplaceLegalRestrictions -> set(VideoDocument::legalRestrictions, updateCommand.text)
             is ReplacePromoted -> set(VideoDocument::promoted, updateCommand.promoted)
             is ReplaceSubjectsWereSetManually -> set(
@@ -322,11 +328,14 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 SetTo(VideoDocument::activeVideoId, ObjectId(updateCommand.activeVideoId.value)),
                 SetTo(VideoDocument::deactivated, true)
             )
-            is ReplaceCategories -> set((
-                VideoDocument::categories / when (updateCommand.source) {
-                    CategorySource.CHANNEL -> VideoCategoriesDocument::channel
-                }),
-                updateCommand.categories.map { ChannelCategoriesDocumentConverter.toDocument(it) }
+            is ReplaceCategories -> set(
+                (
+                    VideoDocument::categories / when (updateCommand.source) {
+                        CategorySource.CHANNEL -> VideoCategoriesDocument::channel
+                        CategorySource.MANUAL -> VideoCategoriesDocument::manual
+                    }
+                    ),
+                updateCommand.categories.map { CategoriesDocumentConverter.toDocument(it) }
             )
         }
     }

@@ -1,6 +1,6 @@
 package com.boclips.videos.service.infrastructure.video.converters
 
-import com.boclips.contentpartner.service.infrastructure.channel.ChannelCategoriesDocumentConverter
+import com.boclips.contentpartner.service.infrastructure.channel.CategoriesDocumentConverter
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.video.*
@@ -57,7 +57,8 @@ object VideoDocumentConverter {
             deactivated = video.deactivated,
             activeVideoId = video.activeVideoId?.let { it.value },
             categories = VideoCategoriesDocument(
-                channel = video.channelCategories.map { ChannelCategoriesDocumentConverter.toDocument(it) }.toSet()
+                channel = video.channelCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
+                manual = video.manualCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
             )
         )
     }
@@ -124,6 +125,11 @@ object VideoDocumentConverter {
         categories?.let { categoriesDocument ->
             mapOf(
                 CategorySource.CHANNEL to categoriesDocument.channel.map {
+                    VideoCategoriesDocumentConverter.fromDocument(
+                        it
+                    )
+                }.toSet(),
+                CategorySource.MANUAL to categoriesDocument.manual.map {
                     VideoCategoriesDocumentConverter.fromDocument(
                         it
                     )

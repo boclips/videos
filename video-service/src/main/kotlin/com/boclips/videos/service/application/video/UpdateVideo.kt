@@ -1,17 +1,19 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.service.application.GetCategoryWithAncestors
 import com.boclips.videos.service.application.exceptions.OperationForbiddenException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.tag.TagId
-import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.ContentWarningRepository
-import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateService
 import mu.KLogging
@@ -23,9 +25,10 @@ class UpdateVideo(
     private val videoRepository: VideoRepository,
     private val subjectRepository: SubjectRepository,
     private val tagRepository: TagRepository,
-    private val contentWarningRepository: ContentWarningRepository
+    private val contentWarningRepository: ContentWarningRepository,
+    private val getCategoryWithAncestors: GetCategoryWithAncestors
 ) {
-    companion object : KLogging();
+    companion object : KLogging()
 
     operator fun invoke(id: String, updateRequest: UpdateVideoRequest, user: User) {
         if (user.isPermittedToUpdateVideo.not()) throw OperationForbiddenException()
@@ -47,7 +50,8 @@ class UpdateVideo(
                 VideoUpdateCommand.ReplaceSubjects(videoId, validNewSubjects)
             }
         val updateContentWarnings = updateRequest.contentWarningIds?.let { contentWarningIds ->
-            val newContentWarnings = contentWarningRepository.findAll().filter { contentWarningIds.contains(it.id.value) }
+            val newContentWarnings =
+                contentWarningRepository.findAll().filter { contentWarningIds.contains(it.id.value) }
             VideoUpdateCommand.ReplaceContentWarnings(videoId, newContentWarnings)
         }
         val updateManuallySetSubjects = updateRequest.subjectIds
@@ -55,7 +59,10 @@ class UpdateVideo(
         val ageRange = AgeRange
             .of(min = updateRequest.ageRangeMin, max = updateRequest.ageRangeMax, curatedManually = true)
         val replaceAgeRange = when {
-            updateRequest.ageRangeMin != null || updateRequest.ageRangeMax!= null -> VideoUpdateCommand.ReplaceAgeRange(videoId = videoId, ageRange = ageRange)
+            updateRequest.ageRangeMin != null || updateRequest.ageRangeMax != null -> VideoUpdateCommand.ReplaceAgeRange(
+                videoId = videoId,
+                ageRange = ageRange
+            )
             else -> null
         }
         val replaceAttachments = AttachmentRequestConverter().convert(videoId, updateRequest.attachments)
@@ -63,6 +70,14 @@ class UpdateVideo(
             tagRepository.findById(TagId(value = updateRequest.tagId!!))?.let {
                 VideoUpdateCommand.ReplaceTag(videoId = videoId, tag = UserTag(tag = it, userId = user.idOrThrow()))
             }
+        }
+
+        val updateCategories = updateRequest.categories?.let {
+            VideoUpdateCommand.ReplaceCategories(
+                videoId = videoId,
+                categories = it.map { code -> getCategoryWithAncestors(code) }.toSet(),
+                source = CategorySource.MANUAL
+            )
         }
 
         videoUpdateService.update(
@@ -77,7 +92,8 @@ class UpdateVideo(
                 updateContentWarnings,
                 replaceAgeRange,
                 replaceAttachments,
-                replaceBestFor
+                replaceBestFor,
+                updateCategories
             )
         )
 
