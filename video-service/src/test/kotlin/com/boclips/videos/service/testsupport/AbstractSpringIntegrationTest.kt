@@ -62,8 +62,9 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
-import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -292,8 +293,8 @@ abstract class AbstractSpringIntegrationTest {
         additionalDescription: String? = "additional description",
         date: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(120),
-        contentProvider: String = "Reuters",
-        contentProviderId: String? = null,
+        newChannelName: String = "Reuters",
+        existingChannelId: String? = null,
         contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
         keywords: List<String> = emptyList(),
         types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
@@ -309,10 +310,11 @@ abstract class AbstractSpringIntegrationTest {
         width: Int = 1920,
         height: Int = 1080,
         assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
-        isVoiced: Boolean? = null
+        isVoiced: Boolean? = null,
+        categories: List<String>? = null,
     ): VideoId {
         val retrievedContentPartnerId =
-            saveChannel(name = contentProvider, distributionMethods = distributionMethods).id.value
+            saveChannel(name = newChannelName, distributionMethods = distributionMethods).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -335,7 +337,7 @@ abstract class AbstractSpringIntegrationTest {
 
         val video = createVideo(
             CreateVideoRequest(
-                providerId = contentProviderId ?: retrievedContentPartnerId,
+                providerId = existingChannelId ?: retrievedContentPartnerId,
                 providerVideoId = contentProviderVideoId,
                 title = title,
                 description = description,
@@ -362,9 +364,8 @@ abstract class AbstractSpringIntegrationTest {
         return video.videoId
     }
 
-
-    fun tagChannelWithCategory(category: Category, channelId: ChannelId) : Channel {
-        val updateRequest =  ChannelRequest(categories = listOf(category.code.value))
+    fun tagChannelWithCategory(category: Category, channelId: ChannelId): Channel {
+        val updateRequest = ChannelRequest(categories = listOf(category.code.value))
         return updateChannel(channelId = channelId.value, upsertRequest = updateRequest)
     }
 

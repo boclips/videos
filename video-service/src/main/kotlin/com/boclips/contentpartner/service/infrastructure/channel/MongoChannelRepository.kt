@@ -118,13 +118,15 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     override fun streamAll(consumer: (Sequence<ChannelSuggestion>) -> Unit) {
         val sequence = Sequence {
             getChannelCollection().find().iterator()
-        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map { ChannelSuggestion(
-            name = it.name,
-            id = it.id,
-            eligibleForStream = it.distributionMethods.contains(DistributionMethod.STREAM),
-            contentTypes = it.contentTypes ?: emptyList(),
-            taxonomy = it.taxonomy
-        )}
+        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map {
+            ChannelSuggestion(
+                name = it.name,
+                id = it.id,
+                eligibleForStream = it.distributionMethods.contains(DistributionMethod.STREAM),
+                contentTypes = it.contentTypes ?: emptyList(),
+                taxonomy = it.taxonomy
+            )
+        }
 
         consumer(sequence)
     }
@@ -239,13 +241,13 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             )
             is ChannelUpdateCommand.ReplaceCategories -> set(
                 ChannelDocument::taxonomy / TaxonomyDocument::categories,
-                updateCommand.categories.map { ChannelCategoriesDocumentConverter.toDocument(it) }
+                updateCommand.categories.map { CategoriesDocumentConverter.toDocument(it) }
             )
             is ChannelUpdateCommand.ReplaceRequiresVideoLevelTagging ->
                 set(
-                        ChannelDocument::taxonomy / TaxonomyDocument::requiresVideoLevelTagging,
-                        updateCommand.requiresVideoLevelTagging
-            )
+                    ChannelDocument::taxonomy / TaxonomyDocument::requiresVideoLevelTagging,
+                    updateCommand.requiresVideoLevelTagging
+                )
         }
 
         return combine(update, set(ChannelDocument::lastModified, Instant.now()))

@@ -196,9 +196,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updates the category of a video`() {
-        addTaxonomy(CategoryFactory.sample(code = "A", description = "AAA"))
-        addTaxonomy(CategoryFactory.sample(code = "B", description = "BBB"))
-        addTaxonomy(CategoryFactory.sample(code = "C", description = "CCC"))
+        addCategory(CategoryFactory.sample(code = "A", description = "AAA"))
+        addCategory(CategoryFactory.sample(code = "B", description = "BBB"))
+        addCategory(CategoryFactory.sample(code = "C", description = "CCC"))
 
         val videoToUpdate = saveVideo(categories = listOf("A", "B")).value
 
