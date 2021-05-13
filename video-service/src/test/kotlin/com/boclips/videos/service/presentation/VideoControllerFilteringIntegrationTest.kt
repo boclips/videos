@@ -16,7 +16,6 @@ import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
-import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.*
@@ -508,19 +507,23 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by mulitple categories`() {
-        val includedCategory =
-            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "H"))
-        val includedOtherCategory =
-            addCategory(CategoryFactory.sample(code = "AC", description = "French", parentCode = "AC"))
-        val excludedCategory =
-            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+        val includedCategory = addCategory(
+            CategoryFactory.sample(code = "AB", description = "French", parentCode = "A")
+        )
+        val includedOtherCategory = addCategory(
+            CategoryFactory.sample(code = "AC", description = "French", parentCode = "A")
+        )
+        val excludedCategory = addCategory(
+            CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X")
+        )
         val abChannel = saveChannel(name = "AB channel")
         val aChannel = saveChannel(name = "A channel")
         val xyChannel = saveChannel(name = "XY channel")
+
         val video = saveVideo(existingChannelId = abChannel.id.value)
         val videoWithAncestor = saveVideo(existingChannelId = aChannel.id.value)
-
         saveVideo(existingChannelId = xyChannel.id.value)
+
         tagChannelWithCategory(category = includedCategory, channelId = ChannelId(abChannel.id.value))
         tagChannelWithCategory(category = includedOtherCategory, channelId = ChannelId(aChannel.id.value))
         tagChannelWithCategory(category = excludedCategory, channelId = ChannelId(xyChannel.id.value))
@@ -530,6 +533,29 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
             .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(video.value)))
             .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(videoWithAncestor.value)))
+    }
+
+    @Test
+    fun `can filter by video tagged categories`() {
+        val greatCategory = addCategory(
+            CategoryFactory.sample(code = "ACAB", description = "Great Category", parentCode = "ACA")
+        )
+        val goodCategory = addCategory(
+            CategoryFactory.sample(code = "CBA", description = "Good Category", parentCode = "CB")
+        )
+        val rubbishCategory = addCategory(
+            CategoryFactory.sample(code = "XYZ", description = "Rubbish Category", parentCode = "XY")
+        )
+
+        val greatVideo = saveVideo(categories = listOf(greatCategory.code.value), newChannelName = "HI")
+        val goodVideo = saveVideo(categories = listOf(goodCategory.code.value), newChannelName = "Hello")
+        saveVideo(categories = listOf(rubbishCategory.code.value), newChannelName = "BYE")
+
+        mockMvc.perform(get("/v1/videos?category_code=ACAB,CBA").asBoclipsEmployee())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(greatVideo.value)))
+            .andExpect(jsonPath("$._embedded.videos[*].id", hasItem(goodVideo.value)))
     }
 
     @Test
@@ -690,16 +716,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andReturn().response.contentAsString
 
         return JsonPath.parse(videoResponse).read("$._links.rate.href")
-    }
-
-    private fun getUpdateLink(videoId: String): UriTemplate {
-        val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asBoclipsEmployee())
-            .andExpect(status().isOk)
-            .andReturn().response.contentAsString
-
-        val link = JsonPath.parse(videoResponse).read<String>("$._links.update.href")
-
-        return UriTemplate.fromTemplate(link)
     }
 
     private fun createTag(name: String): String {
