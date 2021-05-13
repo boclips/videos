@@ -1,5 +1,5 @@
 package com.boclips.search.service.domain.common.model
 
-class SearchRequestWithoutPagination<T>(
+class SuggestionRequest<T>(
     val query: T,
 )

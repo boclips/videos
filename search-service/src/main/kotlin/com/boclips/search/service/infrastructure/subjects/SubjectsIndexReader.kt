@@ -2,8 +2,8 @@ package com.boclips.search.service.infrastructure.subjects
 
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.model.SuggestionRequest
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import mu.KLogging
@@ -13,13 +13,13 @@ import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 
-class SubjectsIndexReader(val client: RestHighLevelClient) : IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>> {
+class SubjectsIndexReader(val client: RestHighLevelClient) : SuggestionsIndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>> {
     companion object : KLogging()
 
     private val elasticSearchResultConverter = SubjectsDocumentConverter()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
-        val results = searchQuery(searchRequest.query)
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
+        val results = searchQuery(suggestionRequest.query)
 
         val elements = results
             .map(elasticSearchResultConverter::convert)

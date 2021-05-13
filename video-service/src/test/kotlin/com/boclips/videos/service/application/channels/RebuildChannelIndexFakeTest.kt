@@ -8,7 +8,7 @@ import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
@@ -30,7 +30,7 @@ internal class RebuildChannelIndexFakeTest {
     @BeforeEach
     fun setUp() {
         val inMemorySearchService = ChannelIndexFake()
-        index = DefaultChannelSearch(inMemorySearchService, inMemorySearchService)
+        index = DefaultChannelSearch(inMemorySearchService, inMemorySearchService, inMemorySearchService)
     }
 
     @Test
@@ -63,8 +63,8 @@ internal class RebuildChannelIndexFakeTest {
 
         rebuildSearchIndex()
 
-        val results = index.search(
-            SearchRequestWithoutPagination(
+        val results = index.getSuggestions(
+            SuggestionRequest(
                 SuggestionQuery(
                     phrase = "chan",
                     accessRuleQuery = SuggestionAccessRuleQuery()
@@ -106,8 +106,8 @@ internal class RebuildChannelIndexFakeTest {
             sequenceOf(channel1, channel2, channel3)
         )
 
-        val results = index.search(
-            SearchRequestWithoutPagination(
+        val results = index.getSuggestions(
+            SuggestionRequest(
                 SuggestionQuery(
                     phrase = "chan",
                     accessRuleQuery = SuggestionAccessRuleQuery(
@@ -155,8 +155,8 @@ internal class RebuildChannelIndexFakeTest {
             sequenceOf(channel1, channel2, channel3)
         )
 
-        val results = index.search(
-            SearchRequestWithoutPagination(
+        val results = index.getSuggestions(
+            SuggestionRequest(
                 SuggestionQuery(
                     phrase = "",
                     accessRuleQuery = SuggestionAccessRuleQuery(),

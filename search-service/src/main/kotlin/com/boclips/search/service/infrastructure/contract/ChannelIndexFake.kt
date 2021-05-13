@@ -1,18 +1,22 @@
 package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
+import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.infrastructure.common.suggestions.AbstractInMemoryFakeSuggestions
-import java.util.*
 import kotlin.Comparator
 
 class ChannelIndexFake :
     AbstractInMemoryFakeSuggestions<SuggestionQuery<ChannelMetadata>, ChannelMetadata>(),
-    IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    IndexReader<ChannelMetadata, ChannelQuery>,
     IndexWriter<ChannelMetadata> {
     override fun upsertMetadata(index: MutableMap<String, ChannelMetadata>, item: ChannelMetadata) {
         index[item.id] = item.copy()
@@ -89,5 +93,9 @@ class ChannelIndexFake :
         val hasAnyIncludedType = entry.value.contentTypes.any { query.accessRuleQuery.includedTypes.contains(it) }
 
         return isEmpty || hasAnyIncludedType
+    }
+
+    override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
+        TODO("Not yet implemented")
     }
 }

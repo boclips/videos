@@ -65,6 +65,7 @@ class SearchContextFake {
     ): ChannelIndex {
         return DefaultChannelSearch(
             channelIndexFake,
+            channelIndexFake,
             channelIndexFake
         )
     }

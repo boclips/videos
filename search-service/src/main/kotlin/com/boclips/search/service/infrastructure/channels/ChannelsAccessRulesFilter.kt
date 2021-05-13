@@ -1,6 +1,6 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import org.elasticsearch.index.query.BoolQueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
@@ -9,7 +9,8 @@ import org.elasticsearch.index.query.QueryBuilders.termsQuery
 class ChannelsAccessRulesFilter {
     companion object {
         fun channelsBuildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder,
-                                           accessRulesQuery: SuggestionAccessRuleQuery): BoolQueryBuilder {
+                                           accessRulesQuery: ChannelAccessRuleQuery
+        ): BoolQueryBuilder {
 
             if (accessRulesQuery.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.mustNot(

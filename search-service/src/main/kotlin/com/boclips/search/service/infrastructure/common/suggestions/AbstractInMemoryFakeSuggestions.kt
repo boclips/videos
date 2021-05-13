@@ -3,21 +3,21 @@ package com.boclips.search.service.infrastructure.common.suggestions
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.model.SearchQuery
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.model.SuggestionRequest
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 
 abstract class AbstractInMemoryFakeSuggestions<QUERY : SearchQuery<METADATA>, METADATA> :
-    IndexReader<METADATA, QUERY>,
+    SuggestionsIndexReader<METADATA, QUERY>,
     IndexWriter<METADATA> {
     private val index = mutableMapOf<String, METADATA>()
-    private var requests: MutableList<SearchRequestWithoutPagination<QUERY>> = mutableListOf()
+    private var requests: MutableList<SuggestionRequest<QUERY>> = mutableListOf()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<QUERY>): SearchSuggestionsResults {
-        requests.add(searchRequest)
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<QUERY>): SearchSuggestionsResults {
+        requests.add(suggestionRequest)
 
-        val nameMatching = nameMatching(index, searchRequest.query)
+        val nameMatching = nameMatching(index, suggestionRequest.query)
 
         return SearchSuggestionsResults(
             elements = nameMatching.map { it ->

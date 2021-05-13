@@ -1,17 +1,22 @@
 package com.boclips.search.service.domain.channels
 
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
+import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.SuggestionRequest
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 
 abstract class ChannelSearchAdapter<T>(
-    private val indexReader: IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    private val suggestionsIndexReader: SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    private val indexReader: IndexReader<ChannelMetadata, ChannelQuery>,
     private val indexWriter: IndexWriter<ChannelMetadata>
-) : IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>, IndexWriter<T> {
+) : SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>, IndexWriter<T>, IndexReader<ChannelMetadata, ChannelQuery> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -20,7 +25,11 @@ abstract class ChannelSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
+        return suggestionsIndexReader.getSuggestions(suggestionRequest)
+    }
+
+    override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
         return indexReader.search(searchRequest)
     }
 

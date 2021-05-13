@@ -3,7 +3,7 @@ package com.boclips.videos.service.domain.service.suggestions
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
@@ -31,16 +31,16 @@ class SuggestionsRetrievalService(
     fun findSuggestions(request: SuggestionsRequest, videoAccess: VideoAccess): Suggestions {
         val videoAccessWithDefaultRules = withDefaultRules(videoAccess)
 
-        val channelsQuery = SearchRequestWithoutPagination(
+        val channelsQuery = SuggestionRequest(
             query = request.toQuery<ChannelMetadata>(videoAccessWithDefaultRules)
         )
 
-        val subjectsQuery = SearchRequestWithoutPagination(
+        val subjectsQuery = SuggestionRequest(
             query = request.toQuery<SubjectMetadata>()
         )
 
-        val channels = channelIndex.search(channelsQuery)
-        val subjects = subjectIndex.search(subjectsQuery)
+        val channels = channelIndex.getSuggestions(channelsQuery)
+        val subjects = subjectIndex.getSuggestions(subjectsQuery)
 
         val channelsResults = channels.elements.map {
             ChannelSuggestion(

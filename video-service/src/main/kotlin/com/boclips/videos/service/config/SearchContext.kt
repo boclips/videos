@@ -69,6 +69,7 @@ class SearchContext(
     ): ChannelIndex {
         return DefaultChannelSearch(
             ChannelsIndexReader(elasticSearchClient.buildClient()),
+            ChannelsIndexReader(elasticSearchClient.buildClient()),
             ChannelsIndexWriter.createInstance(
                 elasticSearchClient.buildClient(),
                 IndexParameters(numberOfShards = 5),

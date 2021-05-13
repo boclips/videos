@@ -3,15 +3,15 @@ package com.boclips.search.service.domain.subjects
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.model.SuggestionRequest
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 
 abstract class SubjectSearchAdapter<T>(
-    private val indexReader: IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>,
+    private val suggestionsIndexReader: SuggestionsIndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>,
     private val indexWriter: IndexWriter<SubjectMetadata>
-) : IndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>, IndexWriter<T> {
+) : SuggestionsIndexReader<SubjectMetadata, SuggestionQuery<SubjectMetadata>>, IndexWriter<T> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -20,8 +20,8 @@ abstract class SubjectSearchAdapter<T>(
         indexWriter.upsert(items.map(::convert), notifier)
     }
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
-        return indexReader.search(searchRequest)
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<SubjectMetadata>>): SearchSuggestionsResults {
+        return suggestionsIndexReader.getSuggestions(suggestionRequest)
     }
 
     override fun removeFromSearch(itemId: String) {

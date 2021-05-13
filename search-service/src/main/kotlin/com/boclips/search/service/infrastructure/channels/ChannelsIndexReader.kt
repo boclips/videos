@@ -1,11 +1,16 @@
 package com.boclips.search.service.infrastructure.channels
 
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.common.model.SearchRequestWithoutPagination
+import com.boclips.search.service.domain.common.IndexReader
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.suggestions.IndexReader
+import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.suggestions.Suggestion
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
@@ -21,7 +26,8 @@ import org.elasticsearch.search.sort.SortOrder
 import com.boclips.search.service.domain.common.model.SortOrder as BoclipsSortOrder
 
 class ChannelsIndexReader(val client: RestHighLevelClient) :
-    IndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>> {
+    SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    IndexReader<ChannelMetadata, ChannelQuery> {
     companion object : KLogging() {
         private val sortByTaxonomyScript = Script(
             """
@@ -38,8 +44,22 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
 
     private val elasticSearchResultConverter = ChannelsDocumentConverter()
 
-    override fun search(searchRequest: SearchRequestWithoutPagination<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
-        val results = searchQuery(searchRequest.query)
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
+        val results = searchQuery(
+            ChannelQuery(
+                phrase = suggestionRequest.query.phrase,
+                accessRuleQuery = suggestionRequest.query.accessRuleQuery?.let {
+                    ChannelAccessRuleQuery(
+                        excludedContentPartnerIds = it.excludedContentPartnerIds,
+                        includedChannelIds = it.includedChannelIds,
+                        includedTypes = it.includedTypes,
+                        excludedTypes = it.excludedTypes,
+                        isEligibleForStream = it.isEligibleForStream,
+                    )
+                },
+                sort = suggestionRequest.query.sort
+            )
+        )
 
         val elements = results
             .map(elasticSearchResultConverter::convert)
@@ -53,7 +73,11 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         return SearchSuggestionsResults(elements = elements)
     }
 
-    private fun searchQuery(channelQuery: SuggestionQuery<ChannelMetadata>): SearchHits {
+    override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
+        TODO("Not yet implemented")
+    }
+
+    private fun searchQuery(channelQuery: ChannelQuery): SearchHits {
         val query = SearchSourceBuilder().apply {
             query(ChannelEsQuery().mainQuery(channelQuery))
             buildSort(channelQuery)?.let { sort(it) }
@@ -67,7 +91,7 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         return client.search(request, RequestOptions.DEFAULT).hits
     }
 
-    private fun buildSort(channelQuery: SuggestionQuery<ChannelMetadata>): SortBuilder<*>? {
+    private fun buildSort(channelQuery: ChannelQuery): SortBuilder<*>? {
         return channelQuery.sort
             .find { (it as? Sort.ByField)?.fieldName == ChannelMetadata::taxonomy }
             ?.let { taxonomySortMetadata ->
