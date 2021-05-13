@@ -6,7 +6,6 @@ import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
-import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.collection.AttachmentResource
 import com.boclips.videos.api.response.contentwarning.ContentWarningResource
 import com.boclips.videos.api.response.subject.SubjectResource
@@ -73,8 +72,6 @@ data class VideoResource(
     val hasTranscripts: Boolean? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val isVoiced: Boolean? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
-    val categories: List<TaxonomyCategoryResource>? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>?
 )

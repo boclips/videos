@@ -1,18 +1,32 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.eventbus.domain.category.CategoryWithAncestors
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.agerange.AgeRangeResource
-import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.api.response.subject.SubjectResource
-import com.boclips.videos.api.response.video.*
-import com.boclips.videos.service.application.channels.VideoChannelService
+import com.boclips.videos.api.response.video.LanguageResource
+import com.boclips.videos.api.response.video.PriceResource
+import com.boclips.videos.api.response.video.TagResource
+import com.boclips.videos.api.response.video.VideoBadge
+import com.boclips.videos.api.response.video.VideoFacetResource
+import com.boclips.videos.api.response.video.VideoFacetsResource
+import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoTypeResource
+import com.boclips.videos.api.response.video.VideosResource
+import com.boclips.videos.api.response.video.VideosWrapperResource
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.Price
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -75,13 +89,12 @@ class VideoToResourceConverter(
             },
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
-            categories = VideoCategoryResourceConverter.toResource(video.categories),
             keywords = video.keywords,
             _links = (
-                    resourceLinks(video.videoId.value) +
-                            conditionalResourceLinks(video) +
-                            actionLinks(video)
-                    )
+                resourceLinks(video.videoId.value) +
+                    conditionalResourceLinks(video) +
+                    actionLinks(video)
+                )
                 .map { it.rel to it }
                 .toMap()
         )

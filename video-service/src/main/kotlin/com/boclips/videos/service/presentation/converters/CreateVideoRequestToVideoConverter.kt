@@ -4,13 +4,16 @@ import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
-import com.boclips.videos.service.domain.model.taxonomy.CategorySource
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoSubjects
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import org.bson.types.ObjectId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Locale
 
 class CreateVideoRequestToVideoConverter {
     fun convert(
@@ -60,8 +63,7 @@ class CreateVideoRequestToVideoConverter {
             contentWarnings = emptyList(),
             deactivated = false,
             activeVideoId = null,
-            categories = mapOf(
-                CategorySource.CHANNEL to VideoCategoryResourceConverter.toDocument(createVideoRequest.categories))
+            categories = emptyMap()
         )
     }
 

@@ -1,7 +1,6 @@
 package com.boclips.videos.api.request.video
 
 import com.boclips.videos.api.request.validators.Language
-import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
 import java.time.LocalDate
@@ -44,6 +43,5 @@ data class CreateVideoRequest(
     val subjects: Set<String>? = null,
     @field:Language
     val language: String? = null,
-    val isVoiced: Boolean? = null,
-    val categories: List<TaxonomyCategoryResource>? = null
+    val isVoiced: Boolean? = null
 )

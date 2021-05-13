@@ -40,7 +40,6 @@ import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
-import com.boclips.videos.api.response.channel.TaxonomyCategoryResource
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -311,8 +310,7 @@ abstract class AbstractSpringIntegrationTest {
         width: Int = 1920,
         height: Int = 1080,
         assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
-        isVoiced: Boolean? = null,
-        categories: List<TaxonomyCategoryResource>? = null,
+        isVoiced: Boolean? = null
     ): VideoId {
         val retrievedContentPartnerId =
             saveChannel(name = newChannelName, distributionMethods = distributionMethods).id.value
@@ -354,8 +352,7 @@ abstract class AbstractSpringIntegrationTest {
                 ageRangeMax = ageRangeMax,
                 subjects = subjectIds,
                 language = language,
-                isVoiced = isVoiced,
-                categories = categories
+                isVoiced = isVoiced
             ),
             UserFactory.sample()
         )
