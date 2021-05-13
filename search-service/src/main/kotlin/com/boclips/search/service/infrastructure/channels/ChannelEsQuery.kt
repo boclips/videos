@@ -15,15 +15,22 @@ class ChannelEsQuery {
                 ChannelsAccessRulesFilter.channelsBuildAccessRulesFilter(this, query.accessRuleQuery!!)
             }
             .apply {
-                must(
-                    QueryBuilders.boolQuery()
-                        .must(
-                            QueryBuilders.matchPhraseQuery(ChannelDocument.NAME, phrase)
-                        )
-                        .should(
-                            QueryBuilders.matchPhraseQuery(IndexConfiguration.unstemmed(ChannelDocument.NAME), phrase)
-                        )
-                )
+                if (phrase.isNotBlank()) {
+                    must(
+                        QueryBuilders.boolQuery()
+                            .must(
+                                QueryBuilders.matchPhraseQuery(ChannelDocument.NAME, phrase)
+                            )
+                            .should(
+                                QueryBuilders.matchPhraseQuery(
+                                    IndexConfiguration.unstemmed(ChannelDocument.NAME),
+                                    phrase
+                                )
+                            )
+                    )
+                } else {
+                    should(QueryBuilders.matchAllQuery())
+                }
             }
     }
 }

@@ -32,7 +32,6 @@ class PriceAggregation {
                 organisationId = videoQuery.userQuery.organisationPriceFilter.userOrganisationId,
                 limit = limit
             )
-
         }
 
         private fun aggregate(queryBuilder: BoolQueryBuilder?, organisationId: String?, limit: Int): FilterAggregationBuilder {
@@ -42,17 +41,19 @@ class PriceAggregation {
                     AggregationBuilders
                         .terms(PRICE_SUB_AGGREGATION_FILTER)
                         .size(limit)
-                        .script(Script(
-                            organisationId?.let {
-                                """
+                        .script(
+                            Script(
+                                organisationId?.let {
+                                    """
                                   if (!doc.containsKey('prices.$organisationId') || doc['prices.$organisationId'].size() == 0) {
                                     $AGGREGATE_PRICES_USING_DEFAULT
                                   } else {
                                     doc['prices.$organisationId']
                                   }
                                 """
-                            } ?: AGGREGATE_PRICES_USING_DEFAULT
-                        ))
+                                } ?: AGGREGATE_PRICES_USING_DEFAULT
+                            )
+                        )
                 )
         }
 
@@ -67,7 +68,6 @@ class PriceAggregation {
                         parseBuckets((it as ParsedStringTerms).buckets).toSet()
                     } ?: emptySet()
             } else emptySet()
-
         }
     }
 }

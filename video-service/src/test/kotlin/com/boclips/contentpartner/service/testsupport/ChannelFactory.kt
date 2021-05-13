@@ -11,6 +11,7 @@ import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
 import com.boclips.contentpartner.service.infrastructure.channel.TaxonomyDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
+import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
@@ -76,13 +77,15 @@ object ChannelFactory {
         ),
         name: String = "TED",
         eligibleForStream: Boolean = false,
-        contentTypes: List<ContentType> = emptyList()
+        contentTypes: List<ContentType> = emptyList(),
+        taxonomy: Taxonomy = Taxonomy.VideoLevelTagging,
     ): ChannelSuggestion {
         return ChannelSuggestion(
             id = id,
             name = name,
             eligibleForStream = eligibleForStream,
             contentTypes = contentTypes,
+            taxonomy = taxonomy
         )
     }
 
