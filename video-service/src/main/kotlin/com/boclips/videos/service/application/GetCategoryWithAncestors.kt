@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application
 
+import com.boclips.videos.service.application.exceptions.CategoryNotFoundException
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
@@ -19,6 +20,6 @@ class GetCategoryWithAncestors(
                 description = it.description,
                 ancestors = it.resolveAncestorsCodes()
             )
-        } ?: throw RuntimeException()
+        } ?: throw CategoryNotFoundException(rawCode)
     }
 }

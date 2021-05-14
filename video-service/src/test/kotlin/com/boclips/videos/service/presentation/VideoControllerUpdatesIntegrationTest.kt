@@ -3,6 +3,7 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.testsupport.*
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -214,6 +215,25 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("C")))
             .andExpect(jsonPath("$.taxonomy.manual.categories[*]", hasSize<Int>(1)))
+    }
+
+    @Test
+    fun `returns 400 when trying to update with non-existing category`() {
+        val videoToUpdate = saveVideo().value
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoToUpdate")
+                .content("""{ "categories": ["B"] }""".trimIndent())
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    Matchers.containsString("Category with code 'B' not found")
+                )
+            )
     }
 
     @Test
