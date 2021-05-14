@@ -63,9 +63,11 @@ class ChannelToResourceConverterTest {
             deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
-            taxonomy = Taxonomy.ChannelLevelTagging(categories = setOf(
-                CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "A description"),
-                CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description"))
+            taxonomy = Taxonomy.ChannelLevelTagging(
+                categories = setOf(
+                    CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "A description"),
+                    CategoryWithAncestors(codeValue = CategoryCode("BC"), description = "B description")
+                )
             ),
         )
 

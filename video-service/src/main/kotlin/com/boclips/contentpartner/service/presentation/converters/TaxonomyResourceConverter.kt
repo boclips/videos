@@ -12,7 +12,11 @@ object TaxonomyResourceConverter {
             )
         is Taxonomy.ChannelLevelTagging -> ChannelTaxonomyResource(
             categories = taxonomy.categories.map { category ->
-                TaxonomyCategoryResource(codeValue = category.codeValue.value, description = category.description)
+                TaxonomyCategoryResource(
+                    codeValue = category.codeValue.value,
+                    description = category.description,
+                    ancestors = category.ancestors.map { it.value }.toSet()
+                )
             }
         )
         else -> null

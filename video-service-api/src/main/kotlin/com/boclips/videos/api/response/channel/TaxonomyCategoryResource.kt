@@ -2,5 +2,6 @@ package com.boclips.videos.api.response.channel
 
 data class TaxonomyCategoryResource(
     val codeValue: String,
-    val description: String
+    val description: String,
+    val ancestors: Set<String>? = emptySet()
 )

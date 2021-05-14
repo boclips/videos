@@ -86,12 +86,20 @@ class VideoToResourceConverter(
             taxonomy = VideoTaxonomyResourceWrapper(
                 channel = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.CHANNEL]?.map {
-                        TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
+                        TaxonomyCategoryResource(
+                            codeValue = it.codeValue.value,
+                            description = it.description,
+                            ancestors = it.ancestors.map { ancestor -> ancestor.value }.toSet()
+                        )
                     }
                 ),
                 manual = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.MANUAL]?.map {
-                        TaxonomyCategoryResource(codeValue = it.codeValue.value, description = it.description)
+                        TaxonomyCategoryResource(
+                            codeValue = it.codeValue.value,
+                            description = it.description,
+                            ancestors = it.ancestors.map { ancestor -> ancestor.value }.toSet()
+                        )
                     }
                 )
             ),

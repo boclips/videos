@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.video.converters
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.Topic
@@ -97,7 +98,13 @@ class VideoDocumentConverterTest {
     fun `converts a video with only CHANNEL source`() {
         val originalVideo: Video = TestFactories.createVideo(
             categories = mapOf(
-                CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()),
+                CategorySource.CHANNEL to setOf(
+                    CategoryWithAncestorsFactory.sample(
+                        "A",
+                        "AA",
+                        setOf(CategoryCode("A"))
+                    )
+                ),
             )
         )
 
@@ -112,7 +119,13 @@ class VideoDocumentConverterTest {
     fun `converts a video with only MANUAL source`() {
         val originalVideo: Video = TestFactories.createVideo(
             categories = mapOf(
-                CategorySource.MANUAL to setOf(CategoryWithAncestorsFactory.sample()),
+                CategorySource.MANUAL to setOf(
+                    CategoryWithAncestorsFactory.sample(
+                        "A",
+                        "AA",
+                        setOf(CategoryCode("A"))
+                    )
+                ),
             )
         )
 

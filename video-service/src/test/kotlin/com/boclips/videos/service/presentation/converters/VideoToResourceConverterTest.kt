@@ -83,13 +83,13 @@ class VideoToResourceConverterTest {
         categories = mapOf(
             CategorySource.CHANNEL to setOf(
                 CategoryWithAncestors(
-                    codeValue = CategoryCode("A"), description = "Test",
+                    codeValue = CategoryCode("A"), description = "Test", ancestors = setOf(CategoryCode("A")),
 
                 )
             ),
             CategorySource.MANUAL to setOf(
                 CategoryWithAncestors(
-                    codeValue = CategoryCode("B"), description = "Test",
+                    codeValue = CategoryCode("B"), description = "Test", ancestors = setOf(CategoryCode("B"))
 
                 )
             )
@@ -216,7 +216,9 @@ class VideoToResourceConverterTest {
         assertThat(playbackResource.id).isEqualTo("entry-id")
         assertThat(playbackResource.referenceId).isEqualTo("555")
         assertThat(videoResource.taxonomy?.channel?.categories!![0].codeValue).isEqualTo("A")
-        assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).contains("B")
+        assertThat(videoResource.taxonomy?.channel?.categories!![0].ancestors).contains("A")
+        assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).isEqualTo("B")
+        assertThat(videoResource.taxonomy?.manual?.categories!![0].ancestors).contains("B")
     }
 
     @Test
