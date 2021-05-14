@@ -41,6 +41,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.presentation.converters.CategoryMappingValidator
 import com.boclips.videos.service.presentation.converters.PriceConverter
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
@@ -446,11 +447,16 @@ class VideoController(
         return ResponseEntity(price, HttpStatus.OK)
     }
 
-    @PostMapping(consumes = ["multipart/form-data"])
+    @PostMapping("/v1/videos/categories", consumes = ["multipart/form-data"])
     fun tagVideos(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<Any> {
-        convertToCategoryMappings(file)
-
+        logger.info { file.bytes }
+        CategoryMappingValidator.validate(file.bytes)
+        // when(validateCsv(file)) {
+        //     is InvalidCa
+        // }
+        return ResponseEntity("hi" +
+            "", HttpStatus.OK)
     }
 }
