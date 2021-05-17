@@ -1096,5 +1096,15 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
                 .andExpect(jsonPath("$.page.number", equalTo(0)))
         }
+
+        @Test
+        fun `Page information is not available via the public API`() {
+            mockMvc.perform(
+                get(
+                    "/v1/channels"
+                ).asApiUser()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.page").doesNotExist())
+        }
     }
 }
