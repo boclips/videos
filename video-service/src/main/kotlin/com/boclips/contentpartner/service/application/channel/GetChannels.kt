@@ -47,8 +47,9 @@ class GetChannels(
             )
         } else {
             val channels = channelRepository.findAll(filters).toList()
+
             ResultsPage(
-                elements = channelRepository.findAll(filters),
+                elements = channels,
                 pageInfo = PageInfo(
                     hasMoreElements = false,
                     totalElements = channels.size.toLong(),
