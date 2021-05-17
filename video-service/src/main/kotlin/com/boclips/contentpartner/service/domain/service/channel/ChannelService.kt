@@ -1,14 +1,20 @@
 package com.boclips.contentpartner.service.domain.service.channel
 
 import com.boclips.contentpartner.service.application.channel.ChannelFiltersConverter
+import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelSortKey
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
-import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
+import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
@@ -83,5 +89,34 @@ class ChannelService(
             }
 
         return false
+    }
+
+    fun search(sortBy: ChannelSortKey?, pageRequest: PageRequest?): List<Channel> {
+        val sortByField = when (sortBy) {
+            ChannelSortKey.CATEGORIES_ASC -> listOf(
+                Sort.ByField(
+                    fieldName = ChannelMetadata::taxonomy,
+                    order = SortOrder.ASC
+                )
+            )
+            ChannelSortKey.CATEGORIES_DESC -> listOf(
+                Sort.ByField(
+                    fieldName = ChannelMetadata::taxonomy,
+                    order = SortOrder.DESC
+                )
+            )
+            null -> emptyList<Sort<ChannelMetadata>>()
+        }
+
+        val searchRequest = pageRequest?.let {
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(sort = sortByField),
+                startIndex = pageRequest.getStartIndex(),
+                windowSize = pageRequest.size
+            )
+        } ?: PaginatedIndexSearchRequest(query = ChannelQuery(sort = sortByField))
+
+        val searchResults = channelIndex.search(searchRequest)
+        return channelRepository.findAllByIds(searchResults.elements.map { ChannelId(it) }).toList()
     }
 }

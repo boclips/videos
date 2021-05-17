@@ -5,8 +5,10 @@ import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexReader
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.suggestions.Suggestion
@@ -14,10 +16,10 @@ import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexRead
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.script.Script
-import org.elasticsearch.search.SearchHits
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.ScriptSortBuilder
 import org.elasticsearch.search.sort.SortBuilder
@@ -45,23 +47,27 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
     private val elasticSearchResultConverter = ChannelsDocumentConverter()
 
     override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
-        val results = searchQuery(
-            ChannelQuery(
-                phrase = suggestionRequest.query.phrase,
-                accessRuleQuery = suggestionRequest.query.accessRuleQuery?.let {
-                    ChannelAccessRuleQuery(
-                        excludedContentPartnerIds = it.excludedContentPartnerIds,
-                        includedChannelIds = it.includedChannelIds,
-                        includedTypes = it.includedTypes,
-                        excludedTypes = it.excludedTypes,
-                        isEligibleForStream = it.isEligibleForStream,
-                    )
-                },
-                sort = suggestionRequest.query.sort
+        val searchResponse = performSearch(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    phrase = suggestionRequest.query.phrase,
+                    accessRuleQuery = suggestionRequest.query.accessRuleQuery?.let {
+                        ChannelAccessRuleQuery(
+                            excludedContentPartnerIds = it.excludedContentPartnerIds,
+                            includedChannelIds = it.includedChannelIds,
+                            includedTypes = it.includedTypes,
+                            excludedTypes = it.excludedTypes,
+                            isEligibleForStream = it.isEligibleForStream,
+                        )
+                    },
+                    sort = suggestionRequest.query.sort
+                ),
+                startIndex = 0,
+                windowSize = 10,
             )
         )
 
-        val elements = results
+        val elements = searchResponse.hits
             .map(elasticSearchResultConverter::convert)
             .map {
                 Suggestion(
@@ -74,10 +80,24 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
     }
 
     override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
-        TODO("Not yet implemented")
+        return (searchRequest as? PaginatedIndexSearchRequest)?.let {
+            val results = performSearch(searchRequest)
+            val elements = results.hits
+                .map{ ChannelsDocumentConverter().convert(it) }
+                .map { it.id }
+
+            val counts =
+                ResultCounts(
+                    totalHits = results.hits.totalHits?.value ?: 0L,
+                )
+
+            return SearchResults(elements = elements, counts = counts, cursor = null)
+
+        } ?: throw UnsupportedOperationException("We currently don't allow cursor based channel search")
     }
 
-    private fun searchQuery(channelQuery: ChannelQuery): SearchHits {
+    private fun performSearch(searchRequest: PaginatedIndexSearchRequest<ChannelQuery>): SearchResponse {
+        val channelQuery = searchRequest.query
         val query = SearchSourceBuilder().apply {
             query(ChannelEsQuery().mainQuery(channelQuery))
             buildSort(channelQuery)?.let { sort(it) }
@@ -85,10 +105,10 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
 
         val request = SearchRequest(
             arrayOf(ChannelsIndex.getIndexAlias()),
-            query.from(0).size(10)
+            query.from(searchRequest.startIndex).size(searchRequest.windowSize)
         )
 
-        return client.search(request, RequestOptions.DEFAULT).hits
+        return client.search(request, RequestOptions.DEFAULT)
     }
 
     private fun buildSort(channelQuery: ChannelQuery): SortBuilder<*>? {

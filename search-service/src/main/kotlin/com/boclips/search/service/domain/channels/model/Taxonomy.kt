@@ -5,7 +5,17 @@ data class Taxonomy(
     val categories: Set<CategoryCode>? = null
 ) : Comparable<Taxonomy> {
     override fun compareTo(other: Taxonomy): Int {
-        return 0
+        return this.getSortPriority().compareTo(other.getSortPriority())
+    }
+
+    private fun getSortPriority(): String {
+        return if (this.videoLevelTagging) {
+            "1"
+        } else if (this.categories == null || this.categories.isEmpty()) {
+            "0"
+        } else {
+            this.categories.map { it.value }.sorted().first()
+        }
     }
 }
 
