@@ -1,14 +1,17 @@
 package com.boclips.contentpartner.service.domain.service.channel
 
 import com.boclips.contentpartner.service.application.channel.ChannelFiltersConverter
+import com.boclips.contentpartner.service.common.PageInfo
+import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRequest
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
 import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
-import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
@@ -83,5 +86,28 @@ class ChannelService(
             }
 
         return false
+    }
+
+    fun search(channelRequest: ChannelRequest): ResultsPage<Channel> {
+        val pageRequest = channelRequest.pageRequest
+
+        val searchRequest =
+            PaginatedIndexSearchRequest(
+                query = channelRequest.toQuery(),
+                startIndex = pageRequest.getStartIndex(),
+                windowSize = pageRequest.size
+            )
+
+        val searchResults = channelIndex.search(searchRequest)
+        val foundChannels = channelRepository.findAllByIds(searchResults.elements.map { ChannelId(it) }).toList()
+
+        return ResultsPage(
+            elements = foundChannels,
+            pageInfo = PageInfo(
+                hasMoreElements = (pageRequest.page + 1) * pageRequest.size < searchResults.counts.totalHits,
+                totalElements = searchResults.counts.totalHits,
+                pageRequest = pageRequest
+            )
+        )
     }
 }

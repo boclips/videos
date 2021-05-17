@@ -1,8 +1,21 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.*
-import com.boclips.search.service.domain.common.model.*
-import java.util.*
+import com.boclips.search.service.domain.common.FacetCount
+import com.boclips.search.service.domain.common.FacetType
+import com.boclips.search.service.domain.common.IndexReader
+import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.ResultCounts
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.FacetDefinition
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.PagingCursor
+import com.boclips.search.service.domain.common.model.SearchQuery
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
+import java.util.UUID
 
 abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     IndexReader<METADATA, QUERY>,
@@ -12,6 +25,8 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
     private var requests: MutableList<IndexSearchRequest<QUERY>> = mutableListOf()
     private var cursorPosition: Int = 0
     private var currentCursor: PagingCursor? = null
+
+    fun getIndex() = index.toMap()
 
     override fun search(searchRequest: IndexSearchRequest<QUERY>): SearchResults {
         val startIndex = (searchRequest as? PaginatedIndexSearchRequest)?.startIndex

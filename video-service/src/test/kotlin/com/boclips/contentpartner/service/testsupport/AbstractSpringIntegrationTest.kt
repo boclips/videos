@@ -229,7 +229,7 @@ abstract class AbstractSpringIntegrationTest {
                 distributionMethods = distributionMethods
             ).id
         } catch (e: ChannelConflictException) {
-            getChannels.invoke(name = contentProvider).firstOrNull()!!.id
+            getChannels.invoke(name = contentProvider).elements.firstOrNull()!!.id
         }
 
         when (playbackId.type) {

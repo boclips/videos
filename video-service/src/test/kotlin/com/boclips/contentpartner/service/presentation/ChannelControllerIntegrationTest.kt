@@ -9,6 +9,8 @@ import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.service.domain.model.taxonomy.Category
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.testsupport.CategoryFactory
 import com.boclips.videos.service.testsupport.asApiUser
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
@@ -637,7 +639,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update videoLevelTagging`(){
+    fun `can update videoLevelTagging`() {
         addCategory(CategoryFactory.sample(code = "ABC", description = "Law"))
         val channel = saveChannel(
             name = "Test channel",
@@ -669,7 +671,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updating videoLevelTagging in channel triggers ChannelUpdated event`(){
+    fun `updating videoLevelTagging in channel triggers ChannelUpdated event`() {
         addCategory(CategoryFactory.sample(code = "ABC", description = "Law"))
         val channel = saveChannel(
             name = "Test channel",
@@ -694,7 +696,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(fakeEventBus.getEventsOfType(ContentPartnerUpdated::class.java)).hasSize(1)
         assertThat(fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.name).isEqualTo("Test channel")
-        val categoriesFromEvent = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
+        val categoriesFromEvent =
+            fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
         assertThat(categoriesFromEvent).hasSize(0)
     }
 
@@ -720,7 +723,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(fakeEventBus.getEventsOfType(ContentPartnerUpdated::class.java)).hasSize(1)
         assertThat(fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.name).isEqualTo("Test channel")
-        val categoriesFromEvent = fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
+        val categoriesFromEvent =
+            fakeEventBus.getEventOfType(ContentPartnerUpdated::class.java).contentPartner.categories
         assertThat(categoriesFromEvent).hasSize(2)
         val categoryA = categoriesFromEvent.first { it.code == "A" }
         val categoryBC = categoriesFromEvent.first { it.code == "BC" }
@@ -1009,6 +1013,88 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `video lookup by provider id returns 404 when video does not exist`() {
             mockMvc.perform(MockMvcRequestBuilders.head("/v1/channels/ted/videos/xyz").asIngestor())
                 .andExpect(status().isNotFound)
+        }
+    }
+
+    @Nested
+    inner class GetChannels {
+
+        @Test
+        fun `can sort by Category ASC`() {
+            addCategory(Category(null, "catA", CategoryCode("A")))
+            addCategory(Category(null, "catB", CategoryCode("B")))
+            addCategory(Category(null, "catC", CategoryCode("C")))
+            addCategory(Category(null, "catD", CategoryCode("D")))
+
+            saveChannel(name = "Channel 1, untagged, needs video level tagging", videoLevelTagging = true)
+            saveChannel(name = "Channel 2, tagged", categories = listOf("B", "D"))
+            saveChannel(name = "Channel 3, tagged", categories = listOf("C", "A"))
+            saveChannel(name = "Channel 4 - untagged, no video level tagging needed", categories = emptyList())
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels?sort_by=CATEGORIES_ASC"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
+                .andExpect(
+                    jsonPath(
+                        "$._embedded.channels[0].name",
+                        equalTo("Channel 4 - untagged, no video level tagging needed")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$._embedded.channels[1].name",
+                        equalTo("Channel 1, untagged, needs video level tagging")
+                    )
+                )
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("Channel 3, tagged")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Channel 2, tagged")))
+        }
+
+        @Test
+        fun `can handle paginated requests`() {
+            saveChannel(name = "Channel 1")
+            saveChannel(name = "Channel 2")
+            saveChannel(name = "Channel 3")
+            saveChannel(name = "Channel 4")
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels?page=1&size=2"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(2)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 3")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 4")))
+                .andExpect(jsonPath("$.page.size", equalTo(2)))
+                .andExpect(jsonPath("$.page.totalElements", equalTo(4)))
+                .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
+                .andExpect(jsonPath("$.page.number", equalTo(1)))
+        }
+
+        @Test
+        fun `returns all records when no pagination is specified`() {
+            saveChannel(name = "Channel 1")
+            saveChannel(name = "Channel 2")
+            saveChannel(name = "Channel 3")
+            saveChannel(name = "Channel 4")
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 1")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 2")))
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("Channel 3")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Channel 4")))
+                .andExpect(jsonPath("$.page.size", equalTo(4)))
+                .andExpect(jsonPath("$.page.totalElements", equalTo(4)))
+                .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
+                .andExpect(jsonPath("$.page.number", equalTo(0)))
         }
     }
 }

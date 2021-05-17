@@ -1,20 +1,36 @@
 package com.boclips.contentpartner.service.presentation.converters
 
 import com.boclips.contentpartner.service.application.channel.ContentCategoryConverter
+import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.channel.ChannelWrapperResource
+import com.boclips.videos.api.response.channel.ChannelsResource
 import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.channel.toLanguageResource
+import org.springframework.hateoas.PagedModel
 
 class ChannelToResourceConverter(
     private val channelLinkBuilder: ChannelLinkBuilder,
     private val ingestDetailsToResourceConverter: IngestDetailsResourceConverter,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
 ) {
+
+    fun convert(resultsPage: ResultsPage<Channel>, projection: Projection?): ChannelsResource {
+        return ChannelsResource(
+            _embedded = ChannelWrapperResource(resultsPage.elements.map { convert(it, projection) }),
+            page = PagedModel.PageMetadata(
+                resultsPage.pageInfo.pageRequest.size.toLong(),
+                resultsPage.pageInfo.pageRequest.page.toLong(),
+                resultsPage.pageInfo.totalElements
+            )
+        )
+    }
+
     fun convert(channel: Channel, projection: Projection? = Projection.full): ChannelResource {
         return when (projection) {
             Projection.list -> ChannelResource(

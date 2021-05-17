@@ -1,6 +1,15 @@
 package com.boclips.contentpartner.service.presentation.converters
 
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.common.PageInfo
+import com.boclips.contentpartner.service.common.PageRequest
+import com.boclips.contentpartner.service.common.ResultsPage
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.channel.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.presentation.hateoas.ChannelLinkBuilder
 import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuilderFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
@@ -178,5 +187,28 @@ class ChannelToResourceConverterTest {
         val contentPartnerResource = channelToResourceConverter.convert(contentPartner, Projection.details)
 
         assertThat(contentPartnerResource.currency).isEqualTo("USD")
+    }
+
+    @Test
+    fun `can convert paged results`() {
+        val resultsPage: ResultsPage<Channel> = ResultsPage(
+            elements = emptyList(),
+            pageInfo = PageInfo(
+                hasMoreElements = true,
+                totalElements = 10,
+                pageRequest = PageRequest(
+                    size = 3,
+                    page = 1
+                )
+            )
+        )
+
+        val converted = channelToResourceConverter.convert(resultsPage = resultsPage, projection = null)
+
+        assertThat(converted._embedded.channels).isEmpty()
+        assertThat(converted.page!!.totalPages).isEqualTo(4)
+        assertThat(converted.page!!.number).isEqualTo(1)
+        assertThat(converted.page!!.size).isEqualTo(3)
+        assertThat(converted.page!!.totalElements).isEqualTo(10)
     }
 }

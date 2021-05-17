@@ -5,16 +5,12 @@ import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
-import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.IndexSearchRequest
-import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.infrastructure.common.suggestions.AbstractInMemoryFakeSuggestions
-import kotlin.Comparator
 
 class ChannelIndexFake :
-    AbstractInMemoryFakeSuggestions<SuggestionQuery<ChannelMetadata>, ChannelMetadata>(),
+    AbstractInMemoryFakeSuggestions<SuggestionQuery<ChannelMetadata>, ChannelQuery, ChannelMetadata>(),
     SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
     IndexReader<ChannelMetadata, ChannelQuery>,
     IndexWriter<ChannelMetadata> {
@@ -23,11 +19,10 @@ class ChannelIndexFake :
     }
 
     override fun nameMatching(
-        index: MutableMap<String, ChannelMetadata>,
+        index: Map<String, ChannelMetadata>,
         query: SuggestionQuery<ChannelMetadata>
     ): List<Suggestion> {
         val phrase = query.phrase
-        val sort = query.sort
         val filtered = index
             .filter { entry -> filterIncludedChannels(query, entry) }
             .filter { entry -> filterEligibleForStream(query, entry) }
@@ -36,26 +31,11 @@ class ChannelIndexFake :
             .filter { entry -> entry.value.name.contains(phrase, ignoreCase = true) }
             .values.toList()
 
-        val sorted = sort.find { (it as? Sort.ByField)?.fieldName == ChannelMetadata::taxonomy }?.let {
-            filtered.sortedWith((Comparator { a, b -> getTaxonomySortPriority(a).compareTo(getTaxonomySortPriority(b)) }))
-        } ?: filtered
-
-        return sorted.map {
+        return filtered.map {
             Suggestion(
                 name = it.name,
                 id = it.id
             )
-        }
-    }
-
-    private fun getTaxonomySortPriority(channelMetadata: ChannelMetadata): String {
-        val taxonomy = channelMetadata.taxonomy
-        return if (taxonomy.videoLevelTagging) {
-            "1"
-        } else if (taxonomy.categories == null || taxonomy.categories.isEmpty()) {
-            "0"
-        } else {
-            taxonomy.categories.map { it.value }.sorted().first()
         }
     }
 
@@ -95,7 +75,7 @@ class ChannelIndexFake :
         return isEmpty || hasAnyIncludedType
     }
 
-    override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
-        TODO("Not yet implemented")
+    override fun idsMatching(index: MutableMap<String, ChannelMetadata>, query: ChannelQuery): List<String> {
+        return index.map { it.key }
     }
 }

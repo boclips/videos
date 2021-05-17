@@ -497,7 +497,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun getChannel(name: String): Channel {
-        return getChannels.invoke(name = name).first()
+        return getChannels.invoke(name = name).elements.first()
     }
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {

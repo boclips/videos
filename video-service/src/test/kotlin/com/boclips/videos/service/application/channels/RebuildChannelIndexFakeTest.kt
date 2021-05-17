@@ -6,8 +6,10 @@ import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
@@ -155,19 +157,18 @@ internal class RebuildChannelIndexFakeTest {
             sequenceOf(channel1, channel2, channel3)
         )
 
-        val results = index.getSuggestions(
-            SuggestionRequest(
-                SuggestionQuery(
+        val results = index.search(
+            PaginatedIndexSearchRequest(
+                ChannelQuery(
                     phrase = "",
-                    accessRuleQuery = SuggestionAccessRuleQuery(),
                     sort = listOf(Sort.ByField(fieldName = ChannelMetadata::taxonomy, order = SortOrder.ASC))
                 )
             )
         )
 
         assertThat(results.elements).hasSize(3)
-        assertThat(results.elements[0].id).isEqualTo(channelId2.value)
-        assertThat(results.elements[1].id).isEqualTo(channelId1.value)
-        assertThat(results.elements[2].id).isEqualTo(channelId3.value)
+        assertThat(results.elements[0]).isEqualTo(channelId2.value)
+        assertThat(results.elements[1]).isEqualTo(channelId1.value)
+        assertThat(results.elements[2]).isEqualTo(channelId3.value)
     }
 }

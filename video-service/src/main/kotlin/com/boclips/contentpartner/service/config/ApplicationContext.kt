@@ -69,7 +69,8 @@ class ApplicationContext(
     @Bean
     fun getChannels(): GetChannels {
         return GetChannels(
-            channelRepository
+            channelRepository,
+            channelService
         )
     }
 

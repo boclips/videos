@@ -11,7 +11,9 @@ class ChannelEsQuery {
         return QueryBuilders
             .boolQuery()
             .apply {
-                ChannelsAccessRulesFilter.channelsBuildAccessRulesFilter(this, query.accessRuleQuery!!)
+                query.accessRuleQuery?.let {
+                    ChannelsAccessRulesFilter.channelsBuildAccessRulesFilter(this, it)
+                }
             }
             .apply {
                 if (phrase.isNotBlank()) {
