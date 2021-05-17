@@ -1,52 +1,38 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.bson.types.ObjectId
-
+import org.springframework.core.io.InputStreamSource
+import java.io.StringReader
 
 object CategoryMappingValidator {
-
-    fun validate(file: ByteArray): CategoryValidationResult {
-//        val reader = CsvMapper().enable(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
-//        val schema = reader.schemaFor(CategoryMappingMetadata::class.java).withoutHeader().withColumnReordering(true)
-//            .withNullValue("")
-//        val items =
-//            reader.reader(schema).readValues<CategoryMappingMetadata>(file)
-//                .readAll()
-
-//        val mapper = CsvMapper().enable(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE);
-//        val schema = mapper.schemaFor(CategoryMappingMetadata::class.java); // schema from 'Pojo' definition
-//        val it: MappingIterator<CategoryMappingMetadata> =
-//            mapper.readerFor(CategoryMappingMetadata::class.java).with(schema).readValues(file);
-//        val all = it.readAll();
-//        var result: CategoryValidationResult = CategoryValidationResult.Valid(all.size)
-
-        val schema = CsvSchema.builder()
-            .addColumn("Thema code (where possible)")
-            .addColumn("ID")
-            .build()
-        val bootstrapSchema = CsvSchema.emptySchema().withHeader()
-        val mapper: ObjectMapper = CsvMapper()
-        val all = mapper.readerFor(Pojo::class.java).with(bootstrapSchema).readValue(csv)
-        all.mapIndexed { index, categoryMappingMetadata ->
-            {
-                if (categoryMappingMetadata.videoId.isNullOrEmpty()) {
-                    result = CategoryValidationResult.MissingVideoId(rowIndex = index)
-                } else {
-                    try {
-                        ObjectId(categoryMappingMetadata.videoId.toString())
-                    } catch (ex: IllegalArgumentException) {
-                        result = CategoryValidationResult.InvalidVideoId(
-                            rowIndex = index,
-                            invalidId = categoryMappingMetadata.videoId!!
-                        )
-                    }
+    fun validate(input: InputStreamSource): CategoryValidationResult =
+        readCsvFile<CategoryMappingMetadata>(input.inputStream.readBytes()).let { items ->
+            var result: CategoryValidationResult = Valid(entries = 0)
+            for ((index, item) in items.withIndex()) {
+                if (item.categoryCode != "PST") {
+                    result = InvalidCategoryCode(code = item.categoryCode!!)
+                    break
                 }
-
+                result = try {
+                    ObjectId(item.videoId)
+                    Valid(entries = index + 1)
+                } catch (e: IllegalArgumentException) {
+                    InvalidVideoId(rowIndex = index, invalidId = item.videoId!!)
+                }
             }
+            return result
         }
-        return result
-    }
+
+    private inline fun <reified T> readCsvFile(bytes: ByteArray): List<T> =
+        StringReader(String(bytes)).use { reader ->
+            return CsvMapper().apply { registerModule(KotlinModule()) }
+                .readerFor(T::class.java)
+                .with(CsvSchema.emptySchema().withHeader().withLineSeparator(""))
+                .readValues<T>(reader)
+                .readAll()
+                .toList()
+        }
 }

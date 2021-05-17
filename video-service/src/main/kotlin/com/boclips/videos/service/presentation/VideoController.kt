@@ -452,7 +452,7 @@ class VideoController(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<Any> {
         logger.info { file.bytes }
-        CategoryMappingValidator.validate(file.bytes)
+        CategoryMappingValidator.validate(file)
         // when(validateCsv(file)) {
         //     is InvalidCa
         // }
