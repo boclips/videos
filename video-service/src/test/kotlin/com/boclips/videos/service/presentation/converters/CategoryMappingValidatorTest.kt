@@ -30,7 +30,7 @@ class CategoryMappingValidatorTest {
 
         assertThat(result).isInstanceOf(CategoryValidationResult.Valid::class.java)
         assertThat(result.isValid).isTrue()
-        assertThat(result.message).isEqualTo("Valid CSV, 4 entries parsed")
+        assertThat(result.message).isEqualTo("Valid CSV, 4 parsed")
     }
 
     @Test
