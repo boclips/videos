@@ -41,11 +41,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.presentation.converters.CategoryMappingValidator
-import com.boclips.videos.service.presentation.converters.PriceConverter
-import com.boclips.videos.service.presentation.converters.QueryParamsConverter
-import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
-import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.converters.*
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -452,12 +448,11 @@ class VideoController(
     fun tagVideos(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<Any> {
-        logger.info { file.bytes }
-        categoryMappingValidator.validate(file)
-        // when(validateCsv(file)) {
-        //     is InvalidCa
-        // }
-        return ResponseEntity("hi" +
-            "", HttpStatus.OK)
+        val validationResult = categoryMappingValidator.validate(file)
+        return if (validationResult is CategoriesInvalid) {
+            ResponseEntity(validationResult.getMessage(), HttpStatus.BAD_REQUEST)
+        } else {
+            ResponseEntity("Valid CSV", HttpStatus.OK)
+        }
     }
 }

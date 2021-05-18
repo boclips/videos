@@ -33,6 +33,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:invalid-categories.csv")
     lateinit var invalidCategoryCsv: Resource
 
+    @Value("classpath:not-csv.txt")
+    lateinit var nonCsv: Resource
+
     @BeforeEach
     fun setUp() {
         kalturaVideoId = saveVideo(
@@ -473,14 +476,12 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `invalid category tags are rejected`() {
-        addCategory(CategoryFactory.sample(code = "PST"))
-
         mockMvc.perform(
             multipart("/v1/videos/categories")
-                .file("file", invalidCategoryCsv.file.readBytes())
+                .file("file", validCategoryCsv.file.readBytes())
                 .asBoclipsEmployee()
         ).andExpect(status().isBadRequest)
-            .andExpect(content().string("Invalid CSV"))
+            .andExpect(content().string("Rows 1, 2 contain invalid or unknown category codes - PST"))
     }
 
     @Test
@@ -492,6 +493,18 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
                 .file("file", invalidCategoryCsv.file.readBytes())
                 .asBoclipsEmployee()
         ).andExpect(status().isBadRequest)
-            .andExpect(content().string("Invalid CSV: Category code ABC is invalid"))
+            .andExpect(content().string("Rows 1 contain invalid or unknown category codes - ABC, Rows 2 are missing a video ID, Rows 1 contain invalid Video IDs - 5c54da69d8eafeecae22bf"))
+    }
+
+    @Test
+    fun `non csvs are rejected with an appropriate message`() {
+        addCategory(CategoryFactory.sample(code = "PST"))
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", nonCsv.file.readBytes())
+                .asBoclipsEmployee()
+        ).andExpect(status().isBadRequest)
+            .andExpect(content().string("The file is not a valid CSV format"))
     }
 }
