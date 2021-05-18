@@ -58,6 +58,7 @@ class LinksController(
                 videosLinkBuilder.searchVideosLink(),
                 videosLinkBuilder.getMetadata(),
                 videosLinkBuilder.getVideoPrice(),
+                videosLinkBuilder.tagVideoCategories(),
 
                 videoTypeLinkBuilder.videoTypes(),
 

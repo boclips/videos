@@ -446,7 +446,7 @@ class VideoController(
 
     @PostMapping("/v1/videos/categories", consumes = ["multipart/form-data"])
     fun tagVideos(
-        @RequestParam("file") file: MultipartFile
+        @RequestParam("file") file: MultipartFile?
     ): ResponseEntity<Any> {
         val validationResult = categoryMappingValidator.validate(file)
         return if (validationResult is CategoriesInvalid) {

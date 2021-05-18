@@ -443,4 +443,22 @@ class VideosLinkBuilderTest {
 
         assertThat(link).isNull()
     }
+
+    @Test
+    fun `tag videos link is visible for permitted users`() {
+        setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
+        val link = videosLinkBuilder.tagVideoCategories()
+
+        assertThat(link?.href).endsWith("/v1/videos/categories{?file}")
+        assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.TAG_VIDEOS)
+        assertThat(link?.templated).isTrue()
+    }
+
+    @Test
+    fun `tag videos link is not visible for forbidden users`() {
+        setSecurityContext("boclip@not-boclips.com")
+        val link = videosLinkBuilder.tagVideoCategories()
+
+        assertThat(link).isNull()
+    }
 }
