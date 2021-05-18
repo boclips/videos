@@ -29,8 +29,8 @@ class ChannelLinkBuilderTest {
 
         val link = channelLinkBuilder.channelsLink()!!
 
-        assertThat(link.href).endsWith("/v1/channels{?name,projection,ingestType*}")
+        assertThat(link.href).endsWith("/v1/channels{?name,projection,sort_by,page,size,ingestType*}")
         assertThat(link.rel.value()).isEqualTo(ChannelLinkBuilder.Rels.CHANNELS)
-        assertThat(link.isTemplated).isTrue()
+        assertThat(link.isTemplated).isTrue
     }
 }
