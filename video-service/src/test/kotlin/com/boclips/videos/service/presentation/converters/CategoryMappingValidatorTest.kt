@@ -37,7 +37,16 @@ class CategoryMappingValidatorTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns error when invalid object id provided for video id`() {
         val result = categoryMappingValidator.validate(fixture("categories-invalid-object-id.csv"))
-        assertThat(result).isEqualTo(CategoriesInvalid(errors = listOf(InvalidVideoId(rowIndex = 1, invalidId = "HITHERE"))))
+        assertThat(result).isEqualTo(
+            CategoriesInvalid(
+                errors = listOf(
+                    InvalidVideoId(
+                        rowIndex = 1,
+                        invalidId = "HITHERE"
+                    )
+                )
+            )
+        )
     }
 
     @Test
@@ -52,11 +61,6 @@ class CategoryMappingValidatorTest : AbstractSpringIntegrationTest() {
         val result = categoryMappingValidator.validate(fixture("not-csv.txt"))
 
         assertThat(result).isEqualTo(CategoriesInvalid(errors = listOf(InvalidFile)))
-    }
-
-    @Test
-    fun `creates a meaningful error message`() {
-        val error = CategoriesInvalid(errors = )
     }
 
     private fun fixture(name: String) =

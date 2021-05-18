@@ -4,17 +4,26 @@ package com.boclips.videos.service.presentation.converters
 sealed class CategoryValidationResult
 
 data class CategoriesValid(val entries: Number) : CategoryValidationResult()
-data class CategoriesInvalid(val errors: List<CategoryValidationError>) : CategoryValidationResult()  {
+data class CategoriesInvalid(val errors: List<CategoryValidationError>) : CategoryValidationResult() {
     fun getMessage(): String {
-        val errorMessage = ""
-        errors.map { error ->
-            when(error){
-                is InvalidCategoryCode -> errorMessage.plus("Rows ${error.rowIndex} contain invalid or unknown category codes ${error.code} \n")
-                is InvalidFile -> TODO()
-                is InvalidVideoId -> TODO()
-                is MissingVideoId -> TODO()
-            }
-        }
+        val errorMessages = emptyList<String>().toMutableList()
+        errorMessages.add(errors.filterIsInstance<InvalidCategoryCode>().let { filteredErrors ->
+            "Rows ${
+                filteredErrors.joinToString { it.rowIndex.toString() }
+            } contain invalid or unknown category codes ${filteredErrors.joinToString { it.code }}"
+        })
+        errorMessages.add(errors.filterIsInstance<MissingVideoId>().let { filteredErrors ->
+            "Rows ${filteredErrors.joinToString { it.rowIndex.toString() }} are missing a video ID"
+        })
+        errorMessages.add(errors.filterIsInstance<InvalidVideoId>().let { filteredErrors ->
+            "Rows ${
+                filteredErrors.joinToString { it.rowIndex.toString() }
+            } contain invalid Video IDs - ${filteredErrors.joinToString { it.invalidId }}"
+        })
+        errorMessages.add(errors.filterIsInstance<InvalidFile>().let {
+            "The file is not a valid CSV format"
+        })
+        return errorMessages.joinToString()
     }
 }
 

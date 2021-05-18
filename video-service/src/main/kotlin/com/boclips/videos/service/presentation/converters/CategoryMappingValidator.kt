@@ -1,6 +1,9 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.application.GetAllCategories
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
@@ -33,24 +36,50 @@ class CategoryMappingValidator(val getAllCategories: GetAllCategories) {
                 }
             }
 
-            if (items.isEmpty()) {
-                errors.add(InvalidFile)
-            }
+//            if (items.isEmpty()) {
+//                errors.add(InvalidFile)
+//            }
 
             if (errors.isEmpty()) {
                 return@let CategoriesValid(items.size)
             } else {
                 return@let CategoriesInvalid(errors = errors)
             }
-        }
+        } ?: CategoriesInvalid(errors = listOf(InvalidFile))
 
-    private inline fun <reified T> readCsvFile(bytes: ByteArray): List<T> =
-        StringReader(String(bytes)).use { reader ->
-            return CsvMapper().configure(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS, true).apply { registerModule(KotlinModule()) }
-                .readerFor(T::class.java)
-                .with(CsvSchema.emptySchema().withHeader().withLineSeparator(""))
-                .readValues<T>(reader)
+    private inline fun <reified T> readCsvFile(bytes: ByteArray): List<CategoryMappingMetadata> {
+//        StringReader(String(bytes)).use { reader ->
+//            return CsvMapper()
+//                .enable(CsvParser.Feature.ALLOW_TRAILING_COMMA)
+//                .enable(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
+//                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+//                .enable(JsonGenerator.Feature.IGNORE_UNKNOWN)
+//                .registerModule(KotlinModule())
+//                .readerFor(T::class.java)
+//                .with(
+//                    CsvSchema.builder()
+//                        .addColumn("Thema code (where possible)")
+//                        .addColumn("ID")
+//                        .setUseHeader(true)
+//
+//                        .build()
+//                )
+//                .readValues<T>(reader)
+//                .readAll()
+//                .toList()
+
+        StringReader(String(bytes)).use {  reader ->
+            val mapper = CsvMapper().enable(CsvParser.Feature.IGNORE_TRAILING_UNMAPPABLE)
+            val schema = mapper.schemaFor(CategoryMappingMetadata::class.java)
+                .withHeader()
+                .withColumnReordering(true)
+                .withNullValue("")
+                .strictHeaders()
+            return mapper.readerFor(CategoryMappingMetadata::class.java)
+                .with(schema)
+                .readValues<CategoryMappingMetadata>(reader)
                 .readAll()
                 .toList()
         }
+    }
 }
