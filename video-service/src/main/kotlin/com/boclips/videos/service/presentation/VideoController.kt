@@ -95,6 +95,7 @@ class VideoController(
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
+    val categoryMappingValidator: CategoryMappingValidator
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -452,7 +453,7 @@ class VideoController(
         @RequestParam("file") file: MultipartFile
     ): ResponseEntity<Any> {
         logger.info { file.bytes }
-        CategoryMappingValidator.validate(file)
+        categoryMappingValidator.validate(file)
         // when(validateCsv(file)) {
         //     is InvalidCa
         // }

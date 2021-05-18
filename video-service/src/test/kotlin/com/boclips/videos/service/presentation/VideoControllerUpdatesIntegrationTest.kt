@@ -482,4 +482,16 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         ).andExpect(status().isBadRequest)
             .andExpect(content().string("Invalid CSV"))
     }
+
+    @Test
+    fun `invalid csvs are rejected with the validation failures returned`() {
+        addCategory(CategoryFactory.sample(code = "PST"))
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", invalidCategoryCsv.file.readBytes())
+                .asBoclipsEmployee()
+        ).andExpect(status().isBadRequest)
+            .andExpect(content().string("Invalid CSV: Category code ABC is invalid"))
+    }
 }
