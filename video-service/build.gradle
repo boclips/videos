@@ -142,6 +142,9 @@ dependencies {
     implementation(platform('com.github.cloudyrock.mongock:mongock-bom:4.2.6.BETA'))
     implementation('com.github.cloudyrock.mongock:mongock-spring-v5:4.2.6.BETA')
     implementation('com.github.cloudyrock.mongock:mongodb-v3-driver:4.2.6.BETA')
+    implementation('com.fasterxml.jackson.core:jackson-core:2.12.3')
+    implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.3')
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3')
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test:5.4.5")

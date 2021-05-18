@@ -41,10 +41,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.presentation.converters.PriceConverter
-import com.boclips.videos.service.presentation.converters.QueryParamsConverter
-import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
-import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.converters.*
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
@@ -94,6 +91,7 @@ class VideoController(
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
+    val categoryMappingValidator: CategoryMappingValidator
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -444,5 +442,17 @@ class VideoController(
         val price = getVideoPrice(video, userId)?.let { PriceResource(amount = it.amount, currency = it.currency) }
 
         return ResponseEntity(price, HttpStatus.OK)
+    }
+
+    @PostMapping("/v1/videos/categories", consumes = ["multipart/form-data"])
+    fun tagVideos(
+        @RequestParam("file") file: MultipartFile
+    ): ResponseEntity<Any> {
+        val validationResult = categoryMappingValidator.validate(file)
+        return if (validationResult is CategoriesInvalid) {
+            ResponseEntity(validationResult.getMessage(), HttpStatus.BAD_REQUEST)
+        } else {
+            ResponseEntity("Valid CSV", HttpStatus.OK)
+        }
     }
 }
