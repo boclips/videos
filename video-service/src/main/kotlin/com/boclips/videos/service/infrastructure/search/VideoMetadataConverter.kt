@@ -57,12 +57,12 @@ object VideoMetadataConverter {
         )
     }
 
-    private fun convertCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): Set<String> {
+    private fun convertCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): List<String> {
         return categories.flatMap { source ->
-            source.value.map { category ->
-                return setOf(category.codeValue.value) + category.ancestors.map { it.value }
+            return@flatMap source.value.flatMap { category ->
+                listOf(category.codeValue.value) + category.ancestors.map { it.value }
             }
-        }.toSet()
+        }.sorted()
     }
 
     private fun convertPrices(prices: OrganisationsPrices): Map<String, BigDecimal> {

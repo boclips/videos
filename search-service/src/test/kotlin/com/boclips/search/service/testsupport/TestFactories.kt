@@ -46,7 +46,7 @@ object SearchableVideoMetadataFactory {
         isVoiced: Boolean? = null,
         language: Locale? = null,
         prices: Map<String, BigDecimal>? = null,
-        categoryCodes: Set<String>? = emptySet()
+        categoryCodes: List<String>? = emptyList()
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -118,7 +118,7 @@ object TestFactories {
             isVoiced = null,
             language = null,
             prices = null,
-            categoryCodes = emptySet()
+            categoryCodes = emptyList()
         )
     }
 }

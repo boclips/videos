@@ -8,10 +8,10 @@ import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSear
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-class VideoInderReaderCategoryFilterIntegrationTest  : EmbeddedElasticSearchIntegrationTest(){
+class VideoInderReaderCategoryFilterIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
     private lateinit var videoIndexReader: VideoIndexReader
     private lateinit var videoIndexWriter: VideoIndexWriter
 
@@ -21,35 +21,35 @@ class VideoInderReaderCategoryFilterIntegrationTest  : EmbeddedElasticSearchInte
         videoIndexWriter = VideoIndexWriter.createTestInstance(esClient, 20)
     }
 
-
     @Test
     fun `can filter by category`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "video-1", categoryCodes = setOf("A", "AB")),
-                SearchableVideoMetadataFactory.create(id = "video-2", categoryCodes = setOf("C"))
-            ))
-            val results = videoIndexReader.search(
+                SearchableVideoMetadataFactory.create(id = "video-1", categoryCodes = listOf("A", "AB")),
+                SearchableVideoMetadataFactory.create(id = "video-2", categoryCodes = listOf("C"))
+            )
+        )
+        val results = videoIndexReader.search(
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     userQuery = UserQuery(categoryCodes = setOf("AB")),
                     videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )
-            )
+        )
 
         Assertions.assertThat(results.elements).containsExactly("video-1")
     }
-
 
     @Test
     fun `can filter by multiple categories`() {
         videoIndexWriter.upsert(
             sequenceOf(
-                SearchableVideoMetadataFactory.create(id = "video-1", categoryCodes = setOf("A", "AB")),
-                SearchableVideoMetadataFactory.create(id = "video-2", categoryCodes = setOf("B", "C")),
-                SearchableVideoMetadataFactory.create(id = "video-3", categoryCodes = setOf("C"))
-            ))
+                SearchableVideoMetadataFactory.create(id = "video-1", categoryCodes = listOf("A", "AB")),
+                SearchableVideoMetadataFactory.create(id = "video-2", categoryCodes = listOf("B", "C")),
+                SearchableVideoMetadataFactory.create(id = "video-3", categoryCodes = listOf("C"))
+            )
+        )
         val results = videoIndexReader.search(
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
@@ -61,5 +61,4 @@ class VideoInderReaderCategoryFilterIntegrationTest  : EmbeddedElasticSearchInte
 
         Assertions.assertThat(results.elements).containsExactlyInAnyOrder("video-1", "video-2")
     }
-
 }

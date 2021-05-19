@@ -26,8 +26,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.*
-import java.util.*
+import java.time.Duration
+import java.time.LocalDate
+import java.time.Month
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.util.Currency
+import java.util.Locale
 import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class VideoMetadataConverterTest {
@@ -52,7 +57,15 @@ class VideoMetadataConverterTest {
                 releasedOn = LocalDate.of(2019, Month.APRIL, 19),
                 voice = Voice.WithVoice(language = Locale.JAPANESE, transcript = "a great transcript"),
                 ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
-                categories = mapOf(CategorySource.CHANNEL to setOf(CategoryWithAncestors(codeValue = CategoryCode("ABC"), description = "Test", ancestors = setOf(CategoryCode("A"), CategoryCode("AB"))))),
+                categories = mapOf(
+                    CategorySource.CHANNEL to setOf(
+                        CategoryWithAncestors(
+                            codeValue = CategoryCode("ABC"),
+                            description = "Test",
+                            ancestors = setOf(CategoryCode("A"), CategoryCode("AB"))
+                        )
+                    )
+                ),
                 subjects = setOf(
                     Subject(
                         id = SubjectId(value = "subject-id"),
@@ -114,7 +127,7 @@ class VideoMetadataConverterTest {
                     "org-1" to BigDecimal.valueOf(9.99),
                     "org-2" to BigDecimal.valueOf(15.99)
                 ),
-                categoryCodes = setOf("A", "AB", "ABC")
+                categoryCodes = listOf("A", "AB", "ABC")
             )
         )
     }
@@ -233,5 +246,32 @@ class VideoMetadataConverterTest {
         val videoWithNoPrices = TestFactories.createVideo()
         val metadata = VideoMetadataConverter.convert(videoWithNoPrices, Availability.ALL)
         assertThat(metadata.prices).isNull()
+    }
+
+    @Test
+    fun `categories are ordered alphabetically`() {
+        val video = TestFactories.createVideoWithPrices(
+            TestFactories.createVideo(
+                categories = mapOf(
+                    CategorySource.CHANNEL to setOf(
+                        CategoryWithAncestors(
+                            codeValue = CategoryCode("ABC"),
+                            description = "Test",
+                            ancestors = setOf(CategoryCode("A"), CategoryCode("AB"))
+                        )
+                    ),
+                    CategorySource.MANUAL to setOf(
+                        CategoryWithAncestors(
+                            codeValue = CategoryCode("BBB"),
+                            description = "B test",
+                            ancestors = setOf(CategoryCode("B"), CategoryCode("BB"))
+                        )
+                    )
+                ),
+            )
+        )
+
+        val metadata = VideoMetadataConverter.convert(video, Availability.ALL)
+        assertThat(metadata.categoryCodes).containsExactly("A", "AB", "ABC", "B", "BB", "BBB")
     }
 }

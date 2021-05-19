@@ -36,7 +36,7 @@ data class VideoDocument @JsonCreator constructor(
     @param:JsonProperty(IS_VOICED) val isVoiced: Boolean?,
     @param:JsonProperty(LANGUAGE) val language: String?,
     @param:JsonProperty(PRICES) val prices: Map<String, Long>?,
-    @param:JsonProperty(CATEGORY_CODES) val categoryCodes: Set<String>?
+    @param:JsonProperty(CATEGORY_CODES) val categoryCodes: List<String>?
 ) : HasAgeRange {
     companion object {
         const val ID = "id"

@@ -88,7 +88,7 @@ class VideoDocumentConverterTest {
                 isVoiced = null,
                 language = "spa",
                 prices = null,
-                categoryCodes = setOf("A", "AB", "ABC")
+                categoryCodes = listOf("A", "AB", "ABC")
             )
         )
     }
@@ -157,7 +157,7 @@ class VideoDocumentConverterTest {
                 "org-id-2" to BigDecimal.valueOf(0),
                 "org-id-3" to BigDecimal.valueOf(1001000.99),
             ),
-            categoryCodes = setOf("A")
+            categoryCodes = listOf("A")
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -197,7 +197,7 @@ class VideoDocumentConverterTest {
                     "org-id-2" to 0,
                     "org-id-3" to 100100099,
                 ),
-                categoryCodes = setOf("A")
+                categoryCodes = listOf("A")
             )
         )
     }

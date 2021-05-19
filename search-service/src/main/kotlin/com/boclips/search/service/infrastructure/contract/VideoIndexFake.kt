@@ -6,7 +6,6 @@ import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
-import com.sun.org.apache.xpath.internal.operations.Bool
 import java.time.LocalDate
 
 class VideoIndexFake :
@@ -149,7 +148,7 @@ class VideoIndexFake :
             .map { video -> video.key }
     }
 
-    private fun <T> checkFilterValues(filters: Set<T>, values: Set<T>?): Boolean {
+    private fun <T> checkFilterValues(filters: Collection<T>, values: Collection<T>?): Boolean {
         return when {
             filters.isEmpty() -> true
             values.isNullOrEmpty() -> false

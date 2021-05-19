@@ -32,5 +32,5 @@ data class VideoMetadata(
     val isVoiced: Boolean?,
     val language: Locale?,
     val prices: Map<String, BigDecimal>?,
-    val categoryCodes: Set<String>?
+    val categoryCodes: List<String>?
 )
