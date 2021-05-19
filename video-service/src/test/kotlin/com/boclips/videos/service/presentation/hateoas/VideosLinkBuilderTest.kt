@@ -449,9 +449,9 @@ class VideosLinkBuilderTest {
         setSecurityContext("boclip@boclips.com", UserRoles.UPDATE_VIDEOS)
         val link = videosLinkBuilder.tagVideoCategories()
 
-        assertThat(link?.href).endsWith("/v1/videos/categories{?file}")
+        assertThat(link?.href).endsWith("/v1/videos/categories")
         assertThat(link?.rel).isEqualTo(VideosLinkBuilder.Rels.TAG_VIDEOS)
-        assertThat(link?.templated).isTrue()
+        assertThat(link?.templated).isFalse()
     }
 
     @Test

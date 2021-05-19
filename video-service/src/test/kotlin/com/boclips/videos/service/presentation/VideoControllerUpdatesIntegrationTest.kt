@@ -490,7 +490,6 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             multipart("/v1/videos/categories")
                 .file("file", validCategoryCsv.file.readBytes())
-                .asBoclipsEmployee()
         ).andExpect(status().isOk)
     }
 
