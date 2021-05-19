@@ -47,7 +47,7 @@ object VideoDocumentConverter {
                 it.key to (it.value.times(BigDecimal.valueOf(100)).longValueExact())
             }
                 ?.toMap(),
-            categoryCodes = video.categoryCodes
+            categoryCodes = video.categoryCodes?.codes
         )
     }
 }

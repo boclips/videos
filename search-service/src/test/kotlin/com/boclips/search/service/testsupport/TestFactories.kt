@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
+import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.search.service.infrastructure.videos.VideoDocument
@@ -74,7 +75,7 @@ object SearchableVideoMetadataFactory {
         isVoiced = isVoiced,
         language = language,
         prices = prices,
-        categoryCodes = categoryCodes
+        categoryCodes = categoryCodes?.let { VideoCategoryCodes(it) }
     )
 }
 

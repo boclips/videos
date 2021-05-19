@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
+import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoType
 import org.assertj.core.api.Assertions.assertThat
@@ -157,7 +158,7 @@ class VideoDocumentConverterTest {
                 "org-id-2" to BigDecimal.valueOf(0),
                 "org-id-3" to BigDecimal.valueOf(1001000.99),
             ),
-            categoryCodes = listOf("A")
+            categoryCodes = VideoCategoryCodes(codes = listOf("A"))
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

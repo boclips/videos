@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
+import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
@@ -127,7 +128,7 @@ class VideoMetadataConverterTest {
                     "org-1" to BigDecimal.valueOf(9.99),
                     "org-2" to BigDecimal.valueOf(15.99)
                 ),
-                categoryCodes = listOf("A", "AB", "ABC")
+                categoryCodes = VideoCategoryCodes(codes = listOf("A", "AB", "ABC"))
             )
         )
     }
@@ -272,6 +273,6 @@ class VideoMetadataConverterTest {
         )
 
         val metadata = VideoMetadataConverter.convert(video, Availability.ALL)
-        assertThat(metadata.categoryCodes).containsExactly("A", "AB", "ABC", "B", "BB", "BBB")
+        assertThat(metadata.categoryCodes?.codes).containsExactly("A", "AB", "ABC", "B", "BB", "BBB")
     }
 }

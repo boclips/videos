@@ -143,7 +143,7 @@ class VideoIndexFake :
             }
             .filter { entry -> !query.videoAccessRuleQuery.excludedLanguages.contains(entry.value.language) }
             .filter { entry ->
-                checkFilterValues(query.userQuery.categoryCodes, entry.value.categoryCodes)
+                checkFilterValues(query.userQuery.categoryCodes, entry.value.categoryCodes?.codes)
             }
             .map { video -> video.key }
     }

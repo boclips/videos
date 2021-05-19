@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.SubjectsMetadata
+import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -53,7 +54,7 @@ object VideoMetadataConverter {
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
             prices = if (video is VideoWithPrices) convertPrices(video.prices) else null,
-            categoryCodes = convertCategories(video.categories)
+            categoryCodes = VideoCategoryCodes(convertCategories(video.categories))
         )
     }
 
