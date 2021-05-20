@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.videos
 
+import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.domain.videos.model.VideoType
@@ -14,7 +15,8 @@ class EsVideoQueryTest {
             videoAccessRuleQuery = VideoAccessRuleQuery(
                 excludedTypes = setOf(VideoType.STOCK),
                 includedTypes = setOf(VideoType.INSTRUCTIONAL),
-                isEligibleForStream = true
+                isEligibleForStream = true,
+                excludedSourceTypes = setOf(SourceType.YOUTUBE)
             )
         )
         val expectedQuery = EsVideoQueryTest::class.java.classLoader.getResource("VideoQuery.json")!!

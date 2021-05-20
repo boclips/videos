@@ -3,15 +3,14 @@ package com.boclips.search.service.infrastructure.videos
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VoiceType
 import org.elasticsearch.index.query.BoolQueryBuilder
-import org.elasticsearch.index.query.QueryBuilders.boolQuery
-import org.elasticsearch.index.query.QueryBuilders.existsQuery
-import org.elasticsearch.index.query.QueryBuilders.idsQuery
-import org.elasticsearch.index.query.QueryBuilders.termQuery
-import org.elasticsearch.index.query.QueryBuilders.termsQuery
+import org.elasticsearch.index.query.QueryBuilders.*
 
 class AccessRulesFilter {
     companion object {
-        fun buildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder, videoQueryVideo: VideoAccessRuleQuery): BoolQueryBuilder {
+        fun buildAccessRulesFilter(
+            boolQueryBuilder: BoolQueryBuilder,
+            videoQueryVideo: VideoAccessRuleQuery
+        ): BoolQueryBuilder {
             if (videoQueryVideo.excludedContentPartnerIds.isNotEmpty()) {
                 boolQueryBuilder.mustNot(
                     termsQuery(
@@ -38,11 +37,21 @@ class AccessRulesFilter {
             }
 
             if (videoQueryVideo.isEligibleForStream != null) {
-                boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, videoQueryVideo.isEligibleForStream))
+                boolQueryBuilder.filter(
+                    termQuery(
+                        VideoDocument.ELIGIBLE_FOR_STREAM,
+                        videoQueryVideo.isEligibleForStream
+                    )
+                )
             }
 
             if (videoQueryVideo.isEligibleForDownload != null) {
-                boolQueryBuilder.filter(termQuery(VideoDocument.ELIGIBLE_FOR_DOWNLOAD, videoQueryVideo.isEligibleForDownload))
+                boolQueryBuilder.filter(
+                    termQuery(
+                        VideoDocument.ELIGIBLE_FOR_DOWNLOAD,
+                        videoQueryVideo.isEligibleForDownload
+                    )
+                )
             }
 
             val combinedQuery = boolQuery()
@@ -69,6 +78,12 @@ class AccessRulesFilter {
                 }.forEach { voicedQuery.should(it) }
 
                 boolQueryBuilder.filter(voicedQuery)
+            }
+
+            if (videoQueryVideo.excludedSourceTypes.isNotEmpty()) {
+                boolQueryBuilder.mustNot(
+                    termsQuery(VideoDocument.SOURCE, videoQueryVideo.excludedSourceTypes.map { it.name.toLowerCase() })
+                )
             }
 
             return boolQueryBuilder

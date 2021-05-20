@@ -1,6 +1,8 @@
 package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoType
@@ -388,6 +390,44 @@ class AccessRuleConverterTest {
                 )
             )
             assertThat(excludedLanguages).containsExactly(Locale.ENGLISH, Locale.FRENCH)
+        }
+    }
+
+    @Nested
+    inner class ToExcludedPlaybackProviderTypes {
+        @Test
+        fun `returns empty when access to everything`() {
+            val excludedTypes = converter.mapToExcludedSourceTypes(VideoAccess.Everything)
+            assertThat(excludedTypes).isEmpty()
+        }
+
+        @Test
+        fun `returns empty when no excluded playback provider type is specified in rules`() {
+            val videoId = TestFactories.createVideoId()
+            val excludedPlaybackProviderTypes = converter.mapToExcludedSourceTypes(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedIds(
+                            videoIds = setOf(videoId)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedPlaybackProviderTypes).isEmpty()
+        }
+
+        @Test
+        fun `returns excluded playback provider types when specified`() {
+            val excludedLanguages = converter.mapToExcludedSourceTypes(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedPlaybackProviderTypes(
+                            sources = setOf(PlaybackProviderType.KALTURA, PlaybackProviderType.YOUTUBE)
+                        )
+                    )
+                )
+            )
+            assertThat(excludedLanguages).containsExactly(SourceType.BOCLIPS, SourceType.YOUTUBE)
         }
     }
 }

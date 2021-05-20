@@ -142,6 +142,7 @@ class VideoIndexFake :
                 }
             }
             .filter { entry -> !query.videoAccessRuleQuery.excludedLanguages.contains(entry.value.language) }
+            .filter { entry -> !query.videoAccessRuleQuery.excludedSourceTypes.contains(entry.value.source) }
             .filter { entry ->
                 checkFilterValues(query.userQuery.categoryCodes, entry.value.categoryCodes?.codes)
             }

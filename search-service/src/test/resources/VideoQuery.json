@@ -234,6 +234,14 @@
           ],
           "boost" : 1.0
         }
+      },
+      {
+        "terms" : {
+          "source" : [
+            "youtube"
+          ],
+          "boost" : 1.0
+        }
       }
     ],
     "adjust_pure_negative" : true,
