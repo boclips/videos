@@ -1,6 +1,7 @@
 package com.boclips.videos.service.domain.model.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.eventbus.domain.video.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import java.util.Locale
 
@@ -56,6 +57,12 @@ sealed class VideoAccessRule {
     data class ExcludedLanguages(val languages: Set<Locale>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to exclude ${languages.joinToString { it.displayLanguage }} content)"
+        }
+    }
+
+    data class ExcludedPlaybackSources(val sources: Set<PlaybackProviderType>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(restricted to exclude ${sources.joinToString { it.name }} content)"
         }
     }
 }
