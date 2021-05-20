@@ -29,7 +29,8 @@ class VideoQueryFactory {
                 ),
                 videoAccessRuleQuery = VideoAccessRuleQuery(
                     includedTypes = setOf(VideoType.INSTRUCTIONAL, VideoType.STOCK),
-                    excludedTypes = setOf(VideoType.INSTRUCTIONAL)
+                    excludedTypes = setOf(VideoType.INSTRUCTIONAL),
+                    excludedSourceTypes = setOf()
                 )
             )
         }

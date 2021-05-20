@@ -6,11 +6,8 @@ import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.request.collection.CreateCollectionRequest
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.VoiceType
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -19,7 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.util.Locale
+import java.util.*
 
 class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
     fun createAccessRulesResource(userId: String, rules: List<AccessRuleResource>, client: String? = null) {
@@ -49,6 +46,11 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                     id = "access-rule-id",
                     name = "Test Contract",
                     videoTypes = listOf("NEWS")
+                ),
+                AccessRuleResource.ExcludedPlaybackSources(
+                    id = "access-rule-3",
+                    name = "test",
+                    sources = setOf("YOUTUBE")
                 )
             )
         )
@@ -62,7 +64,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             VideoAccessRule.IncludedIds(
                 videoIds = setOf(VideoId(videoId))
             ),
-            VideoAccessRule.IncludedContentTypes(contentTypes = setOf(VideoType.NEWS))
+            VideoAccessRule.IncludedContentTypes(contentTypes = setOf(VideoType.NEWS)),
+            VideoAccessRule.ExcludedPlaybackProviderTypes(sources = setOf(PlaybackProviderType.YOUTUBE))
         )
     }
 
@@ -428,6 +431,30 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                         Locale.ENGLISH,
                         Locale.FRENCH
                     )
+                )
+            )
+        }
+
+        @Test
+        fun `can convert excluded playback sources to domain`() {
+            createAccessRulesResource(
+                "test-user",
+                listOf(
+                    AccessRuleResource.ExcludedPlaybackSources(
+                        id = "access-rule-id",
+                        name = "sources",
+                        sources = setOf("YOUTUBE", "KALTURA")
+                    )
+                )
+            )
+
+            val user = UserFactory.sample(id = "test-user")
+            val accessRules = accessRuleService.getRules(user)
+
+            val videoAccess = accessRules.videoAccess as VideoAccess.Rules
+            assertThat(videoAccess.accessRules).containsExactly(
+                VideoAccessRule.ExcludedPlaybackProviderTypes(
+                    setOf(PlaybackProviderType.YOUTUBE, PlaybackProviderType.KALTURA)
                 )
             )
         }

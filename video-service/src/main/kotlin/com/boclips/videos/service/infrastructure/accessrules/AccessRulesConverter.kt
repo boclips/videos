@@ -5,16 +5,13 @@ import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAccessRule
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VoiceType
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
-import java.util.Locale
+import java.util.*
 
 class ApiAccessRulesConverter(
     private val collectionRepository: CollectionRepository
@@ -65,6 +62,18 @@ class ApiAccessRulesConverter(
                 )
                 is AccessRuleResource.ExcludedLanguages -> VideoAccessRule.ExcludedLanguages(
                     it.languages.map { languageTag -> Locale.forLanguageTag(languageTag) }.toSet()
+                )
+                is AccessRuleResource.ExcludedPlaybackSources -> VideoAccessRule.ExcludedPlaybackProviderTypes(
+                    it.sources.mapNotNull { source ->
+                        when (source) {
+                            "KALTURA" -> PlaybackProviderType.KALTURA
+                            "YOUTUBE" -> PlaybackProviderType.YOUTUBE
+                            else -> {
+                                ApiAccessRuleService.logger.warn { "Invalid playback source type: $source" }
+                                null
+                            }
+                        }
+                    }.toSet()
                 )
             }
         }

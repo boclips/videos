@@ -6,6 +6,7 @@ import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.application.video.exceptions.InvalidDateException
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -172,6 +173,23 @@ class QueryConverterTest {
                     DurationRange(min = Duration.ofMinutes(5), max = null)
                 )
             )
+        }
+    }
+
+    @Nested
+    inner class ConvertSourceType {
+        @Test
+        fun `should convert playback provider type into source type for KALTURA`() {
+            val queryConverter = QueryConverter()
+            val actual = queryConverter.convertToSourceType(PlaybackProviderType.KALTURA)
+            assertThat(actual).isEqualTo(SourceType.BOCLIPS)
+        }
+
+        @Test
+        fun `should convert playback provider type into source type for YOUTUBE`() {
+            val queryConverter = QueryConverter()
+            val actual = queryConverter.convertToSourceType(PlaybackProviderType.YOUTUBE)
+            assertThat(actual).isEqualTo(SourceType.YOUTUBE)
         }
     }
 }

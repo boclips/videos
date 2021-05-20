@@ -2,8 +2,10 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.common.QueryConverter
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import java.util.Locale
@@ -141,6 +143,15 @@ object AccessRuleConverter {
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.ExcludedLanguages>()
                 .flatMap { accessRule -> accessRule.languages }
+                .toSet()
+        }
+
+    fun mapToExcludedSourceTypes(videoAccess: VideoAccess): Set<SourceType> =
+        when (videoAccess) {
+            VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules -> videoAccess.accessRules
+                .filterIsInstance<VideoAccessRule.ExcludedPlaybackProviderTypes>()
+                .flatMap { accessRule -> accessRule.sources }.map { QueryConverter().convertToSourceType(it) }
                 .toSet()
         }
 }

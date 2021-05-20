@@ -3,6 +3,8 @@ package com.boclips.videos.service.presentation
 import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -16,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -213,6 +214,40 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("hello")))
+        }
+
+        @Test
+        fun `excludes videos by playback source`() {
+            saveVideo(
+                title = "kaltura video",
+                playbackId = PlaybackId(
+                    type = PlaybackProviderType.KALTURA,
+                    value = "id-${UUID.randomUUID()}"
+                )
+            )
+            saveVideo(
+                title = "youtube video",
+                playbackId = PlaybackId(
+                    type = PlaybackProviderType.YOUTUBE,
+                    value = "id-${UUID.randomUUID()}"
+                )
+            )
+
+            usersClient.addAccessRules(
+                "api-user@gmail.com",
+                AccessRulesResourceFactory.sample(
+                    AccessRuleResource.ExcludedPlaybackSources(
+                        id = "access-rule-id",
+                        name = UUID.randomUUID().toString(),
+                        sources = setOf("YOUTUBE")
+                    )
+                )
+            )
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+                .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("kaltura video")))
         }
     }
 }

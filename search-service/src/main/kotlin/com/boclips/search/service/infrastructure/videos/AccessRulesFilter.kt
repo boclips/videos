@@ -71,6 +71,12 @@ class AccessRulesFilter {
                 boolQueryBuilder.filter(voicedQuery)
             }
 
+            if (videoQueryVideo.excludedSourceTypes.isNotEmpty()) {
+                boolQueryBuilder.mustNot(
+                    termsQuery(VideoDocument.SOURCE, videoQueryVideo.excludedTypes.map { it.name })
+                )
+            }
+
             return boolQueryBuilder
         }
     }
