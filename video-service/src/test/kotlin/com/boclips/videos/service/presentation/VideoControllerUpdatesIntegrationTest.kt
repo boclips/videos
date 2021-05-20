@@ -15,9 +15,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 
 class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
@@ -491,7 +489,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             multipart("/v1/videos/categories")
                 .file("file", validCategoryCsv.file.readBytes())
                 .asBoclipsEmployee()
-        ).andExpect(status().isOk)
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().string("Data has been successfully imported!"))
     }
 
     @Test

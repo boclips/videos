@@ -452,7 +452,7 @@ class VideoController(
         return if (validationResult is CategoriesInvalid) {
             ResponseEntity(validationResult.getMessage(), HttpStatus.BAD_REQUEST)
         } else {
-            ResponseEntity("Valid CSV", HttpStatus.OK)
+            ResponseEntity("Data has been successfully imported!", HttpStatus.OK)
         }
     }
 }
