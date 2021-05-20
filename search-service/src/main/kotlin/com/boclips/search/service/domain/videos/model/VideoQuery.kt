@@ -46,6 +46,6 @@ data class VideoAccessRuleQuery(
     val isEligibleForStream: Boolean? = null,
     val isEligibleForDownload: Boolean? = null,
     val includedVoiceType: Set<VoiceType> = emptySet(),
-    val excludedLanguages: Set<Locale> = emptySet()
-
+    val excludedLanguages: Set<Locale> = emptySet(),
+    val excludedSourceTypes: Set<SourceType> = emptySet()
 )

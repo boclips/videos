@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -29,9 +30,9 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
-                    text = "kaltura",
-                    pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0)
+                text = "kaltura",
+                pageSize = 10,
+                pagingState = VideoRequestPagingState.PageNumber(0)
             ),
             VideoAccess.Everything
         )
@@ -49,10 +50,9 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
         val results = retrievePlayableVideos.searchPlayableVideos(
             VideoRequest(
-                    text = "youtube",
-                    pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0),
-
+                text = "youtube",
+                pageSize = 10,
+                pagingState = VideoRequestPagingState.PageNumber(0),
             ),
             VideoAccess.Everything
         )
@@ -60,5 +60,35 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
         assertThat(results.videos).isNotEmpty
         assertThat(results.videos.first().title).isEqualTo("a youtube video")
         assertThat((results.videos.first().playback as VideoPlayback.YoutubePlayback).thumbnailUrl).isNotBlank()
+    }
+
+    @Test
+    fun `retrieves only kaltura videos when youtube ones are excluded`() {
+        saveVideo(
+            playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "ref-id-youtube"),
+            title = "a youtube video"
+        )
+        saveVideo(
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "ref-id-kaltura"),
+            title = "a kaltura video"
+        )
+
+        val results = retrievePlayableVideos.searchPlayableVideos(
+            VideoRequest(
+                text = "video",
+                pageSize = 10,
+                pagingState = VideoRequestPagingState.PageNumber(0),
+            ),
+            VideoAccess.Rules(
+                accessRules = listOf(
+                    VideoAccessRule.ExcludedPlaybackProviderTypes(
+                        sources = setOf(PlaybackProviderType.YOUTUBE)
+                    )
+                )
+            )
+        )
+
+        assertThat(results.videos).hasSize(1)
+        assertThat(results.videos.first().title).isEqualTo("a kaltura video")
     }
 }

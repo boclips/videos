@@ -1,6 +1,8 @@
 package com.boclips.videos.service.domain.model.video.request
 
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.search.service.domain.videos.model.SourceType
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -37,7 +39,10 @@ class VideoAccessRuleQueryConverterTest {
                     VideoAccessRule.ExcludedIds(videoIds = deniedVideoIds),
                     VideoAccessRule.IncludedDistributionMethods(distributionMethods = setOf(DistributionMethod.DOWNLOAD)),
                     VideoAccessRule.ExcludedChannelIds(channelIds = setOf(ChannelId("HELLO"))),
-                    VideoAccessRule.ExcludedLanguages(languages = setOf(Locale.FRENCH, Locale.KOREAN))
+                    VideoAccessRule.ExcludedLanguages(languages = setOf(Locale.FRENCH, Locale.KOREAN)),
+                    VideoAccessRule.ExcludedPlaybackProviderTypes(
+                        sources = setOf(PlaybackProviderType.YOUTUBE, PlaybackProviderType.KALTURA)
+                    )
                 )
             )
         )
@@ -57,5 +62,6 @@ class VideoAccessRuleQueryConverterTest {
             SearchVoiceType.WITHOUT
         )
         assertThat(query.excludedLanguages).containsExactly(Locale.FRENCH, Locale.KOREAN)
+        assertThat(query.excludedSourceTypes).containsExactlyInAnyOrder(SourceType.BOCLIPS, SourceType.YOUTUBE)
     }
 }

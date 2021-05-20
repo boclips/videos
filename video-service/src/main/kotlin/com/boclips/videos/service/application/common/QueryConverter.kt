@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.video.exceptions.InvalidDateExcept
 import com.boclips.videos.service.application.video.exceptions.InvalidDurationException
 import com.boclips.videos.service.application.video.exceptions.InvalidSourceException
 import com.boclips.videos.service.application.video.exceptions.InvalidTypeException
+import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
@@ -100,4 +101,10 @@ class QueryConverter {
 
         return emptyList()
     }
+
+    fun convertToSourceType(playbackProviderType: PlaybackProviderType) =
+        when (playbackProviderType) {
+            PlaybackProviderType.YOUTUBE -> SourceType.YOUTUBE
+            PlaybackProviderType.KALTURA -> SourceType.BOCLIPS
+        }
 }
