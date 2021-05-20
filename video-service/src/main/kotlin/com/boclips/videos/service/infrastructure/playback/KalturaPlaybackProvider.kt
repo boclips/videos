@@ -22,9 +22,12 @@ import com.boclips.videos.service.domain.model.video.UnknownCaptionFormatExcepti
 import com.boclips.videos.service.domain.model.video.VideoAsset
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.CaptionAssetConverter.getCaptionAsset
+import com.boclips.web.exceptions.BoclipsApiException
+import com.boclips.web.exceptions.ExceptionDetails
 import mu.KLogging
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import java.io.OutputStream
 import java.net.URI
 import java.util.Locale
@@ -37,6 +40,14 @@ class KalturaPlaybackProvider(
     PlaybackProvider {
     companion object : KLogging()
 
+    class UpstreamKalturaException(error: String, message: String) : BoclipsApiException(
+        ExceptionDetails(
+            error = error,
+            message = message,
+            status = HttpStatus.INTERNAL_SERVER_ERROR
+        )
+    )
+
     val restTemplate = restTemplateBuilder.build()
 
     override fun retrievePlayback(playbackIds: List<PlaybackId>): Map<PlaybackId, StreamPlayback> {
@@ -47,7 +58,14 @@ class KalturaPlaybackProvider(
             return emptyMap()
         }
 
-        val assetsByEntryId = kalturaClient.getVideoAssets(entryIds)
+        val assetsByEntryId = try {
+            kalturaClient.getVideoAssets(entryIds)
+        } catch (e: Exception) {
+            throw UpstreamKalturaException(
+                error = e.message ?: "no upstream error available",
+                message = "Error encountered when trying to retrieve assets for entry IDs: ${entryIds}"
+            )
+        }
 
         return kalturaClient.getEntries(entryIds)
             .map { PlaybackId(KALTURA, it.key) to it.value }.toMap()
