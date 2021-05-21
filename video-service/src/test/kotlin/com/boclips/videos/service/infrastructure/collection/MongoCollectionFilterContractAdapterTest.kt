@@ -21,7 +21,6 @@ class MongoCollectionFilterContractAdapterTest {
         val secondId = ObjectId()
         val thirdId = ObjectId()
         val selectedContent = AccessRuleResource.IncludedCollections(
-            id = "access-rule-id",
             name = "included collections",
             collectionIds = listOf(firstId.toHexString(), secondId.toHexString(), thirdId.toHexString())
         )
@@ -35,7 +34,6 @@ class MongoCollectionFilterContractAdapterTest {
 
     private val unknownContractForTesting =
         AccessRuleResource.ExcludedVideoTypes(
-            id = "access-rule-id",
             name = "not collection",
             videoTypes = emptyList())
 

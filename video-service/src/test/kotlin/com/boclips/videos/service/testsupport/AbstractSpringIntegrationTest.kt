@@ -529,7 +529,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideos(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoIds = contractedVideoIds.toList()
                 )
@@ -555,7 +554,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedDistributionMethods(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     distributionMethods = includedDistributionMethods.map { it.name }
                 )
@@ -568,7 +566,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideos(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoIds = excludedVideoIds.toList()
                 )
@@ -581,7 +578,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedVideoTypes(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoTypes = excludedVideoType.map { it.name }
                 )
@@ -594,7 +590,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideoTypes(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     videoTypes = includedVideoType.map { it.name }
                 )
@@ -607,7 +602,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideoVoiceTypes(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     voiceTypes = voiceType.map { it.name }
                 )
@@ -620,7 +614,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedChannels(
-                    id = "access-rule-id",
                     name = UUID.randomUUID().toString(),
                     channelIds = excludeContentPartners.toList()
                 )
@@ -633,7 +626,6 @@ abstract class AbstractSpringIntegrationTest {
             userId,
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.ExcludedLanguages(
-                    id = "rule",
                     name = "no languanges",
                     languages = excludedLanguages.map { it.toLanguageTag() }.toSet()
                 )

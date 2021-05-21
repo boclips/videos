@@ -26,12 +26,10 @@ class ApiContentPackageServiceIntegrationTest : AbstractSpringIntegrationTest() 
             id = "package",
             name = "package",
             AccessRuleResource.IncludedCollections(
-                id = "collection-rule",
                 name = "collection rule",
                 collectionIds = listOf("collection-1", "collection-2")
             ),
             AccessRuleResource.IncludedVideos(
-                id = "video-rule",
                 name = "video rule",
                 videoIds = listOf(
                     firstVideoId,

@@ -61,7 +61,6 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "api-user@gmail.com",
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedChannels(
-                    id = "include channels",
                     name = "channels",
                     channelIds = listOf(channel1.id.value, channel2.id.value)
                 )
@@ -97,7 +96,6 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "api-user@gmail.com",
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedChannels(
-                    id = "include channels",
                     name = "channels",
                     channelIds = listOf(channel1.id.value, channel2.id.value, channel3.id.value)
                 )
@@ -121,12 +119,10 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "api-user@gmail.com",
             AccessRulesResourceFactory.sample(
                 AccessRuleResource.IncludedVideoTypes (
-                    id = "included-id",
                     name = "includedVideoTypes",
                     videoTypes = listOf("NEWS")
                 ),
                 AccessRuleResource.ExcludedVideoTypes (
-                    id = "id-excluded",
                     name = "excludedVideoTypes",
                     videoTypes = listOf("STOCK")
                 ),

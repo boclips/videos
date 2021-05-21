@@ -228,7 +228,6 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
         saveVideo(title = "5")
 
         val accessRules = AccessRuleResource.IncludedVideos(
-            id = "some-id",
             name = "included video rule",
             videoIds = listOf(video2, video3, video4).map { it.value }
         )

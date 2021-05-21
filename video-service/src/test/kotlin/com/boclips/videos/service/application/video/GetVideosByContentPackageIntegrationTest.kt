@@ -19,7 +19,6 @@ class GetVideosByContentPackageIntegrationTest : AbstractSpringIntegrationTest()
         saveVideo(title = "vid-3")
 
         val accessRule = AccessRuleResource.IncludedVideos(
-            id = "inc-1",
             name = "my-beautiful",
             videoIds = listOf(video1, video2).map { it.value }
         )

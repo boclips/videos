@@ -36,7 +36,6 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
 
         val accessRules = apiAccessRulesConverter.toVideoAccess(
             AccessRuleResource.IncludedVideos(
-                id = "my-rule",
                 name = "my-rule",
                 videoIds = listOf(firstVideoId, secondVideoId)
             ).let(::listOf)
@@ -58,7 +57,6 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
         val accessRules = apiAccessRulesConverter.toCollectionAccess(
             listOf(
                 AccessRuleResource.IncludedCollections(
-                    id = "my-rule",
                     name = "my rule",
                     collectionIds = listOf("collection-1", "collection-2")
                 )
@@ -73,7 +71,6 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
         val accessRules = apiAccessRulesConverter.toCollectionAccess(
             listOf(
                 AccessRuleResource.IncludedCollections(
-                    id = "my-rule",
                     name = "my rule",
                     collectionIds = listOf("collection-1", "collection-2")
                 )
@@ -105,7 +102,6 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
         val accessRules = apiAccessRulesConverter.toCollectionAccess(
             listOf(
                 AccessRuleResource.IncludedCollections(
-                    id = "my-rule",
                     name = "my rule",
                     collectionIds = listOf("collection-1", "collection-2")
                 )

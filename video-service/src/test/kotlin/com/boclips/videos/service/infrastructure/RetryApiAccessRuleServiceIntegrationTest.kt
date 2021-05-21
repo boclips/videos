@@ -22,7 +22,6 @@ class RetryApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest()
     @Test
     fun `retries up to 3 times when client throws errors`() {
         val collectionsContract = AccessRuleResource.IncludedCollections(
-            id = "access-rule-id",
             name = "Test Contract",
             collectionIds = listOf("test-collection-id")
         )

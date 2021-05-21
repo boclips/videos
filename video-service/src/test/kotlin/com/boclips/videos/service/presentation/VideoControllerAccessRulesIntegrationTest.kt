@@ -203,7 +203,6 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 "api-user@gmail.com",
                 AccessRulesResourceFactory.sample(
                     AccessRuleResource.IncludedCollections(
-                        id = "access-rule-id",
                         name = UUID.randomUUID().toString(),
                         collectionIds = listOf(collectionId.value)
                     )
@@ -237,7 +236,6 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 "api-user@gmail.com",
                 AccessRulesResourceFactory.sample(
                     AccessRuleResource.ExcludedPlaybackSources(
-                        id = "access-rule-id",
                         name = UUID.randomUUID().toString(),
                         sources = setOf("YOUTUBE")
                     )
