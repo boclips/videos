@@ -20,7 +20,6 @@ class ChannelFactory {
                 awards = null,
                 notes = null,
                 contentTypes = null,
-                deliveryFrequency = null,
                 pedagogyInformation = null,
                 marketingInformation = null,
                 contract = null,

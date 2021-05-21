@@ -179,17 +179,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create a channel with delivery frequency`() {
-        val channel = createChannel(
-            VideoServiceApiFactory.createChannelRequest(
-                deliveryFrequency = Period.ofYears(1)
-            )
-        )
-
-        assertThat(channel.deliveryFrequency).isEqualTo(Period.ofYears(1))
-    }
-
-    @Test
     fun `can create a channel with ingest information`() {
         val channel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
@@ -236,7 +225,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                     DistributionMethodResource.DOWNLOAD
                 ),
                 ingest = IngestDetailsResource.mrss("https://feed.me"),
-                deliveryFrequency = Period.ofYears(1),
                 language = "spa",
                 description = description,
                 contentCategories = contentCategories,
@@ -258,7 +246,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
         assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
-        assertThat(event.contentPartner.ingest.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test

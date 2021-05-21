@@ -115,7 +115,6 @@ class EventConverter {
             .builder()
             .type(type.name)
             .urls(urls)
-            .deliveryFrequency(channel.deliveryFrequency)
             .distributionMethods(distributionMethods)
             .build()
     }

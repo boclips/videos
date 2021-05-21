@@ -114,7 +114,6 @@ class VideoServiceApiFactory {
                 type = IngestType.YOUTUBE,
                 playlistIds = listOf("yt-id")
             ),
-            deliveryFrequency: Period? = null,
             oneLineDescription: String? = null,
             marketingInformation: MarketingInformationRequest? = null,
             isTranscriptProvided: Boolean? = null,
@@ -140,7 +139,6 @@ class VideoServiceApiFactory {
                 notes = notes,
                 language = language,
                 ingest = ingest,
-                deliveryFrequency = deliveryFrequency,
                 oneLineDescription = oneLineDescription,
                 marketingInformation = marketingInformation,
                 isTranscriptProvided = isTranscriptProvided,

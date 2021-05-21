@@ -231,10 +231,6 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::ingest,
                 IngestDetailsDocumentConverter.toIngestDetailsDocument(updateCommand.ingest)
             )
-            is ChannelUpdateCommand.ReplaceDeliveryFrequency -> set(
-                ChannelDocument::deliveryFrequency,
-                updateCommand.deliveryFrequency.toString()
-            )
             is ChannelUpdateCommand.ReplaceContract -> set(
                 ChannelDocument::contract,
                 ContractDocumentConverter().toDocument(updateCommand.contract)

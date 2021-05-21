@@ -276,21 +276,6 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creates a command for updating delivery frequency`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                deliveryFrequency = Period.ofMonths(3)
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceDeliveryFrequency } as ChannelUpdateCommand.ReplaceDeliveryFrequency
-
-        assertThat(command.deliveryFrequency).isEqualTo(Period.ofMonths(3))
-    }
-
-    @Test
     fun `creates command for updating contract`() {
         val newContract = saveContract(name = "new name")
 

@@ -75,7 +75,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                     id = legalRestrictionsId.value
                 ),
                 ingest = IngestDetailsResource.mrss("https://mrss.feed.com"),
-                deliveryFrequency = Period.ofMonths(4)
             )
         )
 
@@ -89,7 +88,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                 listOf("https://mrss.feed.com")
             )
         )
-        assertThat(updatedContentPartner.deliveryFrequency?.months).isEqualTo(4)
     }
 
     @Test
@@ -109,7 +107,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                     DistributionMethodResource.DOWNLOAD
                 ),
                 ingest = IngestDetailsResource.mrss("https://feed.me"),
-                deliveryFrequency = Period.ofYears(1),
                 language = "spa",
                 description = description,
                 contentCategories = contentCategories,
@@ -130,7 +127,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
         assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
-        assertThat(event.contentPartner.ingest.deliveryFrequency).isEqualTo(Period.ofYears(1))
     }
 
     @Test

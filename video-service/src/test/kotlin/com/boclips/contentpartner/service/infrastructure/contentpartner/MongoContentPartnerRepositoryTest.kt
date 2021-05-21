@@ -299,24 +299,6 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `replace delivery frequency`() {
-        val channel =
-            mongoChannelRepository.create(createChannel(deliveryFrequency = Period.ofMonths(1)))
-
-        mongoChannelRepository.update(
-            listOf(
-                ChannelUpdateCommand.ReplaceDeliveryFrequency(
-                    channel.id,
-                    Period.ofYears(1)
-                )
-            )
-        )
-
-        val updatedChannel = mongoChannelRepository.findById(channel.id)
-        assertThat(updatedChannel?.deliveryFrequency).isEqualTo(Period.ofYears(1))
-    }
-
-    @Test
     fun `replace categories`() {
         val channel =
             mongoChannelRepository.create(createChannel(taxonomy = Taxonomy.ChannelLevelTagging(categories = emptySet())))

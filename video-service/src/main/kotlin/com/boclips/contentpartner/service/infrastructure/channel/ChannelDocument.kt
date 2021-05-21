@@ -25,7 +25,6 @@ data class ChannelDocument(
     val notes: String? = null,
     val contentTypes: List<String>? = null,
     val ingest: IngestDetailsDocument? = null,
-    val deliveryFrequency: String? = null,
     val marketingInformation: MarketingInformationDocument? = null,
     val isTranscriptProvided: Boolean? = null,
     val educationalResources: String? = null,

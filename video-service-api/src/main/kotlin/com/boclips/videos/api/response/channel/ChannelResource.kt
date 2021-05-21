@@ -44,8 +44,6 @@ data class ChannelResource(
     val pedagogyInformation: PedagogyResource? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val ingest: IngestDetailsResource? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
-    val deliveryFrequency: Period? = null,
 
     @get:JsonView(BoclipsInternalProjection::class)
     val contractId: String? = null,

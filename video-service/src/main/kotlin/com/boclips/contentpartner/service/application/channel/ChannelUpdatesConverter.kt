@@ -58,7 +58,6 @@ class ChannelUpdatesConverter(
                 commandCreator.updateBestForTags(),
                 commandCreator.updateSubjects(),
                 commandCreator.updateIngestDetails(),
-                commandCreator.updateDeliveryFrequency(),
                 commandCreator.updateContract(contractRepository),
                 commandCreator.updateCategories(getCategoryWithAncestors),
                 commandCreator.updateRequiresVideoLevelTagging(),
@@ -197,11 +196,6 @@ class ChannelUpdateCommandCreator(
     fun updateIngestDetails(): ChannelUpdateCommand.ReplaceIngestDetails? =
         channelRequest.ingest?.let {
             ChannelUpdateCommand.ReplaceIngestDetails(id, ingestDetailsResourceConverter.fromResource(it))
-        }
-
-    fun updateDeliveryFrequency(): ChannelUpdateCommand.ReplaceDeliveryFrequency? =
-        channelRequest.deliveryFrequency?.let {
-            ChannelUpdateCommand.ReplaceDeliveryFrequency(id, it)
         }
 
     fun updateContract(contractRepository: ContractRepository): ChannelUpdateCommand.ReplaceContract? =

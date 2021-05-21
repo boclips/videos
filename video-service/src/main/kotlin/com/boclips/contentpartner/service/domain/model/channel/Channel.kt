@@ -21,7 +21,6 @@ data class Channel(
     val notes: String?,
     val contentTypes: List<ContentType>? = emptyList(),
     val ingest: IngestDetails,
-    val deliveryFrequency: Period?,
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
     val contract: Contract?,

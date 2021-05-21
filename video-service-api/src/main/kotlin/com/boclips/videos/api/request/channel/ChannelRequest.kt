@@ -28,7 +28,6 @@ data class ChannelRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val contentTypes: List<String>? = null,
     val ingest: IngestDetailsResource? = null,
-    val deliveryFrequency: Period? = null,
     val oneLineDescription: String? = null,
     val marketingInformation: MarketingInformationRequest? = null,
     val isTranscriptProvided: Boolean? = null,

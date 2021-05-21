@@ -40,7 +40,6 @@ class ChannelDocumentConverterTest {
             ingest = MrssFeedIngest(
                 urls = listOf("https://mrss.feed")
             ),
-            deliveryFrequency = Period.ofMonths(3),
             marketingInformation = MarketingInformation(
                 oneLineDescription = "1l",
                 status = ChannelStatus.NEEDS_INTRODUCTION,

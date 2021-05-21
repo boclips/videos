@@ -69,7 +69,6 @@ class CreateChannel(
             },
             ingest = upsertRequest.ingest?.let { ingestDetailsToResourceConverter.fromResource(it) }
                 ?: ManualIngest,
-            deliveryFrequency = upsertRequest.deliveryFrequency,
             pedagogyInformation = PedagogyInformation(
                 bestForTags = upsertRequest.bestForTags,
                 subjects = upsertRequest.subjects,

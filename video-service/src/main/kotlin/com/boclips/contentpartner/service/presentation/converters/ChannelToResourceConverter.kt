@@ -54,7 +54,6 @@ class ChannelToResourceConverter(
                 awards = channel.awards,
                 notes = channel.notes,
                 ingest = ingestDetailsToResourceConverter.convert(channel.ingest),
-                deliveryFrequency = channel.deliveryFrequency,
                 language = channel.language?.let { it -> toLanguageResource(it) },
                 contentTypes = channel.contentTypes?.map {
                     when (it) {

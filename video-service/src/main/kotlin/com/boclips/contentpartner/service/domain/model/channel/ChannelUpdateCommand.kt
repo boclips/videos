@@ -71,9 +71,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceIngestDetails(channelId: ChannelId, val ingest: IngestDetails) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceDeliveryFrequency(channelId: ChannelId, val deliveryFrequency: Period) :
-        ChannelUpdateCommand(channelId)
-
     class ReplaceContract(channelId: ChannelId, val contract: Contract) :
         ChannelUpdateCommand(channelId)
 

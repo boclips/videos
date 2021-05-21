@@ -113,13 +113,11 @@ class EventConverterTest {
     fun `converts ingest details`() {
         val contentPartner = createChannel(
             ingest = ManualIngest,
-            deliveryFrequency = Period.ofMonths(1),
             distributionMethods = setOf(DistributionMethod.DOWNLOAD, DistributionMethod.STREAM)
         )
 
         val payload = converter.toContentPartnerPayload(contentPartner)
 
-        assertThat(payload.ingest.deliveryFrequency.months).isEqualTo(1)
         assertThat(payload.ingest.type).isEqualTo("MANUAL")
         assertThat(payload.ingest.distributionMethods).containsExactlyInAnyOrder(
             EventBusDistributionMethod.DOWNLOAD,

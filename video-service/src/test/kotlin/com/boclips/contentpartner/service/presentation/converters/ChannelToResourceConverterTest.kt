@@ -69,7 +69,6 @@ class ChannelToResourceConverterTest {
             ingest = MrssFeedIngest(
                 urls = listOf("https://feed.mrss")
             ),
-            deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED"),
             taxonomy = Taxonomy.ChannelLevelTagging(
@@ -106,7 +105,6 @@ class ChannelToResourceConverterTest {
                 urls = listOf("https://feed.mrss")
             )
         )
-        assertThat(channelResource.deliveryFrequency).isEqualTo(Period.ofMonths(3))
         assertThat(channelResource.contractId).isEqualTo("id")
         assertThat(channelResource.contractName).isEqualTo("TED")
         assertThat(channelResource.taxonomy?.categories).containsExactlyInAnyOrder(
@@ -133,7 +131,6 @@ class ChannelToResourceConverterTest {
             ingest = MrssFeedIngest(
                 urls = listOf("https://feed.mrss")
             ),
-            deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(id = "id", contentPartnerName = "TED")
         )
@@ -153,7 +150,6 @@ class ChannelToResourceConverterTest {
         assertThat(contentPartnerResource.language).isNull()
         assertThat(contentPartnerResource.contentTypes).isNull()
         assertThat(contentPartnerResource.ingest).isNull()
-        assertThat(contentPartnerResource.deliveryFrequency).isNull()
         assertThat(contentPartnerResource.contractId).isNull()
         assertThat(contentPartnerResource.contractName).isNull()
     }
@@ -175,7 +171,6 @@ class ChannelToResourceConverterTest {
             ingest = MrssFeedIngest(
                 urls = listOf("https://feed.mrss")
             ),
-            deliveryFrequency = Period.ofMonths(3),
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK),
             contract = ContentPartnerContractFactory.sample(
                 id = "id",

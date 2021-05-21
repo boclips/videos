@@ -52,7 +52,6 @@ object ChannelDocumentConverter : KLogging() {
             ingest = IngestDetailsDocumentConverter.toIngestDetailsDocument(
                 channel.ingest
             ),
-            deliveryFrequency = channel.deliveryFrequency?.toString(),
             marketingInformation = channel.marketingInformation?.let {
                 MarketingInformationDocument(
                     oneLineDescription = it.oneLineDescription,
@@ -129,7 +128,6 @@ object ChannelDocumentConverter : KLogging() {
                 }
             },
             ingest = document.ingest?.let(IngestDetailsDocumentConverter::toIngestDetails) ?: ManualIngest,
-            deliveryFrequency = document.deliveryFrequency?.let { Period.parse(it) },
             marketingInformation = document.marketingInformation?.let {
                 MarketingInformation(
                     oneLineDescription = it.oneLineDescription,
