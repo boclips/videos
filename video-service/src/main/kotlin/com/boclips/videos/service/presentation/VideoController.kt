@@ -43,6 +43,7 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.*
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
+import com.boclips.videos.service.presentation.exceptions.InvalidVideoTaggingCsvFile
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
@@ -447,12 +448,12 @@ class VideoController(
     @PostMapping("/v1/videos/categories", consumes = ["multipart/form-data"])
     fun tagVideos(
         @RequestParam("file") file: MultipartFile?
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<SuccessResponse> {
         val validationResult = categoryMappingValidator.validate(file)
-        return if (validationResult is CategoriesInvalid) {
-            ResponseEntity(validationResult.getMessage(), HttpStatus.BAD_REQUEST)
+        if (validationResult is CategoriesInvalid) {
+            throw InvalidVideoTaggingCsvFile(validationResult.getMessage())
         } else {
-            ResponseEntity("Data has been successfully imported!", HttpStatus.OK)
+            return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
         }
     }
 }

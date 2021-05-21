@@ -491,7 +491,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
                 .asBoclipsEmployee()
         )
             .andExpect(status().isOk)
-            .andExpect(content().string("Data has been successfully imported!"))
+            .andExpect(jsonPath("$.message", equalTo("Data has been successfully imported!")))
     }
 
     @Test
@@ -501,7 +501,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
                 .file("file", validCategoryCsv.file.readBytes())
                 .asBoclipsEmployee()
         ).andExpect(status().isBadRequest)
-            .andExpect(content().string("Rows 1, 2 contain invalid or unknown category codes - PST"))
+            .andExpect(jsonPath("$.message", equalTo("Rows 1, 2 contain invalid or unknown category codes - PST")))
     }
 
     @Test
@@ -513,7 +513,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
                 .file("file", invalidCategoryCsv.file.readBytes())
                 .asBoclipsEmployee()
         ).andExpect(status().isBadRequest)
-            .andExpect(content().string("Rows 1 contain invalid or unknown category codes - ABC, Rows 2 are missing a video ID, Rows 1 contain invalid Video IDs - 5c54da69d8eafeecae22bf"))
+            .andExpect(jsonPath("$.message", equalTo(
+                "Rows 1 contain invalid or unknown category codes - ABC, Rows 2 are missing a video ID," +
+                    " Rows 1 contain invalid Video IDs - 5c54da69d8eafeecae22bf")))
     }
 
     @Test
@@ -525,6 +527,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
                 .file("file", nonCsv.file.readBytes())
                 .asBoclipsEmployee()
         ).andExpect(status().isBadRequest)
-            .andExpect(content().string("The file is not a valid CSV format"))
+            .andExpect(jsonPath("$.message", equalTo(
+                "The file is not a valid CSV format")))
     }
 }
