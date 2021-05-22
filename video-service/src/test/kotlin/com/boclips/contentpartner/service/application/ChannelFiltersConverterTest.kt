@@ -12,12 +12,5 @@ class ChannelFiltersConverterTest {
 
         assertThat(filters).containsExactly(ChannelFilter.NameFilter(name = "hello"))
     }
-
-    @Test
-    fun `creates a hubspotId filter if present`() {
-        val filters = ChannelFiltersConverter.convert(hubspotId = "12345678")
-
-        assertThat(filters).containsExactly(ChannelFilter.HubspotIdFilter(hubspotId = "12345678"))
-    }
 }
 

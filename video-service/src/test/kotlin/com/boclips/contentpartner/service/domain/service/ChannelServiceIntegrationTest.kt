@@ -51,24 +51,6 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `returns conflict when a channel exists with the same hubspot id`() {
-            val originalChannel = ChannelFactory.createChannel(
-                name = "hello",
-                ingest = YoutubeScrapeIngest(playlistIds = emptyList()),
-                hubspotId = "123"
-            )
-            channelService.create(originalChannel)
-
-            val newChannel = ChannelFactory.createChannel(
-                name = "new",
-                ingest = YoutubeScrapeIngest(playlistIds = emptyList()),
-                hubspotId = "123"
-            )
-            val result = channelService.create(newChannel) as CreateChannelResult.HubSpotIdConflict
-            assertThat(result.hubSpotId).isEqualTo("123")
-        }
-
-        @Test
         fun `returns missing contract result when channel does not have a valid contract`() {
             val newChannel = ChannelFactory.createChannel(name = "new", ingest = MrssFeedIngest(urls = emptyList()))
             val result = channelService.create(newChannel)

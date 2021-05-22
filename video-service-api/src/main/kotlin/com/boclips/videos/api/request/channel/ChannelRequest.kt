@@ -20,8 +20,6 @@ data class ChannelRequest(
     val description: String? = null,
     @JsonSetter(contentNulls = Nulls.FAIL)
     val contentCategories: List<ContentCategoryRequest>? = null,
-    val hubspotId: String? = null,
-    val awards: String? = null,
     val notes: String? = null,
     @field:Language
     val language: String? = null,

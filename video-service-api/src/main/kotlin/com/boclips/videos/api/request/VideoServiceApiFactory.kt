@@ -106,8 +106,6 @@ class VideoServiceApiFactory {
             currency: String? = null,
             description: String? = null,
             contentCategories: List<ContentCategoryRequest>? = null,
-            hubspotId: String? = null,
-            awards: String? = null,
             notes: String? = null,
             language: String? = null,
             ingest: IngestDetailsResource? = IngestDetailsResource(
@@ -134,8 +132,6 @@ class VideoServiceApiFactory {
                 currency = currency,
                 description = description,
                 contentCategories = contentCategories,
-                hubspotId = hubspotId,
-                awards = awards,
                 notes = notes,
                 language = language,
                 ingest = ingest,

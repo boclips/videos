@@ -50,8 +50,6 @@ class ChannelToResourceConverter(
                 description = channel.description,
                 currency = channel.currency?.currencyCode,
                 contentCategories = channel.contentCategories?.let { ContentCategoryConverter.convertToResource(it) },
-                hubspotId = channel.hubspotId,
-                awards = channel.awards,
                 notes = channel.notes,
                 ingest = ingestDetailsToResourceConverter.convert(channel.ingest),
                 language = channel.language?.let { it -> toLanguageResource(it) },

@@ -22,16 +22,12 @@ data class ChannelResource(
     @get:JsonView(PublicApiProjection::class)
     val language: LanguageResource? = null,
     @get:JsonView(PublicApiProjection::class)
-    val awards: String? = null,
-    @get:JsonView(PublicApiProjection::class)
     val notes: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val contentTypes: List<ContentTypeResource>? = emptyList(),
     @get:JsonView(PublicApiProjection::class)
     val oneLineDescription: String? = null,
 
-    @get:JsonView(BoclipsInternalProjection::class)
-    val hubspotId: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val currency: String? = null,
     @get:JsonView(BoclipsInternalProjection::class)

@@ -25,10 +25,6 @@ class ChannelService(
             return CreateChannelResult.NameConflict(channel.name)
         }
 
-        if (channel.hubspotId != null && hasHubSpotIdConflict(channel)) {
-            return CreateChannelResult.HubSpotIdConflict(channel.hubspotId)
-        }
-
         if (isMissingContract(channel)) {
             return CreateChannelResult.MissingContract
         }
@@ -68,9 +64,6 @@ class ChannelService(
 
     private fun isMissingContract(channel: Channel) =
         channel.ingest.type() != IngestType.YOUTUBE && channel.contract == null
-
-    private fun hasHubSpotIdConflict(channel: Channel): Boolean =
-        channelRepository.findAll(ChannelFiltersConverter.convert(hubspotId = channel.hubspotId)).toList().isNotEmpty()
 
     private fun hasNameConflict(channel: Channel): Boolean =
         channelRepository.findAll(ChannelFiltersConverter.convert(name = channel.name)).toList().isNotEmpty()

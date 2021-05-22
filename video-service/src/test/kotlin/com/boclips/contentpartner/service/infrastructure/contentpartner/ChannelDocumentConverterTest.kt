@@ -32,8 +32,6 @@ class ChannelDocumentConverterTest {
             ),
             description = "This is a description",
             contentCategories = listOf(ContentCategory.ANIMATION),
-            hubspotId = "123456789d",
-            awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             contentTypes = listOf(ContentType.INSTRUCTIONAL),

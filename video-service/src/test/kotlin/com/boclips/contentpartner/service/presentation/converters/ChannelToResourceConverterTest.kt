@@ -62,8 +62,6 @@ class ChannelToResourceConverterTest {
             ),
             description = "this is a description",
             contentCategories = listOf(ContentCategory.ANIMATION),
-            hubspotId = "12345678d",
-            awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             ingest = MrssFeedIngest(
@@ -89,8 +87,6 @@ class ChannelToResourceConverterTest {
         assertThat(channelResource.currency).isEqualTo("GBP")
         assertThat(channelResource.description).isEqualTo("this is a description")
         assertThat(channelResource.contentCategories?.first()?.key).isEqualTo("ANIMATION")
-        assertThat(channelResource.hubspotId).isEqualTo("12345678d")
-        assertThat(channelResource.awards).isEqualTo("first award")
         assertThat(channelResource.notes).isEqualTo("first note")
         assertThat(channelResource.language?.code).isEqualTo(Locale.forLanguageTag("spa"))
         assertThat(channelResource.language?.name).isEqualTo("Spanish")
@@ -124,8 +120,6 @@ class ChannelToResourceConverterTest {
             ),
             description = "this is a description",
             contentCategories = listOf(ContentCategory.ANIMATION),
-            hubspotId = "12345678d",
-            awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             ingest = MrssFeedIngest(
@@ -144,8 +138,6 @@ class ChannelToResourceConverterTest {
         assertThat(contentPartnerResource.currency).isNull()
         assertThat(contentPartnerResource.description).isNull()
         assertThat(contentPartnerResource.contentCategories).isNull()
-        assertThat(contentPartnerResource.hubspotId).isNull()
-        assertThat(contentPartnerResource.awards).isNull()
         assertThat(contentPartnerResource.notes).isNull()
         assertThat(contentPartnerResource.language).isNull()
         assertThat(contentPartnerResource.contentTypes).isNull()
@@ -164,8 +156,6 @@ class ChannelToResourceConverterTest {
             ),
             description = "this is a description",
             contentCategories = listOf(ContentCategory.ANIMATION),
-            hubspotId = "12345678d",
-            awards = "first award",
             notes = "first note",
             language = Locale.forLanguageTag("spa"),
             ingest = MrssFeedIngest(

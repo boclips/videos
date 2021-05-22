@@ -187,14 +187,6 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
                 ChannelDocument::description,
                 updateCommand.description
             )
-            is ChannelUpdateCommand.ReplaceAwards -> set(
-                ChannelDocument::awards,
-                updateCommand.awards
-            )
-            is ChannelUpdateCommand.ReplaceHubspotId -> set(
-                ChannelDocument::hubspotId,
-                updateCommand.hubspotId
-            )
             is ChannelUpdateCommand.ReplaceNotes -> set(
                 ChannelDocument::notes,
                 updateCommand.notes
@@ -252,7 +244,6 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
     private fun filterCommandsToBson(filter: ChannelFilter): Bson =
         when (filter) {
             is ChannelFilter.NameFilter -> ChannelDocument::name eq filter.name
-            is ChannelFilter.HubspotIdFilter -> ChannelDocument::hubspotId eq filter.hubspotId
             is ChannelFilter.IngestTypesFilter ->
                 ChannelDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }
         }

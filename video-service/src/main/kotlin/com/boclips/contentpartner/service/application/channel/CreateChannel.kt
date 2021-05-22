@@ -55,8 +55,6 @@ class CreateChannel(
             },
             description = upsertRequest.description,
             contentCategories = upsertRequest.contentCategories?.let { ContentCategoryConverter.convert(it) },
-            hubspotId = upsertRequest.hubspotId,
-            awards = upsertRequest.awards,
             notes = upsertRequest.notes,
             language = upsertRequest.language?.let(Locale::forLanguageTag),
             contentTypes = upsertRequest.contentTypes?.mapNotNull {
@@ -92,7 +90,6 @@ class CreateChannel(
         return when (val createdChannelResult = channelService.create(channel)) {
             is CreateChannelResult.Success -> createdChannelResult.channel
             is CreateChannelResult.NameConflict -> throw ChannelConflictException(createdChannelResult.name)
-            is CreateChannelResult.HubSpotIdConflict -> throw ChannelHubspotIdException(createdChannelResult.hubSpotId)
             CreateChannelResult.MissingContract -> throw MissingContractException()
         }
     }

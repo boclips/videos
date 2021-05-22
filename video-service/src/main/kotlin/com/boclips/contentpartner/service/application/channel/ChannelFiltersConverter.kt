@@ -6,15 +6,11 @@ import com.boclips.videos.api.common.IngestType
 object ChannelFiltersConverter {
     fun convert(
         name: String? = null,
-        hubspotId: String? = null,
         ingestTypes: List<IngestType>? = null
     ): List<ChannelFilter> =
         listOfNotNull(
             getNameFilter(
                 name
-            ),
-            getHubspotId(
-                hubspotId
             ),
             getIngestTypesFilter(
                 ingestTypes
@@ -23,9 +19,6 @@ object ChannelFiltersConverter {
 
     private fun getNameFilter(name: String?) =
         name?.let { ChannelFilter.NameFilter(name = it) }
-
-    private fun getHubspotId(hubspotId: String?) =
-        hubspotId?.let { ChannelFilter.HubspotIdFilter(hubspotId = hubspotId) }
 
     private fun getIngestTypesFilter(ingestTypes: List<IngestType>?) =
         ingestTypes?.let { ChannelFilter.IngestTypesFilter(ingestTypes = it) }

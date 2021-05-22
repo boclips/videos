@@ -97,7 +97,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
             ContentCategoryRequest.WITH_A_HOST)
         val contentTypes = listOf("NEWS")
         val notes = "This is an interesting CP"
-        val hubspotId = "12345678"
 
         updateChannel(
             channelId = originalChannel.id.value,
@@ -112,7 +111,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                 contentCategories = contentCategories,
                 contentTypes = contentTypes,
                 notes = notes,
-                hubspotId = hubspotId
             )
         )
 
@@ -125,7 +123,6 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.details.contentCategories).isEqualTo(listOf("WITH_A_HOST"))
         assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
-        assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
     }
 

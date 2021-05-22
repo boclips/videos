@@ -92,31 +92,6 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `find all with multiple filters`() {
-        val toBeFoundChannelId = mongoChannelRepository.create(
-            createChannel(hubspotId = "123", name = "hello")
-        ).id
-
-        mongoChannelRepository.create(
-            createChannel(hubspotId = "456", name = "shwmae")
-        ).id
-
-        mongoChannelRepository.create(
-            createChannel(name = "hello")
-        ).id
-
-        val retrievedChannels =
-            mongoChannelRepository.findAll(
-                listOf(
-                    ChannelFilter.HubspotIdFilter(hubspotId = "123"),
-                    ChannelFilter.NameFilter(name = "hello")
-                )
-            )
-
-        assertThat(retrievedChannels.map { it.id }).containsExactly(toBeFoundChannelId)
-    }
-
-    @Test
     fun `find all channel`() {
         mongoChannelRepository.create(
             createChannel(name = "my bloody valentine")

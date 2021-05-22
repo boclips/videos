@@ -182,36 +182,6 @@ class ChannelUpdatesConverterTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `creates command for updating content partner awards`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                awards = "This is a new award"
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceAwards } as ChannelUpdateCommand.ReplaceAwards
-
-        assertThat(command.awards).contains("This is a new award")
-    }
-
-    @Test
-    fun `creates command for updating content partner hubspot id`() {
-        val commands = channelUpdatesConverter.convert(
-            id = originalChannel.id,
-            upsertChannelRequest = ChannelRequest(
-                hubspotId = "1a2s3d4f5g6h7j8k9l"
-            )
-        )
-
-        val command =
-            commands.find { it is ChannelUpdateCommand.ReplaceHubspotId } as ChannelUpdateCommand.ReplaceHubspotId
-
-        assertThat(command.hubspotId).contains("1a2s3d4f5g6h7j8k9l")
-    }
-
-    @Test
     fun `creates command for updating content partner notes`() {
         val commands = channelUpdatesConverter.convert(
             id = originalChannel.id,

@@ -59,9 +59,7 @@ class EventConverterTest {
             ),
             contentCategories = listOf(ContentCategory.ANIMATION),
             language = Locale.CANADA_FRENCH,
-            hubspotId = "hubspot-id",
             contract = ContentPartnerContractFactory.sample("contract-id"),
-            awards = "Outsell Company of the Year",
             notes = "no notes yet"
         )
 
@@ -70,9 +68,7 @@ class EventConverterTest {
         assertThat(details).isNotNull
         assertThat(details.contentTypes).containsExactly("INSTRUCTIONAL", "STOCK", "NEWS")
         assertThat(details.contentCategories).containsExactly("ANIMATION")
-        assertThat(details.hubspotId).isEqualTo("hubspot-id")
         assertThat(details.contractId).isEqualTo("contract-id")
-        assertThat(details.awards).isEqualTo("Outsell Company of the Year")
         assertThat(details.notes).isEqualTo("no notes yet")
         assertThat(details.language).isEqualTo(Locale.CANADA_FRENCH)
     }

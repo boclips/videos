@@ -86,9 +86,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     },
                 "currency": "USD",
                 "description": "This is a description",
-                "awards": "award",
                 "notes": "note one",
-                "hubspotId": "123456789",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
                 "contractId": "$contractId"
@@ -198,9 +196,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "searchable": false,
                 "name": "TED",
                 "description": "This is a description",
-                "awards": "award",
                 "notes": "note one",
-                "hubspotId": "123456789",
                 "contractId": "$contractId",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
@@ -240,7 +236,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("TED")))
             .andExpect(jsonPath("$._embedded.channels[0].currency", equalTo("USD")))
             .andExpect(jsonPath("$._embedded.channels[0].description", equalTo("This is a description")))
-            .andExpect(jsonPath("$._embedded.channels[0].awards", equalTo("award")))
             .andExpect(jsonPath("$._embedded.channels[0].notes", equalTo("note one")))
             .andExpect(
                 jsonPath(
@@ -338,9 +333,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "searchable": false,
                 "name": "TED",
                 "description": "This is a description",
-                "awards": "award",
                 "notes": "note one",
-                "hubspotId": "123456789",
                 "contractId": "$contractId",
                 "contentCategories": ["ANIMATION","HISTORICAL_ARCHIVE"],
                 "language": "spa",
@@ -380,7 +373,6 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("TED")))
             .andExpect(jsonPath("$._embedded.channels[0].currency").doesNotExist())
             .andExpect(jsonPath("$._embedded.channels[0].description").doesNotExist())
-            .andExpect(jsonPath("$._embedded.channels[0].awards").doesNotExist())
             .andExpect(jsonPath("$._embedded.channels[0].notes").doesNotExist())
             .andExpect(jsonPath("$._embedded.channels[0].oneLineDescription").doesNotExist())
             .andExpect(jsonPath("$._embedded.channels[0].ingest").doesNotExist())
@@ -860,10 +852,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val channel = saveChannel(
                 name = "hello",
                 currency = "CAD",
-                awards = "this is an award",
                 description = "this is a description",
                 contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
-                hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",
                 oneLineDescription = "This is a single-line description",
@@ -885,10 +875,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name", equalTo("hello")))
                 .andExpect(jsonPath("$.currency").exists())
-                .andExpect(jsonPath("$.awards").exists())
                 .andExpect(jsonPath("$.description").exists())
                 .andExpect(jsonPath("$.contentCategories").exists())
-                .andExpect(jsonPath("$.hubspotId").exists())
                 .andExpect(jsonPath("$.notes").exists())
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.marketingInformation").exists())
@@ -904,10 +892,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.channels[0].id").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("hello")))
                 .andExpect(jsonPath("$._embedded.channels[0].currency").exists())
-                .andExpect(jsonPath("$._embedded.channels[0].awards").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].description").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].contentCategories").exists())
-                .andExpect(jsonPath("$._embedded.channels[0].hubspotId").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].notes").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].language").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].marketingInformation").exists())
@@ -921,10 +907,8 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val channel = saveChannel(
                 name = "hello",
                 currency = "CAD",
-                awards = "this is an award",
                 description = "this is a description",
                 contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST),
-                hubspotId = "123456",
                 notes = "this is a note",
                 language = "eng",
                 curriculumAligned = "this is a curriculum",
@@ -941,13 +925,11 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name", equalTo("hello")))
-                .andExpect(jsonPath("$.awards").exists())
                 .andExpect(jsonPath("$.description").exists())
                 .andExpect(jsonPath("$.contentCategories").exists())
                 .andExpect(jsonPath("$.notes").exists())
                 .andExpect(jsonPath("$.language").exists())
                 .andExpect(jsonPath("$.currency").doesNotExist())
-                .andExpect(jsonPath("$.hubspotId").doesNotExist())
                 .andExpect(jsonPath("$.official").doesNotExist())
                 .andExpect(jsonPath("$.distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$.ingest").doesNotExist())
@@ -967,13 +949,11 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.channels[0].id").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("hello")))
-                .andExpect(jsonPath("$._embedded.channels[0].awards").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].description").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].contentCategories").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].notes").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].language").exists())
                 .andExpect(jsonPath("$._embedded.channels[0].currency").doesNotExist())
-                .andExpect(jsonPath("$._embedded.channels[0].hubspotId").doesNotExist())
                 .andExpect(jsonPath("$._embedded.channels[0].official").doesNotExist())
                 .andExpect(jsonPath("$._embedded.channels[0].distributionMethods").doesNotExist())
                 .andExpect(jsonPath("$._embedded.channels[0].ingest").doesNotExist())

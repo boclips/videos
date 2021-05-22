@@ -44,8 +44,6 @@ object ChannelDocumentConverter : KLogging() {
             remittanceCurrency = channel.remittance?.currency?.currencyCode,
             description = channel.description,
             contentCategories = channel.contentCategories?.map { it.name },
-            hubspotId = channel.hubspotId,
-            awards = channel.awards,
             notes = channel.notes,
             language = channel.language?.toLanguageTag(),
             contentTypes = channel.contentTypes?.map { it.name },
@@ -107,8 +105,6 @@ object ChannelDocumentConverter : KLogging() {
             },
             description = document.description,
             contentCategories = document.contentCategories?.map { ContentCategory.valueOf(it) },
-            hubspotId = document.hubspotId,
-            awards = document.awards,
             notes = document.notes,
             language = document.language?.let { Locale.forLanguageTag(it) },
             contentTypes = document.contentTypes?.mapNotNull {

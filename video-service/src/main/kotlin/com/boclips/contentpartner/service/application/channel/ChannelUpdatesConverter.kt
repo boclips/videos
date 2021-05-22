@@ -47,8 +47,6 @@ class ChannelUpdatesConverter(
                 commandCreator.updateContentContentCategories(),
                 commandCreator.updateContentLanguage(),
                 commandCreator.updateDescription(),
-                commandCreator.updateAwards(),
-                commandCreator.updateHubspotId(),
                 commandCreator.updateNotes(),
                 commandCreator.updateOneLineDescription(),
                 commandCreator.updateMarketingStatus(),
@@ -135,16 +133,6 @@ class ChannelUpdateCommandCreator(
     fun updateDescription(): ChannelUpdateCommand.ReplaceDescription? =
         channelRequest.description?.let { description ->
             ChannelUpdateCommand.ReplaceDescription(id, description)
-        }
-
-    fun updateAwards(): ChannelUpdateCommand.ReplaceAwards? =
-        channelRequest.awards?.let { awards ->
-            ChannelUpdateCommand.ReplaceAwards(id, awards)
-        }
-
-    fun updateHubspotId(): ChannelUpdateCommand.ReplaceHubspotId? =
-        channelRequest.hubspotId?.let { hubspotId ->
-            ChannelUpdateCommand.ReplaceHubspotId(id, hubspotId)
         }
 
     fun updateNotes(): ChannelUpdateCommand.ReplaceNotes? =

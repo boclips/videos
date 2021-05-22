@@ -20,8 +20,6 @@ data class ChannelDocument(
     val description: String? = null,
     val contentCategories: List<String>? = emptyList(),
     val language: String? = null,
-    val hubspotId: String? = null,
-    val awards: String? = null,
     val notes: String? = null,
     val contentTypes: List<String>? = null,
     val ingest: IngestDetailsDocument? = null,

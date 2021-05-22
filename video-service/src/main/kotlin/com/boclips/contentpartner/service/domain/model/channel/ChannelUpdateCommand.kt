@@ -38,12 +38,6 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
     class ReplaceDescription(channelId: ChannelId, val description: String) :
         ChannelUpdateCommand(channelId)
 
-    class ReplaceAwards(channelId: ChannelId, val awards: String) :
-        ChannelUpdateCommand(channelId)
-
-    class ReplaceHubspotId(channelId: ChannelId, val hubspotId: String) :
-        ChannelUpdateCommand(channelId)
-
     class ReplaceNotes(channelId: ChannelId, val notes: String) :
         ChannelUpdateCommand(channelId)
 

@@ -1,9 +1,7 @@
 package com.boclips.contentpartner.service.application
 
 import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
-import com.boclips.contentpartner.service.application.exceptions.ChannelHubspotIdException
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
-import com.boclips.contentpartner.service.application.exceptions.InvalidContentCategoryException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
@@ -18,7 +16,6 @@ import com.boclips.videos.api.response.channel.IngestDetailsResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.Period
 import java.util.Locale
 
 class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
@@ -132,16 +129,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `cannot create the same channel with the same hubspotId`() {
-        createChannel(VideoServiceApiFactory.createChannelRequest(name = "old", hubspotId = "123"))
-        assertThrows<ChannelHubspotIdException> {
-            createChannel(
-                VideoServiceApiFactory.createChannelRequest(name = "new", hubspotId = "123")
-            )
-        }
-    }
-
-    @Test
     fun `cannot create a channel with an unrecognised age range bucket`() {
         assertThrows<InvalidAgeRangeException> {
             createChannel(
@@ -215,7 +202,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         val contentCategories = listOf(ContentCategoryRequest.WITH_A_HOST)
         val contentTypes = listOf("NEWS")
         val notes = "This is an interesting CP"
-        val hubspotId = "12345678"
 
         val channel = createChannel(
             upsertRequest = ChannelRequest(
@@ -230,7 +216,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
                 contentCategories = contentCategories,
                 contentTypes = contentTypes,
                 notes = notes,
-                hubspotId = hubspotId,
                 contractId = contractId.value
             )
         )
@@ -244,7 +229,6 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(event.contentPartner.details.contentCategories).isEqualTo(listOf("WITH_A_HOST"))
         assertThat(event.contentPartner.details.contentTypes).isEqualTo(contentTypes)
         assertThat(event.contentPartner.details.notes).isEqualTo(notes)
-        assertThat(event.contentPartner.details.hubspotId).isEqualTo(hubspotId)
         assertThat(event.contentPartner.ingest.type).isEqualTo("MRSS")
     }
 
