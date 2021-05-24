@@ -99,6 +99,14 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
         index.clear()
     }
 
+    fun setFacets(facets: List<FacetCount>) {
+        this.facetCounts = facets
+    }
+
+    fun getLastSearchRequest(): IndexSearchRequest<QUERY> {
+        return this.requests.last()
+    }
+
     private fun sort(ids: List<String>, query: QUERY): List<String> {
         if (query.sort.isEmpty()) return ids
 

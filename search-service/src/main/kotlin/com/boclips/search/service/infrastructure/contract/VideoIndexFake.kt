@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.contract
 
+import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
@@ -37,6 +38,14 @@ class VideoIndexFake :
     }
 
     override fun makeSureIndexIsThere() {
+    }
+
+    fun setFacets(facets: List<FacetCount>) {
+        fakeSearchIndex.setFacets(facets)
+    }
+
+    fun getLastSearchRequest(): IndexSearchRequest<VideoQuery> {
+        return fakeSearchIndex.getLastSearchRequest()
     }
 
     private fun transformMetadata(item: VideoMetadata): Pair<String, VideoMetadata> {

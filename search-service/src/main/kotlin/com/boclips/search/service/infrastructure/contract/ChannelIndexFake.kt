@@ -31,7 +31,7 @@ class ChannelIndexFake :
 
     override fun upsert(items: Sequence<ChannelMetadata>, notifier: ProgressNotifier?) {
         fakeSearchIndex.upsert(items, this::transformMetadata, notifier)
-        fakeSuggestionIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+        fakeSuggestionIndex.upsert(items, this::transformMetadata, notifier)
     }
 
     override fun removeFromSearch(itemId: String) {
