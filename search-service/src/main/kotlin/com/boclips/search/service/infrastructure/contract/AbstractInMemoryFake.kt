@@ -56,7 +56,6 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
             cursorPosition += searchRequest.windowSize
         }
 
-
         return SearchResults(
             elements = elements,
             counts = ResultCounts(

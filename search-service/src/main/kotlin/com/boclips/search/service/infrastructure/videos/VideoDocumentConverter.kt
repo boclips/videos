@@ -44,8 +44,8 @@ object VideoDocumentConverter {
             language = video.language?.toLanguageTag(),
             prices = video.prices
                 ?.map {
-                it.key to (it.value.times(BigDecimal.valueOf(100)).longValueExact())
-            }
+                    it.key to (it.value.times(BigDecimal.valueOf(100)).longValueExact())
+                }
                 ?.toMap(),
             categoryCodes = video.categoryCodes?.codes
         )

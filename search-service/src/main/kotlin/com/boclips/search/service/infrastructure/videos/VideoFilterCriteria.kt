@@ -93,7 +93,7 @@ class VideoFilterCriteria {
                 query.must(matchPrices(videoQuery.organisationPriceFilter))
             }
 
-            if(videoQuery.categoryCodes.isNotEmpty()) {
+            if (videoQuery.categoryCodes.isNotEmpty()) {
                 query.must(matchCategoryCodes(videoQuery.categoryCodes))
             }
 
@@ -109,7 +109,7 @@ class VideoFilterCriteria {
                 queryBuilder.must(),
                 queryBuilder.should(),
                 queryBuilder.filter()
-            ).forEach { clauses -> clauses.removeIf { it.queryName() === filterName }}
+            ).forEach { clauses -> clauses.removeIf { it.queryName() === filterName } }
             return queryBuilder
         }
 

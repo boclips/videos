@@ -127,7 +127,8 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
                     id = "middleRating",
                     title = "Beautiful Dog Dancing",
                     meanRating = 3.8
-                ), SearchableVideoMetadataFactory.create(
+                ),
+                SearchableVideoMetadataFactory.create(
                     id = "noRating",
                     title = "Beautiful Cat Dancing",
                     meanRating = null
@@ -173,7 +174,8 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
                 SearchableVideoMetadataFactory.create(
                     id = "dTitle",
                     title = "Dog dancing"
-                ), SearchableVideoMetadataFactory.create(
+                ),
+                SearchableVideoMetadataFactory.create(
                     id = "wTitle",
                     title = "Weather report dancing"
                 )
@@ -269,5 +271,39 @@ class VideoSearchSortingContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         Assertions.assertThat(result.elements).containsExactlyInAnyOrder("1")
         Assertions.assertThat(result.counts.totalHits).isEqualTo(1)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `no category codes are returned first when sorting by category code`(
+        queryService: IndexReader<VideoMetadata, VideoQuery>,
+        adminService: IndexWriter<VideoMetadata>
+    ) {
+        adminService.upsert(
+            sequenceOf(
+                SearchableVideoMetadataFactory.create(
+                    id = "1",
+                    title = "blue",
+                    categoryCodes = listOf("A")
+                ),
+                SearchableVideoMetadataFactory.create(
+                    id = "2",
+                    title = "cat",
+                    categoryCodes = emptyList()
+                )
+            )
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
+                    videoSort = Sort.ByField(VideoMetadata::categoryCodes, order = SortOrder.ASC),
+                    videoAccessRuleQuery = VideoAccessRuleQuery()
+                )
+            )
+        )
+
+        Assertions.assertThat(results.counts.totalHits).isEqualTo(2)
+        Assertions.assertThat(results.elements).containsExactly("2", "1")
     }
 }

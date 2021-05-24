@@ -28,8 +28,11 @@ import org.elasticsearch.common.lucene.search.function.CombineFunction
 import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
+import org.elasticsearch.script.Script
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.ScoreSortBuilder
+import org.elasticsearch.search.sort.ScriptSortBuilder
+import org.elasticsearch.search.sort.SortBuilders
 import java.util.concurrent.TimeUnit
 import org.elasticsearch.search.sort.SortOrder as EsSortOrder
 
@@ -39,7 +42,17 @@ class VideoIndexReader(
 ) : IndexReader<VideoMetadata, VideoQuery> {
     private val scrollTimeout = TimeValue(5, TimeUnit.MINUTES)
 
-    companion object : KLogging()
+    companion object : KLogging() {
+        private val sortByCategoryCodesScript = Script(
+            """
+                         if (!doc.containsKey('categoryCodes') || doc['categoryCodes'].size() == 0) {
+                             return '00 untagged';
+                         } else {
+                             return '01'
+                         }
+                    """
+        )
+    }
 
     override fun search(searchRequest: IndexSearchRequest<VideoQuery>): SearchResults {
         val results = performSearch(searchRequest)
@@ -121,9 +134,24 @@ class VideoIndexReader(
         return client.search(request, RequestOptions.DEFAULT)
     }
 
+    private fun Sort.ByField<VideoMetadata>.toElasticsearchOrder() =
+        when (order) {
+            SortOrder.DESC -> org.elasticsearch.search.sort.SortOrder.DESC
+            SortOrder.ASC -> org.elasticsearch.search.sort.SortOrder.ASC
+        }
+
     private fun SearchSourceBuilder.applySort(sort: Sort<VideoMetadata>) {
         Do exhaustive when (sort) {
-            is Sort.ByField -> sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
+            is Sort.ByField -> {
+                if (sort.fieldName == VideoMetadata::categoryCodes) {
+                    sort(
+                        SortBuilders.scriptSort(sortByCategoryCodesScript, ScriptSortBuilder.ScriptSortType.STRING)
+                            .order((sort).toElasticsearchOrder())
+                    )
+                } else {
+                    sort(sort.fieldName.name, EsSortOrder.fromString(sort.order.toString()))
+                }
+            }
             is Sort.ByRandom -> query(
                 FunctionScoreQueryBuilder(
                     query(),

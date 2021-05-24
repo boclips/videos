@@ -91,7 +91,6 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
             )
 
             return SearchResults(elements = elements, counts = counts, cursor = null)
-
         } ?: throw UnsupportedOperationException("We currently don't allow cursor based channel search")
     }
 

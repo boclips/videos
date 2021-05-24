@@ -35,7 +35,8 @@ class VideoIndexConfiguration : IndexConfiguration {
                 VideoDocument.TAGS to keywordField,
                 VideoDocument.CONTENT_PARTNER_ID to IndexConfiguration.Fields.simpleText,
                 VideoDocument.ATTACHMENT_TYPES to IndexConfiguration.Fields.simpleTextArray,
-                VideoDocument.INGESTED_AT to IndexConfiguration.Fields.date
+                VideoDocument.INGESTED_AT to IndexConfiguration.Fields.date,
+                VideoDocument.CATEGORY_CODES to keywordField
             )
         )
     }
