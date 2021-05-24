@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class CategoryMappingMetadata(
-    @JsonProperty("Thema code (where possible)")
+    @JsonProperty("Category Code")
     val categoryCode: String?,
     @JsonProperty("ID")
     val videoId: String?

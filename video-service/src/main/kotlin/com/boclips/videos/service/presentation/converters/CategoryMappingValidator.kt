@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.application.GetAllCategories
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvMappingException
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -54,8 +55,6 @@ class CategoryMappingValidator(val getAllCategories: GetAllCategories) {
                     .with(CsvSchema.emptySchema().withHeader().withLineSeparator(""))
                     .readValues<CategoryMappingMetadata>(reader)
                     .readAll()
-
             }
         }
 }
-
