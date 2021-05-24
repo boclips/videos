@@ -4,18 +4,44 @@ import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.collections.model.CollectionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 
 class CollectionIndexFake :
-    AbstractInMemoryFake<CollectionQuery, CollectionMetadata>(),
     IndexReader<CollectionMetadata, CollectionQuery>,
     IndexWriter<CollectionMetadata> {
+    private val fakeSearchIndex = FakeSearchIndex<CollectionQuery, CollectionMetadata>()
 
-    override fun upsertMetadata(index: MutableMap<String, CollectionMetadata>, item: CollectionMetadata) {
-        index[item.id] = item.copy()
+    override fun search(searchRequest: IndexSearchRequest<CollectionQuery>): SearchResults {
+        return fakeSearchIndex.search(searchRequest, this::performSearch)
     }
 
-    override fun idsMatching(
+    override fun safeRebuildIndex(items: Sequence<CollectionMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+    }
+
+    override fun upsert(items: Sequence<CollectionMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.upsert(items, this::transformMetadata, notifier)
+    }
+
+    override fun removeFromSearch(itemId: String) {
+        fakeSearchIndex.removeFromSearch(itemId)
+    }
+
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        fakeSearchIndex.bulkRemoveFromSearch(itemIds)
+    }
+
+    override fun makeSureIndexIsThere() {
+    }
+
+    private fun transformMetadata(item: CollectionMetadata): Pair<String, CollectionMetadata> {
+        return Pair(item.id, item.copy())
+    }
+
+    private fun performSearch(
         index: MutableMap<String, CollectionMetadata>,
         query: CollectionQuery
     ): List<String> {

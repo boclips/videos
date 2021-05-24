@@ -5,20 +5,57 @@ import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
-import com.boclips.search.service.infrastructure.common.suggestions.AbstractInMemoryFakeSuggestions
+import com.boclips.search.service.domain.search.SearchSuggestionsResults
 
 class ChannelIndexFake :
-    AbstractInMemoryFakeSuggestions<SuggestionQuery<ChannelMetadata>, ChannelQuery, ChannelMetadata>(),
     SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
     IndexReader<ChannelMetadata, ChannelQuery>,
     IndexWriter<ChannelMetadata> {
-    override fun upsertMetadata(index: MutableMap<String, ChannelMetadata>, item: ChannelMetadata) {
-        index[item.id] = item.copy()
+    private val fakeSearchIndex = FakeSearchIndex<ChannelQuery, ChannelMetadata>()
+    private val fakeSuggestionIndex = FakeSuggestionsIndex<SuggestionQuery<ChannelMetadata>, ChannelMetadata>()
+
+    override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
+        return fakeSearchIndex.search(searchRequest, this::performSearch)
     }
 
-    override fun nameMatching(
+    override fun safeRebuildIndex(items: Sequence<ChannelMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+        fakeSuggestionIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+    }
+
+    override fun upsert(items: Sequence<ChannelMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.upsert(items, this::transformMetadata, notifier)
+        fakeSuggestionIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+    }
+
+    override fun removeFromSearch(itemId: String) {
+        fakeSearchIndex.removeFromSearch(itemId)
+        fakeSuggestionIndex.removeFromSearch(itemId)
+    }
+
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        fakeSearchIndex.bulkRemoveFromSearch(itemIds)
+        fakeSuggestionIndex.bulkRemoveFromSearch(itemIds)
+    }
+
+    override fun makeSureIndexIsThere() {
+    }
+
+    override fun getSuggestions(suggestionRequest: SuggestionRequest<SuggestionQuery<ChannelMetadata>>): SearchSuggestionsResults {
+        return fakeSuggestionIndex.getSuggestions(suggestionRequest, this::nameMatching)
+    }
+
+    private fun transformMetadata(item: ChannelMetadata): Pair<String, ChannelMetadata> {
+        return Pair(item.id, item.copy())
+    }
+
+    private fun nameMatching(
         index: Map<String, ChannelMetadata>,
         query: SuggestionQuery<ChannelMetadata>
     ): List<Suggestion> {
@@ -75,7 +112,7 @@ class ChannelIndexFake :
         return isEmpty || hasAnyIncludedType
     }
 
-    override fun idsMatching(index: MutableMap<String, ChannelMetadata>, query: ChannelQuery): List<String> {
+    private fun performSearch(index: Map<String, ChannelMetadata>, query: ChannelQuery): List<String> {
         return index.map { it.key }
     }
 }

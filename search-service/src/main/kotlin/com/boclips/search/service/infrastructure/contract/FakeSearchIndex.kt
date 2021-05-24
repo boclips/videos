@@ -2,8 +2,6 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.FacetCount
 import com.boclips.search.service.domain.common.FacetType
-import com.boclips.search.service.domain.common.IndexReader
-import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
@@ -17,18 +15,17 @@ import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import java.util.UUID
 
-abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
-    IndexReader<METADATA, QUERY>,
-    IndexWriter<METADATA> {
+class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
     private val index = mutableMapOf<String, METADATA>()
     private var facetCounts: List<FacetCount> = emptyList()
     private var requests: MutableList<IndexSearchRequest<QUERY>> = mutableListOf()
     private var cursorPosition: Int = 0
     private var currentCursor: PagingCursor? = null
 
-    fun getIndex() = index.toMap()
-
-    override fun search(searchRequest: IndexSearchRequest<QUERY>): SearchResults {
+    fun search(
+        searchRequest: IndexSearchRequest<QUERY>,
+        filter: (index: MutableMap<String, METADATA>, query: QUERY) -> List<String>
+    ): SearchResults {
         val startIndex = (searchRequest as? PaginatedIndexSearchRequest)?.startIndex
         (searchRequest as? CursorBasedIndexSearchRequest)?.apply {
             if (cursor != currentCursor || cursor == null) {
@@ -46,9 +43,9 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
 
         requests.add(searchRequest)
 
-        val idsMatching = idsMatching(index, searchRequest.query)
+        val matchingIds = filter(index, searchRequest.query)
 
-        val elements = sort(idsMatching, searchRequest.query)
+        val elements = sort(matchingIds, searchRequest.query)
             .drop(toDrop)
             .take(searchRequest.windowSize)
 
@@ -59,47 +56,47 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
         return SearchResults(
             elements = elements,
             counts = ResultCounts(
-                totalHits = idsMatching.size.toLong(),
+                totalHits = matchingIds.size.toLong(),
                 facets = facetCounts
             ),
             cursor = currentCursor
         )
     }
 
-    override fun upsert(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
-        items.forEach { video ->
-            upsertMetadata(index, video)
+    fun upsert(
+        items: Sequence<METADATA>,
+        transformMetadata: (item: METADATA) -> Pair<String, METADATA>,
+        notifier: ProgressNotifier?
+    ) {
+        items.forEach { item ->
+            val pair = transformMetadata(item)
+            index[pair.first] = pair.second
         }
+
+        notifier?.complete()
     }
 
-    override fun safeRebuildIndex(items: Sequence<METADATA>, notifier: ProgressNotifier?) {
+    fun safeRebuildIndex(
+        items: Sequence<METADATA>,
+        transformMetadata: (item: METADATA) -> Pair<String, METADATA>,
+        notifier: ProgressNotifier?
+    ) {
         clear()
-        upsert(items, notifier)
+        upsert(items, transformMetadata, notifier)
     }
 
-    override fun removeFromSearch(itemId: String) {
+    fun removeFromSearch(itemId: String) {
         index.remove(itemId)
     }
 
-    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+    fun bulkRemoveFromSearch(itemIds: List<String>) {
         itemIds.forEach(this::removeFromSearch)
-    }
-
-    override fun makeSureIndexIsThere() {
     }
 
     fun clear() {
         cursorPosition = 0
         currentCursor = null
         index.clear()
-    }
-
-    fun setFacets(facetCounts: List<FacetCount>) {
-        this.facetCounts = facetCounts
-    }
-
-    fun getLastSearchRequest(): IndexSearchRequest<QUERY> {
-        return requests.last()
     }
 
     private fun sort(ids: List<String>, query: QUERY): List<String> {
@@ -127,7 +124,4 @@ abstract class AbstractInMemoryFake<QUERY : SearchQuery<METADATA>, METADATA> :
             is Sort.ByRandom -> ids.shuffled()
         }
     }
-
-    abstract fun idsMatching(index: MutableMap<String, METADATA>, query: QUERY): List<String>
-    abstract fun upsertMetadata(index: MutableMap<String, METADATA>, item: METADATA)
 }

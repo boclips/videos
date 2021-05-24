@@ -2,6 +2,9 @@ package com.boclips.search.service.infrastructure.contract
 
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
@@ -9,14 +12,38 @@ import com.boclips.search.service.domain.videos.model.VoiceType
 import java.time.LocalDate
 
 class VideoIndexFake :
-    AbstractInMemoryFake<VideoQuery, VideoMetadata>(),
     IndexReader<VideoMetadata, VideoQuery>,
     IndexWriter<VideoMetadata> {
-    override fun upsertMetadata(index: MutableMap<String, VideoMetadata>, item: VideoMetadata) {
-        index[item.id] = item.copy()
+    private val fakeSearchIndex = FakeSearchIndex<VideoQuery, VideoMetadata>()
+
+    override fun search(searchRequest: IndexSearchRequest<VideoQuery>): SearchResults {
+        return fakeSearchIndex.search(searchRequest, this::performSearch)
     }
 
-    override fun idsMatching(index: MutableMap<String, VideoMetadata>, query: VideoQuery): List<String> {
+    override fun safeRebuildIndex(items: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.safeRebuildIndex(items, this::transformMetadata, notifier)
+    }
+
+    override fun upsert(items: Sequence<VideoMetadata>, notifier: ProgressNotifier?) {
+        fakeSearchIndex.upsert(items, this::transformMetadata, notifier)
+    }
+
+    override fun removeFromSearch(itemId: String) {
+        fakeSearchIndex.removeFromSearch(itemId)
+    }
+
+    override fun bulkRemoveFromSearch(itemIds: List<String>) {
+        fakeSearchIndex.bulkRemoveFromSearch(itemIds)
+    }
+
+    override fun makeSureIndexIsThere() {
+    }
+
+    private fun transformMetadata(item: VideoMetadata): Pair<String, VideoMetadata> {
+        return Pair(item.id, item.copy())
+    }
+
+    private fun performSearch(index: MutableMap<String, VideoMetadata>, query: VideoQuery): List<String> {
         val phrase = query.phrase
 
         val releaseDateFrom: LocalDate = query.userQuery.releaseDateFrom ?: LocalDate.MIN
