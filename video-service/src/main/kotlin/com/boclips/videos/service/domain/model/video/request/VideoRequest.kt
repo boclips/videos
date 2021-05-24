@@ -18,6 +18,7 @@ enum class SortKey {
     TITLE_ASC,
     INGEST_ASC,
     INGEST_DESC,
+    UNTAGGED_CATEGORIES,
     RANDOM
 }
 
@@ -80,6 +81,10 @@ class VideoRequest(
                     fieldName = VideoMetadata::ingestedAt
                 )
                 SortKey.RANDOM -> Sort.ByRandom<VideoMetadata>()
+                SortKey.UNTAGGED_CATEGORIES -> Sort.ByField(
+                    order = SortOrder.ASC,
+                    fieldName = VideoMetadata::categoryCodes
+                )
             }
         }
 

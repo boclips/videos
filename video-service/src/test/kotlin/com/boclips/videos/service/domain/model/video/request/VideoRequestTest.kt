@@ -97,6 +97,22 @@ class VideoRequestTest {
     }
 
     @Test
+    fun `allows ordering of results by empty category codes ascending`() {
+        val searchQuery = VideoRequest(
+            text = "testing",
+            pageSize = 2,
+            pagingState = VideoRequestPagingState.PageNumber(0),
+            sortBy = SortKey.UNTAGGED_CATEGORIES
+        )
+            .toQuery(VideoAccess.Everything)
+
+        val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
+
+        assertThat(sort.order).isEqualTo(SortOrder.ASC)
+        assertThat(sort.fieldName).isEqualTo(VideoMetadata::categoryCodes)
+    }
+
+    @Test
     fun `allows ordering of results by title ascending`() {
         val searchQuery = VideoRequest(
             text = "testing",

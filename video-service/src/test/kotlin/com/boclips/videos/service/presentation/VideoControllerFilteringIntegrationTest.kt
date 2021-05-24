@@ -292,7 +292,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(youtubeVideoId)))
     }
 
-
     @Test
     fun `can filter by channel`() {
         val channel = getChannel("enabled-cp2")
@@ -302,7 +301,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
     }
-
 
     @Test
     fun `can filter by channels`() {
@@ -318,7 +316,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
         val channel1 = getChannel("enabled-cp2")
         val channel2 = getChannel("cp3")
-
 
         mockMvc.perform(get("/v1/videos?channel=${channel1.id.value}&channel=${channel2.id.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
@@ -476,7 +473,6 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(video.value)))
-
     }
 
     @Test
@@ -609,6 +605,18 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("oldest ingested video")))
             .andExpect(jsonPath("$._embedded.videos[1].title", equalTo("newer ingested video")))
             .andExpect(jsonPath("$._embedded.videos[2].title", equalTo("newest ingested video")))
+    }
+
+    @Test
+    fun `sort by category codes`() {
+        saveVideo(title = "A category", categories = listOf("A"))
+        saveVideo(title = "B category", categories = listOf("B"))
+        saveVideo(title = "Empty category codes", categories = emptyList())
+
+        mockMvc.perform(get("/v1/videos?query=category&sort_by=UNTAGGED_CATEGORIES").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
+            .andExpect(status().isOk)
+            .andExpect(halJson())
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("Empty category codes")))
     }
 
     @Test
