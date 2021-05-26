@@ -14,7 +14,6 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
     @Autowired
     lateinit var mockMvc: MockMvc
 
-
     @Value("classpath:valid.csv")
     lateinit var validCategoryCsv: Resource
 

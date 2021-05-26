@@ -4,8 +4,15 @@ package com.boclips.videos.service.presentation.converters
 sealed class CategoryValidationResult
 
 data class CategoriesValid(val entries: Number) : CategoryValidationResult()
-data class CategoriesInvalid(val errors: List<CategoryValidationError>) : CategoryValidationResult() {
-    fun getMessage(): String {
+
+sealed class CsvValidationError: CategoryValidationResult() {
+    abstract fun getMessage(): String
+}
+object NotCsvFile : CsvValidationError() {
+    override fun getMessage(): String = "The file is not a valid CSV format"
+}
+data class CategoriesInvalid(val errors: List<CategoryValidationError>) : CsvValidationError() {
+    override fun getMessage(): String {
         val errorMessages = emptyList<String>().toMutableList()
         errors.filterIsInstance<InvalidCategoryCode>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
