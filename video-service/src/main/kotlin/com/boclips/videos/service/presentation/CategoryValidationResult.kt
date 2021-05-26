@@ -11,6 +11,9 @@ sealed class CsvValidationError: CategoryValidationResult() {
 object NotCsvFile : CsvValidationError() {
     override fun getMessage(): String = "The file is not a valid CSV format"
 }
+object InvalidColumns : CsvValidationError() {
+    override fun getMessage(): String = "The file must have both 'Category Code' and 'ID' columns"
+}
 data class CategoriesInvalid(val errors: List<CategoryValidationError>) : CsvValidationError() {
     override fun getMessage(): String {
         val errorMessages = emptyList<String>().toMutableList()

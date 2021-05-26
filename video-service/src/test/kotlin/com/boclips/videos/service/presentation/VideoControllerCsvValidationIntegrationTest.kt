@@ -29,8 +29,8 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
     @Value("classpath:id_column_only_no_data.csv")
     lateinit var idColumnNoData: Resource
 
-    @Value("classpath:id_column_with_data.csv")
-    lateinit var idColumnWithData: Resource
+    @Value("classpath:id_column_only_with_data.csv")
+    lateinit var idColumnOnlyWithData: Resource
 
     @Value("classpath:image.csv")
     lateinit var imageFile: Resource
@@ -65,19 +65,6 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
     }
 
     @Test
-    fun `invalid csvs are rejected with the validation failures returned`() {
-        addCategory(CategoryFactory.sample(code = "PST"))
-
-        mockMvc.perform(
-            multipart("/v1/videos/categories")
-                .file("file", invalidCategoryCodeCsv.file.readBytes())
-                .asBoclipsEmployee()
-        ).andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message", equalTo(
-                "Rows 1 contain invalid or unknown category codes - gibberish")))
-    }
-
-    @Test
     fun `image files are rejected with an appropriate message`() {
         addCategory(CategoryFactory.sample(code = "PST"))
 
@@ -88,5 +75,18 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.message", equalTo(
                 "The file is not a valid CSV format")))
+    }
+
+    @Test
+    fun `CSV with no 'Category Code' column is rejected`() {
+        addCategory(CategoryFactory.sample(code = "PST"))
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", idColumnOnlyWithData.file.readBytes())
+                .asBoclipsEmployee()
+        ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.message", equalTo(
+                "The file must have both 'Category Code' and 'ID' columns")))
     }
 }

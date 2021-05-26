@@ -450,7 +450,7 @@ class VideoController(
         @RequestParam("file") file: MultipartFile?
     ): ResponseEntity<SuccessResponse> {
         val validationResult = categoryMappingValidator.validate(file)
-        if (validationResult is CsvValidationE.rror) {
+        if (validationResult is CsvValidationError) {
             throw InvalidVideoTaggingCsvFile(validationResult.getMessage())
         } else {
             return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
