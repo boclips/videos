@@ -29,8 +29,8 @@ class CategoryMappingValidator(val getAllCategories: GetAllCategories) {
         if (items.isEmpty()) {
             errors.add(InvalidFile)
         }
-        if (items.first().categoryCode == null || items.first().videoId == null) {
-            return InvalidColumns
+        if (categoryCodeOrVideoIdColumnIsMissing(items)) {
+            return VideoIdOrCategoryCodeColumnIsMissing
         }
 
         val categoryCodes = getAllCategories().map { it.code.value }
@@ -44,6 +44,9 @@ class CategoryMappingValidator(val getAllCategories: GetAllCategories) {
             return CategoriesInvalid(errors = errors)
         }
     }
+
+    private fun categoryCodeOrVideoIdColumnIsMissing(items: List<CategoryMappingMetadata>) =
+        items.first().categoryCode == null || items.first().videoId == null
 
     private fun validateEntry(index: Int, item: CategoryMappingMetadata, categoryCodes: List<String>): CategoryValidationError? {
         if (item.videoId.isNullOrEmpty()) {
