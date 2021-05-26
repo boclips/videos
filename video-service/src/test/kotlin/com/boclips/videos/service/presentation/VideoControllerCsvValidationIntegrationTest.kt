@@ -41,6 +41,9 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
     @Value("classpath:invalid_columns.csv")
     lateinit var invalidColumns: Resource
 
+    @Value("classpath:valid_columns_empty_categories.csv")
+    lateinit var validColumnsEmptyCategories: Resource
+
     @Test
     fun `can validate a csv of video to category tags`() {
         addCategory(CategoryFactory.sample(code = "A"))
@@ -48,6 +51,19 @@ class VideoControllerCsvValidationIntegrationTest: AbstractSpringIntegrationTest
         mockMvc.perform(
             multipart("/v1/videos/categories")
                 .file("file", validCategoryCsv.file.readBytes())
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.message", equalTo("Data has been successfully imported!")))
+    }
+
+    @Test
+    fun `doesn't throw when no categories are specified`() {
+        addCategory(CategoryFactory.sample(code = "PST"))
+
+        mockMvc.perform(
+            multipart("/v1/videos/categories")
+                .file("file", validColumnsEmptyCategories.file.readBytes())
                 .asBoclipsEmployee()
         )
             .andExpect(status().isOk)
