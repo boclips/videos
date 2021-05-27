@@ -14,6 +14,7 @@ object ChannelMetadataConverter {
             id = channelSuggestion.id.value,
             name = channelSuggestion.name,
             eligibleForStream = channelSuggestion.eligibleForStream,
+            ingestType = channelSuggestion.ingestType,
             contentTypes = channelSuggestion.contentTypes.map {
                 when (it) {
                     com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS -> ContentType.NEWS

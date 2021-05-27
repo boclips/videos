@@ -38,6 +38,7 @@ class GetChannels(
         return if (shouldUseSearch) {
             channelService.search(
                 ChannelRequest(
+                    ingestTypes = ingestTypes,
                     sortBy = sortBy,
                     pageRequest = PageRequest(
                         size = size ?: DEFAULT_PAGE_SIZE,

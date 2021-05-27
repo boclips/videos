@@ -2,6 +2,7 @@ package com.boclips.search.service.infrastructure.channels
 
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -23,7 +24,8 @@ internal class ChannelsDocumentConverterTest {
                 "eligibleForStream": true,
                 "taxonomyVideoLevelTagging": true,
                 "taxonomyCategories": null,
-                "types": ["NEWS", "STOCK", "INSTRUCTIONAL"]
+                "types": ["NEWS", "STOCK", "INSTRUCTIONAL"],
+                "ingestType": "MANUAL"
             }
                 """.trimIndent()
             )
@@ -37,7 +39,8 @@ internal class ChannelsDocumentConverterTest {
             eligibleForStream = true,
             types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomyVideoLevelTagging = true,
-            taxonomyCategories = null
+            taxonomyCategories = null,
+            ingestType = IngestType.MANUAL.name
         )
 
         assertThat(actualDocument).isEqualTo(expectedDocument)
@@ -50,6 +53,7 @@ internal class ChannelsDocumentConverterTest {
             name = "The title",
             eligibleForStream = true,
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
+            ingestType = IngestType.MRSS,
             taxonomy = Taxonomy(videoLevelTagging = true)
         )
 
@@ -61,6 +65,7 @@ internal class ChannelsDocumentConverterTest {
                 name = "The title",
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
+                ingestType = "MRSS",
                 taxonomyVideoLevelTagging = true,
                 taxonomyCategories = null
             )
@@ -73,6 +78,7 @@ internal class ChannelsDocumentConverterTest {
             id = "14",
             name = "The title",
             eligibleForStream = true,
+            ingestType = IngestType.MRSS,
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomy = Taxonomy(categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")), videoLevelTagging = false)
         )
@@ -85,6 +91,7 @@ internal class ChannelsDocumentConverterTest {
                 name = "The title",
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
+                ingestType = "MRSS",
                 taxonomyVideoLevelTagging = false,
                 taxonomyCategories = listOf("AB", "D", "DE")
             )

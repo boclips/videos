@@ -2,6 +2,7 @@ package com.boclips.search.service.testsupport
 
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
@@ -166,12 +167,14 @@ object SearchableChannelMetadataFactory {
         name: String = "",
         eligibleForStream: Boolean = false,
         contentTypes: List<ContentType> = emptyList(),
+        ingestType: IngestType = IngestType.CUSTOM,
         taxonomy: Taxonomy = Taxonomy(videoLevelTagging = true)
     ) = ChannelMetadata(
         id = id,
         name = name,
         eligibleForStream = eligibleForStream,
         contentTypes = contentTypes,
+        ingestType = ingestType,
         taxonomy = taxonomy
     )
 }
