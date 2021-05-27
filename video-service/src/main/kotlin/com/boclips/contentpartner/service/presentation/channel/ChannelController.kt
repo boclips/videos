@@ -85,7 +85,7 @@ class ChannelController(
             },
             sortBy = when (channelFilterRequest.sort_by) {
                 SortByRequest.CATEGORIES_ASC -> ChannelSortKey.CATEGORIES_ASC
-                SortByRequest.CATEGORIES_DESC -> ChannelSortKey.CATEGORIES_ASC
+                SortByRequest.CATEGORIES_DESC -> ChannelSortKey.CATEGORIES_DESC
                 null -> null
             },
             size = channelFilterRequest.size,

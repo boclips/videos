@@ -996,10 +996,10 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
             addCategory(Category(null, "catC", CategoryCode("C")))
             addCategory(Category(null, "catD", CategoryCode("D")))
 
-            saveChannel(name = "Channel 1, untagged, needs video level tagging", videoLevelTagging = true)
-            saveChannel(name = "Channel 2, tagged", categories = listOf("B", "D"))
-            saveChannel(name = "Channel 3, tagged", categories = listOf("C", "A"))
-            saveChannel(name = "Channel 4 - untagged, no video level tagging needed", categories = emptyList())
+            saveChannel(name = "untagged, needs video tag", videoLevelTagging = true)
+            saveChannel(name = "tagged B", categories = listOf("B", "D"))
+            saveChannel(name = "tagged A", categories = listOf("C", "A"))
+            saveChannel(name = "untagged", categories = emptyList())
 
             mockMvc.perform(
                 get(
@@ -1007,20 +1007,34 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asBoclipsEmployee()
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
-                .andExpect(
-                    jsonPath(
-                        "$._embedded.channels[0].name",
-                        equalTo("Channel 4 - untagged, no video level tagging needed")
-                    )
-                )
-                .andExpect(
-                    jsonPath(
-                        "$._embedded.channels[1].name",
-                        equalTo("Channel 1, untagged, needs video level tagging")
-                    )
-                )
-                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("Channel 3, tagged")))
-                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Channel 2, tagged")))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("untagged")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("untagged, needs video tag")))
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("tagged A")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("tagged B")))
+        }
+
+        @Test
+        fun `can sort by Category DESC`() {
+            addCategory(Category(null, "catA", CategoryCode("A")))
+            addCategory(Category(null, "catB", CategoryCode("B")))
+            addCategory(Category(null, "catC", CategoryCode("C")))
+            addCategory(Category(null, "catD", CategoryCode("D")))
+
+            saveChannel(name = "untagged, needs video tag", videoLevelTagging = true)
+            saveChannel(name = "tagged B", categories = listOf("B", "D"))
+            saveChannel(name = "tagged A", categories = listOf("C", "A"))
+            saveChannel(name = "untagged", categories = emptyList())
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels?sort_by=CATEGORIES_DESC"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("tagged B")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("tagged A")))
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("untagged, needs video tag")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("untagged")))
         }
 
         @Test
