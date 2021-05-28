@@ -3,6 +3,7 @@ package com.boclips.search.service.infrastructure.contract.channels
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
@@ -173,13 +174,43 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
             ),
         )
 
-        val page1 = queryService.search(PaginatedIndexSearchRequest(query = ChannelQuery(), startIndex = 0, windowSize = 2))
-        val page2 = queryService.search(PaginatedIndexSearchRequest(query = ChannelQuery(), startIndex = 2, windowSize = 2))
+        val page1 =
+            queryService.search(PaginatedIndexSearchRequest(query = ChannelQuery(), startIndex = 0, windowSize = 2))
+        val page2 =
+            queryService.search(PaginatedIndexSearchRequest(query = ChannelQuery(), startIndex = 2, windowSize = 2))
 
         assertThat(page1.elements).containsExactly("1", "2")
         assertThat(page1.counts.totalHits).isEqualTo(4)
 
         assertThat(page2.elements).containsExactly("3", "4")
         assertThat(page2.counts.totalHits).isEqualTo(4)
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can filter by ingest type`(
+        queryService: IndexReader<ChannelMetadata, ChannelQuery>,
+        adminService: IndexWriter<ChannelMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", ingestType = IngestType.MRSS),
+                SearchableChannelMetadataFactory.create(id = "2", ingestType = IngestType.MANUAL),
+                SearchableChannelMetadataFactory.create(id = "3", ingestType = IngestType.YOUTUBE),
+            ),
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    ingestTypes = listOf(
+                        IngestType.YOUTUBE,
+                        IngestType.MANUAL
+                    )
+                ), startIndex = 0, windowSize = 2
+            )
+        )
+
+        assertThat(results.elements).containsExactly("2", "3")
     }
 }

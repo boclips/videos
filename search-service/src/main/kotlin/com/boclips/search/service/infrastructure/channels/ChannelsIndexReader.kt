@@ -14,6 +14,7 @@ import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.suggestions.Suggestion
 import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.search.SearchSuggestionsResults
+import com.boclips.search.service.infrastructure.channels.ChannelFilterCriteria.Companion.allCriteria
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
@@ -98,6 +99,7 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         val channelQuery = searchRequest.query
         val query = SearchSourceBuilder().apply {
             query(ChannelEsQuery().mainQuery(channelQuery))
+            postFilter(allCriteria(channelQuery))
             buildSort(channelQuery)?.let { sort(it) }
         }
 

@@ -13,7 +13,6 @@ import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpda
 import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.api.common.IngestType
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 
 class ChannelService(
@@ -31,17 +30,7 @@ class ChannelService(
 
         val persistedChannel = channelRepository.create(channel)
 
-        channelIndex.upsert(
-            sequenceOf(
-                ChannelSuggestion(
-                    name = channel.name,
-                    id = ChannelId(channel.id.value),
-                    eligibleForStream = channel.isStreamable(),
-                    contentTypes = channel.contentTypes ?: emptyList(),
-                    taxonomy = channel.taxonomy
-                )
-            )
-        )
+        channelIndex.upsert(sequenceOf(persistedChannel))
 
         return CreateChannelResult.Success(persistedChannel)
     }

@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
@@ -14,7 +13,6 @@ import com.boclips.contentpartner.service.infrastructure.channel.converters.Inge
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
@@ -115,18 +113,10 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             .toList()
     }
 
-    override fun streamAll(consumer: (Sequence<ChannelSuggestion>) -> Unit) {
+    override fun streamAll(consumer: (Sequence<Channel>) -> Unit) {
         val sequence = Sequence {
             getChannelCollection().find().iterator()
-        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }.map {
-            ChannelSuggestion(
-                name = it.name,
-                id = it.id,
-                eligibleForStream = it.distributionMethods.contains(DistributionMethod.STREAM),
-                contentTypes = it.contentTypes ?: emptyList(),
-                taxonomy = it.taxonomy
-            )
-        }
+        }.mapNotNull { ChannelDocumentConverter.toChannel(it) }
 
         consumer(sequence)
     }

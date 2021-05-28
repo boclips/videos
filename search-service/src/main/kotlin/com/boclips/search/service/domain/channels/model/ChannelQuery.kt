@@ -6,7 +6,8 @@ import com.boclips.search.service.domain.common.model.Sort
 class ChannelQuery(
     override val phrase: String = "",
     val accessRuleQuery: ChannelAccessRuleQuery? = null,
-    override val sort: List<Sort<ChannelMetadata>> = emptyList()
+    override val sort: List<Sort<ChannelMetadata>> = emptyList(),
+    val ingestTypes: List<IngestType> = emptyList(),
 ) : SearchQuery<ChannelMetadata>(phrase = phrase, sort = sort)
 
 data class ChannelAccessRuleQuery(

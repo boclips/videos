@@ -1,8 +1,10 @@
 package com.boclips.videos.service.application.channels
 
+import com.boclips.contentpartner.service.domain.model.channel.Channel
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
@@ -10,11 +12,10 @@ import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
+import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.infrastructure.search.DefaultChannelSearch
 import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
@@ -41,9 +42,9 @@ internal class RebuildChannelIndexFakeTest {
         val channelId2 = ChannelId(TestFactories.aValidId())
         val channelId3 = ChannelId(TestFactories.aValidId())
 
-        val channel1 = ChannelFactory.createChannelSuggestion(id = channelId1, name = "channel name 1")
-        val channel2 = ChannelFactory.createChannelSuggestion(id = channelId2, name = "channel name 2")
-        val channel3 = ChannelFactory.createChannelSuggestion(id = channelId3, name = "channel name 3")
+        val channel1 = ChannelFactory.createChannel(id = channelId1, name = "channel name 1")
+        val channel2 = ChannelFactory.createChannel(id = channelId2, name = "channel name 2")
+        val channel3 = ChannelFactory.createChannel(id = channelId3, name = "channel name 3")
 
         index.upsert(
             sequenceOf(channel1)
@@ -53,7 +54,7 @@ internal class RebuildChannelIndexFakeTest {
             on {
                 streamAll(any())
             } doAnswer { invocations ->
-                val consumer = invocations.getArgument(0) as (Sequence<ChannelSuggestion>) -> Unit
+                val consumer = invocations.getArgument(0) as (Sequence<Channel>) -> Unit
 
                 consumer(
                     sequenceOf(channel2, channel3)
@@ -85,22 +86,22 @@ internal class RebuildChannelIndexFakeTest {
         val channelId2 = ChannelId(TestFactories.aValidId())
         val channelId3 = ChannelId(TestFactories.aValidId())
 
-        val channel1 = ChannelFactory.createChannelSuggestion(
+        val channel1 = ChannelFactory.createChannel(
             id = channelId1,
             name = "channel name 1",
-            eligibleForStream = false,
+            distributionMethods = setOf(DistributionMethod.DOWNLOAD),
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK)
         )
-        val channel2 = ChannelFactory.createChannelSuggestion(
+        val channel2 = ChannelFactory.createChannel(
             id = channelId2,
             name = "channel name 2",
-            eligibleForStream = true,
+            distributionMethods = setOf(DistributionMethod.STREAM),
             contentTypes = listOf(ContentType.STOCK)
         )
-        val channel3 = ChannelFactory.createChannelSuggestion(
+        val channel3 = ChannelFactory.createChannel(
             id = channelId3,
             name = "channel name 3",
-            eligibleForStream = true,
+            distributionMethods = setOf(DistributionMethod.STREAM),
             contentTypes = listOf(ContentType.NEWS, ContentType.INSTRUCTIONAL)
         )
 
@@ -131,24 +132,21 @@ internal class RebuildChannelIndexFakeTest {
         val channelId2 = ChannelId(TestFactories.aValidId())
         val channelId3 = ChannelId(TestFactories.aValidId())
 
-        val channel1 = ChannelFactory.createChannelSuggestion(
+        val channel1 = ChannelFactory.createChannel(
             id = channelId1,
             name = "channel name 1",
-            eligibleForStream = false,
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK),
             taxonomy = Taxonomy.VideoLevelTagging
         )
-        val channel2 = ChannelFactory.createChannelSuggestion(
+        val channel2 = ChannelFactory.createChannel(
             id = channelId2,
             name = "channel name 2",
-            eligibleForStream = true,
             contentTypes = listOf(ContentType.STOCK),
             taxonomy = Taxonomy.ChannelLevelTagging(categories = emptySet())
         )
-        val channel3 = ChannelFactory.createChannelSuggestion(
+        val channel3 = ChannelFactory.createChannel(
             id = channelId3,
             name = "channel name 3",
-            eligibleForStream = true,
             contentTypes = listOf(ContentType.NEWS, ContentType.INSTRUCTIONAL),
             taxonomy = Taxonomy.ChannelLevelTagging(categories = setOf(CategoryWithAncestorsFactory.sample("ABC")))
         )

@@ -1,33 +1,46 @@
 package com.boclips.videos.service.infrastructure.search
 
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy.ChannelLevelTagging
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy.VideoLevelTagging
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.channels.model.Taxonomy
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
+import com.boclips.contentpartner.service.domain.model.channel.ContentType as ChannelContentType
 
 object ChannelMetadataConverter {
-    fun convert(channelSuggestion: ChannelSuggestion): ChannelMetadata {
+    fun convert(channel: Channel): ChannelMetadata {
         return ChannelMetadata(
-            id = channelSuggestion.id.value,
-            name = channelSuggestion.name,
-            eligibleForStream = channelSuggestion.eligibleForStream,
-            contentTypes = channelSuggestion.contentTypes.map {
-                when (it) {
-                    com.boclips.contentpartner.service.domain.model.channel.ContentType.NEWS -> ContentType.NEWS
-                    com.boclips.contentpartner.service.domain.model.channel.ContentType.STOCK -> ContentType.STOCK
-                    com.boclips.contentpartner.service.domain.model.channel.ContentType.INSTRUCTIONAL -> ContentType.INSTRUCTIONAL
-                }
+            id = channel.id.value,
+            name = channel.name,
+            eligibleForStream = channel.isStreamable(),
+            ingestType = when (channel.ingest) {
+                CustomIngest -> IngestType.CUSTOM
+                ManualIngest -> IngestType.MANUAL
+                is MrssFeedIngest -> IngestType.MRSS
+                is YoutubeScrapeIngest -> IngestType.YOUTUBE
             },
+            contentTypes = channel.contentTypes?.map {
+                when (it) {
+                    ChannelContentType.NEWS -> ContentType.NEWS
+                    ChannelContentType.STOCK -> ContentType.STOCK
+                    ChannelContentType.INSTRUCTIONAL -> ContentType.INSTRUCTIONAL
+                }
+            } ?: emptyList(),
             taxonomy = Taxonomy(
-                videoLevelTagging = channelSuggestion.taxonomy is VideoLevelTagging,
-                categories = convertCategories(channelSuggestion)
+                videoLevelTagging = channel.taxonomy is VideoLevelTagging,
+                categories = convertCategories(channel)
             )
         )
     }
 
-    private fun convertCategories(channelSuggestion: ChannelSuggestion): Set<CategoryCode>? =
-        (channelSuggestion.taxonomy as? ChannelLevelTagging)?.categories?.map { CategoryCode(it.codeValue.value) }?.toSet()
+    private fun convertCategories(channel: Channel): Set<CategoryCode>? =
+        (channel.taxonomy as? ChannelLevelTagging)?.categories?.map { CategoryCode(it.codeValue.value) }
+            ?.toSet()
 }

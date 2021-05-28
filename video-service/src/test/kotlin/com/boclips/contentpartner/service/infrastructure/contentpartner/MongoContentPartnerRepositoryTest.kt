@@ -1,13 +1,21 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.contentpartner.service.testsupport.ChannelFactory.createChannel
-import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
@@ -16,7 +24,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Period
 
 class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -84,7 +91,7 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             createChannel(name = "good great day")
         )
 
-        var channels: List<ChannelSuggestion> = emptyList()
+        var channels: List<Channel> = emptyList()
 
         mongoChannelRepository.streamAll { channels = it.toList() }
 

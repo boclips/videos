@@ -142,7 +142,14 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val channel2 = saveChannel(name = "otter channel")
             saveChannel(name = "mammoth channel")
 
-            val results = channelService.search(ChannelRequest(null, PageRequest(size = 2, page = 0)))
+            val results =
+                channelService.search(
+                    ChannelRequest(
+                        ingestTypes = null,
+                        pageRequest = PageRequest(size = 2, page = 0),
+                        sortBy = null
+                    )
+                )
 
             assertThat(results.elements).hasSize(2)
             assertThat(results.elements).containsExactly(channel1, channel2)
@@ -162,7 +169,7 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val channels = channelService.search(
                 ChannelRequest(
                     sortBy = ChannelSortKey.CATEGORIES_ASC,
-                    PageRequest(size = 10, page = 0)
+                    pageRequest = PageRequest(size = 10, page = 0)
                 )
             ).elements
 

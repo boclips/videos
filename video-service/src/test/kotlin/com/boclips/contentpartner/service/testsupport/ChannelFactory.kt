@@ -2,7 +2,17 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
+import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
+import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
+import com.boclips.contentpartner.service.domain.model.channel.Remittance
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
@@ -11,15 +21,13 @@ import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
 import com.boclips.contentpartner.service.infrastructure.channel.IngestDetailsDocument
 import com.boclips.contentpartner.service.infrastructure.channel.TaxonomyDocument
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocument
-import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.suggestions.ChannelSuggestion
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
 import com.boclips.videos.service.testsupport.TestFactories
 import org.bson.types.ObjectId
-import java.time.Period
-import java.util.*
+import java.util.Locale
 
 object ChannelFactory {
 

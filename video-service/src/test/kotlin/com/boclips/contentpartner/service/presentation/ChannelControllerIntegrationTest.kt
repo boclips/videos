@@ -9,6 +9,7 @@ import com.boclips.videos.api.request.channel.AgeRangeRequest
 import com.boclips.videos.api.request.channel.ChannelStatusRequest
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
 import com.boclips.videos.api.request.channel.MarketingInformationRequest
+import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.testsupport.CategoryFactory
@@ -1038,24 +1039,24 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `can handle paginated requests`() {
-            saveChannel(name = "Channel 1")
-            saveChannel(name = "Channel 2")
-            saveChannel(name = "Channel 3")
-            saveChannel(name = "Channel 4")
+        fun `can handle paginated requests and filter by ingest type`() {
+            saveChannel(name = "Channel 1", ingest = IngestDetailsResource.manual())
+            saveChannel(name = "Channel 2", ingest = IngestDetailsResource.manual())
+            saveChannel(name = "Channel 3", ingest = IngestDetailsResource.mrss())
+            saveChannel(name = "Channel 4", ingest = IngestDetailsResource.youtube())
 
             mockMvc.perform(
                 get(
-                    "/v1/channels?page=1&size=2"
+                    "/v1/channels?page=0&size=5&ingestType=MANUAL"
                 ).asBoclipsEmployee()
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.channels", hasSize<String>(2)))
-                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 3")))
-                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 4")))
-                .andExpect(jsonPath("$.page.size", equalTo(2)))
-                .andExpect(jsonPath("$.page.totalElements", equalTo(4)))
-                .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
-                .andExpect(jsonPath("$.page.number", equalTo(1)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("Channel 1")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 2")))
+                .andExpect(jsonPath("$.page.size", equalTo(5)))
+                .andExpect(jsonPath("$.page.totalElements", equalTo(2)))
+                .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
+                .andExpect(jsonPath("$.page.number", equalTo(0)))
         }
 
         @Test
