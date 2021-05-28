@@ -5,6 +5,6 @@ data class ChannelMetadata(
     val name: String,
     val eligibleForStream: Boolean,
     val contentTypes: List<ContentType>,
-    val ingestType: IngestType,
+    val ingestType: IngestType?,
     val taxonomy: Taxonomy
 )

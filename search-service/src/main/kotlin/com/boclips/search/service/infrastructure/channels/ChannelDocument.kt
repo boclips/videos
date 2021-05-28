@@ -8,7 +8,7 @@ data class ChannelDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(NAME) val name: String,
     @param:JsonProperty(TYPES) val types: List<ContentType>,
-    @param:JsonProperty(INGEST_TYPE) val ingestType: String,
+    @param:JsonProperty(INGEST_TYPE) val ingestType: String?,
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
     @param:JsonProperty(TAXONOMY_VIDEO_LEVEL_TAGGING) val taxonomyVideoLevelTagging: Boolean,
     @param:JsonProperty(TAXONOMY_CATEGORIES) val taxonomyCategories: List<String>?,

@@ -80,7 +80,10 @@ internal class ChannelsDocumentConverterTest {
             eligibleForStream = true,
             ingestType = IngestType.MRSS,
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
-            taxonomy = Taxonomy(categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")), videoLevelTagging = false)
+            taxonomy = Taxonomy(
+                categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")),
+                videoLevelTagging = false
+            )
         )
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
@@ -96,5 +99,27 @@ internal class ChannelsDocumentConverterTest {
                 taxonomyCategories = listOf("AB", "D", "DE")
             )
         )
+    }
+
+    @Test
+    fun `can convert a search hit with missing ingest types`() {
+        val searchHit = SearchHit(14).sourceRef(
+            BytesArray(
+                """
+            {
+                "id": "14",
+                "name": "this is channel name",
+                "eligibleForStream": true,
+                "taxonomyVideoLevelTagging": true,
+                "taxonomyCategories": null,
+                "types": ["NEWS", "STOCK", "INSTRUCTIONAL"]
+            }
+                """.trimIndent()
+            )
+        )
+
+        val actualDocument = elasticSearchResultConverter.convert(searchHit)
+
+        assertThat(actualDocument.ingestType).isNull()
     }
 }

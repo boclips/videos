@@ -167,7 +167,7 @@ object SearchableChannelMetadataFactory {
         name: String = "",
         eligibleForStream: Boolean = false,
         contentTypes: List<ContentType> = emptyList(),
-        ingestType: IngestType = IngestType.CUSTOM,
+        ingestType: IngestType? = IngestType.CUSTOM,
         taxonomy: Taxonomy = Taxonomy(videoLevelTagging = true)
     ) = ChannelMetadata(
         id = id,
