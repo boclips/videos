@@ -131,8 +131,6 @@ class VideoIndexReader(
             }
         }
 
-        logger.info { request }
-
         return client.search(request, RequestOptions.DEFAULT)
     }
 

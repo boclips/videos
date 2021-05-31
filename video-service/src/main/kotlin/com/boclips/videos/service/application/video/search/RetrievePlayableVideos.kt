@@ -14,8 +14,8 @@ import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging
 
 class RetrievePlayableVideos(
-        private val videoRepository: VideoRepository,
-        private val videoIndex: VideoIndex
+    private val videoRepository: VideoRepository,
+    private val videoIndex: VideoIndex
 ) {
     companion object : KLogging()
 

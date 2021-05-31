@@ -1,5 +1,7 @@
 package com.boclips.videos.service.application.video.search
 
+import com.boclips.security.utils.Client
+import com.boclips.security.utils.ClientExtractor
 import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
@@ -64,8 +66,10 @@ class GetVideosByQuery(
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
 
-        val userSubjectIds =
-            user.id?.let { userService.getSubjectIds(it.value) } ?: emptySet()
+        val userSubjectIds = when (ClientExtractor.extractClient()) {
+            is Client.Teachers -> user.id?.let { userService.getSubjectIds(it.value) } ?: emptySet()
+            else -> emptySet()
+        }
 
         val request = VideoRequest(
             ids = ids,
@@ -104,7 +108,10 @@ class GetVideosByQuery(
         )
 
         val videoSearchResponse =
-            retrievePlayableVideos.searchPlayableVideos(request = request, videoAccess = user.accessRules.videoAccess)
+            retrievePlayableVideos.searchPlayableVideos(
+                request = request,
+                videoAccess = user.accessRules.videoAccess
+            )
         logger.info { "Found ${videoSearchResponse.counts.total} videos for query $request" }
 
         try {
@@ -137,8 +144,9 @@ class GetVideosByQuery(
     }
 
     private fun requestToString(request: HttpServletRequest): String {
-        val headers = request.headerNames.toList().map { headerName -> "$headerName ${request.getHeader(headerName)}" }
-            .joinToString()
+        val headers =
+            request.headerNames.toList().map { headerName -> "$headerName ${request.getHeader(headerName)}" }
+                .joinToString()
         return "${request.method} ${request.requestURI} [ headers: $headers ]"
     }
 
