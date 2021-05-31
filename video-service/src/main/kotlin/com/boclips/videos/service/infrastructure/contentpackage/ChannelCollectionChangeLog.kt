@@ -49,4 +49,16 @@ class ChannelCollectionChangeLog {
             )
         logger.info { "unsetIsTranscriptProvided results: $updateResult" }
     }
+
+    @ChangeSet(order = "003", id = "2021-05-31T10:10", author = "mjanik")
+    fun unsetDeliveryFrequency(
+        @NonLockGuarded mongoClient: MongoClient,
+    ) {
+        val updateResult = mongoClient.getDatabase(DATABASE_NAME).getCollection("channels")
+            .updateMany(
+                Filters.exists("deliveryFrequency"),
+                Updates.unset("deliveryFrequency")
+            )
+        logger.info { "unsetDeliveryFrequency results: $updateResult" }
+    }
 }
