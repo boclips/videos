@@ -56,7 +56,7 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateS
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
-import com.boclips.videos.service.presentation.converters.CategoryMappingValidator
+import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder

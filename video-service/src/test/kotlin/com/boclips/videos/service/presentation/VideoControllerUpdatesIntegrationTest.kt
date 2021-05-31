@@ -26,14 +26,34 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     lateinit var kalturaVideoId: String
     lateinit var youtubeVideoId: String
 
-    @Value("classpath:valid-categories.csv")
+    @Value("classpath:valid.csv")
     lateinit var validCategoryCsv: Resource
 
-    @Value("classpath:invalid-categories.csv")
-    lateinit var invalidCategoryCsv: Resource
+    @Value("classpath:invalid_category_code.csv")
+    lateinit var invalidCategoryCodeCsv: Resource
 
-    @Value("classpath:not-csv.txt")
-    lateinit var nonCsv: Resource
+    @Value("classpath:invalid_data.csv")
+    lateinit var invalidData: Resource
+
+    @Value("classpath:headers_only.csv")
+    lateinit var headersOnly: Resource
+
+    @Value("classpath:id_column_only_no_data.csv")
+    lateinit var idColumnNoData: Resource
+
+    @Value("classpath:id_column_with_data.csv")
+    lateinit var idColumnWithData: Resource
+
+    @Value("classpath:image.csv")
+    lateinit var imageFile: Resource
+
+    @Value("classpath:missing_id_value.csv")
+    lateinit var missingId: Resource
+
+    @Value("classpath:invalid_columns.csv")
+    lateinit var invalidColumns: Resource
+
+
 
     @BeforeEach
     fun setUp() {
@@ -479,55 +499,5 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/videos/$youtubeVideoId").asTeacher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.description", equalTo("it's a video from youtube")))
-    }
-
-    @Test
-    fun `can validate a csv of video to category tags`() {
-        addCategory(CategoryFactory.sample(code = "PST"))
-
-        mockMvc.perform(
-            multipart("/v1/videos/categories")
-                .file("file", validCategoryCsv.file.readBytes())
-                .asBoclipsEmployee()
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.message", equalTo("Data has been successfully imported!")))
-    }
-
-    @Test
-    fun `invalid category tags are rejected`() {
-        mockMvc.perform(
-            multipart("/v1/videos/categories")
-                .file("file", validCategoryCsv.file.readBytes())
-                .asBoclipsEmployee()
-        ).andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message", equalTo("Rows 1, 2 contain invalid or unknown category codes - PST")))
-    }
-
-    @Test
-    fun `invalid csvs are rejected with the validation failures returned`() {
-        addCategory(CategoryFactory.sample(code = "PST"))
-
-        mockMvc.perform(
-            multipart("/v1/videos/categories")
-                .file("file", invalidCategoryCsv.file.readBytes())
-                .asBoclipsEmployee()
-        ).andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message", equalTo(
-                "Rows 1 contain invalid or unknown category codes - ABC, Rows 2 are missing a video ID," +
-                    " Rows 1 contain invalid Video IDs - 5c54da69d8eafeecae22bf")))
-    }
-
-    @Test
-    fun `non csvs are rejected with an appropriate message`() {
-        addCategory(CategoryFactory.sample(code = "PST"))
-
-        mockMvc.perform(
-            multipart("/v1/videos/categories")
-                .file("file", nonCsv.file.readBytes())
-                .asBoclipsEmployee()
-        ).andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message", equalTo(
-                "The file is not a valid CSV format")))
     }
 }

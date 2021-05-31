@@ -145,6 +145,8 @@ dependencies {
     implementation('com.fasterxml.jackson.core:jackson-core:2.12.3')
     implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.3')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3')
+    implementation('io.arrow-kt:arrow-core:0.13.2')
+    implementation('com.github.doyaaaaaken:kotlin-csv-jvm:0.15.2')
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test:5.4.5")

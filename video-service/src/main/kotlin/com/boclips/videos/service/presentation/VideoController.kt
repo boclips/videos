@@ -92,7 +92,7 @@ class VideoController(
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    val categoryMappingValidator: CategoryMappingValidator
+    val videoTaggingCsvFileValidator: VideoTaggingCsvFileValidator
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -449,8 +449,8 @@ class VideoController(
     fun tagVideos(
         @RequestParam("file") file: MultipartFile?
     ): ResponseEntity<SuccessResponse> {
-        val validationResult = categoryMappingValidator.validate(file)
-        if (validationResult is CategoriesInvalid) {
+        val validationResult = videoTaggingCsvFileValidator.validate(file)
+        if (validationResult is CsvValidationError) {
             throw InvalidVideoTaggingCsvFile(validationResult.getMessage())
         } else {
             return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
