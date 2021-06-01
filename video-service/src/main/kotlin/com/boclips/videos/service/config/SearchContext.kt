@@ -121,5 +121,5 @@ class SearchContext(
             password = elasticSearchProperties.password,
             tracer = tracer
         )
-    }
-}
+}}
+

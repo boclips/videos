@@ -1,17 +1,14 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.CustomIngest
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.MrssFeedIngest
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy.ChannelLevelTagging
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy.VideoLevelTagging
-import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.channels.model.Taxonomy
+import com.boclips.videos.api.common.IngestType.YOUTUBE
 import com.boclips.contentpartner.service.domain.model.channel.ContentType as ChannelContentType
 
 object ChannelMetadataConverter {
@@ -36,7 +33,8 @@ object ChannelMetadataConverter {
             taxonomy = Taxonomy(
                 videoLevelTagging = channel.taxonomy is VideoLevelTagging,
                 categories = convertCategories(channel)
-            )
+            ),
+            isYoutube = channel.ingest.type() == YOUTUBE
         )
     }
 

@@ -88,6 +88,8 @@ class ChannelController(
                 SortByRequest.CATEGORIES_DESC -> ChannelSortKey.CATEGORIES_DESC
                 SortByRequest.NAME_ASC -> ChannelSortKey.NAME_ASC
                 SortByRequest.NAME_DESC -> ChannelSortKey.NAME_DESC
+                SortByRequest.YOUTUBE_ASC -> ChannelSortKey.YOUTUBE_ASC
+                SortByRequest.YOUTUBE_DESC -> ChannelSortKey.YOUTUBE_DESC
                 null -> null
             },
             size = channelFilterRequest.size,
