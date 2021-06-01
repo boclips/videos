@@ -10,6 +10,8 @@ class ChannelIndexConfiguration : IndexConfiguration {
             "properties" to mapOf(
                 ChannelDocument.ID to Fields.simpleText,
                 ChannelDocument.NAME to Fields.autocomplete,
+                ChannelDocument.AUTOCOMPLETE_NAME to Fields.autocomplete,
+                ChannelDocument.SORTABLE_NAME to Fields.simpleText,
                 ChannelDocument.TYPES to Fields.simpleTextArray,
                 ChannelDocument.INGEST_TYPE to Fields.simpleText,
                 ChannelDocument.ELIGIBLE_FOR_STREAM to Fields.boolean,

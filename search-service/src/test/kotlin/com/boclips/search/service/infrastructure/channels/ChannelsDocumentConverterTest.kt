@@ -33,9 +33,12 @@ internal class ChannelsDocumentConverterTest {
 
         val actualDocument = elasticSearchResultConverter.convert(searchHit)
 
+        val name = "this is channel name"
         val expectedDocument = ChannelDocument(
             id = "14",
-            name = "this is channel name",
+            name = name,
+            autocompleteName = null,
+            sortableName = null,
             eligibleForStream = true,
             types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomyVideoLevelTagging = true,
@@ -59,10 +62,13 @@ internal class ChannelsDocumentConverterTest {
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
 
+        val name = "The title"
         assertThat(document).isEqualTo(
             ChannelDocument(
                 id = "14",
-                name = "The title",
+                name = name,
+                autocompleteName = name,
+                sortableName = name,
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",
@@ -88,10 +94,13 @@ internal class ChannelsDocumentConverterTest {
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
 
+        val name = "The title"
         assertThat(document).isEqualTo(
             ChannelDocument(
                 id = "14",
-                name = "The title",
+                name = name,
+                autocompleteName = name,
+                sortableName = name,
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class ChannelDocument @JsonCreator constructor(
     @param:JsonProperty(ID) val id: String,
     @param:JsonProperty(NAME) val name: String,
+    @param:JsonProperty(AUTOCOMPLETE_NAME) val autocompleteName: String?,
+    @param:JsonProperty(SORTABLE_NAME) val sortableName: String?,
     @param:JsonProperty(TYPES) val types: List<ContentType>,
     @param:JsonProperty(INGEST_TYPE) val ingestType: String?,
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
@@ -16,6 +18,8 @@ data class ChannelDocument @JsonCreator constructor(
     companion object {
         const val ID = "id"
         const val NAME = "name"
+        const val AUTOCOMPLETE_NAME = "autocompleteName"
+        const val SORTABLE_NAME = "sortableName"
         const val TYPES = "types"
         const val INGEST_TYPE = "ingestType"
         const val ELIGIBLE_FOR_STREAM = "eligibleForStream"
