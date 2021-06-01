@@ -36,6 +36,12 @@ data class ChannelRequest(
                         order = SortOrder.DESC
                     )
                 )
+                ChannelSortKey.NAME_ASC -> listOf(
+                    Sort.ByField(
+                        fieldName = ChannelMetadata::name,
+                        order = SortOrder.ASC
+                    )
+                )
                 null -> emptyList()
             }
         )

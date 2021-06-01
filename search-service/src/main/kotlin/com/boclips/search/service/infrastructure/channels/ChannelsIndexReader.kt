@@ -24,7 +24,6 @@ import org.elasticsearch.script.Script
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.ScoreSortBuilder
 import org.elasticsearch.search.sort.ScriptSortBuilder
-import org.elasticsearch.search.sort.SortBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
 import com.boclips.search.service.domain.common.model.SortOrder as BoclipsSortOrder
@@ -101,7 +100,7 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         val query = SearchSourceBuilder().apply {
             query(ChannelEsQuery().mainQuery(channelQuery))
             postFilter(allCriteria(channelQuery))
-            buildSort(channelQuery)?.let { sort(it) }
+            applySort(channelQuery)
             applyDefaultSort()
         }
 
@@ -118,13 +117,20 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         sort(ChannelDocument.NAME, SortOrder.ASC)
     }
 
-    private fun buildSort(channelQuery: ChannelQuery): SortBuilder<*>? {
-        return channelQuery.sort
-            .find { (it as? Sort.ByField)?.fieldName == ChannelMetadata::taxonomy }
-            ?.let { taxonomySortMetadata ->
-                SortBuilders
-                    .scriptSort(sortByTaxonomyScript, ScriptSortBuilder.ScriptSortType.STRING)
-                    .order((taxonomySortMetadata as Sort.ByField).toElasticsearchOrder())
+    private fun SearchSourceBuilder.applySort(channelQuery: ChannelQuery) {
+        channelQuery.sort
+            .forEach {
+                (it as? Sort.ByField)?.fieldName?.let { fieldName ->
+                    if (fieldName == ChannelMetadata::taxonomy) {
+                        sort(
+                            SortBuilders
+                                .scriptSort(sortByTaxonomyScript, ScriptSortBuilder.ScriptSortType.STRING)
+                                .order((it).toElasticsearchOrder())
+                        )
+                    } else {
+                        sort(fieldName.name, SortOrder.fromString(it.order.toString()))
+                    }
+                }
             }
     }
 

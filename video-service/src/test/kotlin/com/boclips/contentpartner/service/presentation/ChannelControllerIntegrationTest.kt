@@ -1100,6 +1100,25 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can sort by name ASC`() {
+            saveChannel(name = "A")
+            saveChannel(name = "AA")
+            saveChannel(name = "1")
+            saveChannel(name = "Z")
+
+            mockMvc.perform(
+                get(
+                    "/v1/channels?page=0&size=4&sort_by=NAME_ASC"
+                ).asBoclipsEmployee()
+            ).andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.channels", hasSize<String>(4)))
+                .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("1")))
+                .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("A")))
+                .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("AA")))
+                .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Z")))
+        }
+
+        @Test
         fun `Page information is not available via the public API`() {
             mockMvc.perform(
                 get(

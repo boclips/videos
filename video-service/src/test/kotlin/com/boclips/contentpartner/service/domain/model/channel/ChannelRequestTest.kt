@@ -14,6 +14,7 @@ class ChannelRequestTest {
             sortBy = ChannelSortKey.CATEGORIES_ASC,
             pageRequest = PageRequest(size = 10, page = 0)
         ).toQuery()
+
         assertThat(query.sort).containsExactly(
             Sort.ByField(
                 fieldName = ChannelMetadata::taxonomy,
@@ -28,6 +29,7 @@ class ChannelRequestTest {
             sortBy = ChannelSortKey.CATEGORIES_DESC,
             pageRequest = PageRequest(size = 10, page = 0)
         ).toQuery()
+
         assertThat(query.sort).containsExactly(
             Sort.ByField(
                 fieldName = ChannelMetadata::taxonomy,
@@ -43,5 +45,20 @@ class ChannelRequestTest {
             pageRequest = PageRequest(size = 10, page = 0)
         ).toQuery()
         assertThat(query.sort).isEmpty()
+    }
+
+    @Test
+    fun `ascending name sort key sorts by the name field`() {
+        val query = ChannelRequest(
+            sortBy = ChannelSortKey.NAME_ASC,
+            pageRequest = PageRequest(size = 10, page = 0)
+        ).toQuery()
+
+        assertThat(query.sort).containsExactly(
+            Sort.ByField(
+                fieldName = ChannelMetadata::name,
+                order = SortOrder.ASC
+            )
+        )
     }
 }

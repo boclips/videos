@@ -237,4 +237,30 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
 
         assertThat(results.elements).containsExactly("3", "2", "4", "1")
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `can sort by name ascending`(
+        queryService: IndexReader<ChannelMetadata, ChannelQuery>,
+        adminService: IndexWriter<ChannelMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "Z"),
+                SearchableChannelMetadataFactory.create(id = "2", name = "B"),
+                SearchableChannelMetadataFactory.create(id = "3", name = "1"),
+                SearchableChannelMetadataFactory.create(id = "4", name = "BB"),
+            ),
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    sort = listOf(Sort.ByField(fieldName = ChannelMetadata::name, order = SortOrder.ASC))
+                ), startIndex = 0, windowSize = 4
+            )
+        )
+
+        assertThat(results.elements).containsExactly("3", "2", "4", "1")
+    }
 }
