@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
 import com.boclips.eventbus.events.video.VideosSearched
+import com.boclips.security.testing.setSecurityContextWithClientId
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.SubjectResource
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.users.api.response.organisation.OrganisationResource
 import com.boclips.videos.api.request.attachments.AttachmentRequest
@@ -18,6 +20,7 @@ import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions
+import org.bson.types.ObjectId
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -608,15 +611,26 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `sort by category codes`() {
+    fun `ignores subjects when sorting videos not from teachers`() {
+        val subject1 = saveSubject(ObjectId().toHexString())
+        setSecurityContextWithClientId(userId = "teachers", clientId = "hq")
+        val user = usersClient.add(UserResourceFactory.sample(subjects = listOf(SubjectResource(subject1.id.value))))
+
         saveVideo(title = "A category", categories = listOf("A"))
-        saveVideo(title = "B category", categories = listOf("B"))
         saveVideo(title = "Empty category codes", categories = emptyList())
 
-        mockMvc.perform(get("/v1/videos?query=category&sort_by=UNTAGGED_CATEGORIES").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
+        saveVideo(
+            title = "C category",
+            categories = listOf("C"),
+            subjectIds = setOf(subject1.id.value)
+        )
+
+        mockMvc.perform(get("/v1/videos?query=category&sort_by=UNTAGGED_CATEGORIES").asBoclipsEmployee(email = user.id))
             .andExpect(status().isOk)
             .andExpect(halJson())
             .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("Empty category codes")))
+            .andExpect(jsonPath("$._embedded.videos[1].title", equalTo("A category")))
+            .andExpect(jsonPath("$._embedded.videos[2].title", equalTo("C category")))
     }
 
     @Test

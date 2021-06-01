@@ -130,6 +130,8 @@ class VideoIndexFake :
             }.filter { entry ->
                 checkFilterValues(query.userQuery.subjectIds, entry.value.subjects.items.map { it.id }.toSet())
             }.filter { entry ->
+                checkFilterValues(query.userQuery.userSubjectIds, entry.value.subjects.items.map { it.id }.toSet())
+            }.filter { entry ->
                 query.userQuery.subjectsSetManually?.let { entry.value.subjects.setManually == it } ?: true
             }.filter { entry ->
                 query.userQuery.promoted?.let { entry.value.promoted == it } ?: true
