@@ -21,7 +21,10 @@ class ChannelIndexFake :
     private val fakeSuggestionIndex = FakeSuggestionsIndex<SuggestionQuery<ChannelMetadata>, ChannelMetadata>()
 
     override fun search(searchRequest: IndexSearchRequest<ChannelQuery>): SearchResults {
-        return fakeSearchIndex.search(searchRequest, this::performSearch)
+        return fakeSearchIndex.search(
+            searchRequest,
+            this::performSearch,
+            defaultSort = { a, b -> a.name.compareTo(b.name) })
     }
 
     override fun safeRebuildIndex(items: Sequence<ChannelMetadata>, notifier: ProgressNotifier?) {

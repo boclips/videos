@@ -137,10 +137,10 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Nested
     inner class Search {
         @Test
-        fun `can retrieve a page of channels`() {
-            val channel1 = saveChannel(name = "elephant channel")
-            val channel2 = saveChannel(name = "otter channel")
-            saveChannel(name = "mammoth channel")
+        fun `can retrieve a page of channels ordered by name (default)`() {
+            val channel1 = saveChannel(name = "B elephant channel")
+            saveChannel(name = "C otter channel")
+            val channel2 = saveChannel(name = "A mammoth channel")
 
             val results =
                 channelService.search(
@@ -152,7 +152,7 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
 
             assertThat(results.elements).hasSize(2)
-            assertThat(results.elements).containsExactly(channel1, channel2)
+            assertThat(results.elements).containsExactly(channel2, channel1)
             assertThat(results.pageInfo.hasMoreElements).isTrue
             assertThat(results.pageInfo.totalElements).isEqualTo(3)
         }

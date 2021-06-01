@@ -20,11 +20,11 @@ class ChannelEsQuery {
                     must(
                         QueryBuilders.boolQuery()
                             .must(
-                                QueryBuilders.matchPhraseQuery(ChannelDocument.NAME, phrase)
+                                QueryBuilders.matchPhraseQuery(ChannelDocument.AUTOCOMPLETE_NAME, phrase)
                             )
                             .should(
                                 QueryBuilders.matchPhraseQuery(
-                                    IndexConfiguration.unstemmed(ChannelDocument.NAME),
+                                    IndexConfiguration.unstemmed(ChannelDocument.AUTOCOMPLETE_NAME),
                                     phrase
                                 )
                             )

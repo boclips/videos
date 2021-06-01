@@ -22,6 +22,7 @@ import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.script.Script
 import org.elasticsearch.search.builder.SearchSourceBuilder
+import org.elasticsearch.search.sort.ScoreSortBuilder
 import org.elasticsearch.search.sort.ScriptSortBuilder
 import org.elasticsearch.search.sort.SortBuilder
 import org.elasticsearch.search.sort.SortBuilders
@@ -101,6 +102,7 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
             query(ChannelEsQuery().mainQuery(channelQuery))
             postFilter(allCriteria(channelQuery))
             buildSort(channelQuery)?.let { sort(it) }
+            applyDefaultSort()
         }
 
         val request = SearchRequest(
@@ -109,6 +111,11 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
         )
 
         return client.search(request, RequestOptions.DEFAULT)
+    }
+
+    private fun SearchSourceBuilder.applyDefaultSort() {
+        sort(ScoreSortBuilder())
+        sort(ChannelDocument.NAME, SortOrder.ASC)
     }
 
     private fun buildSort(channelQuery: ChannelQuery): SortBuilder<*>? {

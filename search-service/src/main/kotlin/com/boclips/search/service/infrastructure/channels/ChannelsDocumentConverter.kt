@@ -14,7 +14,6 @@ class ChannelsDocumentConverter {
             id = metadata.id,
             name = metadata.name,
             autocompleteName = metadata.name,
-            sortableName = metadata.name,
             eligibleForStream = metadata.eligibleForStream,
             types = metadata.contentTypes,
             ingestType = metadata.ingestType?.name,

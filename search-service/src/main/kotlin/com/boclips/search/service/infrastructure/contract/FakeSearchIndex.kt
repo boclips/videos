@@ -24,7 +24,8 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
 
     fun search(
         searchRequest: IndexSearchRequest<QUERY>,
-        filter: (index: MutableMap<String, METADATA>, query: QUERY) -> List<String>
+        filter: (index: MutableMap<String, METADATA>, query: QUERY) -> List<String>,
+        defaultSort: ((a: METADATA, b: METADATA) -> Int)? = null,
     ): SearchResults {
         val startIndex = (searchRequest as? PaginatedIndexSearchRequest)?.startIndex
         (searchRequest as? CursorBasedIndexSearchRequest)?.apply {
@@ -45,7 +46,7 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
 
         val matchingIds = filter(index, searchRequest.query)
 
-        val elements = sort(matchingIds, searchRequest.query)
+        val elements = sort(matchingIds, searchRequest.query, defaultSort)
             .drop(toDrop)
             .take(searchRequest.windowSize)
 
@@ -107,12 +108,14 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
         return this.requests.last()
     }
 
-    private fun sort(ids: List<String>, query: QUERY): List<String> {
-        if (query.sort.isEmpty()) return ids
+    private fun sort(ids: List<String>, query: QUERY, defaultSort: ((a: METADATA, b: METADATA) -> Int)?): List<String> {
+        if (query.sort.isEmpty()) return ids.sortedWith(
+            Comparator(applyDefaultSort(defaultSort))
+        )
 
         return when (val sortCritieria = query.sort.first()) {
             is Sort.ByField -> {
-                val sortedIds = ids.sortedBy {
+                val sortedIds = ids.sortedWith(compareBy<String> {
                     val value: Comparable<*>? = sortCritieria.fieldName.get(index[it]!!)
                     /**
                      * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
@@ -122,7 +125,7 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
                      */
                     @Suppress("UNCHECKED_CAST")
                     value as? Comparable<Any>
-                }
+                }.thenComparator(applyDefaultSort(defaultSort)))
 
                 when (sortCritieria.order) {
                     SortOrder.ASC -> sortedIds
@@ -132,4 +135,11 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
             is Sort.ByRandom -> ids.shuffled()
         }
     }
+
+    private fun applyDefaultSort(defaultSort: ((aValue: METADATA, bValue: METADATA) -> Int)?) =
+        { a: String, b: String ->
+            val aValue = index[a]!!
+            val bValue = index[b]!!
+            defaultSort?.let { it(aValue, bValue) } ?: 0
+        }
 }

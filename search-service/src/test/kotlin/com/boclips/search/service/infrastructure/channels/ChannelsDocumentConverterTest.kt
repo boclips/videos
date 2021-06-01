@@ -21,6 +21,7 @@ internal class ChannelsDocumentConverterTest {
             {
                 "id": "14",
                 "name": "this is channel name",
+                "autocompleteName": "this is channel name",
                 "eligibleForStream": true,
                 "taxonomyVideoLevelTagging": true,
                 "taxonomyCategories": null,
@@ -37,8 +38,7 @@ internal class ChannelsDocumentConverterTest {
         val expectedDocument = ChannelDocument(
             id = "14",
             name = name,
-            autocompleteName = null,
-            sortableName = null,
+            autocompleteName = name,
             eligibleForStream = true,
             types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomyVideoLevelTagging = true,
@@ -68,7 +68,6 @@ internal class ChannelsDocumentConverterTest {
                 id = "14",
                 name = name,
                 autocompleteName = name,
-                sortableName = name,
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",
@@ -100,7 +99,6 @@ internal class ChannelsDocumentConverterTest {
                 id = "14",
                 name = name,
                 autocompleteName = name,
-                sortableName = name,
                 eligibleForStream = true,
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",
@@ -118,6 +116,7 @@ internal class ChannelsDocumentConverterTest {
             {
                 "id": "14",
                 "name": "this is channel name",
+                "autocompleteName": "this is channel name",
                 "eligibleForStream": true,
                 "taxonomyVideoLevelTagging": true,
                 "taxonomyCategories": null,
