@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.Nulls
 enum class SortByRequest {
     CATEGORIES_ASC,
     CATEGORIES_DESC,
-    NAME_ASC
+    NAME_ASC,
+    NAME_DESC
 }
 
 data class ChannelFilterRequest(

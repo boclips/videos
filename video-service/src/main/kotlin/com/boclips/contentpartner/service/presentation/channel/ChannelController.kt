@@ -87,6 +87,7 @@ class ChannelController(
                 SortByRequest.CATEGORIES_ASC -> ChannelSortKey.CATEGORIES_ASC
                 SortByRequest.CATEGORIES_DESC -> ChannelSortKey.CATEGORIES_DESC
                 SortByRequest.NAME_ASC -> ChannelSortKey.NAME_ASC
+                SortByRequest.NAME_DESC -> ChannelSortKey.NAME_DESC
                 null -> null
             },
             size = channelFilterRequest.size,

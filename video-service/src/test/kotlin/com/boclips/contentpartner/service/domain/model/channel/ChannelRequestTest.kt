@@ -61,4 +61,19 @@ class ChannelRequestTest {
             )
         )
     }
+
+    @Test
+    fun `descending name sort key sorts by the name field`() {
+        val query = ChannelRequest(
+            sortBy = ChannelSortKey.NAME_DESC,
+            pageRequest = PageRequest(size = 10, page = 0)
+        ).toQuery()
+
+        assertThat(query.sort).containsExactly(
+            Sort.ByField(
+                fieldName = ChannelMetadata::name,
+                order = SortOrder.DESC
+            )
+        )
+    }
 }
