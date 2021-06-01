@@ -1,8 +1,10 @@
 package com.boclips.search.service.infrastructure.channels
 
+import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
@@ -498,38 +500,26 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
     }
 
     @Test
-    fun `creates a new index and removes the outdated one`() {
-        indexWriter.safeRebuildIndex(
+    fun `default sort by name is case insensitive`() {
+        indexWriter.upsert(
             sequenceOf(
                 SearchableChannelMetadataFactory.create(
                     id = "1",
-                    name = "Beautiful Boy Dancing"
-                )
+                    name = "BB"
+                ),
+                SearchableChannelMetadataFactory.create(
+                    id = "2",
+                    name = "aa"
+                ),
+                SearchableChannelMetadataFactory.create(
+                    id = "3",
+                    name = "AA channel"
+                ),
             )
         )
 
-        assertThat(
-            indexReader.getSuggestions(
-                SuggestionRequest(
-                    query = SuggestionQuery(
-                        "boy",
-                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
-                    )
-                )
-            ).elements
-        ).isNotEmpty
+        val results = indexReader.search(PaginatedIndexSearchRequest(query = ChannelQuery()))
 
-        indexWriter.safeRebuildIndex(emptySequence())
-
-        assertThat(
-            indexReader.getSuggestions(
-                SuggestionRequest(
-                    query = SuggestionQuery(
-                        "boy",
-                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
-                    )
-                )
-            ).elements.isEmpty()
-        )
+        assertThat(results.elements).containsExactly("2", "3", "1")
     }
 }

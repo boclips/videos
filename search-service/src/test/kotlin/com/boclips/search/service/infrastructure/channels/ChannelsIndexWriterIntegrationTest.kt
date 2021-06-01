@@ -37,4 +37,40 @@ class ChannelsIndexWriterIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("1")
     }
+
+    @Test
+    fun `creates a new index and removes the outdated one`() {
+        indexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(
+                    id = "1",
+                    name = "Beautiful Boy Dancing"
+                )
+            )
+        )
+
+        assertThat(
+            indexReader.getSuggestions(
+                SuggestionRequest(
+                    query = SuggestionQuery(
+                        "boy",
+                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
+                    )
+                )
+            ).elements
+        ).isNotEmpty
+
+        indexWriter.safeRebuildIndex(emptySequence())
+
+        assertThat(
+            indexReader.getSuggestions(
+                SuggestionRequest(
+                    query = SuggestionQuery(
+                        "boy",
+                        SuggestionAccessRuleQuery(includedChannelIds = setOf("1"))
+                    )
+                )
+            ).elements.isEmpty()
+        )
+    }
 }

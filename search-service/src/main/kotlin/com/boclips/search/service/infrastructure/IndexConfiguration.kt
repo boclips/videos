@@ -46,6 +46,11 @@ interface IndexConfiguration {
             "type" to "keyword"
         )
 
+        val caseInsensitiveSimpleText = mapOf(
+            "type" to "keyword",
+            "normalizer" to Normalizers.LOWERCASE
+        )
+
         val autocomplete = mapOf(
             "search_analyzer" to "standard",
             "analyzer" to Analyzers.NGRAM,
