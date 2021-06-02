@@ -428,8 +428,11 @@ class VideoController(
         val videoIds = metadataRequest!!.ids.map { VideoId(it) }
 
         val videos = videosRepository.findAll(videoIds)
-        val videoResource = videoToResourceConverter.convert(videos, getCurrentUser())
-        val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videoResource)
+
+        val videoToCaptionLinkMap = videos.map { it.videoId.value to getVideoUrlAssets(it.videoId.value, getCurrentUser()) }.toMap()
+        val videosResource = videoToResourceConverter.convert(videos, getCurrentUser())
+
+        val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videosResource, videoToCaptionLinkMap)
         val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
         return ResponseEntity(response, HttpStatus.OK)
     }
