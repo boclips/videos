@@ -303,11 +303,12 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws when human generated captions are already processing`() {
         createMediaEntry("new-playback-id")
-        fakeKalturaClient.tag("new-playback-id", listOf("processing"))
+        fakeKalturaClient.setCategories("new-playback-id", listOf("3play_processed"))
 
-        assertThrows<CaptionConflictException> {
+        val exception = assertThrows<CaptionConflictException> {
             kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "new-playback-id"))
         }
+        assertThat(exception.message).isEqualTo("Captions for playback id: new-playback-id have already been requested, caption status is PROCESSING")
     }
 
     private fun mediaEntryWithCaptionsByEntryId(

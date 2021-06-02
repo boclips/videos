@@ -146,7 +146,7 @@ class KalturaPlaybackProvider(
             kalturaClient.requestCaption(playbackId.value)
         } else {
             logger.info { "requestCaptions: captions for playback id: ${playbackId.value} have status: $captionStatus" }
-            throw CaptionConflictException("Captions for playback id: ${playbackId.value} have already been requested")
+            throw CaptionConflictException("Captions for playback id: ${playbackId.value} have already been requested, caption status is $captionStatus")
         }
     }
 
