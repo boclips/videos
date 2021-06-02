@@ -1,19 +1,8 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.FacetCount
-import com.boclips.search.service.domain.common.FacetType
-import com.boclips.search.service.domain.common.ProgressNotifier
-import com.boclips.search.service.domain.common.ResultCounts
-import com.boclips.search.service.domain.common.SearchResults
-import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.FacetDefinition
-import com.boclips.search.service.domain.common.model.IndexSearchRequest
-import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.common.model.PagingCursor
-import com.boclips.search.service.domain.common.model.SearchQuery
-import com.boclips.search.service.domain.common.model.Sort
-import com.boclips.search.service.domain.common.model.SortOrder
-import java.util.UUID
+import com.boclips.search.service.domain.common.*
+import com.boclips.search.service.domain.common.model.*
+import java.util.*
 
 class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
     private val index = mutableMapOf<String, METADATA>()
@@ -115,22 +104,27 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
 
         return when (val sortCritieria = query.sort.first()) {
             is Sort.ByField -> {
-                val sortedIds = ids.sortedWith(compareBy<String> {
-                    val value: Comparable<*>? = sortCritieria.fieldName.get(index[it]!!)
-                    /**
-                     * Kotlin isn't happy about the * to Any cast.. This is the safest way we can coerce the type without
-                     * littering the entire code base with the Sort generic type.
-                     *
-                     * We cannot define sort.fieldName as a Comparable<Any> as it won't then allow us to reference Comparables
-                     */
-                    @Suppress("UNCHECKED_CAST")
-                    value as? Comparable<Any>
-                }.thenComparator(applyDefaultSort(defaultSort)))
+                ids.sortedWith(Comparator { aId: String, bId: String ->
+                    val aValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[aId]!!) as Comparable<Any>?)
+                    val bValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[bId]!!) as Comparable<Any>?)
 
-                when (sortCritieria.order) {
-                    SortOrder.ASC -> sortedIds
-                    SortOrder.DESC -> sortedIds.reversed()
+                    val sort = if (aValue == null && bValue == null) {
+                        0
+                    } else if (aValue == null) {
+                        -1
+                    } else if (bValue == null) {
+                        1
+                    } else {
+                        aValue.compareTo(bValue)
+                    }
+
+                    if (sortCritieria.order == SortOrder.DESC) {
+                        sort * -1
+                    } else {
+                        sort
+                    }
                 }
+                    .thenComparator(applyDefaultSort(defaultSort)))
             }
             is Sort.ByRandom -> ids.shuffled()
         }

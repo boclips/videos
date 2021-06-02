@@ -168,14 +168,16 @@ object SearchableChannelMetadataFactory {
         eligibleForStream: Boolean = false,
         contentTypes: List<ContentType> = emptyList(),
         ingestType: IngestType? = IngestType.CUSTOM,
-        taxonomy: Taxonomy = Taxonomy(videoLevelTagging = true)
+        taxonomy: Taxonomy = Taxonomy(videoLevelTagging = true),
+        isYoutube: Boolean? = false
     ) = ChannelMetadata(
         id = id,
         name = name,
         eligibleForStream = eligibleForStream,
         contentTypes = contentTypes,
         ingestType = ingestType,
-        taxonomy = taxonomy
+        taxonomy = taxonomy,
+        isYoutube = isYoutube
     )
 }
 

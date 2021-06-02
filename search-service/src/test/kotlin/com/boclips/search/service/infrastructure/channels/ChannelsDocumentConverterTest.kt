@@ -43,7 +43,8 @@ internal class ChannelsDocumentConverterTest {
             types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomyVideoLevelTagging = true,
             taxonomyCategories = null,
-            ingestType = IngestType.MANUAL.name
+            ingestType = IngestType.MANUAL.name,
+            isYoutube = null
         )
 
         assertThat(actualDocument).isEqualTo(expectedDocument)
@@ -57,7 +58,8 @@ internal class ChannelsDocumentConverterTest {
             eligibleForStream = true,
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             ingestType = IngestType.MRSS,
-            taxonomy = Taxonomy(videoLevelTagging = true)
+            taxonomy = Taxonomy(videoLevelTagging = true),
+            isYoutube = true
         )
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
@@ -72,7 +74,8 @@ internal class ChannelsDocumentConverterTest {
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",
                 taxonomyVideoLevelTagging = true,
-                taxonomyCategories = null
+                taxonomyCategories = null,
+                isYoutube = true
             )
         )
     }
@@ -88,7 +91,8 @@ internal class ChannelsDocumentConverterTest {
             taxonomy = Taxonomy(
                 categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")),
                 videoLevelTagging = false
-            )
+            ),
+            isYoutube = false
         )
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
@@ -103,7 +107,8 @@ internal class ChannelsDocumentConverterTest {
                 types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
                 ingestType = "MRSS",
                 taxonomyVideoLevelTagging = false,
-                taxonomyCategories = listOf("AB", "D", "DE")
+                taxonomyCategories = listOf("AB", "D", "DE"),
+                isYoutube = false
             )
         )
     }

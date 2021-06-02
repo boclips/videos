@@ -48,6 +48,18 @@ data class ChannelRequest(
                         order = SortOrder.DESC
                     )
                 )
+                ChannelSortKey.YOUTUBE_ASC -> listOf(
+                    Sort.ByField(
+                        fieldName = ChannelMetadata::isYoutube,
+                        order = SortOrder.ASC
+                    )
+                )
+                ChannelSortKey.YOUTUBE_DESC -> listOf(
+                    Sort.ByField(
+                        fieldName = ChannelMetadata::isYoutube,
+                        order = SortOrder.DESC
+                    )
+                )
                 null -> emptyList()
             }
         )

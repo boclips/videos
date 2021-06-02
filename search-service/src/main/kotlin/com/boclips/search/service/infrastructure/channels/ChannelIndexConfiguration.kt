@@ -16,6 +16,7 @@ class ChannelIndexConfiguration : IndexConfiguration {
                 ChannelDocument.ELIGIBLE_FOR_STREAM to Fields.boolean,
                 ChannelDocument.TAXONOMY_VIDEO_LEVEL_TAGGING to Fields.boolean,
                 ChannelDocument.TAXONOMY_CATEGORIES to Fields.simpleText,
+                ChannelDocument.IS_YOUTUBE to Fields.boolean
             )
         )
     }

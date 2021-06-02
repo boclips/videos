@@ -1,13 +1,10 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class ChannelMetadataConverterTest {
@@ -18,7 +15,8 @@ class ChannelMetadataConverterTest {
             id = ChannelId("some id"),
             name = "channel name",
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK, ContentType.NEWS),
-            taxonomy = Taxonomy.VideoLevelTagging
+            taxonomy = Taxonomy.VideoLevelTagging,
+            ingest = YoutubeScrapeIngest(listOf("id-123"))
         )
         val channelMetadata = ChannelMetadataConverter.convert(suggestion)
 
@@ -32,6 +30,7 @@ class ChannelMetadataConverterTest {
         )
         assertThat(channelMetadata.taxonomy.categories).isNull()
         assertThat(channelMetadata.taxonomy.videoLevelTagging).isTrue
+        assertThat(channelMetadata.isYoutube).isTrue
     }
 
     @Test
@@ -45,7 +44,8 @@ class ChannelMetadataConverterTest {
                     CategoryWithAncestorsFactory.sample(codeValue = "CD"),
                     CategoryWithAncestorsFactory.sample(codeValue = "AB")
                 )
-            )
+            ),
+            ingest = ManualIngest
         )
         val channelMetadata = ChannelMetadataConverter.convert(suggestion)
 
@@ -60,5 +60,6 @@ class ChannelMetadataConverterTest {
         assertThat(channelMetadata.taxonomy.categories)
             .containsExactlyInAnyOrder(CategoryCode("AB"), CategoryCode("CD"))
         assertThat(channelMetadata.taxonomy.videoLevelTagging).isFalse
+        assertThat(channelMetadata.isYoutube).isFalse
     }
 }

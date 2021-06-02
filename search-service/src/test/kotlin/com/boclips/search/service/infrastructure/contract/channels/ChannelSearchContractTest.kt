@@ -1,10 +1,6 @@
 package com.boclips.search.service.infrastructure.contract.channels
 
-import com.boclips.search.service.domain.channels.model.CategoryCode
-import com.boclips.search.service.domain.channels.model.ChannelMetadata
-import com.boclips.search.service.domain.channels.model.ChannelQuery
-import com.boclips.search.service.domain.channels.model.IngestType
-import com.boclips.search.service.domain.channels.model.Taxonomy
+import com.boclips.search.service.domain.channels.model.*
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
@@ -236,6 +232,72 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactly("3", "2", "4", "1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `channels can be sorted by youtube asc`(
+        queryService: IndexReader<ChannelMetadata, ChannelQuery>,
+        adminService: IndexWriter<ChannelMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "Z", isYoutube = true),
+                SearchableChannelMetadataFactory.create(id = "2", name = "B", isYoutube = false),
+                SearchableChannelMetadataFactory.create(id = "3", name = "1", isYoutube = false),
+                SearchableChannelMetadataFactory.create(id = "4", name = "BB", isYoutube = true),
+            ),
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    sort = listOf(
+                        Sort.ByField(
+                            fieldName = ChannelMetadata::isYoutube,
+                            order = SortOrder.ASC
+                        )
+                    )
+                ),
+                startIndex = 0,
+                windowSize = 4
+            )
+        )
+
+        assertThat(results.elements).containsExactly("3", "2", "4", "1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `channels can be sorted by youtube desc`(
+        queryService: IndexReader<ChannelMetadata, ChannelQuery>,
+        adminService: IndexWriter<ChannelMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "Z", isYoutube = true),
+                SearchableChannelMetadataFactory.create(id = "2", name = "B", isYoutube = false),
+                SearchableChannelMetadataFactory.create(id = "3", name = "1", isYoutube = false),
+                SearchableChannelMetadataFactory.create(id = "4", name = "BB", isYoutube = true),
+            ),
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    sort = listOf(
+                        Sort.ByField(
+                            fieldName = ChannelMetadata::isYoutube,
+                            order = SortOrder.DESC
+                        )
+                    )
+                ),
+                startIndex = 0,
+                windowSize = 4
+            )
+        )
+
+        assertThat(results.elements).containsExactly("4", "1", "3", "2")
     }
 
     @ParameterizedTest
