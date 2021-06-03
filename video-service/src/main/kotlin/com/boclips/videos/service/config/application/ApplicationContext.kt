@@ -11,7 +11,6 @@ import com.boclips.eventbus.EventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.videos.service.application.ChannelUpdated
-import com.boclips.videos.service.application.GetAllCategories
 import com.boclips.videos.service.application.GetCategoryWithAncestors
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
@@ -56,7 +55,6 @@ import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateS
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
-import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -447,7 +445,7 @@ class ApplicationContext(
 
     @Bean
     fun contentPartnerUpdated(): ChannelUpdated {
-        return ChannelUpdated(videoRepository)
+        return ChannelUpdated(videoRepository, channelRepository, channelIndex)
     }
 
     @Bean
