@@ -78,10 +78,7 @@ class ApiAccessRulesConverter(
             }
         }
 
-        return when {
-            videoAccessRules.isNotEmpty() -> VideoAccess.Rules(videoAccessRules)
-            else -> VideoAccess.Everything
-        }
+        return VideoAccess.Rules(videoAccessRules)
     }
 
     override fun toCollectionAccess(

@@ -7,10 +7,13 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.request.AccessRuleQueryConverter
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,8 +27,32 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @BeforeEach
+    internal fun setUp() {
+        AccessRuleQueryConverter.defaultExcludedChannelIds = emptySet()
+    }
+
     @Nested
     inner class VideoSearch {
+        @Test
+        fun `hidden channels aren't included in search by default`() {
+            val hiddenChannel = saveChannel()
+            AccessRuleQueryConverter.defaultExcludedChannelIds = setOf(ChannelId(hiddenChannel.id.value))
+
+            saveVideo(title = "hidden video", existingChannelId = hiddenChannel.id.value)
+            saveVideo(title = "shown video")
+
+            removeAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+                .andExpect(jsonPath("$._embedded.videos[*].title", equalTo(listOf("shown video"))))
+        }
+
+        @Test
+        fun `hidden channels are included for orgs that want them`() {
+            TODO("Not yet implemented")
+        }
+
         @Test
         fun `limits search results to included videoIds`() {
             saveVideo(title = "A non-contracted video")

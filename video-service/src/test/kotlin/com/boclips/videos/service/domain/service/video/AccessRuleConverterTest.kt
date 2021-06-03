@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.request.AccessRuleQueryConverter
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -177,7 +178,10 @@ class AccessRuleConverterTest {
     inner class ToExcludedContentPartnersIds {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedIds = converter.mapToExcludedChannelIds(VideoAccess.Everything)
+            val excludedIds = converter.mapToExcludedChannelIds(
+                VideoAccess.Everything,
+                AccessRuleQueryConverter.defaultExcludedChannelIds
+            )
             assertThat(excludedIds).isEmpty()
         }
 
@@ -191,7 +195,8 @@ class AccessRuleConverterTest {
                             videoIds = setOf(videoId)
                         )
                     )
-                )
+                ),
+                AccessRuleQueryConverter.defaultExcludedChannelIds
             )
             assertThat(excludedIds).isEmpty()
         }
@@ -209,7 +214,8 @@ class AccessRuleConverterTest {
                             )
                         )
                     )
-                )
+                ),
+                AccessRuleQueryConverter.defaultExcludedChannelIds
             )
             assertThat(excludedIds).containsOnly("123")
         }
