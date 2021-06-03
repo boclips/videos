@@ -12,8 +12,8 @@ buildscript {
 }
 plugins {
     id 'org.springframework.boot' version '2.4.5'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.4.32'
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.plugin.spring' version "$kotlin_version"
     id 'com.adarshr.test-logger' version '3.0.0'
     id 'net.ltgt.apt' version '0.21'
 }
