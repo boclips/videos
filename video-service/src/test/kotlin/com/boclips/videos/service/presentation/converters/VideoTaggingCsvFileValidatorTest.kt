@@ -3,6 +3,12 @@ package com.boclips.videos.service.presentation.converters
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.presentation.CategoriesValid
+import com.boclips.videos.service.presentation.DataRowsContainErrors
+import com.boclips.videos.service.presentation.InvalidCategoryCode
+import com.boclips.videos.service.presentation.InvalidVideoId
+import com.boclips.videos.service.presentation.MissingVideoId
+import com.boclips.videos.service.presentation.NotCsvFile
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

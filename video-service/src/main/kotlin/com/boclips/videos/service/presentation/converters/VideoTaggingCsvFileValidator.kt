@@ -2,24 +2,22 @@ package com.boclips.videos.service.presentation.converters
 
 import arrow.core.Either
 import com.boclips.videos.service.application.GetAllCategories
+import com.boclips.videos.service.presentation.CategoriesValid
+import com.boclips.videos.service.presentation.CategoryValidationResult
+import com.boclips.videos.service.presentation.DataRowsContainErrors
+import com.boclips.videos.service.presentation.NotCsvFile
+import com.boclips.videos.service.presentation.VideoIdOrCategoryCodeColumnIsMissing
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.util.CSVFieldNumDifferentException
 import org.springframework.core.io.InputStreamSource
-import org.springframework.stereotype.Component
 import java.io.InputStream
 
-@Component
 class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
-
     fun validate(input: InputStreamSource?): CategoryValidationResult {
-        val inputStream = input?.inputStream
-        if (inputStream == null) {
-            throw RuntimeException("file is empty!")
-        }
-        val parsedFile = readCsvFile(inputStream)
-        return when {
-            parsedFile is Either.Left -> validateMappings(parsedFile.value)
-            else -> (parsedFile as Either.Right).value
+        val inputStream = input?.inputStream ?: throw RuntimeException("file is empty!")
+        return when (val parsedFile = readCsvFile(inputStream)) {
+            is Either.Left -> validateMappings(parsedFile.value)
+            is Either.Right -> parsedFile.value
         }
     }
 
@@ -28,16 +26,16 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
             return VideoIdOrCategoryCodeColumnIsMissing
         }
 
-        val errors = emptyList<VideoTaggingValidationError>().toMutableList()
         val categoryCodes = getAllCategories().map { it.code.value }
-        for ((index, item) in items.withIndex()) {
-            CategoryMappingValidator.validateMapping(index, item, categoryCodes)?.let { errors.add(it) }
+        val errors = items.mapIndexedNotNull { index, item ->
+            CategoryMappingValidator.validateMapping(index, item, categoryCodes)
         }
 
-        if (errors.isEmpty()) {
-            return CategoriesValid(items.size)
+
+        return if (errors.isEmpty()) {
+            CategoriesValid(items.size)
         } else {
-            return DataRowsContainErrors(errors = errors)
+            DataRowsContainErrors(errors = errors)
         }
     }
 
@@ -45,14 +43,14 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
         items.firstOrNull()?.categoryCode == null || items.firstOrNull()?.videoId == null
 
     private fun readCsvFile(inputStream: InputStream): Either<List<CategoryMappingMetadata>, NotCsvFile> {
-        try {
-            return Either.Left(
+        return try {
+            Either.Left(
                 csvReader()
                     .readAllWithHeader(inputStream)
                     .map { toMetadata(it) }
             )
         } catch (e: CSVFieldNumDifferentException) {
-            return Either.Right(NotCsvFile)
+            Either.Right(NotCsvFile)
         }
     }
 

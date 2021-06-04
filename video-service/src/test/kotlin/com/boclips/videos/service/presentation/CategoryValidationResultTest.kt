@@ -1,8 +1,6 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.presentation.converters.*
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class CategoryValidationResultTest {

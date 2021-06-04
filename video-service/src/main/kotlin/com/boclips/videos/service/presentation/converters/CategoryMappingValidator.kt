@@ -1,5 +1,9 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.videos.service.presentation.InvalidCategoryCode
+import com.boclips.videos.service.presentation.InvalidVideoId
+import com.boclips.videos.service.presentation.MissingVideoId
+import com.boclips.videos.service.presentation.VideoTaggingValidationError
 import org.bson.types.ObjectId
 
 object CategoryMappingValidator {

@@ -1,15 +1,10 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.videos.service.domain.model.taxonomy.Category
-import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
-import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.presentation.InvalidCategoryCode
+import com.boclips.videos.service.presentation.InvalidVideoId
+import com.boclips.videos.service.presentation.MissingVideoId
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.InputStreamResource
-import com.boclips.videos.service.presentation.converters.CategoryMappingMetadata
 
 class CategoryMappingValidatorTest {
 
