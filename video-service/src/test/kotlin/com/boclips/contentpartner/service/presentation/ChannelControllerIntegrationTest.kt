@@ -1093,7 +1093,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("Channel 2")))
                 .andExpect(jsonPath("$._embedded.channels[2].name", equalTo("Channel 3")))
                 .andExpect(jsonPath("$._embedded.channels[3].name", equalTo("Channel 4")))
-                .andExpect(jsonPath("$.page.size", equalTo(4)))
+                .andExpect(jsonPath("$.page.size", equalTo(10000)))
                 .andExpect(jsonPath("$.page.totalElements", equalTo(4)))
                 .andExpect(jsonPath("$.page.totalPages", equalTo(1)))
                 .andExpect(jsonPath("$.page.number", equalTo(0)))

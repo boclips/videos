@@ -117,7 +117,8 @@ class ChannelIndexFake :
 
     private fun performSearch(index: Map<String, ChannelMetadata>, query: ChannelQuery): List<String> {
         return index.filter { item ->
-            query.ingestTypes.isEmpty() || query.ingestTypes.contains(item.value.ingestType)
+            (query.ingestTypes.isEmpty() || query.ingestTypes.contains(item.value.ingestType)) &&
+            (query.phrase.isEmpty() || query.phrase == item.value.name)
         }.map { it.key }
     }
 }

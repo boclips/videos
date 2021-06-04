@@ -129,23 +129,33 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by channel ids`() {
-        val contentProviderName = "enabled-cp2"
+        val channel = saveChannel(name = "Elephant channel")
+
         val newVideoId = saveVideo(
             playbackId = PlaybackId(value = "ref-id-876", type = PlaybackProviderType.KALTURA),
             title = "powerful video about elephants",
             description = "test description 3",
             date = "2018-02-11",
             duration = Duration.ofSeconds(23),
-            newChannelName = contentProviderName,
+            existingChannelId = channel.id.value,
             legalRestrictions = "None"
         ).value
-        val channel = getChannel(contentProviderName)
+
+        val otherNewVideoId = saveVideo(
+            playbackId = PlaybackId(value = "ref-id-877", type = PlaybackProviderType.KALTURA),
+            title = "more powerful video about elephants",
+            description = "test description 3",
+            date = "2018-02-11",
+            duration = Duration.ofSeconds(23),
+            existingChannelId = channel.id.value,
+            legalRestrictions = "None"
+        ).value
 
         mockMvc.perform(get("/v1/videos?channel=${channel.id.value}").asTeacher(email = userAssignedToOrganisation().idOrThrow().value))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(2)))
-            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(youtubeVideoId)))
-            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(newVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(newVideoId)))
+            .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(otherNewVideoId)))
     }
 
     @Test

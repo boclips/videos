@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.application.channel.UpdateChannel
 import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
 import com.boclips.contentpartner.service.application.legalrestriction.CreateLegalRestrictions
 import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -14,6 +15,8 @@ import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.flavorAsset.Asset
 import com.boclips.kalturaclient.media.MediaEntry
 import com.boclips.kalturaclient.media.MediaEntryStatus
+import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
@@ -27,6 +30,7 @@ import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.users.api.response.organisation.DealResource
+import com.boclips.videos.api.common.IngestType
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.VideoServiceApiFactory.Companion.createCollectionRequest

@@ -6,15 +6,18 @@ import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.common.IngestType
+import org.apache.lucene.queries.intervals.Intervals
 import com.boclips.search.service.domain.channels.model.IngestType as ChannelSearchIngestType
 
 data class ChannelRequest(
+    val name: String? = null,
     val ingestTypes: List<IngestType>? = emptyList(),
     val sortBy: ChannelSortKey?,
     val pageRequest: PageRequest
 ) {
     fun toQuery(): ChannelQuery {
         return ChannelQuery(
+            phrase = name ?: "",
             ingestTypes = ingestTypes?.map {
                 when (it) {
                     IngestType.MANUAL -> ChannelSearchIngestType.MANUAL
