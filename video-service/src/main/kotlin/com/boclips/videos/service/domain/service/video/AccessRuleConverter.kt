@@ -5,9 +5,9 @@ import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.VideoType
 import com.boclips.videos.service.application.common.QueryConverter
-import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import java.util.Locale
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 import com.boclips.videos.service.domain.model.video.VoiceType as VideoVoiceType
@@ -62,13 +62,17 @@ object AccessRuleConverter {
                 .toSet()
         }
 
-    fun mapToExcludedChannelIds(videoAccess: VideoAccess): Set<String> =
+    fun mapToExcludedChannelIds(videoAccess: VideoAccess, defaultExcludedChannelIds: Set<ChannelId>): Set<String> =
         when (videoAccess) {
             VideoAccess.Everything -> emptySet()
             is VideoAccess.Rules -> videoAccess.accessRules
                 .filterIsInstance<VideoAccessRule.ExcludedChannelIds>()
                 .flatMap { accessRule -> accessRule.channelIds.map { id -> id.value } }
                 .toSet()
+                .plus(defaultExcludedChannelIds.map(ChannelId::value))
+                .minus(
+                    videoAccess.accessRules.filterIsInstance<VideoAccessRule.IncludedHiddenChannelIds>()
+                        .flatMap { accessRule -> accessRule.channelIds.map { id -> id.value } })
         }
 
     fun isEligibleForStreaming(videoAccess: VideoAccess): Boolean? =

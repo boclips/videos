@@ -7,11 +7,19 @@ import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
-import java.util.*
+import java.util.Locale
+
+object ExtraRules {
+    var rules: List<VideoAccessRule> = emptyList()
+}
 
 class ApiAccessRulesConverter(
     private val collectionRepository: CollectionRepository
@@ -78,10 +86,7 @@ class ApiAccessRulesConverter(
             }
         }
 
-        return when {
-            videoAccessRules.isNotEmpty() -> VideoAccess.Rules(videoAccessRules)
-            else -> VideoAccess.Everything
-        }
+        return VideoAccess.Rules(videoAccessRules.plus(ExtraRules.rules))
     }
 
     override fun toCollectionAccess(

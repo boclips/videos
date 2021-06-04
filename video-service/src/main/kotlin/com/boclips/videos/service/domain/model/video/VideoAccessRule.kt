@@ -42,6 +42,12 @@ sealed class VideoAccessRule {
         }
     }
 
+    data class IncludedHiddenChannelIds(val channelIds: Set<ChannelId>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(includes hidden ${channelIds.size} channels)"
+        }
+    }
+
     data class IncludedDistributionMethods(val distributionMethods: Set<DistributionMethod>) : VideoAccessRule() {
         override fun toString(): String {
             return "VideoAccessRule(restricted to included $distributionMethods distribution methods)"

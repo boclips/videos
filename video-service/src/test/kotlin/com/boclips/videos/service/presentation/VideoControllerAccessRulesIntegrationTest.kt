@@ -5,12 +5,18 @@ import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.request.AccessRuleQueryConverter
+import com.boclips.videos.service.infrastructure.accessrules.ExtraRules
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,14 +24,54 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 
 class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @BeforeEach
+    internal fun setUp() {
+        AccessRuleQueryConverter.defaultExcludedChannelIds = emptySet()
+    }
+
     @Nested
     inner class VideoSearch {
+        @Test
+        fun `hidden channels aren't included in search by default`() {
+            val hiddenChannel = saveChannel()
+            AccessRuleQueryConverter.defaultExcludedChannelIds = setOf(ChannelId(hiddenChannel.id.value))
+
+            saveVideo(title = "hidden video", existingChannelId = hiddenChannel.id.value)
+            saveVideo(title = "shown video")
+
+            removeAccessToVideoTypes("api-user@gmail.com", VideoType.NEWS)
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+                .andExpect(jsonPath("$._embedded.videos[*].title", equalTo(listOf("shown video"))))
+        }
+
+        @Test
+        fun `hidden channels are included for orgs that want them`() {
+            val hiddenChannel = saveChannel()
+            val channelId = ChannelId(hiddenChannel.id.value)
+            AccessRuleQueryConverter.defaultExcludedChannelIds = setOf(channelId)
+
+            saveVideo(title = "hidden video", existingChannelId = hiddenChannel.id.value)
+            saveVideo(title = "shown video")
+
+            ExtraRules.rules = listOf(VideoAccessRule.IncludedHiddenChannelIds(setOf(channelId)))
+
+            mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+                .andExpect(
+                    jsonPath(
+                        "$._embedded.videos[*].title",
+                        Matchers.containsInAnyOrder("shown video", "hidden video")
+                    )
+                )
+        }
+
         @Test
         fun `limits search results to included videoIds`() {
             saveVideo(title = "A non-contracted video")
