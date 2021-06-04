@@ -5,6 +5,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
 import com.boclips.contentpartner.service.domain.service.EventConverter
 import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.contentpartner.ChannelUpdateIndex
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 
@@ -58,6 +59,13 @@ class ChannelRepositoryEventDecorator(
             ContentPartnerUpdated
                 .builder()
                 .contentPartner(eventConverter.toContentPartnerPayload(channel, allSubjects))
+                .build()
+        )
+
+        eventBus.publish(
+            ChannelUpdateIndex
+                .builder()
+                .channel(eventConverter.toContentPartnerPayload(channel, allSubjects))
                 .build()
         )
     }

@@ -1,26 +1,20 @@
 package com.boclips.videos.service.application
 
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.contentpartner.ContentPartnerUpdated
-import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.channel.Channel
-import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId as ChannelServiceChannelId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId as VideoServiceChannelId
 
 class ChannelUpdated(
     private val videoRepository: VideoRepository,
-    private val channelRepository: ChannelRepository,
-    private val channelIndex: ChannelIndex
 ) {
     companion object : KLogging()
 
@@ -29,11 +23,6 @@ class ChannelUpdated(
         val contentPartner = contentPartnerUpdatedEvent.contentPartner
 
         val videoServiceChannelId = VideoServiceChannelId(value = contentPartner.id.value)
-
-        val updatedChannel = channelRepository.findById(ChannelServiceChannelId(value = contentPartner.id.value))
-            ?: throw ChannelNotFoundException(channelId = contentPartner.id.value)
-
-        channelIndex.upsert(sequenceOf(updatedChannel))
 
         logger.info { "Updated channel index for channel: ${contentPartner.id}" }
 

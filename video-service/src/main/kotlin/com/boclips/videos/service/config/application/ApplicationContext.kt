@@ -445,7 +445,7 @@ class ApplicationContext(
 
     @Bean
     fun contentPartnerUpdated(): ChannelUpdated {
-        return ChannelUpdated(videoRepository, channelRepository, channelIndex)
+        return ChannelUpdated(videoRepository)
     }
 
     @Bean

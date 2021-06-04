@@ -2,12 +2,7 @@ package com.boclips.contentpartner.service.config
 
 import com.boclips.contentpartner.service.application.agerange.CreateAgeRange
 import com.boclips.contentpartner.service.application.agerange.GetAgeRange
-import com.boclips.contentpartner.service.application.channel.BroadcastChannels
-import com.boclips.contentpartner.service.application.channel.ChannelUpdatesConverter
-import com.boclips.contentpartner.service.application.channel.ContractUpdated
-import com.boclips.contentpartner.service.application.channel.CreateChannel
-import com.boclips.contentpartner.service.application.channel.GetChannel
-import com.boclips.contentpartner.service.application.channel.GetChannels
+import com.boclips.contentpartner.service.application.channel.*
 import com.boclips.contentpartner.service.application.contract.BroadcastContracts
 import com.boclips.contentpartner.service.application.contract.ContractConverter
 import com.boclips.contentpartner.service.application.contract.CreateContract
@@ -44,6 +39,7 @@ import com.boclips.contentpartner.service.presentation.hateoas.UriComponentsBuil
 import com.boclips.eventbus.EventBus
 import com.boclips.videos.service.application.GetCategoryWithAncestors
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -57,7 +53,8 @@ class ApplicationContext(
     val contractLegalRestrictionsRepository: ContractLegalRestrictionsRepository,
     val subjectRepository: SubjectRepository,
     val eventConverter: EventConverter,
-    val eventBus: EventBus
+    val eventBus: EventBus,
+    val channelIndex: ChannelIndex
 ) {
     @Bean
     fun getChannel(): GetChannel {
@@ -91,6 +88,10 @@ class ApplicationContext(
             contractRepository = contractRepository,
             channelRepository = channelRepository
         )
+
+    @Bean
+    fun updateChannelIndex() : UpdateChannelIndex =
+        UpdateChannelIndex(channelRepository = channelRepository, channelIndex = channelIndex)
 
     @Bean
     fun findAllContractLegalRestrictions(): FindAllContractLegalRestrictions {
