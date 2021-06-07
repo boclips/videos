@@ -39,6 +39,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         const val GET_METADATA = "getMetadata"
         const val GET_VIDEO_PRICE = "getVideoPrice"
         const val TAG_VIDEOS = "tagVideos"
+        const val DOWNLOAD_CAPTIONS = "downloadCaptions"
     }
 
     fun self(videoId: String?): HateoasLink {
@@ -162,6 +163,17 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             )
         } else {
             null
+        }
+    }
+
+    fun downloadCaption(videoId: String?): HateoasLink? {
+        return videoId?.let {
+            HateoasLink.of(
+                WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(VideoController::class.java)
+                        .getCaptions(videoId = videoId, shouldDownload = true, useHumanGeneratedOnly = true)
+                ).withRel(Rels.DOWNLOAD_CAPTIONS)
+            )
         }
     }
 

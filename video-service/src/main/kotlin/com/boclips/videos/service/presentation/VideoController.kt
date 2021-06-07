@@ -96,6 +96,7 @@ class VideoController(
     private val videosRepository: VideoRepository,
     private val getVideoPrice: GetVideoPrice,
     private val tagVideosWithCategories: TagVideosWithCategories,
+    private val videoMetadataConverter: VideoMetadataConverter,
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
@@ -444,7 +445,7 @@ class VideoController(
         return ResponseEntity.ok(assets)
     }
 
-    // TODO: it's a temporary solution only for christmas time
+    // TODO: it's a temporary solution only for christmas time 🎅🌲🎅🌲🎅🌲🎅
     @PostMapping("/v1/videos/metadata")
     fun getMetadata(@Valid @RequestBody metadataRequest: MetadataRequest?): ResponseEntity<VideoMetadataResponse> {
         val videoIds = metadataRequest!!.ids.map { VideoId(it) }
@@ -452,10 +453,10 @@ class VideoController(
         val videos = videosRepository.findAll(videoIds)
 
         val videoToCaptionLinkMap =
-            videos.associate { it.videoId.value to getVideoUrlAssets(it.videoId.value, getCurrentUser()) }
+            videos.associate { it.videoId.value to videoCaptionService.getCaption(it.videoId.value, true) }
         val videosResource = videoToResourceConverter.convert(videos, getCurrentUser())
 
-        val convertVideosToRequiredMetadata = VideoMetadataConverter.convert(videosResource, videoToCaptionLinkMap)
+        val convertVideosToRequiredMetadata = videoMetadataConverter.convert(videosResource, videoToCaptionLinkMap)
         val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
         return ResponseEntity(response, HttpStatus.OK)
     }

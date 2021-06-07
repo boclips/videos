@@ -14,6 +14,7 @@ import com.boclips.videos.service.presentation.converters.CollectionResourceConv
 import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
 import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
 import com.boclips.videos.service.presentation.converters.TagConverter
+import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
@@ -102,6 +103,13 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
             videoChannelService = videoChannelService,
             getSubjects = getSubjects
         )
+    }
+
+    @Bean
+    fun videoMetadataConverter(
+        videosLinkBuilder: VideosLinkBuilder
+    ): VideoMetadataConverter {
+        return VideoMetadataConverter(videosLinkBuilder)
     }
 
     @Bean

@@ -128,22 +128,24 @@ class VideosLinkBuilderTest {
 
         val link = videosLinkBuilder.searchVideosLink()!!
 
-        assertThat(link.href).contains("/v1/videos{?" +
-            "query,id,sort_by," +
-            "duration,duration_facets,duration_min,duration_max," +
-            "released_date_from,released_date_to," +
-            "source," +
-            "age_range_min,age_range_max,age_range,age_range_facets," +
-            "size,page," +
-            "subject,subjects_set_manually," +
-            "promoted," +
-            "content_partner," +
-            "type," +
-            "channel," +
-            "resource_types,resource_type_facets," +
-            "include_channel_facets," +
-            "prices," +
-            "category_code}")
+        assertThat(link.href).contains(
+            "/v1/videos{?" +
+                "query,id,sort_by," +
+                "duration,duration_facets,duration_min,duration_max," +
+                "released_date_from,released_date_to," +
+                "source," +
+                "age_range_min,age_range_max,age_range,age_range_facets," +
+                "size,page," +
+                "subject,subjects_set_manually," +
+                "promoted," +
+                "content_partner," +
+                "type," +
+                "channel," +
+                "resource_types,resource_type_facets," +
+                "include_channel_facets," +
+                "prices," +
+                "category_code}"
+        )
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
         assertThat(link.templated).isTrue()
     }
@@ -154,23 +156,25 @@ class VideosLinkBuilderTest {
 
         val link = videosLinkBuilder.searchVideosByText("search")!!
 
-        assertThat(link.href).contains("/v1/videos?query=search{&" +
-            "id," +
-            "sort_by," +
-            "duration,duration_facets,duration_min,duration_max," +
-            "released_date_from,released_date_to," +
-            "source," +
-            "age_range_min,age_range_max,age_range,age_range_facets," +
-            "size,page," +
-            "subject,subjects_set_manually," +
-            "promoted," +
-            "content_partner," +
-            "channel," +
-            "type," +
-            "resource_types,resource_type_facets," +
-            "include_channel_facets," +
-            "prices," +
-            "category_code}")
+        assertThat(link.href).contains(
+            "/v1/videos?query=search{&" +
+                "id," +
+                "sort_by," +
+                "duration,duration_facets,duration_min,duration_max," +
+                "released_date_from,released_date_to," +
+                "source," +
+                "age_range_min,age_range_max,age_range,age_range_facets," +
+                "size,page," +
+                "subject,subjects_set_manually," +
+                "promoted," +
+                "content_partner," +
+                "channel," +
+                "type," +
+                "resource_types,resource_type_facets," +
+                "include_channel_facets," +
+                "prices," +
+                "category_code}"
+        )
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.SEARCH_VIDEOS)
         assertThat(link.templated).isTrue()
     }
@@ -230,6 +234,17 @@ class VideosLinkBuilderTest {
         assertThat(link!!.href).endsWith("/v1/videos/$videoId/transcript")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.TRANSCRIPT)
         assertThat(link.templated).isFalse()
+    }
+
+    @Test
+    fun `human generated caption link when not authenticated`() {
+        val videoId = aValidId()
+        val link = videosLinkBuilder.downloadCaption(videoId)
+
+        assertThat(link).isNotNull
+        assertThat(link!!.href).endsWith("/v1/videos/$videoId/captions?download=true&human-generated=true")
+        assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.DOWNLOAD_CAPTIONS)
+        assertThat(link.templated).isFalse
     }
 
     @Test
