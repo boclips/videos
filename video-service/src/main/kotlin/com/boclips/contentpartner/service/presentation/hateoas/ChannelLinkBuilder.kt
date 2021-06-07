@@ -1,35 +1,42 @@
 package com.boclips.contentpartner.service.presentation.hateoas
 
-import com.boclips.contentpartner.service.presentation.channel.ChannelController
 import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
-import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 class ChannelLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
     object Rels {
         const val CHANNELS = "channels"
+        const val CHANNEL = "channel"
     }
 
-    fun self(id: String): HateoasLink {
-        val withSelfRel = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ChannelController::class.java).getChannel(
-                id
-            )
-        ).withSelfRel()
+    private fun hasId(id: String?): String {
+        return when (id) {
+            null -> "/{id}"
+            else -> "/$id"
+        }
+    }
 
-        return HateoasLink(href = withSelfRel.href, rel = withSelfRel.rel.value())
+    fun self(id: String): Link {
+        return Link.of(
+            getChannelsRoot()
+                .build()
+                .toUriString()
+                .plus(hasId(id)),
+            "self"
+        )
     }
 
     fun channelLink(id: String?): Link? {
         return getIfHasRole(UserRoles.VIEW_CHANNELS) {
-            WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ChannelController::class.java).getChannel(
-                    id
-                )
-            ).withRel("channel")
+            Link.of(
+                getChannelsRoot()
+                    .build()
+                    .toUriString()
+                    .plus(hasId(id)),
+                Rels.CHANNEL
+            )
         }
     }
 

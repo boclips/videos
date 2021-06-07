@@ -47,7 +47,7 @@ class ContractController(
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(required = false) projection: Projection? = null,
-        ): ResponseEntity<ContractsResource> {
+    ): ResponseEntity<ContractsResource> {
         val resources = fetch(page = page, size = size).let { toResourceConverter.convert(it, projection) }
 
         return ResponseEntity(resources, HttpStatus.OK)
@@ -78,7 +78,8 @@ class ContractController(
                         "Location",
                         contractsLinkBuilder.self(contractId.id.value).href
                     )
-                }, HttpStatus.CREATED
+                },
+                HttpStatus.CREATED
             )
         } catch (e: Exception) {
             print(e)
@@ -103,11 +104,14 @@ class ContractController(
         @RequestBody signedLinkRequest: SignedLinkRequest
     ): ResponseEntity<Void> {
         val link = contractSignedLinkProvider.signedPutLink(signedLinkRequest.filename)
-        return ResponseEntity(HttpHeaders().apply {
-            set(
-                "Location",
-                link.toString()
-            )
-        }, HttpStatus.NO_CONTENT)
+        return ResponseEntity(
+            HttpHeaders().apply {
+                set(
+                    "Location",
+                    link.toString()
+                )
+            },
+            HttpStatus.NO_CONTENT
+        )
     }
 }

@@ -38,8 +38,8 @@ class ChannelController(
     private val videoRepository: VideoRepository,
     private val createChannel: CreateChannel,
     private val updateChannel: UpdateChannel,
-    private val fetchChannel: GetChannel,
-    private val fetchChannels: GetChannels,
+    private val getChannel: GetChannel,
+    private val getChannels: GetChannels,
     private val channelLinkBuilder: ChannelLinkBuilder,
     private val channelToResourceConverter: ChannelToResourceConverter,
     private val marketingSignedLinkProvider: SignedLinkProvider
@@ -76,9 +76,9 @@ class ChannelController(
     }
 
     @GetMapping
-    fun getChannels(channelFilterRequest: ChannelFilterRequest): ChannelsResource {
+    fun channels(channelFilterRequest: ChannelFilterRequest): ResponseEntity<ChannelsResource> {
 
-        val channelsPageResult = fetchChannels(
+        val channelsPageResult = getChannels(
             name = channelFilterRequest.name,
             ingestTypes = channelFilterRequest.ingestType?.map {
                 IngestTypeConverter.convertType(it)
@@ -96,14 +96,16 @@ class ChannelController(
             page = channelFilterRequest.page
         )
 
-        return channelToResourceConverter.convert(channelsPageResult, channelFilterRequest.projection)
+        val channelsResource = channelToResourceConverter.convert(channelsPageResult, channelFilterRequest.projection)
+
+        return ResponseEntity(channelsResource, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")
-    fun getChannel(@PathVariable("id") @NotBlank channelId: String?): ResponseEntity<ChannelResource> {
-        val channelResource = fetchChannel(channelId!!)
+    fun channel(@PathVariable("id") @NotBlank channelId: String?): ResponseEntity<ChannelResource> {
+        val channelResource = getChannel(channelId!!)
             .let { channelToResourceConverter.convert(it, Projection.details) }
-            .copy(_links = listOf(channelLinkBuilder.self(channelId)).map { it.rel to it }.toMap())
+            .copy(_links = listOf(channelLinkBuilder.self(channelId)).map { it.rel.value() to it }.toMap())
 
         return ResponseEntity(channelResource, HttpStatus.OK)
     }

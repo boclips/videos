@@ -3,10 +3,9 @@ package com.boclips.videos.api.response.channel
 import ChannelTaxonomyResource
 import com.boclips.videos.api.BoclipsInternalProjection
 import com.boclips.videos.api.PublicApiProjection
-import com.boclips.videos.api.response.HateoasLink
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonView
-import java.time.Period
+import org.springframework.hateoas.Link
 
 data class ChannelResource(
     @get:JsonView(PublicApiProjection::class)
@@ -51,5 +50,5 @@ data class ChannelResource(
     val taxonomy: ChannelTaxonomyResource? = null,
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var _links: Map<String, HateoasLink>? = null
+    var _links: Map<String, Link>? = null
 )

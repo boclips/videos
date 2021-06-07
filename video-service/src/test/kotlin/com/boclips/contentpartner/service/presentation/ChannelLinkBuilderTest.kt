@@ -33,4 +33,26 @@ class ChannelLinkBuilderTest {
         assertThat(link.rel.value()).isEqualTo(ChannelLinkBuilder.Rels.CHANNELS)
         assertThat(link.isTemplated).isTrue
     }
+
+    @Test
+    fun `single channel link when authenticated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_CHANNELS)
+
+        val link = channelLinkBuilder.channelLink("123")
+
+        assertThat(link?.href).endsWith("/v1/channels/123")
+        assertThat(link?.rel?.value()).isEqualTo(ChannelLinkBuilder.Rels.CHANNEL)
+        assertThat(link?.isTemplated).isFalse
+    }
+
+    @Test
+    fun `single channel null link when authenticated`() {
+        setSecurityContext("teacher@boclips.com", UserRoles.VIEW_CHANNELS)
+
+        val link = channelLinkBuilder.channelLink(null)
+
+        assertThat(link?.href).endsWith("/v1/channels/{id}")
+        assertThat(link?.rel?.value()).isEqualTo(ChannelLinkBuilder.Rels.CHANNEL)
+        assertThat(link?.isTemplated).isTrue
+    }
 }
