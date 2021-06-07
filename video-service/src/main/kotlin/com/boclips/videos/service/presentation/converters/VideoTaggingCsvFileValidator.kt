@@ -15,13 +15,15 @@ import java.io.InputStream
 class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
     fun validate(input: InputStreamSource?): CategoryValidationResult {
         val inputStream = input?.inputStream ?: throw RuntimeException("file is empty!")
-        return when (val parsedFile = readCsvFile(inputStream)) {
+        val parsedFile: Either<List<RawCategoryMappingMetadata>, NotCsvFile> = readCsvFile(inputStream)
+
+        return when (parsedFile) {
             is Either.Left -> validateMappings(parsedFile.value)
             is Either.Right -> parsedFile.value
         }
     }
 
-    private fun validateMappings(items: List<CategoryMappingMetadata>): CategoryValidationResult {
+    private fun validateMappings(items: List<RawCategoryMappingMetadata>): CategoryValidationResult {
         if (categoryCodeOrVideoIdColumnIsMissing(items)) {
             return VideoIdOrCategoryCodeColumnIsMissing
         }
@@ -33,16 +35,16 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
 
 
         return if (errors.isEmpty()) {
-            CategoriesValid(items.size)
+            CategoriesValid(items.map { it.validated() })
         } else {
             DataRowsContainErrors(errors = errors)
         }
     }
 
-    private fun categoryCodeOrVideoIdColumnIsMissing(items: List<CategoryMappingMetadata>) =
+    private fun categoryCodeOrVideoIdColumnIsMissing(items: List<RawCategoryMappingMetadata>) =
         items.firstOrNull()?.categoryCode == null || items.firstOrNull()?.videoId == null
 
-    private fun readCsvFile(inputStream: InputStream): Either<List<CategoryMappingMetadata>, NotCsvFile> {
+    private fun readCsvFile(inputStream: InputStream): Either<List<RawCategoryMappingMetadata>, NotCsvFile> {
         return try {
             Either.Left(
                 csvReader()
@@ -54,9 +56,9 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
         }
     }
 
-    private fun toMetadata(row: Map<String, String>): CategoryMappingMetadata {
+    private fun toMetadata(row: Map<String, String>): RawCategoryMappingMetadata {
         val categoryCode = row["Category Code"]
         val videoId = row["ID"]
-        return CategoryMappingMetadata(categoryCode = categoryCode, videoId = videoId)
+        return RawCategoryMappingMetadata(categoryCode = categoryCode, videoId = videoId)
     }
 }

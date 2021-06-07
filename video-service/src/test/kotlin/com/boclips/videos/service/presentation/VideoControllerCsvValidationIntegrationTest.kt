@@ -1,15 +1,21 @@
 package com.boclips.videos.service.presentation
 
-import com.boclips.videos.service.testsupport.*
-import org.hamcrest.Matchers.*
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.CategoryFactory
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.io.File
 
 class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -78,6 +84,32 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.message", equalTo("Data has been successfully imported!")))
         }
+
+        @Test
+        fun `tags a video with the categories specified in the csv`() {
+            addCategory(CategoryFactory.sample("A"))
+
+            val videoId = saveVideo(categories = emptyList())
+            val csvFile = File.createTempFile("temp", "csv")
+
+            csvFile.printWriter().use { out ->
+                out.println("ID,Category Code")
+                out.println("${videoId.value},A")
+            }
+            csvFile.deleteOnExit()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", csvFile.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+
+            mockMvc.perform(get("/v1/videos/${videoId}").asBoclipsEmployee())
+                .andExpect(jsonPath("$.id", equalTo(videoId.value)))
+                .andExpect(jsonPath("$.taxonomy.manual.categories", hasSize<Int>(1)))
+                .andExpect(jsonPath("$.taxonomy.manual.categories[0].codeValue", equalTo("A")))
+        }
     }
 
     @Nested
@@ -91,8 +123,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", imageFile.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "The file is not a valid CSV format")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "The file is not a valid CSV format"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -104,8 +141,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidBothColumnsMissing.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "The file must have both 'Category Code' and 'ID' columns")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "The file must have both 'Category Code' and 'ID' columns"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -117,8 +159,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidNoCategoryCodeColumnNoData.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "The file must have both 'Category Code' and 'ID' columns")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "The file must have both 'Category Code' and 'ID' columns"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -130,8 +177,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidWrongColumnsAndWrongData.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "The file must have both 'Category Code' and 'ID' columns")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "The file must have both 'Category Code' and 'ID' columns"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -143,8 +195,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", noCategoryCodeColumn.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "The file must have both 'Category Code' and 'ID' columns")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "The file must have both 'Category Code' and 'ID' columns"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -156,8 +213,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidNoVideoIdValue.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "Rows 1 are missing a video ID")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "Rows 1 are missing a video ID"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -169,8 +231,13 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidData.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo(
-                    "Rows 1 contain invalid Video IDs - one")))
+                .andExpect(
+                    jsonPath(
+                        "$.message", equalTo(
+                            "Rows 1 contain invalid Video IDs - one"
+                        )
+                    )
+                )
         }
 
         @Test
@@ -180,7 +247,12 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .file("file", invalidCategoryCodeCsv.file.readBytes())
                     .asBoclipsEmployee()
             ).andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.message", equalTo("Rows 1 contain invalid or unknown category codes - gibberish")))
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Rows 1 contain invalid or unknown category codes - gibberish")
+                    )
+                )
         }
 
         @Test

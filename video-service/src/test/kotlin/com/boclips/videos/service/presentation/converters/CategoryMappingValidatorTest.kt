@@ -12,7 +12,7 @@ class CategoryMappingValidatorTest {
     fun `returns null when mapping valid`() {
         val result = CategoryMappingValidator.validateMapping(
             0,
-            CategoryMappingMetadata(
+            RawCategoryMappingMetadata(
                 categoryCode = "A",
                 videoId = "5c542aba5438cdbcb56de630"
             ),
@@ -25,7 +25,7 @@ class CategoryMappingValidatorTest {
     fun `returns error when invalid category code provided`() {
         val result = CategoryMappingValidator.validateMapping(
             0,
-            CategoryMappingMetadata(
+            RawCategoryMappingMetadata(
                 categoryCode = "gibberish",
                 videoId = "5c542aba5438cdbcb56de630"
             ),
@@ -38,7 +38,7 @@ class CategoryMappingValidatorTest {
     fun `returns error when invalid object id provided for video id`() {
         val result = CategoryMappingValidator.validateMapping(
             0,
-            CategoryMappingMetadata(
+            RawCategoryMappingMetadata(
                 categoryCode = "A",
                 videoId = "invalid"
             ),
@@ -56,7 +56,7 @@ class CategoryMappingValidatorTest {
     fun `returns error when a row is missing video id`() {
         val result = CategoryMappingValidator.validateMapping(
             0,
-            CategoryMappingMetadata(
+            RawCategoryMappingMetadata(
                 categoryCode = "A",
                 videoId = ""
             ),

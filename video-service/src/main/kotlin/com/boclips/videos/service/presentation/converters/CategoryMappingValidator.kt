@@ -10,7 +10,7 @@ object CategoryMappingValidator {
 
     fun validateMapping(
         index: Int,
-        item: CategoryMappingMetadata,
+        item: RawCategoryMappingMetadata,
         categoryCodes: List<String>
     ): VideoTaggingValidationError? =
         if (item.videoId.isNullOrEmpty()) {

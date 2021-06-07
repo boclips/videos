@@ -32,7 +32,8 @@ class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns success when valid`() {
         val result = videoTaggingCsvFileValidator.validate(fixture("video_tagging_csvs/valid.csv"))
-        assertThat(result).isEqualTo(CategoriesValid(entries = 4))
+        assertThat(result).isInstanceOf(CategoriesValid::class.java)
+        assertThat((result as CategoriesValid).entries).hasSize(4)
     }
 
     @Test

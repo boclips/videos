@@ -10,12 +10,44 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddCategories
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsDuplicate
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveAttachments
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveSubject
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAdditionalDescription
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAttachments
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCategories
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceChannel
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentTypes
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentWarnings
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCustomThumbnail
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLegalRestrictions
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjectsWereSetManually
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceThumbnailSecond
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.*
+import com.boclips.videos.service.infrastructure.video.converters.ChannelDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.ContentWarningDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
+import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
@@ -26,6 +58,7 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.SetTo
 import org.litote.kmongo.`in`
+import org.litote.kmongo.addEachToSet
 import org.litote.kmongo.combine
 import org.litote.kmongo.contains
 import org.litote.kmongo.div
@@ -37,7 +70,7 @@ import org.litote.kmongo.pullByFilter
 import org.litote.kmongo.push
 import org.litote.kmongo.set
 import java.time.Instant
-import java.util.*
+import java.util.Optional
 
 class MongoVideoRepository(private val mongoClient: MongoClient, val batchProcessingConfig: BatchProcessingConfig) :
     VideoRepository {
@@ -335,6 +368,13 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                         CategorySource.MANUAL -> VideoCategoriesDocument::manual
                     }
                     ),
+                updateCommand.categories.map { CategoriesDocumentConverter.toDocument(it) }
+            )
+            is AddCategories -> addEachToSet(
+                VideoDocument::categories / when (updateCommand.source) {
+                    CategorySource.CHANNEL -> VideoCategoriesDocument::channel
+                    CategorySource.MANUAL -> VideoCategoriesDocument::manual
+                },
                 updateCommand.categories.map { CategoriesDocumentConverter.toDocument(it) }
             )
         }

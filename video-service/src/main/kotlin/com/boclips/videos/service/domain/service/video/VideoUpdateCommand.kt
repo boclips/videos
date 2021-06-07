@@ -47,5 +47,6 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
         VideoUpdateCommand(videoId)
     class MarkAsDuplicate(videoId: VideoId, val activeVideoId: VideoId) : VideoUpdateCommand(videoId)
     class ReplaceCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
+    class AddCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
 }
 

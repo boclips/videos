@@ -1,8 +1,10 @@
 package com.boclips.videos.service.presentation
 
+import com.boclips.videos.service.presentation.converters.CategoryMappingMetadata
+
 sealed class CategoryValidationResult
 
-data class CategoriesValid(val entries: Number) : CategoryValidationResult()
+data class CategoriesValid(val entries: List<CategoryMappingMetadata>) : CategoryValidationResult()
 
 sealed class CsvValidationError : CategoryValidationResult() {
     abstract fun getMessage(): String
