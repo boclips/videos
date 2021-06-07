@@ -27,7 +27,7 @@ class VideoMetadataConverter(
                 downloadCaptionUrl = videoToCaptionLinkMap[it.id]?.let { _ ->
                     videosLinkBuilder.downloadCaption(it.id)?.href
                 },
-                captionFileExtension = videoToCaptionLinkMap[it.id]!!.format.getFileExtension(),
+                captionFileExtension = videoToCaptionLinkMap[it.id]?.format?.getFileExtension(),
             )
         }
     }
