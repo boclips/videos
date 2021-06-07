@@ -16,7 +16,9 @@ abstract class ChannelSearchAdapter<T>(
     private val suggestionsIndexReader: SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
     private val indexReader: IndexReader<ChannelMetadata, ChannelQuery>,
     private val indexWriter: IndexWriter<ChannelMetadata>
-) : SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>, IndexWriter<T>, IndexReader<ChannelMetadata, ChannelQuery> {
+) : SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+    IndexWriter<T>,
+    IndexReader<ChannelMetadata, ChannelQuery> {
     override fun safeRebuildIndex(items: Sequence<T>, notifier: ProgressNotifier?) {
         indexWriter.safeRebuildIndex(items.map(::convert), notifier)
     }
@@ -46,5 +48,4 @@ abstract class ChannelSearchAdapter<T>(
     }
 
     abstract fun convert(document: T): ChannelMetadata
-
 }

@@ -33,5 +33,18 @@ class ChannelEsQuery {
                     should(QueryBuilders.matchAllQuery())
                 }
             }
+            .apply {
+                if (query.taxonomy?.categories?.isNotEmpty() == true) {
+                    filter(
+                        QueryBuilders.boolQuery()
+                            .must(
+                                QueryBuilders.termsQuery(
+                                    ChannelDocument.TAXONOMY_CATEGORIES,
+                                    query.taxonomy.categories.map { it.value }.toList()
+                                )
+                            )
+                    )
+                }
+            }
     }
 }

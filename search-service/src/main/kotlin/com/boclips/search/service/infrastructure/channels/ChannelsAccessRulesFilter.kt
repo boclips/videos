@@ -8,8 +8,9 @@ import org.elasticsearch.index.query.QueryBuilders.termsQuery
 
 class ChannelsAccessRulesFilter {
     companion object {
-        fun channelsBuildAccessRulesFilter(boolQueryBuilder: BoolQueryBuilder,
-                                           accessRulesQuery: ChannelAccessRuleQuery
+        fun channelsBuildAccessRulesFilter(
+            boolQueryBuilder: BoolQueryBuilder,
+            accessRulesQuery: ChannelAccessRuleQuery
         ): BoolQueryBuilder {
 
             if (accessRulesQuery.excludedContentPartnerIds.isNotEmpty()) {
@@ -30,7 +31,12 @@ class ChannelsAccessRulesFilter {
             }
 
             if (accessRulesQuery.isEligibleForStream != null) {
-                boolQueryBuilder.filter(QueryBuilders.termQuery(VideoDocument.ELIGIBLE_FOR_STREAM, accessRulesQuery.isEligibleForStream))
+                boolQueryBuilder.filter(
+                    QueryBuilders.termQuery(
+                        VideoDocument.ELIGIBLE_FOR_STREAM,
+                        accessRulesQuery.isEligibleForStream
+                    )
+                )
             }
 
             if (!accessRulesQuery.includedChannelIds.isNullOrEmpty()) {

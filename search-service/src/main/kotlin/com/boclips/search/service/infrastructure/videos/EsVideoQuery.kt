@@ -143,14 +143,14 @@ class EsVideoQuery {
             QueryBuilders.boostingQuery(
                 innerQuery,
                 ageRanges.fold(
-                    QueryBuilders.boolQuery(),
-                    { q, ageRange ->
-                        q.mustNot(
-                            TermsSetQueryBuilder(HasAgeRange.AGE_RANGE, ageRange.toRange()).setMinimumShouldMatchScript(
-                                Script(ScriptType.INLINE, DEFAULT_SCRIPT_LANG, "2", emptyMap())
-                            )
+                    QueryBuilders.boolQuery()
+                ) { q, ageRange ->
+                    q.mustNot(
+                        TermsSetQueryBuilder(HasAgeRange.AGE_RANGE, ageRange.toRange()).setMinimumShouldMatchScript(
+                            Script(ScriptType.INLINE, DEFAULT_SCRIPT_LANG, "2", emptyMap())
                         )
-                    })
+                    )
+                }
             ).negativeBoost(0.5F)
         }
 
@@ -159,15 +159,15 @@ class EsVideoQuery {
             QueryBuilders.boostingQuery(
                 innerQuery,
                 subjectIds.fold(
-                    QueryBuilders.boolQuery(),
-                    { q, subjectId ->
-                        q.mustNot(
-                            QueryBuilders.matchPhraseQuery(
-                                VideoDocument.SUBJECT_IDS,
-                                subjectId
-                            )
+                    QueryBuilders.boolQuery()
+                ) { q, subjectId ->
+                    q.mustNot(
+                        QueryBuilders.matchPhraseQuery(
+                            VideoDocument.SUBJECT_IDS,
+                            subjectId
                         )
-                    })
+                    )
+                }
             ).negativeBoost(0.5F)
         }
     }

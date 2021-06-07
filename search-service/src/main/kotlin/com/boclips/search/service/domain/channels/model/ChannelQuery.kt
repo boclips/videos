@@ -8,6 +8,7 @@ class ChannelQuery(
     val accessRuleQuery: ChannelAccessRuleQuery? = null,
     override val sort: List<Sort<ChannelMetadata>> = emptyList(),
     val ingestTypes: List<IngestType> = emptyList(),
+    val taxonomy: Taxonomy? = null
 ) : SearchQuery<ChannelMetadata>(phrase = phrase, sort = sort)
 
 data class ChannelAccessRuleQuery(
