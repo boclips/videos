@@ -234,8 +234,7 @@ class VideoController(
 
     @GetMapping("/v1/videos/{id}/transcript")
     fun getTranscript(@PathVariable("id") videoId: String?): ResponseEntity<String> {
-        val videoTitle =
-            searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+        val videoTitle = getVideoTitle(videoId)
 
         val videoTranscript: String = videoTranscriptService.getTranscript(videoId).let {
             if (it.contains(Regex("\\n\\n"))) {
@@ -415,12 +414,28 @@ class VideoController(
     @GetMapping("/v1/videos/{id}/captions")
     fun getCaptions(
         @PathVariable("id") videoId: String?,
-    ): ResponseEntity<CaptionsResource> {
-        videoCaptionService.getCaptionContent(videoId!!)?.let {
-            return ResponseEntity(it, HttpStatus.OK)
-        }
-        return ResponseEntity(HttpStatus.NOT_FOUND)
+        @RequestParam("download") shouldDownload: Boolean = false,
+        @RequestParam("human-generated") useHumanGeneratedOnly: Boolean = false
+    ): ResponseEntity<Any> {
+        val caption = videoCaptionService.getCaption(videoId!!, useHumanGeneratedOnly)
+
+        return caption?.let {
+            if (shouldDownload) {
+                val headers = HttpHeaders()
+                headers.set(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"${getVideoTitle(videoId)}.${it.format.getFileExtension()}\""
+                )
+
+                ResponseEntity(it.content, headers, HttpStatus.OK)
+            } else {
+                ResponseEntity(CaptionsResource(it.content), HttpStatus.OK)
+            }
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
+
+    private fun getVideoTitle(videoId: String?) =
+        searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
 
     @GetMapping("/v1/videos/{id}/assets")
     fun getAssets(@PathVariable("id") videoId: String): ResponseEntity<VideoUrlAssetsResource> {

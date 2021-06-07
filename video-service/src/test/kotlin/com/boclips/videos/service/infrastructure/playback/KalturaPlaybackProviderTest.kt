@@ -200,7 +200,7 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             language = KalturaLanguage.ENGLISH,
             entryId = "entry-id",
             captionContent = "Captions content to retrieve",
-            format = CaptionFormat.WEBVTT
+            format = CaptionFormat.WEBVTT,
 
         )
 
@@ -210,7 +210,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
             Caption(
                 content = "Captions content to retrieve",
                 format = WEBVTT,
-                default = false
+                default = false,
+                isHumanGenerated = false
             )
         )
     }

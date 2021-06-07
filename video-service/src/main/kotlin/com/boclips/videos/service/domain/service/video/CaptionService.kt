@@ -7,7 +7,6 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.UnsupportedCaptionsException
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 
 class CaptionService(
     private val videoRepository: VideoRepository,
@@ -26,9 +25,15 @@ class CaptionService(
             } ?: throw VideoNotFoundException(videoId)
     }
 
-    fun getCaptionContent(videoId: VideoId): String? {
+    fun getCaption(videoId: VideoId, humanGeneratedOnly: Boolean = false): Caption? {
         return videoRepository.find(videoId)?.let { video ->
-            playbackRepository.getCaptions(playbackId = video.playback.id).firstOrNull()?.content
+            playbackRepository.getCaptions(playbackId = video.playback.id).firstOrNull {
+                if (humanGeneratedOnly) {
+                    it.isHumanGenerated
+                } else {
+                    true
+                }
+            }
         }
     }
 

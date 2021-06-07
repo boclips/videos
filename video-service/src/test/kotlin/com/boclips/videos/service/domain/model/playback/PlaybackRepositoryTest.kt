@@ -96,17 +96,31 @@ class PlaybackRepositoryTest {
 
         playbackRepository.updateCaptionContent(playbackId, "New caption content")
 
-        assertThat(fakeKalturaClient.getCaptionContent(fakeKalturaClient.getCaptionsForVideo("1").first().id)).isEqualTo("New caption content")
+        assertThat(
+            fakeKalturaClient.getCaptionContent(
+                fakeKalturaClient.getCaptionsForVideo("1").first().id
+            )
+        ).isEqualTo("New caption content")
     }
 
     @Test
     fun `retrieves captions`() {
         val playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "1")
-        playbackRepository.uploadCaptions(playbackId, createCaptions(content = "My caption content", format = CaptionsFormat.DFXP))
+        playbackRepository.uploadCaptions(
+            playbackId,
+            createCaptions(content = "My caption content", format = CaptionsFormat.DFXP)
+        )
 
         val captionContent = playbackRepository.getCaptions(playbackId)
 
-        assertThat(captionContent).containsExactly(Caption(content = "My caption content", format = CaptionFormat.DFXP, default = false))
+        assertThat(captionContent).containsExactly(
+            Caption(
+                content = "My caption content",
+                format = CaptionFormat.DFXP,
+                default = false,
+                isHumanGenerated = false
+            )
+        )
     }
 
     @Test

@@ -85,7 +85,7 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .mvcMatchers(GET, "/v1/videos").hasRole(ROLE.VIEW_VIDEOS)
             .mvcMatchers(GET, "/v1/videos/*/transcript").permitAll()
             .mvcMatchers(PUT, "/v1/videos/*/captions").hasRole(ROLE.UPDATE_VIDEOS)
-            .mvcMatchers(GET, "/v1/videos/*/captions").hasRole(ROLE.UPDATE_VIDEOS)
+            .mvcMatchers(GET, "/v1/videos/*/captions").permitAll()
             .mvcMatchers(PUT, "/v1/videos/*/attachments").hasRole(ROLE.UPDATE_VIDEOS)
 
             .mvcMatchers(DELETE, "/v1/videos/*/playback/thumbnail").hasRole(ROLE.UPDATE_VIDEOS)

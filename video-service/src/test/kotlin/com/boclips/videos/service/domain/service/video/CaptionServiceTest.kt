@@ -2,7 +2,6 @@ package com.boclips.videos.service.domain.service.video
 
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.KalturaClient
-import com.boclips.kalturaclient.captionasset.CaptionAsset
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.domain.model.playback.PlaybackId
@@ -38,7 +37,31 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         )
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "captions content to retrieve")
 
-        assertThat(captionService.getCaptionContent(videoId)).isEqualTo("captions content to retrieve")
+        val captionContent = captionService.getCaption(videoId)?.content
+        assertThat(captionContent).isEqualTo("captions content to retrieve")
+    }
+
+    @Test
+    fun `can filter for only human generated captions`() {
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id"))
+        val autoCaptions = createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)"
+        )
+        val humanCaptions = createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English"
+        )
+        fakeKalturaClient.createCaptionForVideo("playback-id", autoCaptions, "auto content")
+        fakeKalturaClient.createCaptionForVideo("playback-id", humanCaptions, "human content")
+
+        val caption = captionService.getCaption(
+            videoId,
+            humanGeneratedOnly = true
+        )!!
+
+        assertThat(caption.isHumanGenerated).isTrue
+        assertThat(caption.content).isEqualTo("human content")
     }
 
     @Test
@@ -55,7 +78,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
             Caption(
                 content = "captions content to retrieve",
                 format = SRT,
-                default = false
+                default = false,
+                isHumanGenerated = false
             )
         )
     }

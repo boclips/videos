@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.kalturaclient.KalturaCaptionManager
 import com.boclips.kalturaclient.captionasset.CaptionAsset
+import com.boclips.kalturaclient.captionasset.CaptionFormat
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
@@ -17,8 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 
@@ -68,13 +70,13 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(status().isOk)
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/transcript").asTeacher())
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
             .andExpect(
-                MockMvcResultMatchers.content().string(
+                content().string(
                     Matchers.equalTo(
                         """
                         While regaling you with daring stories from her youth,
@@ -84,7 +86,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
             .andExpect(
-                MockMvcResultMatchers.header()
+                header()
                     .string("Content-Disposition", Matchers.equalTo("attachment; filename=\"Today_Video_.txt\""))
             )
     }
@@ -121,7 +123,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
         """.trimIndent()
                 )
         )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -140,8 +142,8 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions").asBoclipsEmployee())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.content").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.equalTo(captionContent)))
+            .andExpect(jsonPath("$.content").exists())
+            .andExpect(jsonPath("$.content", Matchers.equalTo(captionContent)))
     }
 
     @Test
@@ -176,5 +178,63 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions?generated=true").asBoclipsEmployee()
         )
             .andExpect(status().isConflict)
+    }
+
+    @Test
+    fun `returns captions and content disposition header when download query param set`() {
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
+        val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)",
+            captionFormat = CaptionFormat.SRT
+        )
+        val captionContent =
+            "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, captionContent).id
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?download=true"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(
+                header().string(
+                    "Content-Disposition",
+                    Matchers.equalTo("attachment; filename=\"Today_Video_.srt\"")
+                )
+            )
+            .andExpect(content().string(Matchers.equalTo(captionContent)))
+    }
+
+    @Test
+    fun `returns only human generated captions when specified`() {
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
+        val autoCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)",
+            captionFormat = CaptionFormat.SRT
+        )
+        val humanCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English",
+            captionFormat = CaptionFormat.SRT
+        )
+        val autoCaptionContent =
+            "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
+
+        val humanCaptionContent = "1\n00:00:00,000 --> 00:00:02,390\n[MUSIC PLAYING]"
+
+        fakeKalturaClient.createCaptionForVideo("playback-id", autoCaptions, autoCaptionContent)
+        fakeKalturaClient.createCaptionForVideo("playback-id", humanCaptions, humanCaptionContent)
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?human-generated=true").asBoclipsEmployee())
+            .andExpect(jsonPath("$.content").exists())
+            .andExpect(jsonPath("$.content", Matchers.equalTo(humanCaptionContent)))
+
     }
 }

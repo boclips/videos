@@ -130,6 +130,7 @@ class KalturaPlaybackProvider(
             Caption(
                 content = kalturaClient.getCaptionContent(caption.id),
                 default = caption.isDefaultCaption,
+                isHumanGenerated = caption.isHumanGenerated,
                 format = convertCaptionFormatFromKaltura(caption) ?: throw UnknownCaptionFormatException(
                     playbackId,
                     caption.fileType
