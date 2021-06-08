@@ -46,7 +46,7 @@ class ChannelLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsB
                 getChannelsRoot()
                     .build()
                     .toUriString()
-                    .plus("{?name,projection,sort_by,page,size,ingestType*}"),
+                    .plus("{?name,projection,sort_by,page,size,categories,ingestType*}"),
                 Rels.CHANNELS
             )
         }
