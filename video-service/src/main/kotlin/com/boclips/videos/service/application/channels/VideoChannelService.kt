@@ -1,9 +1,11 @@
 package com.boclips.videos.service.application.channels
 
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.channel.ChannelWithCategories
 import org.springframework.stereotype.Component
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId as ContentPartnerServiceChannelId
 
@@ -11,12 +13,12 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId as Cont
 class VideoChannelService(val channelRepository: ChannelRepository) {
     var idCache: Pair<ChannelId, Availability>? = null
 
-    fun findById(id: String): Channel? {
+    fun findChannelWithCategories(id: String): ChannelWithCategories? {
         return find(ChannelId(id))
-            ?.let {
-                Channel(
-                    channelId = ChannelId(value = it.id.value),
-                    name = it.name
+            ?.let { channel ->
+                ChannelWithCategories(
+                    channel = Channel(channelId = ChannelId(value = channel.id.value), name = channel.name),
+                    categories = (channel.taxonomy as? Taxonomy.ChannelLevelTagging)?.categories ?: emptySet()
                 )
             }
     }

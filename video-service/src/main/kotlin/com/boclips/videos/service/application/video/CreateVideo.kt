@@ -14,7 +14,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.channel.Channel
+import com.boclips.videos.service.domain.model.video.channel.ChannelWithCategories
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
@@ -38,7 +38,7 @@ class CreateVideo(
     operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
-        val channel = findChannel(createRequest)
+        val channelWithCategories = findChannel(createRequest)
             ?: throw ChannelNotFoundException(
                 "Could not find channel with id: ${createRequest.providerId}"
             )
@@ -47,7 +47,10 @@ class CreateVideo(
         val videoPlayback = findVideoPlayback(playbackId)
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
-        val categories = createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet() ?: emptySet()
+        val categories = mapOf(
+            CategorySource.MANUAL to (createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet() ?: emptySet()),
+            CategorySource.CHANNEL to (channelWithCategories.categories ?: emptySet())
+        )
 
         logger.info { "Obtained video playback and subjects for video ${createRequest.providerId}" }
 
@@ -55,9 +58,9 @@ class CreateVideo(
             createVideoRequestToVideoConverter.convert(
                 createVideoRequest = createRequest,
                 videoPlayback = videoPlayback,
-                contentPartner = channel,
+                contentPartner = channelWithCategories.channel,
                 subjects = subjects,
-                categories = mapOf(CategorySource.MANUAL to categories)
+                categories = categories
             )
 
         val createdVideo = try {
@@ -79,9 +82,9 @@ class CreateVideo(
         return createdVideo
     }
 
-    private fun findChannel(createRequest: CreateVideoRequest): Channel? =
+    private fun findChannel(createRequest: CreateVideoRequest): ChannelWithCategories? =
         createRequest.providerId?.let {
-            videoChannelService.findById(createRequest.providerId!!)
+            videoChannelService.findChannelWithCategories(createRequest.providerId!!)
         }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

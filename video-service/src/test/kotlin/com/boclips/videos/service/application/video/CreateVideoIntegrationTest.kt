@@ -7,12 +7,15 @@ import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.application.video.exceptions.ChannelNotFoundException
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.CategoryFactory
 import com.boclips.videos.service.testsupport.UserFactory
 import io.micrometer.core.instrument.Counter
 import org.assertj.core.api.Assertions.assertThat
@@ -34,22 +37,37 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `requesting creation of an existing kaltura video creates the video`() {
+        taxonomyRepository.create(CategoryFactory.sample(code = "A", description = "A description"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "B", description = "B description"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "C", description = "C description"))
+        taxonomyRepository.create(CategoryFactory.sample(code = "D", description = "D description"))
+
         createMediaEntry(
             id = "entry-$123",
             duration = Duration.ofMinutes(1)
         )
 
-        val contentPartner = saveChannel()
+        val contentPartner = saveChannel(categories = listOf("C", "D"))
 
         val video = createVideo(
             VideoServiceApiFactory.createCreateVideoRequest(
                 providerId = contentPartner.id.value,
-                playbackId = "entry-\$123"
+                playbackId = "entry-\$123",
+                categories = listOf("A", "B")
             ),
             UserFactory.sample()
         )
 
-        assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        val createdVideo = videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)
+        assertThat(createdVideo).isNotNull
+        assertThat(createdVideo.channelCategories).containsExactlyInAnyOrder(
+            CategoryWithAncestors(codeValue = CategoryCode("C"), description = "C description", ancestors = emptySet()),
+            CategoryWithAncestors(codeValue = CategoryCode("D"), description = "D description", ancestors = emptySet()),
+        )
+        assertThat(createdVideo.manualCategories).containsExactlyInAnyOrder(
+            CategoryWithAncestors(codeValue = CategoryCode("A"), description = "A description", ancestors = emptySet()),
+            CategoryWithAncestors(codeValue = CategoryCode("B"), description = "B description", ancestors = emptySet()),
+        )
     }
 
     @Test
@@ -128,9 +146,9 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(
             retrievePlayableVideos.searchPlayableVideos(
                 VideoRequest(
-                        text = "the latest Bloomberg video",
-                        pageSize = 0,
-                        pagingState = VideoRequestPagingState.PageNumber(0)
+                    text = "the latest Bloomberg video",
+                    pageSize = 0,
+                    pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Everything
             ).counts.total

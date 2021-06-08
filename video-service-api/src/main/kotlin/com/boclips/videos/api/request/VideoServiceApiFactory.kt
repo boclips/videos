@@ -14,7 +14,6 @@ import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import java.time.LocalDate
-import java.time.Period
 
 class VideoServiceApiFactory {
     companion object {
@@ -40,7 +39,8 @@ class VideoServiceApiFactory {
             subjects: Set<String> = setOf(),
             youtubeChannelId: String = "1234",
             language: String? = "cym",
-            isVoiced: Boolean? = null
+            isVoiced: Boolean? = null,
+            categories: List<String>? = null
         ) = CreateVideoRequest(
             providerId = providerId,
             providerVideoId = providerVideoId,
@@ -56,7 +56,8 @@ class VideoServiceApiFactory {
             subjects = subjects,
             youtubeChannelId = youtubeChannelId,
             language = language,
-            isVoiced = isVoiced
+            isVoiced = isVoiced,
+            categories = categories,
         )
 
         @JvmStatic

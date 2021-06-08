@@ -6,9 +6,17 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.CategoryFactory
+import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asIngestor
+import com.boclips.videos.service.testsupport.asOperator
+import com.boclips.videos.service.testsupport.asReporter
+import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
@@ -688,6 +696,48 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("A")))
                 .andExpect(jsonPath("$.taxonomy.channel.categories", hasSize<Int>(0)))
+        }
+
+        @Test
+        fun `create new video with categories inherited from video channel`() {
+            taxonomyRepository.create(CategoryFactory.sample(code = "A", description = "A description"))
+            taxonomyRepository.create(CategoryFactory.sample(code = "C", description = "C description"))
+
+            val channelId = saveChannel(categories = listOf("A")).id.value
+
+            createMediaEntry(
+                id = "entry-$123",
+                duration = Duration.ofMinutes(1)
+            )
+
+            val content = """
+            {
+                "providerVideoId": "1",
+                "providerId": "$channelId",
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "keywords": ["k1", "k2"],
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
+                "playbackId": "entry-$123",
+                "playbackProvider": "KALTURA",
+                "categories": ["C"]
+            }
+            """.trimIndent()
+
+            val createdResourceUrl =
+                mockMvc.perform(
+                    post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content)
+                )
+                    .andExpect(status().isCreated)
+                    .andReturn().response.getHeader("Location")
+
+            mockMvc.perform(get(createdResourceUrl!!).asBoclipsEmployee())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.taxonomy.channel.categories[*].codeValue", containsInAnyOrder("A")))
+                .andExpect(jsonPath("$.taxonomy.manual.categories[*].codeValue", containsInAnyOrder("C")))
         }
 
         @Test
