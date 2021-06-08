@@ -203,7 +203,8 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
                         IngestType.YOUTUBE,
                         IngestType.MANUAL
                     )
-                ), startIndex = 0, windowSize = 2
+                ),
+                startIndex = 0, windowSize = 2
             )
         )
 
@@ -319,7 +320,8 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
             PaginatedIndexSearchRequest(
                 query = ChannelQuery(
                     sort = listOf(Sort.ByField(fieldName = ChannelMetadata::name, order = SortOrder.ASC))
-                ), startIndex = 0, windowSize = 4
+                ),
+                startIndex = 0, windowSize = 4
             )
         )
 

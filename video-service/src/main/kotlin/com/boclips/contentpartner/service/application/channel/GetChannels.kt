@@ -19,6 +19,7 @@ class GetChannels(private val channelService: ChannelService) {
         name: String? = null,
         ingestTypes: List<IngestType>? = null,
         sortBy: ChannelSortKey? = null,
+        categories: List<String>? = emptyList(),
         size: Int? = null,
         page: Int? = null
     ): ResultsPage<Channel> = channelService.search(
@@ -26,6 +27,7 @@ class GetChannels(private val channelService: ChannelService) {
             name = name,
             ingestTypes = ingestTypes,
             sortBy = sortBy,
+            categories = categories,
             pageRequest = PageRequest(
                 size = size ?: DEFAULT_PAGE_SIZE,
                 page = page ?: DEFAULT_PAGE_INDEX

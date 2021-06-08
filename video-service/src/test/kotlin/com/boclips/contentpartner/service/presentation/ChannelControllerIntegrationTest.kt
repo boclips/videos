@@ -397,6 +397,26 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can filter channels by category`() {
+        addCategory(CategoryFactory.sample(code = "A", description = "Law"))
+        addCategory(CategoryFactory.sample(code = "C", description = "Order"))
+
+        saveChannel(name = "hello", categories = listOf("A"))
+        saveChannel(name = "hi", categories = listOf("A"))
+        saveChannel(name = "goodbye", categories = listOf("C"))
+        saveChannel(name = "toodooloo", categories = emptyList())
+
+        mockMvc.perform(
+            get("/v1/channels?categories=A").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(2)))
+            .andExpect(jsonPath("$._embedded.channels[0].id").exists())
+            .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("hello")))
+            .andExpect(jsonPath("$._embedded.channels[1].id").exists())
+            .andExpect(jsonPath("$._embedded.channels[1].name", equalTo("hi")))
+    }
+
+    @Test
     fun `can filter channels by ingest types`() {
         saveChannel(
             name = "mrss",

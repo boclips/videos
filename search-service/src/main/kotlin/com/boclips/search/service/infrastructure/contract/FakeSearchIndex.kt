@@ -104,27 +104,29 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
 
         return when (val sortCritieria = query.sort.first()) {
             is Sort.ByField -> {
-                ids.sortedWith(Comparator { aId: String, bId: String ->
-                    val aValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[aId]!!) as Comparable<Any>?)
-                    val bValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[bId]!!) as Comparable<Any>?)
+                ids.sortedWith(
+                    Comparator { aId: String, bId: String ->
+                        val aValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[aId]!!) as Comparable<Any>?)
+                        val bValue: Comparable<Any>? = (sortCritieria.fieldName.get(index[bId]!!) as Comparable<Any>?)
 
-                    val sort = if (aValue == null && bValue == null) {
-                        0
-                    } else if (aValue == null) {
-                        -1
-                    } else if (bValue == null) {
-                        1
-                    } else {
-                        aValue.compareTo(bValue)
-                    }
+                        val sort = if (aValue == null && bValue == null) {
+                            0
+                        } else if (aValue == null) {
+                            -1
+                        } else if (bValue == null) {
+                            1
+                        } else {
+                            aValue.compareTo(bValue)
+                        }
 
-                    if (sortCritieria.order == SortOrder.DESC) {
-                        sort * -1
-                    } else {
-                        sort
+                        if (sortCritieria.order == SortOrder.DESC) {
+                            sort * -1
+                        } else {
+                            sort
+                        }
                     }
-                }
-                    .thenComparator(applyDefaultSort(defaultSort)))
+                        .thenComparator(applyDefaultSort(defaultSort))
+                )
             }
             is Sort.ByRandom -> ids.shuffled()
         }

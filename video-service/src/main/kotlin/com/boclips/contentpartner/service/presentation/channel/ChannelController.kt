@@ -83,6 +83,7 @@ class ChannelController(
             ingestTypes = channelFilterRequest.ingestType?.map {
                 IngestTypeConverter.convertType(it)
             },
+            categories = channelFilterRequest.categories,
             sortBy = when (channelFilterRequest.sort_by) {
                 SortByRequest.CATEGORIES_ASC -> ChannelSortKey.CATEGORIES_ASC
                 SortByRequest.CATEGORIES_DESC -> ChannelSortKey.CATEGORIES_DESC

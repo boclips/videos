@@ -24,7 +24,8 @@ class ChannelIndexFake :
         return fakeSearchIndex.search(
             searchRequest,
             this::performSearch,
-            defaultSort = { a, b -> a.name.compareTo(b.name) })
+            defaultSort = { a, b -> a.name.compareTo(b.name) }
+        )
     }
 
     override fun safeRebuildIndex(items: Sequence<ChannelMetadata>, notifier: ProgressNotifier?) {
@@ -118,7 +119,11 @@ class ChannelIndexFake :
     private fun performSearch(index: Map<String, ChannelMetadata>, query: ChannelQuery): List<String> {
         return index.filter { item ->
             (query.ingestTypes.isEmpty() || query.ingestTypes.contains(item.value.ingestType)) &&
-            (query.phrase.isEmpty() || query.phrase == item.value.name)
+                (query.phrase.isEmpty() || query.phrase == item.value.name)
+        }.filter { item ->
+            query.taxonomy?.categories.isNullOrEmpty() || item.value.taxonomy.categories?.any {
+                query.taxonomy?.categories?.contains(it) ?: false
+            } ?: false
         }.map { it.key }
     }
 }

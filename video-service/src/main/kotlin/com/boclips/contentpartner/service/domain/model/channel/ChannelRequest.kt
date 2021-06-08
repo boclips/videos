@@ -1,18 +1,20 @@
 package com.boclips.contentpartner.service.domain.model.channel
 
 import com.boclips.contentpartner.service.common.PageRequest
+import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.common.IngestType
-import org.apache.lucene.queries.intervals.Intervals
 import com.boclips.search.service.domain.channels.model.IngestType as ChannelSearchIngestType
 
 data class ChannelRequest(
     val name: String? = null,
     val ingestTypes: List<IngestType>? = emptyList(),
     val sortBy: ChannelSortKey?,
+    val categories: List<String>? = emptyList(),
     val pageRequest: PageRequest
 ) {
     fun toQuery(): ChannelQuery {
@@ -26,6 +28,14 @@ data class ChannelRequest(
                     IngestType.YOUTUBE -> ChannelSearchIngestType.YOUTUBE
                 }
             } ?: emptyList(),
+            taxonomy = Taxonomy(
+                categories = categories?.map {
+                    CategoryCode(
+                        it
+                    )
+                }?.toSet(),
+                videoLevelTagging = false
+            ),
             sort = when (sortBy) {
                 ChannelSortKey.CATEGORIES_ASC -> listOf(
                     Sort.ByField(

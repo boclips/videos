@@ -106,7 +106,6 @@ class ChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-
             result as UpdateChannelResult.MissingContract
             assertThat(result.channelId).isEqualTo(channel.id)
         }
