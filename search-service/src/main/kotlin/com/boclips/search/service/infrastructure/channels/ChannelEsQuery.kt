@@ -7,7 +7,6 @@ import org.elasticsearch.index.query.QueryBuilders
 
 class ChannelEsQuery {
     fun mainQuery(query: ChannelQuery): QueryBuilder {
-        val phrase = query.phrase
         return QueryBuilders
             .boolQuery()
             .apply {
@@ -16,16 +15,21 @@ class ChannelEsQuery {
                 }
             }
             .apply {
-                if (phrase.isNotBlank()) {
+                if (!query.name.isNullOrBlank()) {
+                    must(QueryBuilders.termQuery(ChannelDocument.NAME, query.name))
+                }
+            }
+            .apply {
+                if (query.phrase.isNotBlank()) {
                     must(
                         QueryBuilders.boolQuery()
                             .must(
-                                QueryBuilders.matchPhraseQuery(ChannelDocument.AUTOCOMPLETE_NAME, phrase)
+                                QueryBuilders.matchPhraseQuery(ChannelDocument.AUTOCOMPLETE_NAME, query.phrase)
                             )
                             .should(
                                 QueryBuilders.matchPhraseQuery(
                                     IndexConfiguration.unstemmed(ChannelDocument.AUTOCOMPLETE_NAME),
-                                    phrase
+                                    query.phrase
                                 )
                             )
                     )

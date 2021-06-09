@@ -4,9 +4,12 @@ import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 
 class ChannelQuery(
+    // phrase is a fuzzy match
     override val phrase: String = "",
-    val accessRuleQuery: ChannelAccessRuleQuery? = null,
     override val sort: List<Sort<ChannelMetadata>> = emptyList(),
+    // name returns exact matches only
+    val name: String? = null,
+    val accessRuleQuery: ChannelAccessRuleQuery? = null,
     val ingestTypes: List<IngestType> = emptyList(),
     val taxonomy: Taxonomy? = null
 ) : SearchQuery<ChannelMetadata>(phrase = phrase, sort = sort)

@@ -117,13 +117,21 @@ class ChannelIndexFake :
     }
 
     private fun performSearch(index: Map<String, ChannelMetadata>, query: ChannelQuery): List<String> {
-        return index.filter { item ->
-            (query.ingestTypes.isEmpty() || query.ingestTypes.contains(item.value.ingestType)) &&
+        return index
+            .filter { item ->
+                (query.ingestTypes.isEmpty() || query.ingestTypes.contains(item.value.ingestType))
+            }
+            .filter { item ->
                 (query.phrase.isEmpty() || query.phrase == item.value.name)
-        }.filter { item ->
-            query.taxonomy?.categories.isNullOrEmpty() || item.value.taxonomy.categories?.any {
-                query.taxonomy?.categories?.contains(it) ?: false
-            } ?: false
-        }.map { it.key }
+            }
+            .filter { item ->
+                (query.name.isNullOrBlank() || query.name == item.value.name)
+            }
+            .filter { item ->
+                query.taxonomy?.categories.isNullOrEmpty() || item.value.taxonomy.categories?.any {
+                    query.taxonomy?.categories?.contains(it) ?: false
+                } ?: false
+            }
+            .map { it.key }
     }
 }

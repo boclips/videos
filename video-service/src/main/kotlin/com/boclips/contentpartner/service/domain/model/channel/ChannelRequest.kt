@@ -19,7 +19,7 @@ data class ChannelRequest(
 ) {
     fun toQuery(): ChannelQuery {
         return ChannelQuery(
-            phrase = name ?: "",
+            name = name,
             ingestTypes = ingestTypes?.map {
                 when (it) {
                     IngestType.MANUAL -> ChannelSearchIngestType.MANUAL

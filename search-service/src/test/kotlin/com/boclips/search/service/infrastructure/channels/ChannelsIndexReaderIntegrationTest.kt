@@ -1,6 +1,12 @@
 package com.boclips.search.service.infrastructure.channels
 
-import com.boclips.search.service.domain.channels.model.*
+import com.boclips.search.service.domain.channels.model.CategoryCode
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
+import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.ContentType
+import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
+import com.boclips.search.service.domain.channels.model.SuggestionQuery
+import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.SuggestionRequest
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
@@ -580,5 +586,45 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         val results = indexReader.search(PaginatedIndexSearchRequest(query = ChannelQuery()))
 
         assertThat(results.elements).containsExactly("2", "3", "1")
+    }
+
+    @Test
+    fun `searching by name is an exact match`() {
+        indexWriter.upsert(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(
+                    id = "1",
+                    name = "Chicago"
+                ),
+                SearchableChannelMetadataFactory.create(
+                    id = "2",
+                    name = "Chicago bulls"
+                )
+            )
+        )
+
+        val results = indexReader.search(PaginatedIndexSearchRequest(query = ChannelQuery(name = "Chicago")))
+
+        assertThat(results.elements).containsExactly("1")
+    }
+
+    @Test
+    fun `searching by blank name returns everything`() {
+        indexWriter.upsert(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(
+                    id = "1",
+                    name = "Chicago"
+                ),
+                SearchableChannelMetadataFactory.create(
+                    id = "2",
+                    name = "Chicago bulls"
+                )
+            )
+        )
+
+        val results = indexReader.search(PaginatedIndexSearchRequest(query = ChannelQuery(name = "")))
+
+        assertThat(results.elements).containsExactly("1", "2")
     }
 }
