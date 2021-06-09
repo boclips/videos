@@ -271,6 +271,20 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
     }
 
+
+    @Test
+    fun `requests captions when caption status is unknown`() {
+        kalturaPlaybackProvider.requestCaptions(
+            PlaybackId(
+                value = "123",
+                type = PlaybackProviderType.KALTURA
+            )
+        )
+
+        val captionStatus = fakeKalturaClient.getCaptionStatus("123")
+        assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
+    }
+
     @Test
     fun `does request captions when no human generated captions available`() {
         val playbackId = mediaEntryWithCaptionsByEntryId("English (auto-generated)")
