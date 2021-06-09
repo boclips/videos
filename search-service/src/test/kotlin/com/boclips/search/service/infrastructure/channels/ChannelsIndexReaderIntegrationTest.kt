@@ -7,6 +7,7 @@ import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTe
 import com.boclips.search.service.testsupport.SearchableChannelMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest() {
@@ -42,68 +43,6 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
 
         assertThat(results.elements.size).isEqualTo(1)
         assertThat(results.elements[0].id).isEqualTo("1")
-    }
-
-    @Test
-    fun `returns channels based on category`() {
-        indexWriter.safeRebuildIndex(
-            sequenceOf(
-                SearchableChannelMetadataFactory.create(
-                    id = "1", name = "Super Channel 1",
-                    taxonomy = Taxonomy(
-                        videoLevelTagging = false,
-                        categories = setOf(
-                            CategoryCode("A")
-                        )
-                    )
-                ),
-                SearchableChannelMetadataFactory.create(
-                    id = "2", name = "Super Channel 2",
-                    taxonomy = Taxonomy(
-                        videoLevelTagging = false,
-                        categories = setOf(
-                            CategoryCode("D")
-                        )
-                    )
-                ),
-                SearchableChannelMetadataFactory.create(
-                    id = "3", name = "Super Channel 3",
-                    taxonomy = Taxonomy(
-                        videoLevelTagging = false,
-                        categories = setOf(
-                            CategoryCode("A")
-                        )
-                    )
-                ),
-                SearchableChannelMetadataFactory.create(
-                    id = "4", name = "Super Channel 4",
-                    taxonomy = Taxonomy(
-                        videoLevelTagging = false,
-                        categories = setOf(
-                            CategoryCode("C")
-                        )
-                    )
-                ),
-                SearchableChannelMetadataFactory.create(id = "5", name = "Another Channel 5"),
-            )
-        )
-
-        val results = indexReader.search(
-            PaginatedIndexSearchRequest(
-                ChannelQuery(
-                    taxonomy = Taxonomy(
-                        videoLevelTagging = false,
-                        categories = setOf(CategoryCode("A"), CategoryCode("D"))
-                    ),
-                    accessRuleQuery = ChannelAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
-                )
-            )
-        )
-
-        assertThat(results.elements.size).isEqualTo(3)
-        assertThat(results.elements[0]).isEqualTo("1")
-        assertThat(results.elements[1]).isEqualTo("2")
-        assertThat(results.elements[2]).isEqualTo("3")
     }
 
     @Test
@@ -580,5 +519,132 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         val results = indexReader.search(PaginatedIndexSearchRequest(query = ChannelQuery()))
 
         assertThat(results.elements).containsExactly("2", "3", "1")
+    }
+
+    @Nested
+    inner class SearchChannelsByCategories {
+
+        @Test
+        fun `returns channels based on category`() {
+            indexWriter.safeRebuildIndex(
+                sequenceOf(
+                    SearchableChannelMetadataFactory.create(
+                        id = "1", name = "Super Channel 1",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("A")
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(
+                        id = "2", name = "Super Channel 2",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("D")
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(
+                        id = "3", name = "Super Channel 3",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("A")
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(
+                        id = "4", name = "Super Channel 4",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("C")
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(id = "5", name = "Another Channel 5"),
+                )
+            )
+
+            val results = indexReader.search(
+                PaginatedIndexSearchRequest(
+                    ChannelQuery(
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(CategoryCode("A"), CategoryCode("D"))
+                        ),
+                        accessRuleQuery = ChannelAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4", "5"))
+                    )
+                )
+            )
+
+            assertThat(results.elements.size).isEqualTo(3)
+            assertThat(results.elements[0]).isEqualTo("1")
+            assertThat(results.elements[1]).isEqualTo("2")
+            assertThat(results.elements[2]).isEqualTo("3")
+        }
+
+        @Test
+        fun `includes ancestors when filtering channels by category`() {
+            indexWriter.safeRebuildIndex(
+                sequenceOf(
+                    SearchableChannelMetadataFactory.create(
+                        id = "1", name = "Super Channel 1",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("A"),
+                            ),
+                            categoriesWithAncestors = setOf(CategoryCode("A"))
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(
+                        id = "2", name = "Super Channel 2",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("AB"),
+                                CategoryCode("CA")
+                            ),
+                            categoriesWithAncestors = setOf(
+                                CategoryCode("A"), CategoryCode("AB"), CategoryCode("C"), CategoryCode("CA"),
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(
+                        id = "3", name = "Super Channel 3",
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categories = setOf(
+                                CategoryCode("EA"),
+                                CategoryCode("DB"),
+                            ),
+                            categoriesWithAncestors = setOf(
+                                CategoryCode("D"), CategoryCode("DB"), CategoryCode("E"), CategoryCode("EA"),
+                            )
+                        )
+                    ),
+                    SearchableChannelMetadataFactory.create(id = "4", name = "Another Channel 4"),
+                )
+            )
+
+            val results = indexReader.search(
+                PaginatedIndexSearchRequest(
+                    ChannelQuery(
+                        taxonomy = Taxonomy(
+                            videoLevelTagging = false,
+                            categoriesWithAncestors = setOf(CategoryCode("A"))
+                        ),
+                        accessRuleQuery = ChannelAccessRuleQuery(includedChannelIds = setOf("1", "2", "3", "4"))
+                    )
+                )
+            )
+
+            assertThat(results.elements.size).isEqualTo(2)
+            assertThat(results.elements[0]).isEqualTo("1")
+            assertThat(results.elements[1]).isEqualTo("3")
+        }
     }
 }

@@ -32,7 +32,8 @@ object ChannelMetadataConverter {
             } ?: emptyList(),
             taxonomy = Taxonomy(
                 videoLevelTagging = channel.taxonomy is VideoLevelTagging,
-                categories = convertCategories(channel)
+                categories = convertCategories(channel),
+                categoriesWithAncestors = convertCategoriesWithAncestors(channel),
             ),
             isYoutube = channel.ingest.type() == YOUTUBE
         )
@@ -40,5 +41,11 @@ object ChannelMetadataConverter {
 
     private fun convertCategories(channel: Channel): Set<CategoryCode>? =
         (channel.taxonomy as? ChannelLevelTagging)?.categories?.map { CategoryCode(it.codeValue.value) }
+            ?.toSet()
+
+    private fun convertCategoriesWithAncestors(channel: Channel): Set<CategoryCode>? =
+        (channel.taxonomy as? ChannelLevelTagging)?.categories
+            ?.flatMap { it.ancestors + it.codeValue }
+            ?.map { CategoryCode(it.value) }
             ?.toSet()
 }

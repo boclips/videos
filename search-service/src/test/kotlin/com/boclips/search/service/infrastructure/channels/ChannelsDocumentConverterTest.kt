@@ -43,6 +43,7 @@ internal class ChannelsDocumentConverterTest {
             types = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomyVideoLevelTagging = true,
             taxonomyCategories = null,
+            taxonomyCategoriesWithAncestors = null,
             ingestType = IngestType.MANUAL.name,
             isYoutube = null
         )
@@ -75,6 +76,7 @@ internal class ChannelsDocumentConverterTest {
                 ingestType = "MRSS",
                 taxonomyVideoLevelTagging = true,
                 taxonomyCategories = null,
+                taxonomyCategoriesWithAncestors = null,
                 isYoutube = true
             )
         )
@@ -90,6 +92,7 @@ internal class ChannelsDocumentConverterTest {
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             taxonomy = Taxonomy(
                 categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")),
+                categoriesWithAncestors = null,
                 videoLevelTagging = false
             ),
             isYoutube = false
@@ -108,9 +111,36 @@ internal class ChannelsDocumentConverterTest {
                 ingestType = "MRSS",
                 taxonomyVideoLevelTagging = false,
                 taxonomyCategories = listOf("AB", "D", "DE"),
+                taxonomyCategoriesWithAncestors = null,
                 isYoutube = false
             )
         )
+    }
+
+    @Test
+    fun `when converting to document, remove duplicates from taxonomyWithDocuments`() {
+        val metadata = SearchableChannelMetadataFactory.create(
+            id = "14",
+            name = "The title",
+            eligibleForStream = true,
+            ingestType = IngestType.MRSS,
+            contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
+            taxonomy = Taxonomy(
+                categories = setOf(CategoryCode("DE"), CategoryCode("AB"), CategoryCode("D")),
+                categoriesWithAncestors = setOf(
+                    CategoryCode("DE"),
+                    CategoryCode("D"),
+                    CategoryCode("A"),
+                    CategoryCode("AB"),
+                    CategoryCode("D")
+                ),
+                videoLevelTagging = false
+            ),
+            isYoutube = false
+        )
+
+        val document = ChannelsDocumentConverter().convertToDocument(metadata)
+        assertThat(document.taxonomyCategoriesWithAncestors).containsExactlyInAnyOrder("A", "AB", "DE", "D")
     }
 
     @Test

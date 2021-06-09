@@ -19,6 +19,7 @@ class ChannelsDocumentConverter {
             ingestType = metadata.ingestType?.name,
             taxonomyVideoLevelTagging = metadata.taxonomy.videoLevelTagging,
             taxonomyCategories = metadata.taxonomy.categories?.map { it.value }?.sorted(),
+            taxonomyCategoriesWithAncestors = metadata.taxonomy.categoriesWithAncestors?.map { it.value },
             isYoutube = metadata.isYoutube
         )
     }
