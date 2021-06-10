@@ -38,6 +38,7 @@ data class ChannelRequest(
     val contractId: String? = null,
     val categories: List<String>? = null,
     val requiresVideoLevelTagging: Boolean? = null,
+    val hidden: Boolean? = null
 )
 
 

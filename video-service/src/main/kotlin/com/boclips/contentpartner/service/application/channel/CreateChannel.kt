@@ -1,6 +1,9 @@
 package com.boclips.contentpartner.service.application.channel
 
-import com.boclips.contentpartner.service.application.exceptions.*
+import com.boclips.contentpartner.service.application.exceptions.ChannelConflictException
+import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
+import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
+import com.boclips.contentpartner.service.application.exceptions.MissingContractException
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeRepository
@@ -85,7 +88,13 @@ class CreateChannel(
                     }?.toSet() ?: emptySet()
                 )
             },
-            visibility = ChannelVisibility.HIDDEN
+            visibility = upsertRequest.hidden?.let {
+                if (it) {
+                    ChannelVisibility.HIDDEN
+                } else {
+                    ChannelVisibility.VISIBLE
+                }
+            } ?: ChannelVisibility.VISIBLE
         )
 
         return when (val createdChannelResult = channelService.create(channel)) {

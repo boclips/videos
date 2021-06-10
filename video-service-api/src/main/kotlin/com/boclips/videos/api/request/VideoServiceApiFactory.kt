@@ -123,7 +123,8 @@ class VideoServiceApiFactory {
             contentTypes: List<String>? = null,
             contractId: String? = null,
             categories: List<String>? = null,
-            requiresVideoLevelTagging: Boolean? = null
+            requiresVideoLevelTagging: Boolean? = null,
+            hidden: Boolean? = null
         ): ChannelRequest {
             return ChannelRequest(
                 name = name,
@@ -146,7 +147,8 @@ class VideoServiceApiFactory {
                 contentTypes = contentTypes,
                 contractId = contractId,
                 categories = categories,
-                requiresVideoLevelTagging = requiresVideoLevelTagging
+                requiresVideoLevelTagging = requiresVideoLevelTagging,
+                hidden = hidden
             )
         }
 
