@@ -571,67 +571,6 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
     inner class SearchChannelsByCategories {
 
         @Test
-        fun `returns channels based on category`() {
-            indexWriter.safeRebuildIndex(
-                sequenceOf(
-                    SearchableChannelMetadataFactory.create(
-                        id = "1", name = "Super Channel 1",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("A")
-                            )
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "2", name = "Super Channel 2",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("D")
-                            )
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "3", name = "Super Channel 3",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("A")
-                            )
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(
-                        id = "4", name = "Super Channel 4",
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categories = setOf(
-                                CategoryCode("C")
-                            )
-                        )
-                    ),
-                    SearchableChannelMetadataFactory.create(id = "5", name = "Another Channel 5"),
-                )
-            )
-
-            val results = indexReader.search(
-                PaginatedIndexSearchRequest(
-                    ChannelQuery(
-                        taxonomy = Taxonomy(
-                            videoLevelTagging = false,
-                            categoriesWithAncestors = setOf(CategoryCode("A"), CategoryCode("D"))
-                        ),
-                    )
-                )
-            )
-
-            assertThat(results.elements.size).isEqualTo(3)
-            assertThat(results.elements[0]).isEqualTo("1")
-            assertThat(results.elements[1]).isEqualTo("2")
-            assertThat(results.elements[2]).isEqualTo("3")
-        }
-
-        @Test
         fun `includes ancestors when filtering channels by category`() {
             indexWriter.safeRebuildIndex(
                 sequenceOf(
