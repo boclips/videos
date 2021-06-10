@@ -4,6 +4,7 @@ import com.boclips.contentpartner.service.application.exceptions.ChannelConflict
 import com.boclips.contentpartner.service.application.exceptions.InvalidAgeRangeException
 import com.boclips.contentpartner.service.application.exceptions.InvalidContractException
 import com.boclips.contentpartner.service.application.exceptions.MissingContractException
+import com.boclips.contentpartner.service.domain.model.channel.ChannelVisibility
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -192,6 +193,39 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(channel.contract?.id).isEqualTo(contractId)
         assertThat(channel.contract?.contentPartnerName).isEqualTo("hello")
         assertThat(channel.contract?.remittanceCurrency?.currencyCode).isEqualTo("GBP")
+    }
+
+    @Test
+    fun `can create hidden channels`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                hidden = true
+            )
+        )
+
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.HIDDEN)
+    }
+
+    @Test
+    fun `can create visible channels`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                hidden = false
+            )
+        )
+
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.VISIBLE)
+    }
+
+    @Test
+    fun `channels are visible by default`() {
+        val channel = createChannel(
+            VideoServiceApiFactory.createChannelRequest(
+                hidden = null
+            )
+        )
+
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.VISIBLE)
     }
 
     @Test
