@@ -13,7 +13,6 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URL
-import java.time.Period
 import java.util.*
 
 class ChannelDocumentConverterTest {
@@ -61,7 +60,8 @@ class ChannelDocumentConverterTest {
                         ancestors = setOf(CategoryCode("A"))
                     )
                 )
-            )
+            ),
+            visibility = ChannelVisibility.HIDDEN
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

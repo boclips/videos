@@ -30,5 +30,6 @@ data class ChannelDocument(
     val bestForTags: List<String>? = null,
     val subjects: List<String>? = null,
     val contract: ContractDocument?,
-    val taxonomy: TaxonomyDocument?
+    val taxonomy: TaxonomyDocument?,
+    val hidden: Boolean? = null
 )

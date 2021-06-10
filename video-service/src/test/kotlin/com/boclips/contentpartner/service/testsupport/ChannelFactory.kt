@@ -2,17 +2,7 @@ package com.boclips.contentpartner.service.testsupport
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRange
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ContentCategory
-import com.boclips.contentpartner.service.domain.model.channel.ContentType
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.IngestDetails
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.MarketingInformation
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.Remittance
-import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
@@ -52,7 +42,8 @@ object ChannelFactory {
         pedagogyInformation: PedagogyInformation? = null,
         marketingInformation: MarketingInformation? = null,
         contract: Contract? = null,
-        taxonomy: Taxonomy? = null
+        taxonomy: Taxonomy? = null,
+        visibility: ChannelVisibility? = null
     ): Channel {
         return Channel(
             id = id,
@@ -69,7 +60,8 @@ object ChannelFactory {
             marketingInformation = marketingInformation,
             pedagogyInformation = pedagogyInformation,
             contract = contract,
-            taxonomy = taxonomy
+            taxonomy = taxonomy,
+            visibility = visibility
         )
     }
 

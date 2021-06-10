@@ -21,7 +21,8 @@ class ChannelFactory {
                 pedagogyInformation = null,
                 marketingInformation = null,
                 contract = null,
-                taxonomy = null
+                taxonomy = null,
+                visibility = null
             )
         }
 

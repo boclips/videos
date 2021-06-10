@@ -85,6 +85,7 @@ class CreateChannel(
                     }?.toSet() ?: emptySet()
                 )
             },
+            visibility = ChannelVisibility.HIDDEN
         )
 
         return when (val createdChannelResult = channelService.create(channel)) {

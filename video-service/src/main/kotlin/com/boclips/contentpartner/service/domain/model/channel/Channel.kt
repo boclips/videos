@@ -22,7 +22,8 @@ data class Channel(
     val pedagogyInformation: PedagogyInformation?,
     val marketingInformation: MarketingInformation?,
     val contract: Contract?,
-    val taxonomy: Taxonomy?
+    val taxonomy: Taxonomy?,
+    val visibility: ChannelVisibility?
 ) {
     val currency = contract?.remittanceCurrency ?: remittance?.currency
 
