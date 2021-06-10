@@ -9,8 +9,7 @@ import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asApiUser
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -248,4 +247,55 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
                 .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("kaltura video")))
         }
     }
+
+    @Test
+    fun `excludes videos of private channels`() {
+        val privateChannel = saveChannel(name = "My top secret channel", private = true)
+        saveVideo(
+            title = "visible video"
+        )
+        saveVideo(
+            title = "private video",
+            existingChannelId = privateChannel.id.value
+        )
+
+        mockMvc.perform(get("/v1/videos?query=video").asApiUser())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("visible video")))
+    }
+
+    @Test
+    fun `includes videos of private channels if present in content package`() {
+        val privateChannel = saveChannel(name = "My top secret channel", private = true)
+        val otherHiddenChannel = saveChannel(name = "My even more top secret channel", private = true)
+        saveVideo(
+            title = "visible video"
+        )
+        saveVideo(
+            title = "private video i have access to",
+            existingChannelId = privateChannel.id.value
+        )
+
+        saveVideo(
+            title = "private video",
+            existingChannelId = otherHiddenChannel.id.value
+        )
+
+        usersClient.addAccessRules(
+            "api-user@gmail.com",
+            AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedPrivateChannels(
+                    name = UUID.randomUUID().toString(),
+                    channelIds = listOf(privateChannel.id.value)
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/videos?query=video").asApiUser(email = userAssignedToOrganisation("api-user@gmail.com").idOrThrow().value))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<Any>(2)))
+            .andExpect(jsonPath("$._embedded.videos[*].title", containsInAnyOrder("visible video", "private video i have access to")))
+    }
 }
+

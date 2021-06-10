@@ -26,7 +26,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
     fun `look up video by id`() {
         val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "abc"))
 
-        val video = videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything)
+        val video = videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything(emptySet()))
 
         assertThat(video).isNotNull
     }
@@ -37,7 +37,8 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
         saveVideo()
         val videoId2 = saveVideo()
 
-        val video = videoRetrievalService.getPlayableVideos(listOf(videoId1, videoId2), VideoAccess.Everything)
+        val video =
+            videoRetrievalService.getPlayableVideos(listOf(videoId1, videoId2), VideoAccess.Everything(emptySet()))
 
         assertThat(video).hasSize(2)
         assertThat(video.map { it.videoId }).containsExactly(videoId1, videoId2)
@@ -50,7 +51,11 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
         val videoId3 = saveVideo()
 
         val videos =
-            videoRetrievalService.getPlayableVideos(listOf(videoId3, videoId1, videoId2), VideoAccess.Everything)
+            videoRetrievalService.getPlayableVideos(
+                listOf(videoId3, videoId1, videoId2), VideoAccess.Everything(
+                    emptySet()
+                )
+            )
         assertThat(videos.map { it.videoId }).containsExactly(videoId3, videoId1, videoId2)
     }
 
@@ -59,7 +64,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
         Assertions.assertThatThrownBy {
             videoRetrievalService.getPlayableVideo(
                 VideoId(value = TestFactories.aValidId()),
-                VideoAccess.Everything
+                VideoAccess.Everything(emptySet())
             )
         }
             .isInstanceOf(VideoNotFoundException::class.java)
@@ -73,7 +78,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
 
         val videoIds = videoRetrievalService.getVideoIdsWithCursor(
             pageSize = 5,
-            videoAccess = VideoAccess.Everything
+            videoAccess = VideoAccess.Everything(emptySet())
         ).videoIds
 
         assertThat(videoIds).containsExactlyInAnyOrder(videoId1, videoId2, videoId3)
@@ -87,13 +92,13 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
 
         val result = videoRetrievalService.getVideoIdsWithCursor(
             pageSize = 2,
-            videoAccess = VideoAccess.Everything
+            videoAccess = VideoAccess.Everything(emptySet())
         )
         assertThat(result.cursor).isNotNull
         val videoIds = videoRetrievalService.getVideoIdsWithCursor(
             cursor = result.cursor,
             pageSize = 2,
-            videoAccess = VideoAccess.Everything
+            videoAccess = VideoAccess.Everything(emptySet())
         ).videoIds
         assertThat(videoIds).hasSize(1)
     }
@@ -111,7 +116,7 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                     VideoAccessRule.IncludedIds(
                         setOf(video1, video3)
                     )
-                )
+                ), emptySet()
             )
         ).videoIds
 

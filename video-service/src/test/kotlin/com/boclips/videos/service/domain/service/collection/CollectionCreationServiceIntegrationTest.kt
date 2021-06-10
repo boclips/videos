@@ -114,7 +114,7 @@ class CollectionCreationServiceIntegrationTest : AbstractSpringIntegrationTest()
                                 VideoAccessRule.IncludedIds(
                                     videoIds = emptySet()
                                 )
-                            )
+                            ), emptySet()
                         )
                     )
                 }

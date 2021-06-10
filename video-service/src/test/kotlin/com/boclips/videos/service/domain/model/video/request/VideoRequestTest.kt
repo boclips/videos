@@ -19,7 +19,7 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0)
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.phrase).isEqualTo("some phrase")
     }
@@ -32,7 +32,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             ids = setOf("id 1", "id 2")
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.ids).isEqualTo(setOf("id 1", "id 2"))
     }
@@ -46,7 +46,7 @@ class VideoRequestTest {
             ids = setOf("id 1", "id 2"),
             channelIds = setOf("1", "2", "3")
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.channelIds).isEqualTo(setOf("1", "2", "3"))
     }
@@ -59,7 +59,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             bestFor = listOf("explainer")
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.bestFor).contains("explainer")
     }
@@ -72,7 +72,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -88,7 +88,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.TITLE_DESC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -104,7 +104,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.UNTAGGED_CATEGORIES
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -120,7 +120,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.TITLE_ASC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -136,7 +136,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.INGEST_ASC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -152,7 +152,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.INGEST_DESC
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         val sort = searchQuery.sort.first() as Sort.ByField<VideoMetadata>
 
@@ -168,7 +168,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RANDOM
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.sort.first() is Sort.ByRandom<VideoMetadata>)
     }
@@ -181,7 +181,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = null
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.sort).isEmpty()
     }
@@ -195,7 +195,7 @@ class VideoRequestTest {
             sortBy = SortKey.RELEASE_DATE,
             source = SourceType.YOUTUBE
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.source).isEqualTo(SourceType.YOUTUBE)
     }
@@ -208,7 +208,7 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             types = setOf(VideoType.NEWS, VideoType.STOCK)
         )
-            .toQuery(VideoAccess.Everything)
+            .toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.types).containsExactly(VideoType.NEWS, VideoType.STOCK)
     }
@@ -222,7 +222,7 @@ class VideoRequestTest {
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
             releaseDateTo = LocalDate.of(2001, 1, 1)
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
         assertThat(searchQuery.userQuery.releaseDateFrom).isEqualTo(LocalDate.of(2000, 1, 1))
@@ -235,7 +235,7 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
             promoted = true
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.promoted).isEqualTo(true)
     }
@@ -247,7 +247,7 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
             attachmentTypes = setOf("Activity")
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.attachmentTypes).isEqualTo(setOf("Activity"))
     }
@@ -259,7 +259,7 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
             promoted = true
-        ).toQuery(VideoAccess.Everything)
+        ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.videoAccessRuleQuery.permittedVideoIds).isNull()
     }

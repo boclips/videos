@@ -5,6 +5,8 @@ import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.collection.CollectionId
+import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.whenever
@@ -40,15 +42,22 @@ class RetryApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
-    fun `when rules cannot be obtained, revert to public access`() {
+    fun `when rules cannot be obtained, revert to public access and protect private channels`() {
+        val privateChannelId = saveChannel(private = true).id.value
         whenever(usersClient.getAccessRulesOfUser(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
             .thenThrow(HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
             .thenThrow(RuntimeException("Something bad happened"))
             .thenThrow(RuntimeException("Something bad happened again!"))
 
-        Assertions.assertThat(accessRuleService.getRules(UserFactory.sample(id = "test-user")).collectionAccess)
+        val rules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
+
+        Assertions.assertThat(rules.collectionAccess)
             .isEqualTo(
                 CollectionAccessRule.everything()
+            )
+        Assertions.assertThat(rules.videoAccess)
+            .isEqualTo(
+                VideoAccess.Everything(setOf(ChannelId(privateChannelId)))
             )
     }
 }

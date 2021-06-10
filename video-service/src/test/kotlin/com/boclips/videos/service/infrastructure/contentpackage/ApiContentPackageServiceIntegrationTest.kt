@@ -38,7 +38,8 @@ class ApiContentPackageServiceIntegrationTest : AbstractSpringIntegrationTest() 
             )
         )
         val accessRules = contentPackageService.getAccessRules(
-            ContentPackageId("package")
+            ContentPackageId("package"),
+            emptySet()
         )
         assertNotNull(accessRules)
 
@@ -65,8 +66,6 @@ class ApiContentPackageServiceIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `returns null for content package that is not found`() {
-        ContentPackageId("unknown-id")
-            .let(contentPackageService::getAccessRules)
-            .let(::assertNull)
+        assertNull(contentPackageService.getAccessRules(ContentPackageId("unknown-id"), emptySet()))
     }
 }

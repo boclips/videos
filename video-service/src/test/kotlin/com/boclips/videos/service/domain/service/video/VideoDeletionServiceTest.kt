@@ -32,7 +32,7 @@ class VideoDeletionServiceTest : AbstractSpringIntegrationTest() {
 
         videoDeletionService.delete(videoId, UserFactory.sample())
 
-        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything(emptySet())) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 
@@ -42,7 +42,7 @@ class VideoDeletionServiceTest : AbstractSpringIntegrationTest() {
 
         videoDeletionService.delete(videoId, UserFactory.sample())
 
-        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything) }
+        Assertions.assertThatThrownBy { videoRetrievalService.getPlayableVideo(videoId, VideoAccess.Everything(emptySet())) }
             .isInstanceOf(VideoNotFoundException::class.java)
     }
 

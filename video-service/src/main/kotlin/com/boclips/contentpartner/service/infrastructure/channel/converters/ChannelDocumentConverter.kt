@@ -69,7 +69,7 @@ object ChannelDocumentConverter : KLogging() {
                 ContractDocumentConverter().toDocument(contract)
             },
             taxonomy = channel.taxonomy?.let { toCategoriesDocument(it) },
-            hidden = channel.visibility == ChannelVisibility.HIDDEN
+            isPrivate = channel.visibility == ChannelVisibility.PRIVATE
         )
     }
 
@@ -153,13 +153,13 @@ object ChannelDocumentConverter : KLogging() {
             taxonomy = document.taxonomy?.let {
                 convertTaxonomyDocument(it)
             },
-            visibility = document.hidden?.let {
+            visibility = document.isPrivate?.let {
                 if (it) {
-                    ChannelVisibility.HIDDEN
+                    ChannelVisibility.PRIVATE
                 } else {
-                    ChannelVisibility.VISIBLE
+                    ChannelVisibility.PUBLIC
                 }
-            } ?: ChannelVisibility.VISIBLE
+            } ?: ChannelVisibility.PUBLIC
         )
     }
 

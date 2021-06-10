@@ -3,6 +3,7 @@ package com.boclips.videos.service.config.application
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.application.accessrules.AccessRulesConverter
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.KeycloakProperties
 import com.boclips.videos.service.config.security.AppKeycloakConfigResolver
@@ -13,11 +14,7 @@ import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.accessrules.ApiAccessRulesConverter
-import com.boclips.videos.service.infrastructure.collection.CollectionRepository
-import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
-import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
-import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
-import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
+import com.boclips.videos.service.infrastructure.collection.*
 import com.boclips.videos.service.infrastructure.contentwarning.MongoContentWarningRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationService
@@ -71,9 +68,10 @@ class InfrastructureContext(
     @Bean
     fun apiAccessRuleService(
         usersClient: UsersClient,
-        accessRulesConverter: AccessRulesConverter
+        accessRulesConverter: AccessRulesConverter,
+        videoChannelService: VideoChannelService
     ): ApiAccessRuleService {
-        return ApiAccessRuleService(usersClient, accessRulesConverter)
+        return ApiAccessRuleService(usersClient, accessRulesConverter, videoChannelService)
     }
 
     @Bean

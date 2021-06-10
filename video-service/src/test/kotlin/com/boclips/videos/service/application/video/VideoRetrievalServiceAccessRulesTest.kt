@@ -1,9 +1,9 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +30,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val videos = videoRetrievalService.getPlayableVideos(
                 listOf(firstVideoId, secondVideoId),
-                VideoAccess.Rules(listOf(accessRule))
+                VideoAccess.Rules(listOf(accessRule), emptySet())
             )
 
             assertThat(videos.map { it.videoId }).containsExactly(firstVideoId)
@@ -48,7 +48,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val videos = videoRetrievalService.getPlayableVideos(
                 listOf(firstVideoId, secondVideoId, thirdVideoId),
-                VideoAccess.Rules(listOf(accessRule))
+                VideoAccess.Rules(listOf(accessRule), emptySet())
             )
 
             assertThat(videos.map { it.videoId }).containsExactly(secondVideoId)
@@ -65,7 +65,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val videos = videoRetrievalService.getPlayableVideos(
                 listOf(stockVideoId, newsVideoId, instructionalVideoId),
                 VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule), emptySet()
                 )
             )
 
@@ -91,7 +91,24 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             val videos = videoRetrievalService.getPlayableVideos(
                 listOf(allowedVideoId, firstExcludedVideoId, secondExcludedVideoId),
-                VideoAccess.Rules(listOf(accessRule))
+                VideoAccess.Rules(listOf(accessRule), emptySet())
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
+        }
+
+        @Test
+        fun `does not return private channels for everything access rule`() {
+            val visibleChannel = saveChannel(name = "Tina", private = false).id.value
+            val privateChannel = saveChannel(name = "Turner", private = true).id.value
+
+            val allowedVideoId = saveVideo(existingChannelId = visibleChannel)
+            val firstExcludedVideoId = saveVideo(existingChannelId = privateChannel)
+            val secondExcludedVideoId = saveVideo(existingChannelId = privateChannel)
+
+            val videos = videoRetrievalService.getPlayableVideos(
+                listOf(allowedVideoId, firstExcludedVideoId, secondExcludedVideoId),
+                videoAccess = VideoAccess.Everything(privateChannels = setOf(ChannelId(privateChannel)))
             )
 
             assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
@@ -107,7 +124,7 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
             val accessRule = VideoAccessRule.ExcludedContentTypes(setOf(VideoType.STOCK))
 
             assertThrows<VideoNotFoundException> {
-                videoRetrievalService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule)))
+                videoRetrievalService.getPlayableVideo(stockVideo, VideoAccess.Rules(listOf(accessRule), emptySet()))
             }
         }
     }

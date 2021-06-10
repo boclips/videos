@@ -17,7 +17,8 @@ class ApiAccessRulesConverter(
     private val collectionRepository: CollectionRepository
 ) : AccessRulesConverter {
     override fun toVideoAccess(
-        accessRules: List<AccessRuleResource>
+        accessRules: List<AccessRuleResource>,
+        privateChannels: Set<ChannelId>
     ): VideoAccess {
         val videoAccessRules = accessRules.mapNotNull {
             when (it) {
@@ -75,12 +76,23 @@ class ApiAccessRulesConverter(
                         }
                     }.toSet()
                 )
+                is AccessRuleResource.IncludedPrivateChannels -> VideoAccessRule.IncludedPrivateChannels(
+                    channelIds = it.channelIds.map { id ->
+                        ChannelId(
+                            id
+                        )
+                    }.toSet()
+                )
             }
         }
 
+
         return when {
-            videoAccessRules.isNotEmpty() -> VideoAccess.Rules(videoAccessRules)
-            else -> VideoAccess.Everything
+            videoAccessRules.isNotEmpty() -> VideoAccess.Rules(
+                accessRules = videoAccessRules,
+                privateChannels = privateChannels
+            )
+            else -> VideoAccess.Everything(privateChannels = privateChannels)
         }
     }
 

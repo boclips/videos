@@ -72,7 +72,17 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.everything())
 
-        assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
+        assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything(emptySet()))
+    }
+
+    @Test
+    fun `default includes private channels`() {
+        val privateChannel = saveChannel(private = true)
+        val accessRules = accessRuleService.getRules(UserFactory.sample(id = "test-user"))
+
+        assertThat(accessRules.collectionAccess).isEqualTo(CollectionAccessRule.everything())
+
+        assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything(setOf(ChannelId(privateChannel.id.value))))
     }
 
     @Test
@@ -157,7 +167,7 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val user = UserFactory.sample(id = "test-user")
             val accessRules = accessRuleService.getRules(user)
 
-            assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything)
+            assertThat(accessRules.videoAccess).isEqualTo(VideoAccess.Everything(emptySet()))
         }
 
         @Test

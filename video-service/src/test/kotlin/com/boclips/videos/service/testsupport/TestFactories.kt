@@ -529,7 +529,7 @@ object AttachmentFactory {
 object AccessRulesFactory {
     fun sample(
         collectionAccessRule: CollectionAccessRule = CollectionAccessRule.everything(),
-        videoAccess: VideoAccess = VideoAccess.Everything
+        videoAccess: VideoAccess = VideoAccess.Everything(emptySet())
     ): AccessRules {
         return AccessRules(
             collectionAccess = collectionAccessRule,
@@ -577,7 +577,7 @@ object UserFactory {
         context: RequestContext = RequestContext(origin = null, deviceId = null),
         accessRulesSupplier: (user: User) -> AccessRules = {
             AccessRules(
-                videoAccess = VideoAccess.Everything,
+                videoAccess = VideoAccess.Everything(emptySet()),
                 collectionAccess = CollectionAccessRule.Everything
             )
         }

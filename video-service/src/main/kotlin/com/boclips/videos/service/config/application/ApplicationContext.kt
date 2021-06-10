@@ -230,7 +230,7 @@ class ApplicationContext(
 
     @Bean
     fun getVideosByContentPackage(videoRetrievalService: VideoRetrievalService): GetVideosByContentPackage =
-        GetVideosByContentPackage(videoRetrievalService, contentPackageService)
+        GetVideosByContentPackage(videoRetrievalService, contentPackageService, videoChannelService)
 
     @Bean
     fun updateCaptionContent(captionService: CaptionService): UpdateCaptionContent {

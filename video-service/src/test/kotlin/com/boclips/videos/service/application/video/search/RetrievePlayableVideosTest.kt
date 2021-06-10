@@ -34,7 +34,7 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0)
             ),
-            VideoAccess.Everything
+            VideoAccess.Everything(emptySet())
         )
 
         assertThat(results.videos).isNotEmpty
@@ -54,7 +54,7 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0),
             ),
-            VideoAccess.Everything
+            VideoAccess.Everything(emptySet())
         )
 
         assertThat(results.videos).isNotEmpty
@@ -84,8 +84,7 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                     VideoAccessRule.ExcludedPlaybackProviderTypes(
                         sources = setOf(PlaybackProviderType.YOUTUBE)
                     )
-                )
-            )
+                ), emptySet())
         )
 
         assertThat(results.videos).hasSize(1)

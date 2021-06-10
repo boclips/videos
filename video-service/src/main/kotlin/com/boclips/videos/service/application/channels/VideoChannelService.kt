@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.channels
 
+import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.videos.service.domain.model.video.channel.Availability
@@ -48,6 +49,12 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
                 idCache = channelId to it
             }
     }
+
+    fun getPrivateChannelIDs(): Set<ChannelId> =
+        channelRepository.findAll(listOf(ChannelFilter.PrivateFilter(private = true)))
+            .map { ChannelId(it.id.value) }.toSet()
+
+
 
     private fun find(channelId: ChannelId): com.boclips.contentpartner.service.domain.model.channel.Channel? {
         return channelRepository.findById(

@@ -11,7 +11,7 @@ import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.util.Locale
+import java.util.*
 import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class AccessRuleConverterTest {
@@ -21,7 +21,7 @@ class AccessRuleConverterTest {
     inner class ToPermittedIds {
         @Test
         fun `returns null when access to everything`() {
-            val ids = converter.mapToPermittedVideoIds(VideoAccess.Everything)
+            val ids = converter.mapToPermittedVideoIds(VideoAccess.Everything(emptySet()))
             assertThat(ids).isNull()
         }
 
@@ -33,7 +33,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(TestFactories.createVideoId())
                         )
-                    )
+                    ), emptySet()
                 )
             )
 
@@ -49,7 +49,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
 
@@ -61,7 +61,7 @@ class AccessRuleConverterTest {
     inner class ToDeniedVideoIds {
         @Test
         fun `returns null when access to everything`() {
-            val ids = converter.mapToDeniedVideoIds(VideoAccess.Everything)
+            val ids = converter.mapToDeniedVideoIds(VideoAccess.Everything(emptySet()))
             assertThat(ids).isNull()
         }
 
@@ -73,7 +73,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedIds(
                             videoIds = setOf(TestFactories.createVideoId())
                         )
-                    )
+                    ), emptySet()
                 )
             )
 
@@ -89,7 +89,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
 
@@ -101,7 +101,7 @@ class AccessRuleConverterTest {
     inner class ToExcludedVideoTypes {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedTypes = converter.mapToExcludedVideoTypes(VideoAccess.Everything)
+            val excludedTypes = converter.mapToExcludedVideoTypes(VideoAccess.Everything(emptySet()))
             assertThat(excludedTypes).isEmpty()
         }
 
@@ -114,7 +114,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedTypes).isEmpty()
@@ -128,7 +128,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedContentTypes(
                             contentTypes = setOf(VideoType.STOCK)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedTypes).containsOnly(SearchVideoType.STOCK)
@@ -139,7 +139,7 @@ class AccessRuleConverterTest {
     inner class ToIncludedVideoTypes {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedTypes = converter.mapToIncludedVideoTypes(VideoAccess.Everything)
+            val excludedTypes = converter.mapToIncludedVideoTypes(VideoAccess.Everything(emptySet()))
             assertThat(excludedTypes).isEmpty()
         }
 
@@ -152,7 +152,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedTypes).isEmpty()
@@ -166,7 +166,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedContentTypes(
                             contentTypes = setOf(VideoType.STOCK)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(includedTypes).containsOnly(SearchVideoType.STOCK)
@@ -177,7 +177,7 @@ class AccessRuleConverterTest {
     inner class ToExcludedContentPartnersIds {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedIds = converter.mapToExcludedChannelIds(VideoAccess.Everything)
+            val excludedIds = converter.mapToExcludedChannelIds(VideoAccess.Everything(emptySet()))
             assertThat(excludedIds).isEmpty()
         }
 
@@ -190,7 +190,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedIds).isEmpty()
@@ -208,10 +208,38 @@ class AccessRuleConverterTest {
                                 )
                             )
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedIds).containsOnly("123")
+        }
+
+        @Test
+        fun `returns excluded channels minus permitted channels if overlap`() {
+            val excludedIds = converter.mapToExcludedChannelIds(
+                VideoAccess.Rules(
+                    listOf(
+                        VideoAccessRule.ExcludedChannelIds(
+                            channelIds = setOf(
+                                ChannelId(
+                                    value = "123"
+                                ),
+                                ChannelId(
+                                    value = "456"
+                                )
+                            )
+                        ),
+                        VideoAccessRule.IncludedPrivateChannels(
+                            channelIds = setOf(
+                                ChannelId(
+                                    value = "123"
+                                )
+                            )
+                        )
+                    ), emptySet()
+                )
+            )
+            assertThat(excludedIds).containsOnly("456")
         }
     }
 
@@ -219,7 +247,7 @@ class AccessRuleConverterTest {
     inner class ToIncludedChannelIds {
         @Test
         fun `returns empty when access to everything`() {
-            val includedChannelIds = converter.mapToIncludedChannelIds(VideoAccess.Everything)
+            val includedChannelIds = converter.mapToIncludedChannelIds(VideoAccess.Everything(emptySet()))
             assertThat(includedChannelIds).isEmpty()
         }
 
@@ -232,7 +260,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(includedChannelIds).isEmpty()
@@ -250,7 +278,7 @@ class AccessRuleConverterTest {
                                 )
                             )
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(includedChannelIds).containsOnly("123")
@@ -261,7 +289,7 @@ class AccessRuleConverterTest {
     inner class ToIsEligibleForStreaming() {
         @Test
         fun `returns nothing when access to everything`() {
-            val isEligibleForStreaming = converter.isEligibleForStreaming(VideoAccess.Everything)
+            val isEligibleForStreaming = converter.isEligibleForStreaming(VideoAccess.Everything(emptySet()))
             assertThat(isEligibleForStreaming).isNull()
         }
 
@@ -273,7 +301,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.STREAM)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isTrue()
@@ -287,7 +315,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.DOWNLOAD)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isNull()
@@ -299,7 +327,7 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.IncludedDistributionMethods(setOf())
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isNull()
@@ -310,7 +338,7 @@ class AccessRuleConverterTest {
     inner class ToIsEligibleForDownload {
         @Test
         fun `returns nothing when access to everything`() {
-            val isEligibleForDownload = converter.isEligibleForDownload(VideoAccess.Everything)
+            val isEligibleForDownload = converter.isEligibleForDownload(VideoAccess.Everything(emptySet()))
             assertThat(isEligibleForDownload).isNull()
         }
 
@@ -322,7 +350,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.DOWNLOAD)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isTrue()
@@ -336,7 +364,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.STREAM)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isNull()
@@ -348,7 +376,7 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.IncludedDistributionMethods(setOf())
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isNull()
@@ -359,7 +387,7 @@ class AccessRuleConverterTest {
     inner class ToExcludedLanguages {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedTypes = converter.mapToExcludedLanguages(VideoAccess.Everything)
+            val excludedTypes = converter.mapToExcludedLanguages(VideoAccess.Everything(emptySet()))
             assertThat(excludedTypes).isEmpty()
         }
 
@@ -372,7 +400,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedLanguages).isEmpty()
@@ -386,7 +414,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedLanguages(
                             languages = setOf(Locale.ENGLISH, Locale.FRENCH)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedLanguages).containsExactly(Locale.ENGLISH, Locale.FRENCH)
@@ -397,7 +425,7 @@ class AccessRuleConverterTest {
     inner class ToExcludedPlaybackProviderTypes {
         @Test
         fun `returns empty when access to everything`() {
-            val excludedTypes = converter.mapToExcludedSourceTypes(VideoAccess.Everything)
+            val excludedTypes = converter.mapToExcludedSourceTypes(VideoAccess.Everything(emptySet()))
             assertThat(excludedTypes).isEmpty()
         }
 
@@ -410,7 +438,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedPlaybackProviderTypes).isEmpty()
@@ -424,7 +452,7 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedPlaybackProviderTypes(
                             sources = setOf(PlaybackProviderType.KALTURA, PlaybackProviderType.YOUTUBE)
                         )
-                    )
+                    ), emptySet()
                 )
             )
             assertThat(excludedLanguages).containsExactly(SourceType.BOCLIPS, SourceType.YOUTUBE)

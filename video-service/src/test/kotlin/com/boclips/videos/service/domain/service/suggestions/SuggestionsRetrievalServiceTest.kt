@@ -26,7 +26,7 @@ internal class SuggestionsRetrievalServiceTest : AbstractSpringIntegrationTest()
                 SuggestionsRequest(
                     text = "Super"
                 ),
-                VideoAccess.Everything
+                VideoAccess.Everything(emptySet())
             )
 
             assertThat(results.channels[0].id).isEqualTo(superChannel.id)

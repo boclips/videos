@@ -187,7 +187,7 @@ class CollectionSearchQueryAssemblerTest {
         hasLessonPlans: Boolean? = null,
         user: User = UserFactory.sample(accessRulesSupplier = {
             AccessRules(
-                videoAccess = VideoAccess.Everything,
+                videoAccess = VideoAccess.Everything(emptySet()),
                 collectionAccess = CollectionAccessRule.everything()
             )
         }),

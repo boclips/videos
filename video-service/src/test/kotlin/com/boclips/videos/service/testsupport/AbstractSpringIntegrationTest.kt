@@ -478,7 +478,7 @@ abstract class AbstractSpringIntegrationTest {
         contentTypes: List<String>? = emptyList(),
         requiresVideoLevelTagging: Boolean = false,
         categories: List<String>? = null,
-        hidden: Boolean? = false
+        private: Boolean? = false
     ): Channel {
         val createdChannel = try {
             createChannel(
@@ -490,7 +490,7 @@ abstract class AbstractSpringIntegrationTest {
                     contentTypes = contentTypes,
                     requiresVideoLevelTagging = requiresVideoLevelTagging,
                     categories = categories,
-                    hidden = hidden
+                    private = private
                 )
             )
         } catch (e: ChannelConflictException) {

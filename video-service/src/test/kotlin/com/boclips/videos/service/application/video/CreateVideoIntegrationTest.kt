@@ -58,7 +58,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             UserFactory.sample()
         )
 
-        val createdVideo = videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)
+        val createdVideo = videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything(emptySet()))
         assertThat(createdVideo).isNotNull
         assertThat(createdVideo.channelCategories).containsExactlyInAnyOrder(
             CategoryWithAncestors(codeValue = CategoryCode("C"), description = "C description", ancestors = emptySet()),
@@ -102,11 +102,12 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             UserFactory.sample()
         )
 
-        val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(scrapedVideo.videoId, VideoAccess.Everything)
+        val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(scrapedVideo.videoId, VideoAccess.Everything(
+            emptySet()))
         assertThat(updatedScrapedVideo.deactivated).isTrue()
         assertThat(updatedScrapedVideo.activeVideoId).isEqualTo(activeVideo.videoId)
 
-        val newVideo = videoRetrievalService.getPlayableVideo(activeVideo.videoId, VideoAccess.Everything)
+        val newVideo = videoRetrievalService.getPlayableVideo(activeVideo.videoId, VideoAccess.Everything(emptySet()))
         assertThat(newVideo).isNotNull
     }
 
@@ -126,7 +127,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 UserFactory.sample()
             )
 
-        assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything)).isNotNull
+        assertThat(videoRetrievalService.getPlayableVideo(video.videoId, VideoAccess.Everything(emptySet()))).isNotNull
     }
 
     @Test
@@ -150,7 +151,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                     pageSize = 0,
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
-                VideoAccess.Everything
+                VideoAccess.Everything(emptySet())
             ).counts.total
         ).isEqualTo(0)
     }
@@ -192,7 +193,7 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             UserFactory.sample()
         )
 
-        val video = videoRetrievalService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything)
+        val video = videoRetrievalService.getPlayableVideo(createdVideo.videoId, VideoAccess.Everything(emptySet()))
 
         assertThat(video.playback.duration).isEqualTo(playbackProviderDuration)
     }

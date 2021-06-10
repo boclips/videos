@@ -47,7 +47,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     pagingState = VideoRequestPagingState.PageNumber(0),
                 ),
                 VideoAccess.Rules(
-                    listOf(VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.DOWNLOAD)))
+                    listOf(VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.DOWNLOAD))), emptySet()
                 )
             )
 
@@ -67,7 +67,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     pagingState = VideoRequestPagingState.PageNumber(0),
                 ),
                 VideoAccess.Rules(
-                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
+                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo))), emptySet()
                 )
             )
 
@@ -87,7 +87,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     pagingState = VideoRequestPagingState.PageNumber(0),
                 ),
                 VideoAccess.Rules(
-                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo)))
+                    listOf(VideoAccessRule.IncludedIds(setOf(firstVideo))), emptySet()
                 )
             )
 
@@ -106,7 +106,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
-                    listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo)))
+                    listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo))), emptySet()
                 )
             )
 
@@ -130,7 +130,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     pagingState = VideoRequestPagingState.PageNumber(0)
                 ),
                 VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule), emptySet()
                 )
             )
 
@@ -154,7 +154,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
                 ),
                 VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule), emptySet()
                 )
             )
 
@@ -186,7 +186,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
                 ),
                 VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule), emptySet()
                 )
             )
 
@@ -218,7 +218,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
                 ),
                 VideoAccess.Rules(
-                    listOf(accessRule)
+                    listOf(accessRule), emptySet()
                 )
             )
 
@@ -240,7 +240,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 types = setOf(SearchVideoType.INSTRUCTIONAL)
             ),
             VideoAccess.Rules(
-                listOf(accessRule)
+                listOf(accessRule), emptySet()
             )
         )
 

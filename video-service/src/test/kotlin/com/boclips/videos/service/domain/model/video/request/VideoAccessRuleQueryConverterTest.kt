@@ -3,21 +3,21 @@ package com.boclips.videos.service.domain.model.video.request
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.Locale
+import java.util.*
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 
 class VideoAccessRuleQueryConverterTest {
     @Test
-    fun `can convert access rules to query`() {
+    fun `can convert access rules to query and removes any permitted hidden channels from excluded channels filter`() {
         val allowedVideos = setOf(TestFactories.createVideoId(), TestFactories.createVideoId())
         val deniedVideoIds = setOf(TestFactories.createVideoId())
         val query = AccessRuleQueryConverter.toVideoAccessRuleQuery(
@@ -42,8 +42,11 @@ class VideoAccessRuleQueryConverterTest {
                     VideoAccessRule.ExcludedLanguages(languages = setOf(Locale.FRENCH, Locale.KOREAN)),
                     VideoAccessRule.ExcludedPlaybackProviderTypes(
                         sources = setOf(PlaybackProviderType.YOUTUBE, PlaybackProviderType.KALTURA)
+                    ),
+                    VideoAccessRule.IncludedPrivateChannels(
+                        channelIds = setOf(ChannelId("Private"))
                     )
-                )
+                ), setOf(ChannelId("Goodbye"), ChannelId("Private"))
             )
         )
 
@@ -52,7 +55,7 @@ class VideoAccessRuleQueryConverterTest {
         assertThat(query.deniedVideoIds).containsExactly(*deniedVideoIds.map { it.value }.toTypedArray())
         assertThat(query.excludedTypes).containsExactly(SearchVideoType.NEWS)
         assertThat(query.includedTypes).containsExactly(SearchVideoType.INSTRUCTIONAL)
-        assertThat(query.excludedContentPartnerIds).containsExactly("HELLO")
+        assertThat(query.excludedContentPartnerIds).containsExactly("HELLO", "Goodbye")
         assertThat(query.includedChannelIds).containsExactly("hi")
         assertThat(query.isEligibleForStream).isNull()
         assertThat(query.isEligibleForDownload).isTrue

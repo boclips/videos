@@ -196,36 +196,36 @@ class CreateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can create hidden channels`() {
+    fun `can create private channels`() {
         val channel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
-                hidden = true
+                private = true
             )
         )
 
-        assertThat(channel.visibility).isEqualTo(ChannelVisibility.HIDDEN)
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.PRIVATE)
     }
 
     @Test
     fun `can create visible channels`() {
         val channel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
-                hidden = false
+                private = false
             )
         )
 
-        assertThat(channel.visibility).isEqualTo(ChannelVisibility.VISIBLE)
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.PUBLIC)
     }
 
     @Test
     fun `channels are visible by default`() {
         val channel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
-                hidden = null
+                private = null
             )
         )
 
-        assertThat(channel.visibility).isEqualTo(ChannelVisibility.VISIBLE)
+        assertThat(channel.visibility).isEqualTo(ChannelVisibility.PUBLIC)
     }
 
     @Test

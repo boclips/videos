@@ -65,16 +65,21 @@ sealed class VideoAccessRule {
             return "VideoAccessRule(restricted to exclude ${sources.joinToString { it.name }} content)"
         }
     }
+
+    data class IncludedPrivateChannels(val channelIds: Set<ChannelId>) : VideoAccessRule() {
+        override fun toString(): String {
+            return "VideoAccessRule(expanded to add ${channelIds.size} private channels)"
+        }
+    }
 }
 
 sealed class VideoAccess {
-    object Everything : VideoAccess() {
+    data class Everything(val privateChannels: Set<ChannelId>) : VideoAccess() {
         override fun toString(): String {
-            return "Everything - VideoAccessRule"
+            return "Everything - VideoAccessRule, minus ${privateChannels.size} private channels"
         }
     }
-
-    data class Rules(val accessRules: List<VideoAccessRule>) : VideoAccess() {
+    data class Rules(val accessRules: List<VideoAccessRule>, val privateChannels: Set<ChannelId>) : VideoAccess() {
         override fun toString(): String {
             return accessRules.joinToString { it.toString() }
         }

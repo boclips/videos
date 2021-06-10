@@ -88,13 +88,13 @@ class CreateChannel(
                     }?.toSet() ?: emptySet()
                 )
             },
-            visibility = upsertRequest.hidden?.let {
+            visibility = upsertRequest.private?.let {
                 if (it) {
-                    ChannelVisibility.HIDDEN
+                    ChannelVisibility.PRIVATE
                 } else {
-                    ChannelVisibility.VISIBLE
+                    ChannelVisibility.PUBLIC
                 }
-            } ?: ChannelVisibility.VISIBLE
+            } ?: ChannelVisibility.PUBLIC
         )
 
         return when (val createdChannelResult = channelService.create(channel)) {

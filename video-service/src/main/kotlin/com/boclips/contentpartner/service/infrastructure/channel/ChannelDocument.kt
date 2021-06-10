@@ -31,5 +31,5 @@ data class ChannelDocument(
     val subjects: List<String>? = null,
     val contract: ContractDocument?,
     val taxonomy: TaxonomyDocument?,
-    val hidden: Boolean? = null
+    val isPrivate: Boolean? = null
 )

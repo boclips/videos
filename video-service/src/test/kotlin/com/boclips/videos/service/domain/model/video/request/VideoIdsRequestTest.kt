@@ -13,7 +13,7 @@ class VideoIdsRequestTest {
             ids = listOf(
                 id
             )
-        ).toSearchQuery(VideoAccess.Everything)
+        ).toSearchQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(query.userQuery.ids).containsExactlyInAnyOrder(id.value)
     }

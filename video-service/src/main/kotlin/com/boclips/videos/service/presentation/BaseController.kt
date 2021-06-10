@@ -54,7 +54,7 @@ open class BaseController(
                     val clientName = ClientExtractor.extractClient().let { Client.getNameByClient(it) }
                     accessRuleService.getRules(user, clientName)
                 } else {
-                    AccessRules.anonymousAccess()
+                    AccessRules.anonymousAccess(accessRuleService.getPrivateChannels())
                 }
             }
         )
@@ -87,7 +87,7 @@ object Administrator : User(
     accessRulesSupplier = {
         AccessRules(
             collectionAccess = CollectionAccessRule.Everything,
-            videoAccess = VideoAccess.Everything
+            videoAccess = VideoAccess.Everything(emptySet())
         )
     }
 )

@@ -62,7 +62,7 @@ class BaseControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(user.accessRules).isEqualTo(
                 AccessRules(
-                    videoAccess = VideoAccess.Everything,
+                    videoAccess = VideoAccess.Everything(emptySet()),
                     collectionAccess = CollectionAccessRule.everything()
                 )
             )

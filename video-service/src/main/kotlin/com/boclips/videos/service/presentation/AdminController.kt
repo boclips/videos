@@ -42,7 +42,7 @@ class AdminController(
     private val adminLinkBuilder: AdminLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    userService: UserService
+    userService: UserService,
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10000

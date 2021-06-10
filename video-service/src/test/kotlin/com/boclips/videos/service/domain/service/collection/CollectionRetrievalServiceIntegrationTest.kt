@@ -61,7 +61,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                                         )
                                     )
                                 )
-                            )
+                            , emptySet())
                         )
                     }
                 )
@@ -193,7 +193,7 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                                         )
                                     )
                                 )
-                            )
+                            , emptySet())
                         )
                     }
                 )

@@ -61,7 +61,7 @@ class ChannelDocumentConverterTest {
                     )
                 )
             ),
-            visibility = ChannelVisibility.HIDDEN
+            visibility = ChannelVisibility.PRIVATE
         )
 
         val document = ChannelDocumentConverter.toChannelDocument(original)

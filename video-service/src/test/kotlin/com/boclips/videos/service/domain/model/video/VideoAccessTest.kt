@@ -7,7 +7,7 @@ class VideoAccessTest {
     @Test
     fun `to string`() {
         val rule = VideoAccessRule.ExcludedIds(emptySet())
-        val videoAccess = VideoAccess.Rules(listOf(rule))
+        val videoAccess = VideoAccess.Rules(listOf(rule), emptySet())
         assertThat(videoAccess.toString()).isEqualTo(
             rule.toString()
         )

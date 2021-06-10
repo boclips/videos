@@ -1,16 +1,7 @@
 package com.boclips.contentpartner.service.infrastructure.contentpartner
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
-import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
-import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
-import com.boclips.contentpartner.service.domain.model.channel.PedagogyInformation
-import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
-import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestrictionsId
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
@@ -143,6 +134,17 @@ class MongoChannelRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val results = mongoChannelRepository.findByName("Creative Conspiracy (CC)")
 
         assertThat(results).hasSize(1)
+    }
+
+    @Test
+    fun `find by visibility`() {
+        mongoChannelRepository.create(createChannel(name = "coke", visibility = ChannelVisibility.PRIVATE))
+        mongoChannelRepository.create(createChannel(name = "pepsi", visibility = ChannelVisibility.PUBLIC))
+
+        val results = mongoChannelRepository.findAll(listOf(ChannelFilter.PrivateFilter(true)))
+
+        assertThat(results).hasSize(1)
+        assertThat(results.first().name).isEqualTo("coke")
     }
 
     @Test
