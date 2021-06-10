@@ -96,6 +96,23 @@ class VideoRetrievalServiceAccessRulesTest : AbstractSpringIntegrationTest() {
 
             assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
         }
+
+        @Test
+        fun `does not return hidden channels for everything access rule`() {
+            val visibleChannel = saveChannel(name = "Tina", hidden = false).id.value
+            val hiddenChannel = saveChannel(name = "Turner", hidden = true).id.value
+
+            val allowedVideoId = saveVideo(existingChannelId = visibleChannel)
+            val firstExcludedVideoId = saveVideo(existingChannelId = hiddenChannel)
+            val secondExcludedVideoId = saveVideo(existingChannelId = hiddenChannel)
+
+            val videos = videoRetrievalService.getPlayableVideos(
+                listOf(allowedVideoId, firstExcludedVideoId, secondExcludedVideoId),
+                videoAccess = VideoAccess.Everything
+            )
+
+            assertThat(videos.map { it.videoId }).containsOnly(allowedVideoId)
+        }
     }
 
     @Nested

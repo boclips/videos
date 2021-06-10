@@ -1,8 +1,10 @@
 package com.boclips.videos.service.config.application
 
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.users.api.httpclient.OrganisationsClient
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.videos.service.application.accessrules.AccessRulesConverter
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.config.properties.BatchProcessingConfig
 import com.boclips.videos.service.config.properties.KeycloakProperties
 import com.boclips.videos.service.config.security.AppKeycloakConfigResolver
@@ -71,9 +73,10 @@ class InfrastructureContext(
     @Bean
     fun apiAccessRuleService(
         usersClient: UsersClient,
-        accessRulesConverter: AccessRulesConverter
+        accessRulesConverter: AccessRulesConverter,
+        videoChannelService: VideoChannelService
     ): ApiAccessRuleService {
-        return ApiAccessRuleService(usersClient, accessRulesConverter)
+        return ApiAccessRuleService(usersClient, accessRulesConverter, videoChannelService = videoChannelService)
     }
 
     @Bean

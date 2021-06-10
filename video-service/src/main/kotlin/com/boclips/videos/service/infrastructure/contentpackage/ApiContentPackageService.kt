@@ -4,6 +4,7 @@ import com.boclips.users.api.httpclient.ContentPackagesClient
 import com.boclips.videos.service.application.accessrules.AccessRulesConverter
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.contentpackage.ContentPackageId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import feign.FeignException
 import mu.KLogging
@@ -15,11 +16,11 @@ class ApiContentPackageService(
 
     companion object : KLogging()
 
-    override fun getAccessRules(id: ContentPackageId): AccessRules? =
+    override fun getAccessRules(id: ContentPackageId, hiddenChannels: List<ChannelId>): AccessRules? =
         try {
             val resource = contentPackagesClient.find(id.value).accessRules
             AccessRules(
-                videoAccess = accessRulesConverter.toVideoAccess(resource),
+                videoAccess = accessRulesConverter.toVideoAccess(accessRules = resource, hiddenChannels = hiddenChannels),
                 collectionAccess = accessRulesConverter.toCollectionAccess(resource)
             )
         } catch (e: FeignException) {

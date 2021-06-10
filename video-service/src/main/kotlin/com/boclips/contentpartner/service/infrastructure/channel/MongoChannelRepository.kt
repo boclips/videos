@@ -1,10 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.channel
 
-import com.boclips.contentpartner.service.domain.model.channel.Channel
-import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
-import com.boclips.contentpartner.service.domain.model.channel.ChannelId
-import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
-import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.channel.converters.ChannelDocumentConverter
@@ -236,6 +232,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             is ChannelFilter.NameFilter -> ChannelDocument::name eq filter.name
             is ChannelFilter.IngestTypesFilter ->
                 ChannelDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }
+            is ChannelFilter.HiddenFilter ->  ChannelDocument::hidden eq filter.hidden
         }
 
     private fun findByQuery(mongoQuery: Bson): Channel? {

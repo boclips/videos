@@ -6,6 +6,7 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.UserFactory
@@ -19,7 +20,7 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `converts empty list to everything video access`() {
-        val accessRules = apiAccessRulesConverter.toVideoAccess(emptyList())
+        val accessRules = apiAccessRulesConverter.toVideoAccess(emptyList(), emptyList())
         assertThat(accessRules).isEqualTo(VideoAccess.Everything)
     }
 
@@ -38,7 +39,8 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
             AccessRuleResource.IncludedVideos(
                 name = "my-rule",
                 videoIds = listOf(firstVideoId, secondVideoId)
-            ).let(::listOf)
+            ).let(::listOf),
+            emptyList()
         )
         assertThat(accessRules).isEqualTo(
             VideoAccess.Rules(
@@ -48,6 +50,60 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
                         VideoId(secondVideoId)
                     )
                 ).let(::listOf)
+            )
+        )
+    }
+
+    @Test
+    fun `adds hidden channels to excluded channels access rule`() {
+        val firstVideoId = aValidId()
+        val secondVideoId = aValidId()
+
+        val accessRules = apiAccessRulesConverter.toVideoAccess(
+            AccessRuleResource.IncludedVideos(
+                name = "my-rule",
+                videoIds = listOf(firstVideoId, secondVideoId)
+            ).let(::listOf),
+            hiddenChannels = listOf(ChannelId("BLAH"))
+        )
+        assertThat(accessRules).isEqualTo(
+            VideoAccess.Rules(
+                listOf(
+                    VideoAccessRule.IncludedIds(
+                        setOf(
+                            VideoId(firstVideoId),
+                            VideoId(secondVideoId)
+                        )
+                    ),
+                    VideoAccessRule.ExcludedChannelIds(channelIds = setOf(ChannelId("BLAH")))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `combines hidden channels with excluded channels access rule`() {
+        val channelOne = aValidId()
+        val channelTwo = aValidId()
+
+        val accessRules = apiAccessRulesConverter.toVideoAccess(
+            AccessRuleResource.ExcludedChannels(
+                name = "my-rule",
+                channelIds = listOf(channelOne, channelTwo)
+            ).let(::listOf),
+            hiddenChannels = listOf(ChannelId("BLAH"))
+        )
+        assertThat(accessRules).isEqualTo(
+            VideoAccess.Rules(
+                listOf(
+                    VideoAccessRule.ExcludedChannelIds(
+                        channelIds = setOf(
+                            ChannelId("BLAH"),
+                            ChannelId(channelOne),
+                            ChannelId(channelTwo)
+                        )
+                    )
+                )
             )
         )
     }

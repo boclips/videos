@@ -1,8 +1,13 @@
 package com.boclips.videos.service.infrastructure.user
 
+import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelVisibility
+import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.users.api.httpclient.UsersClient
 import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.service.application.accessrules.AccessRulesConverter
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.model.AccessRules
 import com.boclips.videos.service.domain.model.collection.CollectionAccessRule
 import com.boclips.videos.service.domain.model.user.User
@@ -16,7 +21,8 @@ import org.springframework.retry.annotation.Retryable
 
 open class ApiAccessRuleService(
     private val usersClient: UsersClient,
-    private val accessRulesConverter: AccessRulesConverter
+    private val accessRulesConverter: AccessRulesConverter,
+    private val videoChannelService: VideoChannelService
 ) :
     AccessRuleService {
     companion object : KLogging()
@@ -38,12 +44,14 @@ open class ApiAccessRuleService(
                 }
             }
 
+        val hiddenChannels = videoChannelService.getHiddenChannelIDs()
         val accessRules = retrievedAccessRules.let {
             AccessRules(
                 collectionAccess = accessRulesConverter.toCollectionAccess(it, user),
-                videoAccess = accessRulesConverter.toVideoAccess(it)
+                videoAccess = accessRulesConverter.toVideoAccess(it, hiddenChannels)
             )
         }
+
 
         logger.info { "Retrieved access rules for user ${user.id.value}" }
         return accessRules

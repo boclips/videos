@@ -31,6 +31,25 @@ class GetVideosByContentPackageIntegrationTest : AbstractSpringIntegrationTest()
     }
 
     @Test
+    fun `does not include hidden channels' videos in content package`() {
+        val hiddenChannel = saveChannel("Channel to hide")
+        saveVideo(title = "vid-1", existingChannelId = hiddenChannel.id.value)
+        val video1 = saveVideo(title = "vid-3")
+        val video2 = saveVideo(title = "vid-2")
+
+        val accessRule = AccessRuleResource.IncludedVideos(
+            name = "woi",
+            videoIds = listOf(video1, video2).map { it.value }
+        )
+
+        saveContentPackage("package", "included videos", accessRule)
+
+        val result = getVideosByContentPackage("package", pageSize = 50)
+
+        assertThat(result.videoIds).containsExactlyInAnyOrder(video1, video2)
+    }
+
+    @Test
     fun `respects page size and index`() {
         saveVideo(title = "1")
         saveVideo(title = "2")
