@@ -3,6 +3,7 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode as SearchServiceCategoryCode
 import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -41,8 +42,8 @@ class ChannelMetadataConverterTest {
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK, ContentType.NEWS),
             taxonomy = Taxonomy.ChannelLevelTagging(
                 categories = setOf(
-                    CategoryWithAncestorsFactory.sample(codeValue = "CD"),
-                    CategoryWithAncestorsFactory.sample(codeValue = "AB")
+                    CategoryWithAncestorsFactory.sample(codeValue = "CD", ancestors = setOf(SearchServiceCategoryCode("C"))),
+                    CategoryWithAncestorsFactory.sample(codeValue = "AB", ancestors = setOf(SearchServiceCategoryCode("A")))
                 )
             ),
             ingest = ManualIngest
@@ -59,6 +60,8 @@ class ChannelMetadataConverterTest {
         )
         assertThat(channelMetadata.taxonomy.categories)
             .containsExactlyInAnyOrder(CategoryCode("AB"), CategoryCode("CD"))
+        assertThat(channelMetadata.taxonomy.categoriesWithAncestors)
+            .containsExactlyInAnyOrder(CategoryCode("A"), CategoryCode("AB"), CategoryCode("C"), CategoryCode("CD"))
         assertThat(channelMetadata.taxonomy.videoLevelTagging).isFalse
         assertThat(channelMetadata.isYoutube).isFalse
     }

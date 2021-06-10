@@ -29,7 +29,7 @@ data class ChannelRequest(
                 }
             } ?: emptyList(),
             taxonomy = Taxonomy(
-                categories = categories?.map {
+                categoriesWithAncestors = categories?.map {
                     CategoryCode(
                         it
                     )

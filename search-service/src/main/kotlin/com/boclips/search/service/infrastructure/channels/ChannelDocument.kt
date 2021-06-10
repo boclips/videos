@@ -13,6 +13,7 @@ data class ChannelDocument @JsonCreator constructor(
     @param:JsonProperty(ELIGIBLE_FOR_STREAM) val eligibleForStream: Boolean,
     @param:JsonProperty(TAXONOMY_VIDEO_LEVEL_TAGGING) val taxonomyVideoLevelTagging: Boolean,
     @param:JsonProperty(TAXONOMY_CATEGORIES) val taxonomyCategories: List<String>?,
+    @param:JsonProperty(TAXONOMY_CATEGORIES_WITH_ANCESTORS) val taxonomyCategoriesWithAncestors: List<String>?,
     @param:JsonProperty(IS_YOUTUBE) val isYoutube: Boolean?,
 ) {
     companion object {
@@ -23,6 +24,7 @@ data class ChannelDocument @JsonCreator constructor(
         const val INGEST_TYPE = "ingestType"
         const val ELIGIBLE_FOR_STREAM = "eligibleForStream"
         const val TAXONOMY_CATEGORIES = "taxonomyCategories"
+        const val TAXONOMY_CATEGORIES_WITH_ANCESTORS = "taxonomyCategoriesWithAncestors"
         const val TAXONOMY_VIDEO_LEVEL_TAGGING = "taxonomyVideoLevelTagging"
         const val IS_YOUTUBE = "isYoutube"
     }

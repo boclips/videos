@@ -3,6 +3,7 @@ package com.boclips.videos.api.request.channel
 import com.boclips.videos.api.request.Projection
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
+import org.springframework.web.bind.annotation.RequestParam
 
 enum class SortByRequest {
     CATEGORIES_ASC,
@@ -19,7 +20,10 @@ data class ChannelFilterRequest(
     val ingestType: List<String>? = null,
     val projection: Projection? = null,
     val sort_by: SortByRequest? = null,
-    val categories: List<String>? = emptyList(),
+    val categories: List<String> = emptyList(),
     val page: Int? = null,
     val size: Int? = null
-)
+) {
+
+    fun categoriesSplit() = categories.flatMap { it.split(",") }.toList()
+}

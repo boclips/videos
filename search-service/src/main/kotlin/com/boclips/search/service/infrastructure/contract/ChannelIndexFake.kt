@@ -128,8 +128,9 @@ class ChannelIndexFake :
                 (query.name.isNullOrBlank() || query.name == item.value.name)
             }
             .filter { item ->
-                query.taxonomy?.categories.isNullOrEmpty() || item.value.taxonomy.categories?.any {
-                    query.taxonomy?.categories?.contains(it) ?: false
+                query.taxonomy?.categoriesWithAncestors.isNullOrEmpty() ||
+                    item.value.taxonomy.categoriesWithAncestors?.any {
+                    query.taxonomy?.categoriesWithAncestors?.contains(it) ?: false
                 } ?: false
             }
             .map { it.key }

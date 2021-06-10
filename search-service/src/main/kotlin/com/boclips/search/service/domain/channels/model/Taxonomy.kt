@@ -2,7 +2,8 @@ package com.boclips.search.service.domain.channels.model
 
 data class Taxonomy(
     val videoLevelTagging: Boolean,
-    val categories: Set<CategoryCode>? = null
+    val categories: Set<CategoryCode>? = null,
+    val categoriesWithAncestors: Set<CategoryCode>? = null
 ) : Comparable<Taxonomy> {
     override fun compareTo(other: Taxonomy): Int {
         return this.getSortPriority().compareTo(other.getSortPriority())

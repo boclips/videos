@@ -38,13 +38,13 @@ class ChannelEsQuery {
                 }
             }
             .apply {
-                if (query.taxonomy?.categories?.isNotEmpty() == true) {
+                if (query.taxonomy?.categoriesWithAncestors?.isNotEmpty() == true) {
                     filter(
                         QueryBuilders.boolQuery()
-                            .must(
+                            .should(
                                 QueryBuilders.termsQuery(
-                                    ChannelDocument.TAXONOMY_CATEGORIES,
-                                    query.taxonomy.categories.map { it.value }.toList()
+                                    ChannelDocument.TAXONOMY_CATEGORIES_WITH_ANCESTORS,
+                                    query.taxonomy.categoriesWithAncestors.map { it.value }.toList()
                                 )
                             )
                     )
