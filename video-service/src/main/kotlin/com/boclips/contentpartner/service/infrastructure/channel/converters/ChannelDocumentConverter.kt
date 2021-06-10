@@ -4,11 +4,7 @@ import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeBuckets
 import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocument
 import com.boclips.contentpartner.service.infrastructure.agerange.AgeRangeDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.channel.CategoriesDocumentConverter
-import com.boclips.contentpartner.service.infrastructure.channel.ChannelDocument
-import com.boclips.contentpartner.service.infrastructure.channel.ContentPartnerStatusDocument
-import com.boclips.contentpartner.service.infrastructure.channel.MarketingInformationDocument
-import com.boclips.contentpartner.service.infrastructure.channel.TaxonomyDocument
+import com.boclips.contentpartner.service.infrastructure.channel.*
 import com.boclips.contentpartner.service.infrastructure.contract.ContractDocumentConverter
 import com.boclips.contentpartner.service.infrastructure.legalrestriction.LegalRestrictionsDocument
 import com.boclips.videos.service.infrastructure.video.DistributionMethodDocument
@@ -16,7 +12,6 @@ import mu.KLogging
 import org.bson.types.ObjectId
 import java.net.MalformedURLException
 import java.net.URL
-import java.time.Period
 import java.util.*
 
 object ChannelDocumentConverter : KLogging() {
@@ -73,7 +68,8 @@ object ChannelDocumentConverter : KLogging() {
             contract = channel.contract?.let { contract ->
                 ContractDocumentConverter().toDocument(contract)
             },
-            taxonomy = channel.taxonomy?.let { toCategoriesDocument(it) }
+            taxonomy = channel.taxonomy?.let { toCategoriesDocument(it) },
+            hidden = channel.visibility == ChannelVisibility.HIDDEN
         )
     }
 
@@ -115,8 +111,8 @@ object ChannelDocumentConverter : KLogging() {
                     else -> {
                         logger.warn {
                             "$it is not a valid type. Valid types are ${
-                            ContentType.values()
-                                .joinToString(prefix = "[", postfix = "]") { value -> value.name }
+                                ContentType.values()
+                                    .joinToString(prefix = "[", postfix = "]") { value -> value.name }
                             }"
                         }
                         null
@@ -156,7 +152,14 @@ object ChannelDocumentConverter : KLogging() {
             },
             taxonomy = document.taxonomy?.let {
                 convertTaxonomyDocument(it)
-            }
+            },
+            visibility = document.hidden?.let {
+                if (it) {
+                    ChannelVisibility.HIDDEN
+                } else {
+                    ChannelVisibility.VISIBLE
+                }
+            } ?: ChannelVisibility.VISIBLE
         )
     }
 
