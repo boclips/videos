@@ -37,6 +37,13 @@ class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns success when the file contains valid untrimmed data`() {
+        val result = videoTaggingCsvFileValidator.validate(fixture("video_tagging_csvs/valid_with_non_trimmed_values.csv"))
+        assertThat(result).isInstanceOf(CategoriesValid::class.java)
+        assertThat((result as CategoriesValid).entries).hasSize(4)
+    }
+
+    @Test
     fun `returns error when invalid category code provided`() {
         val result = videoTaggingCsvFileValidator.validate(fixture("video_tagging_csvs/invalid_category_code.csv"))
         assertThat(result).isEqualTo(DataRowsContainErrors(errors = listOf(InvalidCategoryCode(0, "gibberish"))))

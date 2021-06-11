@@ -57,8 +57,8 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
     }
 
     private fun toMetadata(row: Map<String, String>): RawCategoryMappingMetadata {
-        val categoryCode = row["Category Code"]
-        val videoId = row["ID"]
+        val categoryCode = row["Category Code"]?.trim()
+        val videoId = row["ID"]?.trim()
         return RawCategoryMappingMetadata(categoryCode = categoryCode, videoId = videoId)
     }
 }
