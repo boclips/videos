@@ -105,7 +105,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-core:5.4.5")
     implementation("org.springframework.security:spring-security-web:5.4.5")
     implementation("org.springframework.boot:spring-boot-starter-tomcat")
-    implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.45")
+    implementation("org.apache.tomcat.embed:tomcat-embed-core:10.0.6")
     implementation("org.apache.tomcat.embed:tomcat-embed-websocket:10.0.4")
 
     implementation("org.springframework.boot:spring-boot-starter-aop")
