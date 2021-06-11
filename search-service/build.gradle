@@ -28,7 +28,7 @@ dependencies {
     compile("org.elasticsearch:elasticsearch:$elasticSearchVersion")
     compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:$elasticSearchVersion")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compile("io.github.microutils:kotlin-logging:2.0.6")
+    compile("io.github.microutils:kotlin-logging:2.0.8")
     compile("org.apache.solr:solr-solrj:$solrVersion")
 
     constraints {
