@@ -216,7 +216,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                 .andExpect(
                     jsonPath(
                         "$.message", equalTo(
-                            "Rows 1 are missing a video ID"
+                            "Rows 2 are missing a video ID"
                         )
                     )
                 )
@@ -234,7 +234,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                 .andExpect(
                     jsonPath(
                         "$.message", equalTo(
-                            "Rows 1 contain invalid Video IDs - one"
+                            "Rows 2 contain invalid Video IDs - one"
                         )
                     )
                 )
@@ -250,7 +250,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                 .andExpect(
                     jsonPath(
                         "$.message",
-                        equalTo("Rows 1 contain invalid or unknown category codes - gibberish")
+                        equalTo("Rows 2 contain invalid or unknown category codes - gibberish")
                     )
                 )
         }
@@ -266,8 +266,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     jsonPath(
                         "$.message",
                         equalTo(
-                            "Rows 3 contain invalid or unknown category codes - INVALID, " +
-                                "Rows 1, 2 contain invalid Video IDs - one, two"
+                            "Rows 4 contain invalid or unknown category codes - INVALID, " +
+                                "Rows 2, 3 contain invalid Video IDs - one, two"
                         )
                     )
                 )

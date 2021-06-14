@@ -21,24 +21,36 @@ object VideoIdOrCategoryCodeColumnIsMissing : CsvValidationError() {
 data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) : CsvValidationError() {
     override fun getMessage(): String {
         val errorMessages = emptyList<String>().toMutableList()
+
         errors.filterIsInstance<InvalidCategoryCode>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
-                errorMessages.add("Rows ${filteredErrors.joinToString { (it.rowIndex.toInt() + 1).toString() }} contain invalid or unknown category codes - ${
-                    filteredErrors.map { it.code }.distinct().joinToString()
-                }"
+                errorMessages.add(
+                    "Rows ${
+                        filteredErrors.joinToString {
+                            (it.getRowNumber().toString())
+                        }
+                    } contain invalid or unknown category codes - ${
+                        filteredErrors.map { it.code }.distinct().joinToString()
+                    }"
                 )
             }
         }
         errors.filterIsInstance<MissingVideoId>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
-                errorMessages.add("Rows ${filteredErrors.joinToString { (it.rowIndex.toInt() + 1).toString() }} are missing a video ID")
+                errorMessages.add(
+                    "Rows ${
+                        filteredErrors.joinToString {
+                            (it.getRowNumber().toString())
+                        }
+                    } are missing a video ID"
+                )
             }
         }
 
         errors.filterIsInstance<InvalidVideoId>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
                 errorMessages.add("Rows ${
-                    filteredErrors.joinToString { (it.rowIndex.toInt() + 1).toString() }
+                    filteredErrors.joinToString { it.getRowNumber().toString() }
                 } contain invalid Video IDs - ${filteredErrors.joinToString { it.invalidId }}"
                 )
             }
@@ -48,7 +60,15 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
     }
 }
 
-sealed class VideoTaggingValidationError
-data class InvalidCategoryCode(val rowIndex: Number, val code: String) : VideoTaggingValidationError()
-data class InvalidVideoId(val rowIndex: Number, val invalidId: String) : VideoTaggingValidationError()
-data class MissingVideoId(val rowIndex: Number) : VideoTaggingValidationError()
+sealed class VideoTaggingValidationError {
+    abstract val rowIndex: Int
+
+    fun getRowNumber(): Int {
+        // 0 index + header
+        return rowIndex + 2
+    }
+}
+
+data class InvalidCategoryCode(override val rowIndex: Int, val code: String) : VideoTaggingValidationError()
+data class InvalidVideoId(override val rowIndex: Int, val invalidId: String) : VideoTaggingValidationError()
+data class MissingVideoId(override val rowIndex: Int) : VideoTaggingValidationError()
