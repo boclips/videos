@@ -742,6 +742,14 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpectApiErrorPayload()
     }
 
+    @Test
+    fun `returns bad request when page size is too big`() {
+        // It would be great if this max page size was configurable in the test
+        mockMvc.perform(get("/v1/videos?query=jobs&page=0&size=501").asApiUser())
+            .andExpect(status().isBadRequest)
+            .andExpectApiErrorPayload()
+    }
+
     private fun getRatingLink(videoId: String): String {
         val videoResponse = mockMvc.perform(get("/v1/videos/$videoId").asTeacher())
             .andExpect(status().isOk)

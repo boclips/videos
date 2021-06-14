@@ -147,7 +147,13 @@ class VideoController(
         val requestedSearchWindow = pageSize * (pageNumber + 1)
         if (requestedSearchWindow > MAXIMUM_SEARCH_RESULT_WINDOW_SIZE) {
             throw InvalidVideoPaginationException(
-                message = "Requested page is too deep. Maximum supported window is 10000 but was $requestedSearchWindow"
+                message = "Requested page is too deep. Maximum supported window is $MAXIMUM_SEARCH_RESULT_WINDOW_SIZE but was $requestedSearchWindow"
+            )
+        }
+
+        if (pageSize > MAX_PAGE_SIZE) {
+            throw InvalidVideoPaginationException(
+                message = "Requested page size is too big. Maximum supported page size is $MAX_PAGE_SIZE"
             )
         }
 
