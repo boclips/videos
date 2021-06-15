@@ -1,8 +1,7 @@
 package com.boclips.videos.api.request.video
 
 import com.boclips.videos.api.request.validators.Language
-import com.fasterxml.jackson.annotation.JsonSetter
-import com.fasterxml.jackson.annotation.Nulls
+import com.boclips.videos.api.request.validators.NoNullContents
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -22,14 +21,14 @@ data class CreateVideoRequest(
     val additionalDescription: String? = null,
 
     @field:NotNull(message = "Keywords are required")
-    @JsonSetter(contentNulls = Nulls.FAIL)
+    @field:NoNullContents(message = "Keywords cannot contain null elements")
     val keywords: List<String>? = null,
 
     @field:NotNull(message = "Released on date is required")
     val releasedOn: LocalDate? = null,
 
     @field:NotNull(message = "Video types are required")
-    @JsonSetter(contentNulls = Nulls.FAIL)
+    @field:NoNullContents(message = "Video types cannot contain null elements")
     val videoTypes: List<String>? = null,
 
     val youtubeChannelId: String? = null,
@@ -39,7 +38,7 @@ data class CreateVideoRequest(
     val analyseVideo: Boolean = true,
     val ageRangeMin: Int? = null,
     val ageRangeMax: Int? = null,
-    @JsonSetter(contentNulls = Nulls.FAIL)
+    @field:NoNullContents(message = "Subjects cannot contain null elements")
     val subjects: Set<String>? = null,
     @field:Language
     val language: String? = null,

@@ -798,6 +798,31 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `returns a helpful error message when keywords contains null values`() {
+            val channelId = saveChannel().id.value
+
+            val content = """
+            {
+                "providerVideoId": "1",
+                "providerId": "$channelId",
+                "keywords": [null],
+                "title": "AP title",
+                "description": "AP description",
+                "releasedOn": "2018-12-04T00:00:00",
+                "duration": 100,
+                "legalRestrictions": "none",
+                "videoTypes": ["INSTRUCTIONAL_CLIPS"],
+                "playbackId": "entry-$123",
+                "playbackProvider": "KALTURA"
+            }
+            """.trimIndent()
+
+            mockMvc.perform(post("/v1/videos").asIngestor().contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.message", containsString("Keywords cannot contain null elements")))
+        }
+
+        @Test
         fun `returns a CONFLICT and a helpful error message when video already exists`() {
             createMediaEntry(
                 id = "entry-$123",
