@@ -2,17 +2,22 @@ package com.boclips.videos.service.domain.service.events
 
 import com.boclips.eventbus.domain.Subject
 import com.boclips.eventbus.domain.SubjectId
+import com.boclips.eventbus.domain.category.CategoryWithAncestors
 import com.boclips.eventbus.domain.video.PlaybackProviderType
+import com.boclips.eventbus.domain.video.VideoCategorySource
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createTopic
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
@@ -53,9 +58,19 @@ class EventConverterTest {
             keywords = listOf("key", "word"),
             videoReference = "video-reference",
             deactivated = true,
+            categories = mapOf(
+                CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample(codeValue = "ZZ",description = "Lizards",ancestors = setOf(
+                    CategoryCode("Z"))))
+                )
         )
 
         val videoEvent = converter.toVideoPayload(video)
+
+        val zzCategory = CategoryWithAncestors.builder()
+            .code("ZZ")
+            .description("Lizards")
+            .ancestors(setOf("Z"))
+            .build()
 
         assertThat(videoEvent.id.value).isEqualTo(id)
         assertThat(videoEvent.title).isEqualTo("the title")
@@ -76,6 +91,7 @@ class EventConverterTest {
         assertThat(videoEvent.keywords).containsExactly("key", "word")
         assertThat(videoEvent.sourceVideoReference).isEqualTo("video-reference")
         assertThat(videoEvent.deactivated).isEqualTo(true)
+        assertThat(videoEvent.categories[VideoCategorySource.CHANNEL]).containsExactlyInAnyOrder(zzCategory)
     }
 
     @Test
@@ -164,6 +180,17 @@ class EventConverterTest {
         )
 
         assertThat(videoEvent.topics.size).isEqualTo(0)
+    }
+
+    @Test
+    fun `deals with empty category set`() {
+        val videoEvent = converter.toVideoPayload(
+            createVideo(
+                categories = emptyMap()
+            )
+        )
+
+        assertThat(videoEvent.categories.size).isEqualTo(0)
     }
 
     @Test

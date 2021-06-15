@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.service.events
 
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.domain.collection.CollectionId
 import com.boclips.eventbus.domain.contentpartner.ChannelId
@@ -11,6 +12,8 @@ import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoAsset
@@ -19,6 +22,9 @@ import com.boclips.eventbus.domain.video.Dimensions as EventDimensions
 import com.boclips.eventbus.domain.video.VideoAsset as EventVideoAsset
 import com.boclips.eventbus.domain.video.VideoTopic as EventVideoTopic
 import com.boclips.eventbus.domain.video.VideoType as EventBusVideoType
+import com.boclips.eventbus.domain.video.VideoCategorySource as EventVideoCategorySource
+import com.boclips.eventbus.domain.category.CategoryWithAncestors as EventCategoryWithAncestors
+
 
 class EventConverter {
     fun toVideoPayload(video: Video): com.boclips.eventbus.domain.video.Video {
@@ -54,6 +60,7 @@ class EventConverter {
             .sourceVideoReference(video.videoReference)
             .deactivated(video.deactivated)
             .hasTranscript(video.hasTranscript())
+            .categories(toCategoriesPayload(video.categories))
             .build()
     }
 
@@ -130,5 +137,28 @@ class EventConverter {
             .language(topic.language)
             .parent(topic.parent?.let { toTopicPayload(it) })
             .build()
+    }
+
+    private fun toCategoriesWithAncestorsPayload(categories: Set<CategoryWithAncestors>): MutableSet<EventCategoryWithAncestors> {
+        return categories.map { EventCategoryWithAncestors.builder()
+                .code(it.codeValue.value)
+                .description(it.description)
+                .ancestors(it.ancestors.map { it.value }.toSet())
+                .build()
+        }.toMutableSet()
+    }
+
+    private fun toVideoCategorySourcePayload(source: CategorySource): EventVideoCategorySource {
+        return when(source) {
+        CategorySource.CHANNEL -> EventVideoCategorySource.CHANNEL
+        CategorySource.MANUAL -> EventVideoCategorySource.MANUAL
+        }
+    }
+
+    private fun toCategoriesPayload(categories: Map<CategorySource,Set<CategoryWithAncestors>>)
+    : MutableMap<EventVideoCategorySource, MutableSet<EventCategoryWithAncestors>> {
+        return categories.map {
+        toVideoCategorySourcePayload(it.key) to toCategoriesWithAncestorsPayload(it.value)
+        }.toMap(mutableMapOf())
     }
 }
