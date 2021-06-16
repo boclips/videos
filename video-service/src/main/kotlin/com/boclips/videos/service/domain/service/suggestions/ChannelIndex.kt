@@ -8,6 +8,7 @@ import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 
-interface ChannelIndex : SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
+interface ChannelIndex :
+    SuggestionsIndexReader<ChannelMetadata, SuggestionQuery<ChannelMetadata>>,
     IndexWriter<Channel>,
     IndexReader<ChannelMetadata, ChannelQuery>

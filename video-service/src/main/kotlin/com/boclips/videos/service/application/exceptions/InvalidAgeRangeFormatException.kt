@@ -11,4 +11,3 @@ class InvalidAgeRangeFormatException(ageRange: String) : BoclipsApiException(
         status = HttpStatus.BAD_REQUEST
     )
 )
-

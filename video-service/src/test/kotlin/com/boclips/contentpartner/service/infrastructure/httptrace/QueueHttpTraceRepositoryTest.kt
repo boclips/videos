@@ -11,9 +11,11 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@TestPropertySource(properties = [
-    "httptracing.requests-to-store=4"
-])
+@TestPropertySource(
+    properties = [
+        "httptracing.requests-to-store=4"
+    ]
+)
 @EnableConfigurationProperties(value = [QueueHttpTraceRepository.Properties::class])
 class QueueHttpTraceRepositoryTest {
 

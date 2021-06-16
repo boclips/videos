@@ -86,7 +86,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                         "videos": ["$firstVideoId"],
                         "discoverable": true
                     }
-                    """.trimIndent()
+        """.trimIndent()
         mockMvc.perform(
             MockMvcRequestBuilders.post("/v1/collections").contentType(MediaType.APPLICATION_JSON)
                 .content(createContent)
@@ -121,7 +121,7 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
                                 "title": "random name",
                                 "$fieldName": [null]
                             }
-                            """.trimIndent()
+                        """.trimIndent()
                     )
                     .asBoclipsEmployee()
             )
@@ -446,8 +446,8 @@ class CollectionsControllerIntegrationTest : AbstractCollectionsControllerIntegr
         }
 
         mockMvc.perform(
-                get("/v1/collections?resource_types=LESSON_PLAN,ACTIVITY").asTeacher("teacher@gmail.com")
-            )
+            get("/v1/collections?resource_types=LESSON_PLAN,ACTIVITY").asTeacher("teacher@gmail.com")
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.collections", hasSize<Any>(2)))
     }

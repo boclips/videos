@@ -26,11 +26,11 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
             if (filteredErrors.isNotEmpty()) {
                 errorMessages.add(
                     "Rows ${
-                        filteredErrors.joinToString {
-                            (it.getRowNumber().toString())
-                        }
+                    filteredErrors.joinToString {
+                        (it.getRowNumber().toString())
+                    }
                     } contain invalid or unknown category codes - ${
-                        filteredErrors.map { it.code }.distinct().joinToString()
+                    filteredErrors.map { it.code }.distinct().joinToString()
                     }"
                 )
             }
@@ -39,9 +39,9 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
             if (filteredErrors.isNotEmpty()) {
                 errorMessages.add(
                     "Rows ${
-                        filteredErrors.joinToString {
-                            (it.getRowNumber().toString())
-                        }
+                    filteredErrors.joinToString {
+                        (it.getRowNumber().toString())
+                    }
                     } are missing a video ID"
                 )
             }
@@ -49,9 +49,10 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
 
         errors.filterIsInstance<InvalidVideoId>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
-                errorMessages.add("Rows ${
+                errorMessages.add(
+                    "Rows ${
                     filteredErrors.joinToString { it.getRowNumber().toString() }
-                } contain invalid Video IDs - ${filteredErrors.joinToString { it.invalidId }}"
+                    } contain invalid Video IDs - ${filteredErrors.joinToString { it.invalidId }}"
                 )
             }
         }

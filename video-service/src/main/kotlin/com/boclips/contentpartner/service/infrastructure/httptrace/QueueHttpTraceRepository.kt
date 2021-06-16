@@ -18,14 +18,14 @@ class QueueHttpTraceRepository(val properties: Properties) : HttpTraceRepository
 
     override fun add(trace: HttpTrace) {
         if (fifo.size >= properties.requestsToStore) {
-            (0 .. fifo.size - properties.requestsToStore).forEach { _ -> fifo.poll() }
+            (0..fifo.size - properties.requestsToStore).forEach { _ -> fifo.poll() }
         }
         fifo.add(trace)
     }
 
     @Configuration
     @ConfigurationProperties(prefix = "httptracing")
-    data class Properties (
+    data class Properties(
         var requestsToStore: Int = 10
     )
 }

@@ -46,7 +46,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
             val result = contractService.update(
                 SingleContractUpdate(
-                    contractId = contract.id, commands = listOf(
+                    contractId = contract.id,
+                    commands = listOf(
                         ContractUpdateCommand.ReplaceContentPartnerName(
                             contractId = contract.id,
                             contentPartnerName = "new"
@@ -64,7 +65,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
             val result = contractService.update(
                 SingleContractUpdate(
-                    contractId = contract.id, commands = listOf(
+                    contractId = contract.id,
+                    commands = listOf(
                         ContractUpdateCommand.ReplaceContentPartnerName(
                             contractId = contract.id,
                             contentPartnerName = "new"
@@ -83,7 +85,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
             val result = contractService.update(
                 SingleContractUpdate(
-                    contractId = contract.id, commands = listOf(
+                    contractId = contract.id,
+                    commands = listOf(
                         ContractUpdateCommand.ReplaceContentPartnerName(
                             contractId = contract.id,
                             contentPartnerName = "i exist"
@@ -101,7 +104,8 @@ class ContractServiceTest : AbstractSpringIntegrationTest() {
 
             val result = contractService.update(
                 SingleContractUpdate(
-                    contractId = missingId, commands = listOf(
+                    contractId = missingId,
+                    commands = listOf(
                         ContractUpdateCommand.ReplaceContentPartnerName(
                             contractId = missingId,
                             contentPartnerName = "i exist"

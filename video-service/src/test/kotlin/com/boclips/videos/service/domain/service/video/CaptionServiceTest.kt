@@ -105,7 +105,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
         captionService.updateCaptionContent(
-            video, """WEBVTT FILE
+            video,
+            """WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -117,7 +118,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent()
+                        We don't have a profit margin.
+            """.trimIndent()
         )
 
         val captionFiles = fakeKalturaClient.getCaptionsForVideo("playback-id")
@@ -136,7 +138,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent()
+                        We don't have a profit margin.
+            """.trimIndent()
         )
     }
 
@@ -150,7 +153,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "previous captions content")
 
         captionService.updateCaptionContent(
-            video, """WEBVTT FILE
+            video,
+            """WEBVTT FILE
 
                         1
                         00:01.981 --> 00:04.682
@@ -162,7 +166,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
 
                         3
                         00:09.526 --> 00:11.324
-                        We don't have a profit margin.""".trimIndent()
+                        We don't have a profit margin.
+            """.trimIndent()
         )
 
         val updatedVideo = videoRepository.find(video)
@@ -171,7 +176,8 @@ class CaptionServiceTest : AbstractSpringIntegrationTest() {
             """
                         We're quite content to be the odd<br>browser out.
                         We don't have a fancy stock abbreviation <br>to go alongside our name in the press.
-                        We don't have a profit margin.""".trimIndent()
+                        We don't have a profit margin.
+            """.trimIndent()
         )
     }
 

@@ -102,8 +102,12 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             UserFactory.sample()
         )
 
-        val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(scrapedVideo.videoId, VideoAccess.Everything(
-            emptySet()))
+        val updatedScrapedVideo = videoRetrievalService.getPlayableVideo(
+            scrapedVideo.videoId,
+            VideoAccess.Everything(
+                emptySet()
+            )
+        )
         assertThat(updatedScrapedVideo.deactivated).isTrue()
         assertThat(updatedScrapedVideo.activeVideoId).isEqualTo(activeVideo.videoId)
 

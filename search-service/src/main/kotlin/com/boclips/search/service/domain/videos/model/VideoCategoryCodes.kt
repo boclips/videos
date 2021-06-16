@@ -13,4 +13,3 @@ data class VideoCategoryCodes(val codes: List<String>) : Comparable<VideoCategor
         }
     }
 }
-

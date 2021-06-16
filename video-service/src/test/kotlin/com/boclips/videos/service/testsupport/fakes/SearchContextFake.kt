@@ -3,8 +3,8 @@ package com.boclips.videos.service.testsupport.fakes
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
 import com.boclips.search.service.infrastructure.contract.ChannelIndexFake
 import com.boclips.search.service.infrastructure.contract.CollectionIndexFake
-import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.search.service.infrastructure.contract.SubjectIndexFake
+import com.boclips.search.service.infrastructure.contract.VideoIndexFake
 import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex

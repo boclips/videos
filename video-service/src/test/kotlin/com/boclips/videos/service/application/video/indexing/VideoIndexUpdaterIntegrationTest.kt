@@ -4,8 +4,8 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.eventbus.events.video.VideoCreated
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
@@ -94,7 +94,8 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `add stream videos to non-legacy index only`() {
             val videos = listOf(
-                createVideo(setOf(DistributionMethod.STREAM)), createVideo(
+                createVideo(setOf(DistributionMethod.STREAM)),
+                createVideo(
                     setOf(
                         DistributionMethod.DOWNLOAD
                     )
@@ -103,10 +104,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map {
-                        EventConverter()
-                            .toVideoPayload(it)
-                    })
+                    .videos(
+                        videos.map {
+                            EventConverter()
+                                .toVideoPayload(it)
+                        }
+                    )
                     .build()
             )
 
@@ -132,10 +135,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map {
-                        EventConverter()
-                            .toVideoPayload(it)
-                    })
+                    .videos(
+                        videos.map {
+                            EventConverter()
+                                .toVideoPayload(it)
+                        }
+                    )
                     .build()
             )
 
@@ -171,10 +176,12 @@ class VideoIndexUpdaterIntegrationTest : AbstractSpringIntegrationTest() {
 
             fakeEventBus.publish(
                 com.boclips.eventbus.events.video.VideosUpdated.builder()
-                    .videos(videos.map {
-                        EventConverter()
-                            .toVideoPayload(it)
-                    })
+                    .videos(
+                        videos.map {
+                            EventConverter()
+                                .toVideoPayload(it)
+                        }
+                    )
                     .build()
             )
 

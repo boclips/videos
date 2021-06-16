@@ -53,8 +53,6 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:invalid_columns.csv")
     lateinit var invalidColumns: Resource
 
-
-
     @BeforeEach
     fun setUp() {
         kalturaVideoId = saveVideo(

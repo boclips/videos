@@ -5,7 +5,7 @@ import com.boclips.videos.service.domain.model.video.VideoType
 import java.time.Duration
 
 data class VideoFacets(
-        var ageRanges: List<FixedAgeRangeFacet> = listOf(
+    var ageRanges: List<FixedAgeRangeFacet> = listOf(
         FixedAgeRangeFacet(min = 3, max = 5),
         FixedAgeRangeFacet(min = 5, max = 9),
         FixedAgeRangeFacet(min = 9, max = 11),
@@ -13,17 +13,17 @@ data class VideoFacets(
         FixedAgeRangeFacet(min = 14, max = 16),
         FixedAgeRangeFacet(min = 16, max = 99)
     ),
-        var durations: List<Pair<Duration, Duration>> = listOf(
+    var durations: List<Pair<Duration, Duration>> = listOf(
         Pair(Duration.ZERO, Duration.ofMinutes(2)),
         Pair(Duration.ofMinutes(2), Duration.ofMinutes(5)),
         Pair(Duration.ofMinutes(5), Duration.ofMinutes(10)),
         Pair(Duration.ofMinutes(10), Duration.ofMinutes(20)),
         Pair(Duration.ofMinutes(20), Duration.ofHours(24))
     ),
-        var attachmentTypes: List<String> = listOf(AttachmentType.values().toString()),
-        var videoTypes: List<String> = listOf(VideoType.values().toString()),
-        var includeChannelFacets: Boolean = false,
-        var includePriceFacets: Boolean = false
+    var attachmentTypes: List<String> = listOf(AttachmentType.values().toString()),
+    var videoTypes: List<String> = listOf(VideoType.values().toString()),
+    var includeChannelFacets: Boolean = false,
+    var includePriceFacets: Boolean = false
 )
 
 class FixedAgeRangeFacet(val min: Int, val max: Int)

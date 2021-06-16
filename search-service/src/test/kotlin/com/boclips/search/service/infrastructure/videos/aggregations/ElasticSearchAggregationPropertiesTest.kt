@@ -9,13 +9,15 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@TestPropertySource(properties = [
-    "elasticsearch.aggregation-limits.subjects=4",
-    "elasticsearch.aggregation-limits.attachment-types=55",
-    "elasticsearch.aggregation-limits.video-types=4",
-    "elasticsearch.aggregation-limits.video-prices=4",
-    "elasticsearch.aggregation-limits.channels=40",
-])
+@TestPropertySource(
+    properties = [
+        "elasticsearch.aggregation-limits.subjects=4",
+        "elasticsearch.aggregation-limits.attachment-types=55",
+        "elasticsearch.aggregation-limits.video-types=4",
+        "elasticsearch.aggregation-limits.video-prices=4",
+        "elasticsearch.aggregation-limits.channels=40",
+    ]
+)
 @EnableConfigurationProperties(value = [ElasticSearchAggregationProperties::class])
 class ElasticSearchAggregationPropertiesTest {
 

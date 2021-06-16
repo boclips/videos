@@ -40,7 +40,7 @@ internal class ContentWarningControllerIntegrationTest : AbstractSpringIntegrati
                 {
                   "label": "New Warning"
                 }
-                """.trimIndent()
+                    """.trimIndent()
                 )
                 .contentType(MediaType.APPLICATION_JSON)
                 .asBoclipsEmployee()

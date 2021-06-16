@@ -78,8 +78,6 @@ class PlaybackRepository(
         }.toMap()
     }
 
-
-
     private fun getProvider(playbackId: PlaybackId): PlaybackProvider {
         return when (playbackId.type) {
             KALTURA -> kalturaPlaybackProvider

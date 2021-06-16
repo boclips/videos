@@ -5,7 +5,6 @@ import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -37,7 +36,8 @@ class VideoIndexReaderPaginationIntegrationTest : EmbeddedElasticSearchIntegrati
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         "banana", videoAccessRuleQuery = VideoAccessRuleQuery()
-                    ), startIndex = 0, windowSize = 2
+                    ),
+                    startIndex = 0, windowSize = 2
                 )
             )
 
@@ -60,21 +60,24 @@ class VideoIndexReaderPaginationIntegrationTest : EmbeddedElasticSearchIntegrati
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "banana", videoAccessRuleQuery = VideoAccessRuleQuery()
-                ), startIndex = 0, windowSize = 2
+                ),
+                startIndex = 0, windowSize = 2
             )
         )
         val page2 = videoIndexReader.search(
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "banana", videoAccessRuleQuery = VideoAccessRuleQuery()
-                ), startIndex = 2, windowSize = 2
+                ),
+                startIndex = 2, windowSize = 2
             )
         )
         val page3 = videoIndexReader.search(
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     "banana", videoAccessRuleQuery = VideoAccessRuleQuery()
-                ), startIndex = 4, windowSize = 2
+                ),
+                startIndex = 4, windowSize = 2
             )
         )
 

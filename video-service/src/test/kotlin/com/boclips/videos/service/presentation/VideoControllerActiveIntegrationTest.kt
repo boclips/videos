@@ -45,8 +45,8 @@ class VideoControllerActiveIntegrationTest : AbstractSpringIntegrationTest() {
 
         videoDuplicationService.markDuplicate(VideoId(oldVideoId), VideoId(newVideoId), UserFactory.sample())
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${oldVideoId}").asTeacher())
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/$oldVideoId").asTeacher())
             .andExpect(MockMvcResultMatchers.status().isPermanentRedirect)
-            .andExpect(MockMvcResultMatchers.header().string("Location", endsWith("/v1/videos/${newVideoId}")))
+            .andExpect(MockMvcResultMatchers.header().string("Location", endsWith("/v1/videos/$newVideoId")))
     }
 }

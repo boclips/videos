@@ -111,7 +111,6 @@ class PriceComputingServiceTest {
             )!!
             assertThat(price.amount).isEqualTo(BigDecimal.valueOf(150))
         }
-
     }
 
     @Nested
@@ -275,7 +274,6 @@ class PriceComputingServiceTest {
                     )
                 )
             )
-
 
             val prices = priceComputingService.computeVideoOrganisationPrices(
                 organisationsPrices = listOf(organisation, organisation2),

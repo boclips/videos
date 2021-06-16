@@ -440,7 +440,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         fun `add categories to video`() {
             val originalVideo = mongoVideoRepository.create(
                 createVideo(
-                    title = "old title", categories = mapOf(
+                    title = "old title",
+                    categories = mapOf(
                         CategorySource.MANUAL to setOf(
                             CategoryWithAncestors(
                                 codeValue = CategoryCode("A"),
@@ -471,7 +472,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         fun `add only unique categories to video`() {
             val originalVideo = mongoVideoRepository.create(
                 createVideo(
-                    title = "old title", categories = mapOf(
+                    title = "old title",
+                    categories = mapOf(
                         CategorySource.MANUAL to setOf(
                             CategoryWithAncestors(
                                 codeValue = CategoryCode("A"),
@@ -508,7 +510,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         fun `add multiple categories to video`() {
             val originalVideo = mongoVideoRepository.create(
                 createVideo(
-                    title = "old title", categories = mapOf(
+                    title = "old title",
+                    categories = mapOf(
                         CategorySource.MANUAL to setOf(
                             CategoryWithAncestors(
                                 codeValue = CategoryCode("A"),

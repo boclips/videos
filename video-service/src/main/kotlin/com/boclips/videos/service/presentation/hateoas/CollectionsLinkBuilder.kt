@@ -44,7 +44,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                     getCollectionsRoot()
                         .pathSegment(collection.id.value)
                         .pathSegment("videos")
-                        .toUriString() + "/{video_id}", "addVideo"
+                        .toUriString() + "/{video_id}",
+                    "addVideo"
                 )
             )
         } else null
@@ -57,7 +58,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                     getCollectionsRoot()
                         .pathSegment(collection.id.value)
                         .pathSegment("videos")
-                        .toUriString() + "/{video_id}", "removeVideo"
+                        .toUriString() + "/{video_id}",
+                    "removeVideo"
                 )
             )
         } else null
@@ -220,7 +222,8 @@ class CollectionsLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
                 Link.of(
                     getCollectionsRoot()
                         .pathSegment(id)
-                        .toUriString(), rel
+                        .toUriString(),
+                    rel
                 )
             )
         }

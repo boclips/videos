@@ -1,13 +1,12 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableVideoMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +37,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
-                        videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(
+                        videoAccessRuleQuery = VideoAccessRuleQuery(),
+                        userQuery = UserQuery(
                             durationRanges = listOf(
                                 DurationRange(
                                     min = Duration.ofSeconds(60),
@@ -68,7 +68,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
-                        videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(
+                        videoAccessRuleQuery = VideoAccessRuleQuery(),
+                        userQuery = UserQuery(
                             durationRanges = listOf(DurationRange(min = Duration.ofSeconds(60)))
                         )
                     )
@@ -92,7 +93,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
-                        videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(
+                        videoAccessRuleQuery = VideoAccessRuleQuery(),
+                        userQuery = UserQuery(
                             durationRanges = listOf(
                                 DurationRange(
                                     min = Duration.ofSeconds(0),
@@ -122,7 +124,8 @@ class VideoIndexReaderDurationSearchesIntegrationTest : EmbeddedElasticSearchInt
             videoIndexReader.search(
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
-                        videoAccessRuleQuery = VideoAccessRuleQuery(), userQuery = UserQuery(
+                        videoAccessRuleQuery = VideoAccessRuleQuery(),
+                        userQuery = UserQuery(
                             durationRanges = listOf(
                                 DurationRange(
                                     min = Duration.ofSeconds(0),

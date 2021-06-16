@@ -3,7 +3,6 @@ package com.boclips.videos.service.presentation
 import com.boclips.videos.service.domain.model.collection.CreateCollectionCommand
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.testsupport.AbstractCollectionsControllerIntegrationTest
-import com.boclips.videos.service.testsupport.MvcMatchers
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import com.boclips.videos.service.testsupport.asTeacher
@@ -304,8 +303,8 @@ class CollectionControllerUpdatesIntegrationTest : AbstractCollectionsController
     fun `unbookmark collections returns updated collection with not populated videos`() {
         val firstVideoId = saveVideo(title = "first").value
         val collectionId = createCollection("collection 1").apply {
-                bookmarkCollection(this, "notTheOwner@gmail.com")
-            }.also {
+            bookmarkCollection(this, "notTheOwner@gmail.com")
+        }.also {
             addVideo(it, firstVideoId)
         }
 

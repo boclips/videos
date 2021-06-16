@@ -1,16 +1,12 @@
 package com.boclips.videos.service.application.video.search
 
-import com.boclips.videos.service.domain.model.user.User
 import com.boclips.eventbus.events.video.VideosSearched
-import com.boclips.users.api.factories.OrganisationResourceFactory
-import com.boclips.users.api.factories.UserResourceFactory
 import com.boclips.videos.api.request.attachments.AttachmentRequest
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.UserFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -192,14 +188,16 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         saveVideo(
             title = "why are camels so tall 2"
-        ).let { addVideoAttachment(
-            attachment = AttachmentRequest(
-                linkToResource = "https://www.boclips.com",
-                type = "ACTIVITY",
-                description = "a description"
-            ),
-            videoId = it
-        ) }
+        ).let {
+            addVideoAttachment(
+                attachment = AttachmentRequest(
+                    linkToResource = "https://www.boclips.com",
+                    type = "ACTIVITY",
+                    description = "a description"
+                ),
+                videoId = it
+            )
+        }
 
         saveVideo(
             title = "why are camels so tall 3"
@@ -210,7 +208,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                     type = "LESSON_PLAN",
                     description = "a description"
                 ),
-                videoId = it)
+                videoId = it
+            )
         }
 
         val results = searchVideo.byQuery(

@@ -3,7 +3,7 @@ package com.boclips
 import com.boclips.contentpartner.service.config.properties.GcsProperties
 import com.boclips.contentpartner.service.domain.model.SignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.TestSignedLinkProvider
-import com.boclips.contentpartner.service.infrastructure.signedlink.ContractSignedLinkProvider
+import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerContractsSignedLinkProvider
 import com.boclips.contentpartner.service.infrastructure.signedlink.ContentPartnerMarketingSignedLinkProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +33,7 @@ class SignedLinkProviderArgumentProvider : ArgumentsProvider {
         val marketingSignedLinkProvider =
             ContentPartnerMarketingSignedLinkProvider(config)
         val contractSignedLinkProvider =
-            ContractSignedLinkProvider(config)
+            ContentPartnerContractsSignedLinkProvider(config)
         return Stream.of(
             testSignedLinkProvider,
             marketingSignedLinkProvider,

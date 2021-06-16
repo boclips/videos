@@ -26,13 +26,17 @@ class SubjectService(
     fun removeReferences(subjectId: SubjectId, user: User) {
         subjectRepository.delete(subjectId)
 
-        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subjectId), { collection ->
-            CollectionUpdateCommand.RemoveSubjectFromCollection(
-                collectionId = collection.id,
-                subjectId = subjectId,
-                user = user
-            )
-        }, {})
+        collectionRepository.streamUpdate(
+            CollectionFilter.HasSubjectId(subjectId),
+            { collection ->
+                CollectionUpdateCommand.RemoveSubjectFromCollection(
+                    collectionId = collection.id,
+                    subjectId = subjectId,
+                    user = user
+                )
+            },
+            {}
+        )
 
         videoRepository.streamUpdate(VideoFilter.HasSubjectId(subjectId)) { videos: List<Video> ->
             videos.map { video ->
@@ -54,19 +58,22 @@ class SubjectService(
             }
         }
 
-        collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subject.id), { collection ->
-            val newSubjects = replaceOneSubject(
-                subjects = collection.subjects,
-                idToReplace = subject.id,
-                updatedSubject = subject
-            ).toSet()
+        collectionRepository.streamUpdate(
+            CollectionFilter.HasSubjectId(subject.id),
+            { collection ->
+                val newSubjects = replaceOneSubject(
+                    subjects = collection.subjects,
+                    idToReplace = subject.id,
+                    updatedSubject = subject
+                ).toSet()
 
-            CollectionUpdateCommand.ReplaceSubjects(
-                collectionId = collection.id,
-                subjects = newSubjects,
-                user = Administrator as User
-            )
-        })
+                CollectionUpdateCommand.ReplaceSubjects(
+                    collectionId = collection.id,
+                    subjects = newSubjects,
+                    user = Administrator as User
+                )
+            }
+        )
 
         UpdateSubject.logger.info { "Updated subject ${subject.id}" }
     }

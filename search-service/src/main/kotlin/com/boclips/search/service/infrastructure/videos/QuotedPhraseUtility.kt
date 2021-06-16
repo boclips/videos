@@ -23,7 +23,7 @@ fun String.quotedParts(): PhraseParts {
             this.substring(from + 1, to)
         }
     return PhraseParts(
-        unquoted = this.filter {it != '"'},
+        unquoted = this.filter { it != '"' },
         quotedParts = quotedSubstrings
     )
 }

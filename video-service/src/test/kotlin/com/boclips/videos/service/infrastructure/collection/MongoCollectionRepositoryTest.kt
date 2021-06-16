@@ -563,13 +563,16 @@ class MongoCollectionRepositoryTest : AbstractSpringIntegrationTest() {
                 CollectionUpdateCommand.ReplaceSubjects(collection.id, setOf(subject), UserFactory.sample())
             )
 
-            collectionRepository.streamUpdate(CollectionFilter.HasSubjectId(subject.id), { collectionToUpdate ->
-                CollectionUpdateCommand.ReplaceSubjects(
-                    collectionToUpdate.id,
-                    setOf(updatedSubject),
-                    UserFactory.sample()
-                )
-            })
+            collectionRepository.streamUpdate(
+                CollectionFilter.HasSubjectId(subject.id),
+                { collectionToUpdate ->
+                    CollectionUpdateCommand.ReplaceSubjects(
+                        collectionToUpdate.id,
+                        setOf(updatedSubject),
+                        UserFactory.sample()
+                    )
+                }
+            )
 
             assertThat(collectionRepository.find(collection.id)!!.subjects).containsExactly(updatedSubject)
         }

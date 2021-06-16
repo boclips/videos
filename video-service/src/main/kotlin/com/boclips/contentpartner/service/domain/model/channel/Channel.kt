@@ -2,9 +2,7 @@ package com.boclips.contentpartner.service.domain.model.channel
 
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
-import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
-import com.boclips.videos.service.domain.model.video.channel.Availability
-import java.time.Period
+import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
 import java.util.Locale
 
 data class Channel(
@@ -32,10 +30,10 @@ data class Channel(
     }
 
     fun availability() = when {
-        isDownloadable() && isStreamable() -> Availability.ALL
-        isDownloadable() -> Availability.DOWNLOAD
-        isStreamable() -> Availability.STREAMING
-        else -> Availability.NONE
+        isDownloadable() && isStreamable() -> ContentPartnerAvailability.ALL
+        isDownloadable() -> ContentPartnerAvailability.DOWNLOAD
+        isStreamable() -> ContentPartnerAvailability.STREAMING
+        else -> ContentPartnerAvailability.NONE
     }
 
     private fun isDownloadable(): Boolean {

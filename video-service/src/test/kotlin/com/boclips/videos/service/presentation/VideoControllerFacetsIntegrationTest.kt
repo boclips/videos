@@ -244,4 +244,3 @@ class VideoControllerFacetsIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.facets.prices.2000.hits", equalTo(5)))
     }
 }
-

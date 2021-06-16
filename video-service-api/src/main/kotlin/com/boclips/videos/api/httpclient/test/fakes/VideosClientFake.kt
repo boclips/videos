@@ -7,7 +7,6 @@ import com.boclips.videos.api.response.agerange.AgeRangeResource
 import com.boclips.videos.api.response.subject.SubjectResource
 import com.boclips.videos.api.response.video.*
 import org.springframework.hateoas.PagedModel
-import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.math.ceil
 
@@ -29,7 +28,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         userId: String
     ): PriceResource {
         return customPrices[videoId] ?: database[videoId]?.price
-        ?: throw FakeClient.notFoundException("Video price not found")
+            ?: throw FakeClient.notFoundException("Video price not found")
     }
 
     override fun probeVideoReference(channelId: String, channelVideoId: String) {

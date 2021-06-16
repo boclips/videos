@@ -52,7 +52,8 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
 
         val videos =
             videoRetrievalService.getPlayableVideos(
-                listOf(videoId3, videoId1, videoId2), VideoAccess.Everything(
+                listOf(videoId3, videoId1, videoId2),
+                VideoAccess.Everything(
                     emptySet()
                 )
             )
@@ -116,7 +117,8 @@ class VideoRetrievalServiceTest : AbstractSpringIntegrationTest() {
                     VideoAccessRule.IncludedIds(
                         setOf(video1, video3)
                     )
-                ), emptySet()
+                ),
+                emptySet()
             )
         ).videoIds
 

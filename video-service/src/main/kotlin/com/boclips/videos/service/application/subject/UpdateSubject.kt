@@ -21,4 +21,3 @@ class UpdateSubject(private val subjectService: SubjectService) {
         subjectService.replaceReferences(updatedSubject)
     }
 }
-

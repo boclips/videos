@@ -8,9 +8,9 @@ import com.boclips.videos.service.domain.model.video.VideoIdsWithCursor
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 
 class GetVideosByContentPackage(
-        private val videoRetrievalService: VideoRetrievalService,
-        private val contentPackageService: ContentPackageService,
-        private val videoChannelService: VideoChannelService
+    private val videoRetrievalService: VideoRetrievalService,
+    private val contentPackageService: ContentPackageService,
+    private val videoChannelService: VideoChannelService
 ) {
     operator fun invoke(
         contentPackageId: String,
@@ -28,4 +28,3 @@ class GetVideosByContentPackage(
         )
     }
 }
-

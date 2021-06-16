@@ -19,4 +19,3 @@ data class CreatePlaybackEventCommand(
         if (isNullOrNegative(this.segmentStartSeconds)) throw InvalidEventException("segmentStartSeconds must be specified")
     }
 }
-

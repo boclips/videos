@@ -46,7 +46,8 @@ class VideoAccessRuleQueryConverterTest {
                     VideoAccessRule.IncludedPrivateChannels(
                         channelIds = setOf(ChannelId("Private"))
                     )
-                ), setOf(ChannelId("Goodbye"), ChannelId("Private"))
+                ),
+                setOf(ChannelId("Goodbye"), ChannelId("Private"))
             )
         )
 

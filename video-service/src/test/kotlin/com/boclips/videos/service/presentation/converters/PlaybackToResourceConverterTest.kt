@@ -6,18 +6,14 @@ import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.service.domain.model.playback.Dimensions
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
-import com.boclips.videos.service.testsupport.KalturaFactories
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.VideoFactory
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.mockito.Mockito.never
 
 internal class PlaybackToResourceConverterTest {
 
@@ -41,8 +37,8 @@ internal class PlaybackToResourceConverterTest {
     val kalturaPlayback = TestFactories.createKalturaPlayback(
         downloadUrl = "https://download-url.com",
         thumbnailSecond = 10,
-        originalDimensions = Dimensions(100,100),
-        assets = setOf(VideoFactory.createVideoAsset(dimensions = Dimensions(100,100)))
+        originalDimensions = Dimensions(100, 100),
+        assets = setOf(VideoFactory.createVideoAsset(dimensions = Dimensions(100, 100)))
     )
 
     val youtubePlayback = TestFactories.createYoutubePlayback()

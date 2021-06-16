@@ -71,14 +71,16 @@ class CollectionUpdateService(
         collectionToBeUpdated: CollectionId,
         user: User
     ) {
-        (collectionRetrievalService.findOwnCollection(
-            id = collectionToBeUpdated,
-            user = user
-        )
-            ?: throw CollectionIllegalOperationException(
-                userId = user.id ?: UserId("anonymous"),
-                collectionId = collectionToBeUpdated.value,
-                operation = "Update collection"
-            ))
+        (
+            collectionRetrievalService.findOwnCollection(
+                id = collectionToBeUpdated,
+                user = user
+            )
+                ?: throw CollectionIllegalOperationException(
+                    userId = user.id ?: UserId("anonymous"),
+                    collectionId = collectionToBeUpdated.value,
+                    operation = "Update collection"
+                )
+            )
     }
 }

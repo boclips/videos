@@ -5,7 +5,6 @@ import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.testsupport.EmbeddedElasticSearchIntegrationTest
-
 import com.boclips.search.service.testsupport.SearchableCollectionMetadataFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -147,7 +146,6 @@ class CollectionIndexReaderAgeRangeSearchesIntegrationTest : EmbeddedElasticSear
             assertThat(results.elements).contains("Upper-Elementary")
             assertThat(results.elements).contains("Middle-School")
             assertThat(results.elements).contains("Middle-School-And-Up")
-
         }
     }
 

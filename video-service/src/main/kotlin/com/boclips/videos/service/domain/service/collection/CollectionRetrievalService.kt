@@ -2,6 +2,7 @@ package com.boclips.videos.service.domain.service.collection
 
 import com.boclips.eventbus.domain.ResourceType
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.common.PageInfo
 import com.boclips.videos.service.common.PageRequest
 import com.boclips.videos.service.common.ResultsPage
@@ -11,7 +12,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionSearchQuery
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.events.EventService
-import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.convertPageToIndex
 import mu.KLogging

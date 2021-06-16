@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
-import kotlin.system.exitProcess
 
 @Component
 class CommandLine(

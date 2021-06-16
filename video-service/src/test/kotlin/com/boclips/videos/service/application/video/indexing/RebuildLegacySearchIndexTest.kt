@@ -2,11 +2,11 @@ package com.boclips.videos.service.application.video.indexing
 
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.testsupport.TestFactories
 import com.mongodb.MongoClientException
 import com.nhaarman.mockitokotlin2.any

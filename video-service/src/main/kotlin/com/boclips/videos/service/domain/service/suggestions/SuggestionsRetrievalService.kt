@@ -62,7 +62,7 @@ class SuggestionsRetrievalService(
         )
     }
 
-    private fun withDefaultRules(videoAccess: VideoAccess ): VideoAccess.Rules {
+    private fun withDefaultRules(videoAccess: VideoAccess): VideoAccess.Rules {
         return when (videoAccess) {
             is VideoAccess.Everything -> VideoAccess.Rules(defaultAccessRules, videoAccess.privateChannels)
             is VideoAccess.Rules -> VideoAccess.Rules(videoAccess.accessRules + defaultAccessRules, videoAccess.privateChannels)

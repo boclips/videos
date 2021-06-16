@@ -4,4 +4,3 @@ data class ContentWarning(
     val id: ContentWarningId,
     val label: String
 )
-

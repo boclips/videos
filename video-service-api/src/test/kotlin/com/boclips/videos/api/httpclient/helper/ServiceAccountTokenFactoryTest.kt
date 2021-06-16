@@ -75,7 +75,7 @@ class ServiceAccountTokenFactoryTest {
                                   "session_state": "f9e8b47b-8a16-4950-b529-f4e23b12e809",
                                   "scope": "profile email"
                                 }
-                            """.trimIndent()
+                                """.trimIndent()
                             )
                     )
             )

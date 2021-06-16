@@ -33,7 +33,6 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
             CategoryMappingValidator.validateMapping(index, item, categoryCodes)
         }
 
-
         return if (errors.isEmpty()) {
             CategoriesValid(items.map { it.validated() })
         } else {

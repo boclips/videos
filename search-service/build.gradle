@@ -1,6 +1,7 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version '1.5.0'
     id 'com.adarshr.test-logger' version '3.0.0'
+    id "org.jlleitschuh.gradle.ktlint" version "10.1.0"
 }
 
 group "com.boclips"
@@ -56,6 +57,8 @@ dependencies {
     testCompile("org.assertj:assertj-core:3.18.0")
     testCompile('org.slf4j:slf4j-log4j12:1.7.30')
     testCompile('org.testcontainers:testcontainers:1.15.3')
+
+    implementation("com.pinterest:ktlint:0.41.0")
 }
 
 compileKotlin {

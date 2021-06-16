@@ -1,9 +1,9 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.service.domain.model.video.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 class VideoTypeConverterTest {
 

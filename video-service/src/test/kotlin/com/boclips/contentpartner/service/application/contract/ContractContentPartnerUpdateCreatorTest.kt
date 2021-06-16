@@ -13,8 +13,8 @@ import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCo
 import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand.ReplaceYearsForMaximumLicense
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.api.request.contract.ContractCostsRequest
-import com.boclips.videos.api.request.contract.UpdateContractRequest
 import com.boclips.videos.api.request.contract.ContractRestrictionsRequest
+import com.boclips.videos.api.request.contract.UpdateContractRequest
 import com.boclips.videos.api.response.contract.ContractDatesResource
 import com.boclips.videos.api.response.contract.ContractRoyaltySplitResource
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory

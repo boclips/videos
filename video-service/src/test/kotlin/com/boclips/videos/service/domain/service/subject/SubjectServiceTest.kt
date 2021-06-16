@@ -63,4 +63,3 @@ class SubjectServiceTest : AbstractSpringIntegrationTest() {
         }
     }
 }
-

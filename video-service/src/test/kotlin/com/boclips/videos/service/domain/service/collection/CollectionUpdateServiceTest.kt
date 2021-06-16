@@ -134,11 +134,13 @@ class CollectionUpdateServiceTest : AbstractSpringIntegrationTest() {
 
             assertThat(collectionRepository.find(collectionId)?.videos).containsExactly(oldVideoId)
 
-            collectionRepository.update(CollectionUpdateCommand.ReplaceVideos(
-                collectionId = collectionId,
-                videoIds = listOf(newVideoId),
-                user = UserFactory.sample()
-            ))
+            collectionRepository.update(
+                CollectionUpdateCommand.ReplaceVideos(
+                    collectionId = collectionId,
+                    videoIds = listOf(newVideoId),
+                    user = UserFactory.sample()
+                )
+            )
 
             assertThat(collectionRepository.find(collectionId)?.videos).containsExactly(newVideoId)
         }

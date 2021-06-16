@@ -21,7 +21,7 @@ class PlaybackIdTest {
         val playbackId = PlaybackId.from(
             playbackProviderName = PlaybackProviderType.YOUTUBE.name,
             playbackId = "youtube-123"
-        );
+        )
 
         assertThat(playbackId.type).isEqualTo(PlaybackProviderType.YOUTUBE)
         assertThat(playbackId.value).isEqualTo("youtube-123")

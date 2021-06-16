@@ -1,10 +1,10 @@
 package com.boclips.search.service.infrastructure.subjects
 
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
-import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.common.model.SuggestionRequest
-import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
 import com.boclips.search.service.domain.common.suggestions.Suggestion
+import com.boclips.search.service.domain.common.suggestions.SuggestionsIndexReader
+import com.boclips.search.service.domain.search.SearchSuggestionsResults
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import mu.KLogging
 import org.elasticsearch.action.search.SearchRequest

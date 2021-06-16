@@ -5,7 +5,6 @@ import com.boclips.videos.api.response.channel.DistributionMethodResource
 import com.boclips.videos.api.response.channel.IngestDetailsResource
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
-import java.time.Period
 import javax.validation.constraints.NotBlank
 
 data class ChannelRequest(
@@ -40,5 +39,3 @@ data class ChannelRequest(
     val requiresVideoLevelTagging: Boolean? = null,
     val private: Boolean? = null
 )
-
-

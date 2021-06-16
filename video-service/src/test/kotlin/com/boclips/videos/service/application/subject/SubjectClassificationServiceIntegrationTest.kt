@@ -4,7 +4,6 @@ import com.boclips.eventbus.domain.SubjectId
 import com.boclips.eventbus.events.video.VideoSubjectClassificationRequested
 import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.videos.api.request.video.UpdateVideoRequest
-import com.boclips.videos.service.application.video.UpdateVideo
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback

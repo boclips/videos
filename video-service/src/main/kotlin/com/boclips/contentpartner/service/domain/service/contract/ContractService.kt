@@ -1,9 +1,9 @@
 package com.boclips.contentpartner.service.domain.service.contract
 
 import com.boclips.contentpartner.service.domain.model.contract.Contract
+import com.boclips.contentpartner.service.domain.model.contract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contract.CreateContractResult
 import com.boclips.contentpartner.service.domain.model.contract.SingleContractUpdate
 import com.boclips.contentpartner.service.domain.model.contract.UpdateContractResult

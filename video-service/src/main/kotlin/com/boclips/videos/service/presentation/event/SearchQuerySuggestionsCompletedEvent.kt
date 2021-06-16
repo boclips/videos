@@ -7,7 +7,7 @@ data class SearchQuerySuggestionsCompletedEvent(
     val impressions: List<String>,
     val componentId: String,
     val completionId: String
-): EventCommand() {
+) : EventCommand() {
     override fun isValidOrThrows() {
         if (this.searchQuery.isNullOrEmpty()) throw InvalidEventException("searchQuery must be specified")
         if (this.impressions.isNullOrEmpty()) throw InvalidEventException("impressions must be specified")

@@ -232,7 +232,7 @@ class MongoChannelRepository(val mongoClient: MongoClient) :
             is ChannelFilter.NameFilter -> ChannelDocument::name eq filter.name
             is ChannelFilter.IngestTypesFilter ->
                 ChannelDocument::ingest / IngestDetailsDocument::type `in` filter.ingestTypes.map { it.name }
-            is ChannelFilter.PrivateFilter ->  ChannelDocument::isPrivate eq filter.private
+            is ChannelFilter.PrivateFilter -> ChannelDocument::isPrivate eq filter.private
         }
 
     private fun findByQuery(mongoQuery: Bson): Channel? {

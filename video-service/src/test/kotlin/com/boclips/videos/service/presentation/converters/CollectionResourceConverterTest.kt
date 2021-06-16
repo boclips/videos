@@ -157,5 +157,3 @@ class CollectionResourceConverterTest {
         )
     }
 }
-
-

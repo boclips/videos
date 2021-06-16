@@ -19,6 +19,6 @@ class VideoTypeAggregationTest {
         val aggregateTypes = VideoTypeAggregation.aggregateVideoTypes(VideoQueryFactory.empty(), 60)
 
         assertThat(aggregateTypes.subAggregations?.toString())
-                .contains("""[{"video type names":{"terms":{"field":"types","size":60,""")
+            .contains("""[{"video type names":{"terms":{"field":"types","size":60,""")
     }
 }

@@ -4,10 +4,10 @@ import com.boclips.contentpartner.service.common.PageInfo
 import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.common.ResultsPage
 import com.boclips.contentpartner.service.domain.model.contract.Contract
+import com.boclips.contentpartner.service.domain.model.contract.ContractFilter
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
-import com.boclips.contentpartner.service.domain.model.contract.ContractFilter
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import com.mongodb.MongoClient
@@ -102,7 +102,8 @@ class MongoContractRepository(
     override fun findAll(filters: List<ContractFilter>): Iterable<Contract> {
         val bson = filters.fold(and()) { bson: Bson, filter: ContractFilter ->
             and(
-                bson, when (filter) {
+                bson,
+                when (filter) {
                     is ContractFilter.NameFilter -> ContractDocument::contentPartnerName eq filter.name
                 }
             )
@@ -171,11 +172,14 @@ class MongoContractRepository(
                 set(ContractDocument::daysForSellOffPeriod, updateCommand.daysForSellOffPeriod)
 
             is ContractUpdateCommand.ReplaceRoyaltySplit ->
-                set(ContractDocument::royaltySplit, updateCommand.royaltySplit.let {
-                    ContractRoyaltySplitDocument(
-                        it.download, it.streaming
-                    )
-                })
+                set(
+                    ContractDocument::royaltySplit,
+                    updateCommand.royaltySplit.let {
+                        ContractRoyaltySplitDocument(
+                            it.download, it.streaming
+                        )
+                    }
+                )
 
             is ContractUpdateCommand.ReplaceMinimumPriceDescription ->
                 set(ContractDocument::minimumPriceDescription, updateCommand.minimumPriceDescription)
@@ -184,29 +188,34 @@ class MongoContractRepository(
                 set(ContractDocument::remittanceCurrency, updateCommand.remittanceCurrency)
 
             is ContractUpdateCommand.ReplaceRestrictions ->
-                set(ContractDocument::restrictions, updateCommand.restrictions.let {
-                    ContractRestrictionsDocument(
-                        clientFacing = it.clientFacing,
-                        territory = it.territory,
-                        licensing = it.licensing,
-                        editing = it.editing,
-                        marketing = it.marketing,
-                        companies = it.companies,
-                        payout = it.payout,
-                        other = it.other
-                    )
-                })
+                set(
+                    ContractDocument::restrictions,
+                    updateCommand.restrictions.let {
+                        ContractRestrictionsDocument(
+                            clientFacing = it.clientFacing,
+                            territory = it.territory,
+                            licensing = it.licensing,
+                            editing = it.editing,
+                            marketing = it.marketing,
+                            companies = it.companies,
+                            payout = it.payout,
+                            other = it.other
+                        )
+                    }
+                )
 
             is ContractUpdateCommand.ReplaceCost ->
-                set(ContractDocument::costs, updateCommand.costs.let {
-                    ContractCostsDocument(
-                        minimumGuarantee = it.minimumGuarantee,
-                        upfrontLicense = it.upfrontLicense,
-                        technicalFee = it.technicalFee,
-                        recoupable = it.recoupable
-                    )
-                })
-
+                set(
+                    ContractDocument::costs,
+                    updateCommand.costs.let {
+                        ContractCostsDocument(
+                            minimumGuarantee = it.minimumGuarantee,
+                            upfrontLicense = it.upfrontLicense,
+                            technicalFee = it.technicalFee,
+                            recoupable = it.recoupable
+                        )
+                    }
+                )
         }
 
         return combine(update, set(ContractDocument::lastModified, Instant.now()))

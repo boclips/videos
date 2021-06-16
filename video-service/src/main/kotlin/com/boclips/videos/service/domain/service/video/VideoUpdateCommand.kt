@@ -9,10 +9,10 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.Duration
 import java.util.Locale
@@ -49,4 +49,3 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
     class AddCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
 }
-

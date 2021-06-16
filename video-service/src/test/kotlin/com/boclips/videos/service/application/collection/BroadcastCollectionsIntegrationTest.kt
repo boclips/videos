@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.collection
 import com.boclips.eventbus.events.collection.CollectionBroadcastRequested
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions
-
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 

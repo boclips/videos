@@ -29,6 +29,3 @@ data class YoutubeScrapeIngest(val playlistIds: List<String>) : IngestDetails() 
         return IngestType.YOUTUBE
     }
 }
-
-
-

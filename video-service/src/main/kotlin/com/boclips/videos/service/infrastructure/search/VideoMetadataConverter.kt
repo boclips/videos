@@ -13,13 +13,13 @@ import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.OrganisationsPrices
 import com.boclips.videos.service.domain.model.video.BaseVideo
-import com.boclips.videos.service.domain.model.video.channel.Availability
+import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
 import com.boclips.videos.service.domain.service.video.ContentEnrichers
 import java.math.BigDecimal
 
 object VideoMetadataConverter {
-    fun convert(video: BaseVideo, videoAvailability: Availability): VideoMetadata {
+    fun convert(video: BaseVideo, videoAvailability: ContentPartnerAvailability): VideoMetadata {
         val subjects = video.subjects.items
             .map { SubjectMetadata(id = it.id.value, name = it.name) }
             .toSet()

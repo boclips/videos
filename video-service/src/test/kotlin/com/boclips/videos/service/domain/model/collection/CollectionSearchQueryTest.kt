@@ -26,7 +26,7 @@ class CollectionSearchQueryTest {
 
         assertThat(searchQuery.sort).isEmpty()
     }
-    
+
     @Test
     fun `can sort by title when searching with text`() {
         val query = CollectionSearchQuery(

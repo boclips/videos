@@ -33,7 +33,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(TestFactories.createVideoId())
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
 
@@ -49,7 +50,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
 
@@ -73,7 +75,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedIds(
                             videoIds = setOf(TestFactories.createVideoId())
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
 
@@ -89,7 +92,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
 
@@ -114,7 +118,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedTypes).isEmpty()
@@ -128,7 +133,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedContentTypes(
                             contentTypes = setOf(VideoType.STOCK)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedTypes).containsOnly(SearchVideoType.STOCK)
@@ -152,7 +158,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedTypes).isEmpty()
@@ -166,7 +173,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedContentTypes(
                             contentTypes = setOf(VideoType.STOCK)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(includedTypes).containsOnly(SearchVideoType.STOCK)
@@ -190,7 +198,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedIds).isEmpty()
@@ -208,7 +217,8 @@ class AccessRuleConverterTest {
                                 )
                             )
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedIds).containsOnly("123")
@@ -236,7 +246,8 @@ class AccessRuleConverterTest {
                                 )
                             )
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedIds).containsOnly("456")
@@ -260,7 +271,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(includedChannelIds).isEmpty()
@@ -278,7 +290,8 @@ class AccessRuleConverterTest {
                                 )
                             )
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(includedChannelIds).containsOnly("123")
@@ -301,7 +314,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.STREAM)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isTrue()
@@ -315,7 +329,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.DOWNLOAD)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isNull()
@@ -327,7 +342,8 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.IncludedDistributionMethods(setOf())
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForStreaming).isNull()
@@ -350,7 +366,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.DOWNLOAD)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isTrue()
@@ -364,7 +381,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.IncludedDistributionMethods(
                             setOf(DistributionMethod.STREAM)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isNull()
@@ -376,7 +394,8 @@ class AccessRuleConverterTest {
                 VideoAccess.Rules(
                     listOf(
                         VideoAccessRule.IncludedDistributionMethods(setOf())
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(isEligibleForDownload).isNull()
@@ -400,7 +419,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedLanguages).isEmpty()
@@ -414,7 +434,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedLanguages(
                             languages = setOf(Locale.ENGLISH, Locale.FRENCH)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedLanguages).containsExactly(Locale.ENGLISH, Locale.FRENCH)
@@ -438,7 +459,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedIds(
                             videoIds = setOf(videoId)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedPlaybackProviderTypes).isEmpty()
@@ -452,7 +474,8 @@ class AccessRuleConverterTest {
                         VideoAccessRule.ExcludedPlaybackProviderTypes(
                             sources = setOf(PlaybackProviderType.KALTURA, PlaybackProviderType.YOUTUBE)
                         )
-                    ), emptySet()
+                    ),
+                    emptySet()
                 )
             )
             assertThat(excludedLanguages).containsExactly(SourceType.BOCLIPS, SourceType.YOUTUBE)

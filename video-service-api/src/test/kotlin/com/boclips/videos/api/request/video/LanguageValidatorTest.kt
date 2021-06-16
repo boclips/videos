@@ -31,7 +31,6 @@ class LanguageValidatorTest {
         assertThat(isValidLanguage).isFalse()
     }
 
-
     @Test
     fun `case insensitive`() {
         val isValidLanguage = languageValidator.isValid("CYM", null)

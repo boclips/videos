@@ -22,7 +22,7 @@ class PlaybackToResourceConverter(
             true -> convertWithoutProtectedAttributes(playback)
             else ->
                 when
-                    (playback) {
+                (playback) {
                     is VideoPlayback.StreamPlayback -> {
                         StreamPlaybackResource(
                             downloadUrl = playback.downloadUrl,
@@ -58,7 +58,7 @@ class PlaybackToResourceConverter(
 
     private fun convertWithoutProtectedAttributes(playback: VideoPlayback): PlaybackResource =
         when
-            (playback) {
+        (playback) {
             is VideoPlayback.StreamPlayback -> {
                 StreamPlaybackResource(
                     id = playback.id.value,

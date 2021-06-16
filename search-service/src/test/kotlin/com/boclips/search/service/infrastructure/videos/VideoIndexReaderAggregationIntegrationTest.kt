@@ -835,14 +835,14 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     videoIndexWriter.upsert(
                         sequenceOf(
                             SearchableVideoMetadataFactory.create(
-                                id = "banana-${i}",
+                                id = "banana-$i",
                                 title = "banana candy",
-                                contentPartnerId = "channel-id-${i}",
+                                contentPartnerId = "channel-id-$i",
                             ),
                             SearchableVideoMetadataFactory.create(
-                                id = "apple-${i}",
+                                id = "apple-$i",
                                 title = "Apple candy",
-                                contentPartnerId = "channel-id-${i}",
+                                contentPartnerId = "channel-id-$i",
                             )
                         ),
                     )
@@ -891,15 +891,15 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
 
             @Test
             fun `does not duplicate channel facets when channel filter is selected`() {
-                    videoIndexWriter.upsert(
-                        sequenceOf(
-                            SearchableVideoMetadataFactory.create(
-                                id = "banana-1",
-                                title = "banana candy",
-                                contentPartnerId = "channel-id-1",
-                            ),
+                videoIndexWriter.upsert(
+                    sequenceOf(
+                        SearchableVideoMetadataFactory.create(
+                            id = "banana-1",
+                            title = "banana candy",
+                            contentPartnerId = "channel-id-1",
                         ),
-                    )
+                    ),
+                )
 
                 val results = videoIndexReader.search(
                     PaginatedIndexSearchRequest(
@@ -1165,7 +1165,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     )
                 )
 
-
                 assertThat(results.counts.totalHits).isEqualTo(5)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 2))
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1999", hits = 1))
@@ -1223,7 +1222,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         )
                     )
                 )
-
 
                 assertThat(results.counts.totalHits).isEqualTo(2)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "9999", hits = 1))
@@ -1285,7 +1283,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     )
                 )
 
-
                 assertThat(results.counts.totalHits).isEqualTo(2)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "1099", hits = 1))
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).contains(Count(id = "111", hits = 1))
@@ -1322,7 +1319,6 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                         )
                     )
                 )
-
 
                 assertThat(results.counts.totalHits).isEqualTo(1)
                 assertThat(results.counts.getFacetCounts(FacetType.Prices)).containsExactly(Count(id = "0", hits = 1))

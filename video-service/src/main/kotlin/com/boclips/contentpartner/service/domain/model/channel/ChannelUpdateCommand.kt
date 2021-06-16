@@ -5,7 +5,6 @@ import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.legalrestriction.LegalRestriction
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import java.net.URL
-import java.time.Period
 import java.util.Currency
 
 sealed class ChannelUpdateCommand(val channelId: ChannelId) {
@@ -17,7 +16,8 @@ sealed class ChannelUpdateCommand(val channelId: ChannelId) {
         ChannelUpdateCommand(channelId)
 
     class ReplaceDistributionMethods(
-        channelId: ChannelId, val distributionMethods: Set<DistributionMethod>
+        channelId: ChannelId,
+        val distributionMethods: Set<DistributionMethod>
     ) : ChannelUpdateCommand(channelId)
 
     class ReplaceLegalRestrictions(channelId: ChannelId, val legalRestriction: LegalRestriction) :

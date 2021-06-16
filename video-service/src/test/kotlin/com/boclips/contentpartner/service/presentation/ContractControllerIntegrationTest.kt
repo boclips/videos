@@ -3,7 +3,6 @@ package com.boclips.contentpartner.service.presentation
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.asBoclipsEmployee
 import org.assertj.core.api.Assertions
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.closeTo
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
@@ -181,7 +180,6 @@ class ContractControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.contracts[0].remittanceCurrency", nullValue()))
             .andExpect(jsonPath("$._embedded.contracts[0].restrictions", nullValue()))
             .andExpect(jsonPath("$._embedded.contracts[0].costs", nullValue()))
-
     }
 
     @Test

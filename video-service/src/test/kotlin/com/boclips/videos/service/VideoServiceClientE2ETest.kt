@@ -2,8 +2,8 @@ package com.boclips.videos.service
 
 import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.factories.UserResourceFactory
-import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.httpclient.ChannelsClient
+import com.boclips.videos.api.httpclient.CollectionsClient
 import com.boclips.videos.api.httpclient.SubjectsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.TestTokenFactory

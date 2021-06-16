@@ -2,11 +2,11 @@ package com.boclips.contentpartner.service.infrastructure.contract
 
 import com.boclips.contentpartner.service.common.PageRequest
 import com.boclips.contentpartner.service.domain.model.contract.Contract
-import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
-import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
 import com.boclips.contentpartner.service.domain.model.contract.ContractDates
 import com.boclips.contentpartner.service.domain.model.contract.ContractFilter
+import com.boclips.contentpartner.service.domain.model.contract.ContractRepository
 import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.ContractUpdateCommand
 import com.boclips.contentpartner.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ContentPartnerContractFactory
 import com.boclips.videos.service.testsupport.ContractCostsFactory
@@ -100,7 +100,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
 
-
         repository.update(
             listOf(
                 ContractUpdateCommand.ReplaceDaysBeforeTerminationWarning(
@@ -137,7 +136,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
 
-
         repository.update(
             listOf(
                 ContractUpdateCommand.ReplaceYearsForMaximumLicense(
@@ -156,7 +154,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
 
-
         repository.update(
             listOf(
                 ContractUpdateCommand.ReplaceDaysForSellOffPeriod(
@@ -174,7 +171,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can replace royalty split`() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
-
 
         repository.update(
             listOf(
@@ -195,7 +191,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
 
-
         repository.update(
             listOf(
                 ContractUpdateCommand.ReplaceMinimumPriceDescription(
@@ -214,7 +209,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
         val currency = Currency.getInstance("AUD")
-
 
         repository.update(
             listOf(
@@ -235,7 +229,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val contract = repository.create(original)
         val restrictions = ContractRestrictionsFactory.sample(clientFacing = listOf("updated restriction"))
 
-
         repository.update(
             listOf(
                 ContractUpdateCommand.ReplaceRestrictions(
@@ -254,7 +247,6 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         val original = ContentPartnerContractFactory.sample()
         val contract = repository.create(original)
         val costs = ContractCostsFactory.sample(recoupable = false)
-
 
         repository.update(
             listOf(
@@ -339,8 +331,10 @@ class MongoContractRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             contracts.map { repository.create(it) }
 
             val retrievedContracts = repository.findAll(PageRequest(size = 10, page = 0))
-            assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(*contracts.map { it.id }
-                .toTypedArray())
+            assertThat(retrievedContracts.elements.map { it.id }).containsExactlyInAnyOrder(
+                *contracts.map { it.id }
+                    .toTypedArray()
+            )
             assertThat(retrievedContracts.pageInfo.hasMoreElements).isFalse()
         }
 

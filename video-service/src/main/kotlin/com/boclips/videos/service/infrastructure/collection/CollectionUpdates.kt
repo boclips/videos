@@ -90,7 +90,8 @@ class CollectionUpdates {
     ): Bson {
         logger.info { "Prepare replacing attachment for collection $collectionId" }
         return set(
-            CollectionDocument::attachments, listOf(
+            CollectionDocument::attachments,
+            listOf(
                 AttachmentDocument(
                     id = ObjectId(),
                     description = description,
@@ -128,7 +129,7 @@ class CollectionUpdates {
 
     private fun replaceVideos(collectionId: CollectionId, videos: List<VideoId>): Bson {
         logger.info { "Prepare videos for replacement in collection $collectionId" }
-        return set(CollectionDocument::videos, videos.map { it.value} )
+        return set(CollectionDocument::videos, videos.map { it.value })
     }
 
     private fun removeSubject(collectionId: CollectionId, subjectId: SubjectId): Bson {

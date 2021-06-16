@@ -23,7 +23,7 @@ class LegalRestrictionsController(
     private val findLegalRestrictions: FindLegalRestrictions,
     private val findAllLegalRestrictions: FindAllLegalRestrictions,
     private val legalRestrictionsToResourceConverter: LegalRestrictionsToResourceConverter
-)  {
+) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

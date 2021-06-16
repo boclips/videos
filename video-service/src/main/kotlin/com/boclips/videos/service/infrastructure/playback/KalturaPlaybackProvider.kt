@@ -63,7 +63,7 @@ class KalturaPlaybackProvider(
         } catch (e: Exception) {
             throw UpstreamKalturaException(
                 error = e.message ?: "no upstream error available",
-                message = "Error encountered when trying to retrieve assets for entry IDs: ${entryIds}"
+                message = "Error encountered when trying to retrieve assets for entry IDs: $entryIds"
             )
         }
 

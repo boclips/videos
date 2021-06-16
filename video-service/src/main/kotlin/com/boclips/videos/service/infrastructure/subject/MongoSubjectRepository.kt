@@ -71,7 +71,8 @@ class MongoSubjectRepository(
         return Subject(
             id = SubjectId(
                 value = id.toHexString()
-            ), name = name
+            ),
+            name = name
         )
     }
 

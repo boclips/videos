@@ -6,9 +6,9 @@ import com.boclips.videos.api.PricingProjection
 import com.boclips.videos.api.PublicApiProjection
 import com.boclips.videos.service.config.security.UserRoles.API
 import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_SERVICE
+import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_WEB_APP
 import com.boclips.videos.service.config.security.UserRoles.HQ
 import com.boclips.videos.service.config.security.UserRoles.LEGACY_PUBLISHER
-import com.boclips.videos.service.config.security.UserRoles.BOCLIPS_WEB_APP
 import com.boclips.videos.service.config.security.UserRoles.TEACHER
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtensionContext

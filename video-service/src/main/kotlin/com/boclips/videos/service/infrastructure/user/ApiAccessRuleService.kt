@@ -50,7 +50,6 @@ open class ApiAccessRuleService(
             )
         }
 
-
         logger.info { "Retrieved access rules for user ${user.id.value}" }
         return accessRules
     }

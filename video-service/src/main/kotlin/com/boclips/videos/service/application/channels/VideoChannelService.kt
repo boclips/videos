@@ -3,16 +3,16 @@ package com.boclips.videos.service.application.channels
 import com.boclips.contentpartner.service.domain.model.channel.ChannelFilter
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
-import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.channel.ChannelWithCategories
+import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
 import org.springframework.stereotype.Component
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId as ContentPartnerServiceChannelId
 
 @Component
 class VideoChannelService(val channelRepository: ChannelRepository) {
-    var idCache: Pair<ChannelId, Availability>? = null
+    var idCache: Pair<ChannelId, ContentPartnerAvailability>? = null
 
     fun findChannelWithCategories(id: String): ChannelWithCategories? {
         return find(ChannelId(id))
@@ -31,7 +31,7 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
         }
     }
 
-    fun findAvailabilityFor(channelId: ChannelId): Availability {
+    fun findAvailabilityFor(channelId: ChannelId): ContentPartnerAvailability {
         idCache?.let {
             if (it.first == channelId) {
                 return it.second
@@ -44,7 +44,7 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
             )
         )
 
-        return (channel?.availability() ?: Availability.NONE)
+        return (channel?.availability() ?: ContentPartnerAvailability.NONE)
             .also {
                 idCache = channelId to it
             }
@@ -53,8 +53,6 @@ class VideoChannelService(val channelRepository: ChannelRepository) {
     fun getPrivateChannelIDs(): Set<ChannelId> =
         channelRepository.findAll(listOf(ChannelFilter.PrivateFilter(private = true)))
             .map { ChannelId(it.id.value) }.toSet()
-
-
 
     private fun find(channelId: ChannelId): com.boclips.contentpartner.service.domain.model.channel.Channel? {
         return channelRepository.findById(

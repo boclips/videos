@@ -9,13 +9,10 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
-import io.opentracing.Tracer
 import mu.KLogging
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.TaskDecorator
 import org.springframework.hateoas.MediaTypes.HAL_JSON
 import org.springframework.http.MediaType
 import org.springframework.http.converter.HttpMessageConverter
@@ -87,11 +84,11 @@ class WebConfig : WebMvcConfigurer {
 
     @Bean
     fun asyncTaskExecutor() = ThreadPoolTaskExecutor().apply {
-            corePoolSize = 5
-            maxPoolSize = 10
-            setQueueCapacity(25)
-            setTaskDecorator(tracingTaskDecorator)
-        }
+        corePoolSize = 5
+        maxPoolSize = 10
+        setQueueCapacity(25)
+        setTaskDecorator(tracingTaskDecorator)
+    }
 }
 
 object DurationSerializer : JsonSerializer<Duration>() {

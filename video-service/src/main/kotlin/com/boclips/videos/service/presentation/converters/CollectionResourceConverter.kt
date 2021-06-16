@@ -6,11 +6,11 @@ import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.api.response.collection.CollectionsResource
 import com.boclips.videos.api.response.collection.CollectionsWrapperResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.collection.Collection
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -36,13 +36,15 @@ class CollectionResourceConverter(
         projection: Projection?
     ): Any {
         return CollectionsResource(
-            _embedded = CollectionsWrapperResource(collections.elements.map {
-                buildCollectionResource(
-                    it,
-                    projection ?: Projection.list,
-                    currentUser
-                )
-            }),
+            _embedded = CollectionsWrapperResource(
+                collections.elements.map {
+                    buildCollectionResource(
+                        it,
+                        projection ?: Projection.list,
+                        currentUser
+                    )
+                }
+            ),
             page = PagedModel.PageMetadata(
                 collections.pageInfo.pageRequest.size.toLong(),
                 collections.pageInfo.pageRequest.page.toLong(),

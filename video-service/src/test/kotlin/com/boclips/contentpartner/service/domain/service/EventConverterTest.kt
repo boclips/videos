@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.net.URL
 import java.time.LocalDate
-import java.time.Period
 import java.util.Currency
 import java.util.Locale
 import com.boclips.eventbus.domain.contentpartner.DistributionMethod as EventBusDistributionMethod
@@ -119,7 +118,6 @@ class EventConverterTest {
             EventBusDistributionMethod.DOWNLOAD,
             EventBusDistributionMethod.STREAM
         )
-
     }
 
     @Test

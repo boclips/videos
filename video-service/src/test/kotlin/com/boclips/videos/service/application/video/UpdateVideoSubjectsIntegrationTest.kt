@@ -5,8 +5,8 @@ import com.boclips.eventbus.events.video.VideoSubjectClassified
 import com.boclips.eventbus.events.video.VideoUpdated
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.service.domain.model.FixedAgeRange
-import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory

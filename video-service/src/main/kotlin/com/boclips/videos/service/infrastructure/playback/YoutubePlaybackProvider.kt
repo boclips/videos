@@ -114,11 +114,13 @@ class YoutubePlaybackProvider(youtubeApiKey: String) :
     private fun convertToPlayback(item: Video): Pair<PlaybackId, YoutubePlayback> {
         val playbackId = PlaybackId(PlaybackProviderType.YOUTUBE, item.id)
 
-        return (playbackId to YoutubePlayback(
-            id = playbackId,
-            duration = Duration.parse(item.contentDetails.duration),
-            thumbnailUrl = item.snippet.thumbnails.high.url
-        ))
+        return (
+            playbackId to YoutubePlayback(
+                id = playbackId,
+                duration = Duration.parse(item.contentDetails.duration),
+                thumbnailUrl = item.snippet.thumbnails.high.url
+            )
+            )
     }
 
     override fun removePlayback(playbackId: PlaybackId) {

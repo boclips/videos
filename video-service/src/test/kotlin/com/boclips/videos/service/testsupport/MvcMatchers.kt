@@ -19,6 +19,6 @@ class HalJson : ResultMatcher {
 class CacheableFor(private val seconds: Long) : ResultMatcher {
     override fun match(result: MvcResult) {
         assertThat(result.response.getHeaderValue("Cache-Control"))
-            .isEqualTo("max-age=${seconds}, public")
+            .isEqualTo("max-age=$seconds, public")
     }
 }

@@ -5,7 +5,6 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
-
 import org.springframework.beans.factory.annotation.Autowired
 
 internal class MongoContentWarningRepositoryTest : AbstractSpringIntegrationTest() {

@@ -6,7 +6,7 @@ import com.boclips.contentpartner.service.infrastructure.signedlink.common.GcsSi
 import com.boclips.contentpartner.service.infrastructure.signedlink.common.SignedLinkOptions
 import java.net.URL
 
-class ContractSignedLinkProvider(
+class ContentPartnerContractsSignedLinkProvider(
     private val config: GcsProperties
 ) : SignedLinkProvider {
     override fun signedPutLink(filename: String): URL =
@@ -28,5 +28,4 @@ class ContractSignedLinkProvider(
                 projectId = config.projectId
             )
         )
-
 }

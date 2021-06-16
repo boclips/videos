@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.contentwarning
 import com.boclips.videos.api.request.contentwarning.CreateContentWarningRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions
-
 import org.junit.jupiter.api.Test
 
 class CreateContentWarningTest() : AbstractSpringIntegrationTest() {

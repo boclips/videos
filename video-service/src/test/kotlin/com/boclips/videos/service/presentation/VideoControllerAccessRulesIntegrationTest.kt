@@ -298,4 +298,3 @@ class VideoControllerAccessRulesIntegrationTest : AbstractSpringIntegrationTest(
             .andExpect(jsonPath("$._embedded.videos[*].title", containsInAnyOrder("visible video", "private video i have access to")))
     }
 }
-

@@ -21,5 +21,4 @@ object DeviceIdCookieExtractor {
                 cookie.name == Cookies.DEVICE_ID
             }?.value
     }
-
 }

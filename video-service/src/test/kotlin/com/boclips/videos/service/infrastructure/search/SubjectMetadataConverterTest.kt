@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class SubjectMetadataConverterTest {
 
     @Test
-    fun `should convert to subject metadata` () {
+    fun `should convert to subject metadata`() {
         val suggestion = SubjectSuggestion(
             id = SubjectId("some id"),
             name = "subject name"

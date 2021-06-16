@@ -28,4 +28,3 @@ class ChannelFiltersConverterTest {
         assertThat(filters).containsExactly(ChannelFilter.PrivateFilter(private = true))
     }
 }
-

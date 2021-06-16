@@ -105,7 +105,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             )
                 .andExpect(status().isOk)
 
-            mockMvc.perform(get("/v1/videos/${videoId}").asBoclipsEmployee())
+            mockMvc.perform(get("/v1/videos/$videoId").asBoclipsEmployee())
                 .andExpect(jsonPath("$.id", equalTo(videoId.value)))
                 .andExpect(jsonPath("$.taxonomy.manual.categories", hasSize<Int>(1)))
                 .andExpect(jsonPath("$.taxonomy.manual.categories[0].codeValue", equalTo("A")))
@@ -125,7 +125,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "The file is not a valid CSV format"
                         )
                     )
@@ -143,7 +144,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "The file must have both 'Category Code' and 'ID' columns"
                         )
                     )
@@ -161,7 +163,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "The file must have both 'Category Code' and 'ID' columns"
                         )
                     )
@@ -179,7 +182,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "The file must have both 'Category Code' and 'ID' columns"
                         )
                     )
@@ -197,7 +201,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "The file must have both 'Category Code' and 'ID' columns"
                         )
                     )
@@ -215,7 +220,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "Rows 2 are missing a video ID"
                         )
                     )
@@ -233,7 +239,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
             ).andExpect(status().isBadRequest)
                 .andExpect(
                     jsonPath(
-                        "$.message", equalTo(
+                        "$.message",
+                        equalTo(
                             "Rows 2 contain invalid Video IDs - one"
                         )
                     )

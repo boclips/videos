@@ -2,7 +2,6 @@ package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.UserQuery
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.aggregations.ElasticSearchAggregationProperties
@@ -40,10 +39,12 @@ class VideoIndexReaderExcludedSourceTypesIntegrationTest : EmbeddedElasticSearch
         )
 
         val results = videoIndexReader.search(
-            PaginatedIndexSearchRequest(query = VideoQuery(
-                phrase="banana",
-                videoAccessRuleQuery = VideoAccessRuleQuery(excludedSourceTypes = setOf(SourceType.YOUTUBE))
-            ))
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
+                    phrase = "banana",
+                    videoAccessRuleQuery = VideoAccessRuleQuery(excludedSourceTypes = setOf(SourceType.YOUTUBE))
+                )
+            )
         )
 
         assertThat(results.elements).containsExactly("bo-vid")

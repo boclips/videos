@@ -15,4 +15,3 @@ class ContractsResource(
 data class ContractsWrapperResource(
     val contracts: List<ContractResource>
 )
-

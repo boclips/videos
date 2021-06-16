@@ -19,7 +19,7 @@ class VideoCollectionChangeLog {
     ) {
         val updateResult = mongoClient.getDatabase(DATABASE_NAME).getCollection("videos")
             .updateMany(
-                Filters.eq ("categories.channel.codeValue",""),
+                Filters.eq("categories.channel.codeValue", ""),
                 Updates.unset("categories")
             )
 

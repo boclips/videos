@@ -11,7 +11,6 @@ import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideosResource
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Client
-
 import feign.Param
 import feign.QueryMap
 import feign.RequestLine
@@ -68,11 +67,11 @@ interface VideosClient {
             tokenFactory: TokenFactory? = null,
             feignClient: Client
         ) = FeignInterserviceClientFactory.create(
-                apiUrl,
-                objectMapper,
-                tokenFactory,
-                feignClient,
-                VideosClient::class.java
+            apiUrl,
+            objectMapper,
+            tokenFactory,
+            feignClient,
+            VideosClient::class.java
         )
     }
 }

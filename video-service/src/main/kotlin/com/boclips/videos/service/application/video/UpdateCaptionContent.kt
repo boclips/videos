@@ -9,6 +9,5 @@ class UpdateCaptionContent(private val captionService: CaptionService) {
 
     operator fun invoke(videoId: String, captionContent: String) {
         captionService.updateCaptionContent(VideoId(videoId), captionContent)
-
     }
 }

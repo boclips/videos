@@ -86,7 +86,6 @@ class ApiAccessRulesConverter(
             }
         }
 
-
         return when {
             videoAccessRules.isNotEmpty() -> VideoAccess.Rules(
                 accessRules = videoAccessRules,
@@ -145,7 +144,6 @@ class ApiAccessRulesConverter(
         val videoIds = accessRule.collectionIds.flatMap {
             val collection = collectionRepository.find(CollectionId(it))
             collection?.videos ?: emptySet()
-
         }
         return VideoAccessRule.IncludedIds(videoIds.toSet())
     }

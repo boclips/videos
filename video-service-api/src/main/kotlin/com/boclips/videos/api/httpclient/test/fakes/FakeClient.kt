@@ -35,7 +35,5 @@ interface FakeClient<T> {
             ),
             null
         )
-
-
     }
 }

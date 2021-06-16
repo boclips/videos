@@ -8,13 +8,15 @@ class DeleteVideoThumbnail(
     private val videoRepository: VideoRepository
 ) {
     operator fun invoke(videoId: String) {
-        videoRepository.bulkUpdate(listOf(
-            VideoUpdateCommand.ReplaceThumbnailSecond(
-                VideoId(videoId), null
-            ),
-            VideoUpdateCommand.ReplaceCustomThumbnail(
-                VideoId(videoId), null
-            ))
+        videoRepository.bulkUpdate(
+            listOf(
+                VideoUpdateCommand.ReplaceThumbnailSecond(
+                    VideoId(videoId), null
+                ),
+                VideoUpdateCommand.ReplaceCustomThumbnail(
+                    VideoId(videoId), null
+                )
+            )
         )
     }
 }

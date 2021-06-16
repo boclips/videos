@@ -36,7 +36,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         ).id
 
         createAccessRulesResource(
-            "test-user", listOf(
+            "test-user",
+            listOf(
                 AccessRuleResource.IncludedCollections(
                     name = "Test Contract",
                     collectionIds = listOf(collectionId.value)
@@ -138,7 +139,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
                 CreateCollectionRequest(
                     title = "hello there",
                     videos = listOf(firstId.value)
-                ), user
+                ),
+                user
             ).id.value
 
             createAccessRulesResource(
@@ -195,7 +197,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can convert ExcludedVideoTypesAccess rule to domain`() {
             createAccessRulesResource(
-                "test-user", listOf(
+                "test-user",
+                listOf(
                     AccessRuleResource.ExcludedVideoTypes(
                         name = "bad video types",
                         videoTypes = listOf("NEWS")
@@ -212,7 +215,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `can convert IncludedVideoTypesAccess rule to domain`() {
             createAccessRulesResource(
-                "test-user", listOf(
+                "test-user",
+                listOf(
                     AccessRuleResource.IncludedVideoTypes(
                         name = "bad video types",
                         videoTypes = listOf("NEWS", "STOCK", "INSTRUCTIONAL")
@@ -328,7 +332,8 @@ class ApiAccessRuleServiceIntegrationTest : AbstractSpringIntegrationTest() {
             val firstId = TestFactories.createVideoId()
             val secondId = TestFactories.createVideoId()
             createAccessRulesResource(
-                "test-user", listOf(
+                "test-user",
+                listOf(
                     AccessRuleResource.IncludedVideos(
                         name = "good videos",
                         videoIds = listOf(firstId.value)

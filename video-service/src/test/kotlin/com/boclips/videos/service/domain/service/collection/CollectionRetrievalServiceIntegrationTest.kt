@@ -60,8 +60,9 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                                             secondPermittedId
                                         )
                                     )
-                                )
-                            , emptySet())
+                                ),
+                                emptySet()
+                            )
                         )
                     }
                 )
@@ -192,8 +193,9 @@ class CollectionRetrievalServiceIntegrationTest : AbstractSpringIntegrationTest(
                                             secondPermittedId
                                         )
                                     )
-                                )
-                            , emptySet())
+                                ),
+                                emptySet()
+                            )
                         )
                     }
                 )

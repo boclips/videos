@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.CategoryFactory
 import org.assertj.core.api.Assertions.*
-
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -21,7 +20,7 @@ class TagVideosWithCategoriesTest : AbstractSpringIntegrationTest() {
     @Test
     fun `tag single video with one category`() {
         addCategory(CategoryFactory.sample(code = "A", description = "cat A"))
-        addCategory(CategoryFactory.sample(code ="C", description = "ANSI C"))
+        addCategory(CategoryFactory.sample(code = "C", description = "ANSI C"))
 
         val videoId = saveVideo(categories = listOf("C"))
 
@@ -30,8 +29,8 @@ class TagVideosWithCategoriesTest : AbstractSpringIntegrationTest() {
         val retrieved = videoRepository.find(videoId)
         assertThat(retrieved!!.manualCategories).hasSize(2)
         assertThat(retrieved.manualCategories).containsExactlyInAnyOrder(
-            CategoryWithAncestors(codeValue = CategoryCode("A"), description = "cat A" ),
-            CategoryWithAncestors(codeValue = CategoryCode("C"), description = "ANSI C" )
+            CategoryWithAncestors(codeValue = CategoryCode("A"), description = "cat A"),
+            CategoryWithAncestors(codeValue = CategoryCode("C"), description = "ANSI C")
         )
     }
 }

@@ -59,9 +59,15 @@ class EventConverterTest {
             videoReference = "video-reference",
             deactivated = true,
             categories = mapOf(
-                CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample(codeValue = "ZZ",description = "Lizards",ancestors = setOf(
-                    CategoryCode("Z"))))
+                CategorySource.CHANNEL to setOf(
+                    CategoryWithAncestorsFactory.sample(
+                        codeValue = "ZZ", description = "Lizards",
+                        ancestors = setOf(
+                            CategoryCode("Z")
+                        )
+                    )
                 )
+            )
         )
 
         val videoEvent = converter.toVideoPayload(video)

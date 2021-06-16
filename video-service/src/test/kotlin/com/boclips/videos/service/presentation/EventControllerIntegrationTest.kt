@@ -71,7 +71,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             "videoId":"${aValidId()}",
                             "segmentStartSeconds":1469.128248,
                             "segmentEndSeconds":1470.728248
-                        }""".trimIndent()
+                        }
+                        """.trimIndent()
                     )
             )
                 .andExpect(status().isCreated)
@@ -117,7 +118,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             "videoIndex":135,
                             "segmentStartSeconds":1469.128248,
                             "segmentEndSeconds":1470.728248
-                        }""".trimIndent()
+                        }
+                        """.trimIndent()
                     )
             )
                 .andExpect(status().isCreated)
@@ -140,7 +142,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
             "segmentStartSeconds":1469.128248,
             "segmentEndSeconds":1470.728248,
             "query":"the awesome dogs"
-        }""".trimIndent()
+        }
+            """.trimIndent()
 
             mockMvc.perform(
                 post("/v1/events/playback")
@@ -281,7 +284,8 @@ class EventControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "language": "caption-language",
                 "id": "caption-id"
             }
-        }""".trimIndent()
+        }
+        """.trimIndent()
 
         mockMvc.perform(
             post("/v1/events/player-interaction")

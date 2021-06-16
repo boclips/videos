@@ -27,7 +27,7 @@ internal class PriceConverterTest {
 
     @Test
     fun `it throws when an invalid value is provided`() {
-        assertThrows<NumberFormatException>{
+        assertThrows<NumberFormatException> {
             PriceConverter.toPrice("not a number")
         }
     }

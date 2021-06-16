@@ -1,7 +1,6 @@
 package com.boclips.search.service.infrastructure.channels
 
 import com.boclips.search.service.domain.channels.model.CategoryCode
-import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery

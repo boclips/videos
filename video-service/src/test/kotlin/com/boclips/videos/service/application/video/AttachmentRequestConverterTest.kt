@@ -28,7 +28,8 @@ class AttachmentRequestConverterTest {
     fun `when attachments are set`() {
         val result: VideoUpdateCommand? =
             AttachmentRequestConverter().convert(
-                VideoId(aValidId()), Specified(
+                VideoId(aValidId()),
+                Specified(
                     listOf(
                         AttachmentRequest(
                             linkToResource = "some-link",

@@ -243,4 +243,3 @@ interface IndexConfiguration {
         )
     }
 }
-

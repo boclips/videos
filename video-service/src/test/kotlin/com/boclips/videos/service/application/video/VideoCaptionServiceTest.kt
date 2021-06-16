@@ -17,7 +17,7 @@ class VideoCaptionServiceTest {
     val target = VideoCaptionService(kalturaClient, captionService)
 
     @Test
-    fun `maps status - PROCESSING`() { //No need to check all cases as it is typed
+    fun `maps status - PROCESSING`() { // No need to check all cases as it is typed
         whenever(kalturaClient.getCaptionStatus("playback-id"))
             .thenReturn(KalturaCaptionManager.CaptionStatus.PROCESSING)
 

@@ -20,14 +20,14 @@ object DistributionMethodResourceConverter {
         }.toSet()
     }
 
-    //TODO: should be private
+    // TODO: should be private
     fun toModel(distributionMethod: DistributionMethod) =
         when (distributionMethod) {
             DistributionMethod.DOWNLOAD -> DistributionMethodResource.DOWNLOAD
             DistributionMethod.STREAM -> DistributionMethodResource.STREAM
         }
 
-    //TODO: should be private
+    // TODO: should be private
     fun fromResource(videoResourceDistributionMethod: DistributionMethodResource) =
         when (videoResourceDistributionMethod) {
             DistributionMethodResource.DOWNLOAD -> DistributionMethod.DOWNLOAD

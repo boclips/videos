@@ -3,7 +3,6 @@ package com.boclips.videos.service.application.video
 import com.boclips.kalturaclient.KalturaCaptionManager.CaptionStatus.*
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.videos.api.response.video.CaptionStatus
-import com.boclips.videos.api.response.video.CaptionsResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.VideoId

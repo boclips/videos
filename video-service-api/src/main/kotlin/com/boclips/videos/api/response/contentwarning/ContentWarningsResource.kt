@@ -13,4 +13,3 @@ data class ContentWarningsResource(
 data class ContentWarningWrapper(
     val contentWarnings: List<ContentWarningResource>
 )
-

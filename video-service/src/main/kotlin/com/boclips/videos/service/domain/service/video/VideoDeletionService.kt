@@ -22,13 +22,16 @@ class VideoDeletionService(
         DeleteVideo.logger.info { "Removed video $videoId from search index" }
         videoRepository.delete(videoId)
         DeleteVideo.logger.info { "Removed video $videoId from video repository" }
-        collectionRepository.streamUpdate(CollectionFilter.HasVideoId(videoId), { collection ->
-            CollectionUpdateCommand.RemoveVideoFromCollection(
-                collectionId = collection.id,
-                videoId = video.videoId,
-                user = user
-            )
-        })
+        collectionRepository.streamUpdate(
+            CollectionFilter.HasVideoId(videoId),
+            { collection ->
+                CollectionUpdateCommand.RemoveVideoFromCollection(
+                    collectionId = collection.id,
+                    videoId = video.videoId,
+                    user = user
+                )
+            }
+        )
         DeleteVideo.logger.info { "Removed video from collections" }
         if (video.isPlayable()) {
             playbackRepository.remove(video.playback.id)

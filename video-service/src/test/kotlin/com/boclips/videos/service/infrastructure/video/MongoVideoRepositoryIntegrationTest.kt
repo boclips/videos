@@ -90,7 +90,6 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(mongoVideoRepository.find(VideoId(id))).isNull()
     }
 
-
     @Test
     fun `find by content partner name and content partner video id`() {
         val video = createVideo(

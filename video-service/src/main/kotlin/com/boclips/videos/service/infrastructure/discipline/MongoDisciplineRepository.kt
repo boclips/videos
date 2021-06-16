@@ -51,7 +51,8 @@ class MongoDisciplineRepository(
         return Discipline(
             id = DisciplineId(
                 value = id.toHexString()
-            ), name = name,
+            ),
+            name = name,
             code = code,
             subjects = emptyList()
         )

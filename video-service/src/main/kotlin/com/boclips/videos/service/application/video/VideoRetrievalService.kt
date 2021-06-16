@@ -18,8 +18,8 @@ import mu.KLogging
 import com.boclips.search.service.domain.common.model.PagingCursor as PagingCursorForSearch
 
 class VideoRetrievalService(
-        private val videoRepository: VideoRepository,
-        private val videoIndex: VideoIndex
+    private val videoRepository: VideoRepository,
+    private val videoIndex: VideoIndex
 ) {
     companion object : KLogging()
 
@@ -76,9 +76,9 @@ class VideoRetrievalService(
         cursor: PagingCursor? = null
     ): VideoIdsWithCursor {
         val videoRequest = VideoRequest(
-                text = "",
-                pageSize = pageSize,
-                pagingState = VideoRequestPagingState.Cursor(cursor?.value)
+            text = "",
+            pageSize = pageSize,
+            pagingState = VideoRequestPagingState.Cursor(cursor?.value)
         )
         val searchRequest = CursorBasedIndexSearchRequest(
             query = videoRequest.toQuery(videoAccess),
@@ -92,4 +92,3 @@ class VideoRetrievalService(
         )
     }
 }
-

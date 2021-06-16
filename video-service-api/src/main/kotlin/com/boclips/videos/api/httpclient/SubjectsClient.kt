@@ -34,11 +34,11 @@ interface SubjectsClient {
             tokenFactory: TokenFactory? = null,
             feignClient: Client
         ) = FeignInterserviceClientFactory.create(
-                apiUrl,
-                objectMapper,
-                tokenFactory,
-                feignClient,
-                SubjectsClient::class.java
+            apiUrl,
+            objectMapper,
+            tokenFactory,
+            feignClient,
+            SubjectsClient::class.java
         )
     }
 }

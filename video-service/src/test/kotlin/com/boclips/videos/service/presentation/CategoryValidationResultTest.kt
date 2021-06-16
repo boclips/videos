@@ -12,7 +12,7 @@ internal class CategoryValidationResultTest {
                 InvalidVideoId(rowIndex = 2, invalidId = "ABC"),
                 InvalidVideoId(rowIndex = 8, invalidId = "DEF"),
                 InvalidCategoryCode(rowIndex = 6, code = "HI"),
-                )
+            )
         )
 
         val message = error.getMessage()

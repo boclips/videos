@@ -40,7 +40,7 @@ class GetCollection(
     }
 
     fun withoutPopulatingVideos(collectionId: String, user: User): Collection {
-        if(!user.isAuthenticated) {
+        if (!user.isAuthenticated) {
             throw OperationForbiddenException()
         }
 

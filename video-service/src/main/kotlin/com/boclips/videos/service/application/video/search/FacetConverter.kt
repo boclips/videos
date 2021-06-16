@@ -37,14 +37,20 @@ class FacetConverter {
                     attachmentTypes = resourcesFacets
                 }
             }
-            .apply { videoTypesFacets?.let { typesFacets ->
-                videoTypes = typesFacets
-            } }
-            .apply { includeChannelFacets?.let {
-                this.includeChannelFacets = it
-            } }
-            .apply { includePriceFacets?.let {
-                this.includePriceFacets = it
-            } }
+            .apply {
+                videoTypesFacets?.let { typesFacets ->
+                    videoTypes = typesFacets
+                }
+            }
+            .apply {
+                includeChannelFacets?.let {
+                    this.includeChannelFacets = it
+                }
+            }
+            .apply {
+                includePriceFacets?.let {
+                    this.includePriceFacets = it
+                }
+            }
     }
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
-class SaveSearchQuerySuggestionsCompletedEventTest: AbstractSpringIntegrationTest() {
+class SaveSearchQuerySuggestionsCompletedEventTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var saveSearchQuerySuggestionsCompletedEvent: SaveSearchQuerySuggestionsCompletedEvent
 

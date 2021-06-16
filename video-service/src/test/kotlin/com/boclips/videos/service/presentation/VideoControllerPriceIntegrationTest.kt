@@ -197,7 +197,6 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos[0].price.currency", equalTo("USD")))
     }
 
-
     @Nested
     inner class Access {
         @Test
@@ -249,9 +248,7 @@ class VideoControllerPriceIntegrationTest : AbstractSpringIntegrationTest() {
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.price").doesNotExist())
         }
-
     }
-
 
     @Test
     fun `requests for custom prices are rejected for non service accounts`() {

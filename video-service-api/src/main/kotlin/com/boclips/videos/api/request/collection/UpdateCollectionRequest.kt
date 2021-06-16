@@ -19,4 +19,3 @@ class UpdateCollectionRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     var videos: List<String>? = null
 )
-

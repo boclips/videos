@@ -21,4 +21,3 @@ class ContentCategoryLinkBuilderTest : AbstractSpringIntegrationTest() {
         Assertions.assertThat(link?.href).endsWith("/v1/content-categories")
     }
 }
-

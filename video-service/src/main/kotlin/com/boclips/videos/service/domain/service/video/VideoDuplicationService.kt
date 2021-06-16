@@ -55,9 +55,7 @@ class VideoDuplicationService(
 
         activeVideoId?.let {
             swapVideoInCollections(oldVideoId, activeVideoId)
-
         } ?: logger.info { "Clean up failed, activeVideoId missing in deactivated video: ${request.videoId}" }
-
     }
 
     private fun swapVideoInCollections(
@@ -65,13 +63,17 @@ class VideoDuplicationService(
         activeVideoId: VideoId,
         user: User = Administrator
     ) {
-        collectionRepository.streamUpdate(CollectionFilter.HasVideoId(oldVideoId), { collection ->
-            logger.info { "Overriding deactivated video: $oldVideoId with new video: $activeVideoId in collection: ${collection.id}" }
-            CollectionUpdateCommand.ReplaceVideos(
-                collectionId = collection.id,
-                videoIds = collection.videos.map { if (it == oldVideoId) activeVideoId else it },
-                user = user
-            )
-        }, {})
+        collectionRepository.streamUpdate(
+            CollectionFilter.HasVideoId(oldVideoId),
+            { collection ->
+                logger.info { "Overriding deactivated video: $oldVideoId with new video: $activeVideoId in collection: ${collection.id}" }
+                CollectionUpdateCommand.ReplaceVideos(
+                    collectionId = collection.id,
+                    videoIds = collection.videos.map { if (it == oldVideoId) activeVideoId else it },
+                    user = user
+                )
+            },
+            {}
+        )
     }
 }

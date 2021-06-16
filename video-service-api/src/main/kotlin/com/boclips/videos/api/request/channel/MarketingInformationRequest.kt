@@ -22,4 +22,3 @@ data class MarketingInformationRequest(
     @JsonSetter(contentNulls = Nulls.FAIL)
     val sampleVideos: List<String>? = null
 )
-

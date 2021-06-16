@@ -35,7 +35,8 @@ class MongoCollectionFilterContractAdapterTest {
     private val unknownContractForTesting =
         AccessRuleResource.ExcludedVideoTypes(
             name = "not collection",
-            videoTypes = emptyList())
+            videoTypes = emptyList()
+        )
 
     private val adapter = MongoCollectionFilterAccessRuleAdapter()
 }

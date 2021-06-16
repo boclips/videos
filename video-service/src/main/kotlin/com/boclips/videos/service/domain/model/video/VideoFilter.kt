@@ -8,7 +8,7 @@ sealed class VideoFilter {
     data class ChannelIdIs(val channelId: ChannelId) : VideoFilter()
     data class HasContentType(val type: VideoType) : VideoFilter()
     data class HasSubjectId(val subjectId: SubjectId) : VideoFilter()
-    class HasVideoId(vararg val videoId: VideoId): VideoFilter()
+    class HasVideoId(vararg val videoId: VideoId) : VideoFilter()
     object IsYoutube : VideoFilter()
     object IsKaltura : VideoFilter()
     object IsDeactivated : VideoFilter()

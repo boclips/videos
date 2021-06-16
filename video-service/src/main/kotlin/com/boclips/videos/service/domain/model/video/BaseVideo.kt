@@ -1,6 +1,5 @@
 package com.boclips.videos.service.domain.model.video
 
-
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.Attachment
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning

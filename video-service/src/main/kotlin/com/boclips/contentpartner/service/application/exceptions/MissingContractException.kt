@@ -11,5 +11,3 @@ class MissingContractException() : BoclipsApiException(
         status = HttpStatus.BAD_REQUEST
     )
 )
-
-

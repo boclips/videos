@@ -75,19 +75,23 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `provides suggestions for channels applying default 'IncludedDistributionMethods=STREAM' access rule`() {
-        val channel1 = saveChannel(name = "The History Channel",
+        val channel1 = saveChannel(
+            name = "The History Channel",
             distributionMethods = setOf(DistributionMethodResource.STREAM),
             contentTypes = listOf("NEWS")
         )
-        val channel2 = saveChannel(name = "TED-Ed",
+        val channel2 = saveChannel(
+            name = "TED-Ed",
             distributionMethods = setOf(DistributionMethodResource.DOWNLOAD),
             contentTypes = listOf("NEWS")
         )
-        val channel3 = saveChannel(name = "We Love History but you can't stream us",
+        val channel3 = saveChannel(
+            name = "We Love History but you can't stream us",
             distributionMethods = setOf(DistributionMethodResource.DOWNLOAD),
             contentTypes = listOf("NEWS")
         )
-        saveChannel(name = "We Love History",
+        saveChannel(
+            name = "We Love History",
             distributionMethods = setOf(DistributionMethodResource.DOWNLOAD),
             contentTypes = listOf("NEWS")
         )
@@ -102,8 +106,10 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders
-            .get("/v1/suggestions?query=history").asApiUser(email = "api-user@gmail.com"))
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/v1/suggestions?query=history").asApiUser(email = "api-user@gmail.com")
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.channels", hasSize<Int>(1)))
             .andExpect(jsonPath("$.channels[0].name", equalTo(channel1.name)))
@@ -118,19 +124,21 @@ class SuggestionsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         usersClient.addAccessRules(
             "api-user@gmail.com",
             AccessRulesResourceFactory.sample(
-                AccessRuleResource.IncludedVideoTypes (
+                AccessRuleResource.IncludedVideoTypes(
                     name = "includedVideoTypes",
                     videoTypes = listOf("NEWS")
                 ),
-                AccessRuleResource.ExcludedVideoTypes (
+                AccessRuleResource.ExcludedVideoTypes(
                     name = "excludedVideoTypes",
                     videoTypes = listOf("STOCK")
                 ),
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders
-            .get("/v1/suggestions?query=history").asApiUser(email = "api-user@gmail.com"))
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/v1/suggestions?query=history").asApiUser(email = "api-user@gmail.com")
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.channels", hasSize<Int>(1)))
             .andExpect(jsonPath("$.channels[0].name", equalTo(channel1.name)))

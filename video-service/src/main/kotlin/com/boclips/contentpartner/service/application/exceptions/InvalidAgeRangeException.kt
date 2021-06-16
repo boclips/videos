@@ -12,5 +12,3 @@ class InvalidAgeRangeException(ageRangeId: AgeRangeId) : BoclipsApiException(
         status = HttpStatus.BAD_REQUEST
     )
 )
-
-

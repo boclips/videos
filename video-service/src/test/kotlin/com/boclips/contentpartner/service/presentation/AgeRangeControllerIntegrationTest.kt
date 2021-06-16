@@ -11,10 +11,8 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -37,7 +35,6 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 """.trimIndent()
             ).asBoclipsEmployee()
         ).andExpect(status().isCreated).andReturn().response.getHeader("Location")!!
-
 
         mockMvc.perform(get(ageRangeUrl).asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -62,7 +59,6 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 """.trimIndent()
             ).asBoclipsEmployee()
         ).andExpect(status().isCreated).andReturn().response.getHeader("Location")!!
-
 
         mockMvc.perform(get(ageRangeUrl).asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -91,10 +87,8 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val ageRange1 = ChannelFactory.createAgeRange(id = "id1")
         val ageRange2 = ChannelFactory.createAgeRange(id = "id2")
 
-
         ageRangeRepository.create(ageRange = ageRange1)
         ageRangeRepository.create(ageRange = ageRange2)
-
 
         mockMvc.perform(get("/v1/age-ranges").asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -106,10 +100,8 @@ class AgeRangeControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val ageRange1 = ChannelFactory.createAgeRange(id = "id1")
         val ageRange2 = ChannelFactory.createAgeRange(id = "id2")
 
-
         ageRangeRepository.create(ageRange = ageRange1)
         ageRangeRepository.create(ageRange = ageRange2)
-
 
         mockMvc.perform(get("/v1/age-ranges").asApiUser())
             .andExpect(status().isForbidden)

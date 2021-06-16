@@ -44,7 +44,9 @@ class ChannelAggregation {
         }
 
         private fun aggregate(
-            queryBuilder: BoolQueryBuilder?, filterName: String, limit: Int
+            queryBuilder: BoolQueryBuilder?,
+            filterName: String,
+            limit: Int
         ): FilterAggregationBuilder {
             return AggregationBuilders
                 .filter(filterName, queryBuilder)

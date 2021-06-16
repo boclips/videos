@@ -1,7 +1,7 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.search.service.domain.videos.model.VideoType as SearchVideoType
 
 object VideoTypeConverter {
 

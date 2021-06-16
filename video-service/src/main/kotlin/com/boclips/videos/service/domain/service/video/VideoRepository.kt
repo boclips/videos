@@ -22,4 +22,3 @@ interface VideoRepository {
     fun existsVideoFromChannelId(channelId: ChannelId, partnerVideoId: String): Boolean
     fun resolveAlias(alias: String): VideoId?
 }
-

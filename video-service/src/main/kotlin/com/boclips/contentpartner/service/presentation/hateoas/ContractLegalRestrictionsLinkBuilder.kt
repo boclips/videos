@@ -11,7 +11,6 @@ class ContractLegalRestrictionsLinkBuilder() {
             methodOn(ContractLegalRestrictionsController::class.java).getAll()
         ).withRel("contractLegalRestrictions")
 
-
         return HateoasLink(href = link.href, rel = link.rel.value())
     }
 }

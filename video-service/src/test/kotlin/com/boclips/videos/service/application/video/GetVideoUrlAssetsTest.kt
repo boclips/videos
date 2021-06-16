@@ -94,10 +94,10 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns empty video asset url when no video asset is available in Kaltura`() {
         val videoId = saveVideo(
-                height = 1920,
-                width = 1080,
-                assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600)),
-                playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+            height = 1920,
+            width = 1080,
+            assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600)),
+            playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
         )
 
         val assetURLs = getVideoUrlAssets(videoId = videoId.value, user = UserFactory.sample())
@@ -107,10 +107,10 @@ class GetVideoUrlAssetsTest : AbstractSpringIntegrationTest() {
     @Test
     fun `returns url for an asset of max resolution available at ingest`() {
         val videoId = saveVideo(
-                height = 400,
-                width = 600,
-                assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600)),
-                playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
+            height = 400,
+            width = 600,
+            assets = setOf(KalturaFactories.createKalturaAsset(height = 400, width = 600)),
+            playbackId = PlaybackId.from("playback-id", PlaybackProviderType.KALTURA.toString())
         )
 
         val assetURLs = getVideoUrlAssets(videoId = videoId.value, user = UserFactory.sample())

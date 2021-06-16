@@ -24,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Period
 
 class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -94,7 +93,8 @@ class UpdateChannelIntegrationTest : AbstractSpringIntegrationTest() {
     fun `emits event`() {
         val description = "Test description"
         val contentCategories = listOf(
-            ContentCategoryRequest.WITH_A_HOST)
+            ContentCategoryRequest.WITH_A_HOST
+        )
         val contentTypes = listOf("NEWS")
         val notes = "This is an interesting CP"
 

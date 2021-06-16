@@ -47,22 +47,26 @@ class SubjectController(
 
     @GetMapping("/{id}")
     fun subject(@PathVariable id: String): ResponseEntity<ByteArray> = halJsonCachedFor(
-        12, TimeUnit.HOURS, getSubject(id)
+        12, TimeUnit.HOURS,
+        getSubject(id)
             .copy(_links = listOfNotNull(subjectsLinkBuilder.self(id)).map { it.rel to it }.toMap())
     )
 
     @GetMapping
     fun subjects(): ResponseEntity<ByteArray> = halJsonCachedFor(
-        12, TimeUnit.HOURS, SubjectsResource(
-            _embedded = SubjectsWrapperResource(getSubjects().map {
-                it.copy(
-                    _links = listOfNotNull(
-                        subjectsLinkBuilder.self(it.id),
-                        subjectsLinkBuilder.updateSubject(it)
+        12, TimeUnit.HOURS,
+        SubjectsResource(
+            _embedded = SubjectsWrapperResource(
+                getSubjects().map {
+                    it.copy(
+                        _links = listOfNotNull(
+                            subjectsLinkBuilder.self(it.id),
+                            subjectsLinkBuilder.updateSubject(it)
+                        )
+                            .map { it.rel to it }.toMap()
                     )
-                        .map { it.rel to it }.toMap()
-                )
-            }),
+                }
+            ),
             _links = listOfNotNull(subjectsLinkBuilder.subjects("self")).map { it.rel to it }.toMap()
         )
     )

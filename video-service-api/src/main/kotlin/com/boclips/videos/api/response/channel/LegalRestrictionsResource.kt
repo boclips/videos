@@ -12,4 +12,3 @@ data class LegalRestrictionsResource(
 data class LegalRestrictionsWrapper(
     val legalRestrictions: List<LegalRestrictionResource>
 )
-

@@ -88,9 +88,12 @@ class CollectionRepositoryEventsDecoratorTest : AbstractSpringIntegrationTest() 
         saveCollection(videos = listOf(video.value))
         saveCollection(videos = listOf())
 
-        repository.streamUpdate(CollectionFilter.HasVideoId(video), { collectionToUpdate ->
-            CollectionUpdateCommand.RenameCollection(collectionToUpdate.id, "The new title", UserFactory.sample())
-        })
+        repository.streamUpdate(
+            CollectionFilter.HasVideoId(video),
+            { collectionToUpdate ->
+                CollectionUpdateCommand.RenameCollection(collectionToUpdate.id, "The new title", UserFactory.sample())
+            }
+        )
 
         assertThat(fakeEventBus.countEventsOfType(CollectionUpdated::class.java)).isEqualTo(2)
         assertThat(

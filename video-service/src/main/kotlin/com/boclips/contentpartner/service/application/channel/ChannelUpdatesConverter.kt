@@ -197,7 +197,7 @@ class ChannelUpdateCommandCreator(
         }
 
     fun updateCategories(getCategoryWithAncestors: GetCategoryWithAncestors): ChannelUpdateCommand.ReplaceCategories? {
-        if(channelRequest.requiresVideoLevelTagging == true) {
+        if (channelRequest.requiresVideoLevelTagging == true) {
             return ChannelUpdateCommand.ReplaceCategories(id, emptySet())
         }
 

@@ -111,8 +111,8 @@ object ChannelDocumentConverter : KLogging() {
                     else -> {
                         logger.warn {
                             "$it is not a valid type. Valid types are ${
-                                ContentType.values()
-                                    .joinToString(prefix = "[", postfix = "]") { value -> value.name }
+                            ContentType.values()
+                                .joinToString(prefix = "[", postfix = "]") { value -> value.name }
                             }"
                         }
                         null

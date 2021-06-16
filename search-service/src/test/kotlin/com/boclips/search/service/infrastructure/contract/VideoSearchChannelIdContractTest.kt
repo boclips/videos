@@ -26,10 +26,12 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedIndexSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
-            ))
+                )
+            )
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
@@ -50,10 +52,12 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedIndexSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
-            ))
+                )
+            )
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("1", "2")
@@ -74,10 +78,12 @@ class VideoSearchChannelIdContractTest : EmbeddedElasticSearchIntegrationTest() 
         )
 
         val result = readService.search(
-            PaginatedIndexSearchRequest(query = VideoQuery(
+            PaginatedIndexSearchRequest(
+                query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(deniedVideoIds = setOf("karate")),
                     userQuery = UserQuery(channelIds = setOf("bjj", "judo"))
-            ))
+                )
+            )
         )
 
         assertThat(result.elements).containsExactlyInAnyOrder("2")

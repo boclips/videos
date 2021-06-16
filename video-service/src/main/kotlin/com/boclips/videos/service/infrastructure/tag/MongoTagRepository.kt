@@ -54,7 +54,8 @@ class MongoTagRepository(
         return Tag(
             id = TagId(
                 value = id.toHexString()
-            ), label = label
+            ),
+            label = label
         )
     }
 

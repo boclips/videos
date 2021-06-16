@@ -3,8 +3,8 @@ package com.boclips.videos.service.application.channels
 import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.DistributionMethod
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
-import com.boclips.videos.service.domain.model.video.channel.Availability
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -28,7 +28,7 @@ class VideoChannelServiceTest {
                 )
             )
 
-        assertThat(availability).isEqualTo(Availability.ALL)
+        assertThat(availability).isEqualTo(ContentPartnerAvailability.ALL)
     }
 
     @Test
@@ -44,7 +44,7 @@ class VideoChannelServiceTest {
                 )
             )
 
-        assertThat(availability).isEqualTo(Availability.STREAMING)
+        assertThat(availability).isEqualTo(ContentPartnerAvailability.STREAMING)
     }
 
     @Test
@@ -60,7 +60,7 @@ class VideoChannelServiceTest {
                 )
             )
 
-        assertThat(availability).isEqualTo(Availability.DOWNLOAD)
+        assertThat(availability).isEqualTo(ContentPartnerAvailability.DOWNLOAD)
     }
 
     @Test
@@ -76,7 +76,7 @@ class VideoChannelServiceTest {
                 )
             )
 
-        assertThat(availability).isEqualTo(Availability.NONE)
+        assertThat(availability).isEqualTo(ContentPartnerAvailability.NONE)
     }
 
     @Test

@@ -29,7 +29,7 @@ class CollectionDocumentConverterTest {
                 "attachmentTypes": ["Lesson Guide"],
                 "default": true
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 
@@ -70,7 +70,7 @@ class CollectionDocumentConverterTest {
                 "ageRange": [],
                 "lastModified": "$aVerySpecialDateTimeSerialised"
             }
-        """.trimIndent()
+                """.trimIndent()
             )
         )
 

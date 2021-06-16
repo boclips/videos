@@ -35,8 +35,8 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.KALTURA
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType.YOUTUBE
 import com.boclips.videos.service.domain.model.taxonomy.Category
-import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.collection.CollectionIndex
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
@@ -65,7 +65,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Month
-import java.time.Period
 import java.util.UUID
 
 @SpringBootTest
@@ -201,27 +200,27 @@ abstract class AbstractSpringIntegrationTest {
         fakeKalturaClient.createMediaEntry(id, "ref-$id", duration, status)
 
     fun saveVideo(
-            playbackId: PlaybackId = PlaybackId(
+        playbackId: PlaybackId = PlaybackId(
             type = KALTURA,
             value = "id-${UUID.randomUUID()}"
         ),
-            title: String = "Some title!",
-            description: String = "Some description!",
-            date: String = "2018-01-01",
-            duration: Duration = Duration.ofSeconds(120),
-            contentProvider: String = "Reuters",
-            contentProviderId: String? = null,
-            contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
-            types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
-            keywords: List<String> = emptyList(),
-            legalRestrictions: String = "",
-            ageRangeMin: Int? = null,
-            ageRangeMax: Int? = null,
-            distributionMethods: Set<DistributionMethodResource> = setOf(
+        title: String = "Some title!",
+        description: String = "Some description!",
+        date: String = "2018-01-01",
+        duration: Duration = Duration.ofSeconds(120),
+        contentProvider: String = "Reuters",
+        contentProviderId: String? = null,
+        contentProviderVideoId: String = "content-partner-video-id-${playbackId.value}",
+        types: List<VideoType> = listOf(VideoType.INSTRUCTIONAL_CLIPS),
+        keywords: List<String> = emptyList(),
+        legalRestrictions: String = "",
+        ageRangeMin: Int? = null,
+        ageRangeMax: Int? = null,
+        distributionMethods: Set<DistributionMethodResource> = setOf(
             DistributionMethodResource.DOWNLOAD,
             DistributionMethodResource.STREAM
         ),
-            subjectIds: Set<String> = setOf()
+        subjectIds: Set<String> = setOf()
     ): VideoId {
         val retrievedContentPartnerId = try {
             saveChannel(

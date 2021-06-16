@@ -81,7 +81,8 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
                         """
                         While regaling you with daring stories from her youth,
                         it might be hard to believe your
-                        grandmother used to be a trapeze artist.""".trimIndent()
+                        grandmother used to be a trapeze artist.
+                        """.trimIndent()
                     )
                 )
             )
@@ -109,8 +110,8 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
                                 \n
                                 3\n
                                 00:09.526 --> 00:11.324\n
-                                We don't have a profit margin."""".trimIndent()
-
+                                We don't have a profit margin."
+        """.trimIndent()
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/v1/videos/${video.value}/captions").asBoclipsEmployee()
@@ -120,7 +121,7 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             {
                "captions": "$captionContent"
             }
-        """.trimIndent()
+                    """.trimIndent()
                 )
         )
             .andExpect(status().isBadRequest)
@@ -139,7 +140,6 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
         val captionContent =
             "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, captionContent).id
-
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions").asBoclipsEmployee())
             .andExpect(jsonPath("$.content").exists())
@@ -195,7 +195,6 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
             "WEBVTT FILE\n\n1\n00:01.981 --> 00:04.682\nWe're quite content to be the odd<br>browser out.\n\n2\n00:05.302 --> 00:08.958\nWe don't have a fancy stock abbreviation <br>to go alongside our name in the press.\n\n3\n00:09.526 --> 00:11.324\nWe don't have a profit margin."
         fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, captionContent).id
 
-
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?download=true"))
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
@@ -235,6 +234,5 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?human-generated=true").asBoclipsEmployee())
             .andExpect(jsonPath("$.content").exists())
             .andExpect(jsonPath("$.content", Matchers.equalTo(humanCaptionContent)))
-
     }
 }

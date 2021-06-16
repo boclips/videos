@@ -3,7 +3,6 @@ package com.boclips.search.service.infrastructure.collections
 import com.boclips.search.service.infrastructure.common.HasAgeRange
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 data class CollectionDocument @JsonCreator constructor(

@@ -13,7 +13,8 @@ class VideoTest {
                 UserRating(
                     1,
                     UserId("1")
-                ), UserRating(2, UserId("2"))
+                ),
+                UserRating(2, UserId("2"))
             )
         )
 
@@ -32,7 +33,8 @@ class VideoTest {
         val video = createVideo(
             ratings = listOf(
                 UserRating(
-                    rating = 3, userId = UserId(
+                    rating = 3,
+                    userId = UserId(
                         "another-teacher"
                     )
                 )
@@ -46,7 +48,8 @@ class VideoTest {
         val video = createVideo(
             ratings = listOf(
                 UserRating(
-                    rating = 3, userId = UserId(
+                    rating = 3,
+                    userId = UserId(
                         "teacher"
                     )
                 )
@@ -61,7 +64,8 @@ class VideoTest {
         val video = createVideo(
             ratings = listOf(
                 UserRating(
-                    rating = 3, userId = UserId(
+                    rating = 3,
+                    userId = UserId(
                         "anothertheacher"
                     )
                 )
@@ -70,5 +74,4 @@ class VideoTest {
 
         assertThat(video.isRatedByUser(UserId(value = "teacher"))).isFalse()
     }
-
 }

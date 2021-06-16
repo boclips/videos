@@ -17,7 +17,8 @@ class SaveCollectionInteractedWithEventTest : AbstractSpringIntegrationTest() {
     @Test
     fun `saves the event`() {
         saveCollectionInteractedWithEvent.execute(
-            collectionId = "123", eventCommand = CollectionInteractedWithEventCommand(
+            collectionId = "123",
+            eventCommand = CollectionInteractedWithEventCommand(
                 subtype = "NAVIGATE_TO_COLLECTION_DETAILS"
             ),
             user = UserFactory.sample(id = "123")

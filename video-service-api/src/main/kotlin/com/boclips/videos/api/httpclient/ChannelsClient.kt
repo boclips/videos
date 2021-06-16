@@ -30,11 +30,11 @@ interface ChannelsClient {
             tokenFactory: TokenFactory? = null,
             feignClient: Client
         ) = FeignInterserviceClientFactory.create(
-                apiUrl,
-                objectMapper,
-                tokenFactory,
-                feignClient,
-                ChannelsClient::class.java
+            apiUrl,
+            objectMapper,
+            tokenFactory,
+            feignClient,
+            ChannelsClient::class.java
         )
     }
 }

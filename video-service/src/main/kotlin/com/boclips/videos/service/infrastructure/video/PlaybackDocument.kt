@@ -1,6 +1,5 @@
 package com.boclips.videos.service.infrastructure.video
 
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import java.time.Instant
 
 data class VideoAssetDocument(

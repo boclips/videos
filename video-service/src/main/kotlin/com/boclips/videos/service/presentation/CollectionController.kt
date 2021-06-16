@@ -46,7 +46,7 @@ class CollectionController(
     private val userService: UserService,
     accessRuleService: AccessRuleService,
     getUserIdOverride: GetUserIdOverride
-) : BaseController(accessRuleService, getUserIdOverride, userService = userService ) {
+) : BaseController(accessRuleService, getUserIdOverride, userService = userService) {
     @PatchMapping("/{id}")
     fun patchCollection(
         @PathVariable("id") id: String,

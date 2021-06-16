@@ -27,4 +27,3 @@ open class User(
 }
 
 data class RequestContext(val origin: String?, val deviceId: String?)
-

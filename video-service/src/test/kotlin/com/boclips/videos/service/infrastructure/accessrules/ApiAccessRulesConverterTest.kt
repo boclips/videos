@@ -6,7 +6,6 @@ import com.boclips.videos.service.domain.model.collection.CollectionId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories.aValidId
 import com.boclips.videos.service.testsupport.UserFactory
@@ -46,11 +45,11 @@ class ApiAccessRulesConverterTest : AbstractSpringIntegrationTest() {
                             VideoId(firstVideoId),
                             VideoId(secondVideoId)
                         )
-                    ).let(::listOf)
-                    , emptySet())
+                    ).let(::listOf),
+                    emptySet()
+                )
             )
         }
-
     }
 
     @Nested

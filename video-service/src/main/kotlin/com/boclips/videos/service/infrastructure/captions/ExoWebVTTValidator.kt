@@ -8,7 +8,6 @@ import java.io.InputStreamReader
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-
 class ExoWebVTTValidator() : CaptionValidator {
 
     private val WEBVTT_FILE_HEADER_STRING = "^\uFEFF?WEBVTT((\\u0020|\u0009).*)?$"
@@ -48,10 +47,10 @@ class ExoWebVTTValidator() : CaptionValidator {
             } else if (line.isEmpty()) {
                 // we've read the newline that separates the header from the body
                 break
-            } else if(line.isNotEmpty()) {
+            } else if (line.isNotEmpty()) {
                 val matcher: Matcher = WEBVTT_METADATA_HEADER.matcher(line)
                 if (!matcher.find()) {
-                    throw InvalidWebVTTException("Expected WebVTT metadata header. Got " + line);
+                    throw InvalidWebVTTException("Expected WebVTT metadata header. Got " + line)
                 }
             }
         }
@@ -84,13 +83,13 @@ class ExoWebVTTValidator() : CaptionValidator {
             matcher = WEBVTT_TIMESTAMP.matcher(line)
 
             if (!matcher.find()) {
-                throw InvalidWebVTTException("Expected cue start time: " + line);
+                throw InvalidWebVTTException("Expected cue start time: " + line)
             }
 
             // parse end timestamp
             var endTimeString: String
             if (!matcher.find()) {
-                throw InvalidWebVTTException("Expected cue end time: " + line);
+                throw InvalidWebVTTException("Expected cue end time: " + line)
             } else {
                 endTimeString = matcher.group()
             }
@@ -103,5 +102,4 @@ class ExoWebVTTValidator() : CaptionValidator {
         }
         return captionContents
     }
-
 }

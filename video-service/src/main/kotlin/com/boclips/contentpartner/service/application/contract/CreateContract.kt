@@ -1,13 +1,13 @@
 package com.boclips.contentpartner.service.application.contract
 
 import com.boclips.contentpartner.service.application.exceptions.ContractConflictException
-import com.boclips.contentpartner.service.domain.model.contract.CreateContractResult
 import com.boclips.contentpartner.service.domain.model.contract.Contract
-import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
 import com.boclips.contentpartner.service.domain.model.contract.ContractDates
+import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
 import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.CreateContractResult
 import com.boclips.contentpartner.service.domain.service.contract.ContractService
 import com.boclips.contentpartner.service.presentation.converters.CurrencyConverter
 import com.boclips.contentpartner.service.presentation.converters.DateConverter

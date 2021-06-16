@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class TraceRequestFilter(
-        repository: HttpTraceRepository,
-        tracer: HttpExchangeTracer
+    repository: HttpTraceRepository,
+    tracer: HttpExchangeTracer
 ) : HttpTraceFilter(repository, tracer) {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {

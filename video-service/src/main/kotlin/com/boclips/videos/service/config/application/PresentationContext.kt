@@ -133,7 +133,7 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         return VideoTaggingCsvFileValidator(getAllCategories)
     }
 
-    @Bean //TODO: collectionResourceFactory mixes different abstractions, address smell. This is a mess.
+    @Bean // TODO: collectionResourceFactory mixes different abstractions, address smell. This is a mess.
     fun collectionResourceFactory(
         videosLinkBuilder: VideosLinkBuilder,
         playbackToResourceConverter: PlaybackToResourceConverter,

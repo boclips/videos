@@ -4,8 +4,6 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.suggestions.SubjectSuggestion
 import com.boclips.videos.service.testsupport.ChannelFactory
 import com.boclips.videos.service.testsupport.SuggestionFactory
-import com.boclips.videos.service.testsupport.TestFactories.createSubject
-import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

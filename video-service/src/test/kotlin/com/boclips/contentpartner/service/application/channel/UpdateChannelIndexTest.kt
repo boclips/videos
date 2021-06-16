@@ -10,13 +10,12 @@ import com.boclips.search.service.domain.channels.model.IngestType
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.api.request.channel.ChannelRequest
 import com.boclips.videos.api.response.channel.IngestDetailsResource
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class UpdateChannelIndexTest: AbstractSpringIntegrationTest() {
+class UpdateChannelIndexTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var updateChannel: UpdateChannel
 
@@ -25,7 +24,7 @@ class UpdateChannelIndexTest: AbstractSpringIntegrationTest() {
         val channel = saveChannel(name = "hello", ingest = IngestDetailsResource.custom())
         updateChannel(channelId = channel.id.value, upsertRequest = ChannelRequest(ingest = IngestDetailsResource.manual()))
         fakeEventBus.publish(
-           ContentPartnerUpdated.builder()
+            ContentPartnerUpdated.builder()
                 .contentPartner(
                     Channel.builder()
                         .id(ChannelId(channel.id.value))
@@ -45,6 +44,5 @@ class UpdateChannelIndexTest: AbstractSpringIntegrationTest() {
         val results = channelIndex.search(searchRequest)
 
         assertThat(results.counts.totalHits).isEqualTo(1)
-
     }
 }

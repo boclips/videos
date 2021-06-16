@@ -155,24 +155,24 @@ class CollectionControllerIntegrationTest : AbstractCollectionsControllerIntegra
     @Test
     fun `fetching a specific collection with youtube video`() {
         val collectionId = createCollection("collection 1")
-        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123" ), title = "a video title").value
+        val videoId = saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.YOUTUBE, value = "123"), title = "a video title").value
         addVideo(collectionId, videoId)
 
         mockMvc.perform(get("/v1/collections/$collectionId").asTeacher())
-                .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/hal+json"))
-                .andExpect(jsonPath("$.id", equalTo(collectionId)))
-                .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
-                .andExpect(jsonPath("$.title", equalTo("collection 1")))
-                .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
-                .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
-                .andExpect(jsonPath("$.videos[0].title", nullValue()))
-                .andExpect(jsonPath("$.videos[0].description", nullValue()))
-                .andExpect(jsonPath("$.videos[0].playback", nullValue()))
-                .andExpect(jsonPath("$.videos[0].playback.downloadUrl").doesNotExist())
-                .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
-                .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
-                .andReturn()
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/hal+json"))
+            .andExpect(jsonPath("$.id", equalTo(collectionId)))
+            .andExpect(jsonPath("$.owner", equalTo("teacher@gmail.com")))
+            .andExpect(jsonPath("$.title", equalTo("collection 1")))
+            .andExpect(jsonPath("$.videos", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.videos[0].id", equalTo(videoId)))
+            .andExpect(jsonPath("$.videos[0].title", nullValue()))
+            .andExpect(jsonPath("$.videos[0].description", nullValue()))
+            .andExpect(jsonPath("$.videos[0].playback", nullValue()))
+            .andExpect(jsonPath("$.videos[0].playback.downloadUrl").doesNotExist())
+            .andExpect(jsonPath("$.videos[0].subjects", hasSize<Any>(0)))
+            .andExpect(jsonPath("$.videos[0]._links.self.href", not(emptyString())))
+            .andReturn()
     }
 
     @Test

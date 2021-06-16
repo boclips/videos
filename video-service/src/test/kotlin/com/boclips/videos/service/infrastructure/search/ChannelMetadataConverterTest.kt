@@ -3,10 +3,10 @@ package com.boclips.videos.service.infrastructure.search
 import com.boclips.contentpartner.service.domain.model.channel.*
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.CategoryCode
-import com.boclips.videos.service.domain.model.taxonomy.CategoryCode as SearchServiceCategoryCode
 import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import com.boclips.videos.service.domain.model.taxonomy.CategoryCode as SearchServiceCategoryCode
 
 class ChannelMetadataConverterTest {
 

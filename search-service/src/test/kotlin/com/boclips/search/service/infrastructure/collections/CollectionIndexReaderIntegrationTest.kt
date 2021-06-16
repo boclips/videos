@@ -56,11 +56,13 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
                     id = "1",
                     title = "You won't believe what this dog can do.",
                     description = "Beautiful Boy Dancing"
-                ), SearchableCollectionMetadataFactory.create(
+                ),
+                SearchableCollectionMetadataFactory.create(
                     id = "2",
                     title = "Control",
                     description = "Control element"
-                ), SearchableCollectionMetadataFactory.create(
+                ),
+                SearchableCollectionMetadataFactory.create(
                     id = "3",
                     title = "Beautiful Boy Dancing",
                     description = "Plot twist, the boy is a dog. They taught a dog to dance!"
@@ -115,7 +117,7 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
 
         Assertions.assertThat(results.elements).containsExactly("100")
     }
-    
+
     @Test
     fun `owner and bookmark filters operate inclusively`() {
         collectionIndexWriter.safeRebuildIndex(
@@ -211,7 +213,8 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
                 PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "gentleman"
-                    ), startIndex = 0, windowSize = 2
+                    ),
+                    startIndex = 0, windowSize = 2
                 )
             )
 
@@ -220,7 +223,8 @@ class CollectionIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTes
                 PaginatedIndexSearchRequest(
                     query = CollectionQuery(
                         "gentleman"
-                    ), startIndex = 2, windowSize = 2
+                    ),
+                    startIndex = 2, windowSize = 2
                 )
             )
 

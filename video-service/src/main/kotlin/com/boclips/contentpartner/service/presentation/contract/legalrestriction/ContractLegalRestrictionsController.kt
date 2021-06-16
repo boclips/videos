@@ -20,7 +20,7 @@ class ContractLegalRestrictionsController(
     private val fetchAll: FindAllContractLegalRestrictions,
     private val createLegalRestrictions: CreateContractLegalRestriction,
     private val toResourceConverter: ContractLegalRestrictionsToResourceConverter
-)  {
+) {
 
     @GetMapping
     fun getAll(): ResponseEntity<ContractLegalRestrictionsResource> {

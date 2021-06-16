@@ -1,7 +1,7 @@
 package com.boclips.contentpartner.service.application.contract
 
-import com.boclips.contentpartner.service.application.exceptions.ContractNotFoundException
 import com.boclips.contentpartner.service.application.exceptions.ContractConflictException
+import com.boclips.contentpartner.service.application.exceptions.ContractNotFoundException
 import com.boclips.contentpartner.service.domain.model.contract.Contract
 import com.boclips.contentpartner.service.domain.model.contract.ContractId
 import com.boclips.contentpartner.service.domain.model.contract.SingleContractUpdate

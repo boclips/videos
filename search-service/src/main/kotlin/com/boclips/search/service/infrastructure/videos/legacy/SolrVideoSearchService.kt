@@ -1,7 +1,7 @@
 package com.boclips.search.service.infrastructure.videos.legacy
 
-import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
 import com.boclips.search.service.domain.common.model.IndexSearchRequest
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest

@@ -14,31 +14,31 @@ import ru.lanwen.wiremock.ext.WiremockUriResolver
 import ru.lanwen.wiremock.ext.WiremockUriResolver.WiremockUri
 
 @ExtendWith(
-        value = [
-            WiremockResolver::class,
-            WiremockUriResolver::class
-        ]
+    value = [
+        WiremockResolver::class,
+        WiremockUriResolver::class
+    ]
 )
 class UsersClientWithJaegerTracingIntegrationTest {
 
     @Test
     fun `uber-trace-is header should be sent when jaeger tracer is present in the context`(
-            @Wiremock server: WireMockServer,
-            @WiremockUri uri: String
+        @Wiremock server: WireMockServer,
+        @WiremockUri uri: String
     ) {
         val usersClient = buildUsersClientWithJaegerTracing(uri)
 
         val userId = "someId"
 
         server.stubFor(
-                get(urlEqualTo("/v1/users/$userId/access-rules"))
-                        .withHeader("uber-trace-id", matching(".*%3A.*"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader("Content-Type", "application/json")
-                                        .withBody("""{"_embedded": { "accessRules" : [] }}""".trimIndent())
-                        )
+            get(urlEqualTo("/v1/users/$userId/access-rules"))
+                .withHeader("uber-trace-id", matching(".*%3A.*"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""{"_embedded": { "accessRules" : [] }}""".trimIndent())
+                )
         )
 
         usersClient.getAccessRulesOfUser(userId)
@@ -49,8 +49,8 @@ class UsersClientWithJaegerTracingIntegrationTest {
         val jaegerTracer = JaegerTracer.Builder("serviceName").build()
         val decoratedFeignClient = TracingClient(rawFeignClient, jaegerTracer)
         return UsersClient.create(
-                apiUrl = uri,
-                feignClient = decoratedFeignClient
+            apiUrl = uri,
+            feignClient = decoratedFeignClient
         )
     }
 }

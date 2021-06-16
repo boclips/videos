@@ -14,7 +14,8 @@ data class LegalRestrictionsDocument(
         return LegalRestriction(
             id = LegalRestrictionsId(
                 id.toHexString()
-            ), text = text
+            ),
+            text = text
         )
     }
 
@@ -24,7 +25,8 @@ data class LegalRestrictionsDocument(
             return LegalRestrictionsDocument(
                 ObjectId(
                     legalRestriction.id.value
-                ), legalRestriction.text
+                ),
+                legalRestriction.text
             )
         }
     }

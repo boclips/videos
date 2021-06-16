@@ -97,5 +97,4 @@ class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
 
     private fun fixture(name: String) =
         InputStreamResource(ClassLoader.getSystemResourceAsStream(name))
-
 }

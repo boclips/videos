@@ -271,7 +271,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
         assertThat(captionStatus).isEqualTo(KalturaCaptionManager.CaptionStatus.REQUESTED)
     }
 
-
     @Test
     fun `requests captions when caption status is unknown`() {
         kalturaPlaybackProvider.requestCaptions(
@@ -308,7 +307,6 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `throws when human generated captions are already requested`() {
         createMediaEntry("new-playback-id")
         fakeKalturaClient.requestCaption("new-playback-id")
-
 
         assertThrows<CaptionConflictException> {
             kalturaPlaybackProvider.requestCaptions(PlaybackId(PlaybackProviderType.KALTURA, "new-playback-id"))
@@ -394,7 +392,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     fun `download asset writes asset if available`() {
         val server = MockRestServiceServer.createServer(kalturaPlaybackProvider.restTemplate)
         createMediaEntry(
-            id = "2", height = 1080, assets = setOf(
+            id = "2", height = 1080,
+            assets = setOf(
                 KalturaFactories.createKalturaAsset(id = "x", height = 100),
                 KalturaFactories.createKalturaAsset(id = "asset-id", height = 1080),
                 KalturaFactories.createKalturaAsset(id = "y", height = 200)
@@ -412,7 +411,8 @@ class KalturaPlaybackProviderTest : AbstractSpringIntegrationTest() {
     @Test
     fun `asset extension`() {
         createMediaEntry(
-            id = "2", height = 1080, assets = setOf(
+            id = "2", height = 1080,
+            assets = setOf(
                 KalturaFactories.createKalturaAsset(id = "x", height = 100),
                 KalturaFactories.createKalturaAsset(id = "asset-id", height = 1080),
                 KalturaFactories.createKalturaAsset(id = "y", height = 200)

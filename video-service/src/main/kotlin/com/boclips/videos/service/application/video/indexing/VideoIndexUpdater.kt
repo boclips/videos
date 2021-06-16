@@ -84,7 +84,6 @@ class VideoIndexUpdater(
                 ?: video
         }
 
-
         videoIndex.upsert(hydratedVideos.asSequence())
         logger.info { "Indexed ${updatedVideos.size} videos " }
     }

@@ -47,15 +47,17 @@ class CollectionFilterCriteria {
                 boolQueryBuilder.filter(boolQuery().must(QueryBuilders.termQuery(CollectionDocument.SEARCHABLE, it)))
             }
 
-            boolQueryBuilder.filter(boolQuery().apply {
-                collectionQuery.owner?.let {
-                    should(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
-                }
+            boolQueryBuilder.filter(
+                boolQuery().apply {
+                    collectionQuery.owner?.let {
+                        should(QueryBuilders.termQuery(CollectionDocument.OWNER, it))
+                    }
 
-                collectionQuery.bookmarkedBy?.let {
-                    should(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, it))
+                    collectionQuery.bookmarkedBy?.let {
+                        should(QueryBuilders.termQuery(CollectionDocument.BOOKMARKED_BY, it))
+                    }
                 }
-            })
+            )
 
             collectionQuery.hasLessonPlans?.let {
                 boolQueryBuilder.filter(

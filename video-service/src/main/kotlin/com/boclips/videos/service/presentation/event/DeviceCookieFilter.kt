@@ -17,10 +17,10 @@ class DeviceCookieFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         filterChain.doFilter(request, response)
-        if(DeviceIdCookieExtractor.getDeviceId(request) == null) {
+        if (DeviceIdCookieExtractor.getDeviceId(request) == null) {
             response.addHeader(
-                    "Set-Cookie",
-                    "${Cookies.DEVICE_ID}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
+                "Set-Cookie",
+                "${Cookies.DEVICE_ID}=${UUID.randomUUID()}; Max-Age=31536000; Path=/; HttpOnly; SameSite=None; Secure"
             )
         }
     }

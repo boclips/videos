@@ -25,4 +25,3 @@ class DisciplinesLinkBuilder(private val uriComponentsBuilderFactory: UriCompone
         .replacePath("/v1/disciplines")
         .replaceQueryParams(null)
 }
-

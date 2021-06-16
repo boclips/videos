@@ -2,10 +2,10 @@ package com.boclips.videos.service.application.video
 
 import com.boclips.videos.api.request.video.TagVideoRequest
 import com.boclips.videos.service.domain.model.tag.TagId
-import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.web.exceptions.ExceptionDetails
@@ -21,7 +21,7 @@ class TagVideo(
     private val tagRepository: TagRepository
 ) {
 
-    companion object : KLogging();
+    companion object : KLogging()
 
     operator fun invoke(@Valid tagVideoRequest: TagVideoRequest, user: User) {
         val tag = try {

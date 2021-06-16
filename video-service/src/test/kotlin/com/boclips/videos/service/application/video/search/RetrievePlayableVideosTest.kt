@@ -84,7 +84,9 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                     VideoAccessRule.ExcludedPlaybackProviderTypes(
                         sources = setOf(PlaybackProviderType.YOUTUBE)
                     )
-                ), emptySet())
+                ),
+                emptySet()
+            )
         )
 
         assertThat(results.videos).hasSize(1)

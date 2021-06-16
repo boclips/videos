@@ -7,4 +7,3 @@ class ChannelNotFoundException(channelId: ChannelId) : ResourceNotFoundApiExcept
     error = "Channel not found",
     message = "Could not find channel: $channelId"
 )
-

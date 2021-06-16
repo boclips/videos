@@ -3,10 +3,10 @@ package com.boclips.search.service.infrastructure.contract
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
-import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.UserQuery
+import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoMetadata
 import com.boclips.search.service.domain.videos.model.VideoQuery
 import com.boclips.search.service.infrastructure.videos.VideoIndexReader
@@ -208,7 +208,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                 PaginatedIndexSearchRequest(
                     query = VideoQuery(
                         phrase = "gentleman", videoAccessRuleQuery = VideoAccessRuleQuery()
-                    ), startIndex = 0, windowSize = 2
+                    ),
+                    startIndex = 0, windowSize = 2
                 )
             )
         val page2 =
@@ -217,7 +218,8 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
                     query = VideoQuery(
                         phrase = "gentleman",
                         videoAccessRuleQuery = VideoAccessRuleQuery()
-                    ), startIndex = 2, windowSize = 2
+                    ),
+                    startIndex = 2, windowSize = 2
                 )
             )
 

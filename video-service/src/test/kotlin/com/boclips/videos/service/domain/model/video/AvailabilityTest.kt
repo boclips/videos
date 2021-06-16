@@ -1,24 +1,24 @@
 package com.boclips.videos.service.domain.model.video
 
-import com.boclips.videos.service.domain.model.video.channel.Availability
+import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class AvailabilityTest {
     @Test
     fun `is downloadable`() {
-        assertThat(Availability.DOWNLOAD.isDownloadable()).isTrue()
-        assertThat(Availability.ALL.isDownloadable()).isTrue()
-        assertThat(Availability.STREAMING.isDownloadable()).isFalse()
-        assertThat(Availability.NONE.isDownloadable()).isFalse()
+        assertThat(ContentPartnerAvailability.DOWNLOAD.isDownloadable()).isTrue()
+        assertThat(ContentPartnerAvailability.ALL.isDownloadable()).isTrue()
+        assertThat(ContentPartnerAvailability.STREAMING.isDownloadable()).isFalse()
+        assertThat(ContentPartnerAvailability.NONE.isDownloadable()).isFalse()
     }
 
     @Test
     fun `is streamable`() {
-        assertThat(Availability.STREAMING.isStreamable()).isTrue()
-        assertThat(Availability.ALL.isStreamable()).isTrue()
+        assertThat(ContentPartnerAvailability.STREAMING.isStreamable()).isTrue()
+        assertThat(ContentPartnerAvailability.ALL.isStreamable()).isTrue()
 
-        assertThat(Availability.DOWNLOAD.isStreamable()).isFalse()
-        assertThat(Availability.NONE.isStreamable()).isFalse()
+        assertThat(ContentPartnerAvailability.DOWNLOAD.isStreamable()).isFalse()
+        assertThat(ContentPartnerAvailability.NONE.isStreamable()).isFalse()
     }
 }

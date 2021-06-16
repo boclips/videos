@@ -3,7 +3,6 @@ package com.boclips.videos.api.request.channel
 import com.boclips.videos.api.request.Projection
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
-import org.springframework.web.bind.annotation.RequestParam
 
 enum class SortByRequest {
     CATEGORIES_ASC,

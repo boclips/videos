@@ -30,7 +30,8 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
                 segmentStartSeconds = 10,
                 segmentEndSeconds = 20,
                 captureTime = ZonedDateTime.now()
-            ), user = user
+            ),
+            user = user
         )
 
         val event = fakeEventBus.getEventOfType(VideoSegmentPlayed::class.java)
@@ -44,10 +45,12 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `saves multiple events`() {
-        val user = UserFactory.sample(context = RequestContext(
-            origin = "https://teachers.boclips.com",
-            deviceId = "my-device"
-        ))
+        val user = UserFactory.sample(
+            context = RequestContext(
+                origin = "https://teachers.boclips.com",
+                deviceId = "my-device"
+            )
+        )
         savePlaybackEvent.execute(
             listOf(
                 CreatePlaybackEventCommandFactory.sample(
@@ -56,14 +59,16 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
                     segmentStartSeconds = 10,
                     segmentEndSeconds = 20,
                     captureTime = ZonedDateTime.now()
-                ), CreatePlaybackEventCommandFactory.sample(
+                ),
+                CreatePlaybackEventCommandFactory.sample(
                     videoId = videoId,
                     videoIndex = 1,
                     segmentStartSeconds = 10,
                     segmentEndSeconds = 20,
                     captureTime = ZonedDateTime.now()
                 )
-            ), user = user
+            ),
+            user = user
         )
 
         val events = fakeEventBus.getEventsOfType(VideoSegmentPlayed::class.java)
@@ -85,7 +90,6 @@ class SavePlaybackEventTest : AbstractSpringIntegrationTest() {
         assertThat(events[1].deviceId).isEqualTo("my-device")
         assertThat(events[1].timestamp).isNotNull()
         assertThat(events[1].url).isEqualTo("https://teachers.boclips.com")
-
     }
 
     @Test

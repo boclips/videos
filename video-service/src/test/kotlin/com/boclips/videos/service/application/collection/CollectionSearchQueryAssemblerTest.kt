@@ -104,11 +104,13 @@ class CollectionSearchQueryAssemblerTest {
         @Test
         fun `with specific ID access, default to no visibility constraints`() {
             val query = collectionSearchQueryAssembler(
-                user = UserFactory.sample(accessRulesSupplier = {
-                    AccessRulesFactory.specificIds(
-                        CollectionId("blah")
-                    )
-                })
+                user = UserFactory.sample(
+                    accessRulesSupplier = {
+                        AccessRulesFactory.specificIds(
+                            CollectionId("blah")
+                        )
+                    }
+                )
             )
 
             assertThat(query.discoverable).isNull()
@@ -121,7 +123,8 @@ class CollectionSearchQueryAssemblerTest {
                 bookmarked = true,
                 user = UserFactory.sample(
                     id = "authenticated",
-                    accessRulesSupplier = { AccessRulesFactory.asOwner(ownerId = "access") })
+                    accessRulesSupplier = { AccessRulesFactory.asOwner(ownerId = "access") }
+                )
             )
 
             assertThat(query.bookmarkedBy).isEqualTo("access")
@@ -133,7 +136,8 @@ class CollectionSearchQueryAssemblerTest {
                 bookmarked = true,
                 user = UserFactory.sample(
                     id = "authenticated",
-                    accessRulesSupplier = { AccessRulesFactory.everything() })
+                    accessRulesSupplier = { AccessRulesFactory.everything() }
+                )
             )
 
             assertThat(query.bookmarkedBy).isEqualTo("authenticated")
@@ -144,9 +148,11 @@ class CollectionSearchQueryAssemblerTest {
             assertThrows<OperationForbiddenException> {
                 collectionSearchQueryAssembler(
                     bookmarked = true,
-                    user = UserFactory.sample(accessRulesSupplier = {
-                        AccessRulesFactory.specificIds()
-                    })
+                    user = UserFactory.sample(
+                        accessRulesSupplier = {
+                            AccessRulesFactory.specificIds()
+                        }
+                    )
                 )
             }
         }
@@ -156,9 +162,11 @@ class CollectionSearchQueryAssemblerTest {
     fun `when access to everything respects discoverable flag`() {
         val query = collectionSearchQueryAssembler(
             discoverable = false,
-            user = UserFactory.sample(accessRulesSupplier = {
-                AccessRulesFactory.everything()
-            })
+            user = UserFactory.sample(
+                accessRulesSupplier = {
+                    AccessRulesFactory.everything()
+                }
+            )
         )
 
         assertThat(query.discoverable).isFalse()
@@ -168,9 +176,11 @@ class CollectionSearchQueryAssemblerTest {
     fun `when elaborate access rules are in place defaults discoverable to null`() {
         val query = collectionSearchQueryAssembler(
             discoverable = false,
-            user = UserFactory.sample(accessRulesSupplier = {
-                AccessRulesFactory.specificIds()
-            })
+            user = UserFactory.sample(
+                accessRulesSupplier = {
+                    AccessRulesFactory.specificIds()
+                }
+            )
         )
 
         assertThat(query.discoverable).isNull()
@@ -185,12 +195,14 @@ class CollectionSearchQueryAssemblerTest {
         size: Int? = null,
         sort: List<CollectionSortKey> = emptyList(),
         hasLessonPlans: Boolean? = null,
-        user: User = UserFactory.sample(accessRulesSupplier = {
-            AccessRules(
-                videoAccess = VideoAccess.Everything(emptySet()),
-                collectionAccess = CollectionAccessRule.everything()
-            )
-        }),
+        user: User = UserFactory.sample(
+            accessRulesSupplier = {
+                AccessRules(
+                    videoAccess = VideoAccess.Everything(emptySet()),
+                    collectionAccess = CollectionAccessRule.everything()
+                )
+            }
+        ),
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
         ageRange: List<String>? = null,

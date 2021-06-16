@@ -44,11 +44,11 @@ interface CollectionsClient {
             tokenFactory: TokenFactory? = null,
             feignClient: Client
         ) = FeignInterserviceClientFactory.create(
-                apiUrl,
-                objectMapper,
-                tokenFactory,
-                feignClient,
-                CollectionsClient::class.java
+            apiUrl,
+            objectMapper,
+            tokenFactory,
+            feignClient,
+            CollectionsClient::class.java
         )
     }
 }

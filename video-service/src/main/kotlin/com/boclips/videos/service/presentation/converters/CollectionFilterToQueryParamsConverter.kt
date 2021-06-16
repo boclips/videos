@@ -20,8 +20,8 @@ class CollectionFilterToQueryParamsConverter {
                 collectionFilter.age_range_max?.let { "age_range_max" to listOf(it.toString()) },
                 collectionFilter.age_range?.let { "age_range" to collectionFilter.getAgeRanges() },
                 collectionFilter.sort_by?.let { "sort_by" to it.split(",") },
-                collectionFilter.resource_types?.let {"resource_types" to collectionFilter.getResourceTypes().toList() },
-                collectionFilter.projection?.let {"projection" to listOf(it.toString())},
+                collectionFilter.resource_types?.let { "resource_types" to collectionFilter.getResourceTypes().toList() },
+                collectionFilter.projection?.let { "projection" to listOf(it.toString()) },
             ).toMap()
         }
     }

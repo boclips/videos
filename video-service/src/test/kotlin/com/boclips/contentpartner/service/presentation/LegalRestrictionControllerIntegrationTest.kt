@@ -6,8 +6,6 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath

@@ -16,7 +16,7 @@ open class RateVideo(
     private val videoRepository: VideoRepository
 ) {
 
-    companion object : KLogging();
+    companion object : KLogging()
 
     open operator fun invoke(@Valid rateVideoRequest: RateVideoRequest, user: User) {
         if (!user.isPermittedToRateVideos) throw OperationForbiddenException()

@@ -19,18 +19,18 @@ class UserServiceContext {
 
     @Bean
     fun usersClient(
-            userClientProperties: UserClientProperties,
-            tracer: Tracer
+        userClientProperties: UserClientProperties,
+        tracer: Tracer
     ): UsersClient = UsersClient.create(
-            apiUrl = userClientProperties.baseUrl,
-            feignClient = createTracingClient(tracer),
-            tokenFactory = userClientProperties.tokenFactory()
+        apiUrl = userClientProperties.baseUrl,
+        feignClient = createTracingClient(tracer),
+        tokenFactory = userClientProperties.tokenFactory()
     )
 
     @Bean
     fun organisationsClient(
-            userClientProperties: UserClientProperties,
-            tracer: Tracer
+        userClientProperties: UserClientProperties,
+        tracer: Tracer
     ) =
         OrganisationsClient.create(
             apiUrl = userClientProperties.baseUrl,
@@ -40,8 +40,8 @@ class UserServiceContext {
 
     @Bean
     fun contentPackagesClient(
-            userClientProperties: UserClientProperties,
-            tracer: Tracer
+        userClientProperties: UserClientProperties,
+        tracer: Tracer
     ) =
         ContentPackagesClient.create(
             apiUrl = userClientProperties.baseUrl,
