@@ -14,7 +14,7 @@ import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.channel.ChannelWithCategories
+import com.boclips.videos.service.domain.model.video.channel.FallbackMetadata
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.video.VideoCreationService
 import com.boclips.videos.service.domain.service.video.VideoNotCreatedException
@@ -38,7 +38,7 @@ class CreateVideo(
     operator fun invoke(createRequest: CreateVideoRequest, user: User): Video {
         logger.info { "Received video creation request for video ${createRequest.providerId}: $createRequest" }
 
-        val channelWithCategories = findChannel(createRequest)
+        val fallbackMetadata = findFallbackMetadata(createRequest)
             ?: throw ChannelNotFoundException(
                 "Could not find channel with id: ${createRequest.providerId}"
             )
@@ -48,8 +48,9 @@ class CreateVideo(
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
         val categories = mapOf(
-            CategorySource.MANUAL to (createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet() ?: emptySet()),
-            CategorySource.CHANNEL to (channelWithCategories.categories ?: emptySet())
+            CategorySource.MANUAL to (createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet()
+                ?: emptySet()),
+            CategorySource.CHANNEL to (fallbackMetadata.categories ?: emptySet())
         )
 
         logger.info { "Obtained video playback and subjects for video ${createRequest.providerId}" }
@@ -58,9 +59,10 @@ class CreateVideo(
             createVideoRequestToVideoConverter.convert(
                 createVideoRequest = createRequest,
                 videoPlayback = videoPlayback,
-                contentPartner = channelWithCategories.channel,
+                channel = fallbackMetadata.channel,
                 subjects = subjects,
-                categories = categories
+                categories = categories,
+                fallbackLanguage = fallbackMetadata.language
             )
 
         val createdVideo = try {
@@ -82,9 +84,9 @@ class CreateVideo(
         return createdVideo
     }
 
-    private fun findChannel(createRequest: CreateVideoRequest): ChannelWithCategories? =
+    private fun findFallbackMetadata(createRequest: CreateVideoRequest): FallbackMetadata? =
         createRequest.providerId?.let {
-            videoChannelService.findChannelWithCategories(createRequest.providerId!!)
+            videoChannelService.findFallbackMetadata(it)
         }
 
     private fun triggerVideoAnalysis(createdVideo: Video) {

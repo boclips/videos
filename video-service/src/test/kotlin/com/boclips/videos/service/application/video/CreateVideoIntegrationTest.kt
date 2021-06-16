@@ -302,6 +302,25 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(createdVideo.voice.language?.displayLanguage).isEqualTo("Welsh")
     }
 
+    @Test
+    fun `when no language specified the video takes the channel's language`() {
+        createMediaEntry(
+            id = "entry-$123",
+            duration = Duration.ofMinutes(1)
+        )
+
+        val channel = saveChannel(language = "wel")
+
+        val createRequest = VideoServiceApiFactory.createCreateVideoRequest(
+            language = null,
+            providerId = channel.id.value,
+            playbackId = "entry-\$123"
+        )
+        val createdVideo = createVideo(createRequest, UserFactory.sample())
+
+        assertThat(createdVideo.voice.language?.displayLanguage).isEqualTo("Welsh")
+    }
+
     private fun createAVideo(title: String) {
         createMediaEntry(
             id = "entry-$123",

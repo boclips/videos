@@ -93,7 +93,9 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Collections
+import java.util.Locale
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -478,7 +480,8 @@ abstract class AbstractSpringIntegrationTest {
         contentTypes: List<String>? = emptyList(),
         requiresVideoLevelTagging: Boolean = false,
         categories: List<String>? = null,
-        private: Boolean? = false
+        private: Boolean? = false,
+        language: String? = null
     ): Channel {
         val createdChannel = try {
             createChannel(
@@ -490,7 +493,8 @@ abstract class AbstractSpringIntegrationTest {
                     contentTypes = contentTypes,
                     requiresVideoLevelTagging = requiresVideoLevelTagging,
                     categories = categories,
-                    private = private
+                    private = private,
+                    language = language
                 )
             )
         } catch (e: ChannelConflictException) {

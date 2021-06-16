@@ -21,9 +21,10 @@ class CreateVideoRequestToVideoConverter {
     fun convert(
         createVideoRequest: CreateVideoRequest,
         videoPlayback: VideoPlayback,
-        contentPartner: Channel,
+        channel: Channel,
         subjects: List<Subject>,
-        categories: Map<CategorySource, Set<CategoryWithAncestors>>
+        categories: Map<CategorySource, Set<CategoryWithAncestors>>,
+        fallbackLanguage: Locale?
     ): Video {
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
@@ -34,7 +35,7 @@ class CreateVideoRequestToVideoConverter {
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
             ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
-            channel = contentPartner,
+            channel = channel,
             videoReference = createVideoRequest.providerVideoId!!,
             types = createVideoRequest.videoTypes!!.map { VideoType.valueOf(it) },
             legalRestrictions = createVideoRequest.legalRestrictions ?: "",
@@ -50,12 +51,12 @@ class CreateVideoRequestToVideoConverter {
             topics = emptySet(),
             voice = when (createVideoRequest.isVoiced) {
                 true -> Voice.WithVoice(
-                    language = convertLanguage(createVideoRequest),
+                    language = convertLanguage(createVideoRequest, fallbackLanguage),
                     transcript = null
                 )
                 false -> Voice.WithoutVoice
                 null -> Voice.UnknownVoice(
-                    language = convertLanguage(createVideoRequest),
+                    language = convertLanguage(createVideoRequest, fallbackLanguage),
                     transcript = null
                 )
             },
@@ -70,7 +71,7 @@ class CreateVideoRequestToVideoConverter {
         )
     }
 
-    private fun convertLanguage(createVideoRequest: CreateVideoRequest): Locale? {
-        return createVideoRequest.language?.let { Locale.forLanguageTag(it) }
+    private fun convertLanguage(createVideoRequest: CreateVideoRequest, fallbackLanguage: Locale?): Locale? {
+        return createVideoRequest.language?.let { Locale.forLanguageTag(it) } ?: fallbackLanguage
     }
 }

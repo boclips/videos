@@ -5,8 +5,8 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
 import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
-import com.boclips.videos.service.domain.model.video.channel.ChannelWithCategories
 import com.boclips.videos.service.domain.model.video.channel.ContentPartnerAvailability
+import com.boclips.videos.service.domain.model.video.channel.FallbackMetadata
 import org.springframework.stereotype.Component
 import com.boclips.contentpartner.service.domain.model.channel.ChannelId as ContentPartnerServiceChannelId
 
@@ -14,12 +14,13 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelId as Cont
 class VideoChannelService(val channelRepository: ChannelRepository) {
     var idCache: Pair<ChannelId, ContentPartnerAvailability>? = null
 
-    fun findChannelWithCategories(id: String): ChannelWithCategories? {
+    fun findFallbackMetadata(id: String): FallbackMetadata? {
         return find(ChannelId(id))
             ?.let { channel ->
-                ChannelWithCategories(
+                FallbackMetadata(
                     channel = Channel(channelId = ChannelId(value = channel.id.value), name = channel.name),
-                    categories = (channel.taxonomy as? Taxonomy.ChannelLevelTagging)?.categories ?: emptySet()
+                    categories = (channel.taxonomy as? Taxonomy.ChannelLevelTagging)?.categories ?: emptySet(),
+                    language = channel.language
                 )
             }
     }

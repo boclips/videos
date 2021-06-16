@@ -8,6 +8,7 @@ import com.boclips.videos.service.testsupport.CategoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.Locale
 
 class VideoChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -31,14 +32,16 @@ class VideoChannelServiceIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can find channel with its categories`() {
+    fun `can find channel`() {
         taxonomyRepository.create(CategoryFactory.sample(code = "A", description = "A description"))
-        val channel = saveChannel(name = "1", categories = listOf("A"))
-        val retrieved = videoChannelService.findChannelWithCategories(channel.id.value)
+
+        val channel = saveChannel(name = "1", categories = listOf("A"), language = "fr")
+        val retrieved = videoChannelService.findFallbackMetadata(channel.id.value)
 
         assertThat(retrieved!!.categories).containsExactlyInAnyOrder(
             CategoryWithAncestors(codeValue = CategoryCode("A"), description = "A description", ancestors = emptySet()),
 
         )
+        assertThat(retrieved.language).isEqualTo(Locale.FRENCH)
     }
 }
