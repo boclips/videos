@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version '1.4.32'
+    id "org.jetbrains.kotlin.jvm" version '1.5.10'
     id 'com.adarshr.test-logger' version '3.0.0'
     id "org.jlleitschuh.gradle.ktlint" version "10.1.0"
 }
@@ -32,7 +32,7 @@ dependencies {
     implementation('io.github.openfeign:feign-slf4j:11.1')
     implementation('io.github.openfeign.form:feign-form:3.8.0')
     implementation('com.github.boclips:boclips-spring-security:0.632.0')
-    implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.0')
+    implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10')
     implementation('com.fasterxml.jackson.core:jackson-databind:2.10.1')
     implementation('org.springframework.boot:spring-boot-starter-validation:2.4.5')
     implementation("com.pinterest:ktlint:0.41.0")
