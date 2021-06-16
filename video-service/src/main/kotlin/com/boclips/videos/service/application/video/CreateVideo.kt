@@ -48,8 +48,10 @@ class CreateVideo(
         val subjects = subjectRepository.findByIds(createRequest.subjects ?: emptyList())
 
         val categories = mapOf(
-            CategorySource.MANUAL to (createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet()
-                ?: emptySet()),
+            CategorySource.MANUAL to (
+                createRequest.categories?.map { getCategoryWithAncestors(it) }?.toSet()
+                    ?: emptySet()
+                ),
             CategorySource.CHANNEL to (fallbackMetadata.categories ?: emptySet())
         )
 
