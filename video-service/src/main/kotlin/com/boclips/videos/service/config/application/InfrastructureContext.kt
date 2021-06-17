@@ -12,9 +12,14 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
+import com.boclips.videos.service.domain.service.video.CaptionConverter
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.accessrules.ApiAccessRulesConverter
-import com.boclips.videos.service.infrastructure.collection.*
+import com.boclips.videos.service.infrastructure.collection.CollectionRepository
+import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
+import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionFilterAccessRuleAdapter
+import com.boclips.videos.service.infrastructure.collection.MongoCollectionRepository
 import com.boclips.videos.service.infrastructure.contentwarning.MongoContentWarningRepository
 import com.boclips.videos.service.infrastructure.discipline.MongoDisciplineRepository
 import com.boclips.videos.service.infrastructure.organisation.ApiOrganisationService
@@ -22,6 +27,7 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
+import com.boclips.videos.service.infrastructure.video.NoopHQCaptionConverter
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
@@ -174,4 +180,7 @@ class InfrastructureContext(
             .setSpringContext(springContext)
             .buildInitializingBeanRunner()
     }
+
+    @Bean
+    fun captionConverter(): CaptionConverter = NoopHQCaptionConverter()
 }

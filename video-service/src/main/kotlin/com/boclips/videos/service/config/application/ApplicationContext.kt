@@ -101,6 +101,7 @@ import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrieva
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
+import com.boclips.videos.service.domain.service.video.CaptionConverter
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.CaptionValidator
 import com.boclips.videos.service.domain.service.video.VideoCreationService
@@ -261,8 +262,8 @@ class ApplicationContext(
     }
 
     @Bean
-    fun videoCaptionService(kalturaClient: KalturaClient): VideoCaptionService {
-        return VideoCaptionService(kalturaClient, captionService())
+    fun videoCaptionService(kalturaClient: KalturaClient, captionConverter: CaptionConverter): VideoCaptionService {
+        return VideoCaptionService(kalturaClient, captionService(), captionConverter)
     }
 
     @Bean

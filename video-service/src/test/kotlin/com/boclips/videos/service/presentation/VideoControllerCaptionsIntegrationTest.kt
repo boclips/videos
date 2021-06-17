@@ -208,6 +208,51 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `returns srt captions when requested`() {
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
+        val existingSRTCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)",
+            captionFormat = CaptionFormat.SRT
+        )
+
+        val existingVTTCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English",
+            captionFormat = CaptionFormat.WEBVTT
+        )
+
+        val captionContent = """WEBVTT
+
+00:00:00.500 --> 00:00:02.000
+The Web is always changing
+
+00:00:02.500 --> 00:00:04.300
+and the way we access it is changing
+
+"""
+
+        val expectedSrtContent =
+            "1\n00:00:00,500 --> 00:00:02,000 \nThe Web is always changing\n\n2\n00:00:02,500 --> 00:00:04,300 \nand the way we access it is changing\n\n"
+
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingVTTCaptions, captionContent)
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingSRTCaptions, "")
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?download=true&format=srt"))
+            .andExpect(status().isOk)
+            .andExpect(
+                header().string(
+                    "Content-Disposition",
+                    Matchers.equalTo("attachment; filename=\"Today_Video_.srt\"")
+                )
+            )
+            .andExpect(content().string(Matchers.equalTo(expectedSrtContent)))
+    }
+
+    @Test
     fun `returns only human generated captions when specified`() {
         val video = saveVideo(
             title = "Today Video?",
@@ -231,7 +276,9 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
         fakeKalturaClient.createCaptionForVideo("playback-id", autoCaptions, autoCaptionContent)
         fakeKalturaClient.createCaptionForVideo("playback-id", humanCaptions, humanCaptionContent)
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?human-generated=true").asBoclipsEmployee())
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?human-generated=true").asBoclipsEmployee()
+        )
             .andExpect(jsonPath("$.content").exists())
             .andExpect(jsonPath("$.content", Matchers.equalTo(humanCaptionContent)))
     }

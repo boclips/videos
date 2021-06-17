@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 class VideoCaptionServiceTest {
     val kalturaClient = mock<KalturaClient>()
     val captionService = mock<CaptionService>()
-    val target = VideoCaptionService(kalturaClient, captionService)
+    val target = VideoCaptionService(kalturaClient, captionService, mock())
 
     @Test
     fun `maps status - PROCESSING`() { // No need to check all cases as it is typed

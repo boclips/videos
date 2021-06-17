@@ -169,9 +169,14 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
     fun downloadCaption(videoId: String?): HateoasLink? {
         return videoId?.let {
             HateoasLink.of(
-                WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(VideoController::class.java)
-                        .getCaptions(videoId = videoId, shouldDownload = true, useHumanGeneratedOnly = true)
+                Link.of(
+                    getVideosRootWithoutParams()
+                        .pathSegment(videoId)
+                        .pathSegment("captions")
+                        .queryParam("download", true)
+                        .queryParam("human-generated", true)
+                        .build()
+                        .toUriString()
                 ).withRel(Rels.DOWNLOAD_CAPTIONS)
             )
         }

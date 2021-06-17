@@ -2,6 +2,7 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.Projection
+import com.boclips.videos.api.request.video.CaptionFormatRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.MetadataRequest
 import com.boclips.videos.api.request.video.RateVideoRequest
@@ -42,6 +43,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.presentation.converters.CaptionFormatRequestEnumConverter
 import com.boclips.videos.service.presentation.converters.PriceConverter
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
@@ -58,9 +60,11 @@ import mu.KLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.InitBinder
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -107,6 +111,15 @@ class VideoController(
         const val MAX_PAGE_SIZE = 500
         const val DEFAULT_PAGE_INDEX = 0
         const val MAXIMUM_SEARCH_RESULT_WINDOW_SIZE = 10000
+    }
+
+    // For converting an lowercase caption format request enum
+    @InitBinder
+    fun initBinder(binder: WebDataBinder) {
+        binder.registerCustomEditor(
+            CaptionFormatRequest::class.java,
+            CaptionFormatRequestEnumConverter()
+        )
     }
 
     @GetMapping("/v1/videos")
@@ -422,9 +435,10 @@ class VideoController(
     fun getCaptions(
         @PathVariable("id") videoId: String?,
         @RequestParam("download") shouldDownload: Boolean = false,
-        @RequestParam("human-generated") useHumanGeneratedOnly: Boolean = false
+        @RequestParam("human-generated") useHumanGeneratedOnly: Boolean = false,
+        @RequestParam("format") captionFormat: CaptionFormatRequest? = null
     ): ResponseEntity<Any> {
-        val caption = videoCaptionService.getCaption(videoId!!, useHumanGeneratedOnly)
+        val caption = videoCaptionService.getCaption(videoId!!, useHumanGeneratedOnly, captionFormat)
 
         return caption?.let {
             if (shouldDownload) {
@@ -459,7 +473,7 @@ class VideoController(
         val videos = videosRepository.findAll(videoIds)
 
         val videoToCaptionLinkMap =
-            videos.associate { it.videoId.value to videoCaptionService.getCaption(it.videoId.value, true) }
+            videos.associate { it.videoId.value to videoCaptionService.getCaption(it.videoId.value, true, null) }
         val videosResource = videoToResourceConverter.convert(videos, getCurrentUser())
 
         val convertVideosToRequiredMetadata = videoMetadataConverter.convert(videosResource, videoToCaptionLinkMap)
