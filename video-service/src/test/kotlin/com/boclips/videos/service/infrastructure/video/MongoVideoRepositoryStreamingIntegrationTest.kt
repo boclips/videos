@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.subject.Subject
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
@@ -186,6 +187,21 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
 
         var videos: List<Video> = emptyList()
         mongoVideoRepository.streamAll(VideoFilter.IsDeactivated) {
+            videos = it.toList()
+        }
+
+        assertThat(videos).containsExactlyInAnyOrder(video1, video2)
+    }
+
+    @Test
+    fun `stream all by marked for transcript generation`() {
+        val voiceWithTranscriptRequested = Voice.WithVoice(isTranscriptRequested = true, language = null, isTranscriptHumanGenerated = null, transcript = null)
+        val video1 = mongoVideoRepository.create(TestFactories.createVideo(voice = voiceWithTranscriptRequested))
+        val video2 = mongoVideoRepository.create(TestFactories.createVideo(voice = voiceWithTranscriptRequested))
+        mongoVideoRepository.create(TestFactories.createVideo())
+
+        var videos: List<Video> = emptyList()
+        mongoVideoRepository.streamAll(VideoFilter.IsMarkedForTranscriptGeneration) {
             videos = it.toList()
         }
 

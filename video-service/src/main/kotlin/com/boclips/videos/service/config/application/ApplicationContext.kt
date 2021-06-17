@@ -56,6 +56,7 @@ import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.CreateVideo
 import com.boclips.videos.service.application.video.DeleteVideo
 import com.boclips.videos.service.application.video.DeleteVideoThumbnail
+import com.boclips.videos.service.application.video.GenerateTranscripts
 import com.boclips.videos.service.application.video.GetVideoUrlAssets
 import com.boclips.videos.service.application.video.GetVideosByContentPackage
 import com.boclips.videos.service.application.video.RateVideo
@@ -574,6 +575,12 @@ class ApplicationContext(
 
     @Bean
     fun getAttachmentTypes() = GetAttachmentTypes()
+
+    @Bean
+    fun generateTranscripts(
+        videoRepository: VideoRepository,
+        captionService: CaptionService
+    ): GenerateTranscripts = GenerateTranscripts(videoRepository, captionService)
 
     @Bean
     fun videoRetrievalService(
