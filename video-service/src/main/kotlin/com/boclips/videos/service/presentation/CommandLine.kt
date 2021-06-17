@@ -57,6 +57,10 @@ class CommandLine(
                 updateYoutubePlayback.invoke()
                 System.exit(SpringApplication.exit(app))
             }
+            "generate-transcripts" -> {
+                generateTranscripts.invoke()
+                System.exit(SpringApplication.exit(app))
+            }
         }
     }
 }
