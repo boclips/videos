@@ -1,0 +1,126 @@
+buildscript {
+    ext {
+        kotlin_version = '1.5.0'
+        openFeignVersion = '11.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.plugin.spring' version "$kotlin_version"
+    id "org.jlleitschuh.gradle.ktlint" version "10.1.0"
+    id 'java-library'
+    id 'maven'
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+
+group = 'boclips-ktlint'
+version = '0.0.1'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+configurations {
+    ktlint
+}
+
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'http://repo.spring.io/libs-release/' }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext["junit-jupiter.version"] = junitVersion
+
+dependencies {
+    ktlint "com.pinterest:ktlint:0.41.0"
+    compile("com.pinterest.ktlint:ktlint-core:0.41.0")
+    compile('com.pinterest.ktlint:ktlint-test:0.41.0')
+
+    testImplementation('org.assertj:assertj-core:3.12.2')
+
+    testImplementation('org.jetbrains.spek:spek-junit-platform-engine:1.1.5') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-reflect'
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+
+
+
+}
+
+task ktlint(type: JavaExec, dependsOn: classes) {
+    main = 'com.pinterest.ktlint.Main'
+    // adding compiled classes to the classpath so that ktlint would validate project's sources
+    // using its own ruleset (in other words to dogfood)
+    classpath = configurations.ktlint + sourceSets.main.output
+    args '--debug', 'src/**/*.kt'
+}
+
+check.dependsOn ktlint
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }
+}
+

@@ -23,6 +23,7 @@ allprojects {
         solrVersion = "8.8.2"
         jettyVersion = "9.4.39.v20210325"
     }
+
     subprojects {
         task allDeps(type: DependencyReportTask) {}
     }

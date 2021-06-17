@@ -1,6 +1,6 @@
 package com.boclips.contentpartner.service.infrastructure.agerange
 
-import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.codecs.pojo.annotations.*
 
 class AgeRangeDocument(
     @BsonId

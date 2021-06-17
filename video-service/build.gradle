@@ -10,6 +10,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
 plugins {
     id 'org.springframework.boot' version '2.4.5'
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
@@ -93,9 +94,15 @@ ext["elasticsearch.version"] = elasticSearchVersion
 ext["solr.version"] = solrVersion
 ext["jetty.version"] = jettyVersion
 
+
 dependencies {
     implementation project(':video-service-api')
     implementation project(':search-service')
+    ktlint "com.pinterest:ktlint:0.41.0"
+    ktlint project(':ktlint-custom-rules')
+
+    compile("com.pinterest.ktlint:ktlint-core:0.41.0")
+    compile('com.pinterest.ktlint:ktlint-test:0.41.0')
 
     implementation('org.springframework.boot:spring-boot-starter-validation')
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -159,8 +166,6 @@ dependencies {
     testImplementation('ru.lanwen.wiremock:wiremock-junit5:1.3.1')
     testImplementation('com.github.tomakehurst:wiremock-jre8:2.25.1')
 
-    implementation("com.pinterest:ktlint:0.41.0")
-
 
     youtubeContractTestImplementation sourceSets.main.output
     youtubeContractTestImplementation configurations.compile
@@ -174,3 +179,23 @@ dependencies {
     testImplementation("com.damnhandy:handy-uri-templates:2.1.8")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task ktlint(type: JavaExec, dependsOn: classes) {
+    main = 'com.pinterest.ktlint.Main'
+    // adding compiled classes to the classpath so that ktlint would validate project's sources
+    // using its own ruleset (in other words to dogfood)
+    classpath = configurations.ktlint + sourceSets.main.output
+    args '--debug', 'src/**/*.kt'
+}
+
+check.dependsOn ktlint
