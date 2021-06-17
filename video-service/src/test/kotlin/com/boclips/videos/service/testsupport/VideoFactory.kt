@@ -33,6 +33,7 @@ object VideoFactory {
         language: String? = null,
         isVoiced: Boolean? = null,
         transcript: String? = null,
+        isTranscriptHumanGenerated: Boolean? = null,
         topics: List<TopicDocument>? = null,
         ageRangeMin: Int? = null,
         ageRangeMax: Int? = null,
@@ -56,13 +57,14 @@ object VideoFactory {
             language = language,
             isVoiced = isVoiced,
             transcript = transcript,
+            isTranscriptHumanGenerated = isTranscriptHumanGenerated,
             topics = topics,
             ageRangeMin = ageRangeMin,
             ageRangeMax = ageRangeMax,
             rating = rating,
             tags = tags,
             promoted = promoted,
-            subjectsWereSetManually = subjectsWereSetManually
+            subjectsWereSetManually = subjectsWereSetManually,
         )
     }
 

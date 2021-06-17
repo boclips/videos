@@ -96,7 +96,7 @@ object TestFactories {
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
         legalRestrictions: String = "",
-        voice: Voice = Voice.UnknownVoice(language = null, transcript = null),
+        voice: Voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null),
         topics: Set<Topic> = emptySet(),
         ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
         ratings: List<UserRating> = emptyList(),

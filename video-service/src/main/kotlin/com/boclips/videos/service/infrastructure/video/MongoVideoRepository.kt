@@ -292,7 +292,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 SubjectDocument::id eq ObjectId(updateCommand.subjectId.value)
             )
             is ReplaceLanguage -> set(VideoDocument::language, updateCommand.language.toLanguageTag())
-            is ReplaceTranscript -> set(VideoDocument::transcript, updateCommand.transcript)
+            is ReplaceTranscript -> combine(
+                set(VideoDocument::transcript, updateCommand.transcript),
+                set(VideoDocument::isTranscriptHumanGenerated, updateCommand.isHumanGenerated)
+            )
             is ReplaceTopics -> set(
                 VideoDocument::topics,
                 updateCommand.eventBus.map(TopicDocumentConverter::toDocument)

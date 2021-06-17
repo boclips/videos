@@ -345,7 +345,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             createVideo(
                 voice = Voice.UnknownVoice(
                     language = Locale.TAIWAN,
-                    transcript = null
+                    transcript = null,
+                    isTranscriptHumanGenerated = null
                 )
             )
         )
@@ -360,19 +361,20 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `replaces transcript`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)))
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla"))
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla", true))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
         assertThat(updatedAsset!!.voice.transcript).isEqualTo("bla bla bla")
+        assertThat(updatedAsset!!.voice.isTranscriptHumanGenerated).isTrue
     }
 
     @Test
     fun `replaces topics`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,

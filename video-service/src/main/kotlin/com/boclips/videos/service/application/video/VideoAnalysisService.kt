@@ -127,7 +127,7 @@ class VideoAnalysisService(
         videoRepository.bulkUpdate(
             listOf(
                 VideoUpdateCommand.ReplaceLanguage(video.videoId, video.voice.language ?: analysedVideo.language),
-                VideoUpdateCommand.ReplaceTranscript(video.videoId, analysedVideo.transcript),
+                VideoUpdateCommand.ReplaceTranscript(videoId = video.videoId, transcript = analysedVideo.transcript, isHumanGenerated = false),
                 VideoUpdateCommand.ReplaceTopics(video.videoId, convertTopics(analysedVideo.topics)),
                 VideoUpdateCommand.ReplaceKeywords(
                     video.videoId,

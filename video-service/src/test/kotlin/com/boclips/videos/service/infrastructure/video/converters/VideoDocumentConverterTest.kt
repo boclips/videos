@@ -51,7 +51,8 @@ class VideoDocumentConverterTest {
             legalRestrictions = "legal restrictions",
             voice = Voice.WithVoice(
                 language = Locale.GERMANY,
-                transcript = "hello"
+                transcript = "hello",
+                isTranscriptHumanGenerated = true
             ),
             topics = setOf(
                 Topic(

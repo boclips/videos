@@ -27,7 +27,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceThumbnailSecond(videoId: VideoId, val thumbnailSecond: Int?) : VideoUpdateCommand(videoId)
     class ReplaceCustomThumbnail(videoId: VideoId, val customThumbnail: Boolean?) : VideoUpdateCommand(videoId)
     class ReplaceLanguage(videoId: VideoId, val language: Locale) : VideoUpdateCommand(videoId)
-    class ReplaceTranscript(videoId: VideoId, val transcript: String) : VideoUpdateCommand(videoId)
+    class ReplaceTranscript(videoId: VideoId, val transcript: String, val isHumanGenerated: Boolean?) : VideoUpdateCommand(videoId)
     class ReplaceTopics(videoId: VideoId, val eventBus: Set<Topic>) : VideoUpdateCommand(videoId)
     class ReplaceKeywords(videoId: VideoId, val keywords: Set<String>) : VideoUpdateCommand(videoId)
     class ReplaceAgeRange(videoId: VideoId, val ageRange: AgeRange) : VideoUpdateCommand(videoId)

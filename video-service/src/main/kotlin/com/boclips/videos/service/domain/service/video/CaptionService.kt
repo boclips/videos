@@ -52,7 +52,7 @@ class CaptionService(
 
                 videoRepository.update(
                     VideoUpdateCommand.ReplaceTranscript(
-                        video.videoId, captionValidator.parse(captionContent).joinToString(separator = "\n")
+                        video.videoId, captionValidator.parse(captionContent).joinToString(separator = "\n"), video.voice.isTranscriptHumanGenerated
                     )
                 )
 

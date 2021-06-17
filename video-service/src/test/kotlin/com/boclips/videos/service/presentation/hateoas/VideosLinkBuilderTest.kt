@@ -194,7 +194,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = videoId,
-                voice = Voice.UnknownVoice(language = null, transcript = "hi")
+                voice = Voice.UnknownVoice(language = null, transcript = "hi", isTranscriptHumanGenerated = null)
             )
         )
 
@@ -212,7 +212,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = aValidId(),
-                voice = Voice.UnknownVoice(language = null, transcript = null)
+                voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)
             )
         )
 
@@ -225,7 +225,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = videoId,
-                voice = Voice.UnknownVoice(language = null, transcript = "hi")
+                voice = Voice.UnknownVoice(language = null, transcript = "hi", isTranscriptHumanGenerated = null)
             )
         )
 

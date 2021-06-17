@@ -35,6 +35,7 @@ object VideoDocumentConverter {
             legalRestrictions = video.legalRestrictions,
             language = video.voice.language?.toLanguageTag(),
             transcript = video.voice.transcript,
+            isTranscriptHumanGenerated = video.voice.isTranscriptHumanGenerated,
             isVoiced = video.isVoiced(),
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
@@ -82,12 +83,14 @@ object VideoDocumentConverter {
             voice = when (document.isVoiced) {
                 true -> Voice.WithVoice(
                     language = document.language?.let(Locale::forLanguageTag),
-                    transcript = document.transcript
+                    transcript = document.transcript,
+                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated
                 )
                 false -> Voice.WithoutVoice
                 null -> Voice.UnknownVoice(
                     language = document.language?.let(Locale::forLanguageTag),
-                    transcript = document.transcript
+                    transcript = document.transcript,
+                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated
                 )
             },
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),

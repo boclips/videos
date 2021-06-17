@@ -173,6 +173,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             val video = videoRepository.find(videoId)!!
 
             assertThat(video.voice.transcript).isEqualTo("bla bla bla")
+            assertThat(video.voice.isTranscriptHumanGenerated).isFalse
         }
 
         @Test
