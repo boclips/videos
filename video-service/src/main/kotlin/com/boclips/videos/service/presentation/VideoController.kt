@@ -35,6 +35,7 @@ import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
+import com.boclips.videos.service.domain.model.video.UnsupportedFormatConversionException
 import com.boclips.videos.service.domain.model.video.UnsupportedVideoUpdateException
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -438,21 +439,30 @@ class VideoController(
         @RequestParam("human-generated") useHumanGeneratedOnly: Boolean = false,
         @RequestParam("format") captionFormat: CaptionFormatRequest? = null
     ): ResponseEntity<Any> {
-        val caption = videoCaptionService.getCaption(videoId!!, useHumanGeneratedOnly, captionFormat)
+        try {
+            val caption = videoCaptionService.getCaption(videoId!!, useHumanGeneratedOnly, captionFormat)
+            return caption?.let {
+                if (shouldDownload) {
+                    val headers = HttpHeaders()
+                    headers.set(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"${getVideoTitle(videoId)}.${it.format.getFileExtension()}\""
+                    )
 
-        return caption?.let {
-            if (shouldDownload) {
-                val headers = HttpHeaders()
-                headers.set(
-                    HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=\"${getVideoTitle(videoId)}.${it.format.getFileExtension()}\""
+                    ResponseEntity(it.content, headers, HttpStatus.OK)
+                } else {
+                    ResponseEntity(CaptionsResource(it.content), HttpStatus.OK)
+                }
+            } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        } catch (ex: UnsupportedFormatConversionException) {
+            throw InvalidRequestApiException(
+                ExceptionDetails(
+                    "Error converting caption for video",
+                    ex.message,
+                    HttpStatus.BAD_REQUEST
                 )
-
-                ResponseEntity(it.content, headers, HttpStatus.OK)
-            } else {
-                ResponseEntity(CaptionsResource(it.content), HttpStatus.OK)
-            }
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+            )
+        }
     }
 
     private fun getVideoTitle(videoId: String?) =

@@ -147,6 +147,23 @@ class VideoControllerCaptionsIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `when trying to convert from an unsupported format it returns 400`() {
+        val video = saveVideo(
+            title = "Today Video?",
+            playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "playback-id")
+        )
+        val existingCaptions = KalturaFactories.createKalturaCaptionAsset(
+            language = KalturaLanguage.ENGLISH,
+            label = "English (auto-generated)",
+            captionFormat = CaptionFormat.CAP
+        )
+        fakeKalturaClient.createCaptionForVideo("playback-id", existingCaptions, "cap content").id
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/videos/${video.value}/captions?format=SRT").asBoclipsEmployee())
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `requests captions for video successfully`() {
         val video = saveVideo(
             title = "Today Video?",

@@ -5,6 +5,6 @@ import java.beans.PropertyEditorSupport
 
 class CaptionFormatRequestEnumConverter : PropertyEditorSupport() {
     override fun setAsText(text: String) {
-        value = CaptionFormatRequest.valueOf(text.uppercase())
+        value = CaptionFormatRequest.valueOf(text.toUpperCase())
     }
 }
