@@ -956,12 +956,13 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.metadata[0].title", equalTo("test name 1")))
                 .andExpect(jsonPath("$.metadata[0].id", equalTo(video1.value)))
-                .andExpect(jsonPath("$.metadata[0].downloadCaptionUrl", containsString("http")))
-                .andExpect(jsonPath("$.metadata[0].captionFileExtension", equalTo("srt")))
+                .andExpect(jsonPath("$.metadata[0].downloadSrtCaptionUrl", containsString("http")))
+                .andExpect(jsonPath("$.metadata[0].downloadVttCaptionUrl", containsString("http")))
                 .andExpect(jsonPath("$.metadata[1].title", equalTo("test name 2")))
                 .andExpect(jsonPath("$.metadata[1].id", equalTo(video2.value)))
-                .andExpect(jsonPath("$.metadata[1].downloadCaptionUrl", containsString("http")))
-                .andExpect(jsonPath("$.metadata[1].captionFileExtension", equalTo("vtt")))
+                .andExpect(jsonPath("$.metadata[1].downloadVttCaptionUrl", containsString("http")))
+                .andExpect(jsonPath("$.metadata[1].downloadSrtCaptionUrl", containsString("http")))
+
         }
     }
 

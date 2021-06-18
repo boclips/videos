@@ -1,6 +1,7 @@
 package com.boclips.videos.service.presentation.hateoas
 
 import com.boclips.security.testing.setSecurityContext
+import com.boclips.videos.api.request.video.CaptionFormatRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.UserRating
@@ -239,10 +240,10 @@ class VideosLinkBuilderTest {
     @Test
     fun `human generated caption link when not authenticated`() {
         val videoId = aValidId()
-        val link = videosLinkBuilder.downloadCaption(videoId)
+        val link = videosLinkBuilder.downloadCaption(videoId, CaptionFormatRequest.SRT)
 
         assertThat(link).isNotNull
-        assertThat(link!!.href).endsWith("/v1/videos/$videoId/captions?download=true&human-generated=true")
+        assertThat(link!!.href).endsWith("/v1/videos/$videoId/captions?download=true&human-generated=true&format=SRT")
         assertThat(link.rel).isEqualTo(VideosLinkBuilder.Rels.DOWNLOAD_CAPTIONS)
         assertThat(link.templated).isFalse
     }

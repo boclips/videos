@@ -5,6 +5,7 @@ import com.boclips.security.utils.UserExtractor.getIfAuthenticated
 import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import com.boclips.videos.api.request.Projection
+import com.boclips.videos.api.request.video.CaptionFormatRequest
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.video.BaseVideo
@@ -166,7 +167,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         }
     }
 
-    fun downloadCaption(videoId: String?): HateoasLink? {
+    fun downloadCaption(videoId: String?, format: CaptionFormatRequest?): HateoasLink? {
         return videoId?.let {
             HateoasLink.of(
                 Link.of(
@@ -175,6 +176,7 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
                         .pathSegment("captions")
                         .queryParam("download", true)
                         .queryParam("human-generated", true)
+                        .queryParam("format", format)
                         .build()
                         .toUriString()
                 ).withRel(Rels.DOWNLOAD_CAPTIONS)

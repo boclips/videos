@@ -11,6 +11,6 @@ data class VideoMetadataToCSV(
     val transcripts: Boolean?,
     val links: Any?,
     val keywords: List<String>?,
-    val downloadCaptionUrl: String?,
-    val captionFileExtension: String?
+    val downloadSrtCaptionUrl: String?,
+    val downloadVttCaptionUrl: String?,
 )
