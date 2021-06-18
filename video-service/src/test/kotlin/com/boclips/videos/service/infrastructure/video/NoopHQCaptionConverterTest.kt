@@ -1,12 +1,13 @@
 package com.boclips.videos.service.infrastructure.video
 
+import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat
 import com.boclips.videos.service.domain.model.video.UnsupportedFormatConversionException
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CaptionFormatterTest {
+class NoopHQCaptionConverterTest {
     // Trim ident was causing issues by removing the last line which is need for a valid SRT
     val vttCaptionContent = """WEBVTT
 
@@ -90,6 +91,55 @@ and the way we access it is changing
     fun `to an unsupported format`() {
         assertThrows<UnsupportedFormatConversionException> {
             captionFormatter.convert(srtCaptionContent, from = CaptionFormat.SRT, to = CaptionFormat.CAP)
+        }
+    }
+
+    @Test
+    fun `convert SRT captions to transcript`() {
+        val expectedTranscript = """The Web is always changing
+and the way we access it is changing"""
+
+        assertThat(
+            captionFormatter.convertToTranscript(
+                Caption(
+                    content = srtCaptionContent,
+                    isHumanGenerated = true,
+                    format = CaptionFormat.SRT,
+                    default = true
+                )
+            )
+        ).isEqualTo(expectedTranscript)
+    }
+
+    @Test
+    fun `convert VTT captions to transcript`() {
+        val expectedTranscript = """The Web is always changing
+and the way we access it is changing"""
+
+        assertThat(
+            captionFormatter.convertToTranscript(
+                Caption(
+                    content = vttCaptionContent,
+                    isHumanGenerated = true,
+                    format = CaptionFormat.WEBVTT,
+                    default = true
+                )
+            )
+        ).isEqualTo(expectedTranscript)
+    }
+
+    @Test
+    fun `throws error when converting CAP captions to transcript`() {
+        assertThrows<UnsupportedFormatConversionException> {
+            (
+                captionFormatter.convertToTranscript(
+                    Caption(
+                        content = vttCaptionContent,
+                        isHumanGenerated = true,
+                        format = CaptionFormat.CAP,
+                        default = true
+                    ))
+                )
         }
     }
 

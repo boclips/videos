@@ -36,6 +36,7 @@ object VideoDocumentConverter {
             language = video.voice.language?.toLanguageTag(),
             transcript = video.voice.transcript,
             isTranscriptHumanGenerated = video.voice.isTranscriptHumanGenerated,
+            isTranscriptRequested = video.voice.isTranscriptRequested,
             isVoiced = video.isVoiced(),
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),

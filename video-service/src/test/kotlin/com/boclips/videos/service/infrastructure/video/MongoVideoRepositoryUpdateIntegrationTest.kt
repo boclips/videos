@@ -371,6 +371,19 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(updatedAsset!!.voice.isTranscriptHumanGenerated).isTrue
     }
 
+
+    @Test
+    fun `replaces transcript requested`() {
+        val video =
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(isTranscriptRequested = true, language = null, transcript = null, isTranscriptHumanGenerated = null)))
+
+        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscriptRequested(video.videoId, false))
+
+        val updatedAsset = mongoVideoRepository.find(video.videoId)
+
+        assertThat(updatedAsset!!.voice.isTranscriptRequested).isFalse
+    }
+
     @Test
     fun `replaces topics`() {
         val video =

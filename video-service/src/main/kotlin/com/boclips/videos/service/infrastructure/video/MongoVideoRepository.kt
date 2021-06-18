@@ -138,6 +138,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.HasSubjectId -> VideoDocument::subjects elemMatch (SubjectDocument::id eq ObjectId(filter.subjectId.value))
             is VideoFilter.HasVideoId -> VideoDocument::id `in` filter.videoId.map { ObjectId(it.value) }
             is VideoFilter.IsDeactivated -> VideoDocument::deactivated eq true
+            is VideoFilter.IsMarkedForTranscriptGeneration -> VideoDocument::isTranscriptRequested eq true
         }
 
         val sequence = Sequence {
@@ -379,6 +380,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                     CategorySource.MANUAL -> VideoCategoriesDocument::manual
                 },
                 updateCommand.categories.map { CategoriesDocumentConverter.toDocument(it) }
+            )
+            is VideoUpdateCommand.ReplaceTranscriptRequested -> set(
+                VideoDocument::isTranscriptRequested,
+                updateCommand.isTranscriptRequested
             )
         }
     }

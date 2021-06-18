@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.ProgressNotifier
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
 import com.boclips.videos.service.application.collection.RebuildCollectionIndex
 import com.boclips.videos.service.application.search.RebuildSubjectIndex
+import com.boclips.videos.service.application.video.GenerateTranscripts
 import com.boclips.videos.service.application.video.UpdateYoutubePlayback
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
@@ -23,7 +24,8 @@ class CommandLine(
     val subjectIndex: RebuildSubjectIndex,
     val channelIndex: RebuildChannelIndex,
     val rebuildLegacySearchIndex: RebuildLegacySearchIndex,
-    val updateYoutubePlayback: UpdateYoutubePlayback
+    val updateYoutubePlayback: UpdateYoutubePlayback,
+    val generateTranscripts: GenerateTranscripts
 ) {
     companion object : KLogging()
 
@@ -55,6 +57,10 @@ class CommandLine(
             }
             "synchronise-youtube-playback" -> {
                 updateYoutubePlayback.invoke()
+                System.exit(SpringApplication.exit(app))
+            }
+            "generate-transcripts" -> {
+                generateTranscripts.invoke()
                 System.exit(SpringApplication.exit(app))
             }
         }

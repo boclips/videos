@@ -79,6 +79,8 @@ class UpdateVideo(
                 source = CategorySource.MANUAL
             )
         }
+        val updateTranscriptRequested =
+            updateRequest.transcriptRequested?.let { VideoUpdateCommand.ReplaceTranscriptRequested(videoId, it) }
 
         videoUpdateService.update(
             video,
@@ -93,7 +95,8 @@ class UpdateVideo(
                 replaceAgeRange,
                 replaceAttachments,
                 replaceBestFor,
-                updateCategories
+                updateCategories,
+                updateTranscriptRequested
             )
         )
 
