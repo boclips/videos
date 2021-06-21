@@ -17,7 +17,6 @@ internal class CategoryValidationResultTest {
 
         val message = error.getMessage()
         Assertions.assertThat(message).contains("Rows 6 are missing a video ID")
-        Assertions.assertThat(message).contains("Rows 4, 10 contain invalid Video IDs - ABC, DEF")
         Assertions.assertThat(message).contains("Rows 8 contain invalid or unknown category codes")
     }
 }
