@@ -43,7 +43,7 @@ class VideoAnalysisService(
 
         val playback = video.playback as? VideoPlayback.StreamPlayback ?: throw VideoNotAnalysableException()
 
-        if (!video.types.contains(VideoType.INSTRUCTIONAL_CLIPS)) {
+        if (!video.types.contains(VideoType.INSTRUCTIONAL_CLIPS) && !video.types.contains(VideoType.NEWS)) {
             logger.info { "Analysis of video $id NOT requested because its legacy type is ${video.types}" }
             return
         }
