@@ -2,6 +2,8 @@ package com.boclips.videos.service.presentation.converters
 
 import arrow.core.Either
 import com.boclips.videos.service.application.GetAllCategories
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.CategoriesValid
 import com.boclips.videos.service.presentation.CategoryValidationResult
 import com.boclips.videos.service.presentation.DataRowsContainErrors
@@ -9,10 +11,11 @@ import com.boclips.videos.service.presentation.NotCsvFile
 import com.boclips.videos.service.presentation.VideoIdOrCategoryCodeColumnIsMissing
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.util.CSVFieldNumDifferentException
+import org.bson.types.ObjectId
 import org.springframework.core.io.InputStreamSource
 import java.io.InputStream
 
-class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
+class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories, val videoRepository: VideoRepository) {
     fun validate(input: InputStreamSource?): CategoryValidationResult {
         val inputStream = input?.inputStream ?: throw RuntimeException("file is empty!")
         val parsedFile: Either<List<RawCategoryMappingMetadata>, NotCsvFile> = readCsvFile(inputStream)
@@ -28,9 +31,20 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories) {
             return VideoIdOrCategoryCodeColumnIsMissing
         }
 
+        val confirmedVideoIds =
+            videoRepository.findAll(
+                items.mapNotNull {
+                    if (ObjectId.isValid(it.videoId)) {
+                        VideoId(it.videoId!!)
+                    } else {
+                        null
+                    }
+                }.toList()
+            ).map { it.videoId.value }
+
         val categoryCodes = getAllCategories().map { it.code.value }
         val errors = items.mapIndexedNotNull { index, item ->
-            CategoryMappingValidator.validateMapping(index, item, categoryCodes)
+            CategoryMappingValidator.validateMapping(index, item, categoryCodes, confirmedVideoIds)
         }
 
         return if (errors.isEmpty()) {
