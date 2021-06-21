@@ -8,6 +8,7 @@ import com.boclips.videos.service.application.collection.CollectionUpdatesConver
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
 import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
 import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
@@ -129,8 +130,11 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
     }
 
     @Bean
-    fun videoTaggingCsvFileValidator(getAllCategories: GetAllCategories): VideoTaggingCsvFileValidator {
-        return VideoTaggingCsvFileValidator(getAllCategories)
+    fun videoTaggingCsvFileValidator(
+        getAllCategories: GetAllCategories,
+        videoRepository: VideoRepository
+    ): VideoTaggingCsvFileValidator {
+        return VideoTaggingCsvFileValidator(getAllCategories, videoRepository)
     }
 
     @Bean // TODO: collectionResourceFactory mixes different abstractions, address smell. This is a mess.
