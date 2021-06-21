@@ -28,7 +28,7 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
         userId: String
     ): PriceResource {
         return customPrices[videoId] ?: database[videoId]?.price
-            ?: throw FakeClient.notFoundException("Video price not found")
+        ?: throw FakeClient.notFoundException("Video price not found")
     }
 
     override fun probeVideoReference(channelId: String, channelVideoId: String) {
@@ -64,7 +64,8 @@ class VideosClientFake : VideosClient, FakeClient<VideoResource> {
             promoted = updateVideoRequest.promoted ?: video.promoted,
             subjects = updateVideoRequest.subjectIds?.let { subjects ->
                 subjects.map { SubjectResource(id = it) }.toSet()
-            } ?: video.subjects
+            } ?: video.subjects,
+            transcriptRequested = updateVideoRequest.transcriptRequested ?: updateVideoRequest.transcriptRequested
         )
 
         database[videoId] = updatedVideo
