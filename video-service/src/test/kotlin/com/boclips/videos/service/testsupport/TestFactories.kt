@@ -1,11 +1,6 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.contentpartner.service.domain.model.contract.Contract
-import com.boclips.contentpartner.service.domain.model.contract.ContractCosts
-import com.boclips.contentpartner.service.domain.model.contract.ContractDates
-import com.boclips.contentpartner.service.domain.model.contract.ContractId
-import com.boclips.contentpartner.service.domain.model.contract.ContractRestrictions
-import com.boclips.contentpartner.service.domain.model.contract.ContractRoyaltySplit
+import com.boclips.contentpartner.service.domain.model.contract.*
 import com.boclips.eventbus.domain.video.Captions
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.eventbus.domain.video.VideoAnalysedKeyword
@@ -47,16 +42,7 @@ import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.*
-import com.boclips.videos.service.domain.model.video.Price
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoAccess
-import com.boclips.videos.service.domain.model.video.VideoAsset
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoSubjects
-import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.VideoWithPrices
@@ -72,8 +58,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import java.util.Currency
-import java.util.Locale
+import java.util.*
 import com.boclips.security.utils.User as SecurityUser
 
 object TestFactories {
@@ -96,7 +81,12 @@ object TestFactories {
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
         legalRestrictions: String = "",
-        voice: Voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null),
+        voice: Voice = Voice.UnknownVoice(
+            language = null,
+            transcript = null,
+            isTranscriptHumanGenerated = null,
+            isTranscriptRequested = null
+        ),
         topics: Set<Topic> = emptySet(),
         ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
         ratings: List<UserRating> = emptyList(),

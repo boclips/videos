@@ -52,7 +52,8 @@ class VideoDocumentConverterTest {
             voice = Voice.WithVoice(
                 language = Locale.GERMANY,
                 transcript = "hello",
-                isTranscriptHumanGenerated = true
+                isTranscriptHumanGenerated = true,
+                isTranscriptRequested = true
             ),
             topics = setOf(
                 Topic(
@@ -86,7 +87,7 @@ class VideoDocumentConverterTest {
             categories = mapOf(
                 CategorySource.CHANNEL to setOf(CategoryWithAncestorsFactory.sample()),
                 CategorySource.MANUAL to setOf(CategoryWithAncestorsFactory.sample())
-            )
+            ),
         )
 
         val document = VideoDocumentConverter.toVideoDocument(originalVideo)

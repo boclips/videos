@@ -12,4 +12,5 @@ sealed class VideoFilter {
     object IsYoutube : VideoFilter()
     object IsKaltura : VideoFilter()
     object IsDeactivated : VideoFilter()
+    object IsMarkedForTranscriptGeneration : VideoFilter()
 }

@@ -36,6 +36,7 @@ object VideoDocumentConverter {
             language = video.voice.language?.toLanguageTag(),
             transcript = video.voice.transcript,
             isTranscriptHumanGenerated = video.voice.isTranscriptHumanGenerated,
+            isTranscriptRequested = video.voice.isTranscriptRequested,
             isVoiced = video.isVoiced(),
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
@@ -60,7 +61,7 @@ object VideoDocumentConverter {
             categories = VideoCategoriesDocument(
                 channel = video.channelCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
                 manual = video.manualCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
-            )
+            ),
         )
     }
 
@@ -84,13 +85,15 @@ object VideoDocumentConverter {
                 true -> Voice.WithVoice(
                     language = document.language?.let(Locale::forLanguageTag),
                     transcript = document.transcript,
-                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated
+                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated,
+                    isTranscriptRequested = document.isTranscriptRequested
                 )
                 false -> Voice.WithoutVoice
                 null -> Voice.UnknownVoice(
                     language = document.language?.let(Locale::forLanguageTag),
                     transcript = document.transcript,
-                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated
+                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated,
+                    isTranscriptRequested = document.isTranscriptRequested
                 )
             },
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),
