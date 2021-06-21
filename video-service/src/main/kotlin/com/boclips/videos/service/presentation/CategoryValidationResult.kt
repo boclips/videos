@@ -35,7 +35,6 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
                 )
             }
         }
-
         errors.filterIsInstance<MissingVideoId>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
                 errorMessages.add(
@@ -48,14 +47,12 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
             }
         }
 
-        errors.filterIsInstance<VideoDoesntExist>().let { filteredErrors ->
+        errors.filterIsInstance<InvalidVideoId>().let { filteredErrors ->
             if (filteredErrors.isNotEmpty()) {
                 errorMessages.add(
                     "Rows ${
-                    filteredErrors.joinToString {
-                        (it.getRowNumber().toString())
-                    }
-                    } this video ID doesn't exist"
+                    filteredErrors.joinToString { it.getRowNumber().toString() }
+                    } contain invalid Video IDs - ${filteredErrors.joinToString { it.invalidId }}"
                 )
             }
         }
@@ -74,5 +71,5 @@ sealed class VideoTaggingValidationError {
 }
 
 data class InvalidCategoryCode(override val rowIndex: Int, val code: String) : VideoTaggingValidationError()
-data class VideoDoesntExist(override val rowIndex: Int, val videoId: String) : VideoTaggingValidationError()
+data class InvalidVideoId(override val rowIndex: Int, val invalidId: String) : VideoTaggingValidationError()
 data class MissingVideoId(override val rowIndex: Int) : VideoTaggingValidationError()

@@ -9,8 +9,8 @@ internal class CategoryValidationResultTest {
         val error = DataRowsContainErrors(
             errors = listOf(
                 MissingVideoId(rowIndex = 4),
-                VideoDoesntExist(rowIndex = 2, videoId = "ABC"),
-                VideoDoesntExist(rowIndex = 8, videoId = "DEF"),
+                InvalidVideoId(rowIndex = 2, invalidId = "ABC"),
+                InvalidVideoId(rowIndex = 8, invalidId = "DEF"),
                 InvalidCategoryCode(rowIndex = 6, code = "HI"),
             )
         )
