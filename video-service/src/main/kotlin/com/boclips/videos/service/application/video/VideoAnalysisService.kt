@@ -11,15 +11,11 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotFound
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.Video
-import com.boclips.videos.service.domain.model.video.VideoFilter
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import java.util.Locale
+import java.util.*
 
 class VideoAnalysisService(
     private val videoRepository: VideoRepository,
@@ -29,10 +25,14 @@ class VideoAnalysisService(
     companion object : KLogging()
 
     fun analyseVideosOfContentPartner(contentPartner: String, language: Locale?) {
-        videoRepository.streamAll(VideoFilter.ChannelNameIs(contentPartner)) { videos ->
-            videos.forEach { video ->
-                analysePlayableVideo(video.videoId.value, language)
-            }
+        videoRepository.streamAll(VideoFilter.ChannelNameIs(contentPartner)) { allVideos ->
+            allVideos.windowed(size = 1000, step = 1000, partialWindows = true)
+                .forEachIndexed { batchIndex, batchOfVideos ->
+                    logger.info { "Dispatching analyse playable video events of channel:$contentPartner batch: $batchIndex" }
+                    batchOfVideos.forEach { video ->
+                        analysePlayableVideo(video.videoId.value, language)
+                    }
+                }
         }
     }
 
@@ -127,7 +127,11 @@ class VideoAnalysisService(
         videoRepository.bulkUpdate(
             listOf(
                 VideoUpdateCommand.ReplaceLanguage(video.videoId, video.voice.language ?: analysedVideo.language),
-                VideoUpdateCommand.ReplaceTranscript(videoId = video.videoId, transcript = analysedVideo.transcript, isHumanGenerated = false),
+                VideoUpdateCommand.ReplaceTranscript(
+                    videoId = video.videoId,
+                    transcript = analysedVideo.transcript,
+                    isHumanGenerated = false
+                ),
                 VideoUpdateCommand.ReplaceTopics(video.videoId, convertTopics(analysedVideo.topics)),
                 VideoUpdateCommand.ReplaceKeywords(
                     video.videoId,
