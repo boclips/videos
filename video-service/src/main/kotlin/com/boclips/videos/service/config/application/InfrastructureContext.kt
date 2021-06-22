@@ -27,7 +27,7 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
-import com.boclips.videos.service.infrastructure.video.NoopHQCaptionConverter
+import com.boclips.videos.service.infrastructure.captions.NomalabCaptionConverter
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
@@ -182,5 +182,5 @@ class InfrastructureContext(
     }
 
     @Bean
-    fun captionConverter(): CaptionConverter = NoopHQCaptionConverter()
+    fun captionConverter(): CaptionConverter = NomalabCaptionConverter()
 }

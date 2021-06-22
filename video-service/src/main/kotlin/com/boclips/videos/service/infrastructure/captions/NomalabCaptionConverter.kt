@@ -1,4 +1,4 @@
-package com.boclips.videos.service.infrastructure.video
+package com.boclips.videos.service.infrastructure.captions
 
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat
@@ -11,7 +11,7 @@ import fr.noop.subtitle.vtt.VttParser
 import fr.noop.subtitle.vtt.VttWriter
 import java.io.ByteArrayOutputStream
 
-class NoopHQCaptionConverter : CaptionConverter {
+class NomalabCaptionConverter : CaptionConverter {
 
     override fun convert(content: String, from: CaptionFormat, to: CaptionFormat): String {
         if (from == to) {

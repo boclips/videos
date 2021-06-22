@@ -3,13 +3,14 @@ package com.boclips.videos.service.infrastructure.video
 import com.boclips.videos.service.domain.model.video.Caption
 import com.boclips.videos.service.domain.model.video.CaptionFormat
 import com.boclips.videos.service.domain.model.video.UnsupportedFormatConversionException
+import com.boclips.videos.service.infrastructure.captions.NomalabCaptionConverter
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class NoopHQCaptionConverterTest {
+class NomalabCaptionConverterTest {
     // Trim ident was causing issues by removing the last line which is need for a valid SRT
-    val vttCaptionContent = """WEBVTT
+    private val vttCaptionContent = """WEBVTT
 
 00:00:00.500 --> 00:00:02.000
 The Web is always changing
@@ -19,7 +20,7 @@ and the way we access it is changing
 
 """
 
-    val vttCaptionContentWithIds = """WEBVTT
+    private val vttCaptionContentWithCues = """WEBVTT
 
 1
 00:00:00.500 --> 00:00:02.000
@@ -31,7 +32,7 @@ and the way we access it is changing
 
 """
 
-    val srtCaptionContent = """
+    private val srtCaptionContent = """
 1
 00:00:00,500 --> 00:00:02,000
 The Web is always changing
@@ -42,14 +43,19 @@ and the way we access it is changing
 
 """
 
-    val captionFormatter = NoopHQCaptionConverter()
+    private val captionFormatter = NomalabCaptionConverter()
+
+    @Test
+    fun `from vtt with cues format to srt`() {
+        captionFormatter.convert(vttCaptionContentWithCues, from = CaptionFormat.WEBVTT, to = CaptionFormat.SRT)
+    }
 
     @Test
     fun `from srt to vtt`() {
         val convertedVttCaption =
             captionFormatter.convert(content = srtCaptionContent, from = CaptionFormat.SRT, to = CaptionFormat.WEBVTT)
 
-        assertThat(normalizeContent(convertedVttCaption)).isEqualTo(normalizeContent(vttCaptionContentWithIds))
+        assertThat(normalizeContent(convertedVttCaption)).isEqualTo(normalizeContent(vttCaptionContentWithCues))
     }
 
     @Test
