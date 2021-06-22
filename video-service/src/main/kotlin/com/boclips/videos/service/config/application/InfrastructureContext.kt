@@ -15,6 +15,7 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.CaptionConverter
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.accessrules.ApiAccessRulesConverter
+import com.boclips.videos.service.infrastructure.captions.NomalabCaptionConverter
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.collection.CollectionRepositoryEventsDecorator
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
@@ -27,7 +28,6 @@ import com.boclips.videos.service.infrastructure.subject.MongoSubjectRepository
 import com.boclips.videos.service.infrastructure.tag.MongoTagRepository
 import com.boclips.videos.service.infrastructure.user.ApiAccessRuleService
 import com.boclips.videos.service.infrastructure.user.ApiGetUserIdOverride
-import com.boclips.videos.service.infrastructure.captions.NomalabCaptionConverter
 import com.github.cloudyrock.mongock.driver.mongodb.v3.driver.MongoCore3Driver
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
