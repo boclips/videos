@@ -17,6 +17,6 @@ class VideoTranscriptService(val videoRepository: VideoRepository) {
         val videoId = VideoId(value = rawVideoId)
         val video = videoRepository.find(videoId) ?: throw VideoNotFoundException(videoId)
 
-        return video.voice.transcript ?: throw VideoTranscriptNotFound(videoId)
+        return video.voice.transcript?.content ?: throw VideoTranscriptNotFound(videoId)
     }
 }

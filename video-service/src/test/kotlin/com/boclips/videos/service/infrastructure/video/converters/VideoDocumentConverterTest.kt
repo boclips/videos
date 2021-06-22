@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoType
@@ -51,9 +52,11 @@ class VideoDocumentConverterTest {
             legalRestrictions = "legal restrictions",
             voice = Voice.WithVoice(
                 language = Locale.GERMANY,
-                transcript = "hello",
-                isTranscriptHumanGenerated = true,
-                isTranscriptRequested = true
+                transcript = Transcript(
+                    content = "hello",
+                    isHumanGenerated = true,
+                    isRequested = true
+                )
             ),
             topics = setOf(
                 Topic(

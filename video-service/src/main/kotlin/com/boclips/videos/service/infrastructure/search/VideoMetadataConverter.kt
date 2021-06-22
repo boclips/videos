@@ -36,7 +36,7 @@ object VideoMetadataConverter {
             tags = tagsFrom(video),
             durationSeconds = video.playback.duration.seconds,
             source = convertPlaybackTypeToSourceType(video.playback.id.type),
-            transcript = video.voice.transcript,
+            transcript = video.voice.transcript?.content,
             isVoiced = video.isVoiced(),
             language = video.voice.language,
             ageRangeMin = video.ageRange.min(),

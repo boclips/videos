@@ -55,7 +55,7 @@ data class Video(
         ratings.any { it.userId == user }
 
     override fun hasTranscript(): Boolean {
-        return this.voice.transcript != null
+        return this.voice.transcript?.content != null
     }
 
     override fun toString(): String {

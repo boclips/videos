@@ -53,13 +53,11 @@ class CreateVideoRequestToVideoConverter {
                 true -> Voice.WithVoice(
                     language = convertLanguage(createVideoRequest, fallbackLanguage),
                     transcript = null,
-                    isTranscriptHumanGenerated = null
                 )
                 false -> Voice.WithoutVoice
                 null -> Voice.UnknownVoice(
                     language = convertLanguage(createVideoRequest, fallbackLanguage),
                     transcript = null,
-                    isTranscriptHumanGenerated = null
                 )
             },
             ratings = emptyList(),

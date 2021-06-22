@@ -34,9 +34,9 @@ object VideoDocumentConverter {
             ingestedAt = video.ingestedAt.toString(),
             legalRestrictions = video.legalRestrictions,
             language = video.voice.language?.toLanguageTag(),
-            transcript = video.voice.transcript,
-            isTranscriptHumanGenerated = video.voice.isTranscriptHumanGenerated,
-            isTranscriptRequested = video.voice.isTranscriptRequested,
+            transcript = video.voice.transcript?.content,
+            isTranscriptHumanGenerated = video.voice.transcript?.isHumanGenerated,
+            isTranscriptRequested = video.voice.transcript?.isRequested,
             isVoiced = video.isVoiced(),
             topics = video.topics.map(TopicDocumentConverter::toDocument),
             ageRangeMin = video.ageRange.min(),
@@ -84,16 +84,20 @@ object VideoDocumentConverter {
             voice = when (document.isVoiced) {
                 true -> Voice.WithVoice(
                     language = document.language?.let(Locale::forLanguageTag),
-                    transcript = document.transcript,
-                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated,
-                    isTranscriptRequested = document.isTranscriptRequested
+                    transcript = Transcript(
+                        content = document.transcript,
+                        isHumanGenerated = document.isTranscriptHumanGenerated,
+                        isRequested = document.isTranscriptRequested
+                    )
                 )
                 false -> Voice.WithoutVoice
                 null -> Voice.UnknownVoice(
                     language = document.language?.let(Locale::forLanguageTag),
-                    transcript = document.transcript,
-                    isTranscriptHumanGenerated = document.isTranscriptHumanGenerated,
-                    isTranscriptRequested = document.isTranscriptRequested
+                    transcript = Transcript(
+                        content = document.transcript,
+                        isHumanGenerated = document.isTranscriptHumanGenerated,
+                        isRequested = document.isTranscriptRequested
+                    )
                 )
             },
             topics = document.topics.orEmpty().map(TopicDocumentConverter::toTopic).toSet(),

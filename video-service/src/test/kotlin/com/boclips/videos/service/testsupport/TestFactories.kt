@@ -83,9 +83,11 @@ object TestFactories {
         legalRestrictions: String = "",
         voice: Voice = Voice.UnknownVoice(
             language = null,
-            transcript = null,
-            isTranscriptHumanGenerated = null,
-            isTranscriptRequested = null
+            transcript = Transcript(
+                content = null,
+                isRequested = null,
+                isHumanGenerated = null
+            ),
         ),
         topics: Set<Topic> = emptySet(),
         ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),

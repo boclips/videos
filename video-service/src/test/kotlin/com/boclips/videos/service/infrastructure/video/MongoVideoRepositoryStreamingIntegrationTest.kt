@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
 import com.boclips.videos.service.domain.model.video.VideoType
@@ -195,7 +196,7 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
 
     @Test
     fun `stream all by marked for transcript generation`() {
-        val voiceWithTranscriptRequested = Voice.WithVoice(isTranscriptRequested = true, language = null, isTranscriptHumanGenerated = null, transcript = null)
+        val voiceWithTranscriptRequested = Voice.WithVoice(language = null, transcript = Transcript(isRequested = true))
         val video1 = mongoVideoRepository.create(TestFactories.createVideo(voice = voiceWithTranscriptRequested))
         val video2 = mongoVideoRepository.create(TestFactories.createVideo(voice = voiceWithTranscriptRequested))
         mongoVideoRepository.create(TestFactories.createVideo())

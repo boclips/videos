@@ -4,6 +4,7 @@ import com.boclips.security.testing.setSecurityContext
 import com.boclips.videos.api.request.video.CaptionFormatRequest
 import com.boclips.videos.service.config.security.UserRoles
 import com.boclips.videos.service.domain.model.user.UserId
+import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.testsupport.TestFactories
@@ -195,7 +196,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = videoId,
-                voice = Voice.UnknownVoice(language = null, transcript = "hi", isTranscriptHumanGenerated = null)
+                voice = Voice.UnknownVoice(language = null, transcript = Transcript(content = "hi"))
             )
         )
 
@@ -213,7 +214,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = aValidId(),
-                voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)
+                voice = Voice.UnknownVoice(language = null, transcript = null)
             )
         )
 
@@ -226,7 +227,7 @@ class VideosLinkBuilderTest {
         val link = videosLinkBuilder.transcriptLink(
             createVideo(
                 videoId = videoId,
-                voice = Voice.UnknownVoice(language = null, transcript = "hi", isTranscriptHumanGenerated = null)
+                voice = Voice.UnknownVoice(language = null, transcript = Transcript(content = "hi"))
             )
         )
 

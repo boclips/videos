@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.Price
+import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
@@ -56,7 +57,7 @@ class VideoMetadataConverterTest {
                 types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
                 keywords = listOf("k1"),
                 releasedOn = LocalDate.of(2019, Month.APRIL, 19),
-                voice = Voice.WithVoice(language = Locale.JAPANESE, transcript = "a great transcript", isTranscriptHumanGenerated = false),
+                voice = Voice.WithVoice(language = Locale.JAPANESE, transcript = Transcript(content = "a great transcript", isHumanGenerated = false, isRequested = false)),
                 ageRange = AgeRange.of(min = 5, max = 11, curatedManually = true),
                 categories = mapOf(
                     CategorySource.CHANNEL to setOf(

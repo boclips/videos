@@ -9,6 +9,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.Topic
+import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.Voice
@@ -346,7 +347,6 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
                 voice = Voice.UnknownVoice(
                     language = Locale.TAIWAN,
                     transcript = null,
-                    isTranscriptHumanGenerated = null
                 )
             )
         )
@@ -361,32 +361,32 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `replaces transcript`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)))
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla", true))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.voice.transcript).isEqualTo("bla bla bla")
-        assertThat(updatedAsset!!.voice.isTranscriptHumanGenerated).isTrue
+        assertThat(updatedAsset!!.voice.transcript!!.content).isEqualTo("bla bla bla")
+        assertThat(updatedAsset.voice.transcript!!.isHumanGenerated).isTrue
     }
 
     @Test
     fun `replaces transcript requested`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(isTranscriptRequested = true, language = null, transcript = null, isTranscriptHumanGenerated = null)))
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = Transcript(isRequested = true))))
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscriptRequested(video.videoId, false))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
-        assertThat(updatedAsset!!.voice.isTranscriptRequested).isFalse
+        assertThat(updatedAsset!!.voice.transcript!!.isRequested).isFalse
     }
 
     @Test
     fun `replaces topics`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null, isTranscriptHumanGenerated = null)))
+            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
         val topic = Topic(
             name = "Bayesian Methods",
             language = Locale.US,
