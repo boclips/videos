@@ -35,7 +35,8 @@ object ChannelMetadataConverter {
                 categories = convertCategories(channel),
                 categoriesWithAncestors = convertCategoriesWithAncestors(channel),
             ),
-            isYoutube = channel.ingest.type() == YOUTUBE
+            isYoutube = channel.ingest.type() == YOUTUBE,
+            isPrivate = channel.visibility == ChannelVisibility.PRIVATE,
         )
     }
 

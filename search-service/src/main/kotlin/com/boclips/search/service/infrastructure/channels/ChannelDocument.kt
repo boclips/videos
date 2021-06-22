@@ -15,6 +15,7 @@ data class ChannelDocument @JsonCreator constructor(
     @param:JsonProperty(TAXONOMY_CATEGORIES) val taxonomyCategories: List<String>?,
     @param:JsonProperty(TAXONOMY_CATEGORIES_WITH_ANCESTORS) val taxonomyCategoriesWithAncestors: List<String>?,
     @param:JsonProperty(IS_YOUTUBE) val isYoutube: Boolean?,
+    @param:JsonProperty(IS_PRIVATE) val isPrivate: Boolean = false,
 ) {
     companion object {
         const val ID = "id"
@@ -27,5 +28,6 @@ data class ChannelDocument @JsonCreator constructor(
         const val TAXONOMY_CATEGORIES_WITH_ANCESTORS = "taxonomyCategoriesWithAncestors"
         const val TAXONOMY_VIDEO_LEVEL_TAGGING = "taxonomyVideoLevelTagging"
         const val IS_YOUTUBE = "isYoutube"
+        const val IS_PRIVATE = "isPrivate"
     }
 }

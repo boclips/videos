@@ -45,7 +45,8 @@ internal class ChannelsDocumentConverterTest {
             taxonomyCategories = null,
             taxonomyCategoriesWithAncestors = null,
             ingestType = IngestType.MANUAL.name,
-            isYoutube = null
+            isYoutube = null,
+            isPrivate = false
         )
 
         assertThat(actualDocument).isEqualTo(expectedDocument)
@@ -60,7 +61,8 @@ internal class ChannelsDocumentConverterTest {
             contentTypes = listOf(ContentType.NEWS, ContentType.STOCK, ContentType.INSTRUCTIONAL),
             ingestType = IngestType.MRSS,
             taxonomy = Taxonomy(videoLevelTagging = true),
-            isYoutube = true
+            isYoutube = true,
+            isPrivate = true,
         )
 
         val document = ChannelsDocumentConverter().convertToDocument(metadata)
@@ -77,7 +79,8 @@ internal class ChannelsDocumentConverterTest {
                 taxonomyVideoLevelTagging = true,
                 taxonomyCategories = null,
                 taxonomyCategoriesWithAncestors = null,
-                isYoutube = true
+                isYoutube = true,
+                isPrivate = true,
             )
         )
     }
@@ -112,7 +115,7 @@ internal class ChannelsDocumentConverterTest {
                 taxonomyVideoLevelTagging = false,
                 taxonomyCategories = listOf("AB", "D", "DE"),
                 taxonomyCategoriesWithAncestors = null,
-                isYoutube = false
+                isYoutube = false,
             )
         )
     }

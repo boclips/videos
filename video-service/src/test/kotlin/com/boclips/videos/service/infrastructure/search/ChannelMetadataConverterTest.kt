@@ -1,6 +1,11 @@
 package com.boclips.videos.service.infrastructure.search
 
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelVisibility
+import com.boclips.contentpartner.service.domain.model.channel.ContentType
+import com.boclips.contentpartner.service.domain.model.channel.ManualIngest
+import com.boclips.contentpartner.service.domain.model.channel.Taxonomy
+import com.boclips.contentpartner.service.domain.model.channel.YoutubeScrapeIngest
 import com.boclips.contentpartner.service.testsupport.ChannelFactory
 import com.boclips.search.service.domain.channels.model.CategoryCode
 import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
@@ -42,8 +47,14 @@ class ChannelMetadataConverterTest {
             contentTypes = listOf(ContentType.INSTRUCTIONAL, ContentType.STOCK, ContentType.NEWS),
             taxonomy = Taxonomy.ChannelLevelTagging(
                 categories = setOf(
-                    CategoryWithAncestorsFactory.sample(codeValue = "CD", ancestors = setOf(SearchServiceCategoryCode("C"))),
-                    CategoryWithAncestorsFactory.sample(codeValue = "AB", ancestors = setOf(SearchServiceCategoryCode("A")))
+                    CategoryWithAncestorsFactory.sample(
+                        codeValue = "CD",
+                        ancestors = setOf(SearchServiceCategoryCode("C"))
+                    ),
+                    CategoryWithAncestorsFactory.sample(
+                        codeValue = "AB",
+                        ancestors = setOf(SearchServiceCategoryCode("A"))
+                    )
                 )
             ),
             ingest = ManualIngest
@@ -64,5 +75,18 @@ class ChannelMetadataConverterTest {
             .containsExactlyInAnyOrder(CategoryCode("A"), CategoryCode("AB"), CategoryCode("C"), CategoryCode("CD"))
         assertThat(channelMetadata.taxonomy.videoLevelTagging).isFalse
         assertThat(channelMetadata.isYoutube).isFalse
+    }
+
+    @Test
+    fun `should convert including visibility`() {
+        val privateChannel = ChannelFactory.createChannel(
+            visibility = ChannelVisibility.PRIVATE
+        )
+        val publicChannel = ChannelFactory.createChannel(
+            visibility = ChannelVisibility.PUBLIC
+        )
+
+        assertThat(ChannelMetadataConverter.convert(privateChannel).isPrivate).isTrue
+        assertThat(ChannelMetadataConverter.convert(publicChannel).isPrivate).isFalse
     }
 }

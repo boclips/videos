@@ -7,5 +7,6 @@ data class ChannelMetadata(
     val contentTypes: List<ContentType>,
     val ingestType: IngestType?,
     val taxonomy: Taxonomy,
-    val isYoutube: Boolean?
+    val isYoutube: Boolean?,
+    val isPrivate: Boolean,
 )

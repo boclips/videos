@@ -17,7 +17,8 @@ class ChannelIndexConfiguration : IndexConfiguration {
                 ChannelDocument.TAXONOMY_VIDEO_LEVEL_TAGGING to Fields.boolean,
                 ChannelDocument.TAXONOMY_CATEGORIES to Fields.simpleText,
                 ChannelDocument.TAXONOMY_CATEGORIES_WITH_ANCESTORS to Fields.simpleText,
-                ChannelDocument.IS_YOUTUBE to Fields.boolean
+                ChannelDocument.IS_YOUTUBE to Fields.boolean,
+                ChannelDocument.IS_PRIVATE to Fields.boolean,
             )
         )
     }
