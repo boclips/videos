@@ -57,7 +57,7 @@ class VideoToResourceConverterTest {
         types = listOf(VideoType.NEWS),
         subjects = setOf(TestFactories.createSubject(id = "maths-subject-id", name = "Maths")),
         legalRestrictions = "None",
-        voice = Voice.WithVoice(language = Locale("khm"), transcript = Transcript(content = "Hello there") ),
+        voice = Voice.WithVoice(language = Locale("khm"), transcript = Transcript(content = "Hello there")),
         ageRange = AgeRange.of(min = 5, max = 11, curatedManually = false),
         ratings = listOf(
             UserRating(
