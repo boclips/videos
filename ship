@@ -4,7 +4,8 @@ set -ex
 
 git pull -r
 
-./gradlew ktlintFormat --scan
+./gradlew ktlintFormat
+./gradlew ktlintCheck
 ./gradlew build --info
 
 git push
