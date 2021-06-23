@@ -1,6 +1,7 @@
 package com.boclips.videos.service.application.video
 
 import com.boclips.videos.service.domain.model.video.VideoFilter
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.CaptionConverter
 import com.boclips.videos.service.domain.service.video.CaptionService
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -15,32 +16,29 @@ class GenerateTranscripts(
     companion object : KLogging()
 
     operator fun invoke() {
-        logger.info("Starting a generating transcripts for marked videos")
+        logger.info("Starting generating transcripts for marked videos")
 
-        videoRepository.streamAll(VideoFilter.IsMarkedForTranscriptGeneration) { videos -> // maybe use streamUpdate
-            videos.forEach { video ->
-                val humanGeneratedCaption =
-                    captionService.getCaption(videoId = video.videoId, humanGeneratedOnly = true)
-
-                humanGeneratedCaption?.let { caption -> // put this thing to the captionService?
-
-                    val transcript = captionConverter.convertToTranscript(caption)
-
-                    videoRepository.bulkUpdate(
-                        listOf(
-                            VideoUpdateCommand.ReplaceTranscript(
-                                videoId = video.videoId,
-                                transcript = transcript, // wrong, we should parse from caption to transcript string
-                                isHumanGenerated = true
-                            ),
-                            VideoUpdateCommand.ReplaceTranscriptRequested(
-                                videoId = video.videoId,
-                                isTranscriptRequested = false
-                            )
-                        )
-                    )
-                }
+        videoRepository.streamUpdate(VideoFilter.IsMarkedForTranscriptGeneration) { videos ->
+            videos.flatMap { video ->
+                captionService.getCaption(videoId = video.videoId, humanGeneratedOnly = true)?.let { caption ->
+                    captionConverter.convertToTranscript(caption)?.let { transcript ->
+                        getMarkedVideoUpdateCommands(video.videoId, transcript)
+                    }
+                } ?: emptyList()
             }
         }
     }
+
+    private fun getMarkedVideoUpdateCommands(videoId: VideoId, transcript: String): List<VideoUpdateCommand> =
+        listOf(
+            VideoUpdateCommand.ReplaceTranscript(
+                videoId = videoId,
+                transcript = transcript,
+                isHumanGenerated = true
+            ),
+            VideoUpdateCommand.ReplaceTranscriptRequested(
+                videoId = videoId,
+                isTranscriptRequested = false
+            )
+        )
 }
