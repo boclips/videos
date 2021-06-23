@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class GetChannelTest {
-
     @Test
     fun `when content partner not found throws`() {
         assertThrows<ResourceNotFoundApiException> {

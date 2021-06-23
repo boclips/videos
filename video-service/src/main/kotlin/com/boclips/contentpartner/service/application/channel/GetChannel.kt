@@ -8,13 +8,13 @@ import com.boclips.web.exceptions.ResourceNotFoundApiException
 class GetChannel(
     private val channelRepository: ChannelRepository
 ) {
-    operator fun invoke(contentPartnerId: String): Channel {
+    operator fun invoke(channelId: String): Channel {
         return channelRepository.findById(
-            ChannelId(value = contentPartnerId)
+            ChannelId(value = channelId)
         )
             ?: throw ResourceNotFoundApiException(
-                error = "Content partner not found",
-                message = "No content partner found for this id: $contentPartnerId"
+                error = "Channel not found",
+                message = "No channel found for this id: $channelId"
             )
     }
 }
