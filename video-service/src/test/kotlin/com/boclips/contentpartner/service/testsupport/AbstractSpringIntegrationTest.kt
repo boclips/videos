@@ -291,10 +291,11 @@ abstract class AbstractSpringIntegrationTest {
         subjects: List<String>? = null,
         contractId: String? = null,
         categories: List<String>? = null,
-        videoLevelTagging: Boolean? = null
+        videoLevelTagging: Boolean? = null,
+        private: Boolean = false
     ): Channel {
         val contract = contractId ?: saveContract(name = UUID.randomUUID().toString()).id.value
-        val createdContentPartner = createChannel(
+        val createdChannel = createChannel(
             VideoServiceApiFactory.createChannelRequest(
                 name = name,
                 ageRanges = ageRanges,
@@ -314,13 +315,14 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjects,
                 contractId = contract,
                 categories = categories,
-                requiresVideoLevelTagging = videoLevelTagging
+                requiresVideoLevelTagging = videoLevelTagging,
+                private = private
             )
         )
 
         fakeEventBus.clearState()
 
-        return createdContentPartner
+        return createdChannel
     }
 
     fun saveLegalRestrictions(text: String = "No restrictions."): LegalRestrictionsId {

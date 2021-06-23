@@ -384,6 +384,19 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `private channels are excluded by default`() {
+        saveChannel(name = "i am private channel", private = true)
+        val publicChannel = saveChannel(name = "i am public channel", private =  false)
+
+        mockMvc.perform(
+            get("/v1/channels").asBoclipsEmployee()
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(1)))
+            .andExpect(jsonPath("$._embedded.channels[0].id", equalTo(publicChannel.id.value)))
+            .andExpect(jsonPath("$._embedded.channels[0].name", equalTo("i am public channel")))
+    }
+
+    @Test
     fun `can filter channels by name`() {
         saveChannel(name = "hello")
         saveChannel(name = "goodbye")

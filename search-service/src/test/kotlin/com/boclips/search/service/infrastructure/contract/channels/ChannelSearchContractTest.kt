@@ -1,6 +1,10 @@
 package com.boclips.search.service.infrastructure.contract.channels
 
-import com.boclips.search.service.domain.channels.model.*
+import com.boclips.search.service.domain.channels.model.CategoryCode
+import com.boclips.search.service.domain.channels.model.ChannelMetadata
+import com.boclips.search.service.domain.channels.model.ChannelQuery
+import com.boclips.search.service.domain.channels.model.IngestType
+import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.IndexWriter
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
@@ -326,5 +330,27 @@ class ChannelSearchContractTest : EmbeddedElasticSearchIntegrationTest() {
         )
 
         assertThat(results.elements).containsExactly("3", "2", "4", "1")
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(SearchServiceProvider::class)
+    fun `private channels are hidden by default`(
+        queryService: IndexReader<ChannelMetadata, ChannelQuery>,
+        adminService: IndexWriter<ChannelMetadata>
+    ) {
+        adminService.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "private", name = "Z", isPrivate = true),
+                SearchableChannelMetadataFactory.create(id = "public", name = "B", isPrivate = false)
+            ),
+        )
+
+        val results = queryService.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(), startIndex = 0, windowSize = 4
+            )
+        )
+
+        assertThat(results.elements).containsExactly("public")
     }
 }

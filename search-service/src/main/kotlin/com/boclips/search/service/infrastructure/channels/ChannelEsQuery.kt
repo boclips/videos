@@ -50,5 +50,13 @@ class ChannelEsQuery {
                     )
                 }
             }
+            .apply {
+                must(
+                    QueryBuilders.termsQuery(
+                        ChannelDocument.IS_PRIVATE,
+                        false
+                    )
+                )
+            }
     }
 }

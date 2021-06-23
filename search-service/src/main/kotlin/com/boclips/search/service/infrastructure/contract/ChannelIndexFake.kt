@@ -133,6 +133,7 @@ class ChannelIndexFake :
                     query.taxonomy?.categoriesWithAncestors?.contains(it) ?: false
                 } ?: false
             }
+            .filter { item -> !item.value.isPrivate }
             .map { it.key }
     }
 }
