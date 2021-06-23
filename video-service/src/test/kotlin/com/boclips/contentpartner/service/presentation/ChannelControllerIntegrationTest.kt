@@ -386,7 +386,7 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `private channels are excluded by default`() {
         saveChannel(name = "i am private channel", private = true)
-        val publicChannel = saveChannel(name = "i am public channel", private =  false)
+        val publicChannel = saveChannel(name = "i am public channel", private = false)
 
         mockMvc.perform(
             get("/v1/channels").asBoclipsEmployee()
