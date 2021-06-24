@@ -9,7 +9,7 @@ class ChannelQuery(
     override val sort: List<Sort<ChannelMetadata>> = emptyList(),
     // name returns exact matches only
     val name: String? = null,
-    val accessRuleQuery: ChannelAccessRuleQuery = ChannelAccessRuleQuery(),
+    val accessRuleQuery: ChannelAccessRuleQuery? = ChannelAccessRuleQuery(),
     val ingestTypes: List<IngestType> = emptyList(),
     val taxonomy: Taxonomy? = null
 ) : SearchQuery<ChannelMetadata>(phrase = phrase, sort = sort)

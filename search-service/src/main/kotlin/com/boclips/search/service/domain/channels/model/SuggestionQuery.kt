@@ -5,7 +5,7 @@ import com.boclips.search.service.domain.common.model.Sort
 
 class SuggestionQuery<T>(
     override val phrase: String = "",
-    val accessRuleQuery: SuggestionAccessRuleQuery = SuggestionAccessRuleQuery(),
+    val accessRuleQuery: SuggestionAccessRuleQuery? = SuggestionAccessRuleQuery(),
     override val sort: List<Sort<T>> = emptyList()
 ) : SearchQuery<T>(phrase = phrase, sort = sort)
 

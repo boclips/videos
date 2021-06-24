@@ -52,7 +52,7 @@ class ChannelsIndexReader(val client: RestHighLevelClient) :
             PaginatedIndexSearchRequest(
                 query = ChannelQuery(
                     phrase = suggestionRequest.query.phrase,
-                    accessRuleQuery = suggestionRequest.query.accessRuleQuery.let {
+                    accessRuleQuery = suggestionRequest.query.accessRuleQuery?.let {
                         ChannelAccessRuleQuery(
                             excludedContentPartnerIds = it.excludedContentPartnerIds,
                             includedChannelIds = it.includedChannelIds,
