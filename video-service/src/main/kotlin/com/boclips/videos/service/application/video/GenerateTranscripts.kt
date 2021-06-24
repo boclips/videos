@@ -27,7 +27,6 @@ class GenerateTranscripts(
                         getMarkedVideoUpdateCommands(video.videoId, transcript)
                     }
                 } ?: handleMissingCaptions(video)
-
             }
         }
     }
