@@ -11,10 +11,10 @@ version=$(cat version/tag)
 cd source
 ./gradlew \
     -Pversion="$version" \
-    ktlintCheck --debug \
     search-service:clean \
     video-service:clean \
     video-service:build \
+    ktlintCheck --debug \
     --info \
     --no-daemon \
     --rerun-tasks
