@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.channels
 
 import com.boclips.search.service.domain.channels.model.CategoryCode
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.ContentType
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
@@ -698,5 +699,32 @@ class ChannelsIndexReaderIntegrationTest : EmbeddedElasticSearchIntegrationTest(
         assertThat(results.elements[0]).isEqualTo("1")
         assertThat(results.elements[1]).isEqualTo("2")
         assertThat(results.elements[2]).isEqualTo("3")
+    }
+
+    @Test
+    fun `returns channels with included private channels`() {
+        indexWriter.safeRebuildIndex(
+            sequenceOf(
+                SearchableChannelMetadataFactory.create(id = "1", name = "Channel 1", isPrivate = true),
+                SearchableChannelMetadataFactory.create(id = "2", name = "Channel 2", isPrivate = true),
+                SearchableChannelMetadataFactory.create(id = "3", name = "Channel 3", isPrivate = true),
+                SearchableChannelMetadataFactory.create(id = "4", name = "Channel 4", isPrivate = false),
+                SearchableChannelMetadataFactory.create(id = "5", name = "Channel 5", isPrivate = false),
+                SearchableChannelMetadataFactory.create(id = "6", name = "Channel 6", isPrivate = true),
+            )
+        )
+
+        val results = indexReader.search(
+            PaginatedIndexSearchRequest(
+                query = ChannelQuery(
+                    accessRuleQuery = ChannelAccessRuleQuery(
+                        includedPrivateChannelIds = setOf("1", "2", "3")
+                    )
+                )
+            )
+        )
+
+        assertThat(results.elements.size).isEqualTo(5)
+        assertThat(results.elements).containsExactly("1", "2", "3", "4", "5")
     }
 }

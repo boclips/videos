@@ -3,9 +3,17 @@ package com.boclips.contentpartner.service.domain.service.channel
 import com.boclips.contentpartner.service.application.channel.ChannelFiltersConverter
 import com.boclips.contentpartner.service.common.PageInfo
 import com.boclips.contentpartner.service.common.ResultsPage
-import com.boclips.contentpartner.service.domain.model.channel.*
+import com.boclips.contentpartner.service.domain.model.channel.Channel
+import com.boclips.contentpartner.service.domain.model.channel.ChannelId
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRepository
+import com.boclips.contentpartner.service.domain.model.channel.ChannelRequest
+import com.boclips.contentpartner.service.domain.model.channel.ChannelUpdateCommand
+import com.boclips.contentpartner.service.domain.model.channel.CreateChannelResult
+import com.boclips.contentpartner.service.domain.model.channel.SingleChannelUpdate
+import com.boclips.contentpartner.service.domain.model.channel.UpdateChannelResult
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 
 class ChannelService(
@@ -63,12 +71,12 @@ class ChannelService(
         return false
     }
 
-    fun search(channelRequest: ChannelRequest): ResultsPage<Channel> {
+    fun search(channelRequest: ChannelRequest, videoAccess: VideoAccess? = null): ResultsPage<Channel> {
         val pageRequest = channelRequest.pageRequest
 
         val searchRequest =
             PaginatedIndexSearchRequest(
-                query = channelRequest.toQuery(),
+                query = channelRequest.toQuery(videoAccess = videoAccess),
                 startIndex = pageRequest.getStartIndex(),
                 windowSize = pageRequest.size
             )

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.domain.model.video.request
 
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.SuggestionAccessRuleQuery
 import com.boclips.search.service.domain.videos.model.VideoAccessRuleQuery
 import com.boclips.videos.service.domain.model.video.VideoAccess
@@ -29,6 +30,12 @@ object AccessRuleQueryConverter {
             excludedContentPartnerIds = AccessRuleConverter.mapToExcludedChannelIds(videoAccess),
             includedChannelIds = AccessRuleConverter.mapToIncludedChannelIds(videoAccess),
             isEligibleForStream = AccessRuleConverter.isEligibleForStreaming(videoAccess),
+        )
+    }
+
+    fun toChannelAccessRulesQuery(videoAccess: VideoAccess): ChannelAccessRuleQuery {
+        return ChannelAccessRuleQuery(
+            includedPrivateChannelIds = AccessRuleConverter.mapToIncludedPrivateChannels(videoAccess)
         )
     }
 }

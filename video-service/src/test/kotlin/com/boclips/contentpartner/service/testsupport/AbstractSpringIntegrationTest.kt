@@ -14,8 +14,10 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.kalturaclient.media.MediaEntryStatus
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoSearchService
+import com.boclips.users.api.factories.AccessRulesResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
+import com.boclips.users.api.response.accessrule.AccessRuleResource
 import com.boclips.videos.api.common.Specified
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.request.channel.ContentCategoryRequest
@@ -369,6 +371,19 @@ abstract class AbstractSpringIntegrationTest {
             costs = costs
         )
     )
+
+    fun addAccessToPrivateChannels(userId: String, vararg privateChannelIds: String, client: String? = null) {
+        usersClient.addAccessRules(
+            userId,
+            AccessRulesResourceFactory.sample(
+                AccessRuleResource.IncludedPrivateChannels(
+                    name = UUID.randomUUID().toString(),
+                    channelIds = privateChannelIds.toList()
+                )
+            ),
+            client
+        )
+    }
 
     fun ResultActions.andExpectApiErrorPayload(): ResultActions {
         return this.andExpect(jsonPath("$.timestamp").exists())

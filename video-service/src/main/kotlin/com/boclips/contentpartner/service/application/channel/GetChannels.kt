@@ -7,6 +7,7 @@ import com.boclips.contentpartner.service.domain.model.channel.ChannelRequest
 import com.boclips.contentpartner.service.domain.model.channel.ChannelSortKey
 import com.boclips.contentpartner.service.domain.service.channel.ChannelService
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.service.domain.model.user.User
 
 class GetChannels(private val channelService: ChannelService) {
 
@@ -21,17 +22,21 @@ class GetChannels(private val channelService: ChannelService) {
         sortBy: ChannelSortKey? = null,
         categories: List<String>? = emptyList(),
         size: Int? = null,
-        page: Int? = null
-    ): ResultsPage<Channel> = channelService.search(
-        ChannelRequest(
-            name = name,
-            ingestTypes = ingestTypes,
-            sortBy = sortBy,
-            categories = categories,
-            pageRequest = PageRequest(
-                size = size ?: DEFAULT_PAGE_SIZE,
-                page = page ?: DEFAULT_PAGE_INDEX
-            )
+        page: Int? = null,
+        user: User? = null
+    ): ResultsPage<Channel> {
+        return channelService.search(
+            ChannelRequest(
+                name = name,
+                ingestTypes = ingestTypes,
+                sortBy = sortBy,
+                categories = categories,
+                pageRequest = PageRequest(
+                    size = size ?: DEFAULT_PAGE_SIZE,
+                    page = page ?: DEFAULT_PAGE_INDEX
+                )
+            ),
+            videoAccess = user?.accessRules?.videoAccess
         )
-    )
+    }
 }

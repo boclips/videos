@@ -17,7 +17,11 @@ import com.boclips.videos.api.request.channel.SortByRequest
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.channel.ChannelsResource
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.service.GetUserIdOverride
+import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.presentation.BaseController
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -42,7 +46,12 @@ class ChannelController(
     private val getChannels: GetChannels,
     private val channelLinkBuilder: ChannelLinkBuilder,
     private val channelToResourceConverter: ChannelToResourceConverter,
-    private val marketingSignedLinkProvider: SignedLinkProvider
+    private val marketingSignedLinkProvider: SignedLinkProvider,
+    private val accessRuleService: AccessRuleService,
+    private val getUserIdOverride: GetUserIdOverride,
+    private val userService: UserService
+) : BaseController(
+    accessRuleService, getUserIdOverride, userService
 ) {
     @PostMapping("/{channelId}/videos/search")
     fun postSearchVideoByProviderId(
@@ -77,8 +86,10 @@ class ChannelController(
 
     @GetMapping
     fun channels(channelFilterRequest: ChannelFilterRequest): ResponseEntity<ChannelsResource> {
+        val user = getCurrentUser()
 
         val channelsPageResult = getChannels(
+            user = user,
             name = channelFilterRequest.name,
             ingestTypes = channelFilterRequest.ingestType?.map {
                 IngestTypeConverter.convertType(it)

@@ -43,6 +43,26 @@ class ChannelsAccessRulesFilter {
                 boolQueryBuilder.should(termsQuery(ChannelDocument.ID, accessRulesQuery.includedChannelIds))
             }
 
+            if (accessRulesQuery.includedPrivateChannelIds.isNotEmpty()) {
+                boolQueryBuilder.must(
+                    QueryBuilders.boolQuery()
+                        .should(termsQuery(ChannelDocument.ID, accessRulesQuery.includedPrivateChannelIds))
+                        .should(
+                            termsQuery(
+                                ChannelDocument.IS_PRIVATE,
+                                false
+                            )
+                        )
+                )
+            } else {
+                boolQueryBuilder.must(
+                    termsQuery(
+                        ChannelDocument.IS_PRIVATE,
+                        false
+                    )
+                )
+            }
+
             return boolQueryBuilder
         }
     }

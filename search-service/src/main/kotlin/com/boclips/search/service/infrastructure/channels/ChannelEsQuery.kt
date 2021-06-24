@@ -10,9 +10,7 @@ class ChannelEsQuery {
         return QueryBuilders
             .boolQuery()
             .apply {
-                query.accessRuleQuery?.let {
-                    ChannelsAccessRulesFilter.channelsBuildAccessRulesFilter(this, it)
-                }
+                ChannelsAccessRulesFilter.channelsBuildAccessRulesFilter(this, query.accessRuleQuery)
             }
             .apply {
                 if (!query.name.isNullOrBlank()) {
@@ -49,14 +47,6 @@ class ChannelEsQuery {
                             )
                     )
                 }
-            }
-            .apply {
-                must(
-                    QueryBuilders.termsQuery(
-                        ChannelDocument.IS_PRIVATE,
-                        false
-                    )
-                )
             }
     }
 }

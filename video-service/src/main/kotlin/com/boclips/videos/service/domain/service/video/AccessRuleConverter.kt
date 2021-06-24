@@ -8,7 +8,7 @@ import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import com.boclips.videos.service.domain.model.video.VideoAccessRule
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
-import java.util.Locale
+import java.util.*
 import com.boclips.search.service.domain.videos.model.VoiceType as SearchVoiceType
 import com.boclips.videos.service.domain.model.video.VoiceType as VideoVoiceType
 
@@ -63,6 +63,16 @@ object AccessRuleConverter {
             is VideoAccess.Rules ->
                 videoAccess.accessRules
                     .filterIsInstance<VideoAccessRule.IncludedChannelIds>()
+                    .flatMap { accessRule -> accessRule.channelIds.map { it.value } }
+                    .toSet()
+        }
+
+    fun mapToIncludedPrivateChannels(videoAccess: VideoAccess): Set<String> =
+        when (videoAccess) {
+            is VideoAccess.Everything -> emptySet()
+            is VideoAccess.Rules ->
+                videoAccess.accessRules
+                    .filterIsInstance<VideoAccessRule.IncludedPrivateChannels>()
                     .flatMap { accessRule -> accessRule.channelIds.map { it.value } }
                     .toSet()
         }

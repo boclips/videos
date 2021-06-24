@@ -8,6 +8,8 @@ import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.common.model.Sort
 import com.boclips.search.service.domain.common.model.SortOrder
 import com.boclips.videos.api.common.IngestType
+import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.request.AccessRuleQueryConverter
 import com.boclips.search.service.domain.channels.model.IngestType as ChannelSearchIngestType
 
 data class ChannelRequest(
@@ -17,7 +19,7 @@ data class ChannelRequest(
     val categories: List<String>? = emptyList(),
     val pageRequest: PageRequest
 ) {
-    fun toQuery(): ChannelQuery {
+    fun toQuery(videoAccess: VideoAccess? = null): ChannelQuery {
         return ChannelQuery(
             name = name,
             ingestTypes = ingestTypes?.map {
@@ -36,6 +38,7 @@ data class ChannelRequest(
                 }?.toSet(),
                 videoLevelTagging = false
             ),
+            accessRuleQuery = videoAccess?.let { AccessRuleQueryConverter.toChannelAccessRulesQuery(it) },
             sort = when (sortBy) {
                 ChannelSortKey.CATEGORIES_ASC -> listOf(
                     Sort.ByField(

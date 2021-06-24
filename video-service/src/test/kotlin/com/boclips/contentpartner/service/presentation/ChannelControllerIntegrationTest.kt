@@ -397,6 +397,26 @@ class ChannelControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `private channels are included when specified access rule`() {
+        saveChannel(name = "no access private channel", private = true)
+        val privateChannelUserCanAccess = saveChannel(name = "i am private channel", private = true)
+        val publicChannel = saveChannel(name = "i am public channel", private = false)
+
+        addAccessToPrivateChannels(userId = "email@address.com", privateChannelIds = arrayOf(privateChannelUserCanAccess.id.value))
+
+        mockMvc.perform(
+            get("/v1/channels").asBoclipsEmployee(email = "email@address.com")
+        ).andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.channels", hasSize<Int>(2)))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.channels[*].id",
+                    containsInAnyOrder(publicChannel.id.value, privateChannelUserCanAccess.id.value)
+                )
+            )
+    }
+
+    @Test
     fun `can filter channels by name`() {
         saveChannel(name = "hello")
         saveChannel(name = "goodbye")

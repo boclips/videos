@@ -1,5 +1,6 @@
 package com.boclips.search.service.infrastructure.contract
 
+import com.boclips.search.service.domain.channels.model.ChannelAccessRuleQuery
 import com.boclips.search.service.domain.channels.model.ChannelMetadata
 import com.boclips.search.service.domain.channels.model.ChannelQuery
 import com.boclips.search.service.domain.channels.model.SuggestionQuery
@@ -133,7 +134,14 @@ class ChannelIndexFake :
                     query.taxonomy?.categoriesWithAncestors?.contains(it) ?: false
                 } ?: false
             }
-            .filter { item -> !item.value.isPrivate }
+            .filter { item ->
+                !item.value.isPrivate || hasAccessToPrivateChannel(query.accessRuleQuery, item)
+            }
             .map { it.key }
     }
+
+    private fun hasAccessToPrivateChannel(
+        accessRuleQuery: ChannelAccessRuleQuery?,
+        item: Map.Entry<String, ChannelMetadata>
+    ) = accessRuleQuery?.includedPrivateChannelIds?.contains(item.value.id) == true
 }
