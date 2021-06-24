@@ -66,6 +66,7 @@ import org.litote.kmongo.elemMatch
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.ne
 import org.litote.kmongo.pullByFilter
 import org.litote.kmongo.push
 import org.litote.kmongo.set
@@ -139,6 +140,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.HasVideoId -> VideoDocument::id `in` filter.videoId.map { ObjectId(it.value) }
             is VideoFilter.IsDeactivated -> VideoDocument::deactivated eq true
             is VideoFilter.IsMarkedForTranscriptGeneration -> VideoDocument::isTranscriptRequested eq true
+            is VideoFilter.IsVoicedWithoutTranscript -> and(
+                VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(filter.channelId.value),
+                VideoDocument::isVoiced ne false,
+                VideoDocument::transcript eq null
+            )
         }
 
         val sequence = Sequence {

@@ -146,10 +146,11 @@ class AdminControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `analyse content partner videos publishes events`() {
-        saveVideo(newChannelName = "Ted")
+    fun `analyse channel videos publishes events`() {
+        val channel = saveChannel()
+        saveVideo(existingChannelId = channel.id.value)
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?contentPartner=Ted&language=es_ES")
+            MockMvcRequestBuilders.post("/v1/admin/actions/analyse_videos?channelId=${channel.id.value}&language=es_ES")
                 .asOperator()
         )
             .andExpect(status().isAccepted)

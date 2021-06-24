@@ -11,6 +11,7 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.KalturaFactories.createKalturaCaptionAsset
 import com.boclips.videos.service.testsupport.TestFactories.createVideoAnalysed
@@ -110,13 +111,73 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
         @Test
         fun `it should only send analyse messages for Ted`() {
-            saveVideo(newChannelName = "Ted")
-            saveVideo(newChannelName = "Ted")
-            saveVideo(newChannelName = "Bob")
+            val channelId = saveChannel(name = "TED").id.value
+            val otherChannelId = saveChannel(name = "BBC").id.value
+            saveVideo(existingChannelId = channelId)
+            saveVideo(existingChannelId = channelId)
+            saveVideo(existingChannelId = otherChannelId)
 
-            videoAnalysisService.analyseVideosOfContentPartner("Ted", language = null)
+            videoAnalysisService.analyseVideosOfChannel(channelId, language = null)
 
             assertThat(fakeEventBus.countEventsOfType(VideoAnalysisRequested::class.java)).isEqualTo(2)
+        }
+
+        @Test
+        fun `it should only send analyse message for videos without a transcript of a channel`() {
+            val channelId = saveChannel(name = "TED").id.value
+            val videoWithTranscript = saveVideo(existingChannelId = channelId, title = "video 1")
+            val videoWithOutTranscript = saveVideo(existingChannelId = channelId, title = "video 1")
+
+            videoRepository.update(
+                VideoUpdateCommand.ReplaceTranscript(
+                    videoId = videoWithTranscript,
+                    transcript = "bla bla",
+                    isHumanGenerated = true
+                )
+            )
+
+            videoAnalysisService.analyseVideosOfChannel(channelId, language = null)
+            val analyseRequestedEvents = fakeEventBus.getEventsOfType(VideoAnalysisRequested::class.java)
+            assertThat(analyseRequestedEvents.size).isEqualTo(1)
+            assertThat(analyseRequestedEvents[0].videoId).isEqualTo(videoWithOutTranscript.value)
+        }
+
+        @Test
+        fun `it should only send analyse message for videos that are voiced or unknown of a channel`() {
+            val channelId = saveChannel(name = "TED").id.value
+            val videoWithVoice = saveVideo(existingChannelId = channelId, isVoiced = true)
+            val videoWithUnknownVoice = saveVideo(existingChannelId = channelId, isVoiced = null)
+            saveVideo(existingChannelId = channelId, isVoiced = false)
+
+            videoAnalysisService.analyseVideosOfChannel(channelId, language = null)
+            val analyseRequested = fakeEventBus.getEventsOfType(VideoAnalysisRequested::class.java).map { it.videoId }
+            assertThat(analyseRequested.size).isEqualTo(2)
+            assertThat(analyseRequested).containsExactlyInAnyOrder(videoWithVoice.value, videoWithUnknownVoice.value)
+        }
+
+        @Test
+        fun `only analyse voiced videos where transcript is missing when analysing by channel`() {
+            val channelId = saveChannel(name = "TED").id.value
+            val voicedVideoWithTranscript = saveVideo(existingChannelId = channelId, title = "video 1", isVoiced = true)
+            val voicedVideoWithoutTranscript =
+                saveVideo(existingChannelId = channelId, title = "video 2", isVoiced = true)
+            val voiceUnknownVideoWithoutTranscript =
+                saveVideo(existingChannelId = channelId, title = "video 3", isVoiced = null)
+            saveVideo(existingChannelId = channelId, title = "video 4", isVoiced = false)
+
+            videoRepository.update(
+                VideoUpdateCommand.ReplaceTranscript(
+                    videoId = voicedVideoWithTranscript,
+                    transcript = "bla bla",
+                    isHumanGenerated = true
+                )
+            )
+
+            videoAnalysisService.analyseVideosOfChannel(channelId, language = null)
+            val analyseRequestedEvents = fakeEventBus.getEventsOfType(VideoAnalysisRequested::class.java)
+            assertThat(analyseRequestedEvents.size).isEqualTo(2)
+            assertThat(analyseRequestedEvents[0].videoId).isEqualTo(voicedVideoWithoutTranscript.value)
+            assertThat(analyseRequestedEvents[1].videoId).isEqualTo(voiceUnknownVideoWithoutTranscript.value)
         }
     }
 

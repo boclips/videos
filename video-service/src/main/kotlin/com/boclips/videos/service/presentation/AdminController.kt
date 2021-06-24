@@ -65,9 +65,9 @@ class AdminController(
     }
 
     @PostMapping("/analyse_videos")
-    fun postAnalyseVideos(@RequestParam contentPartner: String, @RequestParam language: Locale?): ResponseEntity<Void> {
+    fun postAnalyseVideos(@RequestParam channelId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            videoAnalysisService.analyseVideosOfContentPartner(contentPartner, language = language)
+            videoAnalysisService.analyseVideosOfChannel(channelId, language = language)
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }

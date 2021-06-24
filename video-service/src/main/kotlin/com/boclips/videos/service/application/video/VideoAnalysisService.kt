@@ -12,6 +12,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoPlaybackNotF
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.playback.VideoPlayback
 import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
@@ -24,11 +25,11 @@ class VideoAnalysisService(
 ) {
     companion object : KLogging()
 
-    fun analyseVideosOfContentPartner(contentPartner: String, language: Locale?) {
-        videoRepository.streamAll(VideoFilter.ChannelNameIs(contentPartner)) { allVideos ->
+    fun analyseVideosOfChannel(channelId: String, language: Locale?) {
+        videoRepository.streamAll(VideoFilter.IsVoicedWithoutTranscript(ChannelId(channelId))) { allVideos ->
             allVideos.windowed(size = 1000, step = 1000, partialWindows = true)
                 .forEachIndexed { batchIndex, batchOfVideos ->
-                    logger.info { "Dispatching analyse playable video events of channel:$contentPartner batch: $batchIndex" }
+                    logger.info { "Dispatching analyse playable video events of channel:$channelId batch: $batchIndex" }
                     batchOfVideos.forEach { video ->
                         analysePlayableVideo(video.videoId.value, language)
                     }

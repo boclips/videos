@@ -4,6 +4,7 @@ import com.boclips.videos.service.domain.model.subject.SubjectId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 
 sealed class VideoFilter {
+    data class IsVoicedWithoutTranscript(val channelId: ChannelId) : VideoFilter()
     data class ChannelNameIs(val name: String) : VideoFilter()
     data class ChannelIdIs(val channelId: ChannelId) : VideoFilter()
     data class HasContentType(val type: VideoType) : VideoFilter()
