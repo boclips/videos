@@ -5,6 +5,7 @@ import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.presentation.CategoriesValid
+import com.boclips.videos.service.presentation.CategoriesValidWithEmptyVideoIds
 import com.boclips.videos.service.presentation.DataRowsContainErrors
 import com.boclips.videos.service.presentation.InvalidCategoryCode
 import com.boclips.videos.service.presentation.NotCsvFile
@@ -43,6 +44,35 @@ class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
         val result = videoTaggingCsvFileValidator.validate(fixture("video_tagging_csvs/valid.csv"))
         assertThat(result).isInstanceOf(CategoriesValid::class.java)
         assertThat((result as CategoriesValid).entries).hasSize(4)
+    }
+
+    @Test
+    fun `returns success when csv has video id and video id is empty`() {
+        val csvName = "withIdsAndWithout.csv"
+        val csvFile = File(csvName)
+        val saveVideo1Id = saveVideo().value
+        val saveVideo3Id = saveVideo().value
+
+        val header = listOf("ID", "Category Code", "three")
+        val row1 = listOf(saveVideo1Id, "A", "three")
+        val row2 = listOf("", "B", "three")
+        val row3 = listOf(saveVideo3Id, "A", "three")
+
+        csvWriter().open(csvName) {
+            writeRow(header)
+            writeRow(row1)
+            writeRow(row2)
+            writeRow(row3)
+        }
+
+        val fixture = InputStreamResource(csvFile.inputStream())
+
+        val result = videoTaggingCsvFileValidator.validate(fixture) as CategoriesValidWithEmptyVideoIds
+        assertThat(result).isInstanceOf(CategoriesValidWithEmptyVideoIds::class.java)
+        assertThat((result).entriesWithIds).hasSize(2)
+        assertThat(result.entriesWithoutIds).hasSize(1)
+
+        csvFile.delete()
     }
 
     @Test

@@ -511,6 +511,21 @@ class VideoController(
                 tagVideosWithCategories(VideosCategoryMetadataConverter.convert(validationResult.entries))
                 return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
             }
+
+            is CategoriesValidWithEmptyVideoIds -> {
+                val categories = VideosCategoryMetadataConverter.convert(validationResult.entriesWithIds)
+                tagVideosWithCategories(categories)
+
+                return ResponseEntity(
+                    SuccessResponse(
+                        "Rows ${
+                        validationResult.entriesWithoutIds.map { it.index }.joinToString()
+                        } have not been applied because of a missing video ID"
+                    ),
+                    HttpStatus.OK
+                )
+            }
+
             is CsvValidationError -> throw InvalidVideoTaggingCsvFile(validationResult.getMessage())
         }
     }

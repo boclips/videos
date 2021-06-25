@@ -6,6 +6,11 @@ sealed class CategoryValidationResult
 
 data class CategoriesValid(val entries: List<CategoryMappingMetadata>) : CategoryValidationResult()
 
+data class CategoriesValidWithEmptyVideoIds(
+    val entriesWithIds: List<CategoryMappingMetadata>,
+    val entriesWithoutIds: List<CategoryMappingMetadata>
+) : CategoryValidationResult()
+
 sealed class CsvValidationError : CategoryValidationResult() {
     abstract fun getMessage(): String
 }
@@ -32,18 +37,6 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
                     } contain invalid or unknown category codes - ${
                     filteredErrors.map { it.code }.distinct().joinToString()
                     }"
-                )
-            }
-        }
-
-        errors.filterIsInstance<MissingVideoId>().let { filteredErrors ->
-            if (filteredErrors.isNotEmpty()) {
-                errorMessages.add(
-                    "Rows ${
-                    filteredErrors.joinToString {
-                        (it.getRowNumber().toString())
-                    }
-                    } are missing a video ID"
                 )
             }
         }
@@ -75,4 +68,3 @@ sealed class VideoTaggingValidationError {
 
 data class InvalidCategoryCode(override val rowIndex: Int, val code: String) : VideoTaggingValidationError()
 data class VideoDoesntExist(override val rowIndex: Int, val videoId: String) : VideoTaggingValidationError()
-data class MissingVideoId(override val rowIndex: Int) : VideoTaggingValidationError()

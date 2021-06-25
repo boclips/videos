@@ -5,6 +5,7 @@ import com.boclips.videos.service.application.GetAllCategories
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.CategoriesValid
+import com.boclips.videos.service.presentation.CategoriesValidWithEmptyVideoIds
 import com.boclips.videos.service.presentation.CategoryValidationResult
 import com.boclips.videos.service.presentation.DataRowsContainErrors
 import com.boclips.videos.service.presentation.NotCsvFile
@@ -43,12 +44,23 @@ class VideoTaggingCsvFileValidator(val getAllCategories: GetAllCategories, val v
             ).map { it.videoId.value }
 
         val categoryCodes = getAllCategories().map { it.code.value }
+
         val errors = items.mapIndexedNotNull { index, item ->
             CategoryMappingValidator.validateMapping(index, item, categoryCodes, confirmedVideoIds)
         }
 
-        return if (errors.isEmpty()) {
-            CategoriesValid(items.map { it.validated() })
+        val validCategories = items.mapIndexedNotNull { index, it -> it.validated(index) }
+
+        val entriesWithIds = validCategories.filter { it.videoId.isNotEmpty() }
+        val entriesWithoutIds = validCategories.filter { it.videoId.isEmpty() }
+
+        return if (errors.isEmpty() && entriesWithoutIds.isEmpty()) {
+            CategoriesValid(validCategories)
+        } else if (errors.isEmpty() && entriesWithoutIds.isNotEmpty()) {
+            CategoriesValidWithEmptyVideoIds(
+                entriesWithIds = entriesWithIds,
+                entriesWithoutIds = entriesWithoutIds
+            )
         } else {
             DataRowsContainErrors(errors = errors)
         }
