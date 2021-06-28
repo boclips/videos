@@ -4,7 +4,7 @@ data class RawCategoryMappingMetadata(
     val videoId: String?,
     val categoryCode: String?
 ) {
-    val headerOffset = 2
+    private val headerOffset = 2
 
     fun validated(index: Int) =
         videoId?.let {
