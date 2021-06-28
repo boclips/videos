@@ -8,6 +8,7 @@ import com.boclips.videos.api.response.video.VideoIdsWrapper
 import com.boclips.videos.service.application.collection.BroadcastCollections
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.subject.SubjectClassificationService
+import com.boclips.videos.service.application.video.AnalyseChannels
 import com.boclips.videos.service.application.video.BroadcastVideos
 import com.boclips.videos.service.application.video.GetVideosByContentPackage
 import com.boclips.videos.service.application.video.VideoAnalysisService
@@ -19,13 +20,8 @@ import com.boclips.videos.service.presentation.hateoas.AdminLinkBuilder
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import java.util.Locale
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/v1/admin/actions")
@@ -67,7 +63,10 @@ class AdminController(
     @PostMapping("/analyse_videos")
     fun postAnalyseVideos(@RequestParam channelId: String, @RequestParam language: Locale?): ResponseEntity<Void> {
         try {
-            videoAnalysisService.analyseVideosOfChannel(channelId, language = language)
+            AnalyseChannels(videoAnalysisService = videoAnalysisService).analyseVideosOfChannel(
+                channelId = channelId,
+                language = language
+            )
         } catch (e: VideoNotAnalysableException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }

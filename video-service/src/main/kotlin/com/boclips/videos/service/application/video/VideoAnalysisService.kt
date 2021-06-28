@@ -16,7 +16,6 @@ import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import mu.KLogging
-import org.springframework.scheduling.annotation.Async
 import java.util.*
 
 open class VideoAnalysisService(
@@ -26,7 +25,6 @@ open class VideoAnalysisService(
 ) {
     companion object : KLogging()
 
-    @Async
     open fun analyseVideosOfChannel(channelId: String, language: Locale?) {
         videoRepository.streamAll(VideoFilter.IsVoicedWithoutTranscript(ChannelId(channelId))) { allVideos ->
             allVideos.windowed(size = 1000, step = 1000, partialWindows = true)
