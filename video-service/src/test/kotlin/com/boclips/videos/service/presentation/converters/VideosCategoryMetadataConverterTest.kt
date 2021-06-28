@@ -16,10 +16,10 @@ class VideosCategoryMetadataConverterTest : AbstractSpringIntegrationTest() {
 
         val result = VideosCategoryMetadataConverter.convert(
             listOf(
-                CategoryMappingMetadata(videoId1.value, "1a"),
-                CategoryMappingMetadata(videoId1.value, "1b"),
-                CategoryMappingMetadata(videoId2.value, "2a"),
-                CategoryMappingMetadata(videoId3.value, "3a"),
+                CategoryMappingMetadata(videoId1.value, "1a", 1),
+                CategoryMappingMetadata(videoId1.value, "1b", 2),
+                CategoryMappingMetadata(videoId2.value, "2a", 3),
+                CategoryMappingMetadata(videoId3.value, "3a", 4),
             )
         )
 
@@ -34,8 +34,8 @@ class VideosCategoryMetadataConverterTest : AbstractSpringIntegrationTest() {
 
         val result = VideosCategoryMetadataConverter.convert(
             listOf(
-                CategoryMappingMetadata(videoId1.value, "1a"),
-                CategoryMappingMetadata(videoId1.value, ""),
+                CategoryMappingMetadata(videoId1.value, "1a", 1),
+                CategoryMappingMetadata(videoId1.value, "", 2),
             )
         )
 

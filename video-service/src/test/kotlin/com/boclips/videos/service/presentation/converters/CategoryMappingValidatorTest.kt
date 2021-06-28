@@ -1,7 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.presentation.InvalidCategoryCode
-import com.boclips.videos.service.presentation.MissingVideoId
 import com.boclips.videos.service.presentation.VideoDoesntExist
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,6 +22,20 @@ class CategoryMappingValidatorTest {
     }
 
     @Test
+    fun `returns null when videoId is missing`() {
+        val result = CategoryMappingValidator.validateMapping(
+            0,
+            RawCategoryMappingMetadata(
+                categoryCode = "A",
+                videoId = ""
+            ),
+            listOf("A", "B"),
+            listOf("")
+        )
+        assertThat(result).isNull()
+    }
+
+    @Test
     fun `returns error when invalid category code provided`() {
         val result = CategoryMappingValidator.validateMapping(
             0,
@@ -35,21 +48,6 @@ class CategoryMappingValidatorTest {
 
         )
         assertThat(result).isEqualTo(InvalidCategoryCode(0, "gibberish"))
-    }
-
-    @Test
-    fun `returns error when a row is missing video id`() {
-        val result = CategoryMappingValidator.validateMapping(
-            0,
-            RawCategoryMappingMetadata(
-                categoryCode = "A",
-                videoId = ""
-            ),
-            listOf("A", "B"),
-            listOf("5c542aba5438cdbcb56de630")
-        )
-
-        assertThat(result).isEqualTo(MissingVideoId(rowIndex = 0))
     }
 
     @Test

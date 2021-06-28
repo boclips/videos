@@ -228,25 +228,6 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
         }
 
         @Test
-        fun `returns an error when video ID value is missing`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
-
-            mockMvc.perform(
-                multipart("/v1/videos/categories")
-                    .file("file", invalidNoVideoIdValue.file.readBytes())
-                    .asBoclipsEmployee()
-            ).andExpect(status().isBadRequest)
-                .andExpect(
-                    jsonPath(
-                        "$.message",
-                        equalTo(
-                            "Rows 2 are missing a video ID"
-                        )
-                    )
-                )
-        }
-
-        @Test
         fun `returns an error when category code is invalid of unknown`() {
             mockMvc.perform(
                 multipart("/v1/videos/categories")
@@ -276,6 +257,42 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                         )
                     )
                 )
+        }
+        @Test
+        fun `applies category codes to videos that have valid video ids`() {
+            addCategory(CategoryFactory.sample(code = "A"))
+            addCategory(CategoryFactory.sample(code = "B"))
+
+            val csvName = "videos.csv"
+            val csvFile = File(csvName)
+            val saveVideo1Id = saveVideo().value
+            val saveVideo2Id = saveVideo().value
+
+            val header = listOf("ID", "Category Code", "three")
+            val row1 = listOf("", "A", "three")
+            val row2 = listOf(saveVideo1Id, "B", "three")
+            val row3 = listOf(saveVideo2Id, "A", "three")
+            val row4 = listOf("", "A", "three")
+
+            csvWriter().open(csvName) {
+                writeRow(header)
+                writeRow(row1)
+                writeRow(row2)
+                writeRow(row3)
+                writeRow(row4)
+            }
+
+            val fixture = csvFile.inputStream()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", fixture.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.message", equalTo("Rows 2, 5 have not been applied because of a missing video ID")))
+
+            csvFile.delete()
         }
     }
 }

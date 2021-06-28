@@ -8,7 +8,6 @@ internal class CategoryValidationResultTest {
     fun `creates a meaningful error message when invalid`() {
         val error = DataRowsContainErrors(
             errors = listOf(
-                MissingVideoId(rowIndex = 4),
                 VideoDoesntExist(rowIndex = 2, videoId = "ABC"),
                 VideoDoesntExist(rowIndex = 8, videoId = "DEF"),
                 InvalidCategoryCode(rowIndex = 6, code = "HI"),
@@ -16,7 +15,6 @@ internal class CategoryValidationResultTest {
         )
 
         val message = error.getMessage()
-        Assertions.assertThat(message).contains("Rows 6 are missing a video ID")
         Assertions.assertThat(message).contains("Rows 8 contain invalid or unknown category codes")
     }
 }
