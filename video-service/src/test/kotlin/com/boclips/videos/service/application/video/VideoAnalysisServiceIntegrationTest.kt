@@ -49,18 +49,6 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         }
 
         @Test
-        fun `does not send events for videos not longer than 20s`() {
-            val videoId = saveVideo(
-                playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
-                duration = Duration.ofSeconds(20)
-            ).value
-
-            videoAnalysisService.analysePlayableVideo(videoId, language = null)
-
-            assertThat(fakeEventBus.hasReceivedEventOfType(VideoAnalysisRequested::class.java)).isFalse()
-        }
-
-        @Test
         fun `sends events for news videos`() {
             val videoId = saveVideo(
                 playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "kaltura-id"),
