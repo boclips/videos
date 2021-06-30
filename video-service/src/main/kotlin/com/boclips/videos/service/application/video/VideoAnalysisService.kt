@@ -49,11 +49,6 @@ open class VideoAnalysisService(
             return
         }
 
-        if (video.playback.duration.seconds <= 20) {
-            logger.info { "Analysis of video $id NOT requested because it's too short" }
-            return
-        }
-
         when (retry) {
             true -> {
                 eventBus.publish(
