@@ -466,7 +466,7 @@ class VideoController(
     }
 
     private fun getVideoTitle(videoId: String?) =
-        searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_")
+        searchVideo.byId(videoId, getCurrentUser()).title.replace(Regex("""[/\\\\?%\\*:\\|"<>\\. ]"""), "_").trim()
 
     @GetMapping("/v1/videos/{id}/assets")
     fun getAssets(@PathVariable("id") videoId: String): ResponseEntity<VideoUrlAssetsResource> {

@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
 
@@ -152,16 +155,34 @@ class VideoControllerTranscriptsIntegrationTest : AbstractSpringIntegrationTest(
             .andExpect(jsonPath("$._links.transcript.href").exists())
     }
 
-    private fun saveVideoWithTranscript(transcriptContent: String = "Some content in the video"): String {
+    @Test
+    fun `transcript file name is without special characters`() {
+        val videoId =
+            saveVideoWithTranscript(title = "\rStudy links red meat consumption to heart disease and early death\r\n")
+
+        mockMvc.perform(get("/v1/videos/$videoId/transcript").asTeacher())
+            .andExpect(status().isOk)
+            .andExpect(
+                header().string(
+                    "Content-Disposition",
+                    equalTo("attachment; filename=\"Study_links_red_meat_consumption_to_heart_disease_and_early_death.txt\"")
+                )
+            )
+    }
+
+    private fun saveVideoWithTranscript(
+        transcriptContent: String = "Some content in the video",
+        title: String = "Today Video?"
+    ): String {
         val videoId = saveVideo(
-            title = "Today Video?",
+            title = title,
             date = LocalDate.now().toString(),
             types = listOf(VideoType.NEWS)
         ).value
 
         Assertions.assertNotNull(
             mongoVideosCollection().findOneAndUpdate(
-                Filters.eq("title", "Today Video?"),
+                Filters.eq("title", title),
                 Updates.set("transcript", transcriptContent)
             )
         )
