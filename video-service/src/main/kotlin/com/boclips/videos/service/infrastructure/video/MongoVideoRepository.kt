@@ -70,6 +70,7 @@ import org.litote.kmongo.ne
 import org.litote.kmongo.pullByFilter
 import org.litote.kmongo.push
 import org.litote.kmongo.set
+import org.litote.kmongo.size
 import java.time.Instant
 import java.util.Optional
 
@@ -140,10 +141,11 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.HasVideoId -> VideoDocument::id `in` filter.videoId.map { ObjectId(it.value) }
             is VideoFilter.IsDeactivated -> VideoDocument::deactivated eq true
             is VideoFilter.IsMarkedForTranscriptGeneration -> VideoDocument::isTranscriptRequested eq true
-            is VideoFilter.IsVoicedWithoutTranscript -> and(
+            is VideoFilter.IsVoicedAndMissingAnalysisData -> and(
                 VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(filter.channelId.value),
                 VideoDocument::isVoiced ne false,
-                VideoDocument::transcript eq null
+                VideoDocument::isTranscriptHumanGenerated eq true,
+                VideoDocument::topics size 0
             )
         }
 

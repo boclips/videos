@@ -11,11 +11,15 @@ import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.ChannelFactory
 import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.TestFactories.createTopic
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.*
 
 class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -80,6 +84,107 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         mongoVideoRepository.streamAll(VideoFilter.ChannelNameIs("TED")) { videos = it.toList() }
 
         assertThat(videos).hasSize(2)
+    }
+
+    @Nested
+    inner class StreamingVidsForAnalysis {
+
+        //transcript	topics	requestingAnalysis
+        //human	        no	    yes
+        //human	        yes	    nope
+        //machine	    yes	    nope
+        //machine	    no	    nope
+        //null	        yes	    nope
+        //null	        no	    yes
+        //	null?
+
+        @Test
+        fun `stream all voiced videos by channel where no topics, human generated transcript`() {
+            val ted = ChannelFactory.create(id = ObjectId.get().toHexString(), name = "TED")
+
+//            val doesntNeedAnalysis = mongoVideoRepository.create(
+//                TestFactories.createVideo(
+//                    voice = Voice.WithVoice(
+//                        language = Locale.ENGLISH,
+//                        transcript = Transcript(
+//                            content = "a great transcript",
+//                            isHumanGenerated = false,
+//                            isRequested = false
+//                        )
+//                    ),
+//                    channelName = ted.name,
+//                    channelId = ted.channelId,
+//                    topics = setOf(createTopic())
+//                )
+//            )
+//            val needsAnalysicMissingTranscript = TestFactories.createVideo(
+//                voice = Voice.WithVoice(language = Locale.ENGLISH, transcript = null),
+//                channelName = ted.name,
+//                channelId = ted.channelId,
+//                topics = setOf(createTopic())
+//            )
+
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    voice = Voice.WithVoice(
+                        language = Locale.JAPANESE,
+                        transcript = Transcript(
+                            content = "a great transcript",
+                            isHumanGenerated = true,
+                            isRequested = false
+                        )
+                    ),
+                    channelName = ted.name,
+                    channelId = ted.channelId,
+                    topics = emptySet(),
+                )
+            )
+
+//            val hasMachineTranscriptButNoTopics = mongoVideoRepository.create(
+//                TestFactories.createVideo(
+//                    voice = Voice.WithVoice(
+//                        language = Locale.JAPANESE,
+//                        transcript = Transcript(
+//                            content = "a great transcript",
+//                            isHumanGenerated = false,
+//                            isRequested = false
+//                        )
+//                    ),
+//                    channelName = ted.name,
+//                    channelId = ted.channelId,
+//                    topics = emptySet(),
+//                )
+//            )
+
+            mongoVideoRepository.streamAll(VideoFilter.IsVoicedAndMissingAnalysisData(ted.channelId)) {
+                assertThat(it.toList()).hasSize(1)
+            }
+        }
+
+        @Test
+        fun `skip videos which have topics and human generated transcript`() {
+            val ted = ChannelFactory.create(id = ObjectId.get().toHexString(), name = "TED")
+
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    voice = Voice.WithVoice(
+                        language = Locale.JAPANESE,
+                        transcript = Transcript(
+                            content = "a great transcript",
+                            isHumanGenerated = true,
+                            isRequested = false
+                        )
+                    ),
+                    channelName = ted.name,
+                    channelId = ted.channelId,
+                    topics = setOf(createTopic())
+                )
+            )
+
+            mongoVideoRepository.streamAll(VideoFilter.IsVoicedAndMissingAnalysisData(ted.channelId)) {
+                assertThat(it.toList()).hasSize(0)
+            }
+        }
     }
 
     @Test

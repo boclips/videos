@@ -30,7 +30,7 @@ open class VideoAnalysisService(
     companion object : KLogging()
 
     open fun analyseVideosOfChannel(channelId: String, language: Locale?) {
-        videoRepository.streamAll(VideoFilter.IsVoicedWithoutTranscript(ChannelId(channelId))) { allVideos ->
+        videoRepository.streamAll(VideoFilter.IsVoicedAndMissingAnalysisData(ChannelId(channelId))) { allVideos ->
             allVideos.windowed(size = 1000, step = 1000, partialWindows = true)
                 .forEachIndexed { batchIndex, batchOfVideos ->
                     logger.info { "Dispatching analyse playable video events of channel:$channelId batch: $batchIndex" }
