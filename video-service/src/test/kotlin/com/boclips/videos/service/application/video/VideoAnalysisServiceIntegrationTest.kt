@@ -250,6 +250,25 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         }
 
         @Test
+        fun `does not store transcript if video already had a human generated one`() {
+            val videoId =
+                saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
+
+            videoRepository.update(VideoUpdateCommand.ReplaceTranscript(videoId = videoId, transcript = "this is a very nice transcript", isHumanGenerated = true))
+            val videoAnalysed = createVideoAnalysed(
+                videoId = videoId.value,
+                transcript = "bla bla bla"
+            )
+
+            fakeEventBus.publish(videoAnalysed)
+
+            val video = videoRepository.find(videoId)!!
+
+            assertThat(video.voice.transcript!!.content).isEqualTo("this is a very nice transcript")
+            assertThat(video.voice.transcript!!.isHumanGenerated).isTrue
+        }
+
+        @Test
         fun `stores eventBus`() {
             val videoId =
                 saveVideo(playbackId = PlaybackId(type = PlaybackProviderType.KALTURA, value = "reference-id"))
