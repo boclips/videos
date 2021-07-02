@@ -2,6 +2,7 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.subject.Subject
+import com.boclips.videos.service.domain.model.video.Topic
 import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoFilter
@@ -14,12 +15,19 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.ChannelFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createTopic
+import com.boclips.videos.service.testsupport.VoiceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
+import java.util.stream.Stream
 
 class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -101,37 +109,12 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
         @Test
         fun `stream all voiced videos by channel where no topics, human generated transcript`() {
             val ted = ChannelFactory.create(id = ObjectId.get().toHexString(), name = "TED")
-
-//            val doesntNeedAnalysis = mongoVideoRepository.create(
-//                TestFactories.createVideo(
-//                    voice = Voice.WithVoice(
-//                        language = Locale.ENGLISH,
-//                        transcript = Transcript(
-//                            content = "a great transcript",
-//                            isHumanGenerated = false,
-//                            isRequested = false
-//                        )
-//                    ),
-//                    channelName = ted.name,
-//                    channelId = ted.channelId,
-//                    topics = setOf(createTopic())
-//                )
-//            )
-//            val needsAnalysicMissingTranscript = TestFactories.createVideo(
-//                voice = Voice.WithVoice(language = Locale.ENGLISH, transcript = null),
-//                channelName = ted.name,
-//                channelId = ted.channelId,
-//                topics = setOf(createTopic())
-//            )
-
             mongoVideoRepository.create(
                 TestFactories.createVideo(
-                    voice = Voice.WithVoice(
-                        language = Locale.JAPANESE,
+                    voice = VoiceFactory.withVoice(
                         transcript = Transcript(
                             content = "a great transcript",
                             isHumanGenerated = true,
-                            isRequested = false
                         )
                     ),
                     channelName = ted.name,
@@ -139,22 +122,6 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
                     topics = emptySet(),
                 )
             )
-
-//            val hasMachineTranscriptButNoTopics = mongoVideoRepository.create(
-//                TestFactories.createVideo(
-//                    voice = Voice.WithVoice(
-//                        language = Locale.JAPANESE,
-//                        transcript = Transcript(
-//                            content = "a great transcript",
-//                            isHumanGenerated = false,
-//                            isRequested = false
-//                        )
-//                    ),
-//                    channelName = ted.name,
-//                    channelId = ted.channelId,
-//                    topics = emptySet(),
-//                )
-//            )
 
             mongoVideoRepository.streamAll(VideoFilter.IsVoicedAndMissingAnalysisData(ted.channelId)) {
                 assertThat(it.toList()).hasSize(1)
@@ -185,6 +152,53 @@ class MongoVideoRepositoryStreamingIntegrationTest : AbstractSpringIntegrationTe
                 assertThat(it.toList()).hasSize(0)
             }
         }
+        //transcript	topics	requestingAnalysis
+        //human	        no	    yes
+        //human	        yes	    nope
+        //machine	    yes	    nope
+        //machine	    no	    nope
+        //null	        yes	    nope
+        //null	        no	    yes
+        //	null?
+
+        inner class AnalysableVideos : ArgumentsProvider {
+            val noTopics = emptySet<Topic>()
+            val hasTopics = setOf(createTopic())
+            val humanGeneratedTranscript = Transcript(content = "bla", isHumanGenerated = true)
+            val machineGeneratedTranscript = Transcript(content = "bla", isHumanGenerated = false)
+            val NEEDS_ANALYSIS = true
+            val ALREADY_ANALYSED = false
+            override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+                return Stream.of(
+                    Arguments.of(humanGeneratedTranscript, noTopics, NEEDS_ANALYSIS),
+                    Arguments.of(humanGeneratedTranscript, hasTopics, NEEDS_ANALYSIS),
+                    Arguments.of(machineGeneratedTranscript, noTopics, ALREADY_ANALYSED),
+                    Arguments.of(machineGeneratedTranscript, hasTopics, ALREADY_ANALYSED),
+                    Arguments.of(null, noTopics, NEEDS_ANALYSIS),
+                    Arguments.of(null, hasTopics, ALREADY_ANALYSED),
+                )
+            }
+        }
+
+        @ParameterizedTest
+        @ArgumentsSource(AnalysableVideos::class)
+        fun `stream only analysable stuff`(transcript: Transcript, topics: Set<Topic>, needsAnalysis: Boolean) {
+            val ted = ChannelFactory.create(id = ObjectId.get().toHexString(), name = "TED")
+
+            mongoVideoRepository.create(
+                TestFactories.createVideo(
+                    voice = VoiceFactory.withVoice(transcript = transcript),
+                    channelName = ted.name,
+                    channelId = ted.channelId,
+                    topics = topics
+                )
+            )
+
+            mongoVideoRepository.streamAll(VideoFilter.IsVoicedAndMissingAnalysisData(ted.channelId)) {
+                assertThat(it.toList().isNotEmpty()).isEqualTo(needsAnalysis)
+            }
+        }
+
     }
 
     @Test

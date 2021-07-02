@@ -145,7 +145,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(filter.channelId.value),
                 VideoDocument::isVoiced ne false,
                 VideoDocument::isTranscriptHumanGenerated eq true,
-                VideoDocument::topics size 0
+                VideoDocument::topics size 0 //I feel this filter contains domain logic, should we rethink?
             )
         }
 

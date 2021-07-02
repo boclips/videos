@@ -81,14 +81,7 @@ object TestFactories {
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
         legalRestrictions: String = "",
-        voice: Voice = Voice.UnknownVoice(
-            language = null,
-            transcript = Transcript(
-                content = null,
-                isRequested = null,
-                isHumanGenerated = null
-            ),
-        ),
+        voice: Voice = VoiceFactory.unknownVoice(),
         topics: Set<Topic> = emptySet(),
         ageRange: AgeRange = AgeRange.of(min = 5, max = 12, curatedManually = false),
         ratings: List<UserRating> = emptyList(),
@@ -775,5 +768,23 @@ object ContractCostsFactory {
         upfrontLicense = upfrontLicense,
         technicalFee = technicalFee,
         recoupable = recoupable
+    )
+}
+
+object VoiceFactory {
+    fun withVoice(
+        transcript: Transcript = Transcript(content = "sample transcript", isHumanGenerated = false),
+        language: Locale = Locale.ENGLISH
+    ): Voice.WithVoice = Voice.WithVoice(
+        transcript = transcript,
+        language = language
+    )
+
+    fun unknownVoice(
+        transcript: Transcript = Transcript(content = "sample transcript", isHumanGenerated = false),
+        language: Locale = Locale.ENGLISH
+    ): Voice.UnknownVoice = Voice.UnknownVoice(
+        transcript = transcript,
+        language = language
     )
 }
