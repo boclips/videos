@@ -412,6 +412,24 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(updatedAsset!!.keywords).containsExactly("new")
     }
 
+    @Test
+    fun `sets voice to WithoutVoice`() {
+        val video = mongoVideoRepository.create(
+            createVideo(
+                voice = Voice.UnknownVoice(
+                    language = Locale.TAIWAN,
+                    transcript = null,
+                )
+            )
+        )
+
+        mongoVideoRepository.update(VideoUpdateCommand.MarkAsVideoWithoutVoice(video.videoId))
+
+        val updatedAsset = mongoVideoRepository.find(video.videoId)
+
+        assertThat(updatedAsset!!.isVoiced()).isEqualTo(false)
+    }
+
     @Nested
     inner class CategoryUpdates {
         @Test

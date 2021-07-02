@@ -391,6 +391,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
                 VideoDocument::isTranscriptRequested,
                 updateCommand.isTranscriptRequested
             )
+            is VideoUpdateCommand.MarkAsVideoWithoutVoice -> set(VideoDocument::isVoiced, false)
         }
     }
 

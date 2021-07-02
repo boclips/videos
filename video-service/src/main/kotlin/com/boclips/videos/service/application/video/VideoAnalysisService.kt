@@ -132,7 +132,10 @@ open class VideoAnalysisService(
                 VideoUpdateCommand.ReplaceKeywords(
                     video.videoId,
                     (video.keywords + analysedVideo.keywords.map { it.name }).toSet()
-                )
+                ),
+                if (analysedVideo.transcript.isNullOrEmpty()) {
+                    VideoUpdateCommand.MarkAsVideoWithoutVoice(video.videoId)
+                } else null
             )
         )
     }
