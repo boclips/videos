@@ -23,6 +23,7 @@ import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
+import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -47,6 +48,8 @@ class VideoToResourceConverterTest {
     private lateinit var videoToResourceConverter: VideoToResourceConverter
     private lateinit var videoChannelService: VideoChannelService
     private lateinit var getSubjects: GetSubjects
+    private lateinit var categoryResourceConverter: CategoryResourceConverter
+    private lateinit var categoryRepository: CategoryRepository
 
     private val kalturaVideo = createVideo(
         title = "Do what you love",
@@ -121,6 +124,8 @@ class VideoToResourceConverterTest {
         videosLinkBuilder = mock()
         videoChannelService = mock()
         getSubjects = mock()
+        categoryResourceConverter = mock()
+        categoryRepository = mock()
 
         playbackToResourceConverter =
             PlaybackToResourceConverter(
@@ -134,7 +139,9 @@ class VideoToResourceConverterTest {
                 AttachmentToResourceConverter(mock()),
                 ContentWarningToResourceConverter(mock()),
                 videoChannelService,
-                getSubjects
+                getSubjects,
+                categoryResourceConverter,
+                categoryRepository
             )
     }
 

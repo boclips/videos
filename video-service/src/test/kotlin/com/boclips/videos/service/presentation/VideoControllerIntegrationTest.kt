@@ -6,25 +6,12 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.support.Cookies
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.boclips.videos.service.testsupport.CategoryFactory
-import com.boclips.videos.service.testsupport.KalturaFactories
+import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
-import com.boclips.videos.service.testsupport.TestFactories
-import com.boclips.videos.service.testsupport.asApiUser
-import com.boclips.videos.service.testsupport.asBoclipsEmployee
-import com.boclips.videos.service.testsupport.asIngestor
-import com.boclips.videos.service.testsupport.asOperator
-import com.boclips.videos.service.testsupport.asReporter
-import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -32,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -291,6 +275,36 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback._links.hlsStream").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail").exists())
                 .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
+        }
+
+
+        @Test
+        fun `video is returned with categories`() {
+
+            val parent = taxonomyRepository.create(
+                CategoryFactory.sample(
+                    code = "Z",
+                    description = "Z description",
+                )
+            )
+            val child = taxonomyRepository.create(
+                CategoryFactory.sample(
+                    code = "ZW",
+                    description = "ZW description",
+                    parentCode = "Z"
+                )
+            )
+
+            val videoWithCategories = saveVideo(
+                categories = listOf("ZW")
+            ).value
+
+            mockMvc.perform(get("/v1/videos/$videoWithCategories").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.categories[0].code", equalTo(child.code.value)))
+                .andExpect(jsonPath("$.categories[0].value", equalTo(child.description)))
+                .andExpect(jsonPath("$.categories[0].parent.code", equalTo(parent.code.value)))
+                .andExpect(jsonPath("$.categories[0].parent.value", equalTo(parent.description)))
         }
 
         @Test
