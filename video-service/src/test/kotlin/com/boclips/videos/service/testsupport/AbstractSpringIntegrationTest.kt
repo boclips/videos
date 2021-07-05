@@ -318,10 +318,11 @@ abstract class AbstractSpringIntegrationTest {
         height: Int = 1080,
         assets: Set<Asset> = setOf(KalturaFactories.createKalturaAsset(height = 1080)),
         isVoiced: Boolean? = null,
-        categories: List<String>? = null,
+        manualCategories: List<String>? = null,
+        channelCategories: List<String>? = null,
     ): VideoId {
         val retrievedContentPartnerId =
-            saveChannel(name = newChannelName, distributionMethods = distributionMethods).id.value
+            saveChannel(name = newChannelName, distributionMethods = distributionMethods, categories = channelCategories).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -342,7 +343,8 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        categories?.map { addCategory(CategoryFactory.sample(it)) }
+        channelCategories?.map { addCategory(CategoryFactory.sample(it)) }
+        manualCategories?.map { addCategory(CategoryFactory.sample(it)) }
 
         val video = createVideo(
             CreateVideoRequest(
@@ -363,7 +365,7 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjectIds,
                 language = language,
                 isVoiced = isVoiced,
-                categories = categories
+                categories = manualCategories?.plus(channelCategories ?: emptyList())
             ),
             UserFactory.sample()
         )

@@ -10,6 +10,7 @@ import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
@@ -50,6 +51,7 @@ class VideoToResourceConverter(
     }
 
     fun convert(video: BaseVideo, user: User, omitProtectedAttributes: Boolean? = false): VideoResource {
+
         return VideoResource(
             id = video.videoId.value,
             title = video.title,
@@ -80,9 +82,7 @@ class VideoToResourceConverter(
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             keywords = video.keywords,
-            categories = video.categories[CategorySource.MANUAL]?.map { category ->
-                categoryResourceConverter.reverseBuildTree(categoryRepository.findAll(), category)
-            },
+            categories = createCategories(video.categories),
             taxonomy = VideoTaxonomyResourceWrapper(
                 channel = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.CHANNEL]?.map {
@@ -104,13 +104,22 @@ class VideoToResourceConverter(
                 )
             ),
             _links = (
-                    resourceLinks(video.videoId.value) +
-                            conditionalResourceLinks(video) +
-                            actionLinks(video)
-                    )
+                resourceLinks(video.videoId.value) +
+                    conditionalResourceLinks(video) +
+                    actionLinks(video)
+                )
                 .map { it.rel to it }
                 .toMap()
         )
+    }
+
+    private fun createCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): List<VideoCategoryResource>? {
+        val allCategories = categoryRepository.findAll()
+        return categories.flatMap {
+            it.value.map { category ->
+                categoryResourceConverter.reverseBuildTree(allCategories, category)
+            }
+        }
     }
 
     fun convertVideoIds(videoIds: List<VideoId>): List<VideoResource> {

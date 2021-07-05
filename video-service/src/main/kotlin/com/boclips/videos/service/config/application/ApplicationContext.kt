@@ -115,8 +115,7 @@ class ApplicationContext(
     )
 
     @Bean
-    fun categoryResourceConverter(): CategoryResourceConverter =
-        CategoryResourceConverter(getAllCategories = GetAllCategories(categoryRepository = categoryRepository))
+    fun categoryResourceConverter(): CategoryResourceConverter = CategoryResourceConverter()
 
     @Bean
     fun findNewSuggestions(findSuggestionsByQuery: FindSuggestionsByQuery) = FindSuggestions(findSuggestionsByQuery)

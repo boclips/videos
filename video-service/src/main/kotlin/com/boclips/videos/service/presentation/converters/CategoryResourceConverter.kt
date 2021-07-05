@@ -8,9 +8,7 @@ import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 
-class CategoryResourceConverter(
-    val getAllCategories: GetAllCategories
-) {
+class CategoryResourceConverter {
     fun toResource(categories: List<Category>): CategoryResource {
         return CategoryResource(
             _embedded = categories

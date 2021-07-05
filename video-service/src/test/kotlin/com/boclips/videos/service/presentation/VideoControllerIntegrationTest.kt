@@ -47,7 +47,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             legalRestrictions = "None",
             ageRangeMin = 5,
             ageRangeMax = 7,
-            categories = listOf("A")
+            manualCategories = listOf("A")
         ).value
 
         youtubeVideoId = saveVideo(
@@ -280,14 +280,27 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `video is returned with categories`() {
+            val manualParent = taxonomyRepository.create(
+                CategoryFactory.sample(
+                    code = "A",
+                    description = "A description",
+                )
+            )
+            val manualChild = taxonomyRepository.create(
+                CategoryFactory.sample(
+                    code = "AD",
+                    description = "AD description",
+                    parentCode = "A"
+                )
+            )
 
-            val parent = taxonomyRepository.create(
+            val channelParent = taxonomyRepository.create(
                 CategoryFactory.sample(
                     code = "Z",
                     description = "Z description",
                 )
             )
-            val child = taxonomyRepository.create(
+            val channelChild = taxonomyRepository.create(
                 CategoryFactory.sample(
                     code = "ZW",
                     description = "ZW description",
@@ -296,15 +309,16 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             val videoWithCategories = saveVideo(
-                categories = listOf("ZW")
+                manualCategories = listOf(manualChild.code.value),
+                channelCategories = listOf(channelChild.code.value)
             ).value
 
             mockMvc.perform(get("/v1/videos/$videoWithCategories").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.categories[0].code", equalTo(child.code.value)))
-                .andExpect(jsonPath("$.categories[0].value", equalTo(child.description)))
-                .andExpect(jsonPath("$.categories[0].parent.code", equalTo(parent.code.value)))
-                .andExpect(jsonPath("$.categories[0].parent.value", equalTo(parent.description)))
+                .andExpect(jsonPath("$.categories[*].code", containsInAnyOrder(manualChild.code.value,channelChild.code.value)))
+                .andExpect(jsonPath("$.categories[*].value", containsInAnyOrder(manualChild.description, channelChild.description)))
+                .andExpect(jsonPath("$.categories[*].parent.code", containsInAnyOrder(manualParent.code.value, channelParent.code.value)))
+                .andExpect(jsonPath("$.categories[*].parent.value", containsInAnyOrder(manualParent.description, channelParent.description)))
         }
 
         @Test

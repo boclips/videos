@@ -22,7 +22,7 @@ class TagVideosWithCategoriesTest : AbstractSpringIntegrationTest() {
         addCategory(CategoryFactory.sample(code = "A", description = "cat A"))
         addCategory(CategoryFactory.sample(code = "C", description = "ANSI C"))
 
-        val videoId = saveVideo(categories = listOf("C"))
+        val videoId = saveVideo(manualCategories = listOf("C"))
 
         tagVideosWithCategories(mapOf(videoId to listOf("A")))
 

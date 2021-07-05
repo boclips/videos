@@ -5,6 +5,7 @@ import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.request.video.YoutubePlaybackResource
 import com.boclips.videos.api.response.subject.SubjectResource
+import com.boclips.videos.api.response.video.VideoCategoryResource
 import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.PageInfo
@@ -15,6 +16,7 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
@@ -31,12 +33,15 @@ import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.Currency
@@ -86,13 +91,13 @@ class VideoToResourceConverterTest {
         categories = mapOf(
             CategorySource.CHANNEL to setOf(
                 CategoryWithAncestors(
-                    codeValue = CategoryCode("A"), description = "Test", ancestors = setOf(CategoryCode("A")),
+                    codeValue = CategoryCode("AB"), description = "AB Category", ancestors = setOf(CategoryCode("A")),
 
-                )
+                    )
             ),
             CategorySource.MANUAL to setOf(
                 CategoryWithAncestors(
-                    codeValue = CategoryCode("B"), description = "Test", ancestors = setOf(CategoryCode("B"))
+                    codeValue = CategoryCode("BC"), description = "BC Category", ancestors = setOf(CategoryCode("B"))
 
                 )
             )
@@ -124,9 +129,18 @@ class VideoToResourceConverterTest {
         videosLinkBuilder = mock()
         videoChannelService = mock()
         getSubjects = mock()
-        categoryResourceConverter = mock()
         categoryRepository = mock()
 
+        `when`(categoryRepository.findAll()).doReturn(
+            listOf(
+                Category(code = CategoryCode("A"), parentCode = null, description = "A Category"),
+                Category(code = CategoryCode("AB"), parentCode = CategoryCode("A"), description = "AB Category"),
+                Category(code = CategoryCode("B"), parentCode = null, description = "B Category"),
+                Category(code = CategoryCode("BC"), parentCode = CategoryCode("B"), description = "BC Category")
+            )
+        )
+
+        categoryResourceConverter = CategoryResourceConverter()
         playbackToResourceConverter =
             PlaybackToResourceConverter(
                 mock(),
@@ -222,10 +236,14 @@ class VideoToResourceConverterTest {
         assertThat(playbackResource.duration).isEqualTo(Duration.ofSeconds(11))
         assertThat(playbackResource.id).isEqualTo("entry-id")
         assertThat(playbackResource.referenceId).isEqualTo("555")
-        assertThat(videoResource.taxonomy?.channel?.categories!![0].codeValue).isEqualTo("A")
+        assertThat(videoResource.taxonomy?.channel?.categories!![0].codeValue).isEqualTo("AB")
         assertThat(videoResource.taxonomy?.channel?.categories!![0].ancestors).contains("A")
-        assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).isEqualTo("B")
+        assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).isEqualTo("BC")
         assertThat(videoResource.taxonomy?.manual?.categories!![0].ancestors).contains("B")
+        assertThat(videoResource.categories).containsExactly(
+            VideoCategoryResource(code = "AB", value = "AB Category", parent = VideoCategoryResource(code = "A", parent = null, value = "A Category")),
+            VideoCategoryResource(code = "BC", value = "BC Category", parent = VideoCategoryResource(code = "B", parent = null, value = "B Category"))
+        )
     }
 
     @Test
@@ -310,7 +328,7 @@ class VideoToResourceConverterTest {
 
     @Test
     fun `produces facets if they exist on the search results`() {
-        Mockito.`when`(videoChannelService.findAllByIds(any())).thenReturn(
+        `when`(videoChannelService.findAllByIds(any())).thenReturn(
             listOf(
                 Channel(channelId = ChannelId("channel-id"), name = "TED")
             )
