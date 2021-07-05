@@ -56,7 +56,6 @@ class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
             )
         )
 
-
         val category = CategoryWithAncestorsFactory.sample(
             codeValue = "BAA",
             ancestors = setOf(CategoryCode("BA"), CategoryCode("B"), CategoryCode("A")),
@@ -71,6 +70,5 @@ class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
         assertThat(resource.parent?.value).isEqualTo("child BLAH")
         assertThat(resource.parent?.parent?.code).isEqualTo("B")
         assertThat(resource.parent?.parent?.value).isEqualTo("parent BLAH")
-
     }
 }

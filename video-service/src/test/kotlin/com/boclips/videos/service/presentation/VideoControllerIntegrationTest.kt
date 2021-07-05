@@ -277,7 +277,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
         }
 
-
         @Test
         fun `video is returned with categories`() {
             val manualParent = taxonomyRepository.create(
@@ -315,10 +314,30 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             mockMvc.perform(get("/v1/videos/$videoWithCategories").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.categories[*].code", containsInAnyOrder(manualChild.code.value,channelChild.code.value)))
-                .andExpect(jsonPath("$.categories[*].value", containsInAnyOrder(manualChild.description, channelChild.description)))
-                .andExpect(jsonPath("$.categories[*].parent.code", containsInAnyOrder(manualParent.code.value, channelParent.code.value)))
-                .andExpect(jsonPath("$.categories[*].parent.value", containsInAnyOrder(manualParent.description, channelParent.description)))
+                .andExpect(
+                    jsonPath(
+                        "$.categories[*].code",
+                        containsInAnyOrder(manualChild.code.value, channelChild.code.value)
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.categories[*].value",
+                        containsInAnyOrder(manualChild.description, channelChild.description)
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.categories[*].parent.code",
+                        containsInAnyOrder(manualParent.code.value, channelParent.code.value)
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.categories[*].parent.value",
+                        containsInAnyOrder(manualParent.description, channelParent.description)
+                    )
+                )
         }
 
         @Test
