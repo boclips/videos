@@ -259,7 +259,6 @@ class VideoController(
             createVideo(createVideoRequest, user)
                 .let {
                     videoToResourceConverter.convert(it, user)
-
                 }
         } catch (e: VideoAssetAlreadyExistsException) {
             throw InvalidRequestApiException(

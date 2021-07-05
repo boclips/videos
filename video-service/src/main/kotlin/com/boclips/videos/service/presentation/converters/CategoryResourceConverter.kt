@@ -39,7 +39,6 @@ class CategoryResourceConverter {
             code = current.codeValue.value,
             value = current.description
         )
-
     }
 
     private fun buildTree(categories: List<Category>, current: Category): CategoryTreeResource {
