@@ -282,15 +282,15 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `video is returned with categories`() {
             val manualParent = taxonomyRepository.create(
                 CategoryFactory.sample(
-                    code = "A",
-                    description = "A description",
+                    code = "B",
+                    description = "B description",
                 )
             )
             val manualChild = taxonomyRepository.create(
                 CategoryFactory.sample(
-                    code = "AD",
-                    description = "AD description",
-                    parentCode = "A"
+                    code = "BC",
+                    description = "BC description",
+                    parentCode = "B"
                 )
             )
 

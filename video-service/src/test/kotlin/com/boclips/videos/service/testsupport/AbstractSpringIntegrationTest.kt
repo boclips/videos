@@ -365,7 +365,7 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjectIds,
                 language = language,
                 isVoiced = isVoiced,
-                categories = manualCategories?.plus(channelCategories ?: emptyList())
+                categories = manualCategories
             ),
             UserFactory.sample()
         )
