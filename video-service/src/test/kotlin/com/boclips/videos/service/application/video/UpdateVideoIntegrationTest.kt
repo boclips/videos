@@ -73,7 +73,7 @@ class UpdateVideoIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val videoId = saveVideo(categories = listOf("A", "ABC"))
+        val videoId = saveVideo(manualCategories = listOf("A", "ABC"))
 
         updateVideo(
             id = videoId.value,

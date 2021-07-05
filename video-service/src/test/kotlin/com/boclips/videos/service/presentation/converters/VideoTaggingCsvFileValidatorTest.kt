@@ -24,9 +24,6 @@ class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
     lateinit var videoTaggingCsvFileValidator: VideoTaggingCsvFileValidator
 
     @Autowired
-    lateinit var getAllCategories: GetAllCategories
-
-    @Autowired
     lateinit var categoryRepository: CategoryRepository
 
     lateinit var videoRepository: FakeVideoRepository

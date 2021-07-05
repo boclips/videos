@@ -126,7 +126,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
         fun `tags a video with the categories specified in the csv`() {
             addCategory(CategoryFactory.sample("A"))
 
-            val videoId = saveVideo(categories = emptyList())
+            val videoId = saveVideo(manualCategories = emptyList())
             val csvFile = File.createTempFile("temp", "csv")
 
             csvFile.printWriter().use { out ->

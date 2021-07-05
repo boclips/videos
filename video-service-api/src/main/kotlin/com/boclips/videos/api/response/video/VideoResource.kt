@@ -76,6 +76,8 @@ data class VideoResource(
     val taxonomy: VideoTaxonomyResourceWrapper? = null,
     @get:JsonView(BoclipsInternalProjection::class)
     val transcriptRequested: Boolean? = null,
+    @get:JsonView(PublicApiProjection::class)
+    val categories: List<VideoCategoryResource>? = null,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<String, HateoasLink>?
 )

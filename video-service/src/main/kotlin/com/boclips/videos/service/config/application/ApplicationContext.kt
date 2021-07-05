@@ -15,105 +15,48 @@ import com.boclips.videos.service.application.GetCategoryWithAncestors
 import com.boclips.videos.service.application.attachment.GetAttachmentTypes
 import com.boclips.videos.service.application.channels.RebuildChannelIndex
 import com.boclips.videos.service.application.channels.VideoChannelService
-import com.boclips.videos.service.application.collection.AddVideoToCollection
-import com.boclips.videos.service.application.collection.BookmarkCollection
-import com.boclips.videos.service.application.collection.BroadcastCollections
-import com.boclips.videos.service.application.collection.CollectionSearchQueryAssembler
-import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
-import com.boclips.videos.service.application.collection.CreateCollection
-import com.boclips.videos.service.application.collection.CreateDefaultCollection
-import com.boclips.videos.service.application.collection.DeleteCollection
-import com.boclips.videos.service.application.collection.GetCollection
-import com.boclips.videos.service.application.collection.GetCollections
-import com.boclips.videos.service.application.collection.GetCollectionsOfUser
-import com.boclips.videos.service.application.collection.RebuildCollectionIndex
-import com.boclips.videos.service.application.collection.RemoveVideoFromCollection
-import com.boclips.videos.service.application.collection.UnbookmarkCollection
-import com.boclips.videos.service.application.collection.UpdateCollection
+import com.boclips.videos.service.application.collection.*
 import com.boclips.videos.service.application.common.QueryConverter
 import com.boclips.videos.service.application.contentwarning.CreateContentWarning
 import com.boclips.videos.service.application.contentwarning.GetAllContentWarnings
 import com.boclips.videos.service.application.contentwarning.GetContentWarning
-import com.boclips.videos.service.application.disciplines.CreateDiscipline
-import com.boclips.videos.service.application.disciplines.GetDiscipline
-import com.boclips.videos.service.application.disciplines.GetDisciplines
-import com.boclips.videos.service.application.disciplines.ReplaceDisciplineSubjects
-import com.boclips.videos.service.application.disciplines.UpdateDiscipline
+import com.boclips.videos.service.application.disciplines.*
 import com.boclips.videos.service.application.search.FindSuggestions
 import com.boclips.videos.service.application.search.FindSuggestionsByQuery
 import com.boclips.videos.service.application.search.RebuildSubjectIndex
-import com.boclips.videos.service.application.subject.CreateSubject
-import com.boclips.videos.service.application.subject.DeleteSubject
-import com.boclips.videos.service.application.subject.GetSubject
-import com.boclips.videos.service.application.subject.GetSubjects
-import com.boclips.videos.service.application.subject.SubjectClassificationService
-import com.boclips.videos.service.application.subject.UpdateSubject
+import com.boclips.videos.service.application.subject.*
 import com.boclips.videos.service.application.tag.CreateTag
 import com.boclips.videos.service.application.tag.DeleteTag
 import com.boclips.videos.service.application.tag.GetTag
 import com.boclips.videos.service.application.tag.GetTags
-import com.boclips.videos.service.application.video.BroadcastVideos
-import com.boclips.videos.service.application.video.CreateVideo
-import com.boclips.videos.service.application.video.DeleteVideo
-import com.boclips.videos.service.application.video.DeleteVideoThumbnail
-import com.boclips.videos.service.application.video.GenerateTranscripts
-import com.boclips.videos.service.application.video.GetVideoUrlAssets
-import com.boclips.videos.service.application.video.GetVideosByContentPackage
-import com.boclips.videos.service.application.video.RateVideo
-import com.boclips.videos.service.application.video.SetVideoThumbnail
-import com.boclips.videos.service.application.video.TagVideo
-import com.boclips.videos.service.application.video.TagVideosWithCategories
-import com.boclips.videos.service.application.video.UpdateCaptionContent
-import com.boclips.videos.service.application.video.UpdateCaptions
-import com.boclips.videos.service.application.video.UpdateVideo
-import com.boclips.videos.service.application.video.UpdateYoutubePlayback
-import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
-import com.boclips.videos.service.application.video.VideoAnalysisService
-import com.boclips.videos.service.application.video.VideoCaptionService
-import com.boclips.videos.service.application.video.VideoRetrievalService
-import com.boclips.videos.service.application.video.VideoTranscriptService
+import com.boclips.videos.service.application.video.*
 import com.boclips.videos.service.application.video.indexing.RebuildLegacySearchIndex
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
-import com.boclips.videos.service.application.video.search.GetVideoById
-import com.boclips.videos.service.application.video.search.GetVideoPrice
-import com.boclips.videos.service.application.video.search.GetVideosByQuery
-import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
-import com.boclips.videos.service.application.video.search.SearchVideo
+import com.boclips.videos.service.application.video.search.*
 import com.boclips.videos.service.domain.model.playback.PlaybackRepository
 import com.boclips.videos.service.domain.model.video.PriceComputingService
 import com.boclips.videos.service.domain.service.ContentWarningRepository
 import com.boclips.videos.service.domain.service.DisciplineRepository
 import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.TagRepository
-import com.boclips.videos.service.domain.service.collection.CollectionAccessService
-import com.boclips.videos.service.domain.service.collection.CollectionBookmarkService
-import com.boclips.videos.service.domain.service.collection.CollectionCreationService
-import com.boclips.videos.service.domain.service.collection.CollectionDeletionService
-import com.boclips.videos.service.domain.service.collection.CollectionIndex
-import com.boclips.videos.service.domain.service.collection.CollectionRetrievalService
-import com.boclips.videos.service.domain.service.collection.CollectionUpdateService
+import com.boclips.videos.service.domain.service.collection.*
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
+import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.domain.service.video.CaptionConverter
-import com.boclips.videos.service.domain.service.video.CaptionService
-import com.boclips.videos.service.domain.service.video.CaptionValidator
-import com.boclips.videos.service.domain.service.video.VideoCreationService
-import com.boclips.videos.service.domain.service.video.VideoDeletionService
-import com.boclips.videos.service.domain.service.video.VideoIndex
-import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.domain.service.video.VideoUpdateService
+import com.boclips.videos.service.domain.service.video.*
 import com.boclips.videos.service.domain.service.video.plackback.PlaybackUpdateService
 import com.boclips.videos.service.infrastructure.captions.ExoWebVTTValidator
 import com.boclips.videos.service.infrastructure.collection.CollectionRepository
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
+import com.boclips.videos.service.presentation.converters.CategoryResourceConverter
 import com.boclips.videos.service.presentation.converters.CreateVideoRequestToVideoConverter
 import com.boclips.videos.service.presentation.converters.DisciplineConverter
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
@@ -144,6 +87,7 @@ class ApplicationContext(
     val videoChannelService: VideoChannelService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
+    val categoryRepository: CategoryRepository,
     val accessRuleService: AccessRuleService,
     val videoCreationService: VideoCreationService,
     val subjectService: SubjectService,
@@ -168,6 +112,9 @@ class ApplicationContext(
         playbackUpdateService,
         priceComputingService
     )
+
+    @Bean
+    fun categoryResourceConverter(): CategoryResourceConverter = CategoryResourceConverter()
 
     @Bean
     fun findNewSuggestions(findSuggestionsByQuery: FindSuggestionsByQuery) = FindSuggestions(findSuggestionsByQuery)

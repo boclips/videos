@@ -556,9 +556,9 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             CategoryFactory.sample(code = "XYZ", description = "Rubbish Category", parentCode = "XY")
         )
 
-        val greatVideo = saveVideo(categories = listOf(greatCategory.code.value), newChannelName = "HI")
-        val goodVideo = saveVideo(categories = listOf(goodCategory.code.value), newChannelName = "Hello")
-        saveVideo(categories = listOf(rubbishCategory.code.value), newChannelName = "BYE")
+        val greatVideo = saveVideo(manualCategories = listOf(greatCategory.code.value), newChannelName = "HI")
+        val goodVideo = saveVideo(manualCategories = listOf(goodCategory.code.value), newChannelName = "Hello")
+        saveVideo(manualCategories = listOf(rubbishCategory.code.value), newChannelName = "BYE")
 
         mockMvc.perform(get("/v1/videos?category_code=ACAB,CBA").asBoclipsEmployee())
             .andExpect(status().isOk)
@@ -626,12 +626,12 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setSecurityContextWithClientId(userId = "teachers", clientId = "hq")
         val user = usersClient.add(UserResourceFactory.sample(subjects = listOf(SubjectResource(subject1.id.value))))
 
-        saveVideo(title = "A category", categories = listOf("A"))
-        saveVideo(title = "Empty category codes", categories = emptyList())
+        saveVideo(title = "A category", manualCategories = listOf("A"))
+        saveVideo(title = "Empty category codes", manualCategories = emptyList())
 
         saveVideo(
             title = "C category",
-            categories = listOf("C"),
+            manualCategories = listOf("C"),
             subjectIds = setOf(subject1.id.value)
         )
 
