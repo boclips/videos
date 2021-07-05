@@ -222,9 +222,9 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updates the category of a video`() {
-        addCategory(CategoryFactory.sample(code = "A", description = "AAA"))
-        addCategory(CategoryFactory.sample(code = "B", description = "BBB"))
-        addCategory(CategoryFactory.sample(code = "C", description = "CCC"))
+        saveCategory(CategoryFactory.sample(code = "A", description = "AAA"))
+        saveCategory(CategoryFactory.sample(code = "B", description = "BBB"))
+        saveCategory(CategoryFactory.sample(code = "C", description = "CCC"))
 
         val videoToUpdate = saveVideo(manualCategories = listOf("A", "B")).value
 

@@ -50,8 +50,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
     inner class ValidCsvs {
         @Test
         fun `returns no validation errors when file is valid CSV with proper data`() {
-            addCategory(CategoryFactory.sample(code = "A"))
-            addCategory(CategoryFactory.sample(code = "B"))
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
 
             val csvName = "valid-ids.csv"
             val csvFile = File(csvName)
@@ -86,7 +86,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `returns no validation errors when file is valid CSV with empty but existing categories column`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
+            saveCategory(CategoryFactory.sample(code = "PST"))
 
             val csvName = "valid-ids-with-empty-categories.csv"
             val csvFile = File(csvName)
@@ -124,7 +124,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `tags a video with the categories specified in the csv`() {
-            addCategory(CategoryFactory.sample("A"))
+            saveCategory(CategoryFactory.sample("A"))
 
             val videoId = saveVideo(manualCategories = emptyList())
             val csvFile = File.createTempFile("temp", "csv")
@@ -153,7 +153,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
     inner class InvalidCsvs {
         @Test
         fun `returns an error about missing columns when both video ID and category code columns are missing`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
+            saveCategory(CategoryFactory.sample(code = "PST"))
 
             mockMvc.perform(
                 multipart("/v1/videos/categories")
@@ -172,7 +172,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `returns an error about missing columns when no data rows are given and no category code column is present`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
+            saveCategory(CategoryFactory.sample(code = "PST"))
 
             mockMvc.perform(
                 multipart("/v1/videos/categories")
@@ -191,7 +191,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `returns an error about missing columns when columns and values are invalid`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
+            saveCategory(CategoryFactory.sample(code = "PST"))
 
             mockMvc.perform(
                 multipart("/v1/videos/categories")
@@ -210,7 +210,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
 
         @Test
         fun `returns an error when file have no Category Code column`() {
-            addCategory(CategoryFactory.sample(code = "PST"))
+            saveCategory(CategoryFactory.sample(code = "PST"))
 
             mockMvc.perform(
                 multipart("/v1/videos/categories")
@@ -260,8 +260,8 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
         }
         @Test
         fun `applies category codes to videos that have valid video ids`() {
-            addCategory(CategoryFactory.sample(code = "A"))
-            addCategory(CategoryFactory.sample(code = "B"))
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
 
             val csvName = "videos.csv"
             val csvFile = File(csvName)

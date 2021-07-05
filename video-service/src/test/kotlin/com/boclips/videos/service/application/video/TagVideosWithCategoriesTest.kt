@@ -19,8 +19,8 @@ class TagVideosWithCategoriesTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `tag single video with one category`() {
-        addCategory(CategoryFactory.sample(code = "A", description = "cat A"))
-        addCategory(CategoryFactory.sample(code = "C", description = "ANSI C"))
+        saveCategory(CategoryFactory.sample(code = "A", description = "cat A"))
+        saveCategory(CategoryFactory.sample(code = "C", description = "ANSI C"))
 
         val videoId = saveVideo(manualCategories = listOf("C"))
 

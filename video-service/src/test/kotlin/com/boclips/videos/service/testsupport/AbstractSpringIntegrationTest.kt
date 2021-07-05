@@ -343,8 +343,8 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
 
-        channelCategories?.map { addCategory(CategoryFactory.sample(it)) }
-        manualCategories?.map { addCategory(CategoryFactory.sample(it)) }
+        channelCategories?.map { saveCategory(CategoryFactory.sample(it)) }
+        manualCategories?.map { saveCategory(CategoryFactory.sample(it)) }
 
         val video = createVideo(
             CreateVideoRequest(
@@ -652,7 +652,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun addCategory(category: Category): Category {
+    fun saveCategory(category: Category): Category {
         return taxonomyRepository.create(category = category)
     }
 

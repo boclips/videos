@@ -471,9 +471,9 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `can filter by category if video's channel was tagged`() {
         val includedCategory =
-            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
+            saveCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
         val excludedCategory =
-            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+            saveCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
         val abChannel = saveChannel(name = "AB channel")
         val xyChannel = saveChannel(name = "XY channel")
         val video = saveVideo(existingChannelId = abChannel.id.value)
@@ -491,11 +491,11 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     @Test
     fun `filtering by category returns videos tagged with a ancestor categories `() {
         val includedCategory =
-            addCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
+            saveCategory(CategoryFactory.sample(code = "AB", description = "French", parentCode = "A"))
         val includedAncestorCategory =
-            addCategory(CategoryFactory.sample(code = "A", description = "French", parentCode = null))
+            saveCategory(CategoryFactory.sample(code = "A", description = "French", parentCode = null))
         val excludedCategory =
-            addCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
+            saveCategory(CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X"))
         val abChannel = saveChannel(name = "AB channel")
         val aChannel = saveChannel(name = "A channel")
         val xyChannel = saveChannel(name = "XY channel")
@@ -516,13 +516,13 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by mulitple categories`() {
-        val includedCategory = addCategory(
+        val includedCategory = saveCategory(
             CategoryFactory.sample(code = "AB", description = "French", parentCode = "A")
         )
-        val includedOtherCategory = addCategory(
+        val includedOtherCategory = saveCategory(
             CategoryFactory.sample(code = "AC", description = "French", parentCode = "A")
         )
-        val excludedCategory = addCategory(
+        val excludedCategory = saveCategory(
             CategoryFactory.sample(code = "XY", description = "Spanish", parentCode = "X")
         )
         val abChannel = saveChannel(name = "AB channel")
@@ -546,13 +546,13 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
 
     @Test
     fun `can filter by video tagged categories`() {
-        val greatCategory = addCategory(
+        val greatCategory = saveCategory(
             CategoryFactory.sample(code = "ACAB", description = "Great Category", parentCode = "ACA")
         )
-        val goodCategory = addCategory(
+        val goodCategory = saveCategory(
             CategoryFactory.sample(code = "CBA", description = "Good Category", parentCode = "CB")
         )
-        val rubbishCategory = addCategory(
+        val rubbishCategory = saveCategory(
             CategoryFactory.sample(code = "XYZ", description = "Rubbish Category", parentCode = "XY")
         )
 

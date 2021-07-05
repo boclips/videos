@@ -31,9 +31,9 @@ internal class CategoryControllerIntegrationTest : AbstractSpringIntegrationTest
             parentCode = childTaxonomy.code.value
         )
 
-        addCategory(parentTaxonomy)
-        addCategory(childTaxonomy)
-        addCategory(grandChildTaxonomy)
+        saveCategory(parentTaxonomy)
+        saveCategory(childTaxonomy)
+        saveCategory(grandChildTaxonomy)
 
         mockMvc.perform(get("/v1/categories").asBoclipsEmployee())
             .andExpect(status().isOk)
