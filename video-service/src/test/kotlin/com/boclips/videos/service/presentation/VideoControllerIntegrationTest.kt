@@ -12,6 +12,12 @@ import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -89,6 +95,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.channel", equalTo("enabled-cp")))
                 .andExpect(jsonPath("$.channelId").exists())
                 .andExpect(jsonPath("$.channelVideoId", equalTo("content-partner-video-id-entry-id-123")))
+                .andExpect(jsonPath("$.updatedAt", notNullValue()))
                 .andExpect(jsonPath("$.playback.id").exists())
                 .andExpect(jsonPath("$.playback.referenceId").exists())
                 .andExpect(jsonPath("$.playback.type", equalTo("STREAM")))

@@ -26,6 +26,7 @@ class CreateVideoRequestToVideoConverter {
         categories: Map<CategorySource, Set<CategoryWithAncestors>>,
         fallbackLanguage: Locale?
     ): Video {
+        val now = ZonedDateTime.now(ZoneOffset.UTC)
         return Video(
             videoId = VideoId(value = ObjectId().toHexString()),
             playback = videoPlayback,
@@ -34,7 +35,8 @@ class CreateVideoRequestToVideoConverter {
             additionalDescription = createVideoRequest.additionalDescription,
             keywords = createVideoRequest.keywords!!,
             releasedOn = createVideoRequest.releasedOn!!,
-            ingestedAt = ZonedDateTime.now(ZoneOffset.UTC),
+            ingestedAt = now,
+            updatedAt = now,
             channel = channel,
             videoReference = createVideoRequest.providerVideoId!!,
             types = createVideoRequest.videoTypes!!.map { VideoType.valueOf(it) },

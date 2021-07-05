@@ -32,6 +32,7 @@ object VideoDocumentConverter {
             subjects = video.subjects.items.map(SubjectDocumentConverter::toSubjectDocument),
             releaseDate = Date.from(video.releasedOn.atStartOfDay().toInstant(ZoneOffset.UTC)),
             ingestedAt = video.ingestedAt.toString(),
+            updatedAt = video.updatedAt.toString(),
             legalRestrictions = video.legalRestrictions,
             language = video.voice.language?.toLanguageTag(),
             transcript = video.voice.transcript?.content,
@@ -80,6 +81,9 @@ object VideoDocumentConverter {
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) }
                 ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
+            updatedAt = document.updatedAt?.let { updatedAt -> ZonedDateTime.parse(updatedAt) }
+                ?: document.ingestedAt?.let { ingestedAt -> ZonedDateTime.parse(ingestedAt) }
+                ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
             legalRestrictions = document.legalRestrictions,
             voice = when (document.isVoiced) {
                 true -> Voice.WithVoice(
@@ -121,7 +125,7 @@ object VideoDocumentConverter {
             contentWarnings = document.contentWarnings?.map { ContentWarningDocumentConverter.toContentWarning(it) },
             deactivated = document.deactivated ?: false,
             activeVideoId = document.activeVideoId?.let { VideoId(it) },
-            categories = mapCategories(document.categories)
+            categories = mapCategories(document.categories),
         )
     }
 

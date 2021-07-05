@@ -50,6 +50,13 @@ class CreateVideoRequestToVideoConverterTest {
     }
 
     @Test
+    fun `sets updatedAt field with the same value as ingestedAt`() {
+        val video = converter.convert(createCreateVideoRequest(), createKalturaPlayback(), contentPartner, subjects, categories, null)
+
+        assertThat(video.updatedAt).isEqualTo(video.ingestedAt)
+    }
+
+    @Test
     fun `uses the playback duration`() {
         val expectedDuration = Duration.ofMinutes(1)
         val playback = createKalturaPlayback(duration = expectedDuration)

@@ -23,6 +23,7 @@ data class Video(
     override val keywords: List<String>,
     override val releasedOn: LocalDate,
     override val ingestedAt: ZonedDateTime,
+    override val updatedAt: ZonedDateTime,
     override val types: List<VideoType>,
     override val legalRestrictions: String,
     override val subjects: VideoSubjects,

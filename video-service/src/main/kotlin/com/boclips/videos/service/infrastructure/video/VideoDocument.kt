@@ -19,6 +19,7 @@ data class VideoDocument(
     val attachments: List<AttachmentDocument> = emptyList(),
     val releaseDate: Date,
     val ingestedAt: String?,
+    val updatedAt: String?,
     val legalRestrictions: String,
     val language: String?,
     val transcript: String?,

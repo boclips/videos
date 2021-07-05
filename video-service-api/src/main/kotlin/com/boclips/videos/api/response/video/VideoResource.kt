@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonView
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 data class VideoResource(
     @get:JsonView(PublicApiProjection::class)
@@ -25,6 +26,8 @@ data class VideoResource(
     val additionalDescription: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val releasedOn: LocalDate? = null,
+    @get:JsonView(BoclipsInternalProjection::class)
+    val updatedAt: ZonedDateTime? = null,
     @get:JsonView(PublicApiProjection::class)
     val playback: PlaybackResource? = null,
     @get:JsonView(PublicApiProjection::class)

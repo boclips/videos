@@ -80,6 +80,7 @@ object TestFactories {
         subjectsSetManually: Boolean? = null,
         releasedOn: LocalDate = LocalDate.parse("2018-01-01"),
         ingestedAt: ZonedDateTime = ZonedDateTime.now(),
+        updatedAt: ZonedDateTime = ZonedDateTime.now(),
         legalRestrictions: String = "",
         voice: Voice = Voice.UnknownVoice(
             language = null,
@@ -117,6 +118,7 @@ object TestFactories {
             keywords = keywords,
             releasedOn = releasedOn,
             ingestedAt = ingestedAt,
+            updatedAt = updatedAt,
             types = types,
             legalRestrictions = legalRestrictions,
             subjects = VideoSubjects(

@@ -23,6 +23,7 @@ interface BaseVideo {
     val keywords: List<String>
     val releasedOn: LocalDate
     val ingestedAt: ZonedDateTime
+    val updatedAt: ZonedDateTime
     val types: List<VideoType>
     val legalRestrictions: String
     val subjects: VideoSubjects
