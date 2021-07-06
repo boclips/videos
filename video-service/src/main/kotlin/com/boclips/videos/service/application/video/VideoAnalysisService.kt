@@ -5,6 +5,7 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.domain.video.VideoAnalysedTopic
 import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysisFailed
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videos.service.application.exceptions.VideoNotAnalysableException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
@@ -120,6 +121,27 @@ open class VideoAnalysisService(
             logger.info { "Captions of video $videoId uploaded" }
         } catch (e: Exception) {
             logger.error(e) { "Error uploading captions of video $videoId" }
+        }
+    }
+
+    @BoclipsEventListener
+    fun videoAnalysisFailed(videoAnalysisFailed: VideoAnalysisFailed) {
+        val videoId = videoAnalysisFailed.videoId
+        logger.info { "Updating analysis failed for video $videoId" }
+        val video = try {
+            videoRepository.find(VideoId(videoId))
+        } catch (e: Exception) {
+            logger.error(e) { "Error looking up video $videoId" }
+            return
+        }
+
+        if (video == null) {
+            logger.info { "Could not find video $videoId" }
+            return
+        }
+
+        video.let {
+            videoRepository.update(VideoUpdateCommand.SetAnalysisFailed(videoId = it.videoId))
         }
     }
 

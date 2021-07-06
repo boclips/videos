@@ -38,6 +38,7 @@ interface BaseVideo {
     val deactivated: Boolean
     val activeVideoId: VideoId?
     val categories: Map<CategorySource, Set<CategoryWithAncestors>>
+    val analysisFailed: Boolean
 
     fun isPlayable(): Boolean
 

@@ -63,6 +63,7 @@ object VideoDocumentConverter {
                 channel = video.channelCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
                 manual = video.manualCategories.map { CategoriesDocumentConverter.toDocument(it) }.toSet(),
             ),
+            analysisFailed = video.analysisFailed
         )
     }
 
@@ -126,6 +127,7 @@ object VideoDocumentConverter {
             deactivated = document.deactivated ?: false,
             activeVideoId = document.activeVideoId?.let { VideoId(it) },
             categories = mapCategories(document.categories),
+            analysisFailed = document.analysisFailed == true
         )
     }
 

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.application.video
 
+import com.boclips.eventbus.events.video.VideoAnalysisFailed
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideosUpdated
 import com.boclips.kalturaclient.captionasset.KalturaLanguage
@@ -112,16 +113,22 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         }
 
         @Test
-        fun `it should only send analyse message for videos without a transcript of a channel`() {
+        fun `it should only send analyse message for videos without a transcript of a channel without previous failures`() {
             val channelId = saveChannel(name = "TED").id.value
             val videoWithTranscript = saveVideo(existingChannelId = channelId, title = "video 1")
-            val videoWithOutTranscript = saveVideo(existingChannelId = channelId, title = "video 1")
+            val videoWithOutTranscript = saveVideo(existingChannelId = channelId, title = "video 2")
+            val videoWithAnalysisFailed = saveVideo(existingChannelId = channelId, title = "video 3")
 
             videoRepository.update(
                 VideoUpdateCommand.ReplaceTranscript(
                     videoId = videoWithTranscript,
                     transcript = "bla bla",
                     isHumanGenerated = true
+                )
+            )
+            videoRepository.update(
+                VideoUpdateCommand.SetAnalysisFailed(
+                    videoId = videoWithAnalysisFailed,
                 )
             )
 
@@ -354,5 +361,17 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
             val video = videoRepository.find(videoId)!!
             assertThat(video.voice.language?.isO3Language).isEqualTo(Locale.CANADA.isO3Language)
         }
+    }
+
+    @Test
+    fun `stores information about analysis failure`() {
+        val videoId = saveVideo()
+        val videoAnalysisFailed = VideoAnalysisFailed(videoId.value)
+
+        fakeEventBus.publish(videoAnalysisFailed)
+
+        val video = videoRepository.find(videoId)!!
+
+        assertThat(video.analysisFailed).isTrue
     }
 }

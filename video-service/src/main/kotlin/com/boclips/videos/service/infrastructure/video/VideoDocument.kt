@@ -38,4 +38,5 @@ data class VideoDocument(
     val deactivated: Boolean? = false,
     val activeVideoId: String? = null,
     val categories: VideoCategoriesDocument? = null,
+    val analysisFailed: Boolean? = false,
 )

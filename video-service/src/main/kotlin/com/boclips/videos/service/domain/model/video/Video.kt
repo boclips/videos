@@ -37,7 +37,8 @@ data class Video(
     override val contentWarnings: List<ContentWarning>?,
     override val deactivated: Boolean,
     override val activeVideoId: VideoId?,
-    override val categories: Map<CategorySource, Set<CategoryWithAncestors>>
+    override val categories: Map<CategorySource, Set<CategoryWithAncestors>>,
+    override val analysisFailed: Boolean = false,
 ) : BaseVideo {
     override fun isPlayable(): Boolean {
         return playback !is VideoPlayback.FaultyPlayback

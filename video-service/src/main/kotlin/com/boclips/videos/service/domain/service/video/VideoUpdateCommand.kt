@@ -50,4 +50,5 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
     class AddCategories(videoId: VideoId, val categories: Set<CategoryWithAncestors>, val source: CategorySource) : VideoUpdateCommand(videoId)
     class ReplaceTranscriptRequested(videoId: VideoId, val isTranscriptRequested: Boolean) : VideoUpdateCommand(videoId)
+    class SetAnalysisFailed(videoId: VideoId) : VideoUpdateCommand(videoId)
 }
