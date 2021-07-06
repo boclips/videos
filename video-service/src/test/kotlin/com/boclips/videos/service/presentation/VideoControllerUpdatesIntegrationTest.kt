@@ -64,7 +64,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
-            ageRangeMax = 7
+            ageRangeMax = 7,
         ).value
 
         youtubeVideoId = saveVideo(

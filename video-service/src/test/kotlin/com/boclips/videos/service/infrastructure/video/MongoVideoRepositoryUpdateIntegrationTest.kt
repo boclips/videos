@@ -8,11 +8,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
-import com.boclips.videos.service.domain.model.video.Topic
-import com.boclips.videos.service.domain.model.video.Transcript
-import com.boclips.videos.service.domain.model.video.UserRating
-import com.boclips.videos.service.domain.model.video.VideoId
-import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -26,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.Locale
+import java.util.*
 
 class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -63,6 +59,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(updatedAsset.playback.id.value).isEqualTo("new-entry")
         assertThat(updatedAsset.playback.duration).isEqualTo(Duration.ZERO)
         assertThat((updatedAsset.playback as StreamPlayback).downloadUrl).isEqualTo("download-url-updated")
+        assertThat((updatedAsset.updatedAt)).isNotEqualTo(originalAsset.updatedAt)
     }
 
     @Test
@@ -296,9 +293,16 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
         val updatedVideo1 = updatedVideos.find { it.videoId == originalVideo1.videoId }!!
         val updatedVideo2 = updatedVideos.find { it.videoId == originalVideo2.videoId }!!
-        assertThat(updatedVideo1).isEqualToIgnoringGivenFields(originalVideo1, "subjects", "duration", "playback")
+        assertThat(updatedVideo1).isEqualToIgnoringGivenFields(
+            originalVideo1,
+            "subjects",
+            "duration",
+            "playback",
+            "updatedAt"
+        )
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
         assertThat(updatedVideo1.subjects.items).isEmpty()
+        assertThat(updatedVideo1.updatedAt).isNotEqualTo(originalVideo1.updatedAt)
 
         assertThat(updatedVideo2).isEqualToIgnoringGivenFields(
             originalVideo2,
@@ -306,7 +310,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             "duration",
             "playback",
             "promoted",
-            "additionalDescription"
+            "additionalDescription",
+            "updatedAt"
         )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
         assertThat(updatedVideo2.playback).isInstanceOf(StreamPlayback::class.java)
@@ -314,6 +319,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(updatedVideo2.subjects.items).isEqualTo(setOf(biology))
         assertThat(updatedVideo2.promoted).isTrue()
         assertThat(updatedVideo2.additionalDescription).isEqualTo("edited additional description")
+        assertThat(updatedVideo2.updatedAt).isNotEqualTo(originalVideo2.updatedAt)
     }
 
     @Test
@@ -374,7 +380,14 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `replaces transcript requested`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = Transcript(isRequested = true))))
+            mongoVideoRepository.create(
+                createVideo(
+                    voice = Voice.UnknownVoice(
+                        language = null,
+                        transcript = Transcript(isRequested = true)
+                    )
+                )
+            )
 
         mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscriptRequested(video.videoId, false))
 
