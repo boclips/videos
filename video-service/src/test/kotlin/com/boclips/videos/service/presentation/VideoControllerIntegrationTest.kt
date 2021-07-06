@@ -319,7 +319,7 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 channelCategories = listOf(channelChild.code.value)
             ).value
 
-            mockMvc.perform(get("/v1/videos/$videoWithCategories").asBoclipsEmployee(email = userAssignedToOrganisation().idOrThrow().value))
+            mockMvc.perform(get("/v1/videos/$videoWithCategories").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
                 .andExpect(status().isOk)
                 .andExpect(
                     jsonPath(
