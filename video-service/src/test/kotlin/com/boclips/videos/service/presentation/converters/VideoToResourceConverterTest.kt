@@ -16,16 +16,16 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarning
 import com.boclips.videos.service.domain.model.contentwarning.ContentWarningId
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
+import com.boclips.videos.service.domain.model.taxonomy.CategoryTree
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.AttachmentFactory
@@ -42,8 +42,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import java.math.BigDecimal
 import java.time.Duration
-import java.util.Currency
-import java.util.Locale
+import java.util.*
 
 class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
@@ -52,8 +51,16 @@ class VideoToResourceConverterTest {
     private lateinit var videoChannelService: VideoChannelService
     private lateinit var getSubjects: GetSubjects
     private lateinit var categoryResourceConverter: CategoryResourceConverter
-    private lateinit var categoryRepository: CategoryRepository
+    private lateinit var categoryService: CategoryService
 
+    private val abCategory = CategoryWithAncestors(
+        codeValue = CategoryCode("AB"), description = "AB Category", ancestors = setOf(CategoryCode("A")),
+    )
+    private val bcCategory = CategoryWithAncestors(
+        codeValue = CategoryCode("BC"),
+        description = "BC Category",
+        ancestors = setOf(CategoryCode("B"))
+    )
     private val kalturaVideo = createVideo(
         title = "Do what you love",
         description = "Best bottle slogan",
@@ -88,16 +95,10 @@ class VideoToResourceConverterTest {
         ),
         categories = mapOf(
             CategorySource.CHANNEL to setOf(
-                CategoryWithAncestors(
-                    codeValue = CategoryCode("AB"), description = "AB Category", ancestors = setOf(CategoryCode("A")),
-
-                )
+                abCategory
             ),
             CategorySource.MANUAL to setOf(
-                CategoryWithAncestors(
-                    codeValue = CategoryCode("BC"), description = "BC Category", ancestors = setOf(CategoryCode("B"))
-
-                )
+                bcCategory
             )
         ),
     )
@@ -127,14 +128,36 @@ class VideoToResourceConverterTest {
         videosLinkBuilder = mock()
         videoChannelService = mock()
         getSubjects = mock()
-        categoryRepository = mock()
+        categoryService = mock()
 
-        `when`(categoryRepository.findAll()).doReturn(
-            listOf(
-                Category(code = CategoryCode("A"), parentCode = null, description = "A Category"),
-                Category(code = CategoryCode("AB"), parentCode = CategoryCode("A"), description = "AB Category"),
-                Category(code = CategoryCode("B"), parentCode = null, description = "B Category"),
-                Category(code = CategoryCode("BC"), parentCode = CategoryCode("B"), description = "BC Category")
+        `when`(
+            categoryService.buildTreeFromChild(
+                abCategory
+            )
+        ).doReturn(
+            CategoryTree(
+                codeValue = abCategory.codeValue,
+                description = abCategory.description,
+                parent = CategoryTree(
+                    codeValue = abCategory.ancestors.first(),
+                    parent = null,
+                    description = "A Category"
+                )
+            )
+        )
+        `when`(
+            categoryService.buildTreeFromChild(
+                bcCategory
+            )
+        ).doReturn(
+            CategoryTree(
+                codeValue = bcCategory.codeValue,
+                description = bcCategory.description,
+                parent = CategoryTree(
+                    codeValue = bcCategory.ancestors.first(),
+                    parent = null,
+                    description = "B Category"
+                )
             )
         )
 
@@ -153,7 +176,7 @@ class VideoToResourceConverterTest {
                 videoChannelService,
                 getSubjects,
                 categoryResourceConverter,
-                categoryRepository
+                categoryService
             )
     }
 
@@ -239,8 +262,16 @@ class VideoToResourceConverterTest {
         assertThat(videoResource.taxonomy?.manual?.categories!![0].codeValue).isEqualTo("BC")
         assertThat(videoResource.taxonomy?.manual?.categories!![0].ancestors).contains("B")
         assertThat(videoResource.categories).containsExactly(
-            VideoCategoryResource(code = "AB", value = "AB Category", parent = VideoCategoryResource(code = "A", parent = null, value = "A Category")),
-            VideoCategoryResource(code = "BC", value = "BC Category", parent = VideoCategoryResource(code = "B", parent = null, value = "B Category"))
+            VideoCategoryResource(
+                code = "AB",
+                value = "AB Category",
+                parent = VideoCategoryResource(code = "A", parent = null, value = "A Category")
+            ),
+            VideoCategoryResource(
+                code = "BC",
+                value = "BC Category",
+                parent = VideoCategoryResource(code = "B", parent = null, value = "B Category")
+            )
         )
     }
 

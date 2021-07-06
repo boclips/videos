@@ -5,7 +5,7 @@ import com.boclips.videos.api.response.taxonomy.CategoryTreeResource
 import com.boclips.videos.api.response.video.VideoCategoryResource
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
-import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
+import com.boclips.videos.service.domain.model.taxonomy.CategoryTree
 
 class CategoryResourceConverter {
     fun toResource(categories: List<Category>): CategoryResource {
@@ -17,27 +17,15 @@ class CategoryResourceConverter {
         )
     }
 
-    fun reverseBuildTree(categories: List<Category>, current: CategoryWithAncestors): VideoCategoryResource {
-        val parentCode = categories.find { it.code == current.codeValue }?.parentCode
-        val parentDescription = categories.find { it.code == parentCode }?.description
-
-        if (parentCode != null && parentDescription != null) {
-
-            return VideoCategoryResource(
-                code = current.codeValue.value,
-                value = current.description,
-                parent = reverseBuildTree(
-                    categories,
-                    CategoryWithAncestors(
-                        codeValue = parentCode,
-                        description = parentDescription
-                    )
-                )
-            )
-        }
+    fun convertTree(categoryTree: CategoryTree): VideoCategoryResource {
         return VideoCategoryResource(
-            code = current.codeValue.value,
-            value = current.description
+            code = categoryTree.codeValue.value,
+            value = categoryTree.description,
+            parent = categoryTree.parent?.let {
+                convertTree(
+                    it
+                )
+            }
         )
     }
 

@@ -1,9 +1,9 @@
 package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
+import com.boclips.videos.service.domain.model.taxonomy.CategoryTree
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.CategoryFactory
-import com.boclips.videos.service.testsupport.CategoryWithAncestorsFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -42,27 +42,21 @@ class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `reverse builds category tree`() {
-        val sampleCategories = listOf(
-            CategoryFactory.sample(code = "B", description = "parent BLAH"),
-            CategoryFactory.sample(
-                code = "BA",
-                parentCode = "B",
-                description = "child BLAH"
-            ),
-            CategoryFactory.sample(
-                code = "BAA",
-                parentCode = "BA",
-                description = "grandchild BLAH"
+        val categoryTree = CategoryTree(
+            description = "grandchild BLAH",
+            codeValue = CategoryCode("BAA"),
+            parent = CategoryTree(
+                description = "child BLAH",
+                codeValue = CategoryCode("BA"),
+                parent = CategoryTree(
+                    description = "parent BLAH",
+                    codeValue = CategoryCode("B"),
+                    parent = null
+                )
             )
         )
 
-        val category = CategoryWithAncestorsFactory.sample(
-            codeValue = "BAA",
-            ancestors = setOf(CategoryCode("BA"), CategoryCode("B"), CategoryCode("A")),
-            description = "grandchild BLAH"
-        )
-
-        val resource = categoryResourceConverter.reverseBuildTree(sampleCategories, category)
+        val resource = categoryResourceConverter.convertTree(categoryTree)
 
         assertThat(resource.code).isEqualTo("BAA")
         assertThat(resource.value).isEqualTo("grandchild BLAH")

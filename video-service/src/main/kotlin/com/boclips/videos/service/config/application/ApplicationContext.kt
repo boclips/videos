@@ -47,7 +47,7 @@ import com.boclips.videos.service.domain.service.subject.SubjectService
 import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
-import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
@@ -87,7 +87,7 @@ class ApplicationContext(
     val videoChannelService: VideoChannelService,
     val userService: UserService,
     val legalRestrictionsRepository: LegalRestrictionsRepository,
-    val categoryRepository: CategoryRepository,
+    val categoryService: CategoryService,
     val accessRuleService: AccessRuleService,
     val videoCreationService: VideoCreationService,
     val subjectService: SubjectService,

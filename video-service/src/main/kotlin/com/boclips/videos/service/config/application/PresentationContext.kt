@@ -8,7 +8,7 @@ import com.boclips.videos.service.application.collection.CollectionUpdatesConver
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.VideoRetrievalService
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
-import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.*
 import com.boclips.videos.service.presentation.hateoas.*
@@ -81,7 +81,7 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         videoChannelService: VideoChannelService,
         getSubjects: GetSubjects,
         categoryResourceConverter: CategoryResourceConverter,
-        taxonomyRepository: CategoryRepository
+        categoryService: CategoryService
     ): VideoToResourceConverter {
 
         return VideoToResourceConverter(
@@ -92,7 +92,7 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
             videoChannelService = videoChannelService,
             getSubjects = getSubjects,
             categoryResourceConverter = categoryResourceConverter,
-            categoryRepository = taxonomyRepository,
+            categoryService = categoryService
         )
     }
 
@@ -137,7 +137,7 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
         videoChannelService: VideoChannelService,
         getSubjects: GetSubjects,
         categoryResourceConverter: CategoryResourceConverter,
-        taxonomyRepository: CategoryRepository
+        categoryService: CategoryService
     ): CollectionResourceConverter {
         return CollectionResourceConverter(
             VideoToResourceConverter(
@@ -148,7 +148,7 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
                 videoChannelService,
                 getSubjects,
                 categoryResourceConverter,
-                taxonomyRepository
+                categoryService
             ),
             attachmentsToResourceConverter,
             collectionsLinkBuilder,

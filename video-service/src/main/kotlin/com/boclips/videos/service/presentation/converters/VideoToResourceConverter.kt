@@ -14,7 +14,7 @@ import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.*
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
+import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -26,7 +26,7 @@ class VideoToResourceConverter(
     private val videoChannelService: VideoChannelService,
     private val getSubjects: GetSubjects,
     private val categoryResourceConverter: CategoryResourceConverter,
-    private val categoryRepository: CategoryRepository
+    private val categoryService: CategoryService
 
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
@@ -114,10 +114,11 @@ class VideoToResourceConverter(
     }
 
     private fun createCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): List<VideoCategoryResource>? {
-        val allCategories = categoryRepository.findAll()
-        return categories.flatMap {
-            it.value.map { category ->
-                categoryResourceConverter.reverseBuildTree(allCategories, category)
+        return categories.flatMap { categoryTypes ->
+            categoryTypes.value.map { category ->
+                categoryService.buildTreeFromChild(category).let {
+                    categoryResourceConverter.convertTree(it)
+                }
             }
         }
     }
@@ -126,7 +127,7 @@ class VideoToResourceConverter(
         return videoIds.map { videoId ->
             VideoResource(
                 id = videoId.value,
-                _links = resourceLinks(videoId.value).map { it.rel to it }.toMap()
+                _links = resourceLinks(videoId.value).associateBy { it.rel }
             )
         }
     }
