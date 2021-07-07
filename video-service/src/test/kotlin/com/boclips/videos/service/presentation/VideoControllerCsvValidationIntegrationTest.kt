@@ -147,6 +147,162 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                 .andExpect(jsonPath("$.taxonomy.manual.categories", hasSize<Int>(1)))
                 .andExpect(jsonPath("$.taxonomy.manual.categories[0].codeValue", equalTo("A")))
         }
+
+        // ask rafal 
+        @Test
+        fun `doesn't apply pedagogy tags if empty`() {
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
+            saveTag("Other")
+
+            val csvName = "videos.csv"
+            val csvFile = File(csvName)
+            val videoId1 = saveVideo(newChannelName = "test1").value
+            val videoId2 = saveVideo(newChannelName = "test2").value
+
+            val header = listOf("ID", "Category Code", "Pedagogy Tag")
+            val row2 = listOf(videoId1, "B", "")
+            val row3 = listOf(videoId2, "A", "")
+
+            csvWriter().open(csvName) {
+                writeRow(header)
+                writeRow(row2)
+                writeRow(row3)
+            }
+
+            val fixture = csvFile.inputStream()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", fixture.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Data has been successfully imported!")
+                    )
+                )
+
+            mockMvc.perform(get("/v1/videos/$videoId1").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(0)))
+
+            mockMvc.perform(get("/v1/videos/$videoId2").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(0)))
+
+            csvFile.delete()
+        }
+
+        @Test
+        fun `applies pedagogy tags to videos that have valid video ids`() {
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
+            saveTag("Other")
+
+            val csvName = "videos.csv"
+            val csvFile = File(csvName)
+            val videoId1 = saveVideo(newChannelName = "test1").value
+            val videoId2 = saveVideo(newChannelName = "test2").value
+
+            val header = listOf("ID", "Category Code", "Pedagogy Tag")
+            val row2 = listOf(videoId1, "B", "Other")
+            val row3 = listOf(videoId2, "A", "Other")
+
+            csvWriter().open(csvName) {
+                writeRow(header)
+                writeRow(row2)
+                writeRow(row3)
+            }
+
+            val fixture = csvFile.inputStream()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", fixture.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Data has been successfully imported!")
+                    )
+                )
+
+            mockMvc.perform(get("/v1/videos/$videoId1").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.bestFor[0].label", equalTo("Other")))
+
+            mockMvc.perform(get("/v1/videos/$videoId2").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.bestFor[0].label", equalTo("Other")))
+
+            csvFile.delete()
+        }
+
+        @Test
+        fun `applies pedagogy tags to videos that have valid video ids and empty video ids`() {
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
+            saveTag("Other")
+
+            val csvName = "videos.csv"
+            val csvFile = File(csvName)
+            val videoId1 = saveVideo(newChannelName = "test1").value
+            val videoId2 = saveVideo(newChannelName = "test2").value
+
+            val header = listOf("ID", "Category Code", "Pedagogy Tag")
+            val row1 = listOf("", "A", "Other")
+            val row2 = listOf(videoId1, "B", "Other")
+            val row3 = listOf(videoId2, "A", "Other")
+            val row4 = listOf("", "A", "Other")
+
+            csvWriter().open(csvName) {
+                writeRow(header)
+                writeRow(row1)
+                writeRow(row2)
+                writeRow(row3)
+                writeRow(row4)
+            }
+
+            val fixture = csvFile.inputStream()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", fixture.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Rows 2, 5 have not been applied because of a missing video ID")
+                    )
+                )
+
+            mockMvc.perform(get("/v1/videos/$videoId1").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.bestFor[0].label", equalTo("Other")))
+
+            mockMvc.perform(get("/v1/videos/$videoId2").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(1)))
+                .andExpect(jsonPath("$.bestFor[0].label", equalTo("Other")))
+
+            csvFile.delete()
+        }
     }
 
     @Nested
@@ -258,6 +414,7 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     )
                 )
         }
+
         @Test
         fun `applies category codes to videos that have valid video ids`() {
             saveCategory(CategoryFactory.sample(code = "A"))
@@ -290,7 +447,12 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
                     .asBoclipsEmployee()
             )
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.message", equalTo("Rows 2, 5 have not been applied because of a missing video ID")))
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Rows 2, 5 have not been applied because of a missing video ID")
+                    )
+                )
 
             csvFile.delete()
         }

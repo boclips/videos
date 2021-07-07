@@ -14,12 +14,12 @@ class VideosCategoryMetadataConverterTest : AbstractSpringIntegrationTest() {
         val videoId2 = TestFactories.createVideoId()
         val videoId3 = TestFactories.createVideoId()
 
-        val result = VideosCategoryMetadataConverter.convert(
+        val result = VideosCategoryMetadataConverter.convertCategories(
             listOf(
-                CategoryMappingMetadata(videoId1.value, "1a", 1),
-                CategoryMappingMetadata(videoId1.value, "1b", 2),
-                CategoryMappingMetadata(videoId2.value, "2a", 3),
-                CategoryMappingMetadata(videoId3.value, "3a", 4),
+                CategoryMappingMetadata(videoId1.value, "1a", "", 1),
+                CategoryMappingMetadata(videoId1.value, "1b", "", 2),
+                CategoryMappingMetadata(videoId2.value, "2a", "", 3),
+                CategoryMappingMetadata(videoId3.value, "3a", "", 4),
             )
         )
 
@@ -32,13 +32,28 @@ class VideosCategoryMetadataConverterTest : AbstractSpringIntegrationTest() {
     fun `ignores entries with empty categories`() {
         val videoId1 = TestFactories.createVideoId()
 
-        val result = VideosCategoryMetadataConverter.convert(
+        val result = VideosCategoryMetadataConverter.convertCategories(
             listOf(
-                CategoryMappingMetadata(videoId1.value, "1a", 1),
-                CategoryMappingMetadata(videoId1.value, "", 2),
+                CategoryMappingMetadata(videoId1.value, "1a", "", 1),
+                CategoryMappingMetadata(videoId1.value, "", "", 2),
             )
         )
 
         assertThat(result[videoId1]).containsExactly("1a")
+    }
+
+    @Test
+    fun `ignores entries with empty tags`() {
+        val videoId1 = TestFactories.createVideoId()
+        val videoId2 = TestFactories.createVideoId()
+
+        val result = VideosCategoryMetadataConverter.convertTags(
+            listOf(
+                CategoryMappingMetadata(videoId1.value, "1a", "Hook", 1),
+                CategoryMappingMetadata(videoId2.value, "", "", 2),
+            )
+        )
+
+        assertThat(result[videoId2]).isEmpty()
     }
 }
