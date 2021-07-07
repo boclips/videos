@@ -2,12 +2,15 @@ package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.mongodb.MongoClient
+import com.mongodb.client.model.Aggregates
+import com.mongodb.client.model.Field
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
 import io.changock.migration.api.annotations.ChangeLog
 import io.changock.migration.api.annotations.ChangeSet
 import io.changock.migration.api.annotations.NonLockGuarded
 import mu.KLogging
+import java.util.Arrays.equals
 
 @ChangeLog(order = "002")
 class VideoCollectionChangeLog {
@@ -24,5 +27,20 @@ class VideoCollectionChangeLog {
             )
 
         logger.info { "unsetCategories results: $updateResult" }
+    }
+
+    @ChangeSet(order = "002", id = "2021-07-06T13:00", author = "mjanik & mfarleyrose")
+    fun addUpdatedAt(
+        @NonLockGuarded mongoClient: MongoClient,
+    ) {
+        val updatedByIngestDate = mongoClient.getDatabase(DATABASE_NAME).getCollection("videos")
+            .aggregate(
+                listOf(
+                    Aggregates.match(Filters.eq("updatedAt", null)),
+                    Aggregates.replaceWith(Field("updatedAt", "blabla"))
+                )
+            )
+
+        logger.info { "addUpdatedAt results: $updatedByIngestDate" }
     }
 }
