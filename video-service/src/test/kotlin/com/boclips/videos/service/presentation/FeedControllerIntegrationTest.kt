@@ -56,4 +56,16 @@ class FeedControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(0)))
             .andExpect(jsonPath("$._links.next").doesNotExist())
     }
+
+    @Test
+    fun `returns a bad request when cursor id is invalid`() {
+        mockMvc.perform(get("/v1/feed/videos?cursorId=YOU_SHALL_NOT_PASS").asApiUser())
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `returns a bad request when size is too large`() {
+        mockMvc.perform(get("/v1/feed/videos?size=1001").asApiUser())
+            .andExpect(status().isBadRequest)
+    }
 }

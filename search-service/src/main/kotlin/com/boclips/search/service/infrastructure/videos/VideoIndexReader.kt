@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.common.Do
+import com.boclips.search.service.common.InvalidCursorException
 import com.boclips.search.service.domain.common.IndexReader
 import com.boclips.search.service.domain.common.ResultCounts
 import com.boclips.search.service.domain.common.SearchResults
@@ -19,6 +20,7 @@ import com.boclips.search.service.infrastructure.videos.aggregations.SubjectAggr
 import com.boclips.search.service.infrastructure.videos.aggregations.VideoTypeAggregation.Companion.aggregateVideoTypes
 import com.boclips.search.service.infrastructure.videos.aggregations.extractFacetCounts
 import mu.KLogging
+import org.elasticsearch.ElasticsearchStatusException
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchScrollRequest
@@ -75,10 +77,7 @@ class VideoIndexReader(
     private fun performSearch(searchRequest: IndexSearchRequest<VideoQuery>): SearchResponse {
         val isCursorBasedRequest = searchRequest.isCursorBased()
         (searchRequest as? CursorBasedIndexSearchRequest)?.cursor?.let { cursor ->
-            return client.scroll(
-                SearchScrollRequest(cursor.value).scroll(scrollTimeout),
-                RequestOptions.DEFAULT
-            )
+            return performSearch(cursor)
         }
 
         val videoQuery = searchRequest.query
@@ -132,6 +131,18 @@ class VideoIndexReader(
         }
 
         return client.search(request, RequestOptions.DEFAULT)
+    }
+
+    private fun performSearch(cursor: PagingCursor): SearchResponse {
+        try {
+            return client.scroll(
+                SearchScrollRequest(cursor.value).scroll(scrollTimeout),
+                RequestOptions.DEFAULT
+            )
+        } catch (e: ElasticsearchStatusException) {
+            logger.info { "Treating $e as an invalid cursor exception" }
+            throw InvalidCursorException(cursor)
+        }
     }
 
     private fun Sort.ByField<VideoMetadata>.toElasticsearchOrder() =

@@ -8,6 +8,7 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -29,6 +30,7 @@ class FeedController(
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 1000
+        const val MAX_PAGE_SIZE = 1000 // To be decided
     }
 
     @GetMapping("/videos")
@@ -38,6 +40,12 @@ class FeedController(
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val user = getCurrentUser()
+
+        if (pageSize > MAX_PAGE_SIZE) {
+            throw InvalidVideoPaginationException(
+                message = "Requested page size is too big. Maximum supported page size is $MAX_PAGE_SIZE"
+            )
+        }
 
         val videoFeedResult = getVideoFeed(cursorId, pageSize, user)
 

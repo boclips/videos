@@ -1,8 +1,20 @@
 package com.boclips.search.service.infrastructure.contract
 
-import com.boclips.search.service.domain.common.*
-import com.boclips.search.service.domain.common.model.*
-import java.util.*
+import com.boclips.search.service.common.InvalidCursorException
+import com.boclips.search.service.domain.common.FacetCount
+import com.boclips.search.service.domain.common.FacetType
+import com.boclips.search.service.domain.common.ProgressNotifier
+import com.boclips.search.service.domain.common.ResultCounts
+import com.boclips.search.service.domain.common.SearchResults
+import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.FacetDefinition
+import com.boclips.search.service.domain.common.model.IndexSearchRequest
+import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.PagingCursor
+import com.boclips.search.service.domain.common.model.SearchQuery
+import com.boclips.search.service.domain.common.model.Sort
+import com.boclips.search.service.domain.common.model.SortOrder
+import java.util.UUID
 
 class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
     private val index = mutableMapOf<String, METADATA>()
@@ -18,6 +30,10 @@ class FakeSearchIndex<QUERY : SearchQuery<METADATA>, METADATA> {
     ): SearchResults {
         val startIndex = (searchRequest as? PaginatedIndexSearchRequest)?.startIndex
         (searchRequest as? CursorBasedIndexSearchRequest)?.apply {
+            if (currentCursor == null && cursor != null) {
+                throw InvalidCursorException(cursor)
+            }
+
             if (cursor != currentCursor || cursor == null) {
                 currentCursor = cursor ?: UUID.randomUUID()
                     .toString()
