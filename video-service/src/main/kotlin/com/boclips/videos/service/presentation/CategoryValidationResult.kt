@@ -4,9 +4,9 @@ import com.boclips.videos.service.presentation.converters.CategoryMappingMetadat
 
 sealed class CategoryValidationResult
 
-data class CategoriesValid(val entries: List<CategoryMappingMetadata>) : CategoryValidationResult()
+data class CsvValidated(val entries: List<CategoryMappingMetadata>) : CategoryValidationResult()
 
-data class CategoriesValidWithEmptyVideoIds(
+data class CsvValidatedWithEmptyIds(
     val entriesWithIds: List<CategoryMappingMetadata>,
     val entriesWithoutIds: List<CategoryMappingMetadata>
 ) : CategoryValidationResult()
@@ -53,6 +53,18 @@ data class DataRowsContainErrors(val errors: List<VideoTaggingValidationError>) 
             }
         }
 
+        errors.filterIsInstance<InvalidPedagogyTags>().let { filteredErrors ->
+            if (filteredErrors.isNotEmpty()) {
+                errorMessages.add(
+                    "Rows ${
+                    filteredErrors.joinToString {
+                        (it.getRowNumber().toString())
+                    }
+                    } contain invalid Pedagogy Tags"
+                )
+            }
+        }
+
         return errorMessages.joinToString()
     }
 }
@@ -68,3 +80,4 @@ sealed class VideoTaggingValidationError {
 
 data class InvalidCategoryCode(override val rowIndex: Int, val code: String) : VideoTaggingValidationError()
 data class VideoDoesntExist(override val rowIndex: Int, val videoId: String) : VideoTaggingValidationError()
+data class InvalidPedagogyTags(override val rowIndex: Int, val tag: String) : VideoTaggingValidationError()

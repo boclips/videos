@@ -2,10 +2,34 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.security.utils.UserExtractor
 import com.boclips.videos.api.request.Projection
-import com.boclips.videos.api.request.video.*
-import com.boclips.videos.api.response.video.*
+import com.boclips.videos.api.request.video.CaptionFormatRequest
+import com.boclips.videos.api.request.video.CreateVideoRequest
+import com.boclips.videos.api.request.video.MetadataRequest
+import com.boclips.videos.api.request.video.RateVideoRequest
+import com.boclips.videos.api.request.video.SetThumbnailRequest
+import com.boclips.videos.api.request.video.TagVideoRequest
+import com.boclips.videos.api.request.video.UpdateVideoCaptionsRequest
+import com.boclips.videos.api.request.video.UpdateVideoRequest
+import com.boclips.videos.api.response.video.CaptionsResource
+import com.boclips.videos.api.response.video.PriceResource
+import com.boclips.videos.api.response.video.VideoMetadataResponse
+import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoUrlAssetsResource
+import com.boclips.videos.api.response.video.VideosResource
 import com.boclips.videos.service.application.collection.exceptions.InvalidWebVTTException
-import com.boclips.videos.service.application.video.*
+import com.boclips.videos.service.application.video.CreateVideo
+import com.boclips.videos.service.application.video.DeleteVideo
+import com.boclips.videos.service.application.video.DeleteVideoThumbnail
+import com.boclips.videos.service.application.video.GetVideoUrlAssets
+import com.boclips.videos.service.application.video.RateVideo
+import com.boclips.videos.service.application.video.SetVideoThumbnail
+import com.boclips.videos.service.application.video.TagVideo
+import com.boclips.videos.service.application.video.TagVideosCsv
+import com.boclips.videos.service.application.video.UpdateCaptionContent
+import com.boclips.videos.service.application.video.UpdateVideo
+import com.boclips.videos.service.application.video.UploadThumbnailImageToVideo
+import com.boclips.videos.service.application.video.VideoCaptionService
+import com.boclips.videos.service.application.video.VideoTranscriptService
 import com.boclips.videos.service.application.video.exceptions.VideoAssetAlreadyExistsException
 import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
@@ -20,7 +44,12 @@ import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.presentation.converters.*
+import com.boclips.videos.service.presentation.converters.CaptionFormatRequestEnumConverter
+import com.boclips.videos.service.presentation.converters.PriceConverter
+import com.boclips.videos.service.presentation.converters.QueryParamsConverter
+import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
+import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoTaggingCsvFile
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -32,7 +61,19 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.WebDataBinder
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.InitBinder
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import javax.servlet.ServletRequest
 import javax.validation.Valid
@@ -58,7 +99,7 @@ class VideoController(
     private val getVideoUrlAssets: GetVideoUrlAssets,
     private val videosRepository: VideoRepository,
     private val getVideoPrice: GetVideoPrice,
-    private val tagVideosWithCategories: TagVideosWithCategories,
+    private val tagVideosCsv: TagVideosCsv,
     private val videoMetadataConverter: VideoMetadataConverter,
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
@@ -466,14 +507,16 @@ class VideoController(
     fun tagVideos(
         @RequestParam("file") file: MultipartFile?
     ): ResponseEntity<SuccessResponse> {
+        val user = getCurrentUser()
+
         when (val validationResult = videoTaggingCsvFileValidator.validate(file)) {
-            is CategoriesValid -> {
-                tagVideosWithCategories(VideosCategoryMetadataConverter.convert(validationResult.entries))
+            is CsvValidated -> {
+                tagVideosCsv(validationResult.entries, user)
                 return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
             }
 
-            is CategoriesValidWithEmptyVideoIds -> {
-                tagVideosWithCategories(VideosCategoryMetadataConverter.convert(validationResult.entriesWithIds))
+            is CsvValidatedWithEmptyIds -> {
+                tagVideosCsv(validationResult.entriesWithIds, user)
 
                 val rowsWithoutIds = validationResult.entriesWithoutIds.map { it.index }.joinToString()
 

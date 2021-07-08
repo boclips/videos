@@ -7,11 +7,29 @@ import com.boclips.videos.service.application.channels.VideoChannelService
 import com.boclips.videos.service.application.collection.CollectionUpdatesConverter
 import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.application.video.VideoRetrievalService
+import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.presentation.converters.*
-import com.boclips.videos.service.presentation.hateoas.*
+import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
+import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
+import com.boclips.videos.service.presentation.converters.CategoryResourceConverter
+import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
+import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
+import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
+import com.boclips.videos.service.presentation.converters.TagConverter
+import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
+import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.projections.RoleBasedProjectionResolver
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -122,9 +140,10 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
     @Bean
     fun videoTaggingCsvFileValidator(
         getAllCategories: GetAllCategories,
-        videoRepository: VideoRepository
+        videoRepository: VideoRepository,
+        tagRepository: TagRepository
     ): VideoTaggingCsvFileValidator {
-        return VideoTaggingCsvFileValidator(getAllCategories, videoRepository)
+        return VideoTaggingCsvFileValidator(getAllCategories, videoRepository, tagRepository)
     }
 
     @Bean // TODO: collectionResourceFactory mixes different abstractions, address smell. This is a mess.

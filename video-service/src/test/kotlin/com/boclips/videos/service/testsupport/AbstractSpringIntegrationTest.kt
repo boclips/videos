@@ -322,7 +322,11 @@ abstract class AbstractSpringIntegrationTest {
         channelCategories: List<String>? = null,
     ): VideoId {
         val retrievedContentPartnerId =
-            saveChannel(name = newChannelName, distributionMethods = distributionMethods, categories = channelCategories).id.value
+            saveChannel(
+                name = newChannelName,
+                distributionMethods = distributionMethods,
+                categories = channelCategories
+            ).id.value
 
         when (playbackId.type) {
             KALTURA -> createMediaEntry(
@@ -388,6 +392,14 @@ abstract class AbstractSpringIntegrationTest {
         updateVideo(
             videoId.value,
             UpdateVideoRequest(attachments = Specified(listOf(attachment))),
+            user = UserFactory.sample(boclipsEmployee = true)
+        )
+    }
+
+    fun addPedagogyTagToVideo(videoId: VideoId, tag: String) {
+        updateVideo(
+            videoId.value,
+            UpdateVideoRequest(tagId = tag),
             user = UserFactory.sample(boclipsEmployee = true)
         )
     }
