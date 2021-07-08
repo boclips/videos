@@ -4,6 +4,10 @@ import com.boclips.videos.service.application.video.exceptions.VideoNotFoundExce
 import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.subject.SubjectId
+import com.boclips.videos.service.domain.model.tag.Tag
+import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.model.tag.UserTag
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
 import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
@@ -13,8 +17,40 @@ import com.boclips.videos.service.domain.model.video.Transcript
 import com.boclips.videos.service.domain.model.video.UserRating
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.Voice
+import com.boclips.videos.service.domain.model.video.channel.Channel
+import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddCategories
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsDuplicate
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsVideoWithoutVoice
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveAttachments
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveSubject
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAdditionalDescription
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAttachments
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCategories
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceChannel
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentTypes
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentWarnings
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCustomThumbnail
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLegalRestrictions
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjectsWereSetManually
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceThumbnailSecond
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscriptRequested
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.SetAnalysisFailed
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
@@ -24,9 +60,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
-import java.util.Locale
+import java.util.*
+import java.util.stream.Stream
 
 class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -46,7 +88,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
         mongoVideoRepository.bulkUpdate(
             listOf(
-                VideoUpdateCommand.ReplacePlayback(
+                ReplacePlayback(
                     originalAsset.videoId,
                     createKalturaPlayback(
                         duration = Duration.ZERO,
@@ -70,7 +112,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val originalAsset = mongoVideoRepository.create(createVideo(title = "old title"))
 
         val updatedAsset =
-            mongoVideoRepository.update(VideoUpdateCommand.ReplaceTitle(originalAsset.videoId, "new title"))
+            mongoVideoRepository.update(ReplaceTitle(originalAsset.videoId, "new title"))
 
         assertThat(updatedAsset.title).isEqualTo("new title")
     }
@@ -80,7 +122,12 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val originalAsset = mongoVideoRepository.create(createVideo(description = "old description"))
 
         val updatedAsset =
-            mongoVideoRepository.update(VideoUpdateCommand.ReplaceDescription(originalAsset.videoId, "new description"))
+            mongoVideoRepository.update(
+                ReplaceDescription(
+                    originalAsset.videoId,
+                    "new description"
+                )
+            )
 
         assertThat(updatedAsset.description).isEqualTo("new description")
     }
@@ -95,13 +142,13 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceSubjects(
+            ReplaceSubjects(
                 originalAsset.videoId,
                 listOf(biology)
             )
         )
 
-        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects")
+        assertThat(updatedAsset).isEqualToIgnoringGivenFields(originalAsset, "subjects", "updatedAt")
         assertThat(updatedAsset.subjects.items).containsOnly(biology)
     }
 
@@ -115,7 +162,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.RemoveSubject(
+            RemoveSubject(
                 videoId = originalAsset.videoId,
                 subjectId = maths.id
             )
@@ -136,18 +183,18 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         assertThat(originalAsset.subjects.setManually).isNull()
 
         val afterStep1 = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, true)
+            ReplaceSubjectsWereSetManually(originalAsset.videoId, true)
         )
 
-        assertThat(afterStep1).isEqualToIgnoringGivenFields(originalAsset, "subjects")
+        assertThat(afterStep1).isEqualToIgnoringGivenFields(originalAsset, "subjects", "updatedAt")
         assertThat(afterStep1.subjects.setManually).isTrue()
 
         val afterStep2 = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceSubjectsWereSetManually(originalAsset.videoId, false)
+            ReplaceSubjectsWereSetManually(originalAsset.videoId, false)
         )
 
-        assertThat(afterStep2).isEqualToIgnoringGivenFields(originalAsset, "subjects")
-        assertThat(afterStep2.subjects.setManually).isFalse()
+        assertThat(afterStep2).isEqualToIgnoringGivenFields(originalAsset, "subjects", "updatedAt")
+        assertThat(afterStep2.subjects.setManually).isFalse
     }
 
     @Test
@@ -159,7 +206,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         )
 
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceAgeRange(
+            ReplaceAgeRange(
                 originalAsset.videoId,
                 AgeRange.of(min = 3, max = 5, curatedManually = true)
             )
@@ -177,19 +224,19 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         )
 
         mongoVideoRepository.update(
-            VideoUpdateCommand.AddRating(
+            AddRating(
                 originalAsset.videoId,
                 UserRating(3, UserId("a user"))
             )
         )
         mongoVideoRepository.update(
-            VideoUpdateCommand.AddRating(
+            AddRating(
                 originalAsset.videoId,
                 UserRating(3, UserId("another user"))
             )
         )
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.AddRating(
+            AddRating(
                 originalAsset.videoId,
                 UserRating(5, UserId("another user"))
             )
@@ -206,7 +253,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val originalAsset = mongoVideoRepository.create(createVideo())
         val tag = TestFactories.createUserTag(label = "Alex", userId = "user-1")
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceTag(
+            ReplaceTag(
                 originalAsset.videoId, tag
 
             )
@@ -218,7 +265,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     fun `update promoted`() {
         val originalAsset = mongoVideoRepository.create(createVideo())
         val updatedAsset = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplacePromoted(
+            ReplacePromoted(
                 originalAsset.videoId, true
 
             )
@@ -231,7 +278,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     fun `update throws when video not found`() {
         assertThrows<VideoNotFoundException> {
             mongoVideoRepository.update(
-                VideoUpdateCommand.ReplaceDuration(
+                ReplaceDuration(
                     VideoId(value = TestFactories.aValidId()),
                     duration = Duration.ZERO
                 )
@@ -262,31 +309,31 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         )
 
         val updates = listOf(
-            VideoUpdateCommand.ReplaceSubjects(
+            ReplaceSubjects(
                 videoId = originalVideo1.videoId,
                 subjects = emptyList()
             ),
-            VideoUpdateCommand.ReplaceDuration(
+            ReplaceDuration(
                 videoId = originalVideo1.videoId,
                 duration = Duration.ofMinutes(10)
             ),
-            VideoUpdateCommand.ReplaceSubjects(
+            ReplaceSubjects(
                 videoId = originalVideo2.videoId,
                 subjects = listOf(biology)
             ),
-            VideoUpdateCommand.ReplaceDuration(
+            ReplaceDuration(
                 videoId = originalVideo2.videoId,
                 duration = Duration.ofMinutes(11)
             ),
-            VideoUpdateCommand.ReplacePromoted(
+            ReplacePromoted(
                 videoId = originalVideo2.videoId,
                 promoted = true
             ),
-            VideoUpdateCommand.ReplaceAdditionalDescription(
+            ReplaceAdditionalDescription(
                 videoId = originalVideo2.videoId,
                 additionalDescription = "edited additional description"
             ),
-            VideoUpdateCommand.ReplaceCustomThumbnail(
+            ReplaceCustomThumbnail(
                 videoId = originalVideo2.videoId,
                 customThumbnail = true
             )
@@ -296,7 +343,13 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
         val updatedVideo1 = updatedVideos.find { it.videoId == originalVideo1.videoId }!!
         val updatedVideo2 = updatedVideos.find { it.videoId == originalVideo2.videoId }!!
-        assertThat(updatedVideo1).isEqualToIgnoringGivenFields(originalVideo1, "subjects", "duration", "playback")
+        assertThat(updatedVideo1).isEqualToIgnoringGivenFields(
+            originalVideo1,
+            "subjects",
+            "duration",
+            "playback",
+            "updatedAt"
+        )
         assertThat(updatedVideo1.playback.duration).isEqualTo(Duration.ofMinutes(10))
         assertThat(updatedVideo1.subjects.items).isEmpty()
 
@@ -306,7 +359,8 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             "duration",
             "playback",
             "promoted",
-            "additionalDescription"
+            "additionalDescription",
+            "updatedAt"
         )
         assertThat(updatedVideo2.playback.duration).isEqualTo(Duration.ofMinutes(11))
         assertThat(updatedVideo2.playback).isInstanceOf(StreamPlayback::class.java)
@@ -321,7 +375,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val video = mongoVideoRepository.create(createVideo(attachments = emptyList()))
 
         val updatedVideo = mongoVideoRepository.update(
-            VideoUpdateCommand.ReplaceAttachments(
+            ReplaceAttachments(
                 videoId = video.videoId,
                 attachments = listOf(
                     AttachmentFactory.sample(
@@ -351,7 +405,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
         )
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceLanguage(video.videoId, Locale.GERMAN))
+        mongoVideoRepository.update(ReplaceLanguage(video.videoId, Locale.GERMAN))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -363,7 +417,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
         val video =
             mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = null)))
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscript(video.videoId, "bla bla bla", true))
+        mongoVideoRepository.update(ReplaceTranscript(video.videoId, "bla bla bla", true))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -374,9 +428,16 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     @Test
     fun `replaces transcript requested`() {
         val video =
-            mongoVideoRepository.create(createVideo(voice = Voice.UnknownVoice(language = null, transcript = Transcript(isRequested = true))))
+            mongoVideoRepository.create(
+                createVideo(
+                    voice = Voice.UnknownVoice(
+                        language = null,
+                        transcript = Transcript(isRequested = true)
+                    )
+                )
+            )
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTranscriptRequested(video.videoId, false))
+        mongoVideoRepository.update(ReplaceTranscriptRequested(video.videoId, false))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -394,7 +455,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             parent = Topic(name = "Statistics", confidence = 1.0, language = Locale.US, parent = null)
         )
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceTopics(video.videoId, setOf(topic)))
+        mongoVideoRepository.update(ReplaceTopics(video.videoId, setOf(topic)))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -405,7 +466,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
     fun `replaces keywords`() {
         val video = mongoVideoRepository.create(createVideo(keywords = listOf("old")))
 
-        mongoVideoRepository.update(VideoUpdateCommand.ReplaceKeywords(video.videoId, setOf("new")))
+        mongoVideoRepository.update(ReplaceKeywords(video.videoId, setOf("new")))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -423,7 +484,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
         )
 
-        mongoVideoRepository.update(VideoUpdateCommand.MarkAsVideoWithoutVoice(video.videoId))
+        mongoVideoRepository.update(MarkAsVideoWithoutVoice(video.videoId))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
 
@@ -438,9 +499,14 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
             val updatedAsset =
                 mongoVideoRepository.update(
-                    VideoUpdateCommand.ReplaceCategories(
+                    ReplaceCategories(
                         videoId = originalAsset.videoId,
-                        categories = setOf(CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")),
+                        categories = setOf(
+                            CategoryWithAncestors(
+                                codeValue = CategoryCode("M"),
+                                description = "music"
+                            )
+                        ),
                         source = CategorySource.CHANNEL
                     )
                 )
@@ -456,9 +522,14 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
 
             val updatedAsset =
                 mongoVideoRepository.update(
-                    VideoUpdateCommand.ReplaceCategories(
+                    ReplaceCategories(
                         videoId = originalAsset.videoId,
-                        categories = setOf(CategoryWithAncestors(codeValue = CategoryCode("M"), description = "music")),
+                        categories = setOf(
+                            CategoryWithAncestors(
+                                codeValue = CategoryCode("M"),
+                                description = "music"
+                            )
+                        ),
                         source = CategorySource.MANUAL
                     )
                 )
@@ -485,7 +556,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
 
             val updatedVideo = mongoVideoRepository.update(
-                VideoUpdateCommand.AddCategories(
+                AddCategories(
                     videoId = originalVideo.videoId,
                     categories = setOf(
                         CategoryWithAncestors(codeValue = CategoryCode("B"), description = "B CAT")
@@ -521,7 +592,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
 
             val updatedVideo = mongoVideoRepository.update(
-                VideoUpdateCommand.AddCategories(
+                AddCategories(
                     videoId = originalVideo.videoId,
                     categories = setOf(
                         CategoryWithAncestors(codeValue = CategoryCode("B"), description = "B CAT"),
@@ -555,7 +626,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
 
             val updatedVideo = mongoVideoRepository.update(
-                VideoUpdateCommand.AddCategories(
+                AddCategories(
                     videoId = originalVideo.videoId,
                     categories = setOf(
                         CategoryWithAncestors(codeValue = CategoryCode("B"), description = "B CAT"),
@@ -570,6 +641,60 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
                 CategoryWithAncestors(codeValue = CategoryCode("B"), description = "B CAT"),
                 CategoryWithAncestors(codeValue = CategoryCode("C"), description = "C CAT"),
             )
+        }
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(VideoUpdateCommandProvider::class)
+    fun `updatedAt date changes when updating any incoming update`(updateRequest: VideoUpdateCommand) {
+        val videoId = "5c54a6c1d8eafeecae07294c"
+        val originalVideo = videosRepository.create(createVideo(videoId = videoId))
+
+        mongoVideoRepository.update(updateRequest)
+        val videoAfterUpdate = videosRepository.find(videoId = VideoId(videoId))!!
+
+        assertThat(videoAfterUpdate.updatedAt).isAfter(originalVideo.updatedAt)
+    }
+
+    class VideoUpdateCommandProvider : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+            val videoId = VideoId("5c54a6c1d8eafeecae07294c")
+            return VideoUpdateCommand::class.sealedSubclasses.map { subclass ->
+                when (subclass.objectInstance) {
+                    is SetAnalysisFailed -> SetAnalysisFailed(videoId)
+                    is AddCategories -> AddCategories(videoId, emptySet(), CategorySource.CHANNEL)
+                    is AddRating -> AddRating(videoId, UserRating(5, UserId("123")))
+                    is MarkAsDuplicate -> MarkAsDuplicate(videoId, VideoId("123"))
+                    is MarkAsVideoWithoutVoice -> MarkAsVideoWithoutVoice(videoId)
+                    is RemoveAttachments -> RemoveAttachments(videoId)
+                    is RemoveSubject -> RemoveSubject(videoId, SubjectId("123"))
+                    is ReplaceAdditionalDescription -> ReplaceAdditionalDescription(videoId, "description")
+                    is ReplaceAgeRange -> ReplaceAgeRange(videoId, AgeRange.of(4, 5, false))
+                    is ReplaceAttachments -> ReplaceAttachments(videoId, emptyList())
+                    is ReplaceCategories -> ReplaceCategories(videoId, emptySet(), CategorySource.CHANNEL)
+                    is ReplaceChannel -> ReplaceChannel(videoId, Channel(ChannelId("123"), "name"))
+                    is ReplaceContentTypes -> ReplaceContentTypes(videoId, emptyList())
+                    is ReplaceContentWarnings -> ReplaceContentWarnings(videoId, emptyList())
+                    is ReplaceCustomThumbnail -> ReplaceCustomThumbnail(videoId, false)
+                    is ReplaceDescription -> ReplaceDescription(videoId, "description")
+                    is ReplaceDuration -> ReplaceDuration(videoId, Duration.ofMinutes(2))
+                    is ReplaceKeywords -> ReplaceKeywords(videoId, emptySet())
+                    is ReplaceLanguage -> ReplaceLanguage(videoId, Locale.ENGLISH)
+                    is ReplaceLegalRestrictions -> ReplaceLegalRestrictions(videoId, "lala")
+                    is ReplacePlayback -> ReplacePlayback(videoId, createKalturaPlayback())
+                    is ReplacePromoted -> ReplacePromoted(videoId, true)
+                    is ReplaceSubjects -> ReplaceSubjects(videoId, emptyList())
+                    is ReplaceSubjectsWereSetManually -> ReplaceSubjectsWereSetManually(videoId, true)
+                    is ReplaceTag -> ReplaceTag(videoId, UserTag(Tag(TagId("123"), "label"), UserId("123")))
+                    is ReplaceThumbnailSecond -> ReplaceThumbnailSecond(videoId, 123)
+                    is ReplaceTitle -> ReplaceTitle(videoId, "title")
+                    is ReplaceTopics -> ReplaceTopics(videoId, emptySet())
+                    is ReplaceTranscript -> ReplaceTranscript(videoId, "transcript", true)
+                    is ReplaceTranscriptRequested -> ReplaceTranscriptRequested(videoId, true)
+                    else -> SetAnalysisFailed(videoId)
+                }
+            }.map { Arguments.of(it) }
+                .stream()
         }
     }
 }

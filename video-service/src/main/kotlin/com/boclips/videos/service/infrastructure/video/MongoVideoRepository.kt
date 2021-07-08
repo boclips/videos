@@ -10,44 +10,12 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddCategories
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsDuplicate
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveAttachments
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveSubject
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAdditionalDescription
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAgeRange
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAttachments
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCategories
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceChannel
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentTypes
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceContentWarnings
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceCustomThumbnail
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDescription
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceDuration
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceKeywords
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLanguage
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceLegalRestrictions
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePlayback
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplacePromoted
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjects
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceSubjectsWereSetManually
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTag
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceThumbnailSecond
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTitle
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTopics
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.*
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.attachment.AttachmentDocumentConverter
 import com.boclips.videos.service.infrastructure.subject.SubjectDocument
 import com.boclips.videos.service.infrastructure.subject.SubjectDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.ChannelDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.ContentWarningDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.PlaybackConverter
-import com.boclips.videos.service.infrastructure.video.converters.TopicDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.UserRatingDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.UserTagDocumentConverter
-import com.boclips.videos.service.infrastructure.video.converters.VideoDocumentConverter
+import com.boclips.videos.service.infrastructure.video.converters.*
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.and
@@ -56,22 +24,11 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.SetTo
-import org.litote.kmongo.`in`
-import org.litote.kmongo.addEachToSet
-import org.litote.kmongo.combine
-import org.litote.kmongo.contains
-import org.litote.kmongo.div
-import org.litote.kmongo.elemMatch
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.ne
-import org.litote.kmongo.pullByFilter
-import org.litote.kmongo.push
-import org.litote.kmongo.set
+import org.litote.kmongo.*
 import java.time.Instant
-import java.util.Optional
+import java.time.ZonedDateTime
+import java.util.*
+import kotlin.collections.toList
 
 class MongoVideoRepository(private val mongoClient: MongoClient, val batchProcessingConfig: BatchProcessingConfig) :
     VideoRepository {
@@ -188,7 +145,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         } else {
             getVideoCollection().updateOne(
                 VideoDocument::id eq ObjectId(videoId.value),
-                updatedOperation(command)
+                updatedOperationWrapper(command)
             )
         }
         return find(videoId) ?: throw VideoNotFoundException(videoId)
@@ -200,10 +157,9 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<VideoDocument>(
                 VideoDocument::id eq ObjectId(updateCommand.videoId.value),
-                updatedOperation(updateCommand)
+                updatedOperationWrapper(updateCommand),
             )
         }
-
         val result = getVideoCollection().bulkWrite(updateDocs)
         logger.info("Updated videos: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
 
@@ -281,12 +237,23 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         return videoId
     }
 
+    private fun updatedOperationWrapper(updateCommand: VideoUpdateCommand): Bson =
+        combine(
+            updatedOperation(updateCommand),
+            set(
+                VideoDocument::updatedAt,
+                ZonedDateTime.now().toString()
+            )
+        )
+
     private fun updatedOperation(updateCommand: VideoUpdateCommand): Bson {
         return when (updateCommand) {
-            is ReplaceDuration -> set(
-                VideoDocument::playback / PlaybackDocument::duration,
-                updateCommand.duration.seconds.toInt()
-            )
+            is ReplaceDuration ->
+                set(
+                    VideoDocument::playback / PlaybackDocument::duration,
+                    updateCommand.duration.seconds.toInt()
+
+                )
             is ReplaceSubjects -> set(
                 VideoDocument::subjects,
                 updateCommand.subjects.map(SubjectDocumentConverter::toSubjectDocument)

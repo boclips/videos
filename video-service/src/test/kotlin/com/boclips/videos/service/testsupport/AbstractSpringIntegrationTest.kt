@@ -66,6 +66,7 @@ import com.boclips.videos.service.domain.model.video.VoiceType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
 import com.boclips.videos.service.domain.service.user.AccessRuleService
+import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
@@ -145,6 +146,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var updateVideo: UpdateVideo
+
+    @Autowired
+    lateinit var videosRepository: VideoRepository
 
     @Autowired
     lateinit var createCollection: CreateCollection

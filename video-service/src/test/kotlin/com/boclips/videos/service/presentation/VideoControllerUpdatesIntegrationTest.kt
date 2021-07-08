@@ -2,11 +2,18 @@ package com.boclips.videos.service.presentation
 
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
+import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.testsupport.*
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
@@ -17,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
+import java.util.stream.Stream
 
 class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -53,6 +61,28 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:invalid_columns.csv")
     lateinit var invalidColumns: Resource
 
+    companion object {
+        class UpdateRequestProvider : ArgumentsProvider {
+            override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+                return Stream.of(
+                    Arguments.of("""{ "title": "New title" }""".trimIndent()),
+                    Arguments.of("""{ "description": "New description" }""".trimIndent()),
+                    Arguments.of("""{ "additionalDescription": "New description" }""".trimIndent()),
+                    Arguments.of("""{ "promoted": true }""".trimIndent()),
+                    Arguments.of("""{ "subjectIds": [] }""".trimIndent()),
+                    Arguments.of("""{ "ageRangeMin": 10 }""".trimIndent()),
+                    Arguments.of("""{ "ageRangeMax": 12 }""".trimIndent()),
+                    Arguments.of("""{ "rating": 3 }""".trimIndent()),
+                    Arguments.of("""{ "tagId": null }""".trimIndent()),
+                    Arguments.of("""{ "attachments": [] }""".trimIndent()),
+                    Arguments.of("""{ "contentWarningIds": [] }""".trimIndent()),
+                    Arguments.of("""{ "categories": [] }""".trimIndent()),
+                    Arguments.of("""{ "transcriptRequested": true }""".trimIndent()),
+                )
+            }
+        }
+    }
+
     @BeforeEach
     fun setUp() {
         kalturaVideoId = saveVideo(
@@ -64,7 +94,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             newChannelName = "enabled-cp",
             legalRestrictions = "None",
             ageRangeMin = 5,
-            ageRangeMax = 7
+            ageRangeMax = 7,
         ).value
 
         youtubeVideoId = saveVideo(
@@ -111,6 +141,26 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.title", equalTo("New title")))
             .andExpect(jsonPath("$.description", equalTo("New description")))
             .andExpect(jsonPath("$.promoted", equalTo(true)))
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(UpdateRequestProvider::class)
+    fun `updatedAt date changes when updating any incoming update`(updateRequest: String) {
+        val videoId = saveVideo(title = "Old title", description = "Old description").value
+
+        val originalVideo = videosRepository.find(videoId = VideoId(videoId))!!
+
+        mockMvc.perform(
+            patch("/v1/videos/$videoId")
+                .content(updateRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+                .asBoclipsEmployee()
+        )
+            .andExpect(status().isOk)
+
+        val videoAfterUpdate = videosRepository.find(videoId = VideoId(videoId))!!
+
+        assertThat(videoAfterUpdate.updatedAt).isAfter(originalVideo.updatedAt)
     }
 
     @Test
