@@ -10,19 +10,23 @@ import mu.KLogging
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 
-class MongoCategoryRepository(private val mongoClient: MongoClient) : CategoryRepository {
+open class MongoCategoryRepository(private val mongoClient: MongoClient) : CategoryRepository {
 
     companion object : KLogging() {
         const val collectionName = "taxonomy"
     }
 
+    @CacheEvict("categories")
     override fun create(category: Category): Category {
         val categoryDocument: CategoryDocument = CategoryDocumentConverter.toDocument(category)
         getTaxonomyCollection().insertOne(categoryDocument)
         return category
     }
 
+    @Cacheable("categories")
     override fun findAll(): List<Category> {
         return getTaxonomyCollection().find().toList().map { CategoryDocumentConverter.toCategory(it) }
     }
