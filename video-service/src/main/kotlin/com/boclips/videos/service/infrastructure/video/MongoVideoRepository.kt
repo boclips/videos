@@ -72,6 +72,7 @@ import org.litote.kmongo.pullByFilter
 import org.litote.kmongo.push
 import org.litote.kmongo.set
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -287,7 +288,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             updatedOperation(updateCommand),
             set(
                 VideoDocument::updatedAt,
-                ZonedDateTime.now().toString()
+                ZonedDateTime.now(ZoneOffset.UTC).toString()
             )
         )
 
