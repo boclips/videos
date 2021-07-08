@@ -15,7 +15,7 @@ import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.Channel
 import java.time.Duration
-import java.util.Locale
+import java.util.*
 
 sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceAttachments(videoId: VideoId, val attachments: List<Attachment>) : VideoUpdateCommand(videoId)
@@ -34,6 +34,7 @@ sealed class VideoUpdateCommand(val videoId: VideoId) {
     class ReplaceChannel(videoId: VideoId, val channel: Channel) : VideoUpdateCommand(videoId)
     class AddRating(videoId: VideoId, val rating: UserRating) : VideoUpdateCommand(videoId)
     class ReplaceTag(videoId: VideoId, val tag: UserTag) : VideoUpdateCommand(videoId)
+    class UpdateTags(videoId: VideoId, val tags: Set<UserTag>) : VideoUpdateCommand(videoId)
     class ReplaceTitle(videoId: VideoId, val title: String) : VideoUpdateCommand(videoId)
     class MarkAsVideoWithoutVoice(videoId: VideoId) : VideoUpdateCommand(videoId)
     class ReplaceDescription(videoId: VideoId, val description: String) : VideoUpdateCommand(videoId)

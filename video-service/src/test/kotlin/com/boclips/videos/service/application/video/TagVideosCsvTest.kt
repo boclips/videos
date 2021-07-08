@@ -40,16 +40,57 @@ class TagVideosCsvTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `tag single video with one pedagogy tag`() {
+    fun `adds tags from csv to existing tags in video`() {
         val otherTag = saveTag("Other")
         saveTag("Hook")
+        saveCategory(CategoryFactory.sample(code = "A", description = "cat A"))
 
         val videoId = saveVideo()
         addPedagogyTagToVideo(videoId = videoId, tag = otherTag)
 
-        listOf(CategoryMappingMetadata(videoId = videoId.value, categoryCode = "A", tag = "Hook", index = 1))
+        tagVideosCsv(
+            listOf(
+                CategoryMappingMetadata(
+                    videoId = videoId.value,
+                    categoryCode = "A",
+                    tag = "Hook",
+                    index = 1
+                )
+            ),
+            UserFactory.sample()
+        )
 
         val retrieved = videoRepository.find(videoId)
-        assertThat(retrieved!!.tags).hasSize(1)
+        assertThat(retrieved!!.tags).hasSize(2)
+    }
+
+    @Test
+    fun `adds multiple tags to a video`() {
+        saveTag("Other")
+        saveTag("Hook")
+        saveCategory(CategoryFactory.sample(code = "A", description = "cat A"))
+
+        val videoId = saveVideo()
+
+        tagVideosCsv(
+            listOf(
+                CategoryMappingMetadata(
+                    videoId = videoId.value,
+                    categoryCode = "A",
+                    tag = "Hook",
+                    index = 1
+                ),
+                CategoryMappingMetadata(
+                    videoId = videoId.value,
+                    categoryCode = "A",
+                    tag = "Other",
+                    index = 1
+                )
+            ),
+            UserFactory.sample()
+        )
+
+        val retrieved = videoRepository.find(videoId)
+        assertThat(retrieved!!.tags).hasSize(2)
     }
 }

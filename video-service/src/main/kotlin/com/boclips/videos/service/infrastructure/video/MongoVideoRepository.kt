@@ -145,7 +145,7 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         } else {
             getVideoCollection().updateOne(
                 VideoDocument::id eq ObjectId(videoId.value),
-                updatedOperationWrapper(command)
+                updatedOperation(command)
             )
         }
         return find(videoId) ?: throw VideoNotFoundException(videoId)
@@ -157,9 +157,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
         val updateDocs = commands.map { updateCommand ->
             UpdateOneModel<VideoDocument>(
                 VideoDocument::id eq ObjectId(updateCommand.videoId.value),
-                updatedOperationWrapper(updateCommand),
+                updatedOperation(updateCommand)
             )
         }
+
         val result = getVideoCollection().bulkWrite(updateDocs)
         logger.info("Updated videos: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
 
@@ -281,6 +282,10 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is ReplaceTag -> set(
                 VideoDocument::tags,
                 listOf(UserTagDocumentConverter.toDocument(updateCommand.tag))
+            )
+            is UpdateTags -> addEachToSet(
+                VideoDocument::tags,
+                updateCommand.tags.map { UserTagDocumentConverter.toDocument(it) }
             )
             is ReplaceAgeRange -> combine(
                 set(

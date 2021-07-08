@@ -1,10 +1,15 @@
 package com.boclips.videos.service.infrastructure.video
 
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.StreamPlayback
+import com.boclips.videos.service.domain.model.tag.Tag
+import com.boclips.videos.service.domain.model.tag.TagId
+import com.boclips.videos.service.domain.model.tag.UserTag
+import com.boclips.videos.service.domain.model.user.UserId
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.service.video.VideoRepository
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.infrastructure.DATABASE_NAME
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.TestFactories
@@ -18,7 +23,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.Date
+import java.util.*
 
 class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -342,6 +347,82 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
             assertThat(video.description).isEqualTo("Ain't no video like this one")
             assertThat(video.playback.id.value).isEqualTo("some-entry-id")
             assertThat(video.playback.id.type.name).isEqualTo("KALTURA")
+        }
+
+        @Test
+        fun `create update a video with multiple tags`() {
+            val video = createVideo(playback = createKalturaPlayback(assets = setOf(createVideoAsset())))
+            mongoVideoRepository.create(video)
+
+            val tagId = ObjectId("5c54a6c1d8eafeecae07295d").toHexString()
+
+            mongoVideoRepository.update(
+                VideoUpdateCommand.UpdateTags(
+                    videoId = video.videoId,
+                    tags = setOf(
+                        UserTag(tag = Tag(id = TagId(tagId), label = "test tag 1"), userId = UserId("usero")),
+                        UserTag(
+                            tag = Tag(
+                                id = TagId(ObjectId("5c54a6c1d8eafeecae072962").toHexString()),
+                                label = "test tag 2"
+                            ),
+                            userId = UserId("usero")
+                        )
+                    )
+                )
+            )
+
+            val updatedVideo = mongoVideoRepository.find(videoId = video.videoId)
+
+            assertThat(updatedVideo?.tags).hasSize(2)
+            assertThat(updatedVideo?.tags?.get(0)?.tag?.label).isEqualTo("test tag 1")
+            assertThat(updatedVideo?.tags?.get(1)?.tag?.label).isEqualTo("test tag 2")
+        }
+
+        @Test
+        fun `can add pedagogy tags instead of replace`() {
+            val video = createVideo(playback = createKalturaPlayback(assets = setOf(createVideoAsset())))
+            mongoVideoRepository.create(video)
+
+            val tagId = ObjectId("5c54a6c1d8eafeecae07295d").toHexString()
+
+            mongoVideoRepository.update(
+                VideoUpdateCommand.UpdateTags(
+                    videoId = video.videoId,
+                    tags = setOf(
+                        UserTag(tag = Tag(id = TagId(tagId), label = "test tag 1"), userId = UserId("usero")),
+                        UserTag(
+                            tag = Tag(
+                                id = TagId(ObjectId("5c54a6c1d8eafeecae072962").toHexString()),
+                                label = "test tag 2"
+                            ),
+                            userId = UserId("usero")
+                        )
+                    )
+                )
+            )
+
+            mongoVideoRepository.update(
+                VideoUpdateCommand.UpdateTags(
+                    videoId = video.videoId,
+                    tags = setOf(
+                        UserTag(
+                            tag = Tag(
+                                id = TagId(ObjectId("5c54a6c1d8eafeecae072972").toHexString()),
+                                label = "test tag 3"
+                            ),
+                            userId = UserId("usero")
+                        )
+                    )
+                )
+            )
+
+            val updatedVideo = mongoVideoRepository.find(videoId = video.videoId)
+
+            assertThat(updatedVideo?.tags).hasSize(3)
+            assertThat(updatedVideo?.tags?.get(0)?.tag?.label).isEqualTo("test tag 1")
+            assertThat(updatedVideo?.tags?.get(1)?.tag?.label).isEqualTo("test tag 2")
+            assertThat(updatedVideo?.tags?.get(2)?.tag?.label).isEqualTo("test tag 3")
         }
     }
 }
