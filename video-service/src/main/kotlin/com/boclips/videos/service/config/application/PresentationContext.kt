@@ -26,6 +26,7 @@ import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
 import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
@@ -173,5 +174,10 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
             collectionsLinkBuilder,
             videoRetrievalService
         )
+    }
+
+    @Bean
+    fun feedLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): FeedLinkBuilder {
+        return FeedLinkBuilder(uriComponentsBuilderFactory)
     }
 }

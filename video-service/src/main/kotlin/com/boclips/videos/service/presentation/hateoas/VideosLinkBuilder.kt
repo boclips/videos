@@ -267,13 +267,6 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
         )
     }
 
-    private fun getVideosRootWithoutParams() = uriComponentsBuilderFactory.getInstance()
-        .replacePath("/v1/videos")
-        .replaceQueryParams(null)
-
-    private fun getVideosRootWithParams() = uriComponentsBuilderFactory.getInstance()
-        .replacePath("/v1/videos")
-
     fun videoDetailsProjection(id: String?) = getIfHasAnyRole(
         UserRoles.LEGACY_PUBLISHER,
         UserRoles.HQ,
@@ -347,4 +340,11 @@ class VideosLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBu
             )
         }
     }
+
+    private fun getVideosRootWithoutParams() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/videos")
+        .replaceQueryParams(null)
+
+    private fun getVideosRootWithParams() = uriComponentsBuilderFactory.getInstance()
+        .replacePath("/v1/videos")
 }

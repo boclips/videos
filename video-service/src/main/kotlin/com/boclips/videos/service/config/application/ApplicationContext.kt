@@ -76,6 +76,7 @@ import com.boclips.videos.service.application.video.indexing.RebuildLegacySearch
 import com.boclips.videos.service.application.video.indexing.RebuildVideoIndex
 import com.boclips.videos.service.application.video.indexing.VideoIndexUpdater
 import com.boclips.videos.service.application.video.search.GetVideoById
+import com.boclips.videos.service.application.video.search.GetVideoFeed
 import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.GetVideosByQuery
 import com.boclips.videos.service.application.video.search.RetrievePlayableVideos
@@ -658,5 +659,10 @@ class ApplicationContext(
         collectionIndex: CollectionIndex
     ): CollectionBookmarkService {
         return CollectionBookmarkService(collectionRetrievalService, collectionIndex, collectionRepository)
+    }
+
+    @Bean
+    fun getVideoFeed(retrievePlayableVideos: RetrievePlayableVideos): GetVideoFeed {
+        return GetVideoFeed(retrievePlayableVideos)
     }
 }

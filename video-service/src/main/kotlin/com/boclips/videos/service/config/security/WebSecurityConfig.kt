@@ -164,6 +164,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .mvcMatchers(GET, "/v1/categories").hasRole(ROLE.VIEW_TAXONOMIES)
 
+            .mvcMatchers(GET, "/v1/feed/videos").hasRole(ROLE.VIEW_VIDEOS)
+
             .anyRequest().denyAll()
     }
 }

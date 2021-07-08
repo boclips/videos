@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingS
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -91,5 +92,55 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
         assertThat(results.videos).hasSize(1)
         assertThat(results.videos.first().title).isEqualTo("a kaltura video")
+    }
+
+    @Nested
+    inner class WithCursor {
+        @Test
+        fun `retrieves video and a cursor id`() {
+            val video1 = saveVideo(title = "video 1")
+            val video2 = saveVideo(title = "video 2")
+
+            val result = retrievePlayableVideos.searchPlayableVideosWithCursor(
+                request = VideoRequest(
+                    pagingState = VideoRequestPagingState.Cursor(value = null),
+                    text = "video",
+                    pageSize = 2
+                ),
+                videoAccess = VideoAccess.Everything(privateChannels = emptySet())
+            )
+
+            assertThat(result.videos.map { it.videoId }).containsExactly(video1, video2)
+            assertThat(result.cursorId).isNotNull()
+        }
+
+        @Test
+        fun `following the cursor id returns the next "page" of videos`() {
+            val video1 = saveVideo(title = "video 1")
+            val video2 = saveVideo(title = "video 2")
+            val video3 = saveVideo(title = "video 3")
+
+            val previousPage = retrievePlayableVideos.searchPlayableVideosWithCursor(
+                request = VideoRequest(
+                    pagingState = VideoRequestPagingState.Cursor(value = null),
+                    text = "video",
+                    pageSize = 2
+                ),
+                videoAccess = VideoAccess.Everything(privateChannels = emptySet())
+            )
+
+            assertThat(previousPage.videos.map { it.videoId }).containsExactly(video1, video2)
+
+            val nextPage = retrievePlayableVideos.searchPlayableVideosWithCursor(
+                request = VideoRequest(
+                    pagingState = VideoRequestPagingState.Cursor(value = previousPage.cursorId),
+                    text = "video",
+                    pageSize = 2
+                ),
+                videoAccess = VideoAccess.Everything(privateChannels = emptySet())
+            )
+
+            assertThat(nextPage.videos.map { it.videoId }).containsExactly(video3)
+        }
     }
 }

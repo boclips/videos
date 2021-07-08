@@ -2,9 +2,22 @@ package com.boclips.videos.service.application.video.search
 
 import com.boclips.contentpartner.service.domain.model.agerange.AgeRangeId
 import com.boclips.search.service.domain.common.FacetType
+import com.boclips.search.service.domain.common.model.CursorBasedIndexSearchRequest
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.common.model.PagingCursor
 import com.boclips.videos.service.domain.model.subject.SubjectId
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.AgeRangeFacet
+import com.boclips.videos.service.domain.model.video.AttachmentTypeFacet
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.DurationFacet
+import com.boclips.videos.service.domain.model.video.PriceFacet
+import com.boclips.videos.service.domain.model.video.SearchResults
+import com.boclips.videos.service.domain.model.video.SearchResultsWithCursor
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.VideoAccess
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoTypeFacet
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
 import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
@@ -19,7 +32,7 @@ class RetrievePlayableVideos(
 ) {
     companion object : KLogging()
 
-    fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): VideoResults {
+    fun searchPlayableVideos(request: VideoRequest, videoAccess: VideoAccess): SearchResults {
         val pageIndex = when (request.pagingState) {
             is VideoRequestPagingState.PageNumber -> request.pagingState.number
             is VideoRequestPagingState.Cursor -> 0
@@ -56,7 +69,7 @@ class RetrievePlayableVideos(
 
         logger.info { "Retrieving ${playableVideos.size} videos for query $request" }
 
-        return VideoResults(
+        return SearchResults(
             videos = playableVideos,
             counts = VideoCounts(
                 total = results.counts.totalHits,
@@ -69,5 +82,29 @@ class RetrievePlayableVideos(
                 prices = priceCounts
             )
         )
+    }
+
+    fun searchPlayableVideosWithCursor(request: VideoRequest, videoAccess: VideoAccess): SearchResultsWithCursor {
+        val pagingCursor = when (request.pagingState) {
+            is VideoRequestPagingState.PageNumber -> null
+            is VideoRequestPagingState.Cursor -> request.pagingState.value
+        }?.let { PagingCursor(it) }
+
+        logger.info { "Searching for ${request.pageSize} videos with access $videoAccess and cursor ${pagingCursor?.value}" }
+
+        val searchRequest = CursorBasedIndexSearchRequest(
+            request.toQuery(videoAccess),
+            windowSize = request.pageSize,
+            cursor = pagingCursor
+        )
+
+        val results = videoIndex.search(searchRequest)
+
+        val videoIds = results.elements.map { VideoId(value = it) }
+        val playableVideos = videoRepository.findAll(videoIds = videoIds).filter { it.isPlayable() }
+
+        logger.info { "Found ${playableVideos.size} videos with cursor ${results.cursor?.value}" }
+
+        return SearchResultsWithCursor(playableVideos, results.cursor?.value)
     }
 }
