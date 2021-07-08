@@ -39,14 +39,9 @@ class TagVideosCsv(
 
         val videoUpdateCommands = videosToTag.map { videoToTag ->
             when (videoToTag.value.isNotEmpty()) {
-                true -> VideoUpdateCommand.UpdateTags(
+                true -> VideoUpdateCommand.ReplaceTag(
                     videoId = videoToTag.key,
-                    tags = videoToTag.value.map { tagLabel ->
-                        UserTag(
-                            tag = tags.find { tag -> tag.label == tagLabel }!!,
-                            userId = user.id!!
-                        )
-                    }.toSet()
+                    tag = UserTag(tag = tags.find { it.label == videoToTag.value.first() }!!, userId = user.id!!)
                 )
                 else -> return
             }
