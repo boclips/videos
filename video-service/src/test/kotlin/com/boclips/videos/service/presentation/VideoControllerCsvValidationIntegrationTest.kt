@@ -249,6 +249,53 @@ class VideoControllerCsvValidationIntegrationTest : AbstractSpringIntegrationTes
         }
 
         @Test
+        fun `applies multiple pedagogy tags to the same video id`() {
+            saveCategory(CategoryFactory.sample(code = "A"))
+            saveCategory(CategoryFactory.sample(code = "B"))
+            saveTag("Other")
+            saveTag("Hook")
+
+            val csvName = "videos.csv"
+            val csvFile = File(csvName)
+            val videoId1 = saveVideo(newChannelName = "test1").value
+            val videoId2 = saveVideo(newChannelName = "test2").value
+
+            val header = listOf("ID", "Category Code", "Pedagogy Tag")
+            val row1 = listOf(videoId1, "B", "Other")
+            val row2 = listOf(videoId1, "A", "Hook")
+
+            csvWriter().open(csvName) {
+                writeRow(header)
+                writeRow(row1)
+                writeRow(row2)
+            }
+
+            val fixture = csvFile.inputStream()
+
+            mockMvc.perform(
+                multipart("/v1/videos/categories")
+                    .file("file", fixture.readBytes())
+                    .asBoclipsEmployee()
+            )
+                .andExpect(status().isOk)
+                .andExpect(
+                    jsonPath(
+                        "$.message",
+                        equalTo("Data has been successfully imported!")
+                    )
+                )
+
+            mockMvc.perform(get("/v1/videos/$videoId1").asBoclipsEmployee())
+                .andExpect(
+                    status().isOk
+                ).andExpect(jsonPath("$.bestFor", hasSize<Any>(2)))
+                .andExpect(jsonPath("$.bestFor[0].label", equalTo("Other")))
+                .andExpect(jsonPath("$.bestFor[1].label", equalTo("Hook")))
+
+            csvFile.delete()
+        }
+
+        @Test
         fun `applies pedagogy tags to videos that have valid video ids and not to empty video ids`() {
             saveCategory(CategoryFactory.sample(code = "A"))
             saveCategory(CategoryFactory.sample(code = "B"))
