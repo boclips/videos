@@ -21,7 +21,8 @@ class FeedControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(3)))
             .andExpect(
                 jsonPath(
-                    "$._embedded.videos[*].id", containsInAnyOrder(
+                    "$._embedded.videos[*].id",
+                    containsInAnyOrder(
                         video1.value,
                         video2.value,
                         video3.value
@@ -42,11 +43,7 @@ class FeedControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get(nextLink.expand()).asApiUser())
             .andExpect(jsonPath("$._embedded.videos", hasSize<Int>(1)))
             .andExpect(
-                jsonPath(
-                    "$._embedded.videos[*].id", containsInAnyOrder(
-                        video3.value
-                    )
-                )
+                jsonPath("$._embedded.videos[*].id", containsInAnyOrder(video3.value))
             )
     }
 
