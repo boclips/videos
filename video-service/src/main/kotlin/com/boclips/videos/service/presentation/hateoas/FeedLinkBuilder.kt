@@ -1,12 +1,31 @@
 package com.boclips.videos.service.presentation.hateoas
 
+import com.boclips.security.utils.UserExtractor.currentUserHasRole
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder.RELS.NEXT_VIDEO_PAGE
+import com.boclips.videos.service.config.security.UserRoles
 import org.springframework.hateoas.Link
 
 class FeedLinkBuilder(private val uriComponentsBuilderFactory: UriComponentsBuilderFactory) {
-    private object RELS {
+    companion object RELS {
         const val NEXT_VIDEO_PAGE = "next"
+        const val VIDEOS = "videoFeed"
+    }
+
+    fun videos(): HateoasLink? {
+        return if (currentUserHasRole(UserRoles.VIEW_VIDEOS)) {
+            HateoasLink.of(
+                Link.of(
+                    root()
+                        .pathSegment("videos")
+                        .build()
+                        .toUriString()
+                        .plus("{?size}"),
+                    VIDEOS
+                )
+            )
+        } else {
+            null
+        }
     }
 
     fun nextVideosPage(cursorId: String?, size: Int): HateoasLink? {

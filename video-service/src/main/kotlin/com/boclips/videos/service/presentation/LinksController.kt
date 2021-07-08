@@ -12,7 +12,18 @@ import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.service.domain.service.GetUserIdOverride
 import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
-import com.boclips.videos.service.presentation.hateoas.*
+import com.boclips.videos.service.presentation.hateoas.AttachmentTypeLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CategoryLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.SubjectsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.SuggestionLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.VideoTypeLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.hateoas.Link
@@ -43,6 +54,7 @@ class LinksController(
     private val eventsLinkBuilder: EventsLinkBuilder,
     private val attachmentTypeLinkBuilder: AttachmentTypeLinkBuilder,
     private val categoryLinkBuilder: CategoryLinkBuilder,
+    private val feedLinkBuilder: FeedLinkBuilder,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
     userService: UserService
@@ -82,6 +94,8 @@ class LinksController(
                 tagsLinkBuilder.tags(),
                 ageRangesLinkBuilder.ageRanges(),
                 suggestionLinkBuilder.suggestions(),
+
+                feedLinkBuilder.videos(),
 
                 // belong to contentpartner-service links
                 distributionMethodsLinkBuilder.distributionMethods(),
