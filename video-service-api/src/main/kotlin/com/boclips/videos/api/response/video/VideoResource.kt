@@ -26,7 +26,7 @@ data class VideoResource(
     val additionalDescription: String? = null,
     @get:JsonView(PublicApiProjection::class)
     val releasedOn: LocalDate? = null,
-    @get:JsonView(BoclipsInternalProjection::class)
+    @get:JsonView(PublicApiProjection::class)
     val updatedAt: ZonedDateTime? = null,
     @get:JsonView(PublicApiProjection::class)
     val playback: PlaybackResource? = null,
