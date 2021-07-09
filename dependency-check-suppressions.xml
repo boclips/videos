@@ -27,50 +27,10 @@
         <cve>CVE-2020-15824</cve>
     </suppress>
     <suppress until="2021-08-01">
-        <notes><![CDATA[ file name: keycloak-core-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-core@.*$</packageUrl>
-        <cve>CVE-2021-20202</cve>
-        <cve>CVE-2021-20222</cve>
-        <cve>CVE-2020-14359</cve>
-        <cve>CVE-2021-20195</cve>
-    </suppress>
-    <suppress until="2021-08-01">
-        <notes><![CDATA[ file name: keycloak-adapter-spi-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-adapter\-spi@.*$</packageUrl>
-        <cve>CVE-2021-20202</cve>
-        <cve>CVE-2020-14359</cve>
-    </suppress>
-    <suppress until="2021-08-01">
-        <notes><![CDATA[ file name: keycloak-common-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-common@.*$</packageUrl>
-        <cve>CVE-2021-20202</cve>
-        <cve>CVE-2021-20222</cve>
-        <cve>CVE-2020-14359</cve>
-    </suppress>
-    <suppress until="2021-08-01">
-        <notes><![CDATA[ file name: keycloak-spring-security-adapter-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-spring\-security\-adapter@.*$</packageUrl>
-        <cve>CVE-2021-20202</cve>
-        <cve>CVE-2021-20222</cve>
-        <cve>CVE-2020-14359</cve>
-        <cve>CVE-2021-20195</cve>
-    </suppress>
-    <suppress until="2021-08-01">
-        <notes><![CDATA[ file name: keycloak-adapter-core-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-adapter\-core@.*$</packageUrl>
-        <cve>CVE-2020-14359</cve>
-        <cve>CVE-2021-20222</cve>
-        <cve>CVE-2021-20202</cve>
-    </suppress>
-    <suppress until="2021-08-01">
         <notes><![CDATA[ file name: spring-core-5.3.6.jar]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-core@.*$</packageUrl>
         <cve>CVE-2021-22118</cve>
         <cve>CVE-2021-20202</cve>
-        <cve>CVE-2021-20222</cve>
-    </suppress>
-    <suppress until="2021-08-01"><notes><![CDATA[ file name: keycloak-adapter-spi-12.0.3.jar]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak\-adapter\-spi@.*$</packageUrl>
         <cve>CVE-2021-20222</cve>
     </suppress>
 </suppressions>
