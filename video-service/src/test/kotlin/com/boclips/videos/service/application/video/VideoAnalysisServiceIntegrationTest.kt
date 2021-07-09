@@ -139,16 +139,16 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         }
 
         @Test
-        fun `it should only send analyse message for videos that are voiced or unknown of a channel`() {
+        fun `it should only send analyse message for videos of a channel regardless of voice `() {
             val channelId = saveChannel(name = "TED").id.value
             val videoWithVoice = saveVideo(existingChannelId = channelId, isVoiced = true)
             val videoWithUnknownVoice = saveVideo(existingChannelId = channelId, isVoiced = null)
-            saveVideo(existingChannelId = channelId, isVoiced = false)
+            val videoWithoutVoice = saveVideo(existingChannelId = channelId, isVoiced = false)
 
             videoAnalysisService.analyseVideosOfChannel(channelId, language = null)
             val analyseRequested = fakeEventBus.getEventsOfType(VideoAnalysisRequested::class.java).map { it.videoId }
-            assertThat(analyseRequested.size).isEqualTo(2)
-            assertThat(analyseRequested).containsExactlyInAnyOrder(videoWithVoice.value, videoWithUnknownVoice.value)
+            assertThat(analyseRequested.size).isEqualTo(3)
+            assertThat(analyseRequested).containsExactlyInAnyOrder(videoWithVoice.value, videoWithUnknownVoice.value, videoWithoutVoice.value)
         }
 
         @Test
@@ -159,7 +159,6 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
                 saveVideo(existingChannelId = channelId, title = "video 2", isVoiced = true)
             val voiceUnknownVideoWithoutTranscript =
                 saveVideo(existingChannelId = channelId, title = "video 3", isVoiced = null)
-            saveVideo(existingChannelId = channelId, title = "video 4", isVoiced = false)
 
             videoRepository.update(
                 VideoUpdateCommand.ReplaceTranscript(

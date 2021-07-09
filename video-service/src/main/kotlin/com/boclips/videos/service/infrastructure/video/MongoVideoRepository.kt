@@ -145,7 +145,6 @@ class MongoVideoRepository(private val mongoClient: MongoClient, val batchProces
             is VideoFilter.IsMarkedForTranscriptGeneration -> VideoDocument::isTranscriptRequested eq true
             is VideoFilter.IsVoicedWithoutTranscript -> and(
                 VideoDocument::source / SourceDocument::channel / ChannelDocument::id eq ObjectId(filter.channelId.value),
-                VideoDocument::isVoiced ne false,
                 VideoDocument::transcript eq null,
                 VideoDocument::analysisFailed ne true
             )
