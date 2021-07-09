@@ -23,6 +23,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
 class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
@@ -283,6 +285,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("keywords", emptyList<String>())
                         .append("subjects", emptyList<String>())
                         .append("releaseDate", Date())
+                        .append("updatedAt", ZonedDateTime.now(ZoneOffset.UTC).toString())
                         .append("durationSeconds", 10)
                         .append("legalRestrictions", "Some restrictions")
                         .append("language", "en")
@@ -333,6 +336,7 @@ class MongoVideoRepositoryIntegrationTest : AbstractSpringIntegrationTest() {
                         .append("keywords", emptyList<String>())
                         .append("subjects", emptyList<String>())
                         .append("releaseDate", Date())
+                        .append("updatedAt", ZonedDateTime.now(ZoneOffset.UTC).toString())
                         .append("durationSeconds", 10)
                         .append("legalRestrictions", "Some restrictions")
                         .append("language", "en")

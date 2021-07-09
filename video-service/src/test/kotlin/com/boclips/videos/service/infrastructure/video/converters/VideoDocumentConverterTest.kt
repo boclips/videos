@@ -101,17 +101,6 @@ class VideoDocumentConverterTest {
     }
 
     @Test
-    fun `uses ingestedAt when updatedAt is empty`() {
-        val document = createVideoDocument(
-            ingestedAt = ZonedDateTime.of(2019, 11, 12, 13, 14, 15, 160000000, ZoneOffset.UTC).toString(),
-            updatedAt = null
-        )
-        val video = VideoDocumentConverter.toVideo(document)
-
-        assertThat(video.updatedAt).isEqualTo(video.ingestedAt)
-    }
-
-    @Test
     fun `converts a video with only CHANNEL source`() {
         val originalVideo: Video = TestFactories.createVideo(
             categories = mapOf(

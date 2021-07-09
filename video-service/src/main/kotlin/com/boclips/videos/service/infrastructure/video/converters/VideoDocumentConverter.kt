@@ -82,9 +82,7 @@ object VideoDocumentConverter {
             releasedOn = document.releaseDate.toInstant().atOffset(ZoneOffset.UTC).toLocalDate(),
             ingestedAt = document.ingestedAt?.let { ZonedDateTime.parse(it) }
                 ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
-            updatedAt = document.updatedAt?.let { updatedAt -> ZonedDateTime.parse(updatedAt) }
-                ?: document.ingestedAt?.let { ingestedAt -> ZonedDateTime.parse(ingestedAt) }
-                ?: ZonedDateTime.ofInstant(document.id.date.toInstant(), ZoneOffset.UTC),
+            updatedAt = ZonedDateTime.parse(document.updatedAt),
             legalRestrictions = document.legalRestrictions,
             voice = when (document.isVoiced) {
                 true -> Voice.WithVoice(

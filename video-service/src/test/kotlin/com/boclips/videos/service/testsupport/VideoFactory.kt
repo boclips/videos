@@ -14,7 +14,9 @@ import com.boclips.videos.service.infrastructure.video.VideoAssetDocument
 import com.boclips.videos.service.infrastructure.video.VideoDocument
 import org.bson.types.ObjectId
 import java.time.Instant
-import java.util.Date
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.util.*
 
 object VideoFactory {
 
@@ -29,7 +31,7 @@ object VideoFactory {
         subjects: List<SubjectDocument> = emptyList(),
         releaseDate: Date = Date(),
         ingestedAt: String? = null,
-        updatedAt: String? = null,
+        updatedAt: String = ZonedDateTime.now(ZoneOffset.UTC).toString(),
         legalRestrictions: String = "legal restrictions",
         language: String? = null,
         isVoiced: Boolean? = null,
