@@ -6,9 +6,11 @@ import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
+import com.boclips.videos.service.testsupport.VideoFactory
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
@@ -224,5 +226,22 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThat(results.elements.first().title).isEqualTo("why are camels so tall 2")
         assertThat(results.elements.first().attachments.size).isEqualTo(1)
         assertThat(results.elements.first().attachments[0].type).isEqualTo(AttachmentType.ACTIVITY)
+    }
+
+    @Test
+    fun `can filter videos by when they were last updated`(){
+        videosRepository.create(TestFactories.createVideo(title ="an updated sparkly video" , updatedAt="2021-07-12" ))
+        videosRepository.create(TestFactories.createVideo(title ="not the sparkliest video" , updatedAt="2018-07-12" ))
+
+        val results = searchVideo.byQuery(
+            query = "video",
+            updatedAfter = "2020-08-31",
+            pageSize = 20,
+            pageNumber = 0,
+            user = userAssignedToOrganisation()
+        )
+
+        assertThat(results.elements.first().title).isEqualTo("an updated sparkly video")
+        assertThat(results.pageInfo.totalElements).isEqualTo(1)
     }
 }

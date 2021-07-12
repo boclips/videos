@@ -43,5 +43,5 @@ data class CreateVideoRequest(
     @field:Language
     val language: String? = null,
     val isVoiced: Boolean? = null,
-    val categories: List<String>? = null,
+    val categories: List<String>? = null
 )

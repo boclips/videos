@@ -19,6 +19,7 @@ import mu.KLogging
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.math.BigDecimal
+import java.time.ZonedDateTime
 import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
@@ -61,7 +62,8 @@ class GetVideosByQuery(
         includePriceFacets: Boolean?,
         queryParams: Map<String, List<String>>,
         prices: Set<BigDecimal>,
-        categoryCodes: Set<String>
+        categoryCodes: Set<String>,
+        updatedAfter: String?
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -104,7 +106,8 @@ class GetVideosByQuery(
             attachmentTypes = resourceTypes,
             userOrganisationId = userOrganisation?.organisationId,
             prices = prices,
-            categoryCodes = categoryCodes
+            categoryCodes = categoryCodes,
+            updatedAfter = ZonedDateTime.parse(updatedAfter)
         )
 
         val videoSearchResponse =
