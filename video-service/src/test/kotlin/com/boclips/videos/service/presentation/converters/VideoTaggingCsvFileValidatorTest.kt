@@ -11,6 +11,7 @@ import com.boclips.videos.service.presentation.InvalidCategoryCode
 import com.boclips.videos.service.presentation.InvalidPedagogyTags
 import com.boclips.videos.service.presentation.NotCsvFile
 import com.boclips.videos.service.presentation.VideoDoesntExist
+import com.boclips.videos.service.presentation.converters.videoTagging.VideoTaggingCsvFileValidator
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.fakes.FakeVideoRepository
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter

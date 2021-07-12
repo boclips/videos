@@ -166,6 +166,8 @@ class VideoServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .mvcMatchers(GET, "/v1/feed/videos").hasRole(ROLE.VIEW_VIDEOS)
 
+            .mvcMatchers(POST, "/v1/custom-metadata").hasRole(ROLE.UPDATE_VIDEOS)
+
             .anyRequest().denyAll()
     }
 }

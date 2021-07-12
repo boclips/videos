@@ -11,8 +11,27 @@ import com.boclips.videos.service.domain.service.TagRepository
 import com.boclips.videos.service.domain.service.subject.SubjectRepository
 import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.domain.service.video.VideoRepository
-import com.boclips.videos.service.presentation.converters.*
-import com.boclips.videos.service.presentation.hateoas.*
+import com.boclips.videos.service.presentation.converters.AgeRangeToResourceConverter
+import com.boclips.videos.service.presentation.converters.AttachmentToResourceConverter
+import com.boclips.videos.service.presentation.converters.CategoryResourceConverter
+import com.boclips.videos.service.presentation.converters.CollectionResourceConverter
+import com.boclips.videos.service.presentation.converters.ContentWarningToResourceConverter
+import com.boclips.videos.service.presentation.converters.PlaybackToResourceConverter
+import com.boclips.videos.service.presentation.converters.TagConverter
+import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
+import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.converters.customMetadata.CustomMetadataFileValidator
+import com.boclips.videos.service.presentation.converters.videoTagging.VideoTaggingCsvFileValidator
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.DisciplinesLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.TagsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.presentation.projections.RoleBasedProjectionResolver
 import com.boclips.videos.service.presentation.projections.WithProjection
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -161,5 +180,10 @@ class PresentationContext(val videoRetrievalService: VideoRetrievalService) {
     @Bean
     fun feedLinkBuilder(uriComponentsBuilderFactory: UriComponentsBuilderFactory): FeedLinkBuilder {
         return FeedLinkBuilder(uriComponentsBuilderFactory)
+    }
+
+    @Bean
+    fun customMetadataFileValidator(videoRepository: VideoRepository): CustomMetadataFileValidator {
+        return CustomMetadataFileValidator(videoRepository)
     }
 }

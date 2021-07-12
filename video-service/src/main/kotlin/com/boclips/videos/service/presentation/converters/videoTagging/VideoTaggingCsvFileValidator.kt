@@ -1,4 +1,4 @@
-package com.boclips.videos.service.presentation.converters
+package com.boclips.videos.service.presentation.converters.videoTagging
 
 import arrow.core.Either
 import com.boclips.videos.service.application.GetAllCategories
@@ -11,6 +11,7 @@ import com.boclips.videos.service.presentation.CsvValidatedWithEmptyIds
 import com.boclips.videos.service.presentation.DataRowsContainErrors
 import com.boclips.videos.service.presentation.NotCsvFile
 import com.boclips.videos.service.presentation.VideoIdOrCategoryCodeColumnIsMissing
+import com.boclips.videos.service.presentation.converters.RawCategoryMappingMetadata
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.util.CSVFieldNumDifferentException
 import org.bson.types.ObjectId

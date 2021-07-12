@@ -1,9 +1,10 @@
-package com.boclips.videos.service.presentation.converters
+package com.boclips.videos.service.presentation.converters.videoTagging
 
 import com.boclips.videos.service.presentation.InvalidCategoryCode
 import com.boclips.videos.service.presentation.InvalidPedagogyTags
 import com.boclips.videos.service.presentation.VideoDoesntExist
 import com.boclips.videos.service.presentation.VideoTaggingValidationError
+import com.boclips.videos.service.presentation.converters.RawCategoryMappingMetadata
 
 object CategoryMappingValidator {
 
