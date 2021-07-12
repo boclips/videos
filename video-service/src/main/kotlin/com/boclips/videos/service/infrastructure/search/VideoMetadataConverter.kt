@@ -54,7 +54,8 @@ object VideoMetadataConverter {
             deactivated = video.deactivated,
             ingestedAt = video.ingestedAt,
             prices = if (video is VideoWithPrices) convertPrices(video.prices) else null,
-            categoryCodes = VideoCategoryCodes(convertCategories(video.categories))
+            categoryCodes = VideoCategoryCodes(convertCategories(video.categories)),
+            updatedAt = video.updatedAt
         )
     }
 

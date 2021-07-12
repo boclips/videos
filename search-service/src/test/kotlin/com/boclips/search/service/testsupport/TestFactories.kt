@@ -48,7 +48,8 @@ object SearchableVideoMetadataFactory {
         isVoiced: Boolean? = null,
         language: Locale? = null,
         prices: Map<String, BigDecimal>? = null,
-        categoryCodes: List<String>? = emptyList()
+        categoryCodes: List<String>? = emptyList(),
+        updatedAt: ZonedDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)
     ) = VideoMetadata(
         id = id,
         title = title,
@@ -76,7 +77,8 @@ object SearchableVideoMetadataFactory {
         isVoiced = isVoiced,
         language = language,
         prices = prices,
-        categoryCodes = categoryCodes?.let { VideoCategoryCodes(it) }
+        categoryCodes = categoryCodes?.let { VideoCategoryCodes(it) },
+        updatedAt = updatedAt
     )
 }
 
@@ -120,7 +122,8 @@ object TestFactories {
             isVoiced = null,
             language = null,
             prices = null,
-            categoryCodes = emptyList()
+            categoryCodes = emptyList(),
+            updatedAt = ingestDate
         )
     }
 }
