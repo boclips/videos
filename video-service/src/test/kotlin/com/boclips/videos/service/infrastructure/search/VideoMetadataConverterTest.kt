@@ -54,6 +54,7 @@ class VideoMetadataConverterTest {
                 playback = TestFactories.createYoutubePlayback(
                     duration = Duration.ofSeconds(10)
                 ),
+                updatedAt = ZonedDateTime.parse("2021-07-12"),
                 types = listOf(VideoType.INSTRUCTIONAL_CLIPS),
                 keywords = listOf("k1"),
                 releasedOn = LocalDate.of(2019, Month.APRIL, 19),
@@ -103,6 +104,7 @@ class VideoMetadataConverterTest {
                 contentProvider = "content partner",
                 contentPartnerId = "content-partner-id",
                 releaseDate = LocalDate.of(2019, Month.APRIL, 19),
+                updatedAt = ZonedDateTime.parse("2021-07-12"),
                 keywords = listOf("k1"),
                 tags = emptyList(),
                 durationSeconds = 10,

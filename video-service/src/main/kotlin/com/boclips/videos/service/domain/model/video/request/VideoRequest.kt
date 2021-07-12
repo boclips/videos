@@ -50,7 +50,8 @@ class VideoRequest(
     val attachmentTypes: Set<String> = emptySet(),
     val userOrganisationId: OrganisationId? = null,
     val prices: Set<BigDecimal> = emptySet(),
-    val categoryCodes: Set<String> = emptySet()
+    val categoryCodes: Set<String> = emptySet(),
+    val updatedAtFrom: LocalDate? = null
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
 
@@ -119,7 +120,8 @@ class VideoRequest(
                 channelIds = channelIds,
                 types = types,
                 attachmentTypes = attachmentTypes,
-                organisationPriceFilter = PricesFilter(userOrganisationId?.value, prices)
+                organisationPriceFilter = PricesFilter(userOrganisationId?.value, prices),
+                updatedAtFrom = updatedAtFrom
             )
         )
     }

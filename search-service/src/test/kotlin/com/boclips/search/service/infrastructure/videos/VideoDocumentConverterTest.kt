@@ -89,7 +89,8 @@ class VideoDocumentConverterTest {
                 isVoiced = null,
                 language = "spa",
                 prices = null,
-                categoryCodes = listOf("A", "AB", "ABC")
+                categoryCodes = listOf("A", "AB", "ABC"),
+                updatedAt = null
             )
         )
     }
@@ -158,7 +159,8 @@ class VideoDocumentConverterTest {
                 "org-id-2" to BigDecimal.valueOf(0),
                 "org-id-3" to BigDecimal.valueOf(1001000.99),
             ),
-            categoryCodes = VideoCategoryCodes(codes = listOf("A"))
+            categoryCodes = VideoCategoryCodes(codes = listOf("A")),
+            updatedAt = LocalDate.of(2019, 9, 12),
         )
 
         val document = VideoDocumentConverter.fromVideo(video)
@@ -198,7 +200,8 @@ class VideoDocumentConverterTest {
                     "org-id-2" to 0,
                     "org-id-3" to 100100099,
                 ),
-                categoryCodes = listOf("A")
+                categoryCodes = listOf("A"),
+                updatedAt = LocalDate.of(2019, 9, 12),
             )
         )
     }
@@ -235,7 +238,8 @@ class VideoDocumentConverterTest {
             isVoiced = null,
             language = null,
             prices = null,
-            categoryCodes = null
+            categoryCodes = null,
+            updatedAt = LocalDate.of(2019, 9, 12),
         )
 
         val document = VideoDocumentConverter.fromVideo(video)

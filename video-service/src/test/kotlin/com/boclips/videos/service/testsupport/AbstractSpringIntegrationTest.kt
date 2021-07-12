@@ -303,6 +303,7 @@ abstract class AbstractSpringIntegrationTest {
         description: String = "Some description!",
         additionalDescription: String? = "additional description",
         date: String = "2018-01-01",
+        updatedAt: String = "2018-01-01",
         duration: Duration = Duration.ofSeconds(120),
         newChannelName: String = "Reuters",
         existingChannelId: String? = null,
@@ -373,7 +374,8 @@ abstract class AbstractSpringIntegrationTest {
                 subjects = subjectIds,
                 language = language,
                 isVoiced = isVoiced,
-                categories = manualCategories
+                categories = manualCategories,
+                updatedAt = LocalDate.parse(updatedAt)
             ),
             UserFactory.sample()
         )

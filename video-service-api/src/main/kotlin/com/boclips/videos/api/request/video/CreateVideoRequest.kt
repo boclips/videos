@@ -44,4 +44,5 @@ data class CreateVideoRequest(
     val language: String? = null,
     val isVoiced: Boolean? = null,
     val categories: List<String>? = null,
+    val updatedAt: LocalDate? = null,
 )
