@@ -24,7 +24,7 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddCategories
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.AddRating
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsDuplicate
-import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsVideoWithoutVoice
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.MarkAsVoiced
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveAttachments
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.RemoveSubject
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceAdditionalDescription
@@ -51,10 +51,12 @@ import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.Replac
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscript
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.ReplaceTranscriptRequested
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.SetAnalysisFailed
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand.UpdateTags
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.AttachmentFactory
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.TestFactories.createKalturaPlayback
+import com.boclips.videos.service.testsupport.TestFactories.createUserTag
 import com.boclips.videos.service.testsupport.TestFactories.createVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -484,10 +486,9 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
             )
         )
 
-        mongoVideoRepository.update(MarkAsVideoWithoutVoice(video.videoId))
+        mongoVideoRepository.update(MarkAsVoiced(video.videoId, false))
 
         val updatedAsset = mongoVideoRepository.find(video.videoId)
-
         assertThat(updatedAsset!!.isVoiced()).isEqualTo(false)
     }
 
@@ -665,7 +666,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
                     is AddCategories -> AddCategories(videoId, emptySet(), CategorySource.CHANNEL)
                     is AddRating -> AddRating(videoId, UserRating(5, UserId("123")))
                     is MarkAsDuplicate -> MarkAsDuplicate(videoId, VideoId("123"))
-                    is MarkAsVideoWithoutVoice -> MarkAsVideoWithoutVoice(videoId)
+                    is MarkAsVoiced -> MarkAsVoiced(videoId, true)
                     is RemoveAttachments -> RemoveAttachments(videoId)
                     is RemoveSubject -> RemoveSubject(videoId, SubjectId("123"))
                     is ReplaceAdditionalDescription -> ReplaceAdditionalDescription(videoId, "description")
@@ -691,6 +692,7 @@ class MongoVideoRepositoryUpdateIntegrationTest : AbstractSpringIntegrationTest(
                     is ReplaceTopics -> ReplaceTopics(videoId, emptySet())
                     is ReplaceTranscript -> ReplaceTranscript(videoId, "transcript", true)
                     is ReplaceTranscriptRequested -> ReplaceTranscriptRequested(videoId, true)
+                    is UpdateTags -> UpdateTags(videoId, setOf(createUserTag()))
                     else -> SetAnalysisFailed(videoId)
                 }
             }.map { Arguments.of(it) }

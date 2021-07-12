@@ -11,7 +11,6 @@ import com.boclips.videos.service.application.exceptions.VideoNotAnalysableExcep
 import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
-import com.boclips.videos.service.domain.model.video.Voice
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -257,7 +256,7 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
         }
 
         @Test
-        fun `stores voice as WithoutVoice when transcript is empty`() {
+        fun `marks video as WithoutVoice when transcript is empty`() {
             val videoId = saveVideo(isVoiced = true)
             val videoAnalysed = createVideoAnalysed(
                 videoId = videoId.value,
@@ -268,7 +267,22 @@ class VideoAnalysisServiceIntegrationTest(@Autowired val videoAnalysisService: V
 
             val video = videoRepository.find(videoId)!!
 
-            assertThat(video.voice).isOfAnyClassIn(Voice.WithoutVoice::class.java)
+            assertThat(video.voice.isVoiced()).isFalse
+        }
+
+        @Test
+        fun `marks video as WithVoice when transcript is present`() {
+            val videoId = saveVideo(isVoiced = null)
+            val videoAnalysed = createVideoAnalysed(
+                videoId = videoId.value,
+                transcript = "I am transcript"
+            )
+
+            fakeEventBus.publish(videoAnalysed)
+
+            val video = videoRepository.find(videoId)!!
+
+            assertThat(video.voice.isVoiced()).isTrue
         }
 
         @Test

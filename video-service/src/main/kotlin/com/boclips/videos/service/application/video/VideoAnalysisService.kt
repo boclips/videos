@@ -155,9 +155,11 @@ open class VideoAnalysisService(
                     video.videoId,
                     (video.keywords + analysedVideo.keywords.map { it.name }).toSet()
                 ),
-                if (analysedVideo.transcript.isNullOrEmpty()) {
-                    VideoUpdateCommand.MarkAsVideoWithoutVoice(video.videoId)
-                } else null
+
+                VideoUpdateCommand.MarkAsVoiced(
+                    videoId = video.videoId,
+                    isVoiced = analysedVideo.transcript.isNotBlank()
+                )
             )
         )
     }
