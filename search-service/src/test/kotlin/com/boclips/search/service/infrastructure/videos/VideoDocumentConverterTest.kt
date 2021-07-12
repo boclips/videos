@@ -201,7 +201,9 @@ class VideoDocumentConverterTest {
                     "org-id-3" to 100100099,
                 ),
                 categoryCodes = listOf("A"),
-                updatedAt = ZonedDateTime.of(2019, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+                updatedAt = ZonedDateTime.of(
+                    2019, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC
+                ),
             )
         )
     }

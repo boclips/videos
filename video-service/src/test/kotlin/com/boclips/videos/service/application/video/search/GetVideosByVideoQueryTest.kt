@@ -7,11 +7,13 @@ import com.boclips.videos.service.domain.model.playback.PlaybackId
 import com.boclips.videos.service.domain.model.playback.PlaybackProviderType
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
+import java.time.ZonedDateTime
 
 class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
@@ -224,5 +226,41 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         assertThat(results.elements.first().title).isEqualTo("why are camels so tall 2")
         assertThat(results.elements.first().attachments.size).isEqualTo(1)
         assertThat(results.elements.first().attachments[0].type).isEqualTo(AttachmentType.ACTIVITY)
+    }
+
+    @Test
+    fun `can filter videos by when they were last updated inclusive`() {
+        videosRepository.create(
+            TestFactories.createVideo(
+                title = "an updated sparkly video",
+                updatedAt = ZonedDateTime.parse("2021-04-24T09:30Z[UTC]")
+            )
+        )
+        videosRepository.create(
+            TestFactories.createVideo(
+                title = "updated just in time",
+                updatedAt = ZonedDateTime.parse("2020-04-24T09:30Z[UTC]")
+            )
+        )
+        videosRepository.create(
+            TestFactories.createVideo(
+                title = "not the sparkliest video",
+                updatedAt = ZonedDateTime.parse("2017-04-24T09:30Z[UTC]")
+            )
+        )
+
+        val results = searchVideo.byQuery(
+            query = "",
+            updatedAfter = "2020-04-24",
+            pageSize = 20,
+            pageNumber = 0,
+            user = userAssignedToOrganisation()
+        )
+
+        assertThat(results.elements.map { it.title }).containsExactlyInAnyOrder(
+            "updated just in time",
+            "an updated sparkly video"
+        )
+        assertThat(results.pageInfo.totalElements).isEqualTo(2)
     }
 }

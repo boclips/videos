@@ -10,6 +10,7 @@ import com.boclips.videos.service.domain.model.user.OrganisationId
 import com.boclips.videos.service.domain.model.video.VideoAccess
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 enum class SortKey {
     RELEASE_DATE,
@@ -50,7 +51,8 @@ class VideoRequest(
     val attachmentTypes: Set<String> = emptySet(),
     val userOrganisationId: OrganisationId? = null,
     val prices: Set<BigDecimal> = emptySet(),
-    val categoryCodes: Set<String> = emptySet()
+    val categoryCodes: Set<String> = emptySet(),
+    val updatedAfter: ZonedDateTime? = null
 ) {
     fun toQuery(videoAccess: VideoAccess): VideoQuery {
 
@@ -119,7 +121,8 @@ class VideoRequest(
                 channelIds = channelIds,
                 types = types,
                 attachmentTypes = attachmentTypes,
-                organisationPriceFilter = PricesFilter(userOrganisationId?.value, prices)
+                organisationPriceFilter = PricesFilter(userOrganisationId?.value, prices),
+                updatedAfter = updatedAfter
             )
         )
     }

@@ -11,7 +11,11 @@ import com.boclips.videos.service.domain.model.user.Organisation
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.Video
 import com.boclips.videos.service.domain.model.video.VideoCounts
-import com.boclips.videos.service.domain.model.video.request.*
+import com.boclips.videos.service.domain.model.video.request.FixedAgeRangeFacet
+import com.boclips.videos.service.domain.model.video.request.SortKey
+import com.boclips.videos.service.domain.model.video.request.SubjectsRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequest
+import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.videos.service.domain.service.events.EventService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.VideoController.Companion.MAX_PAGE_SIZE
@@ -19,6 +23,9 @@ import mu.KLogging
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.ZoneOffset.UTC
+import java.time.ZonedDateTime
 import javax.servlet.http.HttpServletRequest
 
 class GetVideosByQuery(
@@ -61,7 +68,8 @@ class GetVideosByQuery(
         includePriceFacets: Boolean?,
         queryParams: Map<String, List<String>>,
         prices: Set<BigDecimal>,
-        categoryCodes: Set<String>
+        categoryCodes: Set<String>,
+        updatedAfter: String?
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -104,7 +112,13 @@ class GetVideosByQuery(
             attachmentTypes = resourceTypes,
             userOrganisationId = userOrganisation?.organisationId,
             prices = prices,
-            categoryCodes = categoryCodes
+            categoryCodes = categoryCodes,
+            updatedAfter = updatedAfter?.let {
+                ZonedDateTime.of(
+                    LocalDate.parse(updatedAfter).atStartOfDay(),
+                    UTC
+                )
+            }
         )
 
         val videoSearchResponse =

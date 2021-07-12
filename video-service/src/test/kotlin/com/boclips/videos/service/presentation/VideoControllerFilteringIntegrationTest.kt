@@ -16,23 +16,40 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
-import com.boclips.videos.service.testsupport.*
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.service.testsupport.CategoryFactory
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
+import com.boclips.videos.service.testsupport.TestFactories
+import com.boclips.videos.service.testsupport.UserFactory
+import com.boclips.videos.service.testsupport.asApiUser
+import com.boclips.videos.service.testsupport.asBoclipsEmployee
+import com.boclips.videos.service.testsupport.asBoclipsWebAppUser
+import com.boclips.videos.service.testsupport.asTeacher
 import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions
 import org.bson.types.ObjectId
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -697,6 +714,32 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(tomorrow)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(today)))
             .andExpect(jsonPath("$._embedded.videos[2].id", equalTo(yesterday)))
+    }
+
+    @Test
+    fun `filter by updatedAfter `() {
+        videosRepository.create(
+            TestFactories.createVideo(
+                title = "tree monkeys",
+                updatedAt = ZonedDateTime.parse("2018-03-01T18:30Z")
+            )
+        )
+
+        videosRepository.create(
+            TestFactories.createVideo(
+                title = "tree bears",
+                updatedAt = ZonedDateTime.parse("2020-03-01T18:30Z")
+            )
+        )
+
+        mockMvc.perform(
+            get("/v1/videos?query=tree&updated_after=2019-03-01")
+                .contentType(MediaType.APPLICATION_JSON)
+                .asApiUser()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos", hasSize<String>(1)))
+            .andExpect(jsonPath("$._embedded.videos[0].title", equalTo("tree bears")))
     }
 
     @Test

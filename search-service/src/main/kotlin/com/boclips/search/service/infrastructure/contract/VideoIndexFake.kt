@@ -128,6 +128,9 @@ class VideoIndexFake :
             }.filter { entry ->
                 (releaseDateFrom.toEpochDay()..releaseDateTo.toEpochDay()).contains(entry.value.releaseDate.toEpochDay())
             }.filter { entry ->
+                query.userQuery.updatedAfter?.let { updatedAfter -> entry.value.updatedAt?.isAfter(updatedAfter) }
+                    ?: true
+            }.filter { entry ->
                 checkFilterValues(query.userQuery.subjectIds, entry.value.subjects.items.map { it.id }.toSet())
             }.filter { entry ->
                 checkFilterValues(query.userQuery.userSubjectIds, entry.value.subjects.items.map { it.id }.toSet())

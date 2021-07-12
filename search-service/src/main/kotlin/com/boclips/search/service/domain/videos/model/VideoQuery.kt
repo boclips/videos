@@ -4,6 +4,7 @@ import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Locale
 
 data class VideoQuery(
@@ -34,6 +35,7 @@ data class UserQuery(
     val attachmentTypes: Set<String> = emptySet(),
     val channelIds: Set<String> = emptySet(),
     val organisationPriceFilter: PricesFilter = PricesFilter(),
+    val updatedAfter: ZonedDateTime? = null
 )
 
 data class VideoAccessRuleQuery(
