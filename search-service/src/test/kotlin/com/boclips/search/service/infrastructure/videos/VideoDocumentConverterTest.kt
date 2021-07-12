@@ -1,11 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
-import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.SubjectsMetadata
-import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
-import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.elasticsearch.common.bytes.BytesArray
 import org.elasticsearch.search.SearchHit
@@ -14,7 +10,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Locale
+import java.util.*
 
 class VideoDocumentConverterTest {
 
@@ -201,7 +197,9 @@ class VideoDocumentConverterTest {
                     "org-id-3" to 100100099,
                 ),
                 categoryCodes = listOf("A"),
-                updatedAt = ZonedDateTime.of(2019, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
+                updatedAt = ZonedDateTime.of(
+                    2019, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC
+                ),
             )
         )
     }
@@ -241,7 +239,6 @@ class VideoDocumentConverterTest {
             categoryCodes = null,
             updatedAt = ZonedDateTime.of(2019, 12, 10, 0, 0, 0, 0, ZoneOffset.UTC),
         )
-
         val document = VideoDocumentConverter.fromVideo(video)
 
         assertThat(document.ageRange).isEmpty()

@@ -7,18 +7,14 @@ import com.boclips.search.service.domain.channels.model.Taxonomy
 import com.boclips.search.service.domain.collections.model.CollectionMetadata
 import com.boclips.search.service.domain.subjects.model.SubjectMetadata
 import com.boclips.search.service.domain.videos.legacy.LegacyVideoMetadata
-import com.boclips.search.service.domain.videos.model.SourceType
-import com.boclips.search.service.domain.videos.model.SubjectsMetadata
-import com.boclips.search.service.domain.videos.model.VideoCategoryCodes
-import com.boclips.search.service.domain.videos.model.VideoMetadata
-import com.boclips.search.service.domain.videos.model.VideoType
+import com.boclips.search.service.domain.videos.model.*
 import com.boclips.search.service.infrastructure.videos.VideoDocument
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Locale
+import java.util.*
 
 object SearchableVideoMetadataFactory {
     fun create(

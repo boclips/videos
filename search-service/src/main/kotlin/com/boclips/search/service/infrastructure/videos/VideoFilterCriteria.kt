@@ -21,6 +21,7 @@ class VideoFilterCriteria {
         const val CHANNEL_IDS_FILTER = "content-partner-id-filter"
         const val VIDEO_TYPES_FILTER = "video-types-filter"
         const val VIDEO_PRICES_FILTER = "video-prices-filter"
+        const val UPDATED_AT_FROM = "updated-at-from"
 
         fun allCriteria(videoQuery: UserQuery): BoolQueryBuilder {
             val query = boolQuery()
@@ -97,6 +98,10 @@ class VideoFilterCriteria {
                 query.must(matchCategoryCodes(videoQuery.categoryCodes))
             }
 
+            if (videoQuery.updatedAtFrom != null) {
+                query.must(matchUpdatedAtFrom(videoQuery.updatedAtFrom))
+            }
+
             videoQuery.subjectsSetManually?.let { subjectsSetManually ->
                 query.must(matchSubjectsSetManually(subjectsSetManually))
             }
@@ -125,6 +130,12 @@ class VideoFilterCriteria {
                 queries.should(matchPhraseQuery(VideoDocument.SUBJECT_IDS, s))
             }
             return queries
+        }
+
+        private fun matchUpdatedAtFrom(updatedAtFrom: LocalDate): BoolQueryBuilder? {
+            return boolQuery().queryName(UPDATED_AT_FROM).apply {
+                updatedAtFrom.isBefore(LocalDate.parse(VideoDocument.UPDATED_AT))
+            }
         }
 
         private fun matchCategoryCodes(categoryCodes: Set<String>): BoolQueryBuilder? {

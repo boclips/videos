@@ -16,6 +16,7 @@ import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.VideoId
 import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.channel.ChannelId
+import com.boclips.videos.service.domain.service.video.VideoUpdateCommand
 import com.boclips.videos.service.testsupport.*
 import com.boclips.videos.service.testsupport.MvcMatchers.halJson
 import com.jayway.jsonpath.JsonPath
@@ -24,6 +25,7 @@ import org.bson.types.ObjectId
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.litote.kmongo.util.idValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -33,6 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -697,6 +700,23 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
             .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(tomorrow)))
             .andExpect(jsonPath("$._embedded.videos[1].id", equalTo(today)))
             .andExpect(jsonPath("$._embedded.videos[2].id", equalTo(yesterday)))
+    }
+
+    @Test
+    fun `filter by updatedAfter `(){
+        saveVideo(title = "not updated video")
+        val videoIdToUpdate = saveVideo(title = "this will be updated")
+        val time = ZonedDateTime.now().toString()
+
+        videosRepository.update(VideoUpdateCommand.ReplaceTitle(videoId = videoIdToUpdate, title = "new title"))
+
+        mockMvc.perform(
+            get("/v1/videos?query=video&updatedAfter=$time")
+                .contentType(MediaType.APPLICATION_JSON)
+                .asApiUser()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._embedded.videos[0].id", equalTo(videoIdToUpdate.value)))
     }
 
     @Test

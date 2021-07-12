@@ -3,6 +3,7 @@ package com.boclips.search.service.domain.videos.model
 import com.boclips.search.service.domain.common.model.FacetDefinition
 import com.boclips.search.service.domain.common.model.SearchQuery
 import com.boclips.search.service.domain.common.model.Sort
+import sun.util.resources.LocaleData
 import java.time.LocalDate
 import java.util.Locale
 
@@ -34,6 +35,7 @@ data class UserQuery(
     val attachmentTypes: Set<String> = emptySet(),
     val channelIds: Set<String> = emptySet(),
     val organisationPriceFilter: PricesFilter = PricesFilter(),
+    val updatedAtFrom: LocalDate? = null
 )
 
 data class VideoAccessRuleQuery(
