@@ -45,11 +45,13 @@ import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoRepository
 import com.boclips.videos.service.presentation.converters.CaptionFormatRequestEnumConverter
+import com.boclips.videos.service.presentation.converters.CustomMetadataFileValidator
 import com.boclips.videos.service.presentation.converters.PriceConverter
 import com.boclips.videos.service.presentation.converters.QueryParamsConverter
 import com.boclips.videos.service.presentation.converters.VideoMetadataConverter
 import com.boclips.videos.service.presentation.converters.VideoTaggingCsvFileValidator
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
+import com.boclips.videos.service.presentation.exceptions.InvalidCustomMetadataCsvFile
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoTaggingCsvFile
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
@@ -104,7 +106,8 @@ class VideoController(
     val userService: UserService,
     getUserIdOverride: GetUserIdOverride,
     accessRuleService: AccessRuleService,
-    val videoTaggingCsvFileValidator: VideoTaggingCsvFileValidator
+    val videoTaggingCsvFileValidator: VideoTaggingCsvFileValidator,
+    val customMetadataFileValidator: CustomMetadataFileValidator
 ) : BaseController(accessRuleService, getUserIdOverride, userService) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 100
@@ -490,6 +493,20 @@ class VideoController(
         val convertVideosToRequiredMetadata = videoMetadataConverter.convert(videosResource, videoToCaptionLinkMap)
         val response = VideoMetadataResponse(convertVideosToRequiredMetadata)
         return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @PostMapping("/v1/custom-metadata")
+    fun postCustomMetadata(@RequestParam("file") file: MultipartFile?): ResponseEntity<SuccessResponse> {
+
+        when (val validationResult = customMetadataFileValidator.validate(file)) {
+            is CsvValidationMetadataError -> {
+                throw InvalidCustomMetadataCsvFile(message = validationResult.getMessage())
+            }
+
+            is CustomMetadataValidated -> {
+                return ResponseEntity(SuccessResponse("Data has been successfully imported!"), HttpStatus.OK)
+            }
+        }
     }
 
     @GetMapping("/v1/videos/{videoId}/price")
