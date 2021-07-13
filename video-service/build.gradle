@@ -141,7 +141,7 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:4.4")
 
     implementation(platform('com.github.cloudyrock.mongock:mongock-bom:4.2.6.BETA'))
-    implementation('com.github.cloudyrock.mongock:mongock-spring-v5:4.2.6.BETA')
+    implementation('com.github.cloudyrock.mongock:mongock-spring-v5:4.3.13.BETA')
     implementation('com.github.cloudyrock.mongock:mongodb-v3-driver:4.2.6.BETA')
     implementation('com.fasterxml.jackson.core:jackson-core:2.12.3')
     implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.3')
