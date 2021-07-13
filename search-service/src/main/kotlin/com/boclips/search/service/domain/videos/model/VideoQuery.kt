@@ -35,7 +35,7 @@ data class UserQuery(
     val attachmentTypes: Set<String> = emptySet(),
     val channelIds: Set<String> = emptySet(),
     val organisationPriceFilter: PricesFilter = PricesFilter(),
-    val updatedAfter: ZonedDateTime? = null
+    val updatedAsOf: ZonedDateTime? = null
 )
 
 data class VideoAccessRuleQuery(

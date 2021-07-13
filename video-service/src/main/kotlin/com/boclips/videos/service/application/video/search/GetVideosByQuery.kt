@@ -23,8 +23,6 @@ import mu.KLogging
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 import javax.servlet.http.HttpServletRequest
 
@@ -69,7 +67,7 @@ class GetVideosByQuery(
         queryParams: Map<String, List<String>>,
         prices: Set<BigDecimal>,
         categoryCodes: Set<String>,
-        updatedAfter: String?
+        updatedAsOf: ZonedDateTime?
     ): ResultsPage<Video, VideoCounts> {
         validatePageSize(pageSize)
         validatePageNumber(pageNumber)
@@ -113,12 +111,7 @@ class GetVideosByQuery(
             userOrganisationId = userOrganisation?.organisationId,
             prices = prices,
             categoryCodes = categoryCodes,
-            updatedAfter = updatedAfter?.let {
-                ZonedDateTime.of(
-                    LocalDate.parse(updatedAfter).atStartOfDay(),
-                    UTC
-                )
-            }
+            updatedAsOf = updatedAsOf
         )
 
         val videoSearchResponse =

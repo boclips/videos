@@ -15,12 +15,19 @@ import com.boclips.videos.service.domain.service.user.AccessRuleService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.support.DeviceIdCookieExtractor
 import com.boclips.videos.service.presentation.support.RefererHeaderExtractor
+import com.boclips.web.exceptions.ExceptionDetails
+import com.boclips.web.exceptions.InvalidRequestApiException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.hateoas.MediaTypes
 import org.springframework.http.CacheControl
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import java.nio.charset.Charset
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeParseException
 import java.util.concurrent.TimeUnit
 
 open class BaseController(
@@ -28,6 +35,23 @@ open class BaseController(
     private val getUserIdOverride: GetUserIdOverride,
     private val userService: UserService
 ) {
+    protected fun parseDateAsZonedDateTime(rawDate: String?) = try {
+        rawDate?.let { date ->
+            ZonedDateTime.of(
+                LocalDate.parse(date).atStartOfDay(),
+                ZoneOffset.UTC
+            )
+        }
+    } catch (e: DateTimeParseException) {
+        throw InvalidRequestApiException(
+            ExceptionDetails(
+                "Invalid date format. Please use yyyy-mm-dd.",
+                e.message.orEmpty(),
+                HttpStatus.BAD_REQUEST
+            )
+        )
+    }
+
     fun getCurrentUser(): User {
         val userRequest = UserExtractor.getCurrentUser()
         val externalUserIdSupplier = {

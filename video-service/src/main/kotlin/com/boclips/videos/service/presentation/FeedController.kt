@@ -10,6 +10,8 @@ import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.presentation.converters.VideoToResourceConverter
 import com.boclips.videos.service.presentation.exceptions.InvalidVideoPaginationException
 import com.boclips.videos.service.presentation.hateoas.FeedLinkBuilder
+import com.boclips.web.exceptions.ExceptionDetails
+import com.boclips.web.exceptions.InvalidRequestApiException
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeParseException
 
 @RestController
 @RequestMapping("/v1/feed")
@@ -36,7 +42,8 @@ class FeedController(
     @GetMapping("/videos")
     fun videos(
         @RequestParam size: Int?,
-        @RequestParam cursorId: String?
+        @RequestParam cursorId: String?,
+        @RequestParam(name = "updated_as_of") updatedAsOf: String?
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val user = getCurrentUser()
@@ -47,7 +54,9 @@ class FeedController(
             )
         }
 
-        val videoFeedResult = getVideoFeed(cursorId, pageSize, user)
+        val videoFeedResult = getVideoFeed(
+            cursorId, pageSize, user, parseDateAsZonedDateTime(updatedAsOf)
+        )
 
         logger.info { "Converting to video feed to resource" }
 

@@ -21,6 +21,7 @@ import com.boclips.videos.service.presentation.converters.convertAgeRangeFacets
 import com.boclips.videos.service.presentation.converters.convertAgeRanges
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import java.math.BigDecimal
+import java.time.ZonedDateTime
 
 class SearchVideo(
     private val getVideoById: GetVideoById,
@@ -76,7 +77,7 @@ class SearchVideo(
         includePriceFacets: Boolean? = false,
         categoryCodes: Set<String> = emptySet(),
         queryParams: Map<String, List<String>>? = null,
-        updatedAfter: String? = null
+        updatedAsOf: ZonedDateTime? = null
     ): ResultsPage<out BaseVideo, VideoCounts> {
         val retrievedVideos = getVideosByQuery(
             query = query ?: "",
@@ -111,7 +112,7 @@ class SearchVideo(
             queryParams = queryParams ?: emptyMap(),
             prices = prices,
             categoryCodes = categoryCodes,
-            updatedAfter = updatedAfter
+            updatedAsOf = updatedAsOf
         )
 
         return addPrices(retrievedVideos, user)

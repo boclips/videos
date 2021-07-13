@@ -152,7 +152,7 @@ class VideoController(
         @RequestParam(name = "resource_type_facets", required = false) resourceTypeFacets: List<String>?,
         @RequestParam(name = "prices", required = false) prices: Set<String>?,
         @RequestParam(name = "category_code", required = false) categoryCode: Set<String>?,
-        @RequestParam(name = "updated_after", required = false) updatedAfter: String?,
+        @RequestParam(name = "updated_as_of", required = false) updatedAsOf: String?,
         request: ServletRequest
     ): ResponseEntity<VideosResource> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
@@ -204,7 +204,7 @@ class VideoController(
             queryParams = QueryParamsConverter.toSplitList(request.parameterMap),
             prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet(),
             categoryCodes = categoryCode.orEmpty(),
-            updatedAfter = updatedAfter
+            updatedAsOf = parseDateAsZonedDateTime(updatedAsOf)
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = user)

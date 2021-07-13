@@ -7,6 +7,7 @@ import com.boclips.videos.service.domain.model.video.request.VideoRequest
 import com.boclips.videos.service.domain.model.video.request.VideoRequestPagingState
 import com.boclips.web.exceptions.ExceptionDetails
 import com.boclips.web.exceptions.InvalidRequestApiException
+import java.time.ZonedDateTime
 
 class GetVideoFeed(
     private val retrievePlayableVideos: RetrievePlayableVideos
@@ -14,14 +15,16 @@ class GetVideoFeed(
     operator fun invoke(
         cursorId: String?,
         size: Int,
-        user: User
+        user: User,
+        updatedAsOf: ZonedDateTime? = null
     ): SearchResultsWithCursor {
         try {
             return retrievePlayableVideos.searchPlayableVideosWithCursor(
                 request = VideoRequest(
                     pageSize = size,
                     pagingState = VideoRequestPagingState.Cursor(value = cursorId),
-                    text = ""
+                    text = "",
+                    updatedAsOf = updatedAsOf
                 ),
                 videoAccess = user.accessRules.videoAccess
             )

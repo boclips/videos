@@ -239,7 +239,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
         videosRepository.create(
             TestFactories.createVideo(
                 title = "updated just in time",
-                updatedAt = ZonedDateTime.parse("2020-04-24T09:30Z[UTC]")
+                updatedAt = ZonedDateTime.parse("2020-04-24T00:00Z[UTC]")
             )
         )
         videosRepository.create(
@@ -251,7 +251,7 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val results = searchVideo.byQuery(
             query = "",
-            updatedAfter = "2020-04-24",
+            updatedAsOf = ZonedDateTime.parse("2020-04-24T00:00Z[UTC]"),
             pageSize = 20,
             pageNumber = 0,
             user = userAssignedToOrganisation()

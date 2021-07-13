@@ -52,8 +52,8 @@ class VideoFilterCriteria {
                 query.must(beWithinReleaseDate(videoQuery.releaseDateFrom, videoQuery.releaseDateTo))
             }
 
-            if (videoQuery.updatedAfter != null) {
-                query.must(rangeQuery(VideoDocument.UPDATED_AT).from(videoQuery.updatedAfter))
+            if (videoQuery.updatedAsOf != null) {
+                query.must(rangeQuery(VideoDocument.UPDATED_AT).from(videoQuery.updatedAsOf))
             }
 
             if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {

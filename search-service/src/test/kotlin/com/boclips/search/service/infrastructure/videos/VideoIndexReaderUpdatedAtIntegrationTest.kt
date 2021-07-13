@@ -29,7 +29,7 @@ class VideoIndexReaderUpdatedAtIntegrationTest : EmbeddedElasticSearchIntegratio
                 SearchableVideoMetadataFactory.create(
                     id = "1",
                     title = "TED",
-                    updatedAt = ZonedDateTime.parse("2020-03-01T18:30Z")
+                    updatedAt = ZonedDateTime.parse("2019-01-01T18:30Z")
                 ),
                 SearchableVideoMetadataFactory.create(
                     id = "2",
@@ -48,7 +48,7 @@ class VideoIndexReaderUpdatedAtIntegrationTest : EmbeddedElasticSearchIntegratio
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
-                    userQuery = UserQuery(updatedAfter = ZonedDateTime.parse("2019-01-01T18:30Z"))
+                    userQuery = UserQuery(updatedAsOf = ZonedDateTime.parse("2019-01-01T18:30Z"))
                 )
             )
         )

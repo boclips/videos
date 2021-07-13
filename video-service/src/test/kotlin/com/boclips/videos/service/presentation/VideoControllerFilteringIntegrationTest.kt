@@ -717,11 +717,11 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
-    fun `filter by updatedAfter `() {
+    fun `filter by updated datetime`() {
         videosRepository.create(
             TestFactories.createVideo(
                 title = "tree monkeys",
-                updatedAt = ZonedDateTime.parse("2018-03-01T18:30Z")
+                updatedAt = ZonedDateTime.parse("2018-03-01T00:00Z")
             )
         )
 
@@ -733,7 +733,7 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         )
 
         mockMvc.perform(
-            get("/v1/videos?query=tree&updated_after=2019-03-01")
+            get("/v1/videos?query=tree&updated_as_of=2019-03-01")
                 .contentType(MediaType.APPLICATION_JSON)
                 .asApiUser()
         )
