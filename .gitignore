@@ -19,3 +19,4 @@ spring-shell.log
 dependency-check-cache/
 
 security-report
+video-service/valid-ids.csv
