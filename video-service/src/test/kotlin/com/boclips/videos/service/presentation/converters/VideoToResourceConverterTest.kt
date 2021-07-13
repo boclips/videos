@@ -38,8 +38,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import java.math.BigDecimal
 import java.time.Duration
-import java.util.Currency
-import java.util.Locale
+import java.util.*
 
 class VideoToResourceConverterTest {
     private lateinit var playbackToResourceConverter: PlaybackToResourceConverter
@@ -85,7 +84,7 @@ class VideoToResourceConverterTest {
                 CategoryWithAncestors(
                     codeValue = CategoryCode("A"), description = "Test", ancestors = setOf(CategoryCode("A")),
 
-                )
+                    )
             ),
             CategorySource.MANUAL to setOf(
                 CategoryWithAncestors(
