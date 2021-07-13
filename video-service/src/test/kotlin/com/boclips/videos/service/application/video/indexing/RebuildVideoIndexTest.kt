@@ -14,7 +14,11 @@ import com.boclips.users.api.factories.OrganisationResourceFactory
 import com.boclips.users.api.httpclient.test.fakes.OrganisationsClientFake
 import com.boclips.users.api.response.organisation.DealResource
 import com.boclips.videos.service.application.channels.VideoChannelService
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.playback.PlaybackId
+import com.boclips.videos.service.domain.model.playback.VideoPlayback
+import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.PriceComputingService
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.service.OrganisationService
 import com.boclips.videos.service.domain.service.video.VideoIndex
 import com.boclips.videos.service.domain.service.video.VideoRepository
@@ -128,9 +132,10 @@ class RebuildVideoIndexTest {
     }
 
     @Test
-    fun `reindexes all videos`() {
+    fun `reindexes all playable videos`() {
         val streamableVideoId = TestFactories.aValidId()
         val downloadableVideoId = TestFactories.aValidId()
+        val faultyVideoId = TestFactories.aValidId()
 
         val videoRepository = getMockVideoRepo(
             TestFactories.createVideo(
@@ -139,6 +144,10 @@ class RebuildVideoIndexTest {
                     streamableContentPartnerId
                 ),
                 types = listOf(VideoType.STOCK)
+            ),
+            TestFactories.createVideo(
+                videoId = faultyVideoId,
+                playback = VideoPlayback.FaultyPlayback(id = PlaybackId.from("faulty", "KALTURA"))
             ),
             TestFactories.createVideo(
                 videoId = downloadableVideoId,
@@ -162,7 +171,8 @@ class RebuildVideoIndexTest {
                 userQuery = UserQuery(
                     ids = setOf(
                         streamableVideoId,
-                        downloadableVideoId
+                        downloadableVideoId,
+                        faultyVideoId
                     )
                 ),
                 videoAccessRuleQuery = VideoAccessRuleQuery()

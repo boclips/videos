@@ -31,7 +31,7 @@ open class RebuildVideoIndex(
                     organisationsPrices = organisationsWithPrices
                 )
                 videoPrices?.let { VideoWithPrices(video = video, prices = it) } ?: video
-            }
+            }.filter { it.isPlayable() }
 
             videoIndex.safeRebuildIndex(hydratedVideos, notifier)
         }
