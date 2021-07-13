@@ -40,6 +40,7 @@ class EventConverter {
         return com.boclips.eventbus.domain.video.Video.builder()
             .id(VideoId(video.videoId.value))
             .title(video.title)
+            .description(video.description)
             .channelId(ChannelId(video.channel.channelId.value))
             .playbackProviderType(PlaybackProviderType.valueOf(video.playback.id.type.name))
             .playbackId(video.playback.id.value)

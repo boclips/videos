@@ -40,6 +40,7 @@ class EventConverterTest {
         val video = createVideo(
             videoId = id,
             title = "the title",
+            description = "a description",
             channelId = ChannelId("id-666"),
             playback = TestFactories.createKalturaPlayback(
                 duration = Duration.ofMinutes(2),
@@ -80,6 +81,7 @@ class EventConverterTest {
 
         assertThat(videoEvent.id.value).isEqualTo(id)
         assertThat(videoEvent.title).isEqualTo("the title")
+        assertThat(videoEvent.description).isEqualTo("a description")
         assertThat(videoEvent.channelId.value).isEqualTo("id-666")
         assertThat(videoEvent.playbackProviderType).isEqualTo(PlaybackProviderType.KALTURA)
         assertThat(videoEvent.subjects).hasSize(1)
