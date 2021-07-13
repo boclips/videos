@@ -6,7 +6,6 @@ import com.boclips.web.exceptions.BoclipsApiException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.ZonedDateTime
 
 class GetVideoFeedIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
