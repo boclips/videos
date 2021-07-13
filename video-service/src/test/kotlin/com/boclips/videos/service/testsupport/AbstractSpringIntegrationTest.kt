@@ -40,7 +40,6 @@ import com.boclips.videos.api.request.tag.CreateTagRequest
 import com.boclips.videos.api.request.video.CreateVideoRequest
 import com.boclips.videos.api.request.video.UpdateVideoRequest
 import com.boclips.videos.api.response.channel.DistributionMethodResource
-import com.boclips.videos.service.application.GetAllCategories
 import com.boclips.videos.service.application.collection.BookmarkCollection
 import com.boclips.videos.service.application.collection.CreateCollection
 import com.boclips.videos.service.application.collection.UpdateCollection
@@ -72,7 +71,6 @@ import com.boclips.videos.service.infrastructure.collection.CollectionSubjects
 import com.boclips.videos.service.infrastructure.playback.KalturaPlaybackProvider
 import com.boclips.videos.service.infrastructure.playback.TestYoutubePlaybackProvider
 import com.boclips.videos.service.infrastructure.video.MongoVideoRepository
-import com.boclips.videos.service.presentation.converters.CategoryResourceConverter
 import com.boclips.videos.service.testsupport.ContentPackageResourceFactory.createContentPackageResource
 import com.damnhandy.uri.template.UriTemplate
 import com.jayway.jsonpath.JsonPath
@@ -114,8 +112,6 @@ import java.util.UUID
     "fake-user-service"
 )
 abstract class AbstractSpringIntegrationTest {
-    @Autowired
-    lateinit var getAllCategories: GetAllCategories
 
     @Autowired
     lateinit var legacyVideoSearchService: LegacyVideoSearchService
@@ -212,9 +208,6 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var taxonomyRepository: CategoryRepository
-
-    @Autowired
-    lateinit var categoryResourceConverter: CategoryResourceConverter
 
     @Autowired
     lateinit var updateChannel: UpdateChannel

@@ -1,5 +1,6 @@
 package com.boclips.videos.service.presentation.converters
 
+import com.boclips.videos.service.application.GetAllCategories
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
 import com.boclips.videos.service.domain.service.TagRepository
@@ -24,6 +25,9 @@ import java.io.File
 
 class VideoTaggingCsvFileValidatorTest : AbstractSpringIntegrationTest() {
     lateinit var videoTaggingCsvFileValidator: VideoTaggingCsvFileValidator
+
+    @Autowired
+    lateinit var getAllCategories: GetAllCategories
 
     @Autowired
     lateinit var categoryRepository: CategoryRepository

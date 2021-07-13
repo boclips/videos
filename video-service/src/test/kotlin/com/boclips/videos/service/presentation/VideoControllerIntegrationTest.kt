@@ -12,12 +12,6 @@ import com.jayway.jsonpath.JsonPath
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates.set
 import org.hamcrest.Matchers.*
-import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -282,69 +276,6 @@ class VideoControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.playback._links.hlsStream").doesNotExist())
                 .andExpect(jsonPath("$.playback._links.thumbnail").exists())
                 .andExpect(jsonPath("$.attachments", hasSize<Int>(0)))
-        }
-
-        @Test
-        fun `video is returned with categories`() {
-            val manualParent = taxonomyRepository.create(
-                CategoryFactory.sample(
-                    code = "B",
-                    description = "B description",
-                )
-            )
-            val manualChild = taxonomyRepository.create(
-                CategoryFactory.sample(
-                    code = "BC",
-                    description = "BC description",
-                    parentCode = "B"
-                )
-            )
-
-            val channelParent = taxonomyRepository.create(
-                CategoryFactory.sample(
-                    code = "Z",
-                    description = "Z description",
-                )
-            )
-            val channelChild = taxonomyRepository.create(
-                CategoryFactory.sample(
-                    code = "ZW",
-                    description = "ZW description",
-                    parentCode = "Z"
-                )
-            )
-
-            val videoWithCategories = saveVideo(
-                manualCategories = listOf(manualChild.code.value),
-                channelCategories = listOf(channelChild.code.value)
-            ).value
-
-            mockMvc.perform(get("/v1/videos/$videoWithCategories").asApiUser(email = userAssignedToOrganisation().idOrThrow().value))
-                .andExpect(status().isOk)
-                .andExpect(
-                    jsonPath(
-                        "$.categories[*].code",
-                        containsInAnyOrder(manualChild.code.value, channelChild.code.value)
-                    )
-                )
-                .andExpect(
-                    jsonPath(
-                        "$.categories[*].value",
-                        containsInAnyOrder(manualChild.description, channelChild.description)
-                    )
-                )
-                .andExpect(
-                    jsonPath(
-                        "$.categories[*].parent.code",
-                        containsInAnyOrder(manualParent.code.value, channelParent.code.value)
-                    )
-                )
-                .andExpect(
-                    jsonPath(
-                        "$.categories[*].parent.value",
-                        containsInAnyOrder(manualParent.description, channelParent.description)
-                    )
-                )
         }
 
         @Test

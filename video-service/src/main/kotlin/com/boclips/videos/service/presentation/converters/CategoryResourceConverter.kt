@@ -2,30 +2,17 @@ package com.boclips.videos.service.presentation.converters
 
 import com.boclips.videos.api.response.taxonomy.CategoryResource
 import com.boclips.videos.api.response.taxonomy.CategoryTreeResource
-import com.boclips.videos.api.response.video.VideoCategoryResource
 import com.boclips.videos.service.domain.model.taxonomy.Category
 import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
-import com.boclips.videos.service.domain.model.taxonomy.CategoryTree
 
-class CategoryResourceConverter {
+object CategoryResourceConverter {
+
     fun toResource(categories: List<Category>): CategoryResource {
         return CategoryResource(
             _embedded = categories
                 .filter { it.isRootCategory() }
                 .map { it.code.value to buildTree(categories, it) }
                 .toMap()
-        )
-    }
-
-    fun convertTree(categoryTree: CategoryTree): VideoCategoryResource {
-        return VideoCategoryResource(
-            code = categoryTree.codeValue.value,
-            value = categoryTree.description,
-            parent = categoryTree.parent?.let {
-                convertTree(
-                    it
-                )
-            }
         )
     }
 

@@ -10,11 +10,16 @@ import com.boclips.videos.service.application.subject.GetSubjects
 import com.boclips.videos.service.common.ResultsPage
 import com.boclips.videos.service.domain.model.playback.VideoPlayback.YoutubePlayback
 import com.boclips.videos.service.domain.model.taxonomy.CategorySource
-import com.boclips.videos.service.domain.model.taxonomy.CategoryWithAncestors
 import com.boclips.videos.service.domain.model.user.User
-import com.boclips.videos.service.domain.model.video.*
+import com.boclips.videos.service.domain.model.video.BaseVideo
+import com.boclips.videos.service.domain.model.video.ChannelFacet
+import com.boclips.videos.service.domain.model.video.Price
+import com.boclips.videos.service.domain.model.video.SubjectFacet
+import com.boclips.videos.service.domain.model.video.Video
+import com.boclips.videos.service.domain.model.video.VideoCounts
+import com.boclips.videos.service.domain.model.video.VideoId
+import com.boclips.videos.service.domain.model.video.VideoType
 import com.boclips.videos.service.domain.model.video.prices.PricedVideo
-import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import org.springframework.hateoas.PagedModel
 
@@ -24,10 +29,7 @@ class VideoToResourceConverter(
     private val attachmentToResourceConverter: AttachmentToResourceConverter,
     private val contentWarningToResourceConverter: ContentWarningToResourceConverter,
     private val videoChannelService: VideoChannelService,
-    private val getSubjects: GetSubjects,
-    private val categoryResourceConverter: CategoryResourceConverter,
-    private val categoryService: CategoryService
-
+    private val getSubjects: GetSubjects
 ) {
     fun convert(videos: List<Video>, user: User): List<VideoResource> {
         return videos.map { video -> convert(video, user) }
@@ -82,7 +84,6 @@ class VideoToResourceConverter(
             price = if (video is PricedVideo) video.price?.toResource() else null,
             contentWarnings = video.contentWarnings?.map { contentWarningToResourceConverter.convert(it) },
             keywords = video.keywords,
-            categories = createCategories(video.categories),
             taxonomy = VideoTaxonomyResourceWrapper(
                 channel = VideoTaxonomyResource(
                     categories = video.categories[CategorySource.CHANNEL]?.map {
@@ -113,21 +114,11 @@ class VideoToResourceConverter(
         )
     }
 
-    private fun createCategories(categories: Map<CategorySource, Set<CategoryWithAncestors>>): List<VideoCategoryResource>? {
-        return categories.flatMap { categoryTypes ->
-            categoryTypes.value.map { category ->
-                categoryService.buildTreeFromChild(category).let {
-                    categoryResourceConverter.convertTree(it)
-                }
-            }
-        }
-    }
-
     fun convertVideoIds(videoIds: List<VideoId>): List<VideoResource> {
         return videoIds.map { videoId ->
             VideoResource(
                 id = videoId.value,
-                _links = resourceLinks(videoId.value).associateBy { it.rel }
+                _links = resourceLinks(videoId.value).map { it.rel to it }.toMap()
             )
         }
     }

@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/categories")
-class CategoryController(
-    val categoryResourceConverter: CategoryResourceConverter
-) {
+class CategoryController {
 
     @Autowired
     lateinit var getAllCategories: GetAllCategories
@@ -22,7 +20,7 @@ class CategoryController(
     @GetMapping
     fun getCategories(): ResponseEntity<CategoryResource> {
         val categories = getAllCategories()
-        val categoriesResource = categoryResourceConverter.toResource(categories)
+        val categoriesResource = CategoryResourceConverter.toResource(categories)
         return ResponseEntity(categoriesResource, HttpStatus.OK)
     }
 }

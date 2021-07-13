@@ -643,12 +643,12 @@ class VideoControllerFilteringIntegrationTest : AbstractSpringIntegrationTest() 
         setSecurityContextWithClientId(userId = "teachers", clientId = "hq")
         val user = usersClient.add(UserResourceFactory.sample(subjects = listOf(SubjectResource(subject1.id.value))))
 
-        saveVideo(title = "A category", manualCategories = listOf("A"))
-        saveVideo(title = "Empty category codes", manualCategories = emptyList())
+        saveVideo(title = "A category", manualCategories =  listOf("A"))
+        saveVideo(title = "Empty category codes", manualCategories =  emptyList())
 
         saveVideo(
             title = "C category",
-            manualCategories = listOf("C"),
+            manualCategories =  listOf("C"),
             subjectIds = setOf(subject1.id.value)
         )
 

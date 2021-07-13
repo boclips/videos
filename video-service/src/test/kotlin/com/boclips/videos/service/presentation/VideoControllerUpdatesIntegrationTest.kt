@@ -276,7 +276,7 @@ class VideoControllerUpdatesIntegrationTest : AbstractSpringIntegrationTest() {
         saveCategory(CategoryFactory.sample(code = "B", description = "BBB"))
         saveCategory(CategoryFactory.sample(code = "C", description = "CCC"))
 
-        val videoToUpdate = saveVideo(manualCategories = listOf("A", "B")).value
+        val videoToUpdate = saveVideo(manualCategories =  listOf("A", "B")).value
 
         mockMvc.perform(
             patch("/v1/videos/$videoToUpdate")

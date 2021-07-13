@@ -4,7 +4,13 @@ import com.boclips.kalturaclient.clients.TestKalturaClient
 import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.response.collection.CollectionResource
 import com.boclips.videos.service.application.video.VideoRetrievalService
-import com.boclips.videos.service.presentation.hateoas.*
+import com.boclips.videos.service.presentation.hateoas.AttachmentsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.CollectionsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.ContentWarningLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.EventsLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.PlaybacksLinkBuilder
+import com.boclips.videos.service.presentation.hateoas.UriComponentsBuilderFactory
+import com.boclips.videos.service.presentation.hateoas.VideosLinkBuilder
 import com.boclips.videos.service.testsupport.TestFactories
 import com.boclips.videos.service.testsupport.UserFactory
 import com.nhaarman.mockitokotlin2.any
@@ -40,8 +46,6 @@ class CollectionResourceConverterTest {
             ),
             attachmentToResourceConverter = attachmentToResourceConverter,
             contentWarningToResourceConverter = ContentWarningToResourceConverter(ContentWarningLinkBuilder()),
-            mock(),
-            mock(),
             mock(),
             mock()
         )

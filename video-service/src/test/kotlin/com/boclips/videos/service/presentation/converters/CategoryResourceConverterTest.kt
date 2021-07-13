@@ -1,13 +1,10 @@
 package com.boclips.videos.service.presentation.converters
 
-import com.boclips.videos.service.domain.model.taxonomy.CategoryCode
-import com.boclips.videos.service.domain.model.taxonomy.CategoryTree
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import com.boclips.videos.service.testsupport.CategoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
+class CategoryResourceConverterTest {
 
     @Test
     fun `converts a tree to a resource`() {
@@ -28,7 +25,7 @@ class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
 
         CategoryFactory.sample(code = "B")
 
-        val resource = categoryResourceConverter.toResource(categories)
+        val resource = CategoryResourceConverter.toResource(categories)
 
         assertThat(resource._embedded).hasSize(2)
         assertThat(resource._embedded["A"]?.children).isEmpty()
@@ -38,31 +35,5 @@ class CategoryResourceConverterTest : AbstractSpringIntegrationTest() {
         assertThat(resource._embedded["B"]!!.children["BA"]?.description).isEqualTo("child BLAH")
         assertThat(resource._embedded["B"]!!.children["BA"]!!.children["BAA"]?.children).isEmpty()
         assertThat(resource._embedded["B"]!!.children["BA"]!!.children["BAA"]?.description).isEqualTo("grandchild BLAH")
-    }
-
-    @Test
-    fun `reverse builds category tree`() {
-        val categoryTree = CategoryTree(
-            description = "grandchild BLAH",
-            codeValue = CategoryCode("BAA"),
-            parent = CategoryTree(
-                description = "child BLAH",
-                codeValue = CategoryCode("BA"),
-                parent = CategoryTree(
-                    description = "parent BLAH",
-                    codeValue = CategoryCode("B"),
-                    parent = null
-                )
-            )
-        )
-
-        val resource = categoryResourceConverter.convertTree(categoryTree)
-
-        assertThat(resource.code).isEqualTo("BAA")
-        assertThat(resource.value).isEqualTo("grandchild BLAH")
-        assertThat(resource.parent?.code).isEqualTo("BA")
-        assertThat(resource.parent?.value).isEqualTo("child BLAH")
-        assertThat(resource.parent?.parent?.code).isEqualTo("B")
-        assertThat(resource.parent?.parent?.value).isEqualTo("parent BLAH")
     }
 }

@@ -36,7 +36,6 @@ import com.boclips.videos.service.domain.service.suggestions.ChannelIndex
 import com.boclips.videos.service.domain.service.suggestions.SubjectIndex
 import com.boclips.videos.service.domain.service.suggestions.SuggestionsRetrievalService
 import com.boclips.videos.service.domain.service.taxonomy.CategoryRepository
-import com.boclips.videos.service.domain.service.taxonomy.CategoryService
 import com.boclips.videos.service.domain.service.user.ContentPackageService
 import com.boclips.videos.service.domain.service.user.UserService
 import com.boclips.videos.service.domain.service.video.VideoCreationService
@@ -137,13 +136,8 @@ class DomainContext(
     }
 
     @Bean
-    fun categoryRepository(): CategoryRepository {
+    fun taxonomyRepository(): CategoryRepository {
         return MongoCategoryRepository(mongoClient)
-    }
-
-    @Bean
-    fun categoryService(): CategoryService {
-        return CategoryService(categoryRepository())
     }
 
     @Primary
