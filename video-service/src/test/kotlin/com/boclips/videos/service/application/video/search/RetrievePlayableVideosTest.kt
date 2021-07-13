@@ -33,7 +33,8 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
             VideoRequest(
                 text = "kaltura",
                 pageSize = 10,
-                pagingState = VideoRequestPagingState.PageNumber(0)
+                pagingState = VideoRequestPagingState.PageNumber(0),
+                ageRangeStrict = null
             ),
             VideoAccess.Everything(emptySet())
         )
@@ -54,6 +55,7 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                 text = "youtube",
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0),
+                ageRangeStrict = null,
             ),
             VideoAccess.Everything(emptySet())
         )
@@ -79,6 +81,7 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
                 text = "video",
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0),
+                ageRangeStrict = null,
             ),
             VideoAccess.Rules(
                 accessRules = listOf(
@@ -103,9 +106,10 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
             val result = retrievePlayableVideos.searchPlayableVideosWithCursor(
                 request = VideoRequest(
-                    pagingState = VideoRequestPagingState.Cursor(value = null),
                     text = "video",
-                    pageSize = 2
+                    pageSize = 2,
+                    pagingState = VideoRequestPagingState.Cursor(value = null),
+                    ageRangeStrict = null
                 ),
                 videoAccess = VideoAccess.Everything(privateChannels = emptySet())
             )
@@ -122,9 +126,10 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
             val previousPage = retrievePlayableVideos.searchPlayableVideosWithCursor(
                 request = VideoRequest(
-                    pagingState = VideoRequestPagingState.Cursor(value = null),
                     text = "video",
-                    pageSize = 2
+                    pageSize = 2,
+                    pagingState = VideoRequestPagingState.Cursor(value = null),
+                    ageRangeStrict = null
                 ),
                 videoAccess = VideoAccess.Everything(privateChannels = emptySet())
             )
@@ -133,9 +138,10 @@ class RetrievePlayableVideosTest : AbstractSpringIntegrationTest() {
 
             val nextPage = retrievePlayableVideos.searchPlayableVideosWithCursor(
                 request = VideoRequest(
-                    pagingState = VideoRequestPagingState.Cursor(value = previousPage.cursorId),
                     text = "video",
-                    pageSize = 2
+                    pageSize = 2,
+                    pagingState = VideoRequestPagingState.Cursor(value = previousPage.cursorId),
+                    ageRangeStrict = null
                 ),
                 videoAccess = VideoAccess.Everything(privateChannels = emptySet())
             )

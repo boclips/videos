@@ -21,10 +21,11 @@ class GetVideoFeed(
         try {
             return retrievePlayableVideos.searchPlayableVideosWithCursor(
                 request = VideoRequest(
+                    text = "",
                     pageSize = size,
                     pagingState = VideoRequestPagingState.Cursor(value = cursorId),
-                    text = "",
-                    updatedAsOf = updatedAsOf
+                    updatedAsOf = updatedAsOf,
+                    ageRangeStrict = null
                 ),
                 videoAccess = user.accessRules.videoAccess
             )

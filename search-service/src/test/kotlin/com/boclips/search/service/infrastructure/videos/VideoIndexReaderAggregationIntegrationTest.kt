@@ -152,7 +152,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                     PaginatedIndexSearchRequest(
                         VideoQuery(
                             phrase = "apple",
-                            userQuery = UserQuery(subjectIds = setOf("1"), ageRanges = listOf(AgeRange(1, 3))),
+                            userQuery = UserQuery(subjectIds = setOf("1"), ageRangesRelaxed = listOf(AgeRange(1, 3))),
                             videoAccessRuleQuery = VideoAccessRuleQuery()
                         )
                     )
@@ -442,7 +442,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             phrase = "apple",
                             userQuery = UserQuery(
                                 types = setOf(VideoType.INSTRUCTIONAL),
-                                ageRanges = listOf(AgeRange(min = 9, max = 11))
+                                ageRangesRelaxed = listOf(AgeRange(min = 9, max = 11))
                             )
                         )
                     )
@@ -538,7 +538,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             phrase = "apple",
                             userQuery = UserQuery(
-                                ageRanges = listOf(AgeRange(15, 19)),
+                                ageRangesRelaxed = listOf(AgeRange(15, 19)),
                                 durationRanges = listOf(DurationRange(Duration.ofSeconds(65), Duration.ofSeconds(135)))
                             )
 
@@ -731,7 +731,7 @@ class VideoIndexReaderAggregationIntegrationTest : EmbeddedElasticSearchIntegrat
                             phrase = "apple",
                             userQuery = UserQuery(
                                 channelIds = setOf("123"),
-                                ageRanges = listOf(AgeRange(1, 3))
+                                ageRangesRelaxed = listOf(AgeRange(1, 3))
                             ),
                             videoAccessRuleQuery = VideoAccessRuleQuery(),
                             facetDefinition = FacetDefinition.Video(

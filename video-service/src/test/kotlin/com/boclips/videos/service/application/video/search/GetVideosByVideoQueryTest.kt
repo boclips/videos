@@ -31,7 +31,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = null,
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         assertThat(result.pageInfo.totalElements).isEqualTo(1)
@@ -44,7 +45,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 1000,
                 pageNumber = 0,
-                user = userAssignedToOrganisation()
+                user = userAssignedToOrganisation(),
+                ageRangeStrict = null
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -56,7 +58,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 0,
                 pageNumber = 0,
-                user = userAssignedToOrganisation()
+                user = userAssignedToOrganisation(),
+                ageRangeStrict = null
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -68,7 +71,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
                 query = "query",
                 pageSize = 0,
                 pageNumber = -1,
-                user = userAssignedToOrganisation()
+                user = userAssignedToOrganisation(),
+                ageRangeStrict = null
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -96,7 +100,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "youtube",
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         assertThat(result.elements).hasSize(1)
@@ -113,7 +118,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageSize = 2,
             pageNumber = 0,
             type = setOf("NEWS"),
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         assertThat(videos.elements).hasSize(1)
@@ -130,7 +136,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "why are camels so tall",
             pageSize = 2,
             pageNumber = 1,
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         val event = fakeEventBus.getEventOfType(VideosSearched::class.java)
@@ -149,7 +156,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             maxDuration = "PT10S",
             pageSize = 20,
             pageNumber = 0,
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         assertThat(videos.pageInfo.totalElements).isEqualTo(2)
@@ -174,7 +182,8 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             pageSize = 20,
             pageNumber = 0,
             source = "youtube",
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            ageRangeStrict = null
         )
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)
@@ -218,8 +227,9 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
             query = "why are camels so tall",
             pageSize = 20,
             pageNumber = 0,
+            user = userAssignedToOrganisation(),
             resourceTypes = setOf("ACTIVITY"),
-            user = userAssignedToOrganisation()
+            ageRangeStrict = null
         )
 
         assertThat(results.pageInfo.totalElements).isEqualTo(1)
@@ -251,10 +261,11 @@ class GetVideosByVideoQueryTest : AbstractSpringIntegrationTest() {
 
         val results = searchVideo.byQuery(
             query = "",
-            updatedAsOf = ZonedDateTime.parse("2020-04-24T00:00Z[UTC]"),
             pageSize = 20,
             pageNumber = 0,
-            user = userAssignedToOrganisation()
+            user = userAssignedToOrganisation(),
+            updatedAsOf = ZonedDateTime.parse("2020-04-24T00:00Z[UTC]"),
+            ageRangeStrict = null
         )
 
         assertThat(results.elements.map { it.title }).containsExactlyInAnyOrder(

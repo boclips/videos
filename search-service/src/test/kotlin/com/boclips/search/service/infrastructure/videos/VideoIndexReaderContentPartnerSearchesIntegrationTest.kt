@@ -1,6 +1,7 @@
 package com.boclips.search.service.infrastructure.videos
 
 import com.boclips.search.service.domain.common.model.PaginatedIndexSearchRequest
+import com.boclips.search.service.domain.videos.model.AgeRange
 import com.boclips.search.service.domain.videos.model.DurationRange
 import com.boclips.search.service.domain.videos.model.SourceType
 import com.boclips.search.service.domain.videos.model.UserQuery
@@ -228,8 +229,7 @@ class VideoIndexReaderContentPartnerSearchesIntegrationTest : EmbeddedElasticSea
                     "TED",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
-                        ageRangeMin = 2,
-                        ageRangeMax = 5
+                        ageRangeStrict = AgeRange(2, 5),
                     )
                 )
             )

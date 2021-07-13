@@ -84,7 +84,6 @@ class VideoToResourceConverterTest {
             CategorySource.CHANNEL to setOf(
                 CategoryWithAncestors(
                     codeValue = CategoryCode("A"), description = "Test", ancestors = setOf(CategoryCode("A")),
-
                 )
             ),
             CategorySource.MANUAL to setOf(

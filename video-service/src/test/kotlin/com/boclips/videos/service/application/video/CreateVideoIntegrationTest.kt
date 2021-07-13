@@ -153,7 +153,8 @@ class CreateVideoIntegrationTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "the latest Bloomberg video",
                     pageSize = 0,
-                    pagingState = VideoRequestPagingState.PageNumber(0)
+                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Everything(emptySet())
             ).counts.total

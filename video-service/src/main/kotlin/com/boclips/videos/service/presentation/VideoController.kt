@@ -34,6 +34,7 @@ import com.boclips.videos.service.application.video.exceptions.VideoAssetAlready
 import com.boclips.videos.service.application.video.search.GetVideoPrice
 import com.boclips.videos.service.application.video.search.SearchVideo
 import com.boclips.videos.service.config.security.UserRoles
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.playback.CaptionConflictException
 import com.boclips.videos.service.domain.model.video.UnsupportedFormatConversionException
 import com.boclips.videos.service.domain.model.video.UnsupportedVideoUpdateException
@@ -136,7 +137,7 @@ class VideoController(
         @RequestParam(name = "source", required = false) source: String?,
         @RequestParam(name = "age_range_min", required = false) ageRangeMin: Int?,
         @RequestParam(name = "age_range_max", required = false) ageRangeMax: Int?,
-        @RequestParam(name = "age_range", required = false) ageRanges: List<String>?,
+        @RequestParam(name = "age_range", required = false) ageRangesRelaxed: List<String>?,
         @RequestParam(name = "age_range_facets", required = false) ageRangeFacets: List<String>?,
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?,
@@ -175,6 +176,7 @@ class VideoController(
         val results = searchVideo.byQuery(
             query = query,
             ids = ids ?: emptySet(),
+            sortBy = sortBy,
             bestFor = bestFor?.let { bestFor } ?: emptyList(),
             minDuration = minDuration,
             maxDuration = maxDuration,
@@ -182,29 +184,27 @@ class VideoController(
             durationFacets = durationFacets,
             releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
+            pageSize = pageSize,
+            pageNumber = pageNumber,
             source = source,
-            ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax,
-            ageRanges = ageRanges.orEmpty(),
+            ageRangesRelaxed = ageRangesRelaxed.orEmpty(),
+            ageRangeStrict = AgeRange.of(ageRangeMin, ageRangeMax, false),
             ageRangeFacets = ageRangeFacets.orEmpty(),
             subjects = subjects ?: emptySet(),
             subjectsSetManually = subjectsSetManually,
-            resourceTypes = resourceTypes ?: emptySet(),
-            resourceTypeFacets = resourceTypeFacets.orEmpty(),
-            videoTypeFacets = videoTypeFacets.orEmpty(),
             promoted = promoted,
             channelIds = channelParam ?: emptySet(),
             type = type?.let { type } ?: emptySet(),
             user = user,
-            sortBy = sortBy,
-            pageSize = pageSize,
-            pageNumber = pageNumber,
+            resourceTypes = resourceTypes ?: emptySet(),
+            resourceTypeFacets = resourceTypeFacets.orEmpty(),
+            videoTypeFacets = videoTypeFacets.orEmpty(),
             includeChannelFacets = includeChannelFacets,
-            includePriceFacets = UserExtractor.currentUserHasRole(UserRoles.BOCLIPS_WEB_APP),
-            queryParams = QueryParamsConverter.toSplitList(request.parameterMap),
             prices = prices?.map { PriceConverter.toPrice(it) }?.toSet() ?: emptySet(),
+            includePriceFacets = UserExtractor.currentUserHasRole(UserRoles.BOCLIPS_WEB_APP),
             categoryCodes = categoryCode.orEmpty(),
-            updatedAsOf = parseDateAsZonedDateTime(updatedAsOf)
+            queryParams = QueryParamsConverter.toSplitList(request.parameterMap),
+            updatedAsOf = parseDateAsZonedDateTime(updatedAsOf),
         )
 
         val videosResource = videoToResourceConverter.convert(resultsPage = results, user = user)

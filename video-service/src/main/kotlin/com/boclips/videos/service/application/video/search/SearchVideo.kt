@@ -4,6 +4,7 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.service.application.video.exceptions.SearchRequestValidationException
 import com.boclips.videos.service.application.video.exceptions.VideoNotFoundException
 import com.boclips.videos.service.common.ResultsPage
+import com.boclips.videos.service.domain.model.AgeRange
 import com.boclips.videos.service.domain.model.attachment.AttachmentType
 import com.boclips.videos.service.domain.model.user.User
 import com.boclips.videos.service.domain.model.video.BaseVideo
@@ -59,9 +60,8 @@ class SearchVideo(
         pageSize: Int,
         pageNumber: Int,
         source: String? = null,
-        ageRangeMin: Int? = null,
-        ageRangeMax: Int? = null,
-        ageRanges: List<String>? = null,
+        ageRangesRelaxed: List<String>? = null,
+        ageRangeStrict: AgeRange? = null,
         ageRangeFacets: List<String>? = null,
         subjects: Set<String> = emptySet(),
         subjectsSetManually: Boolean? = null,
@@ -88,22 +88,21 @@ class SearchVideo(
             maxDurationString = maxDuration,
             duration = duration,
             durationFacets = durationFacets,
-            releasedDateFrom = releasedDateFrom,
             releasedDateTo = releasedDateTo,
             pageSize = pageSize,
             pageNumber = pageNumber,
             source = source,
-            ageRangeMin = ageRangeMin,
-            ageRangeMax = ageRangeMax,
-            ageRanges = ageRanges?.map(::convertAgeRanges) ?: emptyList(),
+            ageRangesRelaxed = ageRangesRelaxed?.map(::convertAgeRanges) ?: emptyList(),
+            ageRangeStrict = ageRangeStrict,
             ageRangesFacets = ageRangeFacets?.map(::convertAgeRangeFacets),
             subjects = subjects,
-            subjectsSetManually = subjectsSetManually,
             promoted = promoted,
             channelIds = channelIds,
             type = type,
             user = user,
             userOrganisation = user.organisation,
+            subjectsSetManually = subjectsSetManually,
+            releasedDateFrom = releasedDateFrom,
             resourceTypes = resourceTypes.mapTo(HashSet()) { AttachmentType.valueOf(it).label },
             resourceTypeFacets = resourceTypeFacets,
             videoTypeFacets = videoTypeFacets,

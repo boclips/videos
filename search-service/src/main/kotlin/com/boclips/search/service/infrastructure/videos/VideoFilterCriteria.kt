@@ -56,19 +56,19 @@ class VideoFilterCriteria {
                 query.must(rangeQuery(VideoDocument.UPDATED_AT).from(videoQuery.updatedAsOf))
             }
 
-            if (listOfNotNull(videoQuery.ageRangeMin, videoQuery.ageRangeMax).isNotEmpty()) {
+            if (listOfNotNull(videoQuery.ageRangeStrict?.min, videoQuery.ageRangeStrict?.max).isNotEmpty()) {
                 query.filter(
                     beWithinAgeRange(
-                        videoQuery.ageRangeMin,
-                        videoQuery.ageRangeMax
+                        videoQuery.ageRangeStrict?.min,
+                        videoQuery.ageRangeStrict?.max
                     )
                 )
             }
 
-            if (!videoQuery.ageRanges.isNullOrEmpty()) {
+            if (!videoQuery.ageRangesRelaxed.isNullOrEmpty()) {
                 query.filter(
                     beWithinAgeRanges(
-                        videoQuery.ageRanges
+                        videoQuery.ageRangesRelaxed
                     )
                 )
             }

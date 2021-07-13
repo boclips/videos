@@ -45,6 +45,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null,
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedDistributionMethods(setOf(DistributionMethod.DOWNLOAD))), emptySet()
@@ -65,6 +66,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null,
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo))), emptySet()
@@ -85,6 +87,7 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "access",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null,
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.IncludedIds(setOf(firstVideo))), emptySet()
@@ -103,7 +106,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0)
+                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Rules(
                     listOf(VideoAccessRule.ExcludedIds(setOf(firstVideo))), emptySet()
@@ -127,7 +131,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 VideoRequest(
                     text = "Wild",
                     pageSize = 10,
-                    pagingState = VideoRequestPagingState.PageNumber(0)
+                    pagingState = VideoRequestPagingState.PageNumber(0),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule), emptySet()
@@ -151,7 +156,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule), emptySet()
@@ -183,7 +189,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule), emptySet()
@@ -215,7 +222,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                     text = "Wild",
                     pageSize = 10,
                     pagingState = VideoRequestPagingState.PageNumber(0),
-                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL)
+                    types = setOf(SearchVideoType.NEWS, SearchVideoType.INSTRUCTIONAL),
+                    ageRangeStrict = null
                 ),
                 VideoAccess.Rules(
                     listOf(accessRule), emptySet()
@@ -237,7 +245,8 @@ class RetrievePlayableVideosAccessRulesTest : AbstractSpringIntegrationTest() {
                 text = "Elephant",
                 pageSize = 10,
                 pagingState = VideoRequestPagingState.PageNumber(0),
-                types = setOf(SearchVideoType.INSTRUCTIONAL)
+                types = setOf(SearchVideoType.INSTRUCTIONAL),
+                ageRangeStrict = null
             ),
             VideoAccess.Rules(
                 listOf(accessRule), emptySet()

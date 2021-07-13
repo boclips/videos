@@ -108,18 +108,18 @@ class VideoIndexFake :
                 return@filter false
             }
             .filter { entry ->
-                if (query.userQuery.ageRangeMin == null && query.userQuery.ageRangeMax == null) {
+                if (query.userQuery.ageRangeStrict?.min == null && query.userQuery.ageRangeStrict?.max == null) {
                     return@filter true
                 }
 
-                return@filter (entry.value.ageRangeMin == query.userQuery.ageRangeMin && entry.value.ageRangeMax == query.userQuery.ageRangeMax)
+                return@filter (entry.value.ageRangeMin == query.userQuery.ageRangeStrict.min && entry.value.ageRangeMax == query.userQuery.ageRangeStrict.max)
             }
             .filter { entry ->
-                if (query.userQuery.ageRanges.isNullOrEmpty()) {
+                if (query.userQuery.ageRangesRelaxed.isNullOrEmpty()) {
                     return@filter true
                 }
 
-                return@filter query.userQuery.ageRanges.any { ageRange ->
+                return@filter query.userQuery.ageRangesRelaxed.any { ageRange ->
                     AgeRange(entry.value.ageRangeMin, entry.value.ageRangeMax) == ageRange
                 }
             }

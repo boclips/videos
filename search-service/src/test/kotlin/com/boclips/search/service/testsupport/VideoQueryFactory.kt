@@ -11,8 +11,7 @@ class VideoQueryFactory {
             return VideoQuery(
                 phrase = "some phrase",
                 userQuery = UserQuery(
-                    ageRangeMax = 10,
-                    ageRangeMin = 5,
+                    ageRangeStrict = AgeRange(5, 10),
                     subjectIds = setOf("subject-123"),
                     durationRanges = listOf(
                         DurationRange(min = Duration.ofSeconds(20), max = Duration.ofSeconds(100)),

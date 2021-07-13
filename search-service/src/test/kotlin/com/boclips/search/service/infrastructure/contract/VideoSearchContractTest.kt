@@ -394,7 +394,7 @@ class VideoSearchServiceContractTest : EmbeddedElasticSearchIntegrationTest() {
         val results = queryService.search(
             PaginatedIndexSearchRequest(
                 query = VideoQuery(
-                    userQuery = UserQuery(ageRanges = listOf(AgeRange(3, 7))),
+                    userQuery = UserQuery(ageRangesRelaxed = listOf(AgeRange(3, 7))),
                     videoAccessRuleQuery = VideoAccessRuleQuery()
                 )
             )

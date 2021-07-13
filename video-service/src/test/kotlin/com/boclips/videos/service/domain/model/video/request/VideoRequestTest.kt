@@ -17,7 +17,8 @@ class VideoRequestTest {
         val searchQuery = VideoRequest(
             text = "some phrase",
             pageSize = 2,
-            pagingState = VideoRequestPagingState.PageNumber(0)
+            pagingState = VideoRequestPagingState.PageNumber(0),
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -30,7 +31,8 @@ class VideoRequestTest {
             text = "any query",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            ids = setOf("id 1", "id 2")
+            ids = setOf("id 1", "id 2"),
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -44,7 +46,8 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
             ids = setOf("id 1", "id 2"),
-            channelIds = setOf("1", "2", "3")
+            channelIds = setOf("1", "2", "3"),
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -57,7 +60,8 @@ class VideoRequestTest {
             text = "any query",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            bestFor = listOf("explainer")
+            bestFor = listOf("explainer"),
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -70,7 +74,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RELEASE_DATE
+            sortBy = SortKey.RELEASE_DATE,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -86,7 +91,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.TITLE_DESC
+            sortBy = SortKey.TITLE_DESC,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -102,7 +108,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.UNTAGGED_CATEGORIES
+            sortBy = SortKey.UNTAGGED_CATEGORIES,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -118,7 +125,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.TITLE_ASC
+            sortBy = SortKey.TITLE_ASC,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -134,7 +142,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.INGEST_ASC
+            sortBy = SortKey.INGEST_ASC,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -150,7 +159,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.INGEST_DESC
+            sortBy = SortKey.INGEST_DESC,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -166,7 +176,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = SortKey.RANDOM
+            sortBy = SortKey.RANDOM,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -179,7 +190,8 @@ class VideoRequestTest {
             text = "id:11,12,13",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            sortBy = null
+            sortBy = null,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -193,7 +205,8 @@ class VideoRequestTest {
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE,
-            source = SourceType.YOUTUBE
+            source = SourceType.YOUTUBE,
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -206,7 +219,8 @@ class VideoRequestTest {
             text = "testing",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            types = setOf(VideoType.NEWS, VideoType.STOCK)
+            types = setOf(VideoType.NEWS, VideoType.STOCK),
+            ageRangeStrict = null
         )
             .toQuery(VideoAccess.Everything(emptySet()))
 
@@ -221,7 +235,8 @@ class VideoRequestTest {
             pagingState = VideoRequestPagingState.PageNumber(0),
             sortBy = SortKey.RELEASE_DATE,
             releaseDateFrom = LocalDate.of(2000, 1, 1),
-            releaseDateTo = LocalDate.of(2001, 1, 1)
+            releaseDateTo = LocalDate.of(2001, 1, 1),
+            ageRangeStrict = null
         ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.releaseDateTo).isEqualTo(LocalDate.of(2001, 1, 1))
@@ -234,7 +249,8 @@ class VideoRequestTest {
             text = "",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            promoted = true
+            promoted = true,
+            ageRangeStrict = null
         ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.promoted).isEqualTo(true)
@@ -246,7 +262,8 @@ class VideoRequestTest {
             text = "",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            attachmentTypes = setOf("Activity")
+            attachmentTypes = setOf("Activity"),
+            ageRangeStrict = null
         ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.userQuery.attachmentTypes).isEqualTo(setOf("Activity"))
@@ -258,7 +275,8 @@ class VideoRequestTest {
             text = "",
             pageSize = 2,
             pagingState = VideoRequestPagingState.PageNumber(0),
-            promoted = true
+            promoted = true,
+            ageRangeStrict = null
         ).toQuery(VideoAccess.Everything(emptySet()))
 
         assertThat(searchQuery.videoAccessRuleQuery.permittedVideoIds).isNull()

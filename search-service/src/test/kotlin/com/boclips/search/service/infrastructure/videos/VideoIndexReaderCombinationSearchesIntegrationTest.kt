@@ -77,8 +77,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                 query = VideoQuery(
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
-                        ageRangeMin = 3,
-                        ageRangeMax = 5,
+                        ageRangeStrict = AgeRange(3, 5),
                         subjectIds = setOf("subject-1")
                     )
                 )
@@ -114,8 +113,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     phrase = "Intercom Learning",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
-                        ageRangeMin = 3,
-                        ageRangeMax = 5
+                        ageRangeStrict = AgeRange(3, 5),
                     )
                 )
             )
@@ -205,8 +203,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     phrase = "Intercom Learning",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
-                        ageRangeMin = 3,
-                        ageRangeMax = 5,
+                        ageRangeStrict = AgeRange(3, 5),
                         subjectIds = setOf("subject-1")
                     )
                 )
@@ -251,7 +248,7 @@ class VideoIndexReaderCombinationSearchesIntegrationTest : EmbeddedElasticSearch
                     phrase = "elephant",
                     videoAccessRuleQuery = VideoAccessRuleQuery(),
                     userQuery = UserQuery(
-                        ageRanges = listOf(AgeRange(3, 6), AgeRange(7, 8)),
+                        ageRangesRelaxed = listOf(AgeRange(3, 6), AgeRange(7, 8)),
                         subjectIds = setOf("subject-1")
                     )
                 )

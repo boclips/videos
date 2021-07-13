@@ -78,7 +78,8 @@ class VideoRetrievalService(
         val videoRequest = VideoRequest(
             text = "",
             pageSize = pageSize,
-            pagingState = VideoRequestPagingState.Cursor(cursor?.value)
+            pagingState = VideoRequestPagingState.Cursor(cursor?.value),
+            ageRangeStrict = null
         )
         val searchRequest = CursorBasedIndexSearchRequest(
             query = videoRequest.toQuery(videoAccess),

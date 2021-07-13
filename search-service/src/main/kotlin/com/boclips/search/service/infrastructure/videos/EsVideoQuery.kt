@@ -103,10 +103,10 @@ class EsVideoQuery {
                         .let(boostWhenSubjectsMatch(videoQuery.userQuery.userSubjectIds))
                 )
 
-                if (videoQuery.userQuery.ageRanges != null) {
+                if (videoQuery.userQuery.ageRangesRelaxed != null) {
                     must(
                         QueryBuilders.boolQuery()
-                            .let(boostAgeRangeOverlap(videoQuery.userQuery.ageRanges))
+                            .let(boostAgeRangeOverlap(videoQuery.userQuery.ageRangesRelaxed))
                     )
                 }
             }
